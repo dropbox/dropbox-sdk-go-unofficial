@@ -9,7 +9,38 @@ A Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
 $ go get github.com/dropbox/dropbox-sdk-go
 ----
 
+Note that while the import path ends in `dropbox-sdk-go`, it actually exports the package `dropbox`. There are additional subpackages, one for each namespace in the https://www.dropbox.com/developers/documentation/http/documentation[API]:
+
+  * `github.com/dropbox/dropbox-sdk-go/users`
+  * `github.com/dropbox/dropbox-sdk-go/files`
+  * `github.com/dropbox/dropbox-sdk-go/sharing`
+
 == Usage
+
+First, you need to https://dropbox.com/developers/apps:[register a new "app"] to start making API requests. Once you have created an app, you can either use the SDK via an access token (useful for testing) or via the regular OAuth2 flow (recommended for production).
+
+=== Using OAuth token
+
+Once you've created an app, you can get an access token from the app's console. Note that this token will only work for the Dropbox account the token is associated with.
+
+WARNING: do NOT use this in production unless you know what you are doing!
+
+[source,go]
+----
+// NOTE: this imports package `dropbox`
+import "github.com/dropbox/dropbox-sdk-go"
+
+func main() {
+  api := dropbox.Client(token, true) // second argument enables verbose logging in the SDK
+  // start making API calls
+}
+----
+
+=== Using OAuth2 flow
+
+=== Making API calls
+
+=== Error Handling
 
 == Caveats
 
