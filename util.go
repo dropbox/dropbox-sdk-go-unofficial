@@ -11,10 +11,11 @@ import (
 )
 
 type apiImpl struct {
-	client *http.Client
+	client  *http.Client
+	verbose bool
 }
 
-func Client(token string) Api {
+func Client(token string, verbose bool) Api {
 	var conf = &oauth2.Config{
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://www.dropbox.com/1/oauth2/authorize",
@@ -22,10 +23,10 @@ func Client(token string) Api {
 		},
 	}
 	tok := &oauth2.Token{AccessToken: token}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok)}
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose}
 }
 
-func OauthClient(appId string, appSecret string, filePath string) (Api, error) {
+func OauthClient(appId string, appSecret string, filePath string, verbose bool) (Api, error) {
 	var conf = &oauth2.Config{
 		ClientID:     appId,
 		ClientSecret: appSecret,
@@ -52,7 +53,7 @@ func OauthClient(appId string, appSecret string, filePath string) (Api, error) {
 		}
 		saveToken(filePath, tok)
 	}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok)}, nil
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose}, nil
 }
 
 func readToken(filePath string) (*oauth2.Token, error) {

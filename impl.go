@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go/apierror"
@@ -32,6 +33,9 @@ type GetMetadataWrapper struct {
 func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -43,7 +47,13 @@ func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata,
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -88,6 +98,9 @@ type ListFolderLongpollWrapper struct {
 func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *files.ListFolderLongpollResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -99,7 +112,13 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -144,6 +163,9 @@ type ListFolderWrapper struct {
 func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -155,7 +177,13 @@ func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderR
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -200,6 +228,9 @@ type ListFolderContinueWrapper struct {
 func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *files.ListFolderResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -211,7 +242,13 @@ func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *f
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -256,6 +293,9 @@ type ListFolderGetLatestCursorWrapper struct {
 func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *files.ListFolderGetLatestCursorResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -267,7 +307,13 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *fi
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -312,6 +358,9 @@ type DownloadWrapper struct {
 func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -323,7 +372,13 @@ func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, c
 	}
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -369,7 +424,13 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSess
 		return
 	}
 
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -414,6 +475,9 @@ type UploadSessionAppendWrapper struct {
 func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content io.Reader) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -426,7 +490,13 @@ func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content 
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
 	req.Header.Set("Content-Type", "application/octet-stream")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -471,6 +541,9 @@ type UploadSessionFinishWrapper struct {
 func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, content io.Reader) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -483,7 +556,13 @@ func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, conte
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
 	req.Header.Set("Content-Type", "application/octet-stream")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -528,6 +607,9 @@ type UploadWrapper struct {
 func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -540,7 +622,13 @@ func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
 	req.Header.Set("Content-Type", "application/octet-stream")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -585,6 +673,9 @@ type SearchWrapper struct {
 func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -596,7 +687,13 @@ func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err e
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -641,6 +738,9 @@ type CreateFolderWrapper struct {
 func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -652,7 +752,13 @@ func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderM
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -697,6 +803,9 @@ type DeleteWrapper struct {
 func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -708,7 +817,13 @@ func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -753,6 +868,9 @@ type PermanentlyDeleteWrapper struct {
 func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -764,7 +882,13 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (res struct{}, err e
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -809,6 +933,9 @@ type CopyWrapper struct {
 func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -820,7 +947,13 @@ func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -865,6 +998,9 @@ type MoveWrapper struct {
 func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -876,7 +1012,13 @@ func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -921,6 +1063,9 @@ type GetThumbnailWrapper struct {
 func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -932,7 +1077,13 @@ func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetada
 	}
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -973,6 +1124,9 @@ type GetPreviewWrapper struct {
 func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -984,7 +1138,13 @@ func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, 
 	}
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1025,6 +1185,9 @@ type ListRevisionsWrapper struct {
 func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListRevisionsResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1036,7 +1199,13 @@ func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListR
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1081,6 +1250,9 @@ type RestoreWrapper struct {
 func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1092,7 +1264,13 @@ func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1137,6 +1315,9 @@ type GetSharedLinkMetadataWrapper struct {
 func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1148,7 +1329,13 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1193,6 +1380,9 @@ type ListSharedLinksWrapper struct {
 func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *sharing.ListSharedLinksResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1204,7 +1394,13 @@ func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *shari
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1249,6 +1445,9 @@ type ModifySharedLinkSettingsWrapper struct {
 func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettingsArgs) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1260,7 +1459,13 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettin
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1305,6 +1510,9 @@ type CreateSharedLinkWithSettingsWrapper struct {
 func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWithSettingsArg) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1316,7 +1524,13 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWi
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1361,6 +1575,9 @@ type RevokeSharedLinkWrapper struct {
 func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1372,7 +1589,13 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (res stru
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1417,6 +1640,9 @@ type GetSharedLinkFileWrapper struct {
 func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (res *sharing.SharedLinkMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1428,7 +1654,13 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (re
 	}
 
 	req.Header.Set("Dropbox-API-Arg", string(b))
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1469,6 +1701,9 @@ type GetSharedLinksWrapper struct {
 func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing.GetSharedLinksResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1480,7 +1715,13 @@ func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1525,6 +1766,9 @@ type CreateSharedLinkWrapper struct {
 func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sharing.PathLinkMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1536,7 +1780,13 @@ func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sha
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1586,7 +1836,13 @@ func (dbx *apiImpl) ListFolders() (res *sharing.ListFoldersResult, err error) {
 		return
 	}
 
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1631,6 +1887,9 @@ type ListFoldersContinueWrapper struct {
 func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (res *sharing.ListFoldersResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1642,7 +1901,13 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1687,6 +1952,9 @@ type GetFolderMetadataWrapper struct {
 func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1698,7 +1966,13 @@ func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharin
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1743,6 +2017,9 @@ type ListFolderMembersWrapper struct {
 func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *sharing.SharedFolderMembers, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1754,7 +2031,13 @@ func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1799,6 +2082,9 @@ type ListFolderMembersContinueWrapper struct {
 func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersContinueArg) (res *sharing.SharedFolderMembers, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1810,7 +2096,13 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersCont
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1855,6 +2147,9 @@ type ShareFolderWrapper struct {
 func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.ShareFolderLaunch, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1866,7 +2161,13 @@ func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.Share
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1911,6 +2212,9 @@ type CheckShareJobStatusWrapper struct {
 func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareFolderJobStatus, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1922,7 +2226,13 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareF
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -1967,6 +2277,9 @@ type CheckJobStatusWrapper struct {
 func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -1978,7 +2291,13 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2023,6 +2342,9 @@ type UnshareFolderWrapper struct {
 func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2034,7 +2356,13 @@ func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.Lau
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2079,6 +2407,9 @@ type TransferFolderWrapper struct {
 func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2090,7 +2421,13 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (res struct{}
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2135,6 +2472,9 @@ type UpdateFolderPolicyWrapper struct {
 func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2146,7 +2486,13 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2191,6 +2537,9 @@ type AddFolderMemberWrapper struct {
 func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2202,7 +2551,13 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (res struct
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2247,6 +2602,9 @@ type RemoveFolderMemberWrapper struct {
 func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2258,7 +2616,13 @@ func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2303,6 +2667,9 @@ type UpdateFolderMemberWrapper struct {
 func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2314,7 +2681,13 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2359,6 +2732,9 @@ type MountFolderWrapper struct {
 func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2370,7 +2746,13 @@ func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.Share
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2415,6 +2797,9 @@ type UnmountFolderWrapper struct {
 func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2426,7 +2811,13 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (res struct{}, 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2471,6 +2862,9 @@ type RelinquishFolderMembershipWrapper struct {
 func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMembershipArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2482,7 +2876,13 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2532,7 +2932,13 @@ func (dbx *apiImpl) GetInfo() (res *team.TeamGetInfoResult, err error) {
 		return
 	}
 
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2577,6 +2983,9 @@ type DevicesListMemberDevicesWrapper struct {
 func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (res *team.ListMemberDevicesResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2588,7 +2997,13 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (re
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2633,6 +3048,9 @@ type DevicesListTeamDevicesWrapper struct {
 func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *team.ListTeamDevicesResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2644,7 +3062,13 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *t
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2689,6 +3113,9 @@ type DevicesRevokeDeviceSessionWrapper struct {
 func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2700,7 +3127,13 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2745,6 +3178,9 @@ type DevicesRevokeDeviceSessionBatchWrapper struct {
 func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessionBatchArg) (res *team.RevokeDeviceSessionBatchResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2756,7 +3192,13 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessio
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2801,6 +3243,9 @@ type GroupsListWrapper struct {
 func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2812,7 +3257,13 @@ func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListRes
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2857,6 +3308,9 @@ type GroupsListContinueWrapper struct {
 func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *team.GroupsListResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2868,7 +3322,13 @@ func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *te
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2913,6 +3373,9 @@ type GroupsGetInfoWrapper struct {
 func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsGetInfoItem, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2924,7 +3387,13 @@ func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsG
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -2969,6 +3438,9 @@ type GroupsCreateWrapper struct {
 func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullInfo, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -2980,7 +3452,13 @@ func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullI
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3025,6 +3503,9 @@ type GroupsDeleteWrapper struct {
 func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3036,7 +3517,13 @@ func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmpt
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3081,6 +3568,9 @@ type GroupsUpdateWrapper struct {
 func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFullInfo, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3092,7 +3582,13 @@ func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFull
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3137,6 +3633,9 @@ type GroupsMembersAddWrapper struct {
 func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.GroupMembersChangeResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3148,7 +3647,13 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.Gr
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3193,6 +3698,9 @@ type GroupsMembersRemoveWrapper struct {
 func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *team.GroupMembersChangeResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3204,7 +3712,13 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *t
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3249,6 +3763,9 @@ type GroupsMembersSetAccessTypeWrapper struct {
 func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTypeArg) (res []*team.GroupsGetInfoItem, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3260,7 +3777,13 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTy
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3305,6 +3828,9 @@ type GroupsJobStatusGetWrapper struct {
 func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3316,7 +3842,13 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3361,6 +3893,9 @@ type LinkedAppsListMemberLinkedAppsWrapper struct {
 func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) (res *team.ListMemberAppsResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3372,7 +3907,13 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3417,6 +3958,9 @@ type LinkedAppsListTeamLinkedAppsWrapper struct {
 func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res *team.ListTeamAppsResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3428,7 +3972,13 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3473,6 +4023,9 @@ type LinkedAppsRevokeLinkedAppWrapper struct {
 func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3484,7 +4037,13 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3529,6 +4088,9 @@ type LinkedAppsRevokeLinkedAppBatchWrapper struct {
 func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppBatchArg) (res *team.RevokeLinkedAppBatchResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3540,7 +4102,13 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppB
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3585,6 +4153,9 @@ type MembersListWrapper struct {
 func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersListResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3596,7 +4167,13 @@ func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersList
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3641,6 +4218,9 @@ type MembersListContinueWrapper struct {
 func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *team.MembersListResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3652,7 +4232,13 @@ func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3697,6 +4283,9 @@ type MembersGetInfoWrapper struct {
 func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.MembersGetInfoItem, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3708,7 +4297,13 @@ func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.Me
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3753,6 +4348,9 @@ type MembersAddWrapper struct {
 func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLaunch, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3764,7 +4362,13 @@ func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLau
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3809,6 +4413,9 @@ type MembersAddJobStatusGetWrapper struct {
 func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.MembersAddJobStatus, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3820,7 +4427,13 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.Member
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3865,6 +4478,9 @@ type MembersSetProfileWrapper struct {
 func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team.TeamMemberInfo, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3876,7 +4492,13 @@ func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3921,6 +4543,9 @@ type MembersSetAdminPermissionsWrapper struct {
 func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsArg) (res *team.MembersSetPermissionsResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3932,7 +4557,13 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsAr
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -3977,6 +4608,9 @@ type MembersSendWelcomeEmailWrapper struct {
 func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3988,7 +4622,13 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (res stru
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4033,6 +4673,9 @@ type MembersRemoveWrapper struct {
 func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4044,7 +4687,13 @@ func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.Launch
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4089,6 +4738,9 @@ type MembersRemoveJobStatusGetWrapper struct {
 func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4100,7 +4752,13 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4145,6 +4803,9 @@ type MembersSuspendWrapper struct {
 func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4156,7 +4817,13 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (res struct{}
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4201,6 +4868,9 @@ type MembersUnsuspendWrapper struct {
 func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (res struct{}, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4212,7 +4882,13 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (res struct{
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4257,6 +4933,9 @@ type ReportsGetStorageWrapper struct {
 func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorageReport, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4268,7 +4947,13 @@ func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorage
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4313,6 +4998,9 @@ type ReportsGetActivityWrapper struct {
 func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivityReport, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4324,7 +5012,13 @@ func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivi
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4369,6 +5063,9 @@ type ReportsGetMembershipWrapper struct {
 func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMembershipReport, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4380,7 +5077,13 @@ func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMemb
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4425,6 +5128,9 @@ type ReportsGetDevicesWrapper struct {
 func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevicesReport, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4436,7 +5142,13 @@ func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevices
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4481,6 +5193,9 @@ type GetAccountWrapper struct {
 func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccount, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4492,7 +5207,13 @@ func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccoun
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4542,7 +5263,13 @@ func (dbx *apiImpl) GetCurrentAccount() (res *users.FullAccount, err error) {
 		return
 	}
 
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4592,7 +5319,13 @@ func (dbx *apiImpl) GetSpaceUsage() (res *users.SpaceUsage, err error) {
 		return
 	}
 
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
@@ -4637,6 +5370,9 @@ type GetAccountBatchWrapper struct {
 func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users.BasicAccount, err error) {
 	cli := dbx.client
 
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -4648,7 +5384,13 @@ func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
 	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
 	if err != nil {
 		return
 	}
