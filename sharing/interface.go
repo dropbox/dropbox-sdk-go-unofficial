@@ -8,9 +8,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go/dropbox/async"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/users"
+	"github.com/dropbox/dropbox-sdk-go/async"
+	"github.com/dropbox/dropbox-sdk-go/files"
+	"github.com/dropbox/dropbox-sdk-go/users"
 )
 
 type GetSharedLinkMetadataArg struct {

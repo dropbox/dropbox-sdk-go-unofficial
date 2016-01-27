@@ -7,8 +7,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go/dropbox/async"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/users"
+	"github.com/dropbox/dropbox-sdk-go/async"
+	"github.com/dropbox/dropbox-sdk-go/users"
 )
 
 // The user's status as a member of a specific team.

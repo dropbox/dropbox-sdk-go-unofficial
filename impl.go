@@ -9,12 +9,12 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/dropbox/dropbox-sdk-go/dropbox/apierror"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/async"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/sharing"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/team"
-	"github.com/dropbox/dropbox-sdk-go/dropbox/users"
+	"github.com/dropbox/dropbox-sdk-go/apierror"
+	"github.com/dropbox/dropbox-sdk-go/async"
+	"github.com/dropbox/dropbox-sdk-go/files"
+	"github.com/dropbox/dropbox-sdk-go/sharing"
+	"github.com/dropbox/dropbox-sdk-go/team"
+	"github.com/dropbox/dropbox-sdk-go/users"
 )
 
 type Api interface {
