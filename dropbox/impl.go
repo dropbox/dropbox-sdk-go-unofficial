@@ -8,20 +8,28 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/dropbox/dropbox-sdk-go/dropbox/apierror"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/async"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/files"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/sharing"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/team"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/users"
 )
 
 type Api interface {
-	Files
-	Sharing
-	Users
+	files.Files
+	sharing.Sharing
+	team.Team
+	users.Users
 }
 
 type GetMetadataWrapper struct {
-	ApiError
-	EndpointError *GetMetadataError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.GetMetadataError `json:"error"`
 }
 
-func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res *Metadata, err error) {
+func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -56,7 +64,7 @@ func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res *Metadata, err error) 
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -73,11 +81,11 @@ func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res *Metadata, err error) 
 }
 
 type ListFolderLongpollWrapper struct {
-	ApiError
-	EndpointError *ListFolderLongpollError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ListFolderLongpollError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFolderLongpollResult, err error) {
+func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *files.ListFolderLongpollResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -112,7 +120,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFol
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -129,11 +137,11 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFol
 }
 
 type ListFolderWrapper struct {
-	ApiError
-	EndpointError *ListFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ListFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error) {
+func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -168,7 +176,7 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -185,11 +193,11 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 }
 
 type ListFolderContinueWrapper struct {
-	ApiError
-	EndpointError *ListFolderContinueError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ListFolderContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFolderResult, err error) {
+func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *files.ListFolderResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -224,7 +232,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -241,11 +249,11 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 }
 
 type ListFolderGetLatestCursorWrapper struct {
-	ApiError
-	EndpointError *ListFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ListFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFolderGetLatestCursorResult, err error) {
+func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *files.ListFolderGetLatestCursorResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -280,7 +288,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFold
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -297,11 +305,11 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFold
 }
 
 type DownloadWrapper struct {
-	ApiError
-	EndpointError *DownloadError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.DownloadError `json:"error"`
 }
 
-func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -332,7 +340,7 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -349,11 +357,11 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 }
 
 type UploadSessionStartWrapper struct {
-	ApiError
+	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *UploadSessionStartResult, err error) {
+func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSessionStartResult, err error) {
 	cli := dbx.client
 
 	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/start", nil)
@@ -382,7 +390,7 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *UploadSessionSta
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -399,11 +407,11 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *UploadSessionSta
 }
 
 type UploadSessionAppendWrapper struct {
-	ApiError
-	EndpointError *UploadSessionLookupError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.UploadSessionLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (res struct{}, err error) {
+func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content io.Reader) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -439,7 +447,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -456,11 +464,11 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 }
 
 type UploadSessionFinishWrapper struct {
-	ApiError
-	EndpointError *UploadSessionFinishError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.UploadSessionFinishError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, content io.Reader) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -496,7 +504,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -513,11 +521,11 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 }
 
 type UploadWrapper struct {
-	ApiError
-	EndpointError *UploadError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.UploadError `json:"error"`
 }
 
-func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -553,7 +561,7 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -570,11 +578,11 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 }
 
 type SearchWrapper struct {
-	ApiError
-	EndpointError *SearchError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.SearchError `json:"error"`
 }
 
-func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
+func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -609,7 +617,7 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -626,11 +634,11 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 }
 
 type CreateFolderWrapper struct {
-	ApiError
-	EndpointError *CreateFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.CreateFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error) {
+func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -665,7 +673,7 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -682,11 +690,11 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 }
 
 type DeleteWrapper struct {
-	ApiError
-	EndpointError *DeleteError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.DeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) Delete(arg *DeleteArg) (res *Metadata, err error) {
+func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -721,7 +729,7 @@ func (dbx *apiImpl) Delete(arg *DeleteArg) (res *Metadata, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -738,11 +746,11 @@ func (dbx *apiImpl) Delete(arg *DeleteArg) (res *Metadata, err error) {
 }
 
 type PermanentlyDeleteWrapper struct {
-	ApiError
-	EndpointError *DeleteError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.DeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (res struct{}, err error) {
+func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -777,7 +785,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (res struct{}, err error) 
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -794,11 +802,11 @@ func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (res struct{}, err error) 
 }
 
 type CopyWrapper struct {
-	ApiError
-	EndpointError *RelocationError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.RelocationError `json:"error"`
 }
 
-func (dbx *apiImpl) Copy(arg *RelocationArg) (res *Metadata, err error) {
+func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -833,7 +841,7 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res *Metadata, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -850,11 +858,11 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res *Metadata, err error) {
 }
 
 type MoveWrapper struct {
-	ApiError
-	EndpointError *RelocationError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.RelocationError `json:"error"`
 }
 
-func (dbx *apiImpl) Move(arg *RelocationArg) (res *Metadata, err error) {
+func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -889,7 +897,7 @@ func (dbx *apiImpl) Move(arg *RelocationArg) (res *Metadata, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -906,11 +914,11 @@ func (dbx *apiImpl) Move(arg *RelocationArg) (res *Metadata, err error) {
 }
 
 type GetThumbnailWrapper struct {
-	ApiError
-	EndpointError *ThumbnailError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ThumbnailError `json:"error"`
 }
 
-func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -941,7 +949,7 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -958,11 +966,11 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 }
 
 type GetPreviewWrapper struct {
-	ApiError
-	EndpointError *PreviewError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.PreviewError `json:"error"`
 }
 
-func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -993,7 +1001,7 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1010,11 +1018,11 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 }
 
 type ListRevisionsWrapper struct {
-	ApiError
-	EndpointError *ListRevisionsError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.ListRevisionsError `json:"error"`
 }
 
-func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResult, err error) {
+func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListRevisionsResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1049,7 +1057,7 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1066,11 +1074,11 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 }
 
 type RestoreWrapper struct {
-	ApiError
-	EndpointError *RestoreError `json:"error"`
+	apierror.ApiError
+	EndpointError *files.RestoreError `json:"error"`
 }
 
-func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
+func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1105,7 +1113,7 @@ func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1122,11 +1130,11 @@ func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 }
 
 type GetSharedLinkMetadataWrapper struct {
-	ApiError
-	EndpointError *SharedLinkError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.SharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, err error) {
+func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1161,7 +1169,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res *S
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1178,11 +1186,11 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res *S
 }
 
 type ListSharedLinksWrapper struct {
-	ApiError
-	EndpointError *ListSharedLinksError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.ListSharedLinksError `json:"error"`
 }
 
-func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error) {
+func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *sharing.ListSharedLinksResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1217,7 +1225,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1234,11 +1242,11 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 }
 
 type ModifySharedLinkSettingsWrapper struct {
-	ApiError
-	EndpointError *ModifySharedLinkSettingsError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.ModifySharedLinkSettingsError `json:"error"`
 }
 
-func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res *SharedLinkMetadata, err error) {
+func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettingsArgs) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1273,7 +1281,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1290,11 +1298,11 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 }
 
 type CreateSharedLinkWithSettingsWrapper struct {
-	ApiError
-	EndpointError *CreateSharedLinkWithSettingsError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.CreateSharedLinkWithSettingsError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res *SharedLinkMetadata, err error) {
+func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWithSettingsArg) (res *sharing.SharedLinkMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1329,7 +1337,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1346,11 +1354,11 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 }
 
 type RevokeSharedLinkWrapper struct {
-	ApiError
-	EndpointError *RevokeSharedLinkError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.RevokeSharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (res struct{}, err error) {
+func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1385,7 +1393,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (res struct{}, er
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1402,11 +1410,11 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (res struct{}, er
 }
 
 type GetSharedLinkFileWrapper struct {
-	ApiError
-	EndpointError *GetSharedLinkFileError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.GetSharedLinkFileError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, content io.ReadCloser, err error) {
+func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (res *sharing.SharedLinkMetadata, content io.ReadCloser, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1437,7 +1445,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *Share
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1454,11 +1462,11 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *Share
 }
 
 type GetSharedLinksWrapper struct {
-	ApiError
-	EndpointError *GetSharedLinksError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.GetSharedLinksError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error) {
+func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing.GetSharedLinksResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1493,7 +1501,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1510,11 +1518,11 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 }
 
 type CreateSharedLinkWrapper struct {
-	ApiError
-	EndpointError *CreateSharedLinkError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.CreateSharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error) {
+func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sharing.PathLinkMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1549,7 +1557,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1566,11 +1574,11 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 }
 
 type ListFoldersWrapper struct {
-	ApiError
+	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolders() (res *ListFoldersResult, err error) {
+func (dbx *apiImpl) ListFolders() (res *sharing.ListFoldersResult, err error) {
 	cli := dbx.client
 
 	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_folders", nil)
@@ -1599,7 +1607,7 @@ func (dbx *apiImpl) ListFolders() (res *ListFoldersResult, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1616,11 +1624,11 @@ func (dbx *apiImpl) ListFolders() (res *ListFoldersResult, err error) {
 }
 
 type ListFoldersContinueWrapper struct {
-	ApiError
-	EndpointError *ListFoldersContinueError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.ListFoldersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error) {
+func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (res *sharing.ListFoldersResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1655,7 +1663,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1672,11 +1680,11 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 }
 
 type GetFolderMetadataWrapper struct {
-	ApiError
-	EndpointError *SharedFolderAccessError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.SharedFolderAccessError `json:"error"`
 }
 
-func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error) {
+func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1711,7 +1719,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1728,11 +1736,11 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 }
 
 type ListFolderMembersWrapper struct {
-	ApiError
-	EndpointError *SharedFolderAccessError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.SharedFolderAccessError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error) {
+func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *sharing.SharedFolderMembers, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1767,7 +1775,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1784,11 +1792,11 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 }
 
 type ListFolderMembersContinueWrapper struct {
-	ApiError
-	EndpointError *ListFolderMembersContinueError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.ListFolderMembersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error) {
+func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersContinueArg) (res *sharing.SharedFolderMembers, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1823,7 +1831,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1840,11 +1848,11 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 }
 
 type ShareFolderWrapper struct {
-	ApiError
-	EndpointError *ShareFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.ShareFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error) {
+func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.ShareFolderLaunch, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1879,7 +1887,7 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1896,11 +1904,11 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 }
 
 type CheckShareJobStatusWrapper struct {
-	ApiError
-	EndpointError *PollError `json:"error"`
+	apierror.ApiError
+	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CheckShareJobStatus(arg *PollArg) (res *ShareFolderJobStatus, err error) {
+func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareFolderJobStatus, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1935,7 +1943,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *PollArg) (res *ShareFolderJobStatus
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1952,11 +1960,11 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *PollArg) (res *ShareFolderJobStatus
 }
 
 type CheckJobStatusWrapper struct {
-	ApiError
-	EndpointError *PollError `json:"error"`
+	apierror.ApiError
+	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CheckJobStatus(arg *PollArg) (res *JobStatus, err error) {
+func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -1991,7 +1999,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *PollArg) (res *JobStatus, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2008,11 +2016,11 @@ func (dbx *apiImpl) CheckJobStatus(arg *PollArg) (res *JobStatus, err error) {
 }
 
 type UnshareFolderWrapper struct {
-	ApiError
-	EndpointError *UnshareFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.UnshareFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *LaunchEmptyResult, err error) {
+func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2047,7 +2055,7 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *LaunchEmptyResult
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2064,11 +2072,11 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *LaunchEmptyResult
 }
 
 type TransferFolderWrapper struct {
-	ApiError
-	EndpointError *TransferFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.TransferFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (res struct{}, err error) {
+func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2103,7 +2111,7 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (res struct{}, err er
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2120,11 +2128,11 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (res struct{}, err er
 }
 
 type UpdateFolderPolicyWrapper struct {
-	ApiError
-	EndpointError *UpdateFolderPolicyError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.UpdateFolderPolicyError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedFolderMetadata, err error) {
+func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2159,7 +2167,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2176,11 +2184,11 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 }
 
 type AddFolderMemberWrapper struct {
-	ApiError
-	EndpointError *AddFolderMemberError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.AddFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (res struct{}, err error) {
+func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2215,7 +2223,7 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (res struct{}, err 
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2232,11 +2240,11 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (res struct{}, err 
 }
 
 type RemoveFolderMemberWrapper struct {
-	ApiError
-	EndpointError *RemoveFolderMemberError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.RemoveFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *LaunchEmptyResult, err error) {
+func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2271,7 +2279,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *LaunchE
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2288,11 +2296,11 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *LaunchE
 }
 
 type UpdateFolderMemberWrapper struct {
-	ApiError
-	EndpointError *UpdateFolderMemberError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.UpdateFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res struct{}, err error) {
+func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2327,7 +2335,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res struct{}
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2344,11 +2352,11 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res struct{}
 }
 
 type MountFolderWrapper struct {
-	ApiError
-	EndpointError *MountFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.MountFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata, err error) {
+func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.SharedFolderMetadata, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2383,7 +2391,7 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2400,11 +2408,11 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 }
 
 type UnmountFolderWrapper struct {
-	ApiError
-	EndpointError *UnmountFolderError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.UnmountFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (res struct{}, err error) {
+func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2439,7 +2447,7 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (res struct{}, err erro
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2456,11 +2464,11 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (res struct{}, err erro
 }
 
 type RelinquishFolderMembershipWrapper struct {
-	ApiError
-	EndpointError *RelinquishFolderMembershipError `json:"error"`
+	apierror.ApiError
+	EndpointError *sharing.RelinquishFolderMembershipError `json:"error"`
 }
 
-func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res struct{}, err error) {
+func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMembershipArg) (res struct{}, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2495,7 +2503,1961 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GetInfoWrapper struct {
+	apierror.ApiError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) GetInfo() (res *team.TeamGetInfoResult, err error) {
+	cli := dbx.client
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/get_info", nil)
+	if err != nil {
+		return
+	}
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GetInfoWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type DevicesListMemberDevicesWrapper struct {
+	apierror.ApiError
+	EndpointError *team.ListMemberDevicesError `json:"error"`
+}
+
+func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (res *team.ListMemberDevicesResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/list_member_devices", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap DevicesListMemberDevicesWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type DevicesListTeamDevicesWrapper struct {
+	apierror.ApiError
+	EndpointError *team.ListTeamDevicesError `json:"error"`
+}
+
+func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *team.ListTeamDevicesResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/list_team_devices", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap DevicesListTeamDevicesWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type DevicesRevokeDeviceSessionWrapper struct {
+	apierror.ApiError
+	EndpointError *team.RevokeDeviceSessionError `json:"error"`
+}
+
+func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg) (res struct{}, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/revoke_device_session", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap DevicesRevokeDeviceSessionWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type DevicesRevokeDeviceSessionBatchWrapper struct {
+	apierror.ApiError
+	EndpointError *team.RevokeDeviceSessionBatchError `json:"error"`
+}
+
+func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessionBatchArg) (res *team.RevokeDeviceSessionBatchResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/revoke_device_session_batch", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap DevicesRevokeDeviceSessionBatchWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsListWrapper struct {
+	apierror.ApiError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/list", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsListWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsListContinueWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupsListContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *team.GroupsListResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/list/continue", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsListContinueWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsGetInfoWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupsGetInfoError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsGetInfoItem, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/get_info", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsGetInfoWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsCreateWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupCreateError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullInfo, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/create", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsCreateWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsDeleteWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupDeleteError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmptyResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/delete", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsDeleteWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsUpdateWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupUpdateError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFullInfo, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/update", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsUpdateWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsMembersAddWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupMembersAddError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.GroupMembersChangeResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/add", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsMembersAddWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsMembersRemoveWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupMembersRemoveError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *team.GroupMembersChangeResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/remove", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsMembersRemoveWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsMembersSetAccessTypeWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupMemberSelectorError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTypeArg) (res []*team.GroupsGetInfoItem, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/set_access_type", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsMembersSetAccessTypeWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type GroupsJobStatusGetWrapper struct {
+	apierror.ApiError
+	EndpointError *team.GroupsPollError `json:"error"`
+}
+
+func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/job_status/get", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap GroupsJobStatusGetWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type LinkedAppsListMemberLinkedAppsWrapper struct {
+	apierror.ApiError
+	EndpointError *team.ListMemberAppsError `json:"error"`
+}
+
+func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) (res *team.ListMemberAppsResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/list_member_linked_apps", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap LinkedAppsListMemberLinkedAppsWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type LinkedAppsListTeamLinkedAppsWrapper struct {
+	apierror.ApiError
+	EndpointError *team.ListTeamAppsError `json:"error"`
+}
+
+func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res *team.ListTeamAppsResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/list_team_linked_apps", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap LinkedAppsListTeamLinkedAppsWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type LinkedAppsRevokeLinkedAppWrapper struct {
+	apierror.ApiError
+	EndpointError *team.RevokeLinkedAppError `json:"error"`
+}
+
+func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (res struct{}, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/revoke_linked_app", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap LinkedAppsRevokeLinkedAppWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type LinkedAppsRevokeLinkedAppBatchWrapper struct {
+	apierror.ApiError
+	EndpointError *team.RevokeLinkedAppBatchError `json:"error"`
+}
+
+func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppBatchArg) (res *team.RevokeLinkedAppBatchResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/revoke_linked_app_batch", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap LinkedAppsRevokeLinkedAppBatchWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersListWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersListError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersListResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/list", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersListWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersListContinueWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersListContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *team.MembersListResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/list/continue", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersListContinueWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersGetInfoWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersGetInfoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.MembersGetInfoItem, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/get_info", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersGetInfoWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersAddWrapper struct {
+	apierror.ApiError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLaunch, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/add", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersAddWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersAddJobStatusGetWrapper struct {
+	apierror.ApiError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.MembersAddJobStatus, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/add/job_status/get", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersAddJobStatusGetWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersSetProfileWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersSetProfileError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team.TeamMemberInfo, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/set_profile", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersSetProfileWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersSetAdminPermissionsWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersSetPermissionsError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsArg) (res *team.MembersSetPermissionsResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/set_admin_permissions", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersSetAdminPermissionsWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersSendWelcomeEmailWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersSendWelcomeError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (res struct{}, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/send_welcome_email", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersSendWelcomeEmailWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersRemoveWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersRemoveError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.LaunchEmptyResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/remove", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersRemoveWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersRemoveJobStatusGetWrapper struct {
+	apierror.ApiError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/remove/job_status/get", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersRemoveJobStatusGetWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersSuspendWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersSuspendError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (res struct{}, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/suspend", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersSuspendWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type MembersUnsuspendWrapper struct {
+	apierror.ApiError
+	EndpointError *team.MembersUnsuspendError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (res struct{}, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/unsuspend", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap MembersUnsuspendWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ReportsGetStorageWrapper struct {
+	apierror.ApiError
+	EndpointError *team.DateRangeError `json:"error"`
+}
+
+func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorageReport, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_storage", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ReportsGetStorageWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ReportsGetActivityWrapper struct {
+	apierror.ApiError
+	EndpointError *team.DateRangeError `json:"error"`
+}
+
+func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivityReport, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_activity", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ReportsGetActivityWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ReportsGetMembershipWrapper struct {
+	apierror.ApiError
+	EndpointError *team.DateRangeError `json:"error"`
+}
+
+func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMembershipReport, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_membership", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ReportsGetMembershipWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ReportsGetDevicesWrapper struct {
+	apierror.ApiError
+	EndpointError *team.DateRangeError `json:"error"`
+}
+
+func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevicesReport, err error) {
+	cli := dbx.client
+
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_devices", bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ReportsGetDevicesWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2512,11 +4474,11 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 }
 
 type GetAccountWrapper struct {
-	ApiError
-	EndpointError *GetAccountError `json:"error"`
+	apierror.ApiError
+	EndpointError *users.GetAccountError `json:"error"`
 }
 
-func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error) {
+func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccount, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2551,7 +4513,7 @@ func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2568,11 +4530,11 @@ func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error
 }
 
 type GetCurrentAccountWrapper struct {
-	ApiError
+	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
+func (dbx *apiImpl) GetCurrentAccount() (res *users.FullAccount, err error) {
 	cli := dbx.client
 
 	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_current_account", nil)
@@ -2601,7 +4563,7 @@ func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2618,11 +4580,11 @@ func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
 }
 
 type GetSpaceUsageWrapper struct {
-	ApiError
+	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
+func (dbx *apiImpl) GetSpaceUsage() (res *users.SpaceUsage, err error) {
 	cli := dbx.client
 
 	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_space_usage", nil)
@@ -2651,7 +4613,7 @@ func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2668,11 +4630,11 @@ func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
 }
 
 type GetAccountBatchWrapper struct {
-	ApiError
-	EndpointError *GetAccountBatchError `json:"error"`
+	apierror.ApiError
+	EndpointError *users.GetAccountBatchError `json:"error"`
 }
 
-func (dbx *apiImpl) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccount, err error) {
+func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users.BasicAccount, err error) {
 	cli := dbx.client
 
 	b, err := json.Marshal(arg)
@@ -2707,7 +4669,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccoun
 			err = errWrap
 			return
 		}
-		var apiError ApiError
+		var apiError apierror.ApiError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

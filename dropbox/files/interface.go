@@ -1,7 +1,7 @@
 /* DO NOT EDIT */
 /* This file was generated from files.babel */
 
-package dropbox
+package files
 
 import (
 	"encoding/json"

@@ -1,12 +1,16 @@
 /* DO NOT EDIT */
 /* This file was generated from sharing.babel */
 
-package dropbox
+package sharing
 
 import (
 	"encoding/json"
 	"io"
 	"time"
+
+	"github.com/dropbox/dropbox-sdk-go/dropbox/async"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/files"
+	"github.com/dropbox/dropbox-sdk-go/dropbox/users"
 )
 
 type GetSharedLinkMetadataArg struct {
@@ -115,7 +119,7 @@ func NewLinkPermissions() *LinkPermissions {
 // Information about a team member.
 type TeamMemberInfo struct {
 	// Information about the member's team
-	TeamInfo *Team `json:"team_info"`
+	TeamInfo *users.Team `json:"team_info"`
 	// The display name of the user.
 	DisplayName string `json:"display_name"`
 	// ID of user as a member of a team. This field will only be present if the
@@ -204,7 +208,7 @@ type FileLinkMetadata struct {
 	// The team information of the content's owner. This field will only be present
 	// if the content's owner is a team member and the content's owner team is
 	// different from the link's owner team.
-	ContentOwnerTeamInfo *Team `json:"content_owner_team_info,omitempty"`
+	ContentOwnerTeamInfo *users.Team `json:"content_owner_team_info,omitempty"`
 }
 
 func NewFileLinkMetadata() *FileLinkMetadata {
@@ -234,7 +238,7 @@ type FolderLinkMetadata struct {
 	// The team information of the content's owner. This field will only be present
 	// if the content's owner is a team member and the content's owner team is
 	// different from the link's owner team.
-	ContentOwnerTeamInfo *Team `json:"content_owner_team_info,omitempty"`
+	ContentOwnerTeamInfo *users.Team `json:"content_owner_team_info,omitempty"`
 }
 
 func NewFolderLinkMetadata() *FolderLinkMetadata {
@@ -289,8 +293,8 @@ func NewListSharedLinksResult() *ListSharedLinksResult {
 }
 
 type ListSharedLinksError struct {
-	Tag  string       `json:".tag"`
-	Path *LookupError `json:"path,omitempty"`
+	Tag  string             `json:".tag"`
+	Path *files.LookupError `json:"path,omitempty"`
 }
 
 func (u *ListSharedLinksError) UnmarshalJSON(body []byte) error {
@@ -406,8 +410,8 @@ func NewCreateSharedLinkWithSettingsArg() *CreateSharedLinkWithSettingsArg {
 }
 
 type CreateSharedLinkWithSettingsError struct {
-	Tag  string       `json:".tag"`
-	Path *LookupError `json:"path,omitempty"`
+	Tag  string             `json:".tag"`
+	Path *files.LookupError `json:"path,omitempty"`
 	// There is an error with the given settings
 	SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 }
@@ -674,8 +678,8 @@ func NewCreateSharedLinkArg() *CreateSharedLinkArg {
 }
 
 type CreateSharedLinkError struct {
-	Tag  string       `json:".tag"`
-	Path *LookupError `json:"path,omitempty"`
+	Tag  string             `json:".tag"`
+	Path *files.LookupError `json:"path,omitempty"`
 }
 
 func (u *CreateSharedLinkError) UnmarshalJSON(body []byte) error {
@@ -737,6 +741,41 @@ func NewFolderPolicy() *FolderPolicy {
 	return s
 }
 
+// Actions that may be taken on shared folders.
+type FolderAction struct {
+	Tag string `json:".tag"`
+}
+
+func (u *FolderAction) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		Tag string `json:".tag"`
+	}
+	var w wrap
+	if err := json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch w.Tag {
+	}
+	return nil
+}
+
+// Whether the user is allowed to take the action on the shared folder.
+type FolderPermission struct {
+	// The action that the user may wish to take on the folder.
+	Action *FolderAction `json:"action"`
+	// True if the user is allowed to take the action.
+	Allow bool `json:"allow"`
+	// The reason why the user is denied the permission. Not present if the action
+	// is allowed
+	Reason *PermissionDeniedReason `json:"reason,omitempty"`
+}
+
+func NewFolderPermission() *FolderPermission {
+	s := new(FolderPermission)
+	return s
+}
+
 // Policy governing who can be a member of a shared folder. Only applicable to
 // folders owned by a user on a team.
 type MemberPolicy struct {
@@ -744,6 +783,60 @@ type MemberPolicy struct {
 }
 
 func (u *MemberPolicy) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		Tag string `json:".tag"`
+	}
+	var w wrap
+	if err := json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch w.Tag {
+	}
+	return nil
+}
+
+// Actions that may be taken on members of a shared folder.
+type MemberAction struct {
+	Tag string `json:".tag"`
+}
+
+func (u *MemberAction) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		Tag string `json:".tag"`
+	}
+	var w wrap
+	if err := json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch w.Tag {
+	}
+	return nil
+}
+
+// Whether the user is allowed to take the action on the associated member.
+type MemberPermission struct {
+	// The action that the user may wish to take on the member.
+	Action *MemberAction `json:"action"`
+	// True if the user is allowed to take the action.
+	Allow bool `json:"allow"`
+	// The reason why the user is denied the permission. Not present if the action
+	// is allowed
+	Reason *PermissionDeniedReason `json:"reason,omitempty"`
+}
+
+func NewMemberPermission() *MemberPermission {
+	s := new(MemberPermission)
+	return s
+}
+
+// Possible reasons the user is denied a permission.
+type PermissionDeniedReason struct {
+	Tag string `json:".tag"`
+}
+
+func (u *PermissionDeniedReason) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
 	}
@@ -800,6 +893,9 @@ func (u *SharedLinkPolicy) UnmarshalJSON(body []byte) error {
 type MembershipInfo struct {
 	// The access type for this member.
 	AccessType *AccessLevel `json:"access_type"`
+	// The permissions that requesting user has on this member. The set of
+	// permissions corresponds to the MemberActions in the request.
+	Permissions []*MemberPermission `json:"permissions,omitempty"`
 }
 
 func NewMembershipInfo() *MembershipInfo {
@@ -830,6 +926,9 @@ type UserMembershipInfo struct {
 	AccessType *AccessLevel `json:"access_type"`
 	// The account information for the membership user.
 	User *UserInfo `json:"user"`
+	// The permissions that requesting user has on this member. The set of
+	// permissions corresponds to the MemberActions in the request.
+	Permissions []*MemberPermission `json:"permissions,omitempty"`
 }
 
 func NewUserMembershipInfo() *UserMembershipInfo {
@@ -875,6 +974,9 @@ type InviteeMembershipInfo struct {
 	AccessType *AccessLevel `json:"access_type"`
 	// The information for the invited user.
 	Invitee *InviteeInfo `json:"invitee"`
+	// The permissions that requesting user has on this member. The set of
+	// permissions corresponds to the MemberActions in the request.
+	Permissions []*MemberPermission `json:"permissions,omitempty"`
 }
 
 func NewInviteeMembershipInfo() *InviteeMembershipInfo {
@@ -907,6 +1009,9 @@ type GroupMembershipInfo struct {
 	AccessType *AccessLevel `json:"access_type"`
 	// The information about the membership group.
 	Group *GroupInfo `json:"group"`
+	// The permissions that requesting user has on this member. The set of
+	// permissions corresponds to the MemberActions in the request.
+	Permissions []*MemberPermission `json:"permissions,omitempty"`
 }
 
 func NewGroupMembershipInfo() *GroupMembershipInfo {
@@ -930,6 +1035,9 @@ type SharedFolderMetadata struct {
 	// The lower-cased full path of this shared folder. Absent for unmounted
 	// folders.
 	PathLower string `json:"path_lower,omitempty"`
+	// Actions the current user may perform on the folder and its contents. The set
+	// of permissions corresponds to the MemberActions in the request.
+	Permissions []*FolderPermission `json:"permissions,omitempty"`
 }
 
 func NewSharedFolderMetadata() *SharedFolderMetadata {
@@ -1004,6 +1112,8 @@ func (u *ListFoldersContinueError) UnmarshalJSON(body []byte) error {
 type GetMetadataArgs struct {
 	// The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
+	// Folder actions to query.
+	Actions []*FolderAction `json:"actions,omitempty"`
 }
 
 func NewGetMetadataArgs() *GetMetadataArgs {
@@ -1014,6 +1124,8 @@ func NewGetMetadataArgs() *GetMetadataArgs {
 type ListFolderMembersArgs struct {
 	// The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
+	// Member actions to query.
+	Actions []*MemberAction `json:"actions,omitempty"`
 }
 
 func NewListFolderMembersArgs() *ListFolderMembersArgs {
@@ -1959,17 +2071,17 @@ type Sharing interface {
 	// Returns the status of an asynchronous job for sharing a folder. Apps must
 	// have full Dropbox access to use this endpoint. Warning: This endpoint is in
 	// beta and is subject to minor but possibly backwards-incompatible changes.
-	CheckShareJobStatus(arg *PollArg) (res *ShareFolderJobStatus, err error)
+	CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error)
 	// Returns the status of an asynchronous job. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
 	// subject to minor but possibly backwards-incompatible changes.
-	CheckJobStatus(arg *PollArg) (res *JobStatus, err error)
+	CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error)
 	// Allows a shared folder owner to unshare the folder. You'll need to call
 	// :route:`check_job_status` to determine if the action has completed
 	// successfully. Apps must have full Dropbox access to use this endpoint.
 	// Warning: This endpoint is in beta and is subject to minor but possibly
 	// backwards-incompatible changes.
-	UnshareFolder(arg *UnshareFolderArg) (res *LaunchEmptyResult, err error)
+	UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error)
 	// Transfer ownership of a shared folder to a member of the shared folder. Apps
 	// must have full Dropbox access to use this endpoint. Warning: This endpoint
 	// is in beta and is subject to minor but possibly backwards-incompatible
@@ -1990,7 +2102,7 @@ type Sharing interface {
 	// folder to remove another member. Apps must have full Dropbox access to use
 	// this endpoint. Warning: This endpoint is in beta and is subject to minor but
 	// possibly backwards-incompatible changes.
-	RemoveFolderMember(arg *RemoveFolderMemberArg) (res *LaunchEmptyResult, err error)
+	RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.LaunchEmptyResult, err error)
 	// Allows an owner or editor of a shared folder to update another member's
 	// permissions. Apps must have full Dropbox access to use this endpoint.
 	// Warning: This endpoint is in beta and is subject to minor but possibly

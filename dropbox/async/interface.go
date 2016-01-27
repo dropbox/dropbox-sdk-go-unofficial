@@ -1,7 +1,7 @@
 /* DO NOT EDIT */
 /* This file was generated from async.babel */
 
-package dropbox
+package async
 
 import "encoding/json"
 
