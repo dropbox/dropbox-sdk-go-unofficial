@@ -1,0 +1,16 @@
+= Dropbox SDK for Go
+
+A Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
+
+== Installation
+
+[source,sh]
+----
+$ go get github.com/dropbox/dropbox-sdk-go
+----
+
+== Usage
+
+== Caveats
+
+== Known Issues
