@@ -38,7 +38,51 @@ func main() {
 
 === Using OAuth2 flow
 
+For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. When you first initialize the SDK, users will be taken to an authorization page where they will get an access token.
+The SDK includes a convenient feature for reusing these access tokens so users don't need to go through the flow each time.
+
+Sample usage:
+
+[source, go]
+----
+const (
+  configFileName = "auth.conf"
+  appKey         = "YOUR_APP_KEY"
+  appSecret      = "YOUR_APP_SECRET"
+)
+
+func main() {
+  u, err := user.Current()
+  if u == nil || err != nil {
+    return err
+  }
+  filePath := path.Join(u.HomeDir, ".config", "your_app", configFileName)
+  // last argument enables verbose logging
+  api, err := dropbox.OAuthClient(appKey, appSecret, filePath, true)
+  // check err before making api calls
+}
+----
+
 === Making API calls
+
+Each Dropbox API takes in a request type and returns a response type. For instance, https://www.dropbox.com/developers/documentation/http/documentation#users-get_account[/users/get_account] takes as input a `GetAccountArg` and returns a `BasicAccount`. The typical pattern for making API calls is:
+
+  * Instantiate the argument via the `New*` convenience functions in the SDK
+  * Invoke the API
+  * Process the response (or handle error, as below)
+  
+Here's an example:
+
+[source, go]
+----
+  arg := users.NewGetAccountArg()
+  if resp, err := api.GetAccount(arg); err != nil {
+    return err
+  }
+  fmt.Printf("Name: %v", resp.Name)
+----
+
+
 
 === Error Handling
 
