@@ -19,5 +19,5 @@ func Client(token string, verbose bool) Api {
 		},
 	}
 	tok := &oauth2.Token{AccessToken: token}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok), true}
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose}
 }
