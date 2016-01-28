@@ -16,14 +16,20 @@ type apiImpl struct {
 }
 
 func Client(token string, verbose bool) Api {
+	//var conf = &oauth2.Config{
+	//	Endpoint: oauth2.Endpoint{
+	//		AuthURL:  "https://www.dropbox.com/1/oauth2/authorize",
+	//		TokenURL: "https://api.dropbox.com/1/oauth2/token",
+	//	},
+	//}
 	var conf = &oauth2.Config{
 		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://www.dropbox.com/1/oauth2/authorize",
-			TokenURL: "https://api.dropbox.com/1/oauth2/token",
+			AuthURL:  "https://meta-dbdev.dev.corp.dropbox.com/1/oauth2/authorize",
+			TokenURL: "https://api-dbdev.dev.corp.dropbox.com/1/oauth2/token",
 		},
 	}
 	tok := &oauth2.Token{AccessToken: token}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose}
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), true}
 }
 
 func OauthClient(appId string, appSecret string, filePath string, verbose bool) (Api, error) {
