@@ -14,6 +14,7 @@ Note that while the import path ends in `dropbox-sdk-go`, it actually exports th
   * `github.com/dropbox/dropbox-sdk-go/users`
   * `github.com/dropbox/dropbox-sdk-go/files`
   * `github.com/dropbox/dropbox-sdk-go/sharing`
+  * `github.com/dropbox/dropbox-sdk-go/team`
 
 == Usage
 
@@ -61,10 +62,8 @@ Here's an example:
   fmt.Printf("Name: %v", resp.Name)
 ----
 
-
-
 === Error Handling
 
-== Caveats
+As described in the https://www.dropbox.com/developers/documentation/http/documentation#error-handling[API docs], all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
 
-== Known Issues
+== Note on using the Teams API
