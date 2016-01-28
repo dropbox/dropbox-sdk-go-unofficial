@@ -902,7 +902,7 @@ type PermanentlyDeleteWrapper struct {
 	EndpointError *files.DeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (res struct{}, err error) {
+func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -957,11 +957,6 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (res struct{}, err e
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -1175,7 +1170,7 @@ type UploadSessionAppendWrapper struct {
 	EndpointError *files.UploadSessionLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content io.Reader) (res struct{}, err error) {
+func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content io.Reader) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -1231,11 +1226,6 @@ func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -1372,7 +1362,7 @@ type AddFolderMemberWrapper struct {
 	EndpointError *sharing.AddFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (res struct{}, err error) {
+func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -1427,11 +1417,6 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (res struct
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -2447,7 +2432,7 @@ type RelinquishFolderMembershipWrapper struct {
 	EndpointError *sharing.RelinquishFolderMembershipError `json:"error"`
 }
 
-func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMembershipArg) (res struct{}, err error) {
+func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMembershipArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -2502,11 +2487,6 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -2583,7 +2563,7 @@ type RevokeSharedLinkWrapper struct {
 	EndpointError *sharing.RevokeSharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (res struct{}, err error) {
+func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -2638,11 +2618,6 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (res stru
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -2719,7 +2694,7 @@ type TransferFolderWrapper struct {
 	EndpointError *sharing.TransferFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (res struct{}, err error) {
+func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -2774,11 +2749,6 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (res struct{}
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -2787,7 +2757,7 @@ type UnmountFolderWrapper struct {
 	EndpointError *sharing.UnmountFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (res struct{}, err error) {
+func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -2842,11 +2812,6 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (res struct{}, 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -2923,7 +2888,7 @@ type UpdateFolderMemberWrapper struct {
 	EndpointError *sharing.UpdateFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res struct{}, err error) {
+func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -2978,11 +2943,6 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -3195,7 +3155,7 @@ type DevicesRevokeDeviceSessionWrapper struct {
 	EndpointError *team.RevokeDeviceSessionError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg) (res struct{}, err error) {
+func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -3250,11 +3210,6 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -4206,7 +4161,7 @@ type LinkedAppsRevokeLinkedAppWrapper struct {
 	EndpointError *team.RevokeLinkedAppError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (res struct{}, err error) {
+func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -4261,11 +4216,6 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -4818,7 +4768,7 @@ type MembersSendWelcomeEmailWrapper struct {
 	EndpointError *team.MembersSendWelcomeError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (res struct{}, err error) {
+func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -4873,11 +4823,6 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (res stru
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -5022,7 +4967,7 @@ type MembersSuspendWrapper struct {
 	EndpointError *team.MembersSuspendError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (res struct{}, err error) {
+func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -5077,11 +5022,6 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (res struct{}
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 
@@ -5090,7 +5030,7 @@ type MembersUnsuspendWrapper struct {
 	EndpointError *team.MembersUnsuspendError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (res struct{}, err error) {
+func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (err error) {
 	cli := dbx.client
 
 	if dbx.verbose {
@@ -5145,11 +5085,6 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (res struct{
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
-	if err != nil {
-		return
-	}
-
 	return
 }
 

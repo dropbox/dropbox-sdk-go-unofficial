@@ -1438,7 +1438,7 @@ type Files interface {
 	// Permanently delete the file or folder at a given path (see
 	// https://www.dropbox.com/en/help/40). Note: This endpoint is only available
 	// for Dropbox Business apps.
-	PermanentlyDelete(arg *DeleteArg) (res struct{}, err error)
+	PermanentlyDelete(arg *DeleteArg) (err error)
 	// Restore a file to a specific revision
 	Restore(arg *RestoreArg) (res *FileMetadata, err error)
 	// Searches for files and folders.
@@ -1449,7 +1449,7 @@ type Files interface {
 	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
 	// Append more data to an upload session. A single request should not upload
 	// more than 150 MB of file contents.
-	UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (res struct{}, err error)
+	UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error)
 	// Finish an upload session and save the uploaded data to the given file path.
 	// A single request should not upload more than 150 MB of file contents.
 	UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error)

@@ -1997,7 +1997,7 @@ type Sharing interface {
 	// on their behalf. Apps must have full Dropbox access to use this endpoint.
 	// Warning: This endpoint is in beta and is subject to minor but possibly
 	// backwards-incompatible changes.
-	AddFolderMember(arg *AddFolderMemberArg) (res struct{}, err error)
+	AddFolderMember(arg *AddFolderMemberArg) (err error)
 	// Returns the status of an asynchronous job. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
 	// subject to minor but possibly backwards-incompatible changes.
@@ -2079,7 +2079,7 @@ type Sharing interface {
 	// relinquish membership in their own folder. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
 	// subject to minor but possibly backwards-incompatible changes.
-	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res struct{}, err error)
+	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (err error)
 	// Allows an owner or editor (if the ACL update policy allows) of a shared
 	// folder to remove another member. Apps must have full Dropbox access to use
 	// this endpoint. Warning: This endpoint is in beta and is subject to minor but
@@ -2090,7 +2090,7 @@ type Sharing interface {
 	// file parent folders. To list all shared links that enable access to a
 	// specific file, you can use the :route:`list_shared_links` with the file as
 	// the :field:`ListSharedLinksArg.path` argument.
-	RevokeSharedLink(arg *RevokeSharedLinkArg) (res struct{}, err error)
+	RevokeSharedLink(arg *RevokeSharedLinkArg) (err error)
 	// Share a folder with collaborators. Most sharing will be completed
 	// synchronously. Large folders will be completed asynchronously. To make
 	// testing the async case repeatable, set `ShareFolderArg.force_async`. If a
@@ -2104,12 +2104,12 @@ type Sharing interface {
 	// must have full Dropbox access to use this endpoint. Warning: This endpoint
 	// is in beta and is subject to minor but possibly backwards-incompatible
 	// changes.
-	TransferFolder(arg *TransferFolderArg) (res struct{}, err error)
+	TransferFolder(arg *TransferFolderArg) (err error)
 	// The current user unmounts the designated folder. They can re-mount the
 	// folder at a later time using :route:`mount_folder`. Apps must have full
 	// Dropbox access to use this endpoint. Warning: This endpoint is in beta and
 	// is subject to minor but possibly backwards-incompatible changes.
-	UnmountFolder(arg *UnmountFolderArg) (res struct{}, err error)
+	UnmountFolder(arg *UnmountFolderArg) (err error)
 	// Allows a shared folder owner to unshare the folder. You'll need to call
 	// :route:`check_job_status` to determine if the action has completed
 	// successfully. Apps must have full Dropbox access to use this endpoint.
@@ -2120,7 +2120,7 @@ type Sharing interface {
 	// permissions. Apps must have full Dropbox access to use this endpoint.
 	// Warning: This endpoint is in beta and is subject to minor but possibly
 	// backwards-incompatible changes.
-	UpdateFolderMember(arg *UpdateFolderMemberArg) (res struct{}, err error)
+	UpdateFolderMember(arg *UpdateFolderMemberArg) (err error)
 	// Update the sharing policies for a shared folder. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
 	// subject to minor but possibly backwards-incompatible changes.

@@ -2404,7 +2404,7 @@ type Team interface {
 	// List all device sessions of a team.
 	DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error)
 	// Revoke a device session of a team's member
-	DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (res struct{}, err error)
+	DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err error)
 	// Revoke a list of device sessions of team members
 	DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatchArg) (res *RevokeDeviceSessionBatchResult, err error)
 	// Retrieves information about a team.
@@ -2452,7 +2452,7 @@ type Team interface {
 	// endpoint doesn't list any team-linked applications.
 	LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *ListTeamAppsResult, err error)
 	// Revoke a linked application of the team member
-	LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (res struct{}, err error)
+	LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err error)
 	// Revoke a list of linked applications of the team members
 	LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchArg) (res *RevokeLinkedAppBatchResult, err error)
 	// Adds members to a team. Permission : Team member management A maximum of 20
@@ -2498,7 +2498,7 @@ type Team interface {
 	// Sends welcome email to pending team member. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
 	// provided to identify the user account. No-op if team member is not pending.
-	MembersSendWelcomeEmail(arg *UserSelectorArg) (res struct{}, err error)
+	MembersSendWelcomeEmail(arg *UserSelectorArg) (err error)
 	// Updates a team member's permissions. Permission : Team member management
 	MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (res *MembersSetPermissionsResult, err error)
 	// Updates a team member's profile. Permission : Team member management
@@ -2506,11 +2506,11 @@ type Team interface {
 	// Suspend a member from a team. Permission : Team member management Exactly
 	// one of team_member_id, email, or external_id must be provided to identify
 	// the user account.
-	MembersSuspend(arg *MembersDeactivateArg) (res struct{}, err error)
+	MembersSuspend(arg *MembersDeactivateArg) (err error)
 	// Unsuspend a member from a team. Permission : Team member management Exactly
 	// one of team_member_id, email, or external_id must be provided to identify
 	// the user account.
-	MembersUnsuspend(arg *MembersUnsuspendArg) (res struct{}, err error)
+	MembersUnsuspend(arg *MembersUnsuspendArg) (err error)
 	// Retrieves reporting data about a team's user activity.
 	ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error)
 	// Retrieves reporting data about a team's linked devices.
