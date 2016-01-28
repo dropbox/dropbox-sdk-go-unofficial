@@ -38,30 +38,9 @@ func main() {
 
 === Using OAuth2 flow
 
-For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. When you first initialize the SDK, users will be taken to an authorization page where they will get an access token.
-The SDK includes a convenient feature for reusing these access tokens so users don't need to go through the flow each time.
+For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See https://godoc.org/golang.org/x/oauth2#example-Config[this] for an example of oauth2 flow in Go.
 
-Sample usage:
-
-[source, go]
-----
-const (
-  configFileName = "auth.conf"
-  appKey         = "YOUR_APP_KEY"
-  appSecret      = "YOUR_APP_SECRET"
-)
-
-func main() {
-  u, err := user.Current()
-  if u == nil || err != nil {
-    return err
-  }
-  filePath := path.Join(u.HomeDir, ".config", "your_app", configFileName)
-  // last argument enables verbose logging
-  api, err := dropbox.OAuthClient(appKey, appSecret, filePath, true)
-  // check err before making api calls
-}
-----
+Once you have the token, usage is same as above.
 
 === Making API calls
 
