@@ -1311,6 +1311,7 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSess
 		return
 	}
 
+	req.Header.Set("Content-Type", "application/octet-stream")
 	if dbx.verbose {
 		log.Printf("req: %v", req)
 	}
