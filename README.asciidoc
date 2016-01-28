@@ -67,3 +67,13 @@ Here's an example:
 As described in the https://www.dropbox.com/developers/documentation/http/documentation#error-handling[API docs], all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
 
 == Note on using the Teams API
+
+All features of the Team API are supported except https://www.dropbox.com/developers/documentation/http/teams#teams-member-file-access[acting on behalf of team members]. This should be available soon.
+
+Note that to use the Team API, you will need to create a Dropbox Business App. The OAuth token from this app will _only_ work for the Team API.
+
+Please read the https://www.dropbox.com/developers/documentation/http/teams[API docs] carefully to appropriate secure your apps and tokens when using the Team API.
+
+== Caveats
+
+This SDK only supports the v2 API, which means that v1 features not available in v2 yet are not supported. For instance, the Audit log endpoint of the Business API is not supported yet, but it will be as soon as it is available in the v2 API.
