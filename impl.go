@@ -1316,7 +1316,7 @@ type UploadSessionStartWrapper struct {
 func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSessionStartResult, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/start", nil)
+	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/start", content)
 	if err != nil {
 		return
 	}
