@@ -529,20 +529,6 @@ type ListFolderLongpollError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *ListFolderLongpollError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type ListFolderLongpollResult struct {
 	// Indicates whether new changes are available. If true, call
 	// :route:`list_folder` to retrieve the changes.
@@ -971,36 +957,8 @@ type SearchMatchType struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SearchMatchType) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type SearchMode struct {
 	Tag string `json:".tag"`
-}
-
-func (u *SearchMode) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type SearchResult struct {
@@ -1072,36 +1030,8 @@ type ThumbnailFormat struct {
 	Tag string `json:".tag"`
 }
 
-func (u *ThumbnailFormat) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type ThumbnailSize struct {
 	Tag string `json:".tag"`
-}
-
-func (u *ThumbnailSize) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type UploadError struct {
@@ -1287,20 +1217,6 @@ func NewVideoMetadata() *VideoMetadata {
 
 type WriteConflictError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *WriteConflictError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type WriteError struct {

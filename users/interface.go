@@ -24,20 +24,6 @@ type AccountType struct {
 	Tag string `json:".tag"`
 }
 
-func (u *AccountType) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Basic information about any account.
 type BasicAccount struct {
 	// The user's unique Dropbox ID.
@@ -145,20 +131,6 @@ func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 
 type GetAccountError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GetAccountError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type IndividualSpaceAllocation struct {

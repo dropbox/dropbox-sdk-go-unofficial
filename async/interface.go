@@ -49,20 +49,6 @@ type LaunchEmptyResult struct {
 	Tag string `json:".tag"`
 }
 
-func (u *LaunchEmptyResult) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Arguments for methods that poll the status of an asynchronous job.
 type PollArg struct {
 	// Id of the asynchronous job. This is the value of a response returned from
@@ -83,55 +69,13 @@ type PollResultBase struct {
 	Tag string `json:".tag"`
 }
 
-func (u *PollResultBase) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Result returned by methods that poll for the status of an asynchronous job.
 // Upon completion of the job, no additional information is returned.
 type PollEmptyResult struct {
 	Tag string `json:".tag"`
 }
 
-func (u *PollEmptyResult) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Error returned by methods for polling the status of asynchronous job.
 type PollError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *PollError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }

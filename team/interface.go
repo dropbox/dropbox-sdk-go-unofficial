@@ -59,20 +59,6 @@ type AdminTier struct {
 	Tag string `json:".tag"`
 }
 
-func (u *AdminTier) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Information on linked third party applications
 type ApiApp struct {
 	// The application unique id
@@ -123,20 +109,6 @@ type DateRangeError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *DateRangeError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Information about linked Dropbox desktop client sessions
 type DesktopClientSession struct {
 	// The session id
@@ -168,20 +140,6 @@ func NewDesktopClientSession() *DesktopClientSession {
 
 type DesktopPlatform struct {
 	Tag string `json:".tag"`
-}
-
-func (u *DesktopPlatform) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type DeviceSessionArg struct {
@@ -224,20 +182,6 @@ func NewDevicesActive() *DevicesActive {
 
 type EmmState struct {
 	Tag string `json:".tag"`
-}
-
-func (u *EmmState) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Activity Report Result. Each of the items in the storage report is an array
@@ -363,20 +307,6 @@ type GroupAccessType struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupAccessType) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GroupCreateArg struct {
 	// Group name.
 	GroupName string `json:"group_name"`
@@ -394,55 +324,13 @@ type GroupCreateError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupCreateError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Error that can be raised when :type:`GroupSelector`is used.
 type GroupSelectorError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupSelectorError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GroupDeleteError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GroupDeleteError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Information about a group.
@@ -512,20 +400,6 @@ func NewGroupMemberSelector() *GroupMemberSelector {
 // user is required to be a member of the specified group.
 type GroupMemberSelectorError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GroupMemberSelectorError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type GroupMembersAddArg struct {
@@ -622,36 +496,8 @@ type GroupMembersSelectorError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupMembersSelectorError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GroupMembersRemoveError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GroupMembersRemoveError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Argument for selecting a group and a list of users.
@@ -747,36 +593,8 @@ type GroupUpdateError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupUpdateError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GroupsGetInfoError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GroupsGetInfoError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type GroupsGetInfoItem struct {
@@ -849,20 +667,6 @@ type GroupsListContinueError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *GroupsListContinueError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GroupsListResult struct {
 	Groups []*GroupSummary `json:"groups"`
 	// Pass the cursor into :route:`members/list/continue` to obtain the additional
@@ -880,20 +684,6 @@ func NewGroupsListResult() *GroupsListResult {
 
 type GroupsPollError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GroupsPollError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Argument for selecting a list of groups, either by group_ids, or external
@@ -957,20 +747,6 @@ type ListMemberAppsError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *ListMemberAppsError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type ListMemberAppsResult struct {
 	// List of third party applications linked by this team member
 	LinkedApiApps []*ApiApp `json:"linked_api_apps"`
@@ -1004,20 +780,6 @@ type ListMemberDevicesError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *ListMemberDevicesError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type ListMemberDevicesResult struct {
 	// List of web sessions made by this team member
 	ActiveWebSessions []*ActiveWebSession `json:"active_web_sessions,omitempty"`
@@ -1049,20 +811,6 @@ func NewListTeamAppsArg() *ListTeamAppsArg {
 // Error returned by :route:`linked_apps/list_team_linked_apps`
 type ListTeamAppsError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *ListTeamAppsError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Information returned by :route:`linked_apps/list_team_linked_apps`.
@@ -1106,20 +854,6 @@ func NewListTeamDevicesArg() *ListTeamDevicesArg {
 
 type ListTeamDevicesError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *ListTeamDevicesError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type ListTeamDevicesResult struct {
@@ -1373,36 +1107,8 @@ type UserSelectorError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *UserSelectorError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MemberSelectorError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MemberSelectorError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type MembersAddArg struct {
@@ -1517,20 +1223,6 @@ type MembersDeactivateError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MembersDeactivateError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MembersGetInfoArgs struct {
 	// List of team members.
 	Members []*UserSelectorArg `json:"members"`
@@ -1543,20 +1235,6 @@ func NewMembersGetInfoArgs() *MembersGetInfoArgs {
 
 type MembersGetInfoError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MembersGetInfoError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Describes a result obtained for a single user whose id was specified in the
@@ -1631,36 +1309,8 @@ type MembersListContinueError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MembersListContinueError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MembersListError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MembersListError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type MembersListResult struct {
@@ -1704,36 +1354,8 @@ type MembersRemoveError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MembersRemoveError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MembersSendWelcomeError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MembersSendWelcomeError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Exactly one of team_member_id, email, or external_id must be provided to
@@ -1752,20 +1374,6 @@ func NewMembersSetPermissionsArg() *MembersSetPermissionsArg {
 
 type MembersSetPermissionsError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MembersSetPermissionsError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type MembersSetPermissionsResult struct {
@@ -1805,36 +1413,8 @@ type MembersSetProfileError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MembersSetProfileError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MembersSuspendError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MembersSuspendError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Exactly one of team_member_id, email, or external_id must be provided to
@@ -1853,36 +1433,8 @@ type MembersUnsuspendError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MembersUnsuspendError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type MobileClientPlatform struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MobileClientPlatform) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Information about linked Dropbox mobile client sessions
@@ -1992,20 +1544,6 @@ type RevokeDeviceSessionBatchError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *RevokeDeviceSessionBatchError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type RevokeDeviceSessionBatchResult struct {
 	RevokeDevicesStatus []*RevokeDeviceSessionStatus `json:"revoke_devices_status"`
 }
@@ -2017,20 +1555,6 @@ func NewRevokeDeviceSessionBatchResult() *RevokeDeviceSessionBatchResult {
 
 type RevokeDeviceSessionError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *RevokeDeviceSessionError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type RevokeDeviceSessionStatus struct {
@@ -2075,20 +1599,6 @@ type RevokeLinkedAppBatchError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *RevokeLinkedAppBatchError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type RevokeLinkedAppBatchResult struct {
 	RevokeLinkedAppStatus []*RevokeLinkedAppStatus `json:"revoke_linked_app_status"`
 }
@@ -2101,20 +1611,6 @@ func NewRevokeLinkedAppBatchResult() *RevokeLinkedAppBatchResult {
 // Error returned by :route:`linked_apps/revoke_linked_app`.
 type RevokeLinkedAppError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *RevokeLinkedAppError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type RevokeLinkedAppStatus struct {
@@ -2134,37 +1630,9 @@ type SharedFolderJoinPolicy struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SharedFolderJoinPolicy) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Policy governing who can be a member of a folder shared by a team member.
 type SharedFolderMemberPolicy struct {
 	Tag string `json:".tag"`
-}
-
-func (u *SharedFolderMemberPolicy) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Describes the number of users in a specific storage bucket.
@@ -2240,20 +1708,6 @@ func NewTeamMemberProfile() *TeamMemberProfile {
 // The user's status as a member of a specific team.
 type TeamMemberStatus struct {
 	Tag string `json:".tag"`
-}
-
-func (u *TeamMemberStatus) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Policies governing team members.

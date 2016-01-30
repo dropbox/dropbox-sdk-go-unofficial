@@ -18,38 +18,10 @@ type AccessLevel struct {
 	Tag string `json:".tag"`
 }
 
-func (u *AccessLevel) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Policy governing who can change a shared folder's access control list (ACL).
 // In other words, who can add, remove, or change the privileges of members.
 type AclUpdatePolicy struct {
 	Tag string `json:".tag"`
-}
-
-func (u *AclUpdatePolicy) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type AddFolderMemberArg struct {
@@ -461,20 +433,6 @@ type FolderAction struct {
 	Tag string `json:".tag"`
 }
 
-func (u *FolderAction) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // The metadata of a folder shared link
 type FolderLinkMetadata struct {
 	// URL of the shared link.
@@ -553,36 +511,8 @@ type SharedLinkError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SharedLinkError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type GetSharedLinkFileError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *GetSharedLinkFileError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type GetSharedLinkMetadataArg struct {
@@ -909,20 +839,6 @@ type ListFoldersContinueError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *ListFoldersContinueError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Result for :route:`list_folders`. Unmounted shared folders can be identified
 // by the absence of :field:`SharedFolderMetadata.path_lower`.
 type ListFoldersResult struct {
@@ -1001,20 +917,6 @@ type MemberAction struct {
 	Tag string `json:".tag"`
 }
 
-func (u *MemberAction) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Whether the user is allowed to take the action on the associated member.
 type MemberPermission struct {
 	// The action that the user may wish to take on the member.
@@ -1035,20 +937,6 @@ func NewMemberPermission() *MemberPermission {
 // folders owned by a user on a team.
 type MemberPolicy struct {
 	Tag string `json:".tag"`
-}
-
-func (u *MemberPolicy) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Includes different ways to identify a member of a shared folder.
@@ -1201,37 +1089,9 @@ type PendingUploadMode struct {
 	Tag string `json:".tag"`
 }
 
-func (u *PendingUploadMode) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Possible reasons the user is denied a permission.
 type PermissionDeniedReason struct {
 	Tag string `json:".tag"`
-}
-
-func (u *PermissionDeniedReason) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type RelinquishFolderMembershipArg struct {
@@ -1338,40 +1198,12 @@ type RequestedVisibility struct {
 	Tag string `json:".tag"`
 }
 
-func (u *RequestedVisibility) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // The actual access permissions values of shared links after taking into
 // account user preferences and the team and shared folder settings. Check the
 // :type:`RequestedVisibility` for more info on the possible visibility values
 // that can be set by the shared link's owner.
 type ResolvedVisibility struct {
 	Tag string `json:".tag"`
-}
-
-func (u *ResolvedVisibility) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type RevokeSharedLinkArg struct {
@@ -1386,20 +1218,6 @@ func NewRevokeSharedLinkArg() *RevokeSharedLinkArg {
 
 type RevokeSharedLinkError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *RevokeSharedLinkError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type ShareFolderArg struct {
@@ -1526,55 +1344,13 @@ type SharePathError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SharePathError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // There is an error accessing the shared folder.
 type SharedFolderAccessError struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SharedFolderAccessError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 type SharedFolderMemberError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *SharedFolderMemberError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Shared folder user and group membership.
@@ -1627,37 +1403,9 @@ type SharedLinkAccessFailureReason struct {
 	Tag string `json:".tag"`
 }
 
-func (u *SharedLinkAccessFailureReason) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
-}
-
 // Policy governing who can view shared links.
 type SharedLinkPolicy struct {
 	Tag string `json:".tag"`
-}
-
-func (u *SharedLinkPolicy) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type SharedLinkSettings struct {
@@ -1677,20 +1425,6 @@ func NewSharedLinkSettings() *SharedLinkSettings {
 
 type SharedLinkSettingsError struct {
 	Tag string `json:".tag"`
-}
-
-func (u *SharedLinkSettingsError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 // Information about a team member.
@@ -1974,20 +1708,6 @@ func NewUserMembershipInfo() *UserMembershipInfo {
 // shared folder settings.
 type Visibility struct {
 	Tag string `json:".tag"`
-}
-
-func (u *Visibility) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		Tag string `json:".tag"`
-	}
-	var w wrap
-	if err := json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch w.Tag {
-	}
-	return nil
 }
 
 type Sharing interface {
