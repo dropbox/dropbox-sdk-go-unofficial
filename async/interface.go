@@ -8,7 +8,7 @@ import "encoding/json"
 // Result returned by methods that launch an asynchronous job. A method who may
 // either launch an asynchronous job, or complete the request synchronously, can
 // use this union by extending it, and adding a 'complete' field with the type
-// of the synchronous response. See :type:`LaunchEmptyResult` for an example.
+// of the synchronous response. See `LaunchEmptyResult` for an example.
 type LaunchResultBase struct {
 	Tag string `json:".tag"`
 	// This response indicates that the processing is asynchronous. The string is
@@ -63,8 +63,8 @@ func NewPollArg() *PollArg {
 
 // Result returned by methods that poll for the status of an asynchronous job.
 // Unions that extend this union should add a 'complete' field with a type of
-// the information returned upon job completion. See :type:`PollEmptyResult` for
-// an example.
+// the information returned upon job completion. See `PollEmptyResult` for an
+// example.
 type PollResultBase struct {
 	Tag string `json:".tag"`
 }

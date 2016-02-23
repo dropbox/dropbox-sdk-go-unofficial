@@ -14,18 +14,18 @@ type CommitInfo struct {
 	Path string `json:"path"`
 	// Selects what to do if the file already exists.
 	Mode *WriteMode `json:"mode"`
-	// If there's a conflict, as determined by :field:`mode`, have the Dropbox
-	// server try to autorename the file to avoid conflict.
+	// If there's a conflict, as determined by `mode`, have the Dropbox server try
+	// to autorename the file to avoid conflict.
 	Autorename bool `json:"autorename"`
-	// The value to store as the :field:`client_modified` timestamp. Dropbox
-	// automatically records the time at which the file was written to the Dropbox
-	// servers. It can also record an additional timestamp, provided by Dropbox
-	// desktop clients, mobile clients, and API apps of when the file was actually
-	// created or modified.
+	// The value to store as the `client_modified` timestamp. Dropbox automatically
+	// records the time at which the file was written to the Dropbox servers. It
+	// can also record an additional timestamp, provided by Dropbox desktop
+	// clients, mobile clients, and API apps of when the file was actually created
+	// or modified.
 	ClientModified time.Time `json:"client_modified,omitempty"`
 	// Normally, users are made aware of any file modifications in their Dropbox
-	// account via notifications in the client software. If :val:`true`, this tells
-	// the clients that this modification shouldn't result in a user notification.
+	// account via notifications in the client software. If `True`, this tells the
+	// clients that this modification shouldn't result in a user notification.
 	Mute bool `json:"mute"`
 }
 
@@ -429,8 +429,8 @@ func NewListFolderArg() *ListFolderArg {
 }
 
 type ListFolderContinueArg struct {
-	// The cursor returned by your last call to :route:`list_folder` or
-	// :route:`list_folder/continue`.
+	// The cursor returned by your last call to `ListFolder` or
+	// `ListFolderContinue`.
 	Cursor string `json:"cursor"`
 }
 
@@ -498,8 +498,8 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 }
 
 type ListFolderGetLatestCursorResult struct {
-	// Pass the cursor into :route:`list_folder/continue` to see what's changed in
-	// the folder since your previous query.
+	// Pass the cursor into `ListFolderContinue` to see what's changed in the
+	// folder since your previous query.
 	Cursor string `json:"cursor"`
 }
 
@@ -509,8 +509,7 @@ func NewListFolderGetLatestCursorResult() *ListFolderGetLatestCursorResult {
 }
 
 type ListFolderLongpollArg struct {
-	// A cursor as returned by :route:`list_folder` or
-	// :route:`list_folder/continue`
+	// A cursor as returned by `ListFolder` or `ListFolderContinue`
 	Cursor string `json:"cursor"`
 	// A timeout in seconds. The request will block for at most this length of
 	// time, plus up to 90 seconds of random jitter added to avoid the thundering
@@ -530,11 +529,11 @@ type ListFolderLongpollError struct {
 }
 
 type ListFolderLongpollResult struct {
-	// Indicates whether new changes are available. If true, call
-	// :route:`list_folder` to retrieve the changes.
+	// Indicates whether new changes are available. If true, call `ListFolder` to
+	// retrieve the changes.
 	Changes bool `json:"changes"`
 	// If present, backoff for at least this many seconds before calling
-	// :route:`list_folder/longpoll` again.
+	// `ListFolderLongpoll` again.
 	Backoff uint64 `json:"backoff,omitempty"`
 }
 
@@ -546,11 +545,11 @@ func NewListFolderLongpollResult() *ListFolderLongpollResult {
 type ListFolderResult struct {
 	// The files and (direct) subfolders in the folder.
 	Entries []*Metadata `json:"entries"`
-	// Pass the cursor into :route:`list_folder/continue` to see what's changed in
-	// the folder since your previous query.
+	// Pass the cursor into `ListFolderContinue` to see what's changed in the
+	// folder since your previous query.
 	Cursor string `json:"cursor"`
 	// If true, then there are more entries available. Pass the cursor to
-	// :route:`list_folder/continue` to retrieve the rest.
+	// `ListFolderContinue` to retrieve the rest.
 	HasMore bool `json:"has_more"`
 }
 
@@ -965,10 +964,10 @@ type SearchResult struct {
 	// A list (possibly empty) of matches for the query.
 	Matches []*SearchMatch `json:"matches"`
 	// Used for paging. If true, indicates there is another page of results
-	// available that can be fetched by calling :route:`search` again.
+	// available that can be fetched by calling `Search` again.
 	More bool `json:"more"`
-	// Used for paging. Value to set the start argument to when calling
-	// :route:`search` to fetch the next page of results.
+	// Used for paging. Value to set the start argument to when calling `Search` to
+	// fetch the next page of results.
 	Start uint64 `json:"start"`
 }
 
@@ -1063,7 +1062,7 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 }
 
 type UploadSessionCursor struct {
-	// The upload session ID (returned by :route:`upload_session/start`).
+	// The upload session ID (returned by `UploadSessionStart`).
 	SessionId string `json:"session_id"`
 	// The amount of data that has been uploaded so far. We use this to make sure
 	// upload data isn't lost or duplicated in the event of a network error.
@@ -1177,7 +1176,7 @@ func NewUploadSessionOffsetError() *UploadSessionOffsetError {
 
 type UploadSessionStartResult struct {
 	// A unique identifier for the upload session. Pass this to
-	// :route:`upload_session/append` and :route:`upload_session/finish`.
+	// `UploadSessionAppend` and `UploadSessionFinish`.
 	SessionId string `json:"session_id"`
 }
 
@@ -1329,22 +1328,21 @@ type Files interface {
 	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// Returns the contents of a folder.
 	ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error)
-	// Once a cursor has been retrieved from :route:`list_folder`, use this to
-	// paginate through all files and retrieve updates to the folder.
+	// Once a cursor has been retrieved from `ListFolder`, use this to paginate
+	// through all files and retrieve updates to the folder.
 	ListFolderContinue(arg *ListFolderContinueArg) (res *ListFolderResult, err error)
-	// A way to quickly get a cursor for the folder's state. Unlike
-	// :route:`list_folder`, :route:`list_folder/get_latest_cursor` doesn't return
-	// any entries. This endpoint is for app which only needs to know about new
-	// files and modifications and doesn't need to know about files that already
-	// exist in Dropbox.
+	// A way to quickly get a cursor for the folder's state. Unlike `ListFolder`,
+	// `ListFolderGetLatestCursor` doesn't return any entries. This endpoint is for
+	// app which only needs to know about new files and modifications and doesn't
+	// need to know about files that already exist in Dropbox.
 	ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFolderGetLatestCursorResult, err error)
 	// A longpoll endpoint to wait for changes on an account. In conjunction with
-	// :route:`list_folder`, this call gives you a low-latency way to monitor an
-	// account for file changes. The connection will block until there are changes
+	// `ListFolder`, this call gives you a low-latency way to monitor an account
+	// for file changes. The connection will block until there are changes
 	// available or a timeout occurs. This endpoint is useful mostly for
 	// client-side apps. If you're looking for server-side notifications, check out
-	// our :link:`webhooks documentation
-	// https://www.dropbox.com/developers/reference/webhooks`.
+	// our `webhooks documentation`
+	// <https://www.dropbox.com/developers/reference/webhooks>.
 	ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFolderLongpollResult, err error)
 	// Return revisions of a file
 	ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResult, err error)
@@ -1361,7 +1359,7 @@ type Files interface {
 	Search(arg *SearchArg) (res *SearchResult, err error)
 	// Create a new file with the contents provided in the request. Do not use this
 	// to upload a file larger than 150 MB. Instead, create an upload session with
-	// :route:`upload_session/start`.
+	// `UploadSessionStart`.
 	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
 	// Append more data to an upload session. A single request should not upload
 	// more than 150 MB of file contents.
@@ -1371,8 +1369,8 @@ type Files interface {
 	UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error)
 	// Upload sessions allow you to upload a single file using multiple requests.
 	// This call starts a new upload session with the given data.  You can then use
-	// :route:`upload_session/append` to add more data and
-	// :route:`upload_session/finish` to save all the data to a file in Dropbox. A
-	// single request should not upload more than 150 MB of file contents.
+	// `UploadSessionAppend` to add more data and `UploadSessionFinish` to save all
+	// the data to a file in Dropbox. A single request should not upload more than
+	// 150 MB of file contents.
 	UploadSessionStart(content io.Reader) (res *UploadSessionStartResult, err error)
 }

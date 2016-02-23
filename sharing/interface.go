@@ -47,7 +47,7 @@ type AddFolderMemberError struct {
 	Tag string `json:".tag"`
 	// Unable to access shared folder.
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
-	// :field:`AddFolderMemberArg.members` contains a bad invitation recipient.
+	// `AddFolderMemberArg.members` contains a bad invitation recipient.
 	BadMember *AddMemberSelectorError `json:"bad_member,omitempty"`
 	// The value is the member limit that was reached.
 	TooManyMembers uint64 `json:"too_many_members,omitempty"`
@@ -60,7 +60,7 @@ func (u *AddFolderMemberError) UnmarshalJSON(body []byte) error {
 		Tag string `json:".tag"`
 		// Unable to access shared folder.
 		AccessError json.RawMessage `json:"access_error"`
-		// :field:`AddFolderMemberArg.members` contains a bad invitation recipient.
+		// `AddFolderMemberArg.members` contains a bad invitation recipient.
 		BadMember json.RawMessage `json:"bad_member"`
 		// The value is the member limit that was reached.
 		TooManyMembers json.RawMessage `json:"too_many_members"`
@@ -118,8 +118,8 @@ func (u *AddFolderMemberError) UnmarshalJSON(body []byte) error {
 type AddMember struct {
 	// The member to add to the shared folder.
 	Member *MemberSelector `json:"member"`
-	// The access level to grant :field:`member` to the shared folder.
-	// :field:`AccessLevel.owner` is disallowed.
+	// The access level to grant `member` to the shared folder.
+	// `AccessLevel.owner` is disallowed.
 	AccessLevel *AccessLevel `json:"access_level"`
 }
 
@@ -188,8 +188,8 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// Metadata for a shared link. This can be either a :type:`PathLinkMetadata` or
-// :type:`CollectionLinkMetadata`.
+// Metadata for a shared link. This can be either a `PathLinkMetadata` or
+// `CollectionLinkMetadata`.
 type LinkMetadata struct {
 	Tag        string                  `json:".tag"`
 	Path       *PathLinkMetadata       `json:"path,omitempty"`
@@ -250,8 +250,8 @@ type CreateSharedLinkArg struct {
 	// Whether to return a shortened URL.
 	ShortUrl bool `json:"short_url"`
 	// If it's okay to share a path that does not yet exist, set this to either
-	// :field:`PendingUploadMode.file` or :field:`PendingUploadMode.folder` to
-	// indicate whether to assume it's a file or folder.
+	// `PendingUploadMode.file` or `PendingUploadMode.folder` to indicate whether
+	// to assume it's a file or folder.
 	PendingUpload *PendingUploadMode `json:"pending_upload,omitempty"`
 }
 
@@ -532,7 +532,7 @@ func NewGetSharedLinkMetadataArg() *GetSharedLinkMetadataArg {
 }
 
 type GetSharedLinksArg struct {
-	// See :route:`get_shared_links` description.
+	// See `GetSharedLinks` description.
 	Path string `json:"path,omitempty"`
 }
 
@@ -759,11 +759,11 @@ type LinkPermissions struct {
 	ResolvedVisibility *ResolvedVisibility `json:"resolved_visibility,omitempty"`
 	// The shared link's requested visibility. This can be overridden by the team
 	// and shared folder policies. The final visibility, after considering these
-	// policies, can be found in :field:`resolved_visibility`. This is shown only
-	// if the caller is the link's owner.
+	// policies, can be found in `resolved_visibility`. This is shown only if the
+	// caller is the link's owner.
 	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
 	// The failure reason for revoking the link. This field will only be present if
-	// the :field:`can_revoke` is :val:`false`.
+	// the `can_revoke` is `False`.
 	RevokeFailureReason *SharedLinkAccessFailureReason `json:"revoke_failure_reason,omitempty"`
 }
 
@@ -785,8 +785,8 @@ func NewListFolderMembersArgs() *ListFolderMembersArgs {
 }
 
 type ListFolderMembersContinueArg struct {
-	// The cursor returned by your last call to :route:`list_folder_members` or
-	// :route:`list_folder_members/continue`.
+	// The cursor returned by your last call to `ListFolderMembers` or
+	// `ListFolderMembersContinue`.
 	Cursor string `json:"cursor"`
 }
 
@@ -825,8 +825,8 @@ func (u *ListFolderMembersContinueError) UnmarshalJSON(body []byte) error {
 }
 
 type ListFoldersContinueArg struct {
-	// The cursor returned by your last call to :route:`list_folders` or
-	// :route:`list_folders/continue`.
+	// The cursor returned by your last call to `ListFolders` or
+	// `ListFoldersContinue`.
 	Cursor string `json:"cursor"`
 }
 
@@ -839,14 +839,13 @@ type ListFoldersContinueError struct {
 	Tag string `json:".tag"`
 }
 
-// Result for :route:`list_folders`. Unmounted shared folders can be identified
-// by the absence of :field:`SharedFolderMetadata.path_lower`.
+// Result for `ListFolders`. Unmounted shared folders can be identified by the
+// absence of `SharedFolderMetadata.path_lower`.
 type ListFoldersResult struct {
 	// List of all shared folders the authenticated user has access to.
 	Entries []*SharedFolderMetadata `json:"entries"`
 	// Present if there are additional shared folders that have not been returned
-	// yet. Pass the cursor into :route:`list_folders/continue` to list additional
-	// folders.
+	// yet. Pass the cursor into `ListFoldersContinue` to list additional folders.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -856,9 +855,9 @@ func NewListFoldersResult() *ListFoldersResult {
 }
 
 type ListSharedLinksArg struct {
-	// See :route:`list_shared_links` description.
+	// See `ListSharedLinks` description.
 	Path string `json:"path,omitempty"`
-	// The cursor returned by your last call to :route:`list_shared_links`.
+	// The cursor returned by your last call to `ListSharedLinks`.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -900,10 +899,10 @@ type ListSharedLinksResult struct {
 	// Shared links applicable to the path argument.
 	Links []*SharedLinkMetadata `json:"links"`
 	// Is true if there are additional shared links that have not been returned
-	// yet. Pass the cursor into :route:`list_shared_links` to retrieve them.
+	// yet. Pass the cursor into `ListSharedLinks` to retrieve them.
 	HasMore bool `json:"has_more"`
-	// Pass the cursor into :route:`list_shared_links` to obtain the additional
-	// links. Cursor is returned only if no path is given or the path is empty.
+	// Pass the cursor into `ListSharedLinks` to obtain the additional links.
+	// Cursor is returned only if no path is given or the path is empty.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -1192,16 +1191,16 @@ func (u *RemoveFolderMemberError) UnmarshalJSON(body []byte) error {
 // The access permission that can be requested by the caller for the shared
 // link. Note that the final resolved visibility of the shared link takes into
 // account other aspects, such as team and shared folder settings. Check the
-// :type:`ResolvedVisibility` for more info on the possible resolved visibility
-// values of shared links.
+// `ResolvedVisibility` for more info on the possible resolved visibility values
+// of shared links.
 type RequestedVisibility struct {
 	Tag string `json:".tag"`
 }
 
 // The actual access permissions values of shared links after taking into
 // account user preferences and the team and shared folder settings. Check the
-// :type:`RequestedVisibility` for more info on the possible visibility values
-// that can be set by the shared link's owner.
+// `RequestedVisibility` for more info on the possible visibility values that
+// can be set by the shared link's owner.
 type ResolvedVisibility struct {
 	Tag string `json:".tag"`
 }
@@ -1246,14 +1245,14 @@ func NewShareFolderArg() *ShareFolderArg {
 
 type ShareFolderError struct {
 	Tag string `json:".tag"`
-	// :field:`ShareFolderArg.path` is invalid.
+	// `ShareFolderArg.path` is invalid.
 	BadPath *SharePathError `json:"bad_path,omitempty"`
 }
 
 func (u *ShareFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
-		// :field:`ShareFolderArg.path` is invalid.
+		// `ShareFolderArg.path` is invalid.
 		BadPath json.RawMessage `json:"bad_path"`
 	}
 	var w wrap
@@ -1363,8 +1362,8 @@ type SharedFolderMembers struct {
 	// invitees that have already accepted or declined to join the shared folder.
 	Invitees []*InviteeMembershipInfo `json:"invitees"`
 	// Present if there are additional shared folder members that have not been
-	// returned yet. Pass the cursor into :route:`list_folder_members/continue` to
-	// list additional members.
+	// returned yet. Pass the cursor into `ListFolderMembersContinue` to list
+	// additional members.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -1381,8 +1380,8 @@ type SharedFolderMetadata struct {
 	SharedFolderId string `json:"shared_folder_id"`
 	// The current user's access level for this shared folder.
 	AccessType *AccessLevel `json:"access_type"`
-	// Whether this folder is a :link:`team folder
-	// https://www.dropbox.com/en/help/986`.
+	// Whether this folder is a `team folder`
+	// <https://www.dropbox.com/en/help/986>.
 	IsTeamFolder bool `json:"is_team_folder"`
 	// Policies governing this shared folder.
 	Policy *FolderPolicy `json:"policy"`
@@ -1411,8 +1410,8 @@ type SharedLinkPolicy struct {
 type SharedLinkSettings struct {
 	// The requested access for this shared link.
 	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
-	// If :field:`requested_visibility` is :field:`RequestedVisibility.password`
-	// this is needed to specify the password to access the link.
+	// If `requested_visibility` is `RequestedVisibility.password` this is needed
+	// to specify the password to access the link.
 	LinkPassword string `json:"link_password,omitempty"`
 	// Expiration time of the shared link. By default the link won't expire.
 	Expires time.Time `json:"expires,omitempty"`
@@ -1570,10 +1569,9 @@ type UpdateFolderMemberArg struct {
 	// The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
 	// The member of the shared folder to update.  Only the
-	// :field:`MemberSelector.dropbox_id` may be set at this time.
+	// `MemberSelector.dropbox_id` may be set at this time.
 	Member *MemberSelector `json:"member"`
-	// The new access level for :field:`member`. :field:`AccessLevel.owner` is
-	// disallowed.
+	// The new access level for `member`. `AccessLevel.owner` is disallowed.
 	AccessLevel *AccessLevel `json:"access_level"`
 }
 
@@ -1670,15 +1668,15 @@ func (u *UpdateFolderPolicyError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// Basic information about a user. Use :route:`users.get_account` and
-// :route:`users.get_account_batch`` to obtain more detailed information.
+// Basic information about a user. Use `UsersAccount` and `UsersAccountBatch``
+// to obtain more detailed information.
 type UserInfo struct {
 	// The account ID of the user.
 	AccountId string `json:"account_id"`
 	// If the user is in the same team as current user.
 	SameTeam bool `json:"same_team"`
-	// The team member ID of the shared folder member. Only present if
-	// :field:`same_team` is true.
+	// The team member ID of the shared folder member. Only present if `same_team`
+	// is true.
 	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
@@ -1703,9 +1701,9 @@ func NewUserMembershipInfo() *UserMembershipInfo {
 	return s
 }
 
-// Who can access a shared link. The most open visibility is :field:`public`.
-// The default depends on many aspects, such as team and user preferences and
-// shared folder settings.
+// Who can access a shared link. The most open visibility is `public`. The
+// default depends on many aspects, such as team and user preferences and shared
+// folder settings.
 type Visibility struct {
 	Tag string `json:".tag"`
 }
@@ -1713,9 +1711,9 @@ type Visibility struct {
 type Sharing interface {
 	// Allows an owner or editor (if the ACL update policy allows) of a shared
 	// folder to add another member. For the new member to get access to all the
-	// functionality for this folder, you will need to call :route:`mount_folder`
-	// on their behalf. Apps must have full Dropbox access to use this endpoint.
-	// Warning: This endpoint is in beta and is subject to minor but possibly
+	// functionality for this folder, you will need to call `MountFolder` on their
+	// behalf. Apps must have full Dropbox access to use this endpoint. Warning:
+	// This endpoint is in beta and is subject to minor but possibly
 	// backwards-incompatible changes.
 	AddFolderMember(arg *AddFolderMemberArg) (err error)
 	// Returns the status of an asynchronous job. Apps must have full Dropbox
@@ -1727,18 +1725,18 @@ type Sharing interface {
 	// beta and is subject to minor but possibly backwards-incompatible changes.
 	CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error)
 	// Create a shared link. If a shared link already exists for the given path,
-	// that link is returned. Note that in the returned :type:`PathLinkMetadata`,
-	// the :field:`PathLinkMetadata.url` field is the shortened URL if
-	// :field:`CreateSharedLinkArg.short_url` argument is set to :val:`true`.
-	// Previously, it was technically possible to break a shared link by moving or
-	// renaming the corresponding file or folder. In the future, this will no
-	// longer be the case, so your app shouldn't rely on this behavior. Instead, if
-	// your app needs to revoke a shared link, use :route:`revoke_shared_link`.
+	// that link is returned. Note that in the returned `PathLinkMetadata`, the
+	// `PathLinkMetadata.url` field is the shortened URL if
+	// `CreateSharedLinkArg.short_url` argument is set to `True`. Previously, it
+	// was technically possible to break a shared link by moving or renaming the
+	// corresponding file or folder. In the future, this will no longer be the
+	// case, so your app shouldn't rely on this behavior. Instead, if your app
+	// needs to revoke a shared link, use `RevokeSharedLink`.
 	CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error)
 	// Create a shared link with custom settings. If no settings are given then the
-	// default visibility is :field:`RequestedVisibility.public` (The resolved
-	// visibility, though, may depend on other aspects such as team and shared
-	// folder settings).
+	// default visibility is `RequestedVisibility.public` (The resolved visibility,
+	// though, may depend on other aspects such as team and shared folder
+	// settings).
 	CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res *SharedLinkMetadata, err error)
 	// Returns shared folder metadata by its folder ID. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
@@ -1748,9 +1746,9 @@ type Sharing interface {
 	GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, content io.ReadCloser, err error)
 	// Get the shared link's metadata.
 	GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, err error)
-	// Returns a list of :type:`LinkMetadata` objects for this user, including
-	// collection links. If no path is given or the path is empty, returns a list
-	// of all shared links for the current user, including collection links. If a
+	// Returns a list of `LinkMetadata` objects for this user, including collection
+	// links. If no path is given or the path is empty, returns a list of all
+	// shared links for the current user, including collection links. If a
 	// non-empty path is given, returns a list of all shared links that allow
 	// access to the given path.  Collection links are never returned in this case.
 	// Note that the url field in the response is never the shortened URL.
@@ -1759,8 +1757,8 @@ type Sharing interface {
 	// Dropbox access to use this endpoint. Warning: This endpoint is in beta and
 	// is subject to minor but possibly backwards-incompatible changes.
 	ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error)
-	// Once a cursor has been retrieved from :route:`list_folder_members`, use this
-	// to paginate through all shared folder members. Apps must have full Dropbox
+	// Once a cursor has been retrieved from `ListFolderMembers`, use this to
+	// paginate through all shared folder members. Apps must have full Dropbox
 	// access to use this endpoint. Warning: This endpoint is in beta and is
 	// subject to minor but possibly backwards-incompatible changes.
 	ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error)
@@ -1769,10 +1767,10 @@ type Sharing interface {
 	// is in beta and is subject to minor but possibly backwards-incompatible
 	// changes.
 	ListFolders() (res *ListFoldersResult, err error)
-	// Once a cursor has been retrieved from :route:`list_folders`, use this to
-	// paginate through all shared folders. Apps must have full Dropbox access to
-	// use this endpoint. Warning: This endpoint is in beta and is subject to minor
-	// but possibly backwards-incompatible changes.
+	// Once a cursor has been retrieved from `ListFolders`, use this to paginate
+	// through all shared folders. Apps must have full Dropbox access to use this
+	// endpoint. Warning: This endpoint is in beta and is subject to minor but
+	// possibly backwards-incompatible changes.
 	ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
 	// List shared links of this user. If no path is given or the path is empty,
 	// returns a list of all shared links for the current user. If a non-empty path
@@ -1783,10 +1781,10 @@ type Sharing interface {
 	// Modify the shared link's settings. If the requested visibility conflict with
 	// the shared links policy of the team or the shared folder (in case the linked
 	// file is part of a shared folder) then the
-	// :field:`LinkPermissions.resolved_visibility` of the returned
-	// :type:`SharedLinkMetadata` will reflect the actual visibility of the shared
-	// link and the :field:`LinkPermissions.requested_visibility` will reflect the
-	// requested visibility.
+	// `LinkPermissions.resolved_visibility` of the returned `SharedLinkMetadata`
+	// will reflect the actual visibility of the shared link and the
+	// `LinkPermissions.requested_visibility` will reflect the requested
+	// visibility.
 	ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res *SharedLinkMetadata, err error)
 	// The current user mounts the designated folder. Mount a shared folder for a
 	// user after they have been added as a member. Once mounted, the shared folder
@@ -1808,17 +1806,17 @@ type Sharing interface {
 	// Revoke a shared link. Note that even after revoking a shared link to a file,
 	// the file may be accessible if there are shared links leading to any of the
 	// file parent folders. To list all shared links that enable access to a
-	// specific file, you can use the :route:`list_shared_links` with the file as
-	// the :field:`ListSharedLinksArg.path` argument.
+	// specific file, you can use the `ListSharedLinks` with the file as the
+	// `ListSharedLinksArg.path` argument.
 	RevokeSharedLink(arg *RevokeSharedLinkArg) (err error)
 	// Share a folder with collaborators. Most sharing will be completed
 	// synchronously. Large folders will be completed asynchronously. To make
 	// testing the async case repeatable, set `ShareFolderArg.force_async`. If a
-	// :field:`ShareFolderLaunch.async_job_id` is returned, you'll need to call
-	// :route:`check_share_job_status` until the action completes to get the
-	// metadata for the folder. Apps must have full Dropbox access to use this
-	// endpoint. Warning: This endpoint is in beta and is subject to minor but
-	// possibly backwards-incompatible changes.
+	// `ShareFolderLaunch.async_job_id` is returned, you'll need to call
+	// `CheckShareJobStatus` until the action completes to get the metadata for the
+	// folder. Apps must have full Dropbox access to use this endpoint. Warning:
+	// This endpoint is in beta and is subject to minor but possibly
+	// backwards-incompatible changes.
 	ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error)
 	// Transfer ownership of a shared folder to a member of the shared folder. Apps
 	// must have full Dropbox access to use this endpoint. Warning: This endpoint
@@ -1826,15 +1824,15 @@ type Sharing interface {
 	// changes.
 	TransferFolder(arg *TransferFolderArg) (err error)
 	// The current user unmounts the designated folder. They can re-mount the
-	// folder at a later time using :route:`mount_folder`. Apps must have full
-	// Dropbox access to use this endpoint. Warning: This endpoint is in beta and
-	// is subject to minor but possibly backwards-incompatible changes.
+	// folder at a later time using `MountFolder`. Apps must have full Dropbox
+	// access to use this endpoint. Warning: This endpoint is in beta and is
+	// subject to minor but possibly backwards-incompatible changes.
 	UnmountFolder(arg *UnmountFolderArg) (err error)
 	// Allows a shared folder owner to unshare the folder. You'll need to call
-	// :route:`check_job_status` to determine if the action has completed
-	// successfully. Apps must have full Dropbox access to use this endpoint.
-	// Warning: This endpoint is in beta and is subject to minor but possibly
-	// backwards-incompatible changes.
+	// `CheckJobStatus` to determine if the action has completed successfully. Apps
+	// must have full Dropbox access to use this endpoint. Warning: This endpoint
+	// is in beta and is subject to minor but possibly backwards-incompatible
+	// changes.
 	UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error)
 	// Allows an owner or editor of a shared folder to update another member's
 	// permissions. Apps must have full Dropbox access to use this endpoint.

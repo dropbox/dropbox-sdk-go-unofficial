@@ -31,7 +31,7 @@ type BasicAccount struct {
 	// Details of a user's name.
 	Name *Name `json:"name"`
 	// Whether this user is a teammate of the current user. If this account is the
-	// current user's account, then this will be :val:`true`.
+	// current user's account, then this will be `True`.
 	IsTeammate bool `json:"is_teammate"`
 }
 
@@ -47,24 +47,24 @@ type FullAccount struct {
 	// Details of a user's name.
 	Name *Name `json:"name"`
 	// The user's e-mail address. Do not rely on this without checking the
-	// :field:`email_verified` field. Even then, it's possible that the user has
-	// since lost access to their e-mail.
+	// `email_verified` field. Even then, it's possible that the user has since
+	// lost access to their e-mail.
 	Email string `json:"email"`
 	// Whether the user has verified their e-mail address.
 	EmailVerified bool `json:"email_verified"`
-	// The language that the user specified. Locale tags will be :link:`IETF
-	// language tags http://en.wikipedia.org/wiki/IETF_language_tag`.
+	// The language that the user specified. Locale tags will be `IETF language
+	// tags` <http://en.wikipedia.org/wiki/IETF_language_tag>.
 	Locale string `json:"locale"`
-	// The user's :link:`referral link https://www.dropbox.com/referrals`.
+	// The user's `referral link` <https://www.dropbox.com/referrals>.
 	ReferralLink string `json:"referral_link"`
 	// Whether the user has a personal and work account. If the current account is
-	// personal, then :field:`team` will always be :val:`null`, but
-	// :field:`is_paired` will indicate if a work account is linked.
+	// personal, then `team` will always be nil, but `is_paired` will indicate if a
+	// work account is linked.
 	IsPaired bool `json:"is_paired"`
 	// What type of account this user has.
 	AccountType *AccountType `json:"account_type"`
 	// The user's two-letter country code, if available. Country codes are based on
-	// :link:`ISO 3166-1 http://en.wikipedia.org/wiki/ISO_3166-1`.
+	// `ISO 3166-1` <http://en.wikipedia.org/wiki/ISO_3166-1>.
 	Country string `json:"country,omitempty"`
 	// If this account is a member of a team, information about that team.
 	Team *Team `json:"team,omitempty"`
@@ -98,16 +98,16 @@ func NewGetAccountBatchArg() *GetAccountBatchArg {
 
 type GetAccountBatchError struct {
 	Tag string `json:".tag"`
-	// The value is an account ID specified in
-	// :field:`GetAccountBatchArg.account_ids` that does not exist.
+	// The value is an account ID specified in `GetAccountBatchArg.account_ids`
+	// that does not exist.
 	NoAccount string `json:"no_account,omitempty"`
 }
 
 func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
-		// The value is an account ID specified in
-		// :field:`GetAccountBatchArg.account_ids` that does not exist.
+		// The value is an account ID specified in `GetAccountBatchArg.account_ids`
+		// that does not exist.
 		NoAccount json.RawMessage `json:"no_account"`
 	}
 	var w wrap
@@ -150,8 +150,8 @@ type Name struct {
 	// Also known as a last name or family name.
 	Surname string `json:"surname"`
 	// Locale-dependent name. In the US, a person's familiar name is their
-	// :field:`given_name`, but elsewhere, it could be any combination of a
-	// person's :field:`given_name` and :field:`surname`.
+	// `given_name`, but elsewhere, it could be any combination of a person's
+	// `given_name` and `surname`.
 	FamiliarName string `json:"familiar_name"`
 	// A name that can be used directly to represent the name of a user's Dropbox
 	// account.

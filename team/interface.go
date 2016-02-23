@@ -324,7 +324,7 @@ type GroupCreateError struct {
 	Tag string `json:".tag"`
 }
 
-// Error that can be raised when :type:`GroupSelector`is used.
+// Error that can be raised when `GroupSelector`is used.
 type GroupSelectorError struct {
 	Tag string `json:".tag"`
 }
@@ -387,7 +387,7 @@ func NewGroupMemberInfo() *GroupMemberInfo {
 type GroupMemberSelector struct {
 	// Specify a group.
 	Group *GroupSelector `json:"group"`
-	// Identity of a user that is a member of :field:`group`.
+	// Identity of a user that is a member of `group`.
 	User *UserSelectorArg `json:"user"`
 }
 
@@ -396,8 +396,8 @@ func NewGroupMemberSelector() *GroupMemberSelector {
 	return s
 }
 
-// Error that can be raised when :type:`GroupMemberSelector` is used, and the
-// user is required to be a member of the specified group.
+// Error that can be raised when `GroupMemberSelector` is used, and the user is
+// required to be a member of the specified group.
 type GroupMemberSelectorError struct {
 	Tag string `json:".tag"`
 }
@@ -419,7 +419,7 @@ type GroupMembersAddError struct {
 	// These members are not part of your team. Currently, you cannot add members
 	// to a group if they are not part of your team, though this may change in a
 	// subsequent version. To add new members to your Dropbox Business team, use
-	// the :route:`members/add` endpoint.
+	// the `MembersAdd` endpoint.
 	MembersNotInTeam []string `json:"members_not_in_team,omitempty"`
 	// These users were not found in Dropbox.
 	UsersNotFound []string `json:"users_not_found,omitempty"`
@@ -431,7 +431,7 @@ func (u *GroupMembersAddError) UnmarshalJSON(body []byte) error {
 		// These members are not part of your team. Currently, you cannot add members
 		// to a group if they are not part of your team, though this may change in a
 		// subsequent version. To add new members to your Dropbox Business team, use
-		// the :route:`members/add` endpoint.
+		// the `MembersAdd` endpoint.
 		MembersNotInTeam json.RawMessage `json:"members_not_in_team"`
 		// These users were not found in Dropbox.
 		UsersNotFound json.RawMessage `json:"users_not_found"`
@@ -464,8 +464,7 @@ func (u *GroupMembersAddError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// Result returned by :route:`groups/members/add` and
-// :route:`groups/members/remove`.
+// Result returned by `GroupsMembersAdd` and `GroupsMembersRemove`.
 type GroupMembersChangeResult struct {
 	// Lists the group members after the member change operation has been
 	// performed.
@@ -490,8 +489,8 @@ func NewGroupMembersRemoveArg() *GroupMembersRemoveArg {
 	return s
 }
 
-// Error that can be raised when :type:`GroupMembersSelector` is used, and the
-// users are required to be members of the specified group.
+// Error that can be raised when `GroupMembersSelector` is used, and the users
+// are required to be members of the specified group.
 type GroupMembersSelectorError struct {
 	Tag string `json:".tag"`
 }
@@ -504,7 +503,7 @@ type GroupMembersRemoveError struct {
 type GroupMembersSelector struct {
 	// Specify a group.
 	Group *GroupSelector `json:"group"`
-	// A list of users that are members of :field:`group`.
+	// A list of users that are members of `group`.
 	Users *UsersSelectorArg `json:"users"`
 }
 
@@ -516,7 +515,7 @@ func NewGroupMembersSelector() *GroupMembersSelector {
 type GroupMembersSetAccessTypeArg struct {
 	// Specify a group.
 	Group *GroupSelector `json:"group"`
-	// Identity of a user that is a member of :field:`group`.
+	// Identity of a user that is a member of `group`.
 	User *UserSelectorArg `json:"user"`
 	// New group access type the user will have.
 	AccessType *GroupAccessType `json:"access_type"`
@@ -599,9 +598,9 @@ type GroupsGetInfoError struct {
 
 type GroupsGetInfoItem struct {
 	Tag string `json:".tag"`
-	// An ID that was provided as a parameter to :route:`groups/get_info`, and did
-	// not match a corresponding group. The ID can be a group ID, or an external
-	// ID, depending on how the method was called.
+	// An ID that was provided as a parameter to `GroupsGetInfo`, and did not match
+	// a corresponding group. The ID can be a group ID, or an external ID,
+	// depending on how the method was called.
 	IdNotFound string `json:"id_not_found,omitempty"`
 	// Info about a group.
 	GroupInfo *GroupFullInfo `json:"group_info,omitempty"`
@@ -610,9 +609,9 @@ type GroupsGetInfoItem struct {
 func (u *GroupsGetInfoItem) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
-		// An ID that was provided as a parameter to :route:`groups/get_info`, and did
-		// not match a corresponding group. The ID can be a group ID, or an external
-		// ID, depending on how the method was called.
+		// An ID that was provided as a parameter to `GroupsGetInfo`, and did not
+		// match a corresponding group. The ID can be a group ID, or an external ID,
+		// depending on how the method was called.
 		IdNotFound json.RawMessage `json:"id_not_found"`
 		// Info about a group.
 		GroupInfo json.RawMessage `json:"group_info"`
@@ -669,11 +668,10 @@ type GroupsListContinueError struct {
 
 type GroupsListResult struct {
 	Groups []*GroupSummary `json:"groups"`
-	// Pass the cursor into :route:`members/list/continue` to obtain the additional
-	// members.
+	// Pass the cursor into `MembersListContinue` to obtain the additional members.
 	Cursor string `json:"cursor"`
 	// Is true if there are additional team members that have not been returned
-	// yet. An additional call to :route:`members/list/continue` can retrieve them.
+	// yet. An additional call to `MembersListContinue` can retrieve them.
 	HasMore bool `json:"has_more"`
 }
 
@@ -742,7 +740,7 @@ func NewListMemberAppsArg() *ListMemberAppsArg {
 	return s
 }
 
-// Error returned by :route:`linked_apps/list_member_linked_apps`.
+// Error returned by `LinkedAppsListMemberLinkedApps`.
 type ListMemberAppsError struct {
 	Tag string `json:".tag"`
 }
@@ -794,12 +792,12 @@ func NewListMemberDevicesResult() *ListMemberDevicesResult {
 	return s
 }
 
-// Arguments for :route:`linked_apps/list_team_linked_apps`.
+// Arguments for `LinkedAppsListTeamLinkedApps`.
 type ListTeamAppsArg struct {
-	// At the first call to the :route:`linked_apps/list_team_linked_apps` the
-	// cursor shouldn't be passed. Then, if the result of the call includes a
-	// cursor, the following requests should include the received cursors in order
-	// to receive the next sub list of the team applications
+	// At the first call to the `LinkedAppsListTeamLinkedApps` the cursor shouldn't
+	// be passed. Then, if the result of the call includes a cursor, the following
+	// requests should include the received cursors in order to receive the next
+	// sub list of the team applications
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -808,20 +806,20 @@ func NewListTeamAppsArg() *ListTeamAppsArg {
 	return s
 }
 
-// Error returned by :route:`linked_apps/list_team_linked_apps`
+// Error returned by `LinkedAppsListTeamLinkedApps`
 type ListTeamAppsError struct {
 	Tag string `json:".tag"`
 }
 
-// Information returned by :route:`linked_apps/list_team_linked_apps`.
+// Information returned by `LinkedAppsListTeamLinkedApps`.
 type ListTeamAppsResult struct {
 	// The linked applications of each member of the team
 	Apps []*MemberLinkedApps `json:"apps"`
 	// If true, then there are more apps available. Pass the cursor to
-	// :route:`linked_apps/list_team_linked_apps` to retrieve the rest.
+	// `LinkedAppsListTeamLinkedApps` to retrieve the rest.
 	HasMore bool `json:"has_more"`
-	// Pass the cursor into :route:`linked_apps/list_team_linked_apps` to receive
-	// the next sub list of team's applications.
+	// Pass the cursor into `LinkedAppsListTeamLinkedApps` to receive the next sub
+	// list of team's applications.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -831,10 +829,10 @@ func NewListTeamAppsResult() *ListTeamAppsResult {
 }
 
 type ListTeamDevicesArg struct {
-	// At the first call to the :route:`devices/list_team_devices` the cursor
-	// shouldn't be passed. Then, if the result of the call includes a cursor, the
-	// following requests should include the received cursors in order to receive
-	// the next sub list of team devices
+	// At the first call to the `DevicesListTeamDevices` the cursor shouldn't be
+	// passed. Then, if the result of the call includes a cursor, the following
+	// requests should include the received cursors in order to receive the next
+	// sub list of team devices
 	Cursor string `json:"cursor,omitempty"`
 	// Whether to list web sessions of the team members
 	IncludeWebSessions bool `json:"include_web_sessions"`
@@ -860,10 +858,10 @@ type ListTeamDevicesResult struct {
 	// The devices of each member of the team
 	Devices []*MemberDevices `json:"devices"`
 	// If true, then there are more devices available. Pass the cursor to
-	// :route:`devices/list_team_devices` to retrieve the rest.
+	// `DevicesListTeamDevices` to retrieve the rest.
 	HasMore bool `json:"has_more"`
-	// Pass the cursor into :route:`devices/list_team_devices` to receive the next
-	// sub list of team's devices.
+	// Pass the cursor into `DevicesListTeamDevices` to receive the next sub list
+	// of team's devices.
 	Cursor string `json:"cursor,omitempty"`
 }
 
@@ -1101,8 +1099,8 @@ func NewMemberProfile() *MemberProfile {
 	return s
 }
 
-// Error that can be returned whenever a struct derived from
-// :type:`UserSelectorArg` is used.
+// Error that can be returned whenever a struct derived from `UserSelectorArg`
+// is used.
 type UserSelectorError struct {
 	Tag string `json:".tag"`
 }
@@ -1127,8 +1125,8 @@ func NewMembersAddArg() *MembersAddArg {
 type MembersAddJobStatus struct {
 	Tag string `json:".tag"`
 	// The asynchronous job has finished. For each member that was specified in the
-	// parameter :type:`MembersAddArg` that was provided to :route:`members/add`, a
-	// corresponding item is returned in this list.
+	// parameter `MembersAddArg` that was provided to `MembersAdd`, a corresponding
+	// item is returned in this list.
 	Complete []*MemberAddResult `json:"complete,omitempty"`
 	// The asynchronous job returned an error. The string contains an error
 	// message.
@@ -1139,8 +1137,8 @@ func (u *MembersAddJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
 		// The asynchronous job has finished. For each member that was specified in
-		// the parameter :type:`MembersAddArg` that was provided to
-		// :route:`members/add`, a corresponding item is returned in this list.
+		// the parameter `MembersAddArg` that was provided to `MembersAdd`, a
+		// corresponding item is returned in this list.
 		Complete json.RawMessage `json:"complete"`
 		// The asynchronous job returned an error. The string contains an error
 		// message.
@@ -1238,12 +1236,12 @@ type MembersGetInfoError struct {
 }
 
 // Describes a result obtained for a single user whose id was specified in the
-// parameter of :route:`members/get_info`.
+// parameter of `MembersGetInfo`.
 type MembersGetInfoItem struct {
 	Tag string `json:".tag"`
-	// An ID that was provided as a parameter to :route:`members/get_info`, and did
-	// not match a corresponding user. This might be a team_member_id, an email, or
-	// an external ID, depending on how the method was called.
+	// An ID that was provided as a parameter to `MembersGetInfo`, and did not
+	// match a corresponding user. This might be a team_member_id, an email, or an
+	// external ID, depending on how the method was called.
 	IdNotFound string `json:"id_not_found,omitempty"`
 	// Info about a team member.
 	MemberInfo *TeamMemberInfo `json:"member_info,omitempty"`
@@ -1252,9 +1250,9 @@ type MembersGetInfoItem struct {
 func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		Tag string `json:".tag"`
-		// An ID that was provided as a parameter to :route:`members/get_info`, and
-		// did not match a corresponding user. This might be a team_member_id, an
-		// email, or an external ID, depending on how the method was called.
+		// An ID that was provided as a parameter to `MembersGetInfo`, and did not
+		// match a corresponding user. This might be a team_member_id, an email, or an
+		// external ID, depending on how the method was called.
 		IdNotFound json.RawMessage `json:"id_not_found"`
 		// Info about a team member.
 		MemberInfo json.RawMessage `json:"member_info"`
@@ -1316,11 +1314,10 @@ type MembersListError struct {
 type MembersListResult struct {
 	// List of team members.
 	Members []*TeamMemberInfo `json:"members"`
-	// Pass the cursor into :route:`members/list/continue` to obtain the additional
-	// members.
+	// Pass the cursor into `MembersListContinue` to obtain the additional members.
 	Cursor string `json:"cursor"`
 	// Is true if there are additional team members that have not been returned
-	// yet. An additional call to :route:`members/list/continue` can retrieve them.
+	// yet. An additional call to `MembersListContinue` can retrieve them.
 	HasMore bool `json:"has_more"`
 }
 
@@ -1594,7 +1591,7 @@ func NewRevokeLinkedApiAppBatchArg() *RevokeLinkedApiAppBatchArg {
 	return s
 }
 
-// Error returned by :route:`linked_apps/revoke_linked_app_batch`.
+// Error returned by `LinkedAppsRevokeLinkedAppBatch`.
 type RevokeLinkedAppBatchError struct {
 	Tag string `json:".tag"`
 }
@@ -1608,7 +1605,7 @@ func NewRevokeLinkedAppBatchResult() *RevokeLinkedAppBatchResult {
 	return s
 }
 
-// Error returned by :route:`linked_apps/revoke_linked_app`.
+// Error returned by `LinkedAppsRevokeLinkedApp`.
 type RevokeLinkedAppError struct {
 	Tag string `json:".tag"`
 }
@@ -1867,32 +1864,32 @@ type Team interface {
 	// management
 	GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error)
 	// Deletes a group. The group is deleted immediately. However the revoking of
-	// group-owned resources may take additional time. Use the
-	// :route:`groups/job_status/get` to determine whether this process has
-	// completed. Permission : Team member management
+	// group-owned resources may take additional time. Use the `GroupsJobStatusGet`
+	// to determine whether this process has completed. Permission : Team member
+	// management
 	GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResult, err error)
 	// Retrieves information about one or more groups. Permission : Team
 	// Information
 	GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error)
-	// Once an async_job_id is returned from :route:`groups/delete`,
-	// :route:`groups/members/add` , or :route:`groups/members/remove` use this
-	// method to poll the status of granting/revoking group members' access to
-	// group-owned resources. Permission : Team member management
+	// Once an async_job_id is returned from `GroupsDelete`, `GroupsMembersAdd` ,
+	// or `GroupsMembersRemove` use this method to poll the status of
+	// granting/revoking group members' access to group-owned resources. Permission
+	// : Team member management
 	GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error)
 	// Lists groups on a team. Permission : Team Information
 	GroupsList(arg *GroupsListArg) (res *GroupsListResult, err error)
-	// Once a cursor has been retrieved from :route:`groups/list`, use this to
-	// paginate through all groups. Permission : Team information
+	// Once a cursor has been retrieved from `GroupsList`, use this to paginate
+	// through all groups. Permission : Team information
 	GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error)
 	// Adds members to a group. The members are added immediately. However the
 	// granting of group-owned resources may take additional time. Use the
-	// :route:`groups/job_status/get` to determine whether this process has
-	// completed. Permission : Team member management
+	// `GroupsJobStatusGet` to determine whether this process has completed.
+	// Permission : Team member management
 	GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembersChangeResult, err error)
 	// Removes members from a group. The members are removed immediately. However
 	// the revoking of group-owned resources may take additional time. Use the
-	// :route:`groups/job_status/get` to determine whether this process has
-	// completed. Permission : Team member management
+	// `GroupsJobStatusGet` to determine whether this process has completed.
+	// Permission : Team member management
 	GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupMembersChangeResult, err error)
 	// Sets a member's access type in a group. Permission : Team member management
 	GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg) (res []*GroupsGetInfoItem, err error)
@@ -1921,9 +1918,8 @@ type Team interface {
 	// invitation and for 'Perform as team member' actions taken on the user before
 	// they become 'active'.
 	MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err error)
-	// Once an async_job_id is returned from :route:`members/add` , use this to
-	// poll the status of the asynchronous request. Permission : Team member
-	// management
+	// Once an async_job_id is returned from `MembersAdd` , use this to poll the
+	// status of the asynchronous request. Permission : Team member management
 	MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error)
 	// Returns information about multiple team members. Permission : Team
 	// information This endpoint will return an empty member_info item, for IDs (or
@@ -1931,23 +1927,21 @@ type Team interface {
 	MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetInfoItem, err error)
 	// Lists members of a team. Permission : Team information
 	MembersList(arg *MembersListArg) (res *MembersListResult, err error)
-	// Once a cursor has been retrieved from :route:`members/list`, use this to
-	// paginate through all team members. Permission : Team information
+	// Once a cursor has been retrieved from `MembersList`, use this to paginate
+	// through all team members. Permission : Team information
 	MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error)
 	// Removes a member from a team. Permission : Team member management Exactly
 	// one of team_member_id, email, or external_id must be provided to identify
 	// the user account. This is not a deactivation where the account can be
-	// re-activated again. Calling :route:`members/add` with the removed user's
-	// email address will create a new account with a new team_member_id that will
-	// not have access to any content that was shared with the initial account.
-	// This endpoint can also be used to cancel a pending invite to join the team.
-	// This endpoint may initiate an asynchronous job. To obtain the final result
-	// of the job, the client should periodically poll
-	// :route:`members/remove/job_status/get`.
+	// re-activated again. Calling `MembersAdd` with the removed user's email
+	// address will create a new account with a new team_member_id that will not
+	// have access to any content that was shared with the initial account. This
+	// endpoint can also be used to cancel a pending invite to join the team. This
+	// endpoint may initiate an asynchronous job. To obtain the final result of the
+	// job, the client should periodically poll `MembersRemoveJobStatusGet`.
 	MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error)
-	// Once an async_job_id is returned from :route:`members/remove` , use this to
-	// poll the status of the asynchronous request. Permission : Team member
-	// management
+	// Once an async_job_id is returned from `MembersRemove` , use this to poll the
+	// status of the asynchronous request. Permission : Team member management
 	MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error)
 	// Sends welcome email to pending team member. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
