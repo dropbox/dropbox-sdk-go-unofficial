@@ -1,7 +1,19 @@
-= Dropbox SDK for Go
+= Dropbox SDK for Go [UNOFFICIAL]
 
-A Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
+An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
 
+WARNING: This SDK is **NOT yet official**. What does this mean?
+
+  * There is no formal Dropbox https://www.dropbox.com/developers/support[support] for this SDK at this point
+  * Bugs may or may not get fixed
+  * Not all SDK features may be implemented and implemented features may be buggy or incorrect
+  
+
+=== Uh OK, so why are you releasing this?
+
+  * the SDK, while unofficial, _is_ usable. See https://github.com/dropbox/dbxcli[dbxcli] for an example application built using the SDK
+  * we would like to get feedback from the community and evaluate the level of interest/enthusiasm before investing into official supporting one more SDK
+ 
 == Installation
 
 [source,sh]
