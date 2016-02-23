@@ -21,14 +21,38 @@
 package dropbox
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 
 	"golang.org/x/oauth2"
+)
+
+const (
+	apiVersion    = 2
+	defaultDomain = ".dropboxapi.com"
+	hostApi       = "api"
+	hostContent   = "content"
+	hostNotify    = "notify"
 )
 
 type apiImpl struct {
 	client  *http.Client
 	verbose bool
+	hostMap map[string]string
+}
+
+func getenv(key string, defVal string) string {
+	val := os.Getenv(key)
+	if val == "" {
+		val = defVal
+	}
+	return val
+}
+
+func (dbx *apiImpl) generateUrl(host string, namespace string, route string) string {
+	fqHost := dbx.hostMap[host]
+	return fmt.Sprintf("https://%s/%d/%s/%s", fqHost, apiVersion, namespace, route)
 }
 
 func Client(token string, verbose bool) Api {
@@ -39,5 +63,11 @@ func Client(token string, verbose bool) Api {
 		},
 	}
 	tok := &oauth2.Token{AccessToken: token}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose}
+	domain := getenv("DROPBOX_DOMAIN", defaultDomain)
+	hostMap := map[string]string{
+		hostApi:     hostApi + domain,
+		hostContent: hostContent + domain,
+		hostNotify:  hostNotify + domain,
+	}
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose, hostMap}
 }

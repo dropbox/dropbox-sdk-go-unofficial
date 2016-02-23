@@ -59,7 +59,7 @@ func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err err
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/copy", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "copy"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -127,7 +127,7 @@ func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderM
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/create_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "create_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -195,7 +195,7 @@ func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/delete", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "delete"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -263,7 +263,7 @@ func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, c
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/download", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "download"), nil)
 	if err != nil {
 		return
 	}
@@ -327,7 +327,7 @@ func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata,
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/get_metadata", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "get_metadata"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -395,7 +395,7 @@ func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/get_preview", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "get_preview"), nil)
 	if err != nil {
 		return
 	}
@@ -459,7 +459,7 @@ func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetada
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/get_thumbnail", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "get_thumbnail"), nil)
 	if err != nil {
 		return
 	}
@@ -523,7 +523,7 @@ func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderR
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/list_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "list_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -591,7 +591,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *f
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/list_folder/continue", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "list_folder/continue"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -659,7 +659,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *fi
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/list_folder/get_latest_cursor", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "list_folder/get_latest_cursor"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -727,7 +727,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://notify.dropboxapi.com/2/files/list_folder/longpoll", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("notify", "files", "list_folder/longpoll"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -795,7 +795,7 @@ func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListR
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/list_revisions", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "list_revisions"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -863,7 +863,7 @@ func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err err
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/move", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "move"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -931,7 +931,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/permanently_delete", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "permanently_delete"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -994,7 +994,7 @@ func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/restore", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "restore"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1062,7 +1062,7 @@ func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err e
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/files/search", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "files", "search"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1130,7 +1130,7 @@ func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload", content)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "upload"), content)
 	if err != nil {
 		return
 	}
@@ -1199,7 +1199,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/append", content)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "upload_session/append"), content)
 	if err != nil {
 		return
 	}
@@ -1263,7 +1263,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, conte
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/finish", content)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "upload_session/finish"), content)
 	if err != nil {
 		return
 	}
@@ -1324,7 +1324,7 @@ type UploadSessionStartWrapper struct {
 func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSessionStartResult, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/files/upload_session/start", content)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "files", "upload_session/start"), content)
 	if err != nil {
 		return
 	}
@@ -1392,7 +1392,7 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (err error)
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/add_folder_member", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "add_folder_member"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1455,7 +1455,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/check_job_status", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "check_job_status"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1523,7 +1523,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareF
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/check_share_job_status", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "check_share_job_status"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1591,7 +1591,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sha
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/create_shared_link", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "create_shared_link"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1659,7 +1659,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWi
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "create_shared_link_with_settings"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1727,7 +1727,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharin
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/get_folder_metadata", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "get_folder_metadata"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1795,7 +1795,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://content.dropboxapi.com/2/sharing/get_shared_link_file", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("content", "sharing", "get_shared_link_file"), nil)
 	if err != nil {
 		return
 	}
@@ -1859,7 +1859,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg)
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/get_shared_link_metadata", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "get_shared_link_metadata"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1927,7 +1927,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/get_shared_links", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "get_shared_links"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -1995,7 +1995,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_folder_members", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folder_members"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2063,7 +2063,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersCont
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_folder_members/continue", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folder_members/continue"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2123,7 +2123,7 @@ type ListFoldersWrapper struct {
 func (dbx *apiImpl) ListFolders() (res *sharing.ListFoldersResult, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_folders", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folders"), nil)
 	if err != nil {
 		return
 	}
@@ -2190,7 +2190,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_folders/continue", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folders/continue"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2258,7 +2258,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *shari
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/list_shared_links", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_shared_links"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2326,7 +2326,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettin
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/modify_shared_link_settings", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "modify_shared_link_settings"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2394,7 +2394,7 @@ func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.Share
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/mount_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "mount_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2462,7 +2462,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/relinquish_folder_membership", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "relinquish_folder_membership"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2525,7 +2525,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/remove_folder_member", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "remove_folder_member"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2593,7 +2593,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (err erro
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/revoke_shared_link", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "revoke_shared_link"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2656,7 +2656,7 @@ func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.Share
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/share_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "share_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2724,7 +2724,7 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/transfer_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "transfer_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2787,7 +2787,7 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/unmount_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "unmount_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2850,7 +2850,7 @@ func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.Lau
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/unshare_folder", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "unshare_folder"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2918,7 +2918,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (err 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/update_folder_member", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "update_folder_member"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -2981,7 +2981,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/sharing/update_folder_policy", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "update_folder_policy"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3049,7 +3049,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/list_member_devices", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "devices/list_member_devices"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3117,7 +3117,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *t
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/list_team_devices", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "devices/list_team_devices"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3185,7 +3185,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/revoke_device_session", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "devices/revoke_device_session"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3248,7 +3248,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessio
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/devices/revoke_device_session_batch", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "devices/revoke_device_session_batch"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3308,7 +3308,7 @@ type GetInfoWrapper struct {
 func (dbx *apiImpl) GetInfo() (res *team.TeamGetInfoResult, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/get_info", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "get_info"), nil)
 	if err != nil {
 		return
 	}
@@ -3375,7 +3375,7 @@ func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullI
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/create", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/create"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3443,7 +3443,7 @@ func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmpt
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/delete", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/delete"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3511,7 +3511,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsG
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/get_info", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/get_info"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3579,7 +3579,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/job_status/get", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/job_status/get"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3647,7 +3647,7 @@ func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListRes
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/list", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/list"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3715,7 +3715,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *te
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/list/continue", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/list/continue"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3783,7 +3783,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.Gr
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/add", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/members/add"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3851,7 +3851,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *t
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/remove", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/members/remove"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3919,7 +3919,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTy
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/members/set_access_type", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/members/set_access_type"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -3987,7 +3987,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFull
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/groups/update", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "groups/update"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4055,7 +4055,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/list_member_linked_apps", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "linked_apps/list_member_linked_apps"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4123,7 +4123,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/list_team_linked_apps", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "linked_apps/list_team_linked_apps"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4191,7 +4191,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/revoke_linked_app", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "linked_apps/revoke_linked_app"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4254,7 +4254,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppB
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/linked_apps/revoke_linked_app_batch", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "linked_apps/revoke_linked_app_batch"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4322,7 +4322,7 @@ func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLau
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/add", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/add"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4390,7 +4390,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.Member
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/add/job_status/get", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/add/job_status/get"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4458,7 +4458,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.Me
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/get_info", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/get_info"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4526,7 +4526,7 @@ func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersList
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/list", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/list"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4594,7 +4594,7 @@ func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/list/continue", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/list/continue"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4662,7 +4662,7 @@ func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.Launch
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/remove", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/remove"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4730,7 +4730,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/remove/job_status/get", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/remove/job_status/get"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4798,7 +4798,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (err erro
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/send_welcome_email", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/send_welcome_email"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4861,7 +4861,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsAr
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/set_admin_permissions", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/set_admin_permissions"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4929,7 +4929,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/set_profile", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/set_profile"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -4997,7 +4997,7 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/suspend", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/suspend"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5060,7 +5060,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (err error) 
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/members/unsuspend", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "members/unsuspend"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5123,7 +5123,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivi
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_activity", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "reports/get_activity"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5191,7 +5191,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevices
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_devices", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "reports/get_devices"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5259,7 +5259,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMemb
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_membership", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "reports/get_membership"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5327,7 +5327,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorage
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/team/reports/get_storage", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "team", "reports/get_storage"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5395,7 +5395,7 @@ func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccoun
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_account", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "users", "get_account"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5463,7 +5463,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users
 		return
 	}
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_account_batch", bytes.NewReader(b))
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "users", "get_account_batch"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -5523,7 +5523,7 @@ type GetCurrentAccountWrapper struct {
 func (dbx *apiImpl) GetCurrentAccount() (res *users.FullAccount, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_current_account", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "users", "get_current_account"), nil)
 	if err != nil {
 		return
 	}
@@ -5582,7 +5582,7 @@ type GetSpaceUsageWrapper struct {
 func (dbx *apiImpl) GetSpaceUsage() (res *users.SpaceUsage, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", "https://api.dropboxapi.com/2/users/get_space_usage", nil)
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "users", "get_space_usage"), nil)
 	if err != nil {
 		return
 	}
