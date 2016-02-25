@@ -517,7 +517,7 @@ func NewFolderPolicy() *FolderPolicy {
 type GetMetadataArgs struct {
 	// The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
-	// Folder actions to query.
+	// Folder actions to query. This field is optional.
 	Actions []*FolderAction `json:"actions,omitempty"`
 }
 
@@ -625,10 +625,15 @@ type MembershipInfo struct {
 	// The permissions that requesting user has on this member. The set of
 	// permissions corresponds to the MemberActions in the request.
 	Permissions []*MemberPermission `json:"permissions,omitempty"`
+	// Suggested name initials for a member.
+	Initials string `json:"initials,omitempty"`
+	// True if the member's access to the file is inherited from a parent folder.
+	IsInherited bool `json:"is_inherited"`
 }
 
 func NewMembershipInfo() *MembershipInfo {
 	s := new(MembershipInfo)
+	s.IsInherited = false
 	return s
 }
 
@@ -641,10 +646,15 @@ type GroupMembershipInfo struct {
 	// The permissions that requesting user has on this member. The set of
 	// permissions corresponds to the MemberActions in the request.
 	Permissions []*MemberPermission `json:"permissions,omitempty"`
+	// Suggested name initials for a member.
+	Initials string `json:"initials,omitempty"`
+	// True if the member's access to the file is inherited from a parent folder.
+	IsInherited bool `json:"is_inherited"`
 }
 
 func NewGroupMembershipInfo() *GroupMembershipInfo {
 	s := new(GroupMembershipInfo)
+	s.IsInherited = false
 	return s
 }
 
@@ -689,24 +699,35 @@ type InviteeMembershipInfo struct {
 	// The permissions that requesting user has on this member. The set of
 	// permissions corresponds to the MemberActions in the request.
 	Permissions []*MemberPermission `json:"permissions,omitempty"`
+	// Suggested name initials for a member.
+	Initials string `json:"initials,omitempty"`
+	// True if the member's access to the file is inherited from a parent folder.
+	IsInherited bool `json:"is_inherited"`
 }
 
 func NewInviteeMembershipInfo() *InviteeMembershipInfo {
 	s := new(InviteeMembershipInfo)
+	s.IsInherited = false
 	return s
 }
 
+// Error occurred while performing an asynchronous job from `UnshareFolder` or
+// `RemoveFolderMember`.
 type JobError struct {
-	Tag         string                   `json:".tag"`
-	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
-	MemberError *SharedFolderMemberError `json:"member_error,omitempty"`
+	Tag string `json:".tag"`
+	// Error occurred while performing `UnshareFolder` action.
+	UnshareFolderError *UnshareFolderError `json:"unshare_folder_error,omitempty"`
+	// Error occurred while performing `RemoveFolderMember` action.
+	RemoveFolderMemberError *RemoveFolderMemberError `json:"remove_folder_member_error,omitempty"`
 }
 
 func (u *JobError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
-		Tag         string          `json:".tag"`
-		AccessError json.RawMessage `json:"access_error"`
-		MemberError json.RawMessage `json:"member_error"`
+		Tag string `json:".tag"`
+		// Error occurred while performing `UnshareFolder` action.
+		UnshareFolderError json.RawMessage `json:"unshare_folder_error"`
+		// Error occurred while performing `RemoveFolderMember` action.
+		RemoveFolderMemberError json.RawMessage `json:"remove_folder_member_error"`
 	}
 	var w wrap
 	if err := json.Unmarshal(body, &w); err != nil {
@@ -714,21 +735,21 @@ func (u *JobError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch w.Tag {
-	case "access_error":
+	case "unshare_folder_error":
 		{
-			if len(w.AccessError) == 0 {
+			if len(w.UnshareFolderError) == 0 {
 				break
 			}
-			if err := json.Unmarshal(w.AccessError, &u.AccessError); err != nil {
+			if err := json.Unmarshal(w.UnshareFolderError, &u.UnshareFolderError); err != nil {
 				return err
 			}
 		}
-	case "member_error":
+	case "remove_folder_member_error":
 		{
-			if len(w.MemberError) == 0 {
+			if len(w.RemoveFolderMemberError) == 0 {
 				break
 			}
-			if err := json.Unmarshal(w.MemberError, &u.MemberError); err != nil {
+			if err := json.Unmarshal(w.RemoveFolderMemberError, &u.RemoveFolderMemberError); err != nil {
 				return err
 			}
 		}
@@ -794,12 +815,16 @@ func NewLinkPermissions() *LinkPermissions {
 type ListFolderMembersArgs struct {
 	// The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
-	// Member actions to query.
+	// Member actions to query. This field is optional.
 	Actions []*MemberAction `json:"actions,omitempty"`
+	// The maximum number of results that include members, groups and invitees to
+	// return per request.
+	Limit uint32 `json:"limit"`
 }
 
 func NewListFolderMembersArgs() *ListFolderMembersArgs {
 	s := new(ListFolderMembersArgs)
+	s.Limit = 1000
 	return s
 }
 
@@ -843,6 +868,19 @@ func (u *ListFolderMembersContinueError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+type ListFoldersArgs struct {
+	// The maximum number of results to return per request.
+	Limit uint32 `json:"limit"`
+	// Folder actions to query. This field is optional.
+	Actions []*FolderAction `json:"actions,omitempty"`
+}
+
+func NewListFoldersArgs() *ListFoldersArgs {
+	s := new(ListFoldersArgs)
+	s.Limit = 1000
+	return s
+}
+
 type ListFoldersContinueArg struct {
 	// The cursor returned by your last call to `ListFolders` or
 	// `ListFoldersContinue`.
@@ -878,6 +916,8 @@ type ListSharedLinksArg struct {
 	Path string `json:"path,omitempty"`
 	// The cursor returned by your last call to `ListSharedLinks`.
 	Cursor string `json:"cursor,omitempty"`
+	// See `ListSharedLinks` description.
+	DirectOnly bool `json:"direct_only,omitempty"`
 }
 
 func NewListSharedLinksArg() *ListSharedLinksArg {
@@ -1391,12 +1431,8 @@ func NewSharedFolderMembers() *SharedFolderMembers {
 	return s
 }
 
-// The metadata which includes basic information about the shared folder.
-type SharedFolderMetadata struct {
-	// The name of the this shared folder.
-	Name string `json:"name"`
-	// The ID of the shared folder.
-	SharedFolderId string `json:"shared_folder_id"`
+// Properties of the shared folder.
+type SharedFolderMetadataBase struct {
 	// The current user's access level for this shared folder.
 	AccessType *AccessLevel `json:"access_type"`
 	// Whether this folder is a `team folder`
@@ -1404,12 +1440,35 @@ type SharedFolderMetadata struct {
 	IsTeamFolder bool `json:"is_team_folder"`
 	// Policies governing this shared folder.
 	Policy *FolderPolicy `json:"policy"`
+	// Actions the current user may perform on the folder and its contents. The set
+	// of permissions corresponds to the FolderActions in the request.
+	Permissions []*FolderPermission `json:"permissions,omitempty"`
+}
+
+func NewSharedFolderMetadataBase() *SharedFolderMetadataBase {
+	s := new(SharedFolderMetadataBase)
+	return s
+}
+
+// The metadata which includes basic information about the shared folder.
+type SharedFolderMetadata struct {
+	// The current user's access level for this shared folder.
+	AccessType *AccessLevel `json:"access_type"`
+	// Whether this folder is a `team folder`
+	// <https://www.dropbox.com/en/help/986>.
+	IsTeamFolder bool `json:"is_team_folder"`
+	// Policies governing this shared folder.
+	Policy *FolderPolicy `json:"policy"`
+	// The name of the this shared folder.
+	Name string `json:"name"`
+	// The ID of the shared folder.
+	SharedFolderId string `json:"shared_folder_id"`
+	// Actions the current user may perform on the folder and its contents. The set
+	// of permissions corresponds to the FolderActions in the request.
+	Permissions []*FolderPermission `json:"permissions,omitempty"`
 	// The lower-cased full path of this shared folder. Absent for unmounted
 	// folders.
 	PathLower string `json:"path_lower,omitempty"`
-	// Actions the current user may perform on the folder and its contents. The set
-	// of permissions corresponds to the MemberActions in the request.
-	Permissions []*FolderPermission `json:"permissions,omitempty"`
 }
 
 func NewSharedFolderMetadata() *SharedFolderMetadata {
@@ -1687,8 +1746,8 @@ func (u *UpdateFolderPolicyError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// Basic information about a user. Use `UsersAccount` and `UsersAccountBatch``
-// to obtain more detailed information.
+// Basic information about a user. Use `UsersAccount` and `UsersAccountBatch` to
+// obtain more detailed information.
 type UserInfo struct {
 	// The account ID of the user.
 	AccountId string `json:"account_id"`
@@ -1713,10 +1772,15 @@ type UserMembershipInfo struct {
 	// The permissions that requesting user has on this member. The set of
 	// permissions corresponds to the MemberActions in the request.
 	Permissions []*MemberPermission `json:"permissions,omitempty"`
+	// Suggested name initials for a member.
+	Initials string `json:"initials,omitempty"`
+	// True if the member's access to the file is inherited from a parent folder.
+	IsInherited bool `json:"is_inherited"`
 }
 
 func NewUserMembershipInfo() *UserMembershipInfo {
 	s := new(UserMembershipInfo)
+	s.IsInherited = false
 	return s
 }
 
@@ -1785,17 +1849,25 @@ type Sharing interface {
 	// must have full Dropbox access to use this endpoint. Warning: This endpoint
 	// is in beta and is subject to minor but possibly backwards-incompatible
 	// changes.
-	ListFolders() (res *ListFoldersResult, err error)
+	ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error)
 	// Once a cursor has been retrieved from `ListFolders`, use this to paginate
 	// through all shared folders. Apps must have full Dropbox access to use this
 	// endpoint. Warning: This endpoint is in beta and is subject to minor but
 	// possibly backwards-incompatible changes.
 	ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
+	// Return the list of all shared folders the current user can mount or unmount.
+	// Apps must have full Dropbox access to use this endpoint.
+	ListMountableFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error)
+	// Once a cursor has been retrieved from `ListMountableFolders`, use this to
+	// paginate through all mountable shared folders. Apps must have full Dropbox
+	// access to use this endpoint.
+	ListMountableFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
 	// List shared links of this user. If no path is given or the path is empty,
 	// returns a list of all shared links for the current user. If a non-empty path
 	// is given, returns a list of all shared links that allow access to the given
 	// path - direct links to the given path and links to parent folders of the
-	// given path.
+	// given path. Links to parent folders can be suppressed by setting direct_only
+	// to true.
 	ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error)
 	// Modify the shared link's settings. If the requested visibility conflict with
 	// the shared links policy of the team or the shared folder (in case the linked

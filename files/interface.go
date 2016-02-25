@@ -201,8 +201,13 @@ type DeletedMetadata struct {
 	// The lowercased full path in the user's Dropbox. This always starts with a
 	// slash.
 	PathLower string `json:"path_lower"`
-	// Deprecated. Please use :field:'FileSharingInfo.parent_shared_folder_id' or
-	// :field:'FolderSharingInfo.parent_shared_folder_id' instead.
+	// The cased path to be used for display purposes only. In rare instances the
+	// casing will not correctly match the user's filesystem, but this behavior
+	// will match the path provided in the Core API v1. Changes to the casing of
+	// paths won't be returned by `ListFolderContinue`
+	PathDisplay string `json:"path_display"`
+	// Deprecated. Please use `FileSharingInfo.parent_shared_folder_id` or
+	// `FolderSharingInfo.parent_shared_folder_id` instead.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
 }
 
@@ -227,7 +232,7 @@ func NewDimensions() *Dimensions {
 type DownloadArg struct {
 	// The path of the file to download.
 	Path string `json:"path"`
-	// Deprecated. Please specify revision in :field:'path' instead
+	// Deprecated. Please specify revision in `path` instead
 	Rev string `json:"rev,omitempty"`
 }
 
@@ -272,6 +277,13 @@ type FileMetadata struct {
 	// The lowercased full path in the user's Dropbox. This always starts with a
 	// slash.
 	PathLower string `json:"path_lower"`
+	// The cased path to be used for display purposes only. In rare instances the
+	// casing will not correctly match the user's filesystem, but this behavior
+	// will match the path provided in the Core API v1. Changes to the casing of
+	// paths won't be returned by `ListFolderContinue`
+	PathDisplay string `json:"path_display"`
+	// A unique identifier for the file.
+	Id string `json:"id"`
 	// For files, this is the modification time set by the desktop client when the
 	// file was added to Dropbox. Since this time is not verified (the Dropbox
 	// server stores whatever the desktop client sends up), this should only be
@@ -286,11 +298,9 @@ type FileMetadata struct {
 	Rev string `json:"rev"`
 	// The file size in bytes.
 	Size uint64 `json:"size"`
-	// Deprecated. Please use :field:'FileSharingInfo.parent_shared_folder_id' or
-	// :field:'FolderSharingInfo.parent_shared_folder_id' instead.
+	// Deprecated. Please use `FileSharingInfo.parent_shared_folder_id` or
+	// `FolderSharingInfo.parent_shared_folder_id` instead.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
-	// A unique identifier for the file.
-	Id string `json:"id,omitempty"`
 	// Additional information if the file is a photo or video.
 	MediaInfo *MediaInfo `json:"media_info,omitempty"`
 	// Set if this file is contained in a shared folder.
@@ -336,12 +346,17 @@ type FolderMetadata struct {
 	// The lowercased full path in the user's Dropbox. This always starts with a
 	// slash.
 	PathLower string `json:"path_lower"`
-	// Deprecated. Please use :field:'FileSharingInfo.parent_shared_folder_id' or
-	// :field:'FolderSharingInfo.parent_shared_folder_id' instead.
-	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
+	// The cased path to be used for display purposes only. In rare instances the
+	// casing will not correctly match the user's filesystem, but this behavior
+	// will match the path provided in the Core API v1. Changes to the casing of
+	// paths won't be returned by `ListFolderContinue`
+	PathDisplay string `json:"path_display"`
 	// A unique identifier for the folder.
-	Id string `json:"id,omitempty"`
-	// Deprecated. Please use :field:'sharing_info' instead.
+	Id string `json:"id"`
+	// Deprecated. Please use `FileSharingInfo.parent_shared_folder_id` or
+	// `FolderSharingInfo.parent_shared_folder_id` instead.
+	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
+	// Deprecated. Please use `sharing_info` instead.
 	SharedFolderId string `json:"shared_folder_id,omitempty"`
 	// Set if the folder is contained in a shared folder or is a shared folder
 	// mount point.
@@ -371,9 +386,9 @@ func NewFolderSharingInfo() *FolderSharingInfo {
 }
 
 type GetMetadataArg struct {
-	// The path of a file or folder on Dropbox
+	// The path of a file or folder on Dropbox.
 	Path string `json:"path"`
-	// If true, :field:'FileMetadata.media_info' is set for photo and video.
+	// If true, `FileMetadata.media_info` is set for photo and video.
 	IncludeMediaInfo bool `json:"include_media_info"`
 }
 
@@ -431,7 +446,7 @@ type ListFolderArg struct {
 	// If true, the list folder operation will be applied recursively to all
 	// subfolders and the response will contain contents of all subfolders.
 	Recursive bool `json:"recursive"`
-	// If true, :field:'FileMetadata.media_info' is set for photo and video.
+	// If true, `FileMetadata.media_info` is set for photo and video.
 	IncludeMediaInfo bool `json:"include_media_info"`
 	// If true, the results will include entries for files and folders that used to
 	// exist but were deleted.
@@ -745,7 +760,7 @@ func NewPhotoMetadata() *PhotoMetadata {
 type PreviewArg struct {
 	// The path of the file to preview.
 	Path string `json:"path"`
-	// Deprecated. Please specify revision in :field:'path' instead
+	// Deprecated. Please specify revision in `path` instead
 	Rev string `json:"rev,omitempty"`
 }
 
@@ -1334,7 +1349,8 @@ type Files interface {
 	Delete(arg *DeleteArg) (res *Metadata, err error)
 	// Download a file from a user's Dropbox.
 	Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error)
-	// Returns the metadata for a file or folder.
+	// Returns the metadata for a file or folder. Note: Metadata for the root
+	// folder is unsupported.
 	GetMetadata(arg *GetMetadataArg) (res *Metadata, err error)
 	// Get a preview for a file. Currently previews are only generated for the
 	// files with  the following extensions: .doc, .docx, .docm, .ppt, .pps, .ppsx,

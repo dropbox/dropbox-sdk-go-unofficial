@@ -733,6 +733,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Del("Authorization")
 	if dbx.verbose {
 		log.Printf("req: %v", req)
 	}
@@ -2120,14 +2121,23 @@ type ListFoldersWrapper struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolders() (res *sharing.ListFoldersResult, err error) {
+func (dbx *apiImpl) ListFolders(arg *sharing.ListFoldersArgs) (res *sharing.ListFoldersResult, err error) {
 	cli := dbx.client
 
-	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folders"), nil)
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
 	if err != nil {
 		return
 	}
 
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_folders"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.verbose {
 		log.Printf("req: %v", req)
 	}
@@ -2219,6 +2229,142 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
 			var errWrap ListFoldersContinueWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ListMountableFoldersWrapper struct {
+	apierror.ApiError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) ListMountableFolders(arg *sharing.ListFoldersArgs) (res *sharing.ListFoldersResult, err error) {
+	cli := dbx.client
+
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_mountable_folders"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
+	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ListMountableFoldersWrapper
+			err = json.Unmarshal(body, &errWrap)
+			if err != nil {
+				return
+			}
+			err = errWrap
+			return
+		}
+		var apiError apierror.ApiError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
+type ListMountableFoldersContinueWrapper struct {
+	apierror.ApiError
+	EndpointError *sharing.ListFoldersContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) ListMountableFoldersContinue(arg *sharing.ListFoldersContinueArg) (res *sharing.ListFoldersResult, err error) {
+	cli := dbx.client
+
+	if dbx.verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", dbx.generateUrl("api", "sharing", "list_mountable_folders/continue"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if dbx.verbose {
+		log.Printf("req: %v", req)
+	}
+	resp, err := cli.Do(req)
+	if dbx.verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var errWrap ListMountableFoldersContinueWrapper
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return

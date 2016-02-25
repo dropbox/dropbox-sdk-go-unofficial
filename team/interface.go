@@ -1953,7 +1953,6 @@ type Team interface {
 	// re-activated again. Calling `MembersAdd` with the removed user's email
 	// address will create a new account with a new team_member_id that will not
 	// have access to any content that was shared with the initial account. This
-	// endpoint can also be used to cancel a pending invite to join the team. This
 	// endpoint may initiate an asynchronous job. To obtain the final result of the
 	// job, the client should periodically poll `MembersRemoveJobStatusGet`.
 	MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error)

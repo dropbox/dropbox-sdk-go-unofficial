@@ -30,6 +30,14 @@ type Account struct {
 	AccountId string `json:"account_id"`
 	// Details of a user's name.
 	Name *Name `json:"name"`
+	// The user's e-mail address. Do not rely on this without checking the
+	// `email_verified` field. Even then, it's possible that the user has since
+	// lost access to their e-mail.
+	Email string `json:"email"`
+	// Whether the user has verified their e-mail address.
+	EmailVerified bool `json:"email_verified"`
+	// URL for the photo representing the user, if one is set.
+	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
 }
 
 func NewAccount() *Account {
@@ -48,9 +56,20 @@ type BasicAccount struct {
 	AccountId string `json:"account_id"`
 	// Details of a user's name.
 	Name *Name `json:"name"`
+	// The user's e-mail address. Do not rely on this without checking the
+	// `email_verified` field. Even then, it's possible that the user has since
+	// lost access to their e-mail.
+	Email string `json:"email"`
+	// Whether the user has verified their e-mail address.
+	EmailVerified bool `json:"email_verified"`
 	// Whether this user is a teammate of the current user. If this account is the
 	// current user's account, then this will be `True`.
 	IsTeammate bool `json:"is_teammate"`
+	// URL for the photo representing the user, if one is set.
+	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
+	// The user's unique team member id. This field will only be present if the
+	// user is part of a team and `is_teammate` is `True`.
+	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
 func NewBasicAccount() *BasicAccount {
@@ -81,11 +100,16 @@ type FullAccount struct {
 	IsPaired bool `json:"is_paired"`
 	// What type of account this user has.
 	AccountType *AccountType `json:"account_type"`
+	// URL for the photo representing the user, if one is set.
+	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
 	// The user's two-letter country code, if available. Country codes are based on
 	// `ISO 3166-1` <http://en.wikipedia.org/wiki/ISO_3166-1>.
 	Country string `json:"country,omitempty"`
 	// If this account is a member of a team, information about that team.
 	Team *Team `json:"team,omitempty"`
+	// This account's unique team member id. This field will only be present if
+	// `team` is present.
+	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
 func NewFullAccount() *FullAccount {
