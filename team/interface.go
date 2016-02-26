@@ -24,8 +24,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go/async"
-	"github.com/dropbox/dropbox-sdk-go/users"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/users"
 )
 
 type DeviceSession struct {

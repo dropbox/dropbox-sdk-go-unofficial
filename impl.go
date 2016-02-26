@@ -28,12 +28,12 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/dropbox/dropbox-sdk-go/apierror"
-	"github.com/dropbox/dropbox-sdk-go/async"
-	"github.com/dropbox/dropbox-sdk-go/files"
-	"github.com/dropbox/dropbox-sdk-go/sharing"
-	"github.com/dropbox/dropbox-sdk-go/team"
-	"github.com/dropbox/dropbox-sdk-go/users"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/apierror"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/files"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/sharing"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/team"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/users"
 )
 
 type Api interface {

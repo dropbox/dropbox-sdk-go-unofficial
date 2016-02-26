@@ -27,9 +27,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go/async"
-	"github.com/dropbox/dropbox-sdk-go/files"
-	"github.com/dropbox/dropbox-sdk-go/users"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/files"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/users"
 )
 
 // Defines the access levels for collaborators.
