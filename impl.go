@@ -43,7 +43,7 @@ type Api interface {
 	users.Users
 }
 
-type CopyWrapper struct {
+type wrapCopy struct {
 	apierror.ApiError
 	EndpointError *files.RelocationError `json:"error"`
 }
@@ -87,7 +87,7 @@ func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CopyWrapper
+			var errWrap wrapCopy
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -111,7 +111,7 @@ func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err err
 	return
 }
 
-type CreateFolderWrapper struct {
+type wrapCreateFolder struct {
 	apierror.ApiError
 	EndpointError *files.CreateFolderError `json:"error"`
 }
@@ -155,7 +155,7 @@ func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderM
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CreateFolderWrapper
+			var errWrap wrapCreateFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -179,7 +179,7 @@ func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderM
 	return
 }
 
-type DeleteWrapper struct {
+type wrapDelete struct {
 	apierror.ApiError
 	EndpointError *files.DeleteError `json:"error"`
 }
@@ -223,7 +223,7 @@ func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DeleteWrapper
+			var errWrap wrapDelete
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -247,7 +247,7 @@ func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error
 	return
 }
 
-type DownloadWrapper struct {
+type wrapDownload struct {
 	apierror.ApiError
 	EndpointError *files.DownloadError `json:"error"`
 }
@@ -287,7 +287,7 @@ func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, c
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DownloadWrapper
+			var errWrap wrapDownload
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -311,7 +311,7 @@ func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, c
 	return
 }
 
-type GetMetadataWrapper struct {
+type wrapGetMetadata struct {
 	apierror.ApiError
 	EndpointError *files.GetMetadataError `json:"error"`
 }
@@ -355,7 +355,7 @@ func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata,
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetMetadataWrapper
+			var errWrap wrapGetMetadata
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -379,7 +379,7 @@ func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata,
 	return
 }
 
-type GetPreviewWrapper struct {
+type wrapGetPreview struct {
 	apierror.ApiError
 	EndpointError *files.PreviewError `json:"error"`
 }
@@ -419,7 +419,7 @@ func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetPreviewWrapper
+			var errWrap wrapGetPreview
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -443,7 +443,7 @@ func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, 
 	return
 }
 
-type GetThumbnailWrapper struct {
+type wrapGetThumbnail struct {
 	apierror.ApiError
 	EndpointError *files.ThumbnailError `json:"error"`
 }
@@ -483,7 +483,7 @@ func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetada
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetThumbnailWrapper
+			var errWrap wrapGetThumbnail
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -507,7 +507,7 @@ func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetada
 	return
 }
 
-type ListFolderWrapper struct {
+type wrapListFolder struct {
 	apierror.ApiError
 	EndpointError *files.ListFolderError `json:"error"`
 }
@@ -551,7 +551,7 @@ func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderR
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderWrapper
+			var errWrap wrapListFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -575,7 +575,7 @@ func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderR
 	return
 }
 
-type ListFolderContinueWrapper struct {
+type wrapListFolderContinue struct {
 	apierror.ApiError
 	EndpointError *files.ListFolderContinueError `json:"error"`
 }
@@ -619,7 +619,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *f
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderContinueWrapper
+			var errWrap wrapListFolderContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -643,7 +643,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *f
 	return
 }
 
-type ListFolderGetLatestCursorWrapper struct {
+type wrapListFolderGetLatestCursor struct {
 	apierror.ApiError
 	EndpointError *files.ListFolderError `json:"error"`
 }
@@ -687,7 +687,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *fi
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderGetLatestCursorWrapper
+			var errWrap wrapListFolderGetLatestCursor
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -711,7 +711,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *fi
 	return
 }
 
-type ListFolderLongpollWrapper struct {
+type wrapListFolderLongpoll struct {
 	apierror.ApiError
 	EndpointError *files.ListFolderLongpollError `json:"error"`
 }
@@ -756,7 +756,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderLongpollWrapper
+			var errWrap wrapListFolderLongpoll
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -780,7 +780,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 	return
 }
 
-type ListRevisionsWrapper struct {
+type wrapListRevisions struct {
 	apierror.ApiError
 	EndpointError *files.ListRevisionsError `json:"error"`
 }
@@ -824,7 +824,7 @@ func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListR
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListRevisionsWrapper
+			var errWrap wrapListRevisions
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -848,7 +848,7 @@ func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListR
 	return
 }
 
-type MoveWrapper struct {
+type wrapMove struct {
 	apierror.ApiError
 	EndpointError *files.RelocationError `json:"error"`
 }
@@ -892,7 +892,7 @@ func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MoveWrapper
+			var errWrap wrapMove
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -916,7 +916,7 @@ func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err err
 	return
 }
 
-type PermanentlyDeleteWrapper struct {
+type wrapPermanentlyDelete struct {
 	apierror.ApiError
 	EndpointError *files.DeleteError `json:"error"`
 }
@@ -960,7 +960,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap PermanentlyDeleteWrapper
+			var errWrap wrapPermanentlyDelete
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -979,7 +979,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (err error) {
 	return
 }
 
-type RestoreWrapper struct {
+type wrapRestore struct {
 	apierror.ApiError
 	EndpointError *files.RestoreError `json:"error"`
 }
@@ -1023,7 +1023,7 @@ func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap RestoreWrapper
+			var errWrap wrapRestore
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1047,7 +1047,7 @@ func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err
 	return
 }
 
-type SearchWrapper struct {
+type wrapSearch struct {
 	apierror.ApiError
 	EndpointError *files.SearchError `json:"error"`
 }
@@ -1091,7 +1091,7 @@ func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err e
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap SearchWrapper
+			var errWrap wrapSearch
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1115,7 +1115,7 @@ func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err e
 	return
 }
 
-type UploadWrapper struct {
+type wrapUpload struct {
 	apierror.ApiError
 	EndpointError *files.UploadError `json:"error"`
 }
@@ -1160,7 +1160,7 @@ func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UploadWrapper
+			var errWrap wrapUpload
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1184,7 +1184,7 @@ func (dbx *apiImpl) Upload(arg *files.CommitInfo, content io.Reader) (res *files
 	return
 }
 
-type UploadSessionAppendWrapper struct {
+type wrapUploadSessionAppend struct {
 	apierror.ApiError
 	EndpointError *files.UploadSessionLookupError `json:"error"`
 }
@@ -1229,7 +1229,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UploadSessionAppendWrapper
+			var errWrap wrapUploadSessionAppend
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1248,7 +1248,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *files.UploadSessionCursor, content 
 	return
 }
 
-type UploadSessionFinishWrapper struct {
+type wrapUploadSessionFinish struct {
 	apierror.ApiError
 	EndpointError *files.UploadSessionFinishError `json:"error"`
 }
@@ -1293,7 +1293,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, conte
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UploadSessionFinishWrapper
+			var errWrap wrapUploadSessionFinish
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1317,7 +1317,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *files.UploadSessionFinishArg, conte
 	return
 }
 
-type UploadSessionStartWrapper struct {
+type wrapUploadSessionStart struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -1353,7 +1353,7 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSess
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UploadSessionStartWrapper
+			var errWrap wrapUploadSessionStart
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1377,7 +1377,7 @@ func (dbx *apiImpl) UploadSessionStart(content io.Reader) (res *files.UploadSess
 	return
 }
 
-type AddFolderMemberWrapper struct {
+type wrapAddFolderMember struct {
 	apierror.ApiError
 	EndpointError *sharing.AddFolderMemberError `json:"error"`
 }
@@ -1421,7 +1421,7 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (err error)
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap AddFolderMemberWrapper
+			var errWrap wrapAddFolderMember
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1440,7 +1440,7 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (err error)
 	return
 }
 
-type CheckJobStatusWrapper struct {
+type wrapCheckJobStatus struct {
 	apierror.ApiError
 	EndpointError *async.PollError `json:"error"`
 }
@@ -1484,7 +1484,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CheckJobStatusWrapper
+			var errWrap wrapCheckJobStatus
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1508,7 +1508,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, 
 	return
 }
 
-type CheckShareJobStatusWrapper struct {
+type wrapCheckShareJobStatus struct {
 	apierror.ApiError
 	EndpointError *async.PollError `json:"error"`
 }
@@ -1552,7 +1552,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareF
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CheckShareJobStatusWrapper
+			var errWrap wrapCheckShareJobStatus
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1576,7 +1576,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareF
 	return
 }
 
-type CreateSharedLinkWrapper struct {
+type wrapCreateSharedLink struct {
 	apierror.ApiError
 	EndpointError *sharing.CreateSharedLinkError `json:"error"`
 }
@@ -1620,7 +1620,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sha
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CreateSharedLinkWrapper
+			var errWrap wrapCreateSharedLink
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1644,7 +1644,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sha
 	return
 }
 
-type CreateSharedLinkWithSettingsWrapper struct {
+type wrapCreateSharedLinkWithSettings struct {
 	apierror.ApiError
 	EndpointError *sharing.CreateSharedLinkWithSettingsError `json:"error"`
 }
@@ -1688,7 +1688,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWi
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap CreateSharedLinkWithSettingsWrapper
+			var errWrap wrapCreateSharedLinkWithSettings
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1712,7 +1712,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWi
 	return
 }
 
-type GetFolderMetadataWrapper struct {
+type wrapGetFolderMetadata struct {
 	apierror.ApiError
 	EndpointError *sharing.SharedFolderAccessError `json:"error"`
 }
@@ -1756,7 +1756,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharin
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetFolderMetadataWrapper
+			var errWrap wrapGetFolderMetadata
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1780,7 +1780,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharin
 	return
 }
 
-type GetSharedLinkFileWrapper struct {
+type wrapGetSharedLinkFile struct {
 	apierror.ApiError
 	EndpointError *sharing.GetSharedLinkFileError `json:"error"`
 }
@@ -1820,7 +1820,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (re
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetSharedLinkFileWrapper
+			var errWrap wrapGetSharedLinkFile
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1844,7 +1844,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (re
 	return
 }
 
-type GetSharedLinkMetadataWrapper struct {
+type wrapGetSharedLinkMetadata struct {
 	apierror.ApiError
 	EndpointError *sharing.SharedLinkError `json:"error"`
 }
@@ -1888,7 +1888,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg)
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetSharedLinkMetadataWrapper
+			var errWrap wrapGetSharedLinkMetadata
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1912,7 +1912,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg)
 	return
 }
 
-type GetSharedLinksWrapper struct {
+type wrapGetSharedLinks struct {
 	apierror.ApiError
 	EndpointError *sharing.GetSharedLinksError `json:"error"`
 }
@@ -1956,7 +1956,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetSharedLinksWrapper
+			var errWrap wrapGetSharedLinks
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -1980,7 +1980,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing
 	return
 }
 
-type ListFolderMembersWrapper struct {
+type wrapListFolderMembers struct {
 	apierror.ApiError
 	EndpointError *sharing.SharedFolderAccessError `json:"error"`
 }
@@ -2024,7 +2024,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderMembersWrapper
+			var errWrap wrapListFolderMembers
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2048,7 +2048,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *
 	return
 }
 
-type ListFolderMembersContinueWrapper struct {
+type wrapListFolderMembersContinue struct {
 	apierror.ApiError
 	EndpointError *sharing.ListFolderMembersContinueError `json:"error"`
 }
@@ -2092,7 +2092,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersCont
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFolderMembersContinueWrapper
+			var errWrap wrapListFolderMembersContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2116,7 +2116,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersCont
 	return
 }
 
-type ListFoldersWrapper struct {
+type wrapListFolders struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -2160,7 +2160,7 @@ func (dbx *apiImpl) ListFolders(arg *sharing.ListFoldersArgs) (res *sharing.List
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFoldersWrapper
+			var errWrap wrapListFolders
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2184,7 +2184,7 @@ func (dbx *apiImpl) ListFolders(arg *sharing.ListFoldersArgs) (res *sharing.List
 	return
 }
 
-type ListFoldersContinueWrapper struct {
+type wrapListFoldersContinue struct {
 	apierror.ApiError
 	EndpointError *sharing.ListFoldersContinueError `json:"error"`
 }
@@ -2228,7 +2228,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListFoldersContinueWrapper
+			var errWrap wrapListFoldersContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2252,7 +2252,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 	return
 }
 
-type ListMountableFoldersWrapper struct {
+type wrapListMountableFolders struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -2296,7 +2296,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *sharing.ListFoldersArgs) (res *sha
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListMountableFoldersWrapper
+			var errWrap wrapListMountableFolders
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2320,7 +2320,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *sharing.ListFoldersArgs) (res *sha
 	return
 }
 
-type ListMountableFoldersContinueWrapper struct {
+type wrapListMountableFoldersContinue struct {
 	apierror.ApiError
 	EndpointError *sharing.ListFoldersContinueError `json:"error"`
 }
@@ -2364,7 +2364,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *sharing.ListFoldersContinu
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListMountableFoldersContinueWrapper
+			var errWrap wrapListMountableFoldersContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2388,7 +2388,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *sharing.ListFoldersContinu
 	return
 }
 
-type ListSharedLinksWrapper struct {
+type wrapListSharedLinks struct {
 	apierror.ApiError
 	EndpointError *sharing.ListSharedLinksError `json:"error"`
 }
@@ -2432,7 +2432,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *shari
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ListSharedLinksWrapper
+			var errWrap wrapListSharedLinks
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2456,7 +2456,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *shari
 	return
 }
 
-type ModifySharedLinkSettingsWrapper struct {
+type wrapModifySharedLinkSettings struct {
 	apierror.ApiError
 	EndpointError *sharing.ModifySharedLinkSettingsError `json:"error"`
 }
@@ -2500,7 +2500,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettin
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ModifySharedLinkSettingsWrapper
+			var errWrap wrapModifySharedLinkSettings
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2524,7 +2524,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettin
 	return
 }
 
-type MountFolderWrapper struct {
+type wrapMountFolder struct {
 	apierror.ApiError
 	EndpointError *sharing.MountFolderError `json:"error"`
 }
@@ -2568,7 +2568,7 @@ func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.Share
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MountFolderWrapper
+			var errWrap wrapMountFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2592,7 +2592,7 @@ func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.Share
 	return
 }
 
-type RelinquishFolderMembershipWrapper struct {
+type wrapRelinquishFolderMembership struct {
 	apierror.ApiError
 	EndpointError *sharing.RelinquishFolderMembershipError `json:"error"`
 }
@@ -2636,7 +2636,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap RelinquishFolderMembershipWrapper
+			var errWrap wrapRelinquishFolderMembership
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2655,7 +2655,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 	return
 }
 
-type RemoveFolderMemberWrapper struct {
+type wrapRemoveFolderMember struct {
 	apierror.ApiError
 	EndpointError *sharing.RemoveFolderMemberError `json:"error"`
 }
@@ -2699,7 +2699,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap RemoveFolderMemberWrapper
+			var errWrap wrapRemoveFolderMember
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2723,7 +2723,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res 
 	return
 }
 
-type RevokeSharedLinkWrapper struct {
+type wrapRevokeSharedLink struct {
 	apierror.ApiError
 	EndpointError *sharing.RevokeSharedLinkError `json:"error"`
 }
@@ -2767,7 +2767,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (err erro
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap RevokeSharedLinkWrapper
+			var errWrap wrapRevokeSharedLink
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2786,7 +2786,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (err erro
 	return
 }
 
-type ShareFolderWrapper struct {
+type wrapShareFolder struct {
 	apierror.ApiError
 	EndpointError *sharing.ShareFolderError `json:"error"`
 }
@@ -2830,7 +2830,7 @@ func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.Share
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ShareFolderWrapper
+			var errWrap wrapShareFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2854,7 +2854,7 @@ func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.Share
 	return
 }
 
-type TransferFolderWrapper struct {
+type wrapTransferFolder struct {
 	apierror.ApiError
 	EndpointError *sharing.TransferFolderError `json:"error"`
 }
@@ -2898,7 +2898,7 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap TransferFolderWrapper
+			var errWrap wrapTransferFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2917,7 +2917,7 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (err error) {
 	return
 }
 
-type UnmountFolderWrapper struct {
+type wrapUnmountFolder struct {
 	apierror.ApiError
 	EndpointError *sharing.UnmountFolderError `json:"error"`
 }
@@ -2961,7 +2961,7 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UnmountFolderWrapper
+			var errWrap wrapUnmountFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -2980,7 +2980,7 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (err error) {
 	return
 }
 
-type UnshareFolderWrapper struct {
+type wrapUnshareFolder struct {
 	apierror.ApiError
 	EndpointError *sharing.UnshareFolderError `json:"error"`
 }
@@ -3024,7 +3024,7 @@ func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.Lau
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UnshareFolderWrapper
+			var errWrap wrapUnshareFolder
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3048,7 +3048,7 @@ func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.Lau
 	return
 }
 
-type UpdateFolderMemberWrapper struct {
+type wrapUpdateFolderMember struct {
 	apierror.ApiError
 	EndpointError *sharing.UpdateFolderMemberError `json:"error"`
 }
@@ -3092,7 +3092,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (err 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UpdateFolderMemberWrapper
+			var errWrap wrapUpdateFolderMember
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3111,7 +3111,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (err 
 	return
 }
 
-type UpdateFolderPolicyWrapper struct {
+type wrapUpdateFolderPolicy struct {
 	apierror.ApiError
 	EndpointError *sharing.UpdateFolderPolicyError `json:"error"`
 }
@@ -3155,7 +3155,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap UpdateFolderPolicyWrapper
+			var errWrap wrapUpdateFolderPolicy
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3179,7 +3179,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res 
 	return
 }
 
-type DevicesListMemberDevicesWrapper struct {
+type wrapDevicesListMemberDevices struct {
 	apierror.ApiError
 	EndpointError *team.ListMemberDevicesError `json:"error"`
 }
@@ -3223,7 +3223,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (re
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DevicesListMemberDevicesWrapper
+			var errWrap wrapDevicesListMemberDevices
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3247,7 +3247,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (re
 	return
 }
 
-type DevicesListTeamDevicesWrapper struct {
+type wrapDevicesListTeamDevices struct {
 	apierror.ApiError
 	EndpointError *team.ListTeamDevicesError `json:"error"`
 }
@@ -3291,7 +3291,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *t
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DevicesListTeamDevicesWrapper
+			var errWrap wrapDevicesListTeamDevices
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3315,7 +3315,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *t
 	return
 }
 
-type DevicesRevokeDeviceSessionWrapper struct {
+type wrapDevicesRevokeDeviceSession struct {
 	apierror.ApiError
 	EndpointError *team.RevokeDeviceSessionError `json:"error"`
 }
@@ -3359,7 +3359,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DevicesRevokeDeviceSessionWrapper
+			var errWrap wrapDevicesRevokeDeviceSession
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3378,7 +3378,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 	return
 }
 
-type DevicesRevokeDeviceSessionBatchWrapper struct {
+type wrapDevicesRevokeDeviceSessionBatch struct {
 	apierror.ApiError
 	EndpointError *team.RevokeDeviceSessionBatchError `json:"error"`
 }
@@ -3422,7 +3422,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessio
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap DevicesRevokeDeviceSessionBatchWrapper
+			var errWrap wrapDevicesRevokeDeviceSessionBatch
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3446,7 +3446,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessio
 	return
 }
 
-type GetInfoWrapper struct {
+type wrapGetInfo struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -3481,7 +3481,7 @@ func (dbx *apiImpl) GetInfo() (res *team.TeamGetInfoResult, err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetInfoWrapper
+			var errWrap wrapGetInfo
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3505,7 +3505,7 @@ func (dbx *apiImpl) GetInfo() (res *team.TeamGetInfoResult, err error) {
 	return
 }
 
-type GroupsCreateWrapper struct {
+type wrapGroupsCreate struct {
 	apierror.ApiError
 	EndpointError *team.GroupCreateError `json:"error"`
 }
@@ -3549,7 +3549,7 @@ func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullI
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsCreateWrapper
+			var errWrap wrapGroupsCreate
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3573,7 +3573,7 @@ func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullI
 	return
 }
 
-type GroupsDeleteWrapper struct {
+type wrapGroupsDelete struct {
 	apierror.ApiError
 	EndpointError *team.GroupDeleteError `json:"error"`
 }
@@ -3617,7 +3617,7 @@ func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmpt
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsDeleteWrapper
+			var errWrap wrapGroupsDelete
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3641,7 +3641,7 @@ func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmpt
 	return
 }
 
-type GroupsGetInfoWrapper struct {
+type wrapGroupsGetInfo struct {
 	apierror.ApiError
 	EndpointError *team.GroupsGetInfoError `json:"error"`
 }
@@ -3685,7 +3685,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsG
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsGetInfoWrapper
+			var errWrap wrapGroupsGetInfo
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3709,7 +3709,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsG
 	return
 }
 
-type GroupsJobStatusGetWrapper struct {
+type wrapGroupsJobStatusGet struct {
 	apierror.ApiError
 	EndpointError *team.GroupsPollError `json:"error"`
 }
@@ -3753,7 +3753,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsJobStatusGetWrapper
+			var errWrap wrapGroupsJobStatusGet
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3777,7 +3777,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 	return
 }
 
-type GroupsListWrapper struct {
+type wrapGroupsList struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -3821,7 +3821,7 @@ func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListRes
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsListWrapper
+			var errWrap wrapGroupsList
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3845,7 +3845,7 @@ func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListRes
 	return
 }
 
-type GroupsListContinueWrapper struct {
+type wrapGroupsListContinue struct {
 	apierror.ApiError
 	EndpointError *team.GroupsListContinueError `json:"error"`
 }
@@ -3889,7 +3889,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *te
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsListContinueWrapper
+			var errWrap wrapGroupsListContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3913,7 +3913,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *te
 	return
 }
 
-type GroupsMembersAddWrapper struct {
+type wrapGroupsMembersAdd struct {
 	apierror.ApiError
 	EndpointError *team.GroupMembersAddError `json:"error"`
 }
@@ -3957,7 +3957,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.Gr
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsMembersAddWrapper
+			var errWrap wrapGroupsMembersAdd
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -3981,7 +3981,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.Gr
 	return
 }
 
-type GroupsMembersRemoveWrapper struct {
+type wrapGroupsMembersRemove struct {
 	apierror.ApiError
 	EndpointError *team.GroupMembersRemoveError `json:"error"`
 }
@@ -4025,7 +4025,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *t
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsMembersRemoveWrapper
+			var errWrap wrapGroupsMembersRemove
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4049,7 +4049,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *t
 	return
 }
 
-type GroupsMembersSetAccessTypeWrapper struct {
+type wrapGroupsMembersSetAccessType struct {
 	apierror.ApiError
 	EndpointError *team.GroupMemberSelectorError `json:"error"`
 }
@@ -4093,7 +4093,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTy
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsMembersSetAccessTypeWrapper
+			var errWrap wrapGroupsMembersSetAccessType
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4117,7 +4117,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTy
 	return
 }
 
-type GroupsUpdateWrapper struct {
+type wrapGroupsUpdate struct {
 	apierror.ApiError
 	EndpointError *team.GroupUpdateError `json:"error"`
 }
@@ -4161,7 +4161,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFull
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GroupsUpdateWrapper
+			var errWrap wrapGroupsUpdate
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4185,7 +4185,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFull
 	return
 }
 
-type LinkedAppsListMemberLinkedAppsWrapper struct {
+type wrapLinkedAppsListMemberLinkedApps struct {
 	apierror.ApiError
 	EndpointError *team.ListMemberAppsError `json:"error"`
 }
@@ -4229,7 +4229,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap LinkedAppsListMemberLinkedAppsWrapper
+			var errWrap wrapLinkedAppsListMemberLinkedApps
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4253,7 +4253,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) 
 	return
 }
 
-type LinkedAppsListTeamLinkedAppsWrapper struct {
+type wrapLinkedAppsListTeamLinkedApps struct {
 	apierror.ApiError
 	EndpointError *team.ListTeamAppsError `json:"error"`
 }
@@ -4297,7 +4297,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap LinkedAppsListTeamLinkedAppsWrapper
+			var errWrap wrapLinkedAppsListTeamLinkedApps
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4321,7 +4321,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res
 	return
 }
 
-type LinkedAppsRevokeLinkedAppWrapper struct {
+type wrapLinkedAppsRevokeLinkedApp struct {
 	apierror.ApiError
 	EndpointError *team.RevokeLinkedAppError `json:"error"`
 }
@@ -4365,7 +4365,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap LinkedAppsRevokeLinkedAppWrapper
+			var errWrap wrapLinkedAppsRevokeLinkedApp
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4384,7 +4384,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 	return
 }
 
-type LinkedAppsRevokeLinkedAppBatchWrapper struct {
+type wrapLinkedAppsRevokeLinkedAppBatch struct {
 	apierror.ApiError
 	EndpointError *team.RevokeLinkedAppBatchError `json:"error"`
 }
@@ -4428,7 +4428,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppB
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap LinkedAppsRevokeLinkedAppBatchWrapper
+			var errWrap wrapLinkedAppsRevokeLinkedAppBatch
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4452,7 +4452,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppB
 	return
 }
 
-type MembersAddWrapper struct {
+type wrapMembersAdd struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -4496,7 +4496,7 @@ func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLau
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersAddWrapper
+			var errWrap wrapMembersAdd
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4520,7 +4520,7 @@ func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLau
 	return
 }
 
-type MembersAddJobStatusGetWrapper struct {
+type wrapMembersAddJobStatusGet struct {
 	apierror.ApiError
 	EndpointError *async.PollError `json:"error"`
 }
@@ -4564,7 +4564,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.Member
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersAddJobStatusGetWrapper
+			var errWrap wrapMembersAddJobStatusGet
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4588,7 +4588,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.Member
 	return
 }
 
-type MembersGetInfoWrapper struct {
+type wrapMembersGetInfo struct {
 	apierror.ApiError
 	EndpointError *team.MembersGetInfoError `json:"error"`
 }
@@ -4632,7 +4632,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.Me
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersGetInfoWrapper
+			var errWrap wrapMembersGetInfo
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4656,7 +4656,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.Me
 	return
 }
 
-type MembersListWrapper struct {
+type wrapMembersList struct {
 	apierror.ApiError
 	EndpointError *team.MembersListError `json:"error"`
 }
@@ -4700,7 +4700,7 @@ func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersList
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersListWrapper
+			var errWrap wrapMembersList
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4724,7 +4724,7 @@ func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersList
 	return
 }
 
-type MembersListContinueWrapper struct {
+type wrapMembersListContinue struct {
 	apierror.ApiError
 	EndpointError *team.MembersListContinueError `json:"error"`
 }
@@ -4768,7 +4768,7 @@ func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersListContinueWrapper
+			var errWrap wrapMembersListContinue
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4792,7 +4792,7 @@ func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *
 	return
 }
 
-type MembersRemoveWrapper struct {
+type wrapMembersRemove struct {
 	apierror.ApiError
 	EndpointError *team.MembersRemoveError `json:"error"`
 }
@@ -4836,7 +4836,7 @@ func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.Launch
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersRemoveWrapper
+			var errWrap wrapMembersRemove
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4860,7 +4860,7 @@ func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.Launch
 	return
 }
 
-type MembersRemoveJobStatusGetWrapper struct {
+type wrapMembersRemoveJobStatusGet struct {
 	apierror.ApiError
 	EndpointError *async.PollError `json:"error"`
 }
@@ -4904,7 +4904,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersRemoveJobStatusGetWrapper
+			var errWrap wrapMembersRemoveJobStatusGet
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4928,7 +4928,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	return
 }
 
-type MembersSendWelcomeEmailWrapper struct {
+type wrapMembersSendWelcomeEmail struct {
 	apierror.ApiError
 	EndpointError *team.MembersSendWelcomeError `json:"error"`
 }
@@ -4972,7 +4972,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (err erro
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersSendWelcomeEmailWrapper
+			var errWrap wrapMembersSendWelcomeEmail
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -4991,7 +4991,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (err erro
 	return
 }
 
-type MembersSetAdminPermissionsWrapper struct {
+type wrapMembersSetAdminPermissions struct {
 	apierror.ApiError
 	EndpointError *team.MembersSetPermissionsError `json:"error"`
 }
@@ -5035,7 +5035,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsAr
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersSetAdminPermissionsWrapper
+			var errWrap wrapMembersSetAdminPermissions
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5059,7 +5059,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsAr
 	return
 }
 
-type MembersSetProfileWrapper struct {
+type wrapMembersSetProfile struct {
 	apierror.ApiError
 	EndpointError *team.MembersSetProfileError `json:"error"`
 }
@@ -5103,7 +5103,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersSetProfileWrapper
+			var errWrap wrapMembersSetProfile
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5127,7 +5127,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team
 	return
 }
 
-type MembersSuspendWrapper struct {
+type wrapMembersSuspend struct {
 	apierror.ApiError
 	EndpointError *team.MembersSuspendError `json:"error"`
 }
@@ -5171,7 +5171,7 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersSuspendWrapper
+			var errWrap wrapMembersSuspend
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5190,7 +5190,7 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (err error) {
 	return
 }
 
-type MembersUnsuspendWrapper struct {
+type wrapMembersUnsuspend struct {
 	apierror.ApiError
 	EndpointError *team.MembersUnsuspendError `json:"error"`
 }
@@ -5234,7 +5234,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (err error) 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap MembersUnsuspendWrapper
+			var errWrap wrapMembersUnsuspend
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5253,7 +5253,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (err error) 
 	return
 }
 
-type ReportsGetActivityWrapper struct {
+type wrapReportsGetActivity struct {
 	apierror.ApiError
 	EndpointError *team.DateRangeError `json:"error"`
 }
@@ -5297,7 +5297,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivi
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ReportsGetActivityWrapper
+			var errWrap wrapReportsGetActivity
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5321,7 +5321,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivi
 	return
 }
 
-type ReportsGetDevicesWrapper struct {
+type wrapReportsGetDevices struct {
 	apierror.ApiError
 	EndpointError *team.DateRangeError `json:"error"`
 }
@@ -5365,7 +5365,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevices
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ReportsGetDevicesWrapper
+			var errWrap wrapReportsGetDevices
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5389,7 +5389,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevices
 	return
 }
 
-type ReportsGetMembershipWrapper struct {
+type wrapReportsGetMembership struct {
 	apierror.ApiError
 	EndpointError *team.DateRangeError `json:"error"`
 }
@@ -5433,7 +5433,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMemb
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ReportsGetMembershipWrapper
+			var errWrap wrapReportsGetMembership
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5457,7 +5457,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMemb
 	return
 }
 
-type ReportsGetStorageWrapper struct {
+type wrapReportsGetStorage struct {
 	apierror.ApiError
 	EndpointError *team.DateRangeError `json:"error"`
 }
@@ -5501,7 +5501,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorage
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap ReportsGetStorageWrapper
+			var errWrap wrapReportsGetStorage
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5525,7 +5525,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorage
 	return
 }
 
-type GetAccountWrapper struct {
+type wrapGetAccount struct {
 	apierror.ApiError
 	EndpointError *users.GetAccountError `json:"error"`
 }
@@ -5569,7 +5569,7 @@ func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccoun
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetAccountWrapper
+			var errWrap wrapGetAccount
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5593,7 +5593,7 @@ func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccoun
 	return
 }
 
-type GetAccountBatchWrapper struct {
+type wrapGetAccountBatch struct {
 	apierror.ApiError
 	EndpointError *users.GetAccountBatchError `json:"error"`
 }
@@ -5637,7 +5637,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetAccountBatchWrapper
+			var errWrap wrapGetAccountBatch
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5661,7 +5661,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users
 	return
 }
 
-type GetCurrentAccountWrapper struct {
+type wrapGetCurrentAccount struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -5696,7 +5696,7 @@ func (dbx *apiImpl) GetCurrentAccount() (res *users.FullAccount, err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetCurrentAccountWrapper
+			var errWrap wrapGetCurrentAccount
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
@@ -5720,7 +5720,7 @@ func (dbx *apiImpl) GetCurrentAccount() (res *users.FullAccount, err error) {
 	return
 }
 
-type GetSpaceUsageWrapper struct {
+type wrapGetSpaceUsage struct {
 	apierror.ApiError
 	EndpointError struct{} `json:"error"`
 }
@@ -5755,7 +5755,7 @@ func (dbx *apiImpl) GetSpaceUsage() (res *users.SpaceUsage, err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var errWrap GetSpaceUsageWrapper
+			var errWrap wrapGetSpaceUsage
 			err = json.Unmarshal(body, &errWrap)
 			if err != nil {
 				return
