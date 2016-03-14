@@ -41,8 +41,9 @@ type DeviceSession struct {
 	Updated time.Time `json:"updated,omitempty"`
 }
 
-func NewDeviceSession() *DeviceSession {
+func NewDeviceSession(SessionId string) *DeviceSession {
 	s := new(DeviceSession)
+	s.SessionId = SessionId
 	return s
 }
 
@@ -66,8 +67,12 @@ type ActiveWebSession struct {
 	Updated time.Time `json:"updated,omitempty"`
 }
 
-func NewActiveWebSession() *ActiveWebSession {
+func NewActiveWebSession(SessionId string, UserAgent string, Os string, Browser string) *ActiveWebSession {
 	s := new(ActiveWebSession)
+	s.SessionId = SessionId
+	s.UserAgent = UserAgent
+	s.Os = Os
+	s.Browser = Browser
 	return s
 }
 
@@ -92,8 +97,11 @@ type ApiApp struct {
 	Linked time.Time `json:"linked,omitempty"`
 }
 
-func NewApiApp() *ApiApp {
+func NewApiApp(AppId string, AppName string, IsAppFolder bool) *ApiApp {
 	s := new(ApiApp)
+	s.AppId = AppId
+	s.AppName = AppName
+	s.IsAppFolder = IsAppFolder
 	return s
 }
 
@@ -103,8 +111,9 @@ type BaseDfbReport struct {
 	StartDate string `json:"start_date"`
 }
 
-func NewBaseDfbReport() *BaseDfbReport {
+func NewBaseDfbReport(StartDate string) *BaseDfbReport {
 	s := new(BaseDfbReport)
+	s.StartDate = StartDate
 	return s
 }
 
@@ -150,8 +159,14 @@ type DesktopClientSession struct {
 	Updated time.Time `json:"updated,omitempty"`
 }
 
-func NewDesktopClientSession() *DesktopClientSession {
+func NewDesktopClientSession(SessionId string, HostName string, ClientType *DesktopPlatform, ClientVersion string, Platform string, IsDeleteOnUnlinkSupported bool) *DesktopClientSession {
 	s := new(DesktopClientSession)
+	s.SessionId = SessionId
+	s.HostName = HostName
+	s.ClientType = ClientType
+	s.ClientVersion = ClientVersion
+	s.Platform = Platform
+	s.IsDeleteOnUnlinkSupported = IsDeleteOnUnlinkSupported
 	return s
 }
 
@@ -166,8 +181,10 @@ type DeviceSessionArg struct {
 	TeamMemberId string `json:"team_member_id"`
 }
 
-func NewDeviceSessionArg() *DeviceSessionArg {
+func NewDeviceSessionArg(SessionId string, TeamMemberId string) *DeviceSessionArg {
 	s := new(DeviceSessionArg)
+	s.SessionId = SessionId
+	s.TeamMemberId = TeamMemberId
 	return s
 }
 
@@ -192,8 +209,15 @@ type DevicesActive struct {
 	Total []uint64 `json:"total"`
 }
 
-func NewDevicesActive() *DevicesActive {
+func NewDevicesActive(Windows []uint64, Macos []uint64, Linux []uint64, Ios []uint64, Android []uint64, Other []uint64, Total []uint64) *DevicesActive {
 	s := new(DevicesActive)
+	s.Windows = Windows
+	s.Macos = Macos
+	s.Linux = Linux
+	s.Ios = Ios
+	s.Android = Android
+	s.Other = Other
+	s.Total = Total
 	return s
 }
 
@@ -242,8 +266,23 @@ type GetActivityReport struct {
 	SharedLinksViewedTotal []uint64 `json:"shared_links_viewed_total"`
 }
 
-func NewGetActivityReport() *GetActivityReport {
+func NewGetActivityReport(StartDate string, Adds []uint64, Edits []uint64, Deletes []uint64, ActiveUsers28Day []uint64, ActiveUsers7Day []uint64, ActiveUsers1Day []uint64, ActiveSharedFolders28Day []uint64, ActiveSharedFolders7Day []uint64, ActiveSharedFolders1Day []uint64, SharedLinksCreated []uint64, SharedLinksViewedByTeam []uint64, SharedLinksViewedByOutsideUser []uint64, SharedLinksViewedByNotLoggedIn []uint64, SharedLinksViewedTotal []uint64) *GetActivityReport {
 	s := new(GetActivityReport)
+	s.StartDate = StartDate
+	s.Adds = Adds
+	s.Edits = Edits
+	s.Deletes = Deletes
+	s.ActiveUsers28Day = ActiveUsers28Day
+	s.ActiveUsers7Day = ActiveUsers7Day
+	s.ActiveUsers1Day = ActiveUsers1Day
+	s.ActiveSharedFolders28Day = ActiveSharedFolders28Day
+	s.ActiveSharedFolders7Day = ActiveSharedFolders7Day
+	s.ActiveSharedFolders1Day = ActiveSharedFolders1Day
+	s.SharedLinksCreated = SharedLinksCreated
+	s.SharedLinksViewedByTeam = SharedLinksViewedByTeam
+	s.SharedLinksViewedByOutsideUser = SharedLinksViewedByOutsideUser
+	s.SharedLinksViewedByNotLoggedIn = SharedLinksViewedByNotLoggedIn
+	s.SharedLinksViewedTotal = SharedLinksViewedTotal
 	return s
 }
 
@@ -262,8 +301,12 @@ type GetDevicesReport struct {
 	Active28Day *DevicesActive `json:"active_28_day"`
 }
 
-func NewGetDevicesReport() *GetDevicesReport {
+func NewGetDevicesReport(StartDate string, Active1Day *DevicesActive, Active7Day *DevicesActive, Active28Day *DevicesActive) *GetDevicesReport {
 	s := new(GetDevicesReport)
+	s.StartDate = StartDate
+	s.Active1Day = Active1Day
+	s.Active7Day = Active7Day
+	s.Active28Day = Active28Day
 	return s
 }
 
@@ -285,8 +328,14 @@ type GetMembershipReport struct {
 	Licenses []uint64 `json:"licenses"`
 }
 
-func NewGetMembershipReport() *GetMembershipReport {
+func NewGetMembershipReport(StartDate string, TeamSize []uint64, PendingInvites []uint64, MembersJoined []uint64, SuspendedMembers []uint64, Licenses []uint64) *GetMembershipReport {
 	s := new(GetMembershipReport)
+	s.StartDate = StartDate
+	s.TeamSize = TeamSize
+	s.PendingInvites = PendingInvites
+	s.MembersJoined = MembersJoined
+	s.SuspendedMembers = SuspendedMembers
+	s.Licenses = Licenses
 	return s
 }
 
@@ -314,8 +363,14 @@ type GetStorageReport struct {
 	MemberStorageMap [][]*StorageBucket `json:"member_storage_map"`
 }
 
-func NewGetStorageReport() *GetStorageReport {
+func NewGetStorageReport(StartDate string, TotalUsage []uint64, SharedUsage []uint64, UnsharedUsage []uint64, SharedFolders []uint64, MemberStorageMap [][]*StorageBucket) *GetStorageReport {
 	s := new(GetStorageReport)
+	s.StartDate = StartDate
+	s.TotalUsage = TotalUsage
+	s.SharedUsage = SharedUsage
+	s.UnsharedUsage = UnsharedUsage
+	s.SharedFolders = SharedFolders
+	s.MemberStorageMap = MemberStorageMap
 	return s
 }
 
@@ -332,8 +387,9 @@ type GroupCreateArg struct {
 	GroupExternalId string `json:"group_external_id,omitempty"`
 }
 
-func NewGroupCreateArg() *GroupCreateArg {
+func NewGroupCreateArg(GroupName string) *GroupCreateArg {
 	s := new(GroupCreateArg)
+	s.GroupName = GroupName
 	return s
 }
 
@@ -361,8 +417,11 @@ type GroupSummary struct {
 	GroupExternalId string `json:"group_external_id,omitempty"`
 }
 
-func NewGroupSummary() *GroupSummary {
+func NewGroupSummary(GroupName string, GroupId string, MemberCount uint32) *GroupSummary {
 	s := new(GroupSummary)
+	s.GroupName = GroupName
+	s.GroupId = GroupId
+	s.MemberCount = MemberCount
 	return s
 }
 
@@ -382,8 +441,13 @@ type GroupFullInfo struct {
 	GroupExternalId string `json:"group_external_id,omitempty"`
 }
 
-func NewGroupFullInfo() *GroupFullInfo {
+func NewGroupFullInfo(GroupName string, GroupId string, MemberCount uint32, Members []*GroupMemberInfo, Created uint64) *GroupFullInfo {
 	s := new(GroupFullInfo)
+	s.GroupName = GroupName
+	s.GroupId = GroupId
+	s.MemberCount = MemberCount
+	s.Members = Members
+	s.Created = Created
 	return s
 }
 
@@ -395,8 +459,10 @@ type GroupMemberInfo struct {
 	AccessType *GroupAccessType `json:"access_type"`
 }
 
-func NewGroupMemberInfo() *GroupMemberInfo {
+func NewGroupMemberInfo(Profile *MemberProfile, AccessType *GroupAccessType) *GroupMemberInfo {
 	s := new(GroupMemberInfo)
+	s.Profile = Profile
+	s.AccessType = AccessType
 	return s
 }
 
@@ -408,8 +474,10 @@ type GroupMemberSelector struct {
 	User *UserSelectorArg `json:"user"`
 }
 
-func NewGroupMemberSelector() *GroupMemberSelector {
+func NewGroupMemberSelector(Group *GroupSelector, User *UserSelectorArg) *GroupMemberSelector {
 	s := new(GroupMemberSelector)
+	s.Group = Group
+	s.User = User
 	return s
 }
 
@@ -426,8 +494,10 @@ type GroupMembersAddArg struct {
 	Members []*MemberAccess `json:"members"`
 }
 
-func NewGroupMembersAddArg() *GroupMembersAddArg {
+func NewGroupMembersAddArg(Group *GroupSelector, Members []*MemberAccess) *GroupMembersAddArg {
 	s := new(GroupMembersAddArg)
+	s.Group = Group
+	s.Members = Members
 	return s
 }
 
@@ -491,8 +561,10 @@ type GroupMembersChangeResult struct {
 	AsyncJobId string `json:"async_job_id"`
 }
 
-func NewGroupMembersChangeResult() *GroupMembersChangeResult {
+func NewGroupMembersChangeResult(GroupInfo *GroupFullInfo, AsyncJobId string) *GroupMembersChangeResult {
 	s := new(GroupMembersChangeResult)
+	s.GroupInfo = GroupInfo
+	s.AsyncJobId = AsyncJobId
 	return s
 }
 
@@ -501,8 +573,10 @@ type GroupMembersRemoveArg struct {
 	Users []*UserSelectorArg `json:"users"`
 }
 
-func NewGroupMembersRemoveArg() *GroupMembersRemoveArg {
+func NewGroupMembersRemoveArg(Group *GroupSelector, Users []*UserSelectorArg) *GroupMembersRemoveArg {
 	s := new(GroupMembersRemoveArg)
+	s.Group = Group
+	s.Users = Users
 	return s
 }
 
@@ -524,8 +598,10 @@ type GroupMembersSelector struct {
 	Users *UsersSelectorArg `json:"users"`
 }
 
-func NewGroupMembersSelector() *GroupMembersSelector {
+func NewGroupMembersSelector(Group *GroupSelector, Users *UsersSelectorArg) *GroupMembersSelector {
 	s := new(GroupMembersSelector)
+	s.Group = Group
+	s.Users = Users
 	return s
 }
 
@@ -538,8 +614,11 @@ type GroupMembersSetAccessTypeArg struct {
 	AccessType *GroupAccessType `json:"access_type"`
 }
 
-func NewGroupMembersSetAccessTypeArg() *GroupMembersSetAccessTypeArg {
+func NewGroupMembersSetAccessTypeArg(Group *GroupSelector, User *UserSelectorArg, AccessType *GroupAccessType) *GroupMembersSetAccessTypeArg {
 	s := new(GroupMembersSetAccessTypeArg)
+	s.Group = Group
+	s.User = User
+	s.AccessType = AccessType
 	return s
 }
 
@@ -600,8 +679,9 @@ type GroupUpdateArgs struct {
 	NewGroupExternalId string `json:"new_group_external_id,omitempty"`
 }
 
-func NewGroupUpdateArgs() *GroupUpdateArgs {
+func NewGroupUpdateArgs(Group *GroupSelector) *GroupUpdateArgs {
 	s := new(GroupUpdateArgs)
+	s.Group = Group
 	return s
 }
 
@@ -674,8 +754,9 @@ type GroupsListContinueArg struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewGroupsListContinueArg() *GroupsListContinueArg {
+func NewGroupsListContinueArg(Cursor string) *GroupsListContinueArg {
 	s := new(GroupsListContinueArg)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -692,8 +773,11 @@ type GroupsListResult struct {
 	HasMore bool `json:"has_more"`
 }
 
-func NewGroupsListResult() *GroupsListResult {
+func NewGroupsListResult(Groups []*GroupSummary, Cursor string, HasMore bool) *GroupsListResult {
 	s := new(GroupsListResult)
+	s.Groups = Groups
+	s.Cursor = Cursor
+	s.HasMore = HasMore
 	return s
 }
 
@@ -752,8 +836,9 @@ type ListMemberAppsArg struct {
 	TeamMemberId string `json:"team_member_id"`
 }
 
-func NewListMemberAppsArg() *ListMemberAppsArg {
+func NewListMemberAppsArg(TeamMemberId string) *ListMemberAppsArg {
 	s := new(ListMemberAppsArg)
+	s.TeamMemberId = TeamMemberId
 	return s
 }
 
@@ -767,8 +852,9 @@ type ListMemberAppsResult struct {
 	LinkedApiApps []*ApiApp `json:"linked_api_apps"`
 }
 
-func NewListMemberAppsResult() *ListMemberAppsResult {
+func NewListMemberAppsResult(LinkedApiApps []*ApiApp) *ListMemberAppsResult {
 	s := new(ListMemberAppsResult)
+	s.LinkedApiApps = LinkedApiApps
 	return s
 }
 
@@ -783,8 +869,9 @@ type ListMemberDevicesArg struct {
 	IncludeMobileClients bool `json:"include_mobile_clients"`
 }
 
-func NewListMemberDevicesArg() *ListMemberDevicesArg {
+func NewListMemberDevicesArg(TeamMemberId string) *ListMemberDevicesArg {
 	s := new(ListMemberDevicesArg)
+	s.TeamMemberId = TeamMemberId
 	s.IncludeWebSessions = true
 	s.IncludeDesktopClients = true
 	s.IncludeMobileClients = true
@@ -840,8 +927,10 @@ type ListTeamAppsResult struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-func NewListTeamAppsResult() *ListTeamAppsResult {
+func NewListTeamAppsResult(Apps []*MemberLinkedApps, HasMore bool) *ListTeamAppsResult {
 	s := new(ListTeamAppsResult)
+	s.Apps = Apps
+	s.HasMore = HasMore
 	return s
 }
 
@@ -882,8 +971,10 @@ type ListTeamDevicesResult struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-func NewListTeamDevicesResult() *ListTeamDevicesResult {
+func NewListTeamDevicesResult(Devices []*MemberDevices, HasMore bool) *ListTeamDevicesResult {
 	s := new(ListTeamDevicesResult)
+	s.Devices = Devices
+	s.HasMore = HasMore
 	return s
 }
 
@@ -895,8 +986,10 @@ type MemberAccess struct {
 	AccessType *GroupAccessType `json:"access_type"`
 }
 
-func NewMemberAccess() *MemberAccess {
+func NewMemberAccess(User *UserSelectorArg, AccessType *GroupAccessType) *MemberAccess {
 	s := new(MemberAccess)
+	s.User = User
+	s.AccessType = AccessType
 	return s
 }
 
@@ -916,8 +1009,11 @@ type MemberAddArg struct {
 	Role             *AdminTier `json:"role"`
 }
 
-func NewMemberAddArg() *MemberAddArg {
+func NewMemberAddArg(MemberEmail string, MemberGivenName string, MemberSurname string) *MemberAddArg {
 	s := new(MemberAddArg)
+	s.MemberEmail = MemberEmail
+	s.MemberGivenName = MemberGivenName
+	s.MemberSurname = MemberSurname
 	s.SendWelcomeEmail = true
 	s.Role = &AdminTier{Tag: "member_only"}
 	return s
@@ -1075,8 +1171,9 @@ type MemberDevices struct {
 	MobileClients []*MobileClientSession `json:"mobile_clients,omitempty"`
 }
 
-func NewMemberDevices() *MemberDevices {
+func NewMemberDevices(TeamMemberId string) *MemberDevices {
 	s := new(MemberDevices)
+	s.TeamMemberId = TeamMemberId
 	return s
 }
 
@@ -1088,8 +1185,10 @@ type MemberLinkedApps struct {
 	LinkedApiApps []*ApiApp `json:"linked_api_apps"`
 }
 
-func NewMemberLinkedApps() *MemberLinkedApps {
+func NewMemberLinkedApps(TeamMemberId string, LinkedApiApps []*ApiApp) *MemberLinkedApps {
 	s := new(MemberLinkedApps)
+	s.TeamMemberId = TeamMemberId
+	s.LinkedApiApps = LinkedApiApps
 	return s
 }
 
@@ -1111,8 +1210,13 @@ type MemberProfile struct {
 	ExternalId string `json:"external_id,omitempty"`
 }
 
-func NewMemberProfile() *MemberProfile {
+func NewMemberProfile(TeamMemberId string, Email string, EmailVerified bool, Status *TeamMemberStatus, Name *users.Name) *MemberProfile {
 	s := new(MemberProfile)
+	s.TeamMemberId = TeamMemberId
+	s.Email = Email
+	s.EmailVerified = EmailVerified
+	s.Status = Status
+	s.Name = Name
 	return s
 }
 
@@ -1133,8 +1237,9 @@ type MembersAddArg struct {
 	ForceAsync bool `json:"force_async"`
 }
 
-func NewMembersAddArg() *MembersAddArg {
+func NewMembersAddArg(NewMembers []*MemberAddArg) *MembersAddArg {
 	s := new(MembersAddArg)
+	s.NewMembers = NewMembers
 	s.ForceAsync = false
 	return s
 }
@@ -1228,8 +1333,9 @@ type MembersDeactivateArg struct {
 	WipeData bool `json:"wipe_data"`
 }
 
-func NewMembersDeactivateArg() *MembersDeactivateArg {
+func NewMembersDeactivateArg(User *UserSelectorArg) *MembersDeactivateArg {
 	s := new(MembersDeactivateArg)
+	s.User = User
 	s.WipeData = true
 	return s
 }
@@ -1243,8 +1349,9 @@ type MembersGetInfoArgs struct {
 	Members []*UserSelectorArg `json:"members"`
 }
 
-func NewMembersGetInfoArgs() *MembersGetInfoArgs {
+func NewMembersGetInfoArgs(Members []*UserSelectorArg) *MembersGetInfoArgs {
 	s := new(MembersGetInfoArgs)
+	s.Members = Members
 	return s
 }
 
@@ -1315,8 +1422,9 @@ type MembersListContinueArg struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewMembersListContinueArg() *MembersListContinueArg {
+func NewMembersListContinueArg(Cursor string) *MembersListContinueArg {
 	s := new(MembersListContinueArg)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -1338,8 +1446,11 @@ type MembersListResult struct {
 	HasMore bool `json:"has_more"`
 }
 
-func NewMembersListResult() *MembersListResult {
+func NewMembersListResult(Members []*TeamMemberInfo, Cursor string, HasMore bool) *MembersListResult {
 	s := new(MembersListResult)
+	s.Members = Members
+	s.Cursor = Cursor
+	s.HasMore = HasMore
 	return s
 }
 
@@ -1358,8 +1469,9 @@ type MembersRemoveArg struct {
 	TransferAdminId *UserSelectorArg `json:"transfer_admin_id,omitempty"`
 }
 
-func NewMembersRemoveArg() *MembersRemoveArg {
+func NewMembersRemoveArg(User *UserSelectorArg) *MembersRemoveArg {
 	s := new(MembersRemoveArg)
+	s.User = User
 	s.WipeData = true
 	return s
 }
@@ -1381,8 +1493,10 @@ type MembersSetPermissionsArg struct {
 	NewRole *AdminTier `json:"new_role"`
 }
 
-func NewMembersSetPermissionsArg() *MembersSetPermissionsArg {
+func NewMembersSetPermissionsArg(User *UserSelectorArg, NewRole *AdminTier) *MembersSetPermissionsArg {
 	s := new(MembersSetPermissionsArg)
+	s.User = User
+	s.NewRole = NewRole
 	return s
 }
 
@@ -1397,8 +1511,10 @@ type MembersSetPermissionsResult struct {
 	Role *AdminTier `json:"role"`
 }
 
-func NewMembersSetPermissionsResult() *MembersSetPermissionsResult {
+func NewMembersSetPermissionsResult(TeamMemberId string, Role *AdminTier) *MembersSetPermissionsResult {
 	s := new(MembersSetPermissionsResult)
+	s.TeamMemberId = TeamMemberId
+	s.Role = Role
 	return s
 }
 
@@ -1418,8 +1534,9 @@ type MembersSetProfileArg struct {
 	NewSurname string `json:"new_surname,omitempty"`
 }
 
-func NewMembersSetProfileArg() *MembersSetProfileArg {
+func NewMembersSetProfileArg(User *UserSelectorArg) *MembersSetProfileArg {
 	s := new(MembersSetProfileArg)
+	s.User = User
 	return s
 }
 
@@ -1438,8 +1555,9 @@ type MembersUnsuspendArg struct {
 	User *UserSelectorArg `json:"user"`
 }
 
-func NewMembersUnsuspendArg() *MembersUnsuspendArg {
+func NewMembersUnsuspendArg(User *UserSelectorArg) *MembersUnsuspendArg {
 	s := new(MembersUnsuspendArg)
+	s.User = User
 	return s
 }
 
@@ -1475,8 +1593,11 @@ type MobileClientSession struct {
 	LastCarrier string `json:"last_carrier,omitempty"`
 }
 
-func NewMobileClientSession() *MobileClientSession {
+func NewMobileClientSession(SessionId string, DeviceName string, ClientType *MobileClientPlatform) *MobileClientSession {
 	s := new(MobileClientSession)
+	s.SessionId = SessionId
+	s.DeviceName = DeviceName
+	s.ClientType = ClientType
 	return s
 }
 
@@ -1491,8 +1612,10 @@ type RevokeDesktopClientArg struct {
 	DeleteOnUnlink bool `json:"delete_on_unlink"`
 }
 
-func NewRevokeDesktopClientArg() *RevokeDesktopClientArg {
+func NewRevokeDesktopClientArg(SessionId string, TeamMemberId string) *RevokeDesktopClientArg {
 	s := new(RevokeDesktopClientArg)
+	s.SessionId = SessionId
+	s.TeamMemberId = TeamMemberId
 	s.DeleteOnUnlink = false
 	return s
 }
@@ -1549,8 +1672,9 @@ type RevokeDeviceSessionBatchArg struct {
 	RevokeDevices []*RevokeDeviceSessionArg `json:"revoke_devices"`
 }
 
-func NewRevokeDeviceSessionBatchArg() *RevokeDeviceSessionBatchArg {
+func NewRevokeDeviceSessionBatchArg(RevokeDevices []*RevokeDeviceSessionArg) *RevokeDeviceSessionBatchArg {
 	s := new(RevokeDeviceSessionBatchArg)
+	s.RevokeDevices = RevokeDevices
 	return s
 }
 
@@ -1562,8 +1686,9 @@ type RevokeDeviceSessionBatchResult struct {
 	RevokeDevicesStatus []*RevokeDeviceSessionStatus `json:"revoke_devices_status"`
 }
 
-func NewRevokeDeviceSessionBatchResult() *RevokeDeviceSessionBatchResult {
+func NewRevokeDeviceSessionBatchResult(RevokeDevicesStatus []*RevokeDeviceSessionStatus) *RevokeDeviceSessionBatchResult {
 	s := new(RevokeDeviceSessionBatchResult)
+	s.RevokeDevicesStatus = RevokeDevicesStatus
 	return s
 }
 
@@ -1578,8 +1703,9 @@ type RevokeDeviceSessionStatus struct {
 	ErrorType *RevokeDeviceSessionError `json:"error_type,omitempty"`
 }
 
-func NewRevokeDeviceSessionStatus() *RevokeDeviceSessionStatus {
+func NewRevokeDeviceSessionStatus(Success bool) *RevokeDeviceSessionStatus {
 	s := new(RevokeDeviceSessionStatus)
+	s.Success = Success
 	return s
 }
 
@@ -1593,8 +1719,10 @@ type RevokeLinkedApiAppArg struct {
 	KeepAppFolder bool `json:"keep_app_folder"`
 }
 
-func NewRevokeLinkedApiAppArg() *RevokeLinkedApiAppArg {
+func NewRevokeLinkedApiAppArg(AppId string, TeamMemberId string) *RevokeLinkedApiAppArg {
 	s := new(RevokeLinkedApiAppArg)
+	s.AppId = AppId
+	s.TeamMemberId = TeamMemberId
 	s.KeepAppFolder = true
 	return s
 }
@@ -1603,8 +1731,9 @@ type RevokeLinkedApiAppBatchArg struct {
 	RevokeLinkedApp []*RevokeLinkedApiAppArg `json:"revoke_linked_app"`
 }
 
-func NewRevokeLinkedApiAppBatchArg() *RevokeLinkedApiAppBatchArg {
+func NewRevokeLinkedApiAppBatchArg(RevokeLinkedApp []*RevokeLinkedApiAppArg) *RevokeLinkedApiAppBatchArg {
 	s := new(RevokeLinkedApiAppBatchArg)
+	s.RevokeLinkedApp = RevokeLinkedApp
 	return s
 }
 
@@ -1617,8 +1746,9 @@ type RevokeLinkedAppBatchResult struct {
 	RevokeLinkedAppStatus []*RevokeLinkedAppStatus `json:"revoke_linked_app_status"`
 }
 
-func NewRevokeLinkedAppBatchResult() *RevokeLinkedAppBatchResult {
+func NewRevokeLinkedAppBatchResult(RevokeLinkedAppStatus []*RevokeLinkedAppStatus) *RevokeLinkedAppBatchResult {
 	s := new(RevokeLinkedAppBatchResult)
+	s.RevokeLinkedAppStatus = RevokeLinkedAppStatus
 	return s
 }
 
@@ -1634,8 +1764,9 @@ type RevokeLinkedAppStatus struct {
 	ErrorType *RevokeLinkedAppError `json:"error_type,omitempty"`
 }
 
-func NewRevokeLinkedAppStatus() *RevokeLinkedAppStatus {
+func NewRevokeLinkedAppStatus(Success bool) *RevokeLinkedAppStatus {
 	s := new(RevokeLinkedAppStatus)
+	s.Success = Success
 	return s
 }
 
@@ -1658,8 +1789,10 @@ type StorageBucket struct {
 	Users uint64 `json:"users"`
 }
 
-func NewStorageBucket() *StorageBucket {
+func NewStorageBucket(Bucket string, Users uint64) *StorageBucket {
 	s := new(StorageBucket)
+	s.Bucket = Bucket
+	s.Users = Users
 	return s
 }
 
@@ -1676,8 +1809,13 @@ type TeamGetInfoResult struct {
 	Policies            *TeamPolicies `json:"policies"`
 }
 
-func NewTeamGetInfoResult() *TeamGetInfoResult {
+func NewTeamGetInfoResult(Name string, TeamId string, NumLicensedUsers uint32, NumProvisionedUsers uint32, Policies *TeamPolicies) *TeamGetInfoResult {
 	s := new(TeamGetInfoResult)
+	s.Name = Name
+	s.TeamId = TeamId
+	s.NumLicensedUsers = NumLicensedUsers
+	s.NumProvisionedUsers = NumProvisionedUsers
+	s.Policies = Policies
 	return s
 }
 
@@ -1689,8 +1827,10 @@ type TeamMemberInfo struct {
 	Role *AdminTier `json:"role"`
 }
 
-func NewTeamMemberInfo() *TeamMemberInfo {
+func NewTeamMemberInfo(Profile *TeamMemberProfile, Role *AdminTier) *TeamMemberInfo {
 	s := new(TeamMemberInfo)
+	s.Profile = Profile
+	s.Role = Role
 	return s
 }
 
@@ -1714,8 +1854,14 @@ type TeamMemberProfile struct {
 	ExternalId string `json:"external_id,omitempty"`
 }
 
-func NewTeamMemberProfile() *TeamMemberProfile {
+func NewTeamMemberProfile(TeamMemberId string, Email string, EmailVerified bool, Status *TeamMemberStatus, Name *users.Name, Groups []string) *TeamMemberProfile {
 	s := new(TeamMemberProfile)
+	s.TeamMemberId = TeamMemberId
+	s.Email = Email
+	s.EmailVerified = EmailVerified
+	s.Status = Status
+	s.Name = Name
+	s.Groups = Groups
 	return s
 }
 
@@ -1736,8 +1882,10 @@ type TeamPolicies struct {
 	EmmState *EmmState `json:"emm_state"`
 }
 
-func NewTeamPolicies() *TeamPolicies {
+func NewTeamPolicies(Sharing *TeamSharingPolicies, EmmState *EmmState) *TeamPolicies {
 	s := new(TeamPolicies)
+	s.Sharing = Sharing
+	s.EmmState = EmmState
 	return s
 }
 
@@ -1749,8 +1897,10 @@ type TeamSharingPolicies struct {
 	SharedFolderJoinPolicy *SharedFolderJoinPolicy `json:"shared_folder_join_policy"`
 }
 
-func NewTeamSharingPolicies() *TeamSharingPolicies {
+func NewTeamSharingPolicies(SharedFolderMemberPolicy *SharedFolderMemberPolicy, SharedFolderJoinPolicy *SharedFolderJoinPolicy) *TeamSharingPolicies {
 	s := new(TeamSharingPolicies)
+	s.SharedFolderMemberPolicy = SharedFolderMemberPolicy
+	s.SharedFolderJoinPolicy = SharedFolderJoinPolicy
 	return s
 }
 

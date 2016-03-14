@@ -56,8 +56,10 @@ type AddFolderMemberArg struct {
 	CustomMessage string `json:"custom_message,omitempty"`
 }
 
-func NewAddFolderMemberArg() *AddFolderMemberArg {
+func NewAddFolderMemberArg(SharedFolderId string, Members []*AddMember) *AddFolderMemberArg {
 	s := new(AddFolderMemberArg)
+	s.SharedFolderId = SharedFolderId
+	s.Members = Members
 	s.Quiet = false
 	return s
 }
@@ -142,8 +144,9 @@ type AddMember struct {
 	AccessLevel *AccessLevel `json:"access_level"`
 }
 
-func NewAddMember() *AddMember {
+func NewAddMember(Member *MemberSelector) *AddMember {
 	s := new(AddMember)
+	s.Member = Member
 	s.AccessLevel = &AccessLevel{Tag: "viewer"}
 	return s
 }
@@ -243,11 +246,6 @@ func (u *LinkMetadata) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-func NewLinkMetadata() *LinkMetadata {
-	s := new(LinkMetadata)
-	return s
-}
-
 // Metadata for a collection-based shared link.
 type CollectionLinkMetadata struct {
 	// URL of the shared link.
@@ -258,8 +256,10 @@ type CollectionLinkMetadata struct {
 	Expires time.Time `json:"expires,omitempty"`
 }
 
-func NewCollectionLinkMetadata() *CollectionLinkMetadata {
+func NewCollectionLinkMetadata(Url string, Visibility *Visibility) *CollectionLinkMetadata {
 	s := new(CollectionLinkMetadata)
+	s.Url = Url
+	s.Visibility = Visibility
 	return s
 }
 
@@ -274,8 +274,9 @@ type CreateSharedLinkArg struct {
 	PendingUpload *PendingUploadMode `json:"pending_upload,omitempty"`
 }
 
-func NewCreateSharedLinkArg() *CreateSharedLinkArg {
+func NewCreateSharedLinkArg(Path string) *CreateSharedLinkArg {
 	s := new(CreateSharedLinkArg)
+	s.Path = Path
 	s.ShortUrl = false
 	return s
 }
@@ -316,8 +317,9 @@ type CreateSharedLinkWithSettingsArg struct {
 	Settings *SharedLinkSettings `json:"settings,omitempty"`
 }
 
-func NewCreateSharedLinkWithSettingsArg() *CreateSharedLinkWithSettingsArg {
+func NewCreateSharedLinkWithSettingsArg(Path string) *CreateSharedLinkWithSettingsArg {
 	s := new(CreateSharedLinkWithSettingsArg)
+	s.Path = Path
 	return s
 }
 
@@ -398,11 +400,6 @@ func (u *SharedLinkMetadata) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-func NewSharedLinkMetadata() *SharedLinkMetadata {
-	s := new(SharedLinkMetadata)
-	return s
-}
-
 // The metadata of a file shared link
 type FileLinkMetadata struct {
 	// URL of the shared link.
@@ -442,8 +439,15 @@ type FileLinkMetadata struct {
 	ContentOwnerTeamInfo *users.Team `json:"content_owner_team_info,omitempty"`
 }
 
-func NewFileLinkMetadata() *FileLinkMetadata {
+func NewFileLinkMetadata(Url string, Name string, LinkPermissions *LinkPermissions, ClientModified time.Time, ServerModified time.Time, Rev string, Size uint64) *FileLinkMetadata {
 	s := new(FileLinkMetadata)
+	s.Url = Url
+	s.Name = Name
+	s.LinkPermissions = LinkPermissions
+	s.ClientModified = ClientModified
+	s.ServerModified = ServerModified
+	s.Rev = Rev
+	s.Size = Size
 	return s
 }
 
@@ -477,8 +481,11 @@ type FolderLinkMetadata struct {
 	ContentOwnerTeamInfo *users.Team `json:"content_owner_team_info,omitempty"`
 }
 
-func NewFolderLinkMetadata() *FolderLinkMetadata {
+func NewFolderLinkMetadata(Url string, Name string, LinkPermissions *LinkPermissions) *FolderLinkMetadata {
 	s := new(FolderLinkMetadata)
+	s.Url = Url
+	s.Name = Name
+	s.LinkPermissions = LinkPermissions
 	return s
 }
 
@@ -493,8 +500,10 @@ type FolderPermission struct {
 	Reason *PermissionDeniedReason `json:"reason,omitempty"`
 }
 
-func NewFolderPermission() *FolderPermission {
+func NewFolderPermission(Action *FolderAction, Allow bool) *FolderPermission {
 	s := new(FolderPermission)
+	s.Action = Action
+	s.Allow = Allow
 	return s
 }
 
@@ -509,8 +518,10 @@ type FolderPolicy struct {
 	MemberPolicy *MemberPolicy `json:"member_policy,omitempty"`
 }
 
-func NewFolderPolicy() *FolderPolicy {
+func NewFolderPolicy(AclUpdatePolicy *AclUpdatePolicy, SharedLinkPolicy *SharedLinkPolicy) *FolderPolicy {
 	s := new(FolderPolicy)
+	s.AclUpdatePolicy = AclUpdatePolicy
+	s.SharedLinkPolicy = SharedLinkPolicy
 	return s
 }
 
@@ -521,8 +532,9 @@ type GetMetadataArgs struct {
 	Actions []*FolderAction `json:"actions,omitempty"`
 }
 
-func NewGetMetadataArgs() *GetMetadataArgs {
+func NewGetMetadataArgs(SharedFolderId string) *GetMetadataArgs {
 	s := new(GetMetadataArgs)
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -545,8 +557,9 @@ type GetSharedLinkMetadataArg struct {
 	LinkPassword string `json:"link_password,omitempty"`
 }
 
-func NewGetSharedLinkMetadataArg() *GetSharedLinkMetadataArg {
+func NewGetSharedLinkMetadataArg(Url string) *GetSharedLinkMetadataArg {
 	s := new(GetSharedLinkMetadataArg)
+	s.Url = Url
 	return s
 }
 
@@ -594,8 +607,9 @@ type GetSharedLinksResult struct {
 	Links []*LinkMetadata `json:"links"`
 }
 
-func NewGetSharedLinksResult() *GetSharedLinksResult {
+func NewGetSharedLinksResult(Links []*LinkMetadata) *GetSharedLinksResult {
 	s := new(GetSharedLinksResult)
+	s.Links = Links
 	return s
 }
 
@@ -613,8 +627,12 @@ type GroupInfo struct {
 	GroupExternalId string `json:"group_external_id,omitempty"`
 }
 
-func NewGroupInfo() *GroupInfo {
+func NewGroupInfo(GroupName string, GroupId string, MemberCount uint32, SameTeam bool) *GroupInfo {
 	s := new(GroupInfo)
+	s.GroupName = GroupName
+	s.GroupId = GroupId
+	s.MemberCount = MemberCount
+	s.SameTeam = SameTeam
 	return s
 }
 
@@ -631,8 +649,9 @@ type MembershipInfo struct {
 	IsInherited bool `json:"is_inherited"`
 }
 
-func NewMembershipInfo() *MembershipInfo {
+func NewMembershipInfo(AccessType *AccessLevel) *MembershipInfo {
 	s := new(MembershipInfo)
+	s.AccessType = AccessType
 	s.IsInherited = false
 	return s
 }
@@ -652,8 +671,10 @@ type GroupMembershipInfo struct {
 	IsInherited bool `json:"is_inherited"`
 }
 
-func NewGroupMembershipInfo() *GroupMembershipInfo {
+func NewGroupMembershipInfo(AccessType *AccessLevel, Group *GroupInfo) *GroupMembershipInfo {
 	s := new(GroupMembershipInfo)
+	s.AccessType = AccessType
+	s.Group = Group
 	s.IsInherited = false
 	return s
 }
@@ -705,8 +726,10 @@ type InviteeMembershipInfo struct {
 	IsInherited bool `json:"is_inherited"`
 }
 
-func NewInviteeMembershipInfo() *InviteeMembershipInfo {
+func NewInviteeMembershipInfo(AccessType *AccessLevel, Invitee *InviteeInfo) *InviteeMembershipInfo {
 	s := new(InviteeMembershipInfo)
+	s.AccessType = AccessType
+	s.Invitee = Invitee
 	s.IsInherited = false
 	return s
 }
@@ -807,8 +830,9 @@ type LinkPermissions struct {
 	RevokeFailureReason *SharedLinkAccessFailureReason `json:"revoke_failure_reason,omitempty"`
 }
 
-func NewLinkPermissions() *LinkPermissions {
+func NewLinkPermissions(CanRevoke bool) *LinkPermissions {
 	s := new(LinkPermissions)
+	s.CanRevoke = CanRevoke
 	return s
 }
 
@@ -822,8 +846,9 @@ type ListFolderMembersArgs struct {
 	Limit uint32 `json:"limit"`
 }
 
-func NewListFolderMembersArgs() *ListFolderMembersArgs {
+func NewListFolderMembersArgs(SharedFolderId string) *ListFolderMembersArgs {
 	s := new(ListFolderMembersArgs)
+	s.SharedFolderId = SharedFolderId
 	s.Limit = 1000
 	return s
 }
@@ -834,8 +859,9 @@ type ListFolderMembersContinueArg struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewListFolderMembersContinueArg() *ListFolderMembersContinueArg {
+func NewListFolderMembersContinueArg(Cursor string) *ListFolderMembersContinueArg {
 	s := new(ListFolderMembersContinueArg)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -887,8 +913,9 @@ type ListFoldersContinueArg struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewListFoldersContinueArg() *ListFoldersContinueArg {
+func NewListFoldersContinueArg(Cursor string) *ListFoldersContinueArg {
 	s := new(ListFoldersContinueArg)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -906,8 +933,9 @@ type ListFoldersResult struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-func NewListFoldersResult() *ListFoldersResult {
+func NewListFoldersResult(Entries []*SharedFolderMetadata) *ListFoldersResult {
 	s := new(ListFoldersResult)
+	s.Entries = Entries
 	return s
 }
 
@@ -965,8 +993,10 @@ type ListSharedLinksResult struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-func NewListSharedLinksResult() *ListSharedLinksResult {
+func NewListSharedLinksResult(Links []*SharedLinkMetadata, HasMore bool) *ListSharedLinksResult {
 	s := new(ListSharedLinksResult)
+	s.Links = Links
+	s.HasMore = HasMore
 	return s
 }
 
@@ -986,8 +1016,10 @@ type MemberPermission struct {
 	Reason *PermissionDeniedReason `json:"reason,omitempty"`
 }
 
-func NewMemberPermission() *MemberPermission {
+func NewMemberPermission(Action *MemberAction, Allow bool) *MemberPermission {
 	s := new(MemberPermission)
+	s.Action = Action
+	s.Allow = Allow
 	return s
 }
 
@@ -1049,8 +1081,10 @@ type ModifySharedLinkSettingsArgs struct {
 	Settings *SharedLinkSettings `json:"settings"`
 }
 
-func NewModifySharedLinkSettingsArgs() *ModifySharedLinkSettingsArgs {
+func NewModifySharedLinkSettingsArgs(Url string, Settings *SharedLinkSettings) *ModifySharedLinkSettingsArgs {
 	s := new(ModifySharedLinkSettingsArgs)
+	s.Url = Url
+	s.Settings = Settings
 	return s
 }
 
@@ -1090,8 +1124,9 @@ type MountFolderArg struct {
 	SharedFolderId string `json:"shared_folder_id"`
 }
 
-func NewMountFolderArg() *MountFolderArg {
+func NewMountFolderArg(SharedFolderId string) *MountFolderArg {
 	s := new(MountFolderArg)
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -1136,8 +1171,11 @@ type PathLinkMetadata struct {
 	Expires time.Time `json:"expires,omitempty"`
 }
 
-func NewPathLinkMetadata() *PathLinkMetadata {
+func NewPathLinkMetadata(Url string, Visibility *Visibility, Path string) *PathLinkMetadata {
 	s := new(PathLinkMetadata)
+	s.Url = Url
+	s.Visibility = Visibility
+	s.Path = Path
 	return s
 }
 
@@ -1157,8 +1195,9 @@ type RelinquishFolderMembershipArg struct {
 	SharedFolderId string `json:"shared_folder_id"`
 }
 
-func NewRelinquishFolderMembershipArg() *RelinquishFolderMembershipArg {
+func NewRelinquishFolderMembershipArg(SharedFolderId string) *RelinquishFolderMembershipArg {
 	s := new(RelinquishFolderMembershipArg)
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -1202,8 +1241,11 @@ type RemoveFolderMemberArg struct {
 	LeaveACopy bool `json:"leave_a_copy"`
 }
 
-func NewRemoveFolderMemberArg() *RemoveFolderMemberArg {
+func NewRemoveFolderMemberArg(SharedFolderId string, Member *MemberSelector, LeaveACopy bool) *RemoveFolderMemberArg {
 	s := new(RemoveFolderMemberArg)
+	s.SharedFolderId = SharedFolderId
+	s.Member = Member
+	s.LeaveACopy = LeaveACopy
 	return s
 }
 
@@ -1269,8 +1311,9 @@ type RevokeSharedLinkArg struct {
 	Url string `json:"url"`
 }
 
-func NewRevokeSharedLinkArg() *RevokeSharedLinkArg {
+func NewRevokeSharedLinkArg(Url string) *RevokeSharedLinkArg {
 	s := new(RevokeSharedLinkArg)
+	s.Url = Url
 	return s
 }
 
@@ -1293,8 +1336,9 @@ type ShareFolderArg struct {
 	ForceAsync bool `json:"force_async"`
 }
 
-func NewShareFolderArg() *ShareFolderArg {
+func NewShareFolderArg(Path string) *ShareFolderArg {
 	s := new(ShareFolderArg)
+	s.Path = Path
 	s.MemberPolicy = &MemberPolicy{Tag: "anyone"}
 	s.AclUpdatePolicy = &AclUpdatePolicy{Tag: "owner"}
 	s.SharedLinkPolicy = &SharedLinkPolicy{Tag: "anyone"}
@@ -1426,8 +1470,11 @@ type SharedFolderMembers struct {
 	Cursor string `json:"cursor,omitempty"`
 }
 
-func NewSharedFolderMembers() *SharedFolderMembers {
+func NewSharedFolderMembers(Users []*UserMembershipInfo, Groups []*GroupMembershipInfo, Invitees []*InviteeMembershipInfo) *SharedFolderMembers {
 	s := new(SharedFolderMembers)
+	s.Users = Users
+	s.Groups = Groups
+	s.Invitees = Invitees
 	return s
 }
 
@@ -1445,8 +1492,11 @@ type SharedFolderMetadataBase struct {
 	Permissions []*FolderPermission `json:"permissions,omitempty"`
 }
 
-func NewSharedFolderMetadataBase() *SharedFolderMetadataBase {
+func NewSharedFolderMetadataBase(AccessType *AccessLevel, IsTeamFolder bool, Policy *FolderPolicy) *SharedFolderMetadataBase {
 	s := new(SharedFolderMetadataBase)
+	s.AccessType = AccessType
+	s.IsTeamFolder = IsTeamFolder
+	s.Policy = Policy
 	return s
 }
 
@@ -1471,8 +1521,13 @@ type SharedFolderMetadata struct {
 	PathLower string `json:"path_lower,omitempty"`
 }
 
-func NewSharedFolderMetadata() *SharedFolderMetadata {
+func NewSharedFolderMetadata(AccessType *AccessLevel, IsTeamFolder bool, Policy *FolderPolicy, Name string, SharedFolderId string) *SharedFolderMetadata {
 	s := new(SharedFolderMetadata)
+	s.AccessType = AccessType
+	s.IsTeamFolder = IsTeamFolder
+	s.Policy = Policy
+	s.Name = Name
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -1515,8 +1570,10 @@ type TeamMemberInfo struct {
 	MemberId string `json:"member_id,omitempty"`
 }
 
-func NewTeamMemberInfo() *TeamMemberInfo {
+func NewTeamMemberInfo(TeamInfo *users.Team, DisplayName string) *TeamMemberInfo {
 	s := new(TeamMemberInfo)
+	s.TeamInfo = TeamInfo
+	s.DisplayName = DisplayName
 	return s
 }
 
@@ -1527,8 +1584,10 @@ type TransferFolderArg struct {
 	ToDropboxId string `json:"to_dropbox_id"`
 }
 
-func NewTransferFolderArg() *TransferFolderArg {
+func NewTransferFolderArg(SharedFolderId string, ToDropboxId string) *TransferFolderArg {
 	s := new(TransferFolderArg)
+	s.SharedFolderId = SharedFolderId
+	s.ToDropboxId = ToDropboxId
 	return s
 }
 
@@ -1566,8 +1625,9 @@ type UnmountFolderArg struct {
 	SharedFolderId string `json:"shared_folder_id"`
 }
 
-func NewUnmountFolderArg() *UnmountFolderArg {
+func NewUnmountFolderArg(SharedFolderId string) *UnmountFolderArg {
 	s := new(UnmountFolderArg)
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -1609,8 +1669,10 @@ type UnshareFolderArg struct {
 	LeaveACopy bool `json:"leave_a_copy"`
 }
 
-func NewUnshareFolderArg() *UnshareFolderArg {
+func NewUnshareFolderArg(SharedFolderId string, LeaveACopy bool) *UnshareFolderArg {
 	s := new(UnshareFolderArg)
+	s.SharedFolderId = SharedFolderId
+	s.LeaveACopy = LeaveACopy
 	return s
 }
 
@@ -1653,8 +1715,11 @@ type UpdateFolderMemberArg struct {
 	AccessLevel *AccessLevel `json:"access_level"`
 }
 
-func NewUpdateFolderMemberArg() *UpdateFolderMemberArg {
+func NewUpdateFolderMemberArg(SharedFolderId string, Member *MemberSelector, AccessLevel *AccessLevel) *UpdateFolderMemberArg {
 	s := new(UpdateFolderMemberArg)
+	s.SharedFolderId = SharedFolderId
+	s.Member = Member
+	s.AccessLevel = AccessLevel
 	return s
 }
 
@@ -1712,8 +1777,9 @@ type UpdateFolderPolicyArg struct {
 	SharedLinkPolicy *SharedLinkPolicy `json:"shared_link_policy,omitempty"`
 }
 
-func NewUpdateFolderPolicyArg() *UpdateFolderPolicyArg {
+func NewUpdateFolderPolicyArg(SharedFolderId string) *UpdateFolderPolicyArg {
 	s := new(UpdateFolderPolicyArg)
+	s.SharedFolderId = SharedFolderId
 	return s
 }
 
@@ -1758,8 +1824,10 @@ type UserInfo struct {
 	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
-func NewUserInfo() *UserInfo {
+func NewUserInfo(AccountId string, SameTeam bool) *UserInfo {
 	s := new(UserInfo)
+	s.AccountId = AccountId
+	s.SameTeam = SameTeam
 	return s
 }
 
@@ -1778,8 +1846,10 @@ type UserMembershipInfo struct {
 	IsInherited bool `json:"is_inherited"`
 }
 
-func NewUserMembershipInfo() *UserMembershipInfo {
+func NewUserMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserMembershipInfo {
 	s := new(UserMembershipInfo)
+	s.AccessType = AccessType
+	s.User = User
 	s.IsInherited = false
 	return s
 }

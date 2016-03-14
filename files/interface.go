@@ -47,8 +47,9 @@ type CommitInfo struct {
 	Mute bool `json:"mute"`
 }
 
-func NewCommitInfo() *CommitInfo {
+func NewCommitInfo(Path string) *CommitInfo {
 	s := new(CommitInfo)
+	s.Path = Path
 	s.Mode = &WriteMode{Tag: "add"}
 	s.Autorename = false
 	s.Mute = false
@@ -60,8 +61,9 @@ type CreateFolderArg struct {
 	Path string `json:"path"`
 }
 
-func NewCreateFolderArg() *CreateFolderArg {
+func NewCreateFolderArg(Path string) *CreateFolderArg {
 	s := new(CreateFolderArg)
+	s.Path = Path
 	return s
 }
 
@@ -99,8 +101,9 @@ type DeleteArg struct {
 	Path string `json:"path"`
 }
 
-func NewDeleteArg() *DeleteArg {
+func NewDeleteArg(Path string) *DeleteArg {
 	s := new(DeleteArg)
+	s.Path = Path
 	return s
 }
 
@@ -187,11 +190,6 @@ func (u *Metadata) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-func NewMetadata() *Metadata {
-	s := new(Metadata)
-	return s
-}
-
 // Indicates that there used to be a file or folder at this path, but it no
 // longer exists.
 type DeletedMetadata struct {
@@ -211,8 +209,11 @@ type DeletedMetadata struct {
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
 }
 
-func NewDeletedMetadata() *DeletedMetadata {
+func NewDeletedMetadata(Name string, PathLower string, PathDisplay string) *DeletedMetadata {
 	s := new(DeletedMetadata)
+	s.Name = Name
+	s.PathLower = PathLower
+	s.PathDisplay = PathDisplay
 	return s
 }
 
@@ -224,8 +225,10 @@ type Dimensions struct {
 	Width uint64 `json:"width"`
 }
 
-func NewDimensions() *Dimensions {
+func NewDimensions(Height uint64, Width uint64) *Dimensions {
 	s := new(Dimensions)
+	s.Height = Height
+	s.Width = Width
 	return s
 }
 
@@ -236,8 +239,9 @@ type DownloadArg struct {
 	Rev string `json:"rev,omitempty"`
 }
 
-func NewDownloadArg() *DownloadArg {
+func NewDownloadArg(Path string) *DownloadArg {
 	s := new(DownloadArg)
+	s.Path = Path
 	return s
 }
 
@@ -307,8 +311,16 @@ type FileMetadata struct {
 	SharingInfo *FileSharingInfo `json:"sharing_info,omitempty"`
 }
 
-func NewFileMetadata() *FileMetadata {
+func NewFileMetadata(Name string, PathLower string, PathDisplay string, Id string, ClientModified time.Time, ServerModified time.Time, Rev string, Size uint64) *FileMetadata {
 	s := new(FileMetadata)
+	s.Name = Name
+	s.PathLower = PathLower
+	s.PathDisplay = PathDisplay
+	s.Id = Id
+	s.ClientModified = ClientModified
+	s.ServerModified = ServerModified
+	s.Rev = Rev
+	s.Size = Size
 	return s
 }
 
@@ -318,8 +330,9 @@ type SharingInfo struct {
 	ReadOnly bool `json:"read_only"`
 }
 
-func NewSharingInfo() *SharingInfo {
+func NewSharingInfo(ReadOnly bool) *SharingInfo {
 	s := new(SharingInfo)
+	s.ReadOnly = ReadOnly
 	return s
 }
 
@@ -334,8 +347,10 @@ type FileSharingInfo struct {
 	ModifiedBy string `json:"modified_by,omitempty"`
 }
 
-func NewFileSharingInfo() *FileSharingInfo {
+func NewFileSharingInfo(ReadOnly bool, ParentSharedFolderId string) *FileSharingInfo {
 	s := new(FileSharingInfo)
+	s.ReadOnly = ReadOnly
+	s.ParentSharedFolderId = ParentSharedFolderId
 	return s
 }
 
@@ -363,8 +378,12 @@ type FolderMetadata struct {
 	SharingInfo *FolderSharingInfo `json:"sharing_info,omitempty"`
 }
 
-func NewFolderMetadata() *FolderMetadata {
+func NewFolderMetadata(Name string, PathLower string, PathDisplay string, Id string) *FolderMetadata {
 	s := new(FolderMetadata)
+	s.Name = Name
+	s.PathLower = PathLower
+	s.PathDisplay = PathDisplay
+	s.Id = Id
 	return s
 }
 
@@ -380,8 +399,9 @@ type FolderSharingInfo struct {
 	SharedFolderId string `json:"shared_folder_id,omitempty"`
 }
 
-func NewFolderSharingInfo() *FolderSharingInfo {
+func NewFolderSharingInfo(ReadOnly bool) *FolderSharingInfo {
 	s := new(FolderSharingInfo)
+	s.ReadOnly = ReadOnly
 	return s
 }
 
@@ -392,8 +412,9 @@ type GetMetadataArg struct {
 	IncludeMediaInfo bool `json:"include_media_info"`
 }
 
-func NewGetMetadataArg() *GetMetadataArg {
+func NewGetMetadataArg(Path string) *GetMetadataArg {
 	s := new(GetMetadataArg)
+	s.Path = Path
 	s.IncludeMediaInfo = false
 	return s
 }
@@ -435,8 +456,10 @@ type GpsCoordinates struct {
 	Longitude float64 `json:"longitude"`
 }
 
-func NewGpsCoordinates() *GpsCoordinates {
+func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 	s := new(GpsCoordinates)
+	s.Latitude = Latitude
+	s.Longitude = Longitude
 	return s
 }
 
@@ -453,8 +476,9 @@ type ListFolderArg struct {
 	IncludeDeleted bool `json:"include_deleted"`
 }
 
-func NewListFolderArg() *ListFolderArg {
+func NewListFolderArg(Path string) *ListFolderArg {
 	s := new(ListFolderArg)
+	s.Path = Path
 	s.Recursive = false
 	s.IncludeMediaInfo = false
 	s.IncludeDeleted = false
@@ -467,8 +491,9 @@ type ListFolderContinueArg struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewListFolderContinueArg() *ListFolderContinueArg {
+func NewListFolderContinueArg(Cursor string) *ListFolderContinueArg {
 	s := new(ListFolderContinueArg)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -536,8 +561,9 @@ type ListFolderGetLatestCursorResult struct {
 	Cursor string `json:"cursor"`
 }
 
-func NewListFolderGetLatestCursorResult() *ListFolderGetLatestCursorResult {
+func NewListFolderGetLatestCursorResult(Cursor string) *ListFolderGetLatestCursorResult {
 	s := new(ListFolderGetLatestCursorResult)
+	s.Cursor = Cursor
 	return s
 }
 
@@ -551,8 +577,9 @@ type ListFolderLongpollArg struct {
 	Timeout uint64 `json:"timeout"`
 }
 
-func NewListFolderLongpollArg() *ListFolderLongpollArg {
+func NewListFolderLongpollArg(Cursor string) *ListFolderLongpollArg {
 	s := new(ListFolderLongpollArg)
+	s.Cursor = Cursor
 	s.Timeout = 30
 	return s
 }
@@ -570,8 +597,9 @@ type ListFolderLongpollResult struct {
 	Backoff uint64 `json:"backoff,omitempty"`
 }
 
-func NewListFolderLongpollResult() *ListFolderLongpollResult {
+func NewListFolderLongpollResult(Changes bool) *ListFolderLongpollResult {
 	s := new(ListFolderLongpollResult)
+	s.Changes = Changes
 	return s
 }
 
@@ -586,8 +614,11 @@ type ListFolderResult struct {
 	HasMore bool `json:"has_more"`
 }
 
-func NewListFolderResult() *ListFolderResult {
+func NewListFolderResult(Entries []*Metadata, Cursor string, HasMore bool) *ListFolderResult {
 	s := new(ListFolderResult)
+	s.Entries = Entries
+	s.Cursor = Cursor
+	s.HasMore = HasMore
 	return s
 }
 
@@ -598,8 +629,9 @@ type ListRevisionsArg struct {
 	Limit uint64 `json:"limit"`
 }
 
-func NewListRevisionsArg() *ListRevisionsArg {
+func NewListRevisionsArg(Path string) *ListRevisionsArg {
 	s := new(ListRevisionsArg)
+	s.Path = Path
 	s.Limit = 10
 	return s
 }
@@ -640,8 +672,10 @@ type ListRevisionsResult struct {
 	Entries []*FileMetadata `json:"entries"`
 }
 
-func NewListRevisionsResult() *ListRevisionsResult {
+func NewListRevisionsResult(IsDeleted bool, Entries []*FileMetadata) *ListRevisionsResult {
 	s := new(ListRevisionsResult)
+	s.IsDeleted = IsDeleted
+	s.Entries = Entries
 	return s
 }
 
@@ -737,11 +771,6 @@ func (u *MediaMetadata) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-func NewMediaMetadata() *MediaMetadata {
-	s := new(MediaMetadata)
-	return s
-}
-
 // Metadata for a photo.
 type PhotoMetadata struct {
 	// Dimension of the photo/video.
@@ -764,8 +793,9 @@ type PreviewArg struct {
 	Rev string `json:"rev,omitempty"`
 }
 
-func NewPreviewArg() *PreviewArg {
+func NewPreviewArg(Path string) *PreviewArg {
 	s := new(PreviewArg)
+	s.Path = Path
 	return s
 }
 
@@ -807,8 +837,10 @@ type RelocationArg struct {
 	ToPath string `json:"to_path"`
 }
 
-func NewRelocationArg() *RelocationArg {
+func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 	s := new(RelocationArg)
+	s.FromPath = FromPath
+	s.ToPath = ToPath
 	return s
 }
 
@@ -870,8 +902,10 @@ type RestoreArg struct {
 	Rev string `json:"rev"`
 }
 
-func NewRestoreArg() *RestoreArg {
+func NewRestoreArg(Path string, Rev string) *RestoreArg {
 	s := new(RestoreArg)
+	s.Path = Path
+	s.Rev = Rev
 	return s
 }
 
@@ -935,8 +969,10 @@ type SearchArg struct {
 	Mode *SearchMode `json:"mode"`
 }
 
-func NewSearchArg() *SearchArg {
+func NewSearchArg(Path string, Query string) *SearchArg {
 	s := new(SearchArg)
+	s.Path = Path
+	s.Query = Query
 	s.Start = 0
 	s.MaxResults = 100
 	s.Mode = &SearchMode{Tag: "filename"}
@@ -979,8 +1015,10 @@ type SearchMatch struct {
 	Metadata *Metadata `json:"metadata"`
 }
 
-func NewSearchMatch() *SearchMatch {
+func NewSearchMatch(MatchType *SearchMatchType, Metadata *Metadata) *SearchMatch {
 	s := new(SearchMatch)
+	s.MatchType = MatchType
+	s.Metadata = Metadata
 	return s
 }
 
@@ -1004,8 +1042,11 @@ type SearchResult struct {
 	Start uint64 `json:"start"`
 }
 
-func NewSearchResult() *SearchResult {
+func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchResult {
 	s := new(SearchResult)
+	s.Matches = Matches
+	s.More = More
+	s.Start = Start
 	return s
 }
 
@@ -1020,8 +1061,9 @@ type ThumbnailArg struct {
 	Size *ThumbnailSize `json:"size"`
 }
 
-func NewThumbnailArg() *ThumbnailArg {
+func NewThumbnailArg(Path string) *ThumbnailArg {
 	s := new(ThumbnailArg)
+	s.Path = Path
 	s.Format = &ThumbnailFormat{Tag: "jpeg"}
 	s.Size = &ThumbnailSize{Tag: "w64h64"}
 	return s
@@ -1102,8 +1144,10 @@ type UploadSessionCursor struct {
 	Offset uint64 `json:"offset"`
 }
 
-func NewUploadSessionCursor() *UploadSessionCursor {
+func NewUploadSessionCursor(SessionId string, Offset uint64) *UploadSessionCursor {
 	s := new(UploadSessionCursor)
+	s.SessionId = SessionId
+	s.Offset = Offset
 	return s
 }
 
@@ -1114,8 +1158,10 @@ type UploadSessionFinishArg struct {
 	Commit *CommitInfo `json:"commit"`
 }
 
-func NewUploadSessionFinishArg() *UploadSessionFinishArg {
+func NewUploadSessionFinishArg(Cursor *UploadSessionCursor, Commit *CommitInfo) *UploadSessionFinishArg {
 	s := new(UploadSessionFinishArg)
+	s.Cursor = Cursor
+	s.Commit = Commit
 	return s
 }
 
@@ -1202,8 +1248,9 @@ type UploadSessionOffsetError struct {
 	CorrectOffset uint64 `json:"correct_offset"`
 }
 
-func NewUploadSessionOffsetError() *UploadSessionOffsetError {
+func NewUploadSessionOffsetError(CorrectOffset uint64) *UploadSessionOffsetError {
 	s := new(UploadSessionOffsetError)
+	s.CorrectOffset = CorrectOffset
 	return s
 }
 
@@ -1213,8 +1260,9 @@ type UploadSessionStartResult struct {
 	SessionId string `json:"session_id"`
 }
 
-func NewUploadSessionStartResult() *UploadSessionStartResult {
+func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 	s := new(UploadSessionStartResult)
+	s.SessionId = SessionId
 	return s
 }
 
@@ -1225,8 +1273,10 @@ type UploadWriteFailed struct {
 	UploadSessionId string `json:"upload_session_id"`
 }
 
-func NewUploadWriteFailed() *UploadWriteFailed {
+func NewUploadWriteFailed(Reason *WriteError, UploadSessionId string) *UploadWriteFailed {
 	s := new(UploadWriteFailed)
+	s.Reason = Reason
+	s.UploadSessionId = UploadSessionId
 	return s
 }
 

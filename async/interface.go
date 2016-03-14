@@ -73,8 +73,9 @@ type PollArg struct {
 	AsyncJobId string `json:"async_job_id"`
 }
 
-func NewPollArg() *PollArg {
+func NewPollArg(AsyncJobId string) *PollArg {
 	s := new(PollArg)
+	s.AsyncJobId = AsyncJobId
 	return s
 }
 

@@ -40,8 +40,12 @@ type Account struct {
 	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
 }
 
-func NewAccount() *Account {
+func NewAccount(AccountId string, Name *Name, Email string, EmailVerified bool) *Account {
 	s := new(Account)
+	s.AccountId = AccountId
+	s.Name = Name
+	s.Email = Email
+	s.EmailVerified = EmailVerified
 	return s
 }
 
@@ -72,8 +76,13 @@ type BasicAccount struct {
 	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
-func NewBasicAccount() *BasicAccount {
+func NewBasicAccount(AccountId string, Name *Name, Email string, EmailVerified bool, IsTeammate bool) *BasicAccount {
 	s := new(BasicAccount)
+	s.AccountId = AccountId
+	s.Name = Name
+	s.Email = Email
+	s.EmailVerified = EmailVerified
+	s.IsTeammate = IsTeammate
 	return s
 }
 
@@ -112,8 +121,16 @@ type FullAccount struct {
 	TeamMemberId string `json:"team_member_id,omitempty"`
 }
 
-func NewFullAccount() *FullAccount {
+func NewFullAccount(AccountId string, Name *Name, Email string, EmailVerified bool, Locale string, ReferralLink string, IsPaired bool, AccountType *AccountType) *FullAccount {
 	s := new(FullAccount)
+	s.AccountId = AccountId
+	s.Name = Name
+	s.Email = Email
+	s.EmailVerified = EmailVerified
+	s.Locale = Locale
+	s.ReferralLink = ReferralLink
+	s.IsPaired = IsPaired
+	s.AccountType = AccountType
 	return s
 }
 
@@ -122,8 +139,9 @@ type GetAccountArg struct {
 	AccountId string `json:"account_id"`
 }
 
-func NewGetAccountArg() *GetAccountArg {
+func NewGetAccountArg(AccountId string) *GetAccountArg {
 	s := new(GetAccountArg)
+	s.AccountId = AccountId
 	return s
 }
 
@@ -133,8 +151,9 @@ type GetAccountBatchArg struct {
 	AccountIds []string `json:"account_ids"`
 }
 
-func NewGetAccountBatchArg() *GetAccountBatchArg {
+func NewGetAccountBatchArg(AccountIds []string) *GetAccountBatchArg {
 	s := new(GetAccountBatchArg)
+	s.AccountIds = AccountIds
 	return s
 }
 
@@ -180,8 +199,9 @@ type IndividualSpaceAllocation struct {
 	Allocated uint64 `json:"allocated"`
 }
 
-func NewIndividualSpaceAllocation() *IndividualSpaceAllocation {
+func NewIndividualSpaceAllocation(Allocated uint64) *IndividualSpaceAllocation {
 	s := new(IndividualSpaceAllocation)
+	s.Allocated = Allocated
 	return s
 }
 
@@ -200,8 +220,12 @@ type Name struct {
 	DisplayName string `json:"display_name"`
 }
 
-func NewName() *Name {
+func NewName(GivenName string, Surname string, FamiliarName string, DisplayName string) *Name {
 	s := new(Name)
+	s.GivenName = GivenName
+	s.Surname = Surname
+	s.FamiliarName = FamiliarName
+	s.DisplayName = DisplayName
 	return s
 }
 
@@ -252,8 +276,10 @@ type SpaceUsage struct {
 	Allocation *SpaceAllocation `json:"allocation"`
 }
 
-func NewSpaceUsage() *SpaceUsage {
+func NewSpaceUsage(Used uint64, Allocation *SpaceAllocation) *SpaceUsage {
 	s := new(SpaceUsage)
+	s.Used = Used
+	s.Allocation = Allocation
 	return s
 }
 
@@ -265,8 +291,10 @@ type Team struct {
 	Name string `json:"name"`
 }
 
-func NewTeam() *Team {
+func NewTeam(Id string, Name string) *Team {
 	s := new(Team)
+	s.Id = Id
+	s.Name = Name
 	return s
 }
 
@@ -277,8 +305,10 @@ type TeamSpaceAllocation struct {
 	Allocated uint64 `json:"allocated"`
 }
 
-func NewTeamSpaceAllocation() *TeamSpaceAllocation {
+func NewTeamSpaceAllocation(Used uint64, Allocated uint64) *TeamSpaceAllocation {
 	s := new(TeamSpaceAllocation)
+	s.Used = Used
+	s.Allocated = Allocated
 	return s
 }
 
