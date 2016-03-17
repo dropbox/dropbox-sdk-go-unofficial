@@ -31,7 +31,7 @@ import (
 const (
 	apiVersion    = 2
 	defaultDomain = ".dropboxapi.com"
-	hostApi       = "api"
+	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
 )
@@ -50,11 +50,12 @@ func getenv(key string, defVal string) string {
 	return val
 }
 
-func (dbx *apiImpl) generateUrl(host string, namespace string, route string) string {
+func (dbx *apiImpl) generateURL(host string, namespace string, route string) string {
 	fqHost := dbx.hostMap[host]
 	return fmt.Sprintf("https://%s/%d/%s/%s", fqHost, apiVersion, namespace, route)
 }
 
+// Client returns an `Api` instance for Dropbox using the given OAuth token.
 func Client(token string, verbose bool) Api {
 	var conf = &oauth2.Config{
 		Endpoint: oauth2.Endpoint{
@@ -65,7 +66,7 @@ func Client(token string, verbose bool) Api {
 	tok := &oauth2.Token{AccessToken: token}
 	domain := getenv("DROPBOX_DOMAIN", defaultDomain)
 	hostMap := map[string]string{
-		hostApi:     hostApi + domain,
+		hostAPI:     hostAPI + domain,
 		hostContent: hostContent + domain,
 		hostNotify:  hostNotify + domain,
 	}
