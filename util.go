@@ -36,9 +36,14 @@ const (
 	hostNotify    = "notify"
 )
 
+type Options struct {
+	Verbose    bool
+	AsMemberId string
+}
+
 type apiImpl struct {
 	client  *http.Client
-	verbose bool
+	options Options
 	hostMap map[string]string
 }
 
@@ -56,7 +61,7 @@ func (dbx *apiImpl) generateURL(host string, namespace string, route string) str
 }
 
 // Client returns an `Api` instance for Dropbox using the given OAuth token.
-func Client(token string, verbose bool) Api {
+func Client(token string, options Options) Api {
 	var conf = &oauth2.Config{
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "https://www.dropbox.com/1/oauth2/authorize",
@@ -70,5 +75,5 @@ func Client(token string, verbose bool) Api {
 		hostContent: hostContent + domain,
 		hostNotify:  hostNotify + domain,
 	}
-	return &apiImpl{conf.Client(oauth2.NoContext, tok), verbose, hostMap}
+	return &apiImpl{conf.Client(oauth2.NoContext, tok), options, hostMap}
 }
