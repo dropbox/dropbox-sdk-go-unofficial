@@ -62,18 +62,21 @@ func (dbx *apiImpl) generateURL(host string, namespace string, route string) str
 
 // Client returns an `Api` instance for Dropbox using the given OAuth token.
 func Client(token string, options Options) Api {
-	var conf = &oauth2.Config{
-		Endpoint: oauth2.Endpoint{
-			AuthURL:  "https://www.dropbox.com/1/oauth2/authorize",
-			TokenURL: "https://api.dropbox.com/1/oauth2/token",
-		},
-	}
-	tok := &oauth2.Token{AccessToken: token}
 	domain := getenv("DROPBOX_DOMAIN", defaultDomain)
 	hostMap := map[string]string{
 		hostAPI:     hostAPI + domain,
 		hostContent: hostContent + domain,
 		hostNotify:  hostNotify + domain,
 	}
+	authDomain := getenv("DROPBOX_DOMAIN", ".dropbox.com")
+	authUrl := fmt.Sprintf("https://www%s/1/oauth2/authorize", authDomain)
+	tokenUrl := fmt.Sprintf("https://api%s/1/oauth2/token", authDomain)
+	var conf = &oauth2.Config{
+		Endpoint: oauth2.Endpoint{
+			AuthURL:  authUrl,
+			TokenURL: tokenUrl,
+		},
+	}
+	tok := &oauth2.Token{AccessToken: token}
 	return &apiImpl{conf.Client(oauth2.NoContext, tok), options, hostMap}
 }
