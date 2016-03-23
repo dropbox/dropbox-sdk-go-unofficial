@@ -47,6 +47,7 @@ type apiImpl struct {
 	hostMap map[string]string
 }
 
+// OAuthEndpoint constructs an `oauth2.Endpoint` for the given domain
 func OAuthEndpoint(domain string) oauth2.Endpoint {
 	if domain == "" {
 		domain = defaultDomain
@@ -79,4 +80,10 @@ func Client(token string, options Options) Api {
 	var conf = &oauth2.Config{Endpoint: OAuthEndpoint(domain)}
 	tok := &oauth2.Token{AccessToken: token}
 	return &apiImpl{conf.Client(oauth2.NoContext, tok), options, hostMap}
+}
+
+func init() {
+	// These are not registered in the oauth library by default
+	oauth2.RegisterBrokenAuthHeaderProvider("https://api.dropboxapi.com")
+	oauth2.RegisterBrokenAuthHeaderProvider("https://api-dbdev.dev.corp.dropbox.com")
 }
