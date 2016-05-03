@@ -49,7 +49,7 @@ func main() {
 
 === Using OAuth2 flow
 
-For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See https://godoc.org/golang.org/x/oauth2#example-Config[this] for an example of oauth2 flow in Go.
+For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See https://godoc.org/golang.org/x/oauth2#example-Config[this] for a generic example of oauth2 flow in Go, or see link:examples/oauth2.go[this example] for a Dropbox specific implementation.
 
 Once you have the token, usage is same as above.
 
