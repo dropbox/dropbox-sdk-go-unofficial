@@ -129,7 +129,7 @@ func (dbx *apiImpl) AlphaGetMetadata(arg *files.AlphaGetMetadataArg) (res *files
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -282,7 +282,7 @@ func (dbx *apiImpl) Copy(arg *files.RelocationArg) (res *files.Metadata, err err
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -358,7 +358,7 @@ func (dbx *apiImpl) CopyReferenceGet(arg *files.GetCopyReferenceArg) (res *files
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -434,7 +434,7 @@ func (dbx *apiImpl) CopyReferenceSave(arg *files.SaveCopyReferenceArg) (res *fil
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -510,7 +510,7 @@ func (dbx *apiImpl) CreateFolder(arg *files.CreateFolderArg) (res *files.FolderM
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -586,7 +586,7 @@ func (dbx *apiImpl) Delete(arg *files.DeleteArg) (res *files.Metadata, err error
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -657,12 +657,12 @@ func (dbx *apiImpl) Download(arg *files.DownloadArg) (res *files.FileMetadata, c
 		return
 	}
 
-	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "download"), nil)
+	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "download"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -734,7 +734,7 @@ func (dbx *apiImpl) GetMetadata(arg *files.GetMetadataArg) (res *files.Metadata,
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -805,12 +805,12 @@ func (dbx *apiImpl) GetPreview(arg *files.PreviewArg) (res *files.FileMetadata, 
 		return
 	}
 
-	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "get_preview"), nil)
+	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "get_preview"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -882,7 +882,7 @@ func (dbx *apiImpl) GetTemporaryLink(arg *files.GetTemporaryLinkArg) (res *files
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -953,12 +953,12 @@ func (dbx *apiImpl) GetThumbnail(arg *files.ThumbnailArg) (res *files.FileMetada
 		return
 	}
 
-	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "get_thumbnail"), nil)
+	req, err := http.NewRequest("POST", dbx.generateURL("content", "files", "get_thumbnail"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1030,7 +1030,7 @@ func (dbx *apiImpl) ListFolder(arg *files.ListFolderArg) (res *files.ListFolderR
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1106,7 +1106,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *files.ListFolderContinueArg) (res *f
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1182,7 +1182,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *files.ListFolderArg) (res *fi
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1258,7 +1258,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *files.ListFolderLongpollArg) (res *f
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Del("Authorization")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
@@ -1332,7 +1332,7 @@ func (dbx *apiImpl) ListRevisions(arg *files.ListRevisionsArg) (res *files.ListR
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1408,7 +1408,7 @@ func (dbx *apiImpl) Move(arg *files.RelocationArg) (res *files.Metadata, err err
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1484,7 +1484,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *files.DeleteArg) (err error) {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1555,7 +1555,7 @@ func (dbx *apiImpl) PropertiesAdd(arg *files.PropertyGroupWithPath) (err error) 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1626,7 +1626,7 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *files.PropertyGroupWithPath) (err e
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1697,7 +1697,7 @@ func (dbx *apiImpl) PropertiesRemove(arg *files.RemovePropertiesArg) (err error)
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1768,7 +1768,7 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1911,7 +1911,7 @@ func (dbx *apiImpl) PropertiesUpdate(arg *files.UpdatePropertyGroupArg) (err err
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -1982,7 +1982,7 @@ func (dbx *apiImpl) Restore(arg *files.RestoreArg) (res *files.FileMetadata, err
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2058,7 +2058,7 @@ func (dbx *apiImpl) SaveUrl(arg *files.SaveUrlArg) (res *files.SaveUrlResult, er
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2134,7 +2134,7 @@ func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *files.SaveUr
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2210,7 +2210,7 @@ func (dbx *apiImpl) Search(arg *files.SearchArg) (res *files.SearchResult, err e
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2661,7 +2661,7 @@ func (dbx *apiImpl) AddFileMember(arg *sharing.AddFileMemberArgs) (res []*sharin
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2737,7 +2737,7 @@ func (dbx *apiImpl) AddFolderMember(arg *sharing.AddFolderMemberArg) (err error)
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2808,7 +2808,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *sharing.JobStatus, 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2884,7 +2884,7 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *sharing
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -2960,7 +2960,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *sharing.ShareF
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3036,7 +3036,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *sharing.CreateSharedLinkArg) (res *sha
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3112,7 +3112,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *sharing.CreateSharedLinkWi
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3188,7 +3188,7 @@ func (dbx *apiImpl) GetFileMetadata(arg *sharing.GetFileMetadataArg) (res *shari
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3264,7 +3264,7 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *sharing.GetFileMetadataBatchArg) (
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3340,7 +3340,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *sharing.GetMetadataArgs) (res *sharin
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3411,12 +3411,12 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *sharing.GetSharedLinkMetadataArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", dbx.generateURL("content", "sharing", "get_shared_link_file"), nil)
+	req, err := http.NewRequest("POST", dbx.generateURL("content", "sharing", "get_shared_link_file"), bytes.NewReader(b))
 	if err != nil {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3488,7 +3488,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *sharing.GetSharedLinkMetadataArg)
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3564,7 +3564,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *sharing.GetSharedLinksArg) (res *sharing
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3640,7 +3640,7 @@ func (dbx *apiImpl) ListFileMembers(arg *sharing.ListFileMembersArg) (res *shari
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3716,7 +3716,7 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *sharing.ListFileMembersBatchArg) (
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3792,7 +3792,7 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *sharing.ListFileMembersContinue
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3868,7 +3868,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *sharing.ListFolderMembersArgs) (res *
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -3944,7 +3944,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *sharing.ListFolderMembersCont
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4020,7 +4020,7 @@ func (dbx *apiImpl) ListFolders(arg *sharing.ListFoldersArgs) (res *sharing.List
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4096,7 +4096,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *sharing.ListFoldersContinueArg) (re
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4172,7 +4172,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *sharing.ListFoldersArgs) (res *sha
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4248,7 +4248,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *sharing.ListFoldersContinu
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4324,7 +4324,7 @@ func (dbx *apiImpl) ListReceivedFiles(arg *sharing.ListFilesArg) (res *sharing.L
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4400,7 +4400,7 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *sharing.ListFilesContinueArg)
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4476,7 +4476,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *sharing.ListSharedLinksArg) (res *shari
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4552,7 +4552,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *sharing.ModifySharedLinkSettin
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4628,7 +4628,7 @@ func (dbx *apiImpl) MountFolder(arg *sharing.MountFolderArg) (res *sharing.Share
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4704,7 +4704,7 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *sharing.RelinquishFileMembersh
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4775,7 +4775,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *sharing.RelinquishFolderMemb
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4851,7 +4851,7 @@ func (dbx *apiImpl) RemoveFileMember(arg *sharing.RemoveFileMemberArg) (res *sha
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -4927,7 +4927,7 @@ func (dbx *apiImpl) RemoveFileMember2(arg *sharing.RemoveFileMemberArg) (res *sh
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5003,7 +5003,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *sharing.RemoveFolderMemberArg) (res 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5079,7 +5079,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *sharing.RevokeSharedLinkArg) (err erro
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5150,7 +5150,7 @@ func (dbx *apiImpl) ShareFolder(arg *sharing.ShareFolderArg) (res *sharing.Share
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5226,7 +5226,7 @@ func (dbx *apiImpl) TransferFolder(arg *sharing.TransferFolderArg) (err error) {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5297,7 +5297,7 @@ func (dbx *apiImpl) UnmountFolder(arg *sharing.UnmountFolderArg) (err error) {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5368,7 +5368,7 @@ func (dbx *apiImpl) UnshareFile(arg *sharing.UnshareFileArg) (err error) {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5439,7 +5439,7 @@ func (dbx *apiImpl) UnshareFolder(arg *sharing.UnshareFolderArg) (res *async.Lau
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5515,7 +5515,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *sharing.UpdateFolderMemberArg) (res 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5591,7 +5591,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *sharing.UpdateFolderPolicyArg) (res 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -5667,7 +5667,7 @@ func (dbx *apiImpl) AlphaGroupsCreate(arg *team.AlphaGroupCreateArg) (res *team.
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -5740,7 +5740,7 @@ func (dbx *apiImpl) AlphaGroupsGetInfo(arg *team.GroupsSelector) (res []*team.Al
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -5813,7 +5813,7 @@ func (dbx *apiImpl) AlphaGroupsList(arg *team.GroupsListArg) (res *team.AlphaGro
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -5886,7 +5886,7 @@ func (dbx *apiImpl) AlphaGroupsListContinue(arg *team.GroupsListContinueArg) (re
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -5959,7 +5959,7 @@ func (dbx *apiImpl) AlphaGroupsUpdate(arg *team.AlphaGroupUpdateArgs) (res *team
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6032,7 +6032,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *team.ListMemberDevicesArg) (re
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6105,7 +6105,7 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *team.ListMembersDevicesArg) (
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6178,7 +6178,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *team.ListTeamDevicesArg) (res *t
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6251,7 +6251,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *team.RevokeDeviceSessionArg)
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6319,7 +6319,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *team.RevokeDeviceSessio
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6456,7 +6456,7 @@ func (dbx *apiImpl) GroupsCreate(arg *team.GroupCreateArg) (res *team.GroupFullI
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6529,7 +6529,7 @@ func (dbx *apiImpl) GroupsDelete(arg *team.GroupSelector) (res *async.LaunchEmpt
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6602,7 +6602,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *team.GroupsSelector) (res []*team.GroupsG
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6675,7 +6675,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6748,7 +6748,7 @@ func (dbx *apiImpl) GroupsList(arg *team.GroupsListArg) (res *team.GroupsListRes
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6821,7 +6821,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *team.GroupsListContinueArg) (res *te
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6894,7 +6894,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *team.GroupMembersAddArg) (res *team.Gr
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -6967,7 +6967,7 @@ func (dbx *apiImpl) GroupsMembersList(arg *team.GroupsMembersListArg) (res *team
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7040,7 +7040,7 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *team.GroupsMembersListContinu
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7113,7 +7113,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *team.GroupMembersRemoveArg) (res *t
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7186,7 +7186,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *team.GroupMembersSetAccessTy
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7259,7 +7259,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *team.GroupUpdateArgs) (res *team.GroupFull
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7332,7 +7332,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *team.ListMemberAppsArg) 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7405,7 +7405,7 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *team.ListMembersAppsArg
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7478,7 +7478,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *team.ListTeamAppsArg) (res
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7551,7 +7551,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *team.RevokeLinkedApiAppArg) (
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7619,7 +7619,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *team.RevokeLinkedApiAppB
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7692,7 +7692,7 @@ func (dbx *apiImpl) MembersAdd(arg *team.MembersAddArg) (res *team.MembersAddLau
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7765,7 +7765,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *team.Member
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7838,7 +7838,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *team.MembersGetInfoArgs) (res []*team.Me
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7911,7 +7911,7 @@ func (dbx *apiImpl) MembersList(arg *team.MembersListArg) (res *team.MembersList
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -7984,7 +7984,7 @@ func (dbx *apiImpl) MembersListContinue(arg *team.MembersListContinueArg) (res *
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8057,7 +8057,7 @@ func (dbx *apiImpl) MembersRemove(arg *team.MembersRemoveArg) (res *async.Launch
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8130,7 +8130,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8203,7 +8203,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *team.UserSelectorArg) (err erro
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8271,7 +8271,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *team.MembersSetPermissionsAr
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8344,7 +8344,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *team.MembersSetProfileArg) (res *team
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8417,7 +8417,7 @@ func (dbx *apiImpl) MembersSuspend(arg *team.MembersDeactivateArg) (err error) {
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8485,7 +8485,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *team.MembersUnsuspendArg) (err error) 
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8553,7 +8553,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *team.DateRange) (res *team.GetActivi
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8626,7 +8626,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *team.DateRange) (res *team.GetDevices
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8699,7 +8699,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *team.DateRange) (res *team.GetMemb
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8772,7 +8772,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *team.DateRange) (res *team.GetStorage
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.Verbose {
 		log.Printf("req: %v", req)
 	}
@@ -8845,7 +8845,7 @@ func (dbx *apiImpl) GetAccount(arg *users.GetAccountArg) (res *users.BasicAccoun
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
@@ -8921,7 +8921,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *users.GetAccountBatchArg) (res []*users
 		return
 	}
 
-	req.Header.Set("Dropbox-API-Arg", string(b))
+	req.Header.Set("Content-Type", "application/json")
 	if dbx.options.AsMemberId != "" {
 		req.Header.Set("Dropbox-API-Select-User", dbx.options.AsMemberId)
 	}
