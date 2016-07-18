@@ -24,6 +24,7 @@ package sharing
 
 import (
 	"encoding/json"
+	"io"
 	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/async"
@@ -2955,7 +2956,7 @@ type Sharing interface {
 	// access to use this endpoint.
 	GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error)
 	// Download the shared link's file from a user's Dropbox.
-	GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, err error)
+	GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, content io.ReadCloser, err error)
 	// Get the shared link's metadata.
 	GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res *SharedLinkMetadata, err error)
 	// Returns a list of `LinkMetadata` objects for this user, including collection

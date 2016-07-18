@@ -23,6 +23,7 @@ package files
 
 import (
 	"encoding/json"
+	"io"
 	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/async"
@@ -1998,7 +1999,7 @@ type Files interface {
 	// endpoint is part of the properties API alpha and is slightly different from
 	// `Upload`. Do not use this to upload a file larger than 150 MB. Instead,
 	// create an upload session with `UploadSessionStart`.
-	AlphaUpload(arg *CommitInfoWithProperties) (res *FileMetadata, err error)
+	AlphaUpload(arg *CommitInfoWithProperties, content io.Reader) (res *FileMetadata, err error)
 	// Copy a file or folder to a different location in the user's Dropbox. If the
 	// source path is a folder all its contents will be copied.
 	Copy(arg *RelocationArg) (res *Metadata, err error)
@@ -2017,14 +2018,14 @@ type Files interface {
 	// a `DeletedMetadata` object.
 	Delete(arg *DeleteArg) (res *Metadata, err error)
 	// Download a file from a user's Dropbox.
-	Download(arg *DownloadArg) (res *FileMetadata, err error)
+	Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// Returns the metadata for a file or folder. Note: Metadata for the root
 	// folder is unsupported.
 	GetMetadata(arg *GetMetadataArg) (res *Metadata, err error)
 	// Get a preview for a file. Currently previews are only generated for the
 	// files with  the following extensions: .doc, .docx, .docm, .ppt, .pps, .ppsx,
 	// .ppsm, .pptx, .pptm,  .xls, .xlsx, .xlsm, .rtf
-	GetPreview(arg *PreviewArg) (res *FileMetadata, err error)
+	GetPreview(arg *PreviewArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// Get a temporary link to stream content of a file. This link will expire in
 	// four hours and afterwards you will get 410 Gone. Content-Type of the link is
 	// determined automatically by the file's mime type.
@@ -2032,7 +2033,7 @@ type Files interface {
 	// Get a thumbnail for an image. This method currently supports files with the
 	// following file extensions: jpg, jpeg, png, tiff, tif, gif and bmp. Photos
 	// that are larger than 20MB in size won't be converted to a thumbnail.
-	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, err error)
+	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// Returns the contents of a folder.
 	ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error)
 	// Once a cursor has been retrieved from `ListFolder`, use this to paginate
@@ -2094,21 +2095,21 @@ type Files interface {
 	// Create a new file with the contents provided in the request. Do not use this
 	// to upload a file larger than 150 MB. Instead, create an upload session with
 	// `UploadSessionStart`.
-	Upload(arg *CommitInfo) (res *FileMetadata, err error)
+	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
 	// Append more data to an upload session. A single request should not upload
 	// more than 150 MB of file contents.
-	UploadSessionAppend(arg *UploadSessionCursor) (err error)
+	UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error)
 	// Append more data to an upload session. When the parameter close is set, this
 	// call will close the session. A single request should not upload more than
 	// 150 MB of file contents.
-	UploadSessionAppendV2(arg *UploadSessionAppendArg) (err error)
+	UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error)
 	// Finish an upload session and save the uploaded data to the given file path.
 	// A single request should not upload more than 150 MB of file contents.
-	UploadSessionFinish(arg *UploadSessionFinishArg) (res *FileMetadata, err error)
+	UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error)
 	// Upload sessions allow you to upload a single file using multiple requests.
 	// This call starts a new upload session with the given data.  You can then use
 	// `UploadSessionAppendV2` to add more data and `UploadSessionFinish` to save
 	// all the data to a file in Dropbox. A single request should not upload more
 	// than 150 MB of file contents.
-	UploadSessionStart(arg *UploadSessionStartArg) (res *UploadSessionStartResult, err error)
+	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
 }
