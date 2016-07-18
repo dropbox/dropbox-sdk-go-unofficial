@@ -24,3 +24,8 @@ package auth
 type AuthError struct {
 	Tag string `json:".tag"`
 }
+
+type Auth interface {
+	// Disables the access token used to authenticate the call.
+	TokenRevoke() (err error)
+}
