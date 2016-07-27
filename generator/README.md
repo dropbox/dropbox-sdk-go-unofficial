@@ -208,7 +208,7 @@ type ListFolderResult struct {
 
 Finally, to actually deserialize a bag of bytes into the appropriate type or subtype, we use a trick similar to how we handle unions above.
 
-```
+```go
 type metadataUnion struct {
 	dropbox.Tagged
 	File    *FileMetadata    `json:"file,omitempty"`
