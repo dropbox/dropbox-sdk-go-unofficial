@@ -1,0 +1,173 @@
+import os
+
+from stone.generator import CodeGenerator
+from stone.data_type import (
+    is_void_type,
+    is_struct_type
+)
+
+from go_helpers import (
+    HEADER,
+    fmt_type,
+    fmt_var,
+    generate_doc,
+)
+
+
+class GoClientGenerator(CodeGenerator):
+    def generate(self, api):
+        for namespace in api.namespaces.values():
+            if len(namespace.routes) > 0:
+                self._generate_client(namespace)
+
+    def _generate_client(self, namespace):
+        file_name = os.path.join(self.target_folder_path, namespace.name,
+                                 'client.go')
+        with self.output_to_relative_path(file_name):
+            self.emit_raw(HEADER)
+            self.emit()
+            generate_doc(self, namespace.doc)
+            self.emit('package %s' % namespace.name)
+            self.emit()
+
+            with self.block('type Client interface'):
+                for route in namespace.routes:
+                    generate_doc(self, route.doc)
+                    self.emit(self._generate_route_signature(namespace, route))
+            self.emit()
+
+            self.emit('type apiImpl dropbox.Context')
+            for route in namespace.routes:
+                self._generate_route(namespace, route)
+            with self.block('func New(c dropbox.Config) *apiImpl'):
+                self.emit('ctx := apiImpl(dropbox.NewContext(c))')
+                self.emit('return &ctx')
+
+    def _generate_route_signature(self, namespace, route):
+        req = fmt_type(route.arg_data_type, namespace)
+        res = fmt_type(route.result_data_type, namespace, use_interface=True)
+        fn = fmt_var(route.name)
+        style = route.attrs.get('style', 'rpc')
+
+        arg = '' if is_void_type(route.arg_data_type) else 'arg {req}'
+        ret = '(err error)' if is_void_type(route.result_data_type) else \
+            '(res {res}, err error)'
+        signature = '{fn}(' + arg + ') ' + ret
+        if style == 'download':
+            signature = '{fn}(' + arg + \
+                ') (res {res}, content io.ReadCloser, err error)'
+        elif style == 'upload':
+            signature = '{fn}(' + arg + ', content io.Reader) ' + ret
+            if is_void_type(route.arg_data_type):
+                signature = '{fn}(content io.Reader) ' + ret
+        return signature.format(fn=fn, req=req, res=res)
+
+
+    def _generate_route(self, namespace, route):
+        out = self.emit
+        fn = fmt_var(route.name)
+        err = fmt_type(route.error_data_type, namespace)
+        with self.block('type {fn}ApiError struct'.format(fn=fn)):
+            out('dropbox.ApiError')
+            out('EndpointError {err} `json:"error"`'.format(err=err))
+        out()
+        host = route.attrs.get('host', 'api')
+        style = route.attrs.get('style', 'rpc')
+        auth = route.attrs.get('auth', '')
+
+        signature = 'func (dbx *apiImpl) ' + self._generate_route_signature(
+            namespace, route)
+        with self.block(signature):
+            out('cli := dbx.Client')
+            out()
+
+            body = 'nil'
+            if not is_void_type(route.arg_data_type):
+                with self.block('if dbx.Config.Verbose'):
+                    out('log.Printf("arg: %v", arg)')
+                out('b, err := json.Marshal(arg)')
+                with self.block('if err != nil'):
+                    out('return')
+                out()
+                if style is not 'upload':
+                    body = 'bytes.NewReader(b)'
+            if style == 'upload':
+                body = 'content'
+            out('req, err := http.NewRequest("POST", '
+                '(*dropbox.Context)(dbx).GenerateURL("{}", "{}", "{}"), {})'.format(
+                    host, namespace.name, route.name, body))
+            with self.block('if err != nil'):
+                out('return')
+            out()
+            if not is_void_type(route.arg_data_type):
+                if style == 'upload':
+                    out('req.Header.Set("Dropbox-API-Arg", string(b))')
+                else:
+                    out('req.Header.Set("Content-Type", "application/json")')
+            if style == 'upload':
+                out('req.Header.Set("Content-Type",'
+                    '"application/octet-stream")')
+
+            if auth == 'noauth':
+                out('req.Header.Del("Authorization")')
+            elif auth != 'team':
+                with self.block('if dbx.Config.AsMemberId != ""'):
+                    out('req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)')
+
+            with self.block('if dbx.Config.Verbose'):
+                out('log.Printf("req: %v", req)')
+            out('resp, err := cli.Do(req)')
+            with self.block('if dbx.Config.Verbose'):
+                out('log.Printf("resp: %v", resp)')
+
+            with self.block('if err != nil'):
+                out('return')
+            out()
+
+            if style == 'download':
+                out('body := []byte(resp.Header.Get("Dropbox-API-Result"))')
+                out('content = resp.Body')
+            else:
+                out('defer resp.Body.Close()')
+                with self.block('body, err := ioutil.ReadAll(resp.Body);'
+                                'if err != nil'):
+                    out('return')
+                out()
+
+            with self.block('if dbx.Config.Verbose'):
+                out('log.Printf("body: %s", body)')
+            with self.block('if resp.StatusCode != 200'):
+                with self.block('if resp.StatusCode == 409'):
+                    out('var apiError {fn}ApiError'.format(fn=fn))
+                    with self.block('err = json.Unmarshal(body, &apiError);'
+                                    'if err != nil'):
+                        out('return')
+                    out('err = apiError')
+                    out('return')
+                out('var apiError dropbox.ApiError')
+                with self.block('if resp.StatusCode == 400'):
+                    out('apiError.ErrorSummary = string(body)')
+                    out('err = apiError')
+                    out('return')
+                with self.block('err = json.Unmarshal(body, &apiError);'
+                                'if err != nil'):
+                    out('return')
+                out('err = apiError')
+                out('return')
+            if is_struct_type(route.result_data_type) and \
+                    route.result_data_type.has_enumerated_subtypes():
+                out('var tmp %sUnion' % fmt_var(route.result_data_type.name, export=False))
+                with self.block('err = json.Unmarshal(body, &tmp);'
+                                'if err != nil'):
+                    out('return')
+                with self.block('switch tmp.Tag'):
+                    for t in route.result_data_type.get_enumerated_subtypes():
+                        with self.block('case "%s":' % t.name, delim=(None, None)):
+                            self.emit('res = tmp.%s' % fmt_var(t.name))
+            elif not is_void_type(route.result_data_type):
+                with self.block('err = json.Unmarshal(body, &res);'
+                                'if err != nil'):
+                    out('return')
+                out()
+            out('return')
+        out()
