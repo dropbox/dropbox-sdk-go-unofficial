@@ -68,6 +68,7 @@ func NewAddFileMemberArgs(File string, Members []*MemberSelector) *AddFileMember
 	s.File = File
 	s.Members = Members
 	s.Quiet = false
+	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{"viewer"}}
 	s.AddMessageAsComment = false
 	return s
 }
@@ -189,6 +190,7 @@ type AddMember struct {
 func NewAddMember(Member *MemberSelector) *AddMember {
 	s := new(AddMember)
 	s.Member = Member
+	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{"viewer"}}
 	return s
 }
 
@@ -1979,6 +1981,9 @@ type ShareFolderArg struct {
 func NewShareFolderArg(Path string) *ShareFolderArg {
 	s := new(ShareFolderArg)
 	s.Path = Path
+	s.MemberPolicy = &MemberPolicy{Tagged: dropbox.Tagged{"anyone"}}
+	s.AclUpdatePolicy = &AclUpdatePolicy{Tagged: dropbox.Tagged{"owner"}}
+	s.SharedLinkPolicy = &SharedLinkPolicy{Tagged: dropbox.Tagged{"anyone"}}
 	s.ForceAsync = false
 	return s
 }
