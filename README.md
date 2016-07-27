@@ -11,7 +11,7 @@ An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go
 
 ### Uh OK, so why are you releasing this?
 
-  * the SDK, while unofficial, _is_ usable. See https://github.com/dropbox/dbxcli[dbxcli] for an example application built using the SDK
+  * the SDK, while unofficial, _is_ usable. See [dbxcli](https://github.com/dropbox/dbxcli) for an example application built using the SDK
   * we would like to get feedback from the community and evaluate the level of interest/enthusiasm before investing into official supporting one more SDK
 
 ## Installation
@@ -75,7 +75,7 @@ Here's an example:
 
 ### Error Handling
 
-As described in the https://www.dropbox.com/developers/documentation/http/documentation#error-handling[API docs], all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
+As described in the [API docs](https://www.dropbox.com/developers/documentation/http/documentation#error-handling), all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
 
 ## Note on using the Teams API
 
