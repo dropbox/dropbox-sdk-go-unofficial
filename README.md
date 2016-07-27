@@ -1,25 +1,24 @@
-= Dropbox SDK for Go [UNOFFICIAL]
+# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://godoc.org/github.com/dropbox/dropbox-sdk-go-unofficial/dropbox?status.svg)](https://godoc.org/github.com/dropbox/dropbox-sdk-go-unofficial/dropbox)
 
 An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
 
 WARNING: This SDK is **NOT yet official**. What does this mean?
 
-  * There is no formal Dropbox https://www.dropbox.com/developers/support[support] for this SDK at this point
+  * There is no formal Dropbox [support](https://www.dropbox.com/developers/support) for this SDK at this point
   * Bugs may or may not get fixed
   * Not all SDK features may be implemented and implemented features may be buggy or incorrect
 
 
-=== Uh OK, so why are you releasing this?
+### Uh OK, so why are you releasing this?
 
   * the SDK, while unofficial, _is_ usable. See https://github.com/dropbox/dbxcli[dbxcli] for an example application built using the SDK
   * we would like to get feedback from the community and evaluate the level of interest/enthusiasm before investing into official supporting one more SDK
 
-== Installation
+## Installation
 
-[source,sh]
-----
+```sh
 $ go get github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/...
-----
+```
 
 For most applications, you should just import the relevant namespace(s) only. The SDK exports the following sub-packages:
 
@@ -31,16 +30,15 @@ For most applications, you should just import the relevant namespace(s) only. Th
 
 Additionally, the base `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox` package exports some configuration and helper methods.
 
-== Usage
+## Usage
 
-First, you need to https://dropbox.com/developers/apps:[register a new "app"] to start making API requests. Once you have created an app, you can either use the SDK via an access token (useful for testing) or via the regular OAuth2 flow (recommended for production).
+First, you need to [register a new "app"](https://dropbox.com/developers/apps) to start making API requests. Once you have created an app, you can either use the SDK via an access token (useful for testing) or via the regular OAuth2 flow (recommended for production).
 
-=== Using OAuth token
+### Using OAuth token
 
 Once you've created an app, you can get an access token from the app's console. Note that this token will only work for the Dropbox account the token is associated with.
 
-[source,go]
-----
+```go
 import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
 
@@ -49,17 +47,17 @@ func main() {
   dbx := users.New(config)
   // start making API calls
 }
-----
+```
 
-=== Using OAuth2 flow
+### Using OAuth2 flow
 
-For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See https://godoc.org/golang.org/x/oauth2#example-Config[this] for an example of oauth2 flow in Go.
+For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See [this](https://godoc.org/golang.org/x/oauth2#example-Config) for an example of oauth2 flow in Go.
 
 Once you have the token, usage is same as above.
 
-=== Making API calls
+### Making API calls
 
-Each Dropbox API takes in a request type and returns a response type. For instance, https://www.dropbox.com/developers/documentation/http/documentation#users-get_account[/users/get_account] takes as input a `GetAccountArg` and returns a `BasicAccount`. The typical pattern for making API calls is:
+Each Dropbox API takes in a request type and returns a response type. For instance, [/users/get_account](https://www.dropbox.com/developers/documentation/http/documentation#users-get_account) takes as input a `GetAccountArg` and returns a `BasicAccount`. The typical pattern for making API calls is:
 
   * Instantiate the argument via the `New*` convenience functions in the SDK
   * Invoke the API
@@ -67,33 +65,31 @@ Each Dropbox API takes in a request type and returns a response type. For instan
 
 Here's an example:
 
-[source, go]
-----
+```go
   arg := users.NewGetAccountArg()
   if resp, err := dbx.GetAccount(arg); err != nil {
     return err
   }
   fmt.Printf("Name: %v", resp.Name)
-----
+```
 
-=== Error Handling
+### Error Handling
 
 As described in the https://www.dropbox.com/developers/documentation/http/documentation#error-handling[API docs], all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
 
-== Note on using the Teams API
+## Note on using the Teams API
 
 To use the Team API, you will need to create a Dropbox Business App. The OAuth token from this app will _only_ work for the Team API.
 
-Please read the https://www.dropbox.com/developers/documentation/http/teams[API docs] carefully to appropriate secure your apps and tokens when using the Team API.
+Please read the [API docs](https://www.dropbox.com/developers/documentation/http/teams) carefully to appropriate secure your apps and tokens when using the Team API.
 
-== Code Generation
+## Code Generation
 
-This SDK is automatically generated using the public https://github.com/dropbox/dropbox-api-spec[Dropbox API spec]
-and https://github.com/dropbox/stone[Stone]. See this https://github.com/dropbox/dropbox-sdk-go-unofficial/blob/master/generator/README.asciidoc[README]
+This SDK is automatically generated using the public [Dropbox API spec](https://github.com/dropbox/dropbox-api-spec) and [Stone](https://github.com/dropbox/stone). See this [README](https://github.com/dropbox/dropbox-sdk-go-unofficial/blob/master/generator/README.md)
 for more details on how code is generated. 
 
-== Caveats
+## Caveats
 
   * To re-iterate, this is an **UNOFFICIAL** SDK and thus has no official support from Dropbox
-	* Only supports the v2 API. Parts of the v2 API are still in beta, and thus subject to change
-	* This SDK itself is in beta, and so interfaces may change at any point
+  * Only supports the v2 API. Parts of the v2 API are still in beta, and thus subject to change
+  * This SDK itself is in beta, and so interfaces may change at any point
