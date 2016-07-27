@@ -56,9 +56,31 @@ type Account struct {
 }
 ```
 
+#### Inheritance
+
+Stone supports [struct inheritance](https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#inheritance). In Go, we support this via [embedding](https://golang.org/doc/effective_go.html#embedding)
+
+```
+struct BasicAccount extends Account
+    "Basic information about any account."
+
+    is_teammate Boolean
+        "Whether this user is a teammate of the current user. If this account
+        is the current user's account, then this will be :val:`true`."
+```
+
+```go
+// Basic information about any account.
+type BasicAccount struct {
+	Account
+	// Whether this user is a teammate of the current user. If this account is
+	// the current user's account, then this will be `True`.
+	IsTeammate bool `json:"is_teammate"`
+```
+
 ### Unions
 
-Stone https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#union[unions] are bit more complex as Go doesn't have native support for union types (tagged or otherwise). We declare a union as a Go struct with all the possible fields as pointer types, and then use the tag value to populate the correct field during deserialization. This necessitates the use of an intermedia wrapper struct for the deserialization to work correctly, see below for a concrete example.
+Stone https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#union[unions] are bit more complex as Go doesn't have native support for union types (tagged or otherwise). We declare a union as a Go struct with all the possible fields as pointer types, and then use the tag value to populate the correct field during deserialization. This necessitates the use of an intermediate wrapper struct for the deserialization to work correctly, see below for a concrete example.
 
 ```
 union SpaceAllocation
@@ -72,101 +94,144 @@ union SpaceAllocation
 
 ```go
 // Space is allocated differently based on the type of account.
-type SpaceAllocation struct { // <1>
-  Tag string `json:".tag"` // <2>
-  // The user's space allocation applies only to their individual account.
-  Individual *IndividualSpaceAllocation `json:"individual,omitempty"` // <3>
-  // The user shares space with other members of their team.
-  Team *TeamSpaceAllocation `json:"team,omitempty"`
+type SpaceAllocation struct {
+	dropbox.Tagged
+	// The user's space allocation applies only to their individual account.
+	Individual *IndividualSpaceAllocation `json:"individual,omitempty"`
+	// The user shares space with other members of their team.
+	Team *TeamSpaceAllocation `json:"team,omitempty"`
 }
 
-func (u *SpaceAllocation) UnmarshalJSON(body []byte) error { // <4>
-  type wrap struct { // <5>
-    Tag string `json:".tag"`
-    // The user's space allocation applies only to their individual account.
-    Individual json.RawMessage `json:"individual"` // <6>
-    // The user shares space with other members of their team.
-    Team json.RawMessage `json:"team"`
-  }
-  var w wrap
-  if err := json.Unmarshal(body, &w); err != nil { // <7>
-    return err
-  }
-  u.Tag = w.Tag
-  switch w.Tag {
-  case "individual":
-    {
-      if err := json.Unmarshal(body, &u.Individual); err != nil { // <8>
-        return err
-      }
-    }
-  case "team":
-    {
-      if err := json.Unmarshal(body, &u.Team); err != nil {
-        return err
-      }
-    }
-  }
-  return nil
+// Valid tag values for `SpaceAllocation`
+const (
+	SpaceAllocation_Individual = "individual"
+	SpaceAllocation_Team       = "team"
+	SpaceAllocation_Other      = "other"
+)
+
+func (u *SpaceAllocation) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// The user's space allocation applies only to their individual account.
+		Individual json.RawMessage `json:"individual,omitempty"`
+		// The user shares space with other members of their team.
+		Team json.RawMessage `json:"team,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "individual":
+		if err := json.Unmarshal(body, &u.Individual); err != nil {
+			return err
+		}
+
+	case "team":
+		if err := json.Unmarshal(body, &u.Team); err != nil {
+			return err
+		}
+
+	}
+	return nil
 }
 ```
-<1> A babel union is represented as Go struct
-<2> The tag value is used to determine which field is actually set
-<3> Possible values are represented as pointer types. Note the `omitempty` in the JSON tag; this is so values not set are automatically elided during serialization.
-<4> We generate a custom `UnmarshalJSON` method for union types
-<5> An intermedia wrapper struct is used to help with deserialization
-<6> Note that members of the wrapper struct are of type `RawMessage` so we can capture the body without deserializing it right away
-<7> When we deserialize response into the wrapper struct, it should get the tag value and the raw JSON as part of the members.
-<8> We then use the tag value to deserialize the `RawMessage` into the appropriate member of the union type
 
 ### Struct with Enumerated Subtypes
 
 Per the https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct-polymorphism[spec], structs with enumerated subtypes are a mechanism of inheritance:
 
-> If a struct enumerates its subtypes, an instance of any subtype will satisfy the type constraint.
+> If a struct enumerates its subtypes, an instance of any subtype will satisfy the type constraint. This is useful when wanting to discriminate amongst types that are part of the same hierarchy while simultaneously being able to avoid discriminating when accessing common fields.
 
-So to represent structs with enumerated subtypes in Go, we use a strategy similar to unions. The _base_ struct (the one that defines the subtypes) is represented like we represent a union above. The _subtype_ is represented as a struct that essentially duplicates all fields of the base type and includes fields specific to that subtype. Here's an example:
+To represent structs with enumerated subtypes in Go, we use a combination of Go interface types and unions as implemented above. Considering the following:
 
 ```
 struct Metadata
-    "Metadata for a file or folder."
-
     union
         file FileMetadata
         folder FolderMetadata
         deleted DeletedMetadata  # Used by list_folder* and search
 
-    name String #<1>
-        "The last component of the path (including extension).
-        This never contains a slash."
-
-...
+    name String
+    path_lower String?
+    path_display String?
+    parent_shared_folder_id common.SharedFolderId?
+    
 struct FileMetadata extends Metadata
-    id Id? #<2>
-   ...
+    id Id
+    client_modified common.DropboxTimestamp
+    ...
 ```
-<1> Field common to all subtypes
-<2> Field specific to `FileMetadata`
 
+In this case, `FileMetadata`, `FolderMetadata` etc are subtypes of `Metadata`. Specifically, any subtype can be used where a parent type is expected. Thus, if `list_folder` returns a list of `Metadata`s, we should be able to parse and "upcast" to one of the enumerated subtypes.
+
+First, we define structs to represent the base and enumerated types as we did for inherited structs above:
 
 ```go
-// Metadata for a file or folder.
-type Metadata struct { // <1>
-  Tag     string           `json:".tag"`
-  File    *FileMetadata    `json:"file,omitempty"`
-  Folder  *FolderMetadata  `json:"folder,omitempty"`
-  Deleted *DeletedMetadata `json:"deleted,omitempty"`
+type Metadata struct {
+	Name string `json:"name"`
+	PathLower string `json:"path_lower,omitempty"`
+	PathDisplay string `json:"path_display,omitempty"`
+	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
 }
-...
 
 type FileMetadata struct {
-  // The last component of the path (including extension). This never contains a
-  // slash.
-  Name string `json:"name"` // <2>
-  ...
-  Id string `json:"id,omitempty"` // <3>
+	Metadata
+	Id string `json:"id"`
+	ClientModified time.Time `json:"client_modified"`
+	...
 }
 ```
-<1> Subtype is represented like we represent unions as described above
-<2> Common fields are duplicated in subtypes
-<3> Subtype specific fields are included as usual in structs
+
+Next, we define an interface type with a dummy method and ensure that both the base and the subtypes implement the interface:
+
+```go
+type IsMetadata interface {
+	IsMetadata()
+}
+
+func (u *Metadata) IsMetadata() {} // Subtypes get this for free due to embedding
+```
+
+At this point, types or methods that accept/return a struct with enumerated subtypes can use the interface type instead. For instance:
+
+```go
+func GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {...}
+
+type ListFolderResult struct {
+	// The files and (direct) subfolders in the folder.
+	Entries []IsMetadata `json:"entries"`
+	...
+}
+```
+
+Finally, to actually deserialize a bag of bytes into the appropriate type or subtype, we use a trick similar to how we handle unions above.
+
+```
+type metadataUnion struct {
+	dropbox.Tagged
+	File    *FileMetadata    `json:"file,omitempty"`
+	Folder  *FolderMetadata  `json:"folder,omitempty"`
+	Deleted *DeletedMetadata `json:"deleted,omitempty"`
+}
+
+func (u *metadataUnion) UnmarshalJSON(body []byte) error {...}
+
+func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {
+   	...
+   	var tmp metadataUnion
+	err = json.Unmarshal(body, &tmp)
+	if err != nil {
+		return
+	}
+	switch tmp.Tag {
+	case "file":
+		res = tmp.File
+	case "folder":
+		res = tmp.Folder
+	case "deleted":
+		res = tmp.Deleted
+	}
+}
+```
