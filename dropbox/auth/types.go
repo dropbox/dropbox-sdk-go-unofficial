@@ -20,7 +20,7 @@
 
 package auth
 
-import dropbox "github.com/dropbox/dropbox-sdk-go-unofficial"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 
 // Errors occurred during authentication.
 type AuthError struct {

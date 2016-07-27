@@ -26,10 +26,10 @@ import (
 	"encoding/json"
 	"time"
 
-	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/files"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/users"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
 )
 
 // Defines the access levels for collaborators.
