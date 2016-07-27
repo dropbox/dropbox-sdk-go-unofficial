@@ -18,15 +18,18 @@ WARNING: This SDK is **NOT yet official**. What does this mean?
 
 [source,sh]
 ----
-$ go get github.com/dropbox/dropbox-sdk-go-unofficial
+$ go get github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/...
 ----
 
-Note that while the import path ends in `dropbox-sdk-go-unofficial`, it actually exports the package `dropbox`. There are additional subpackages, one for each namespace in the https://www.dropbox.com/developers/documentation/http/documentation[API]:
+For most applications, you should just import the relevant namespace(s) only. The SDK exports the following sub-packages:
 
-  * `github.com/dropbox/dropbox-sdk-go-unofficial/users`
-  * `github.com/dropbox/dropbox-sdk-go-unofficial/files`
-  * `github.com/dropbox/dropbox-sdk-go-unofficial/sharing`
-  * `github.com/dropbox/dropbox-sdk-go-unofficial/team`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users`
+
+Additionally, the base `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox` package exports some configuration and helper methods.
 
 == Usage
 
@@ -38,11 +41,12 @@ Once you've created an app, you can get an access token from the app's console. 
 
 [source,go]
 ----
-// NOTE: this imports package `dropbox`
-import "github.com/dropbox/dropbox-sdk-go-unofficial"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
 
 func main() {
-  api := dropbox.Client(token, dropbox.Options{Verbose: true}) // second argument enables verbose logging in the SDK
+  config := dropbox.Config{Token: token, Verbose: true} // second arg enables verbose logging in the SDK
+  dbx := users.New(config)
   // start making API calls
 }
 ----
@@ -66,7 +70,7 @@ Here's an example:
 [source, go]
 ----
   arg := users.NewGetAccountArg()
-  if resp, err := api.GetAccount(arg); err != nil {
+  if resp, err := dbx.GetAccount(arg); err != nil {
     return err
   }
   fmt.Printf("Name: %v", resp.Name)
@@ -78,11 +82,15 @@ As described in the https://www.dropbox.com/developers/documentation/http/docume
 
 == Note on using the Teams API
 
-All features of the Team API are supported except https://www.dropbox.com/developers/documentation/http/teams#teams-member-file-access[acting on behalf of team members]. This should be available soon.
-
-Note that to use the Team API, you will need to create a Dropbox Business App. The OAuth token from this app will _only_ work for the Team API.
+To use the Team API, you will need to create a Dropbox Business App. The OAuth token from this app will _only_ work for the Team API.
 
 Please read the https://www.dropbox.com/developers/documentation/http/teams[API docs] carefully to appropriate secure your apps and tokens when using the Team API.
+
+== Code Generation
+
+This SDK is automatically generated using the public https://github.com/dropbox/dropbox-api-spec[Dropbox API spec]
+and https://github.com/dropbox/stone[Stone]. See this https://github.com/dropbox/dropbox-sdk-go-unofficial/blob/master/generator/README.asciidoc[README]
+for more details on how code is generated. 
 
 == Caveats
 

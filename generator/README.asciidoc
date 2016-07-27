@@ -1,23 +1,25 @@
 = Dropbox Go SDK Generator
 
-This repository is used to generate the (currently private) https://github.com/dropbox/dropbox-sdk-go[Dropbox Go SDK]. It does not contain any auto-generated code.
+This directory contains the https://github.com/dropbox/stone[Stone] code generators
+used to programmatically generate the https://github.com/dropbox/dropbox-sdk-go[Dropbox Go SDK].
 
 == Requirements
 
   * While not a hard requirement, this repo currently assumes `python3` in the path.
+  * Assumes you have already installed https://github.com/dropbox/stone[Stone]
   * Requires https://godoc.org/golang.org/x/tools/cmd/goimports[goimports] to fix up imports in the auto-generated code
-  
+
 == Basic Setup
 
   . Clone this repo
   . Run `git submodule init` followed by `git submodule update`
-  . Run `./codegen.sh` to generate code under `$GOPATH/src/github.com/dropbox/dropbox-sdk-go`
+  . Run `./generate-sdk.sh` to generate code under `../dropbox`
 
 == Generated Code
 
 === Structs
 
-Babel https://github.com/braincore/babel-docs/blob/master/doc/lang_ref.rst#struct[structs] are represented as Go https://gobyexample.com/structs[structs] in a relatively straigh-forward manner.
+Stone https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct[structs] are represented as Go https://gobyexample.com/structs[structs] in a relatively straight-forward manner.
 
 ----
 struct Account <1>
@@ -29,11 +31,6 @@ struct Account <1>
     name Name <5>
         "Details of a user's name."
 ----
-<1> A struct is defined as a Go struct
-<2> The documentation shows up before the struct definition
-<3> Each struct member is exported and also gets assigned the correct json tag. The latter is used for serializing requests and deserializing responses.
-<4> Member documentation appears above the member definition
-<5> Non-primitive types are represented as pointers to the corresponding type
 
 [source,go]
 ----
@@ -46,10 +43,15 @@ type Account struct {  // <1>
   Name *Name `json:"name"` // <5>
 }
 ----
+<1> A struct is defined as a Go struct
+<2> The documentation shows up before the struct definition
+<3> Each struct member is exported and also gets assigned the correct json tag. The latter is used for serializing requests and deserializing responses.
+<4> Member documentation appears above the member definition
+<5> Non-primitive types are represented as pointers to the corresponding type
 
 === Unions
 
-Babel https://github.com/braincore/babel-docs/blob/master/doc/lang_ref.rst#union[unions] are bit more complex as Go doesn't have native support for union types (tagged or otherwise). We declare a union as a Go struct with all the possible fields as pointer types, and then use the tag value to populate the correct field during deserialization. This necessitates the use of an intermedia wrapper struct for the deserialization to work correctly, see below for a concrete example.
+Stone https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#union[unions] are bit more complex as Go doesn't have native support for union types (tagged or otherwise). We declare a union as a Go struct with all the possible fields as pointer types, and then use the tag value to populate the correct field during deserialization. This necessitates the use of an intermedia wrapper struct for the deserialization to work correctly, see below for a concrete example.
 
 ----
 union SpaceAllocation
@@ -113,7 +115,7 @@ func (u *SpaceAllocation) UnmarshalJSON(body []byte) error { // <4>
 
 === Struct with Enumerated Subtypes
 
-Per the https://github.com/braincore/babel-docs/blob/master/doc/lang_ref.rst#struct-with-enumerated-subtypes[spec], structs with enumerated subtypes are a mechanism of inheritance:
+Per the https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct-polymorphism[spec], structs with enumerated subtypes are a mechanism of inheritance:
 
 > If a struct enumerates its subtypes, an instance of any subtype will satisfy the type constraint.
 
@@ -163,8 +165,3 @@ type FileMetadata struct {
 <1> Subtype is represented like we represent unions as described above
 <2> Common fields are duplicated in subtypes
 <3> Subtype specific fields are included as usual in structs
-
-== Known Issues
-
-  * Wildcard unions not supported
-  * Min/max constraints on strings are not enforced
