@@ -26,3 +26,10 @@ import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 type AuthError struct {
 	dropbox.Tagged
 }
+
+const (
+	AuthError_InvalidAccessToken = "invalid_access_token"
+	AuthError_InvalidSelectUser  = "invalid_select_user"
+	AuthError_InvalidSelectAdmin = "invalid_select_admin"
+	AuthError_Other              = "other"
+)

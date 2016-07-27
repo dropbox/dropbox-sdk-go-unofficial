@@ -37,11 +37,25 @@ type AccessLevel struct {
 	dropbox.Tagged
 }
 
+const (
+	AccessLevel_Owner           = "owner"
+	AccessLevel_Editor          = "editor"
+	AccessLevel_Viewer          = "viewer"
+	AccessLevel_ViewerNoComment = "viewer_no_comment"
+	AccessLevel_Other           = "other"
+)
+
 // Policy governing who can change a shared folder's access control list (ACL).
 // In other words, who can add, remove, or change the privileges of members.
 type AclUpdatePolicy struct {
 	dropbox.Tagged
 }
+
+const (
+	AclUpdatePolicy_Owner   = "owner"
+	AclUpdatePolicy_Editors = "editors"
+	AclUpdatePolicy_Other   = "other"
+)
 
 // Arguments for `addFileMember`.
 type AddFileMemberArgs struct {
@@ -79,6 +93,14 @@ type AddFileMemberError struct {
 	UserError   *SharingUserError       `json:"user_error,omitempty"`
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	AddFileMemberError_UserError      = "user_error"
+	AddFileMemberError_AccessError    = "access_error"
+	AddFileMemberError_RateLimit      = "rate_limit"
+	AddFileMemberError_InvalidComment = "invalid_comment"
+	AddFileMemberError_Other          = "other"
+)
 
 func (u *AddFileMemberError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -138,6 +160,20 @@ type AddFolderMemberError struct {
 	// The value is the pending invite limit that was reached.
 	TooManyPendingInvites uint64 `json:"too_many_pending_invites,omitempty"`
 }
+
+const (
+	AddFolderMemberError_AccessError           = "access_error"
+	AddFolderMemberError_EmailUnverified       = "email_unverified"
+	AddFolderMemberError_BadMember             = "bad_member"
+	AddFolderMemberError_CantShareOutsideTeam  = "cant_share_outside_team"
+	AddFolderMemberError_TooManyMembers        = "too_many_members"
+	AddFolderMemberError_TooManyPendingInvites = "too_many_pending_invites"
+	AddFolderMemberError_RateLimit             = "rate_limit"
+	AddFolderMemberError_InsufficientPlan      = "insufficient_plan"
+	AddFolderMemberError_TeamFolder            = "team_folder"
+	AddFolderMemberError_NoPermission          = "no_permission"
+	AddFolderMemberError_Other                 = "other"
+)
 
 func (u *AddFolderMemberError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -206,6 +242,15 @@ type AddMemberSelectorError struct {
 	UnverifiedDropboxId string `json:"unverified_dropbox_id,omitempty"`
 }
 
+const (
+	AddMemberSelectorError_InvalidDropboxId    = "invalid_dropbox_id"
+	AddMemberSelectorError_InvalidEmail        = "invalid_email"
+	AddMemberSelectorError_UnverifiedDropboxId = "unverified_dropbox_id"
+	AddMemberSelectorError_GroupDeleted        = "group_deleted"
+	AddMemberSelectorError_GroupNotOnTeam      = "group_not_on_team"
+	AddMemberSelectorError_Other               = "other"
+)
+
 func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -264,6 +309,11 @@ type linkMetadataUnion struct {
 	Path       *PathLinkMetadata       `json:"path,omitempty"`
 	Collection *CollectionLinkMetadata `json:"collection,omitempty"`
 }
+
+const (
+	LinkMetadata_Path       = "path"
+	LinkMetadata_Collection = "collection"
+)
 
 func (u *linkMetadataUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -326,6 +376,11 @@ type CreateSharedLinkError struct {
 	Path *files.LookupError `json:"path,omitempty"`
 }
 
+const (
+	CreateSharedLinkError_Path  = "path"
+	CreateSharedLinkError_Other = "other"
+)
+
 func (u *CreateSharedLinkError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -366,6 +421,14 @@ type CreateSharedLinkWithSettingsError struct {
 	SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 }
 
+const (
+	CreateSharedLinkWithSettingsError_Path                    = "path"
+	CreateSharedLinkWithSettingsError_EmailNotVerified        = "email_not_verified"
+	CreateSharedLinkWithSettingsError_SharedLinkAlreadyExists = "shared_link_already_exists"
+	CreateSharedLinkWithSettingsError_SettingsError           = "settings_error"
+	CreateSharedLinkWithSettingsError_AccessDenied            = "access_denied"
+)
+
 func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -398,6 +461,14 @@ type FileAction struct {
 	dropbox.Tagged
 }
 
+const (
+	FileAction_EditContents         = "edit_contents"
+	FileAction_InviteViewer         = "invite_viewer"
+	FileAction_Unshare              = "unshare"
+	FileAction_RelinquishMembership = "relinquish_membership"
+	FileAction_Other                = "other"
+)
+
 type FileErrorResult struct {
 	dropbox.Tagged
 	// File specified by id was not found.
@@ -407,6 +478,13 @@ type FileErrorResult struct {
 	// User does not have permission to access file specified by file.Id.
 	PermissionDeniedError string `json:"permission_denied_error,omitempty"`
 }
+
+const (
+	FileErrorResult_FileNotFoundError      = "file_not_found_error"
+	FileErrorResult_InvalidFileActionError = "invalid_file_action_error"
+	FileErrorResult_PermissionDeniedError  = "permission_denied_error"
+	FileErrorResult_Other                  = "other"
+)
 
 func (u *FileErrorResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -482,6 +560,11 @@ type sharedLinkMetadataUnion struct {
 	Folder *FolderLinkMetadata `json:"folder,omitempty"`
 }
 
+const (
+	SharedLinkMetadata_File   = "file"
+	SharedLinkMetadata_Folder = "folder"
+)
+
 func (u *sharedLinkMetadataUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -543,6 +626,12 @@ type FileMemberActionError struct {
 	dropbox.Tagged
 }
 
+const (
+	FileMemberActionError_InvalidMember = "invalid_member"
+	FileMemberActionError_NoPermission  = "no_permission"
+	FileMemberActionError_Other         = "other"
+)
+
 type FileMemberActionIndividualResult struct {
 	dropbox.Tagged
 	// Member was successfully removed from this file. If AccessLevel is given,
@@ -551,6 +640,11 @@ type FileMemberActionIndividualResult struct {
 	// User was not able to remove this member.
 	MemberError *FileMemberActionError `json:"member_error,omitempty"`
 }
+
+const (
+	FileMemberActionIndividualResult_Success     = "success"
+	FileMemberActionIndividualResult_MemberError = "member_error"
+)
 
 func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -604,6 +698,12 @@ type FileMemberRemoveActionResult struct {
 	MemberError *FileMemberActionError `json:"member_error,omitempty"`
 }
 
+const (
+	FileMemberRemoveActionResult_Success     = "success"
+	FileMemberRemoveActionResult_MemberError = "member_error"
+	FileMemberRemoveActionResult_Other       = "other"
+)
+
 func (u *FileMemberRemoveActionResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -654,6 +754,18 @@ func NewFilePermission(Action *FileAction, Allow bool) *FilePermission {
 type FolderAction struct {
 	dropbox.Tagged
 }
+
+const (
+	FolderAction_ChangeOptions        = "change_options"
+	FolderAction_EditContents         = "edit_contents"
+	FolderAction_InviteEditor         = "invite_editor"
+	FolderAction_InviteViewer         = "invite_viewer"
+	FolderAction_RelinquishMembership = "relinquish_membership"
+	FolderAction_Unmount              = "unmount"
+	FolderAction_Unshare              = "unshare"
+	FolderAction_LeaveACopy           = "leave_a_copy"
+	FolderAction_Other                = "other"
+)
 
 // The metadata of a folder shared link
 type FolderLinkMetadata struct {
@@ -761,6 +873,12 @@ type GetFileMetadataError struct {
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	GetFileMetadataError_UserError   = "user_error"
+	GetFileMetadataError_AccessError = "access_error"
+	GetFileMetadataError_Other       = "other"
+)
+
 func (u *GetFileMetadataError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -794,6 +912,12 @@ type GetFileMetadataIndividualResult struct {
 	// The result for this file if it was an error.
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	GetFileMetadataIndividualResult_Metadata    = "metadata"
+	GetFileMetadataIndividualResult_AccessError = "access_error"
+	GetFileMetadataIndividualResult_Other       = "other"
+)
 
 func (u *GetFileMetadataIndividualResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -842,9 +966,19 @@ type SharedLinkError struct {
 	dropbox.Tagged
 }
 
+const (
+	SharedLinkError_SharedLinkNotFound     = "shared_link_not_found"
+	SharedLinkError_SharedLinkAccessDenied = "shared_link_access_denied"
+	SharedLinkError_Other                  = "other"
+)
+
 type GetSharedLinkFileError struct {
 	dropbox.Tagged
 }
+
+const (
+	GetSharedLinkFileError_SharedLinkIsDirectory = "shared_link_is_directory"
+)
 
 type GetSharedLinkMetadataArg struct {
 	// URL of the shared link.
@@ -877,6 +1011,11 @@ type GetSharedLinksError struct {
 	dropbox.Tagged
 	Path string `json:"path,omitempty"`
 }
+
+const (
+	GetSharedLinksError_Path  = "path"
+	GetSharedLinksError_Other = "other"
+)
 
 func (u *GetSharedLinksError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -973,6 +1112,11 @@ type InviteeInfo struct {
 	Email string `json:"email,omitempty"`
 }
 
+const (
+	InviteeInfo_Email = "email"
+	InviteeInfo_Other = "other"
+)
+
 func (u *InviteeInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1021,6 +1165,13 @@ type JobError struct {
 	RelinquishFolderMembershipError *RelinquishFolderMembershipError `json:"relinquish_folder_membership_error,omitempty"`
 }
 
+const (
+	JobError_UnshareFolderError              = "unshare_folder_error"
+	JobError_RemoveFolderMemberError         = "remove_folder_member_error"
+	JobError_RelinquishFolderMembershipError = "relinquish_folder_membership_error"
+	JobError_Other                           = "other"
+)
+
 func (u *JobError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1061,6 +1212,11 @@ type JobStatus struct {
 	// The asynchronous job returned an error.
 	Failed *JobError `json:"failed,omitempty"`
 }
+
+const (
+	JobStatus_Complete = "complete"
+	JobStatus_Failed   = "failed"
+)
 
 func (u *JobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1181,6 +1337,13 @@ type ListFileMembersContinueError struct {
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	ListFileMembersContinueError_UserError     = "user_error"
+	ListFileMembersContinueError_AccessError   = "access_error"
+	ListFileMembersContinueError_InvalidCursor = "invalid_cursor"
+	ListFileMembersContinueError_Other         = "other"
+)
+
 func (u *ListFileMembersContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1229,6 +1392,12 @@ type ListFileMembersError struct {
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	ListFileMembersError_UserError   = "user_error"
+	ListFileMembersError_AccessError = "access_error"
+	ListFileMembersError_Other       = "other"
+)
+
 func (u *ListFileMembersError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1262,6 +1431,12 @@ type ListFileMembersIndividualResult struct {
 	// The result of the query for this file if it was an error.
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	ListFileMembersIndividualResult_Result      = "result"
+	ListFileMembersIndividualResult_AccessError = "access_error"
+	ListFileMembersIndividualResult_Other       = "other"
+)
 
 func (u *ListFileMembersIndividualResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1324,6 +1499,12 @@ type ListFilesContinueError struct {
 	// User account had a problem.
 	UserError *SharingUserError `json:"user_error,omitempty"`
 }
+
+const (
+	ListFilesContinueError_UserError     = "user_error"
+	ListFilesContinueError_InvalidCursor = "invalid_cursor"
+	ListFilesContinueError_Other         = "other"
+)
 
 func (u *ListFilesContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1406,6 +1587,12 @@ type ListFolderMembersContinueError struct {
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	ListFolderMembersContinueError_AccessError   = "access_error"
+	ListFolderMembersContinueError_InvalidCursor = "invalid_cursor"
+	ListFolderMembersContinueError_Other         = "other"
+)
+
 func (u *ListFolderMembersContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1457,6 +1644,11 @@ type ListFoldersContinueError struct {
 	dropbox.Tagged
 }
 
+const (
+	ListFoldersContinueError_InvalidCursor = "invalid_cursor"
+	ListFoldersContinueError_Other         = "other"
+)
+
 // Result for `listFolders` or `listMountableFolders`, depending on which
 // endpoint was requested. Unmounted shared folders can be identified by the
 // absence of `SharedFolderMetadata.path_lower`.
@@ -1494,6 +1686,12 @@ type ListSharedLinksError struct {
 	dropbox.Tagged
 	Path *files.LookupError `json:"path,omitempty"`
 }
+
+const (
+	ListSharedLinksError_Path  = "path"
+	ListSharedLinksError_Reset = "reset"
+	ListSharedLinksError_Other = "other"
+)
 
 func (u *ListSharedLinksError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1554,6 +1752,15 @@ type MemberAction struct {
 	dropbox.Tagged
 }
 
+const (
+	MemberAction_LeaveACopy = "leave_a_copy"
+	MemberAction_MakeEditor = "make_editor"
+	MemberAction_MakeOwner  = "make_owner"
+	MemberAction_MakeViewer = "make_viewer"
+	MemberAction_Remove     = "remove"
+	MemberAction_Other      = "other"
+)
+
 // Whether the user is allowed to take the action on the associated member.
 type MemberPermission struct {
 	// The action that the user may wish to take on the member.
@@ -1578,6 +1785,12 @@ type MemberPolicy struct {
 	dropbox.Tagged
 }
 
+const (
+	MemberPolicy_Team   = "team"
+	MemberPolicy_Anyone = "anyone"
+	MemberPolicy_Other  = "other"
+)
+
 // Includes different ways to identify a member of a shared folder.
 type MemberSelector struct {
 	dropbox.Tagged
@@ -1586,6 +1799,12 @@ type MemberSelector struct {
 	// E-mail address of member.
 	Email string `json:"email,omitempty"`
 }
+
+const (
+	MemberSelector_DropboxId = "dropbox_id"
+	MemberSelector_Email     = "email"
+	MemberSelector_Other     = "other"
+)
 
 func (u *MemberSelector) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1634,6 +1853,11 @@ type ModifySharedLinkSettingsError struct {
 	SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 }
 
+const (
+	ModifySharedLinkSettingsError_SettingsError    = "settings_error"
+	ModifySharedLinkSettingsError_EmailNotVerified = "email_not_verified"
+)
+
 func (u *ModifySharedLinkSettingsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1670,6 +1894,16 @@ type MountFolderError struct {
 	dropbox.Tagged
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	MountFolderError_AccessError        = "access_error"
+	MountFolderError_InsideSharedFolder = "inside_shared_folder"
+	MountFolderError_InsufficientQuota  = "insufficient_quota"
+	MountFolderError_AlreadyMounted     = "already_mounted"
+	MountFolderError_NoPermission       = "no_permission"
+	MountFolderError_NotMountable       = "not_mountable"
+	MountFolderError_Other              = "other"
+)
 
 func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1712,10 +1946,25 @@ type PendingUploadMode struct {
 	dropbox.Tagged
 }
 
+const (
+	PendingUploadMode_File   = "file"
+	PendingUploadMode_Folder = "folder"
+)
+
 // Possible reasons the user is denied a permission.
 type PermissionDeniedReason struct {
 	dropbox.Tagged
 }
+
+const (
+	PermissionDeniedReason_UserNotSameTeamAsOwner = "user_not_same_team_as_owner"
+	PermissionDeniedReason_UserNotAllowedByOwner  = "user_not_allowed_by_owner"
+	PermissionDeniedReason_TargetIsIndirectMember = "target_is_indirect_member"
+	PermissionDeniedReason_TargetIsOwner          = "target_is_owner"
+	PermissionDeniedReason_TargetIsSelf           = "target_is_self"
+	PermissionDeniedReason_TargetNotActive        = "target_not_active"
+	PermissionDeniedReason_Other                  = "other"
+)
 
 type RelinquishFileMembershipArg struct {
 	// The path or id for the file.
@@ -1732,6 +1981,13 @@ type RelinquishFileMembershipError struct {
 	dropbox.Tagged
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	RelinquishFileMembershipError_AccessError  = "access_error"
+	RelinquishFileMembershipError_GroupAccess  = "group_access"
+	RelinquishFileMembershipError_NoPermission = "no_permission"
+	RelinquishFileMembershipError_Other        = "other"
+)
 
 func (u *RelinquishFileMembershipError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1771,6 +2027,16 @@ type RelinquishFolderMembershipError struct {
 	dropbox.Tagged
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	RelinquishFolderMembershipError_AccessError  = "access_error"
+	RelinquishFolderMembershipError_FolderOwner  = "folder_owner"
+	RelinquishFolderMembershipError_Mounted      = "mounted"
+	RelinquishFolderMembershipError_GroupAccess  = "group_access"
+	RelinquishFolderMembershipError_TeamFolder   = "team_folder"
+	RelinquishFolderMembershipError_NoPermission = "no_permission"
+	RelinquishFolderMembershipError_Other        = "other"
+)
 
 func (u *RelinquishFolderMembershipError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1815,6 +2081,13 @@ type RemoveFileMemberError struct {
 	UserError   *SharingUserError       `json:"user_error,omitempty"`
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	RemoveFileMemberError_UserError        = "user_error"
+	RemoveFileMemberError_AccessError      = "access_error"
+	RemoveFileMemberError_NoExplicitAccess = "no_explicit_access"
+	RemoveFileMemberError_Other            = "other"
+)
 
 func (u *RemoveFileMemberError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1867,6 +2140,16 @@ type RemoveFolderMemberError struct {
 	MemberError *SharedFolderMemberError `json:"member_error,omitempty"`
 }
 
+const (
+	RemoveFolderMemberError_AccessError  = "access_error"
+	RemoveFolderMemberError_MemberError  = "member_error"
+	RemoveFolderMemberError_FolderOwner  = "folder_owner"
+	RemoveFolderMemberError_GroupAccess  = "group_access"
+	RemoveFolderMemberError_TeamFolder   = "team_folder"
+	RemoveFolderMemberError_NoPermission = "no_permission"
+	RemoveFolderMemberError_Other        = "other"
+)
+
 func (u *RemoveFolderMemberError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -1900,6 +2183,11 @@ type RemoveMemberJobStatus struct {
 	Complete *MemberAccessLevelResult `json:"complete,omitempty"`
 	Failed   *RemoveFolderMemberError `json:"failed,omitempty"`
 }
+
+const (
+	RemoveMemberJobStatus_Complete = "complete"
+	RemoveMemberJobStatus_Failed   = "failed"
+)
 
 func (u *RemoveMemberJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -1938,6 +2226,12 @@ type RequestedVisibility struct {
 	dropbox.Tagged
 }
 
+const (
+	RequestedVisibility_Public   = "public"
+	RequestedVisibility_TeamOnly = "team_only"
+	RequestedVisibility_Password = "password"
+)
+
 // The actual access permissions values of shared links after taking into
 // account user preferences and the team and shared folder settings. Check the
 // `RequestedVisibility` for more info on the possible visibility values that
@@ -1945,6 +2239,12 @@ type RequestedVisibility struct {
 type ResolvedVisibility struct {
 	dropbox.Tagged
 }
+
+const (
+	ResolvedVisibility_TeamAndPassword  = "team_and_password"
+	ResolvedVisibility_SharedFolderOnly = "shared_folder_only"
+	ResolvedVisibility_Other            = "other"
+)
 
 type RevokeSharedLinkArg struct {
 	// URL of the shared link.
@@ -1960,6 +2260,10 @@ func NewRevokeSharedLinkArg(Url string) *RevokeSharedLinkArg {
 type RevokeSharedLinkError struct {
 	dropbox.Tagged
 }
+
+const (
+	RevokeSharedLinkError_SharedLinkMalformed = "shared_link_malformed"
+)
 
 type ShareFolderArg struct {
 	// The path to the folder to share. If it does not exist, then a new one is
@@ -1994,6 +2298,14 @@ type ShareFolderErrorBase struct {
 	BadPath *SharePathError `json:"bad_path,omitempty"`
 }
 
+const (
+	ShareFolderErrorBase_EmailUnverified                 = "email_unverified"
+	ShareFolderErrorBase_BadPath                         = "bad_path"
+	ShareFolderErrorBase_TeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
+	ShareFolderErrorBase_DisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
+	ShareFolderErrorBase_Other                           = "other"
+)
+
 func (u *ShareFolderErrorBase) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -2019,12 +2331,21 @@ type ShareFolderError struct {
 	dropbox.Tagged
 }
 
+const (
+	ShareFolderError_NoPermission = "no_permission"
+)
+
 type ShareFolderJobStatus struct {
 	dropbox.Tagged
 	// The share job has finished. The value is the metadata for the folder.
 	Complete *SharedFolderMetadata `json:"complete,omitempty"`
 	Failed   *ShareFolderError     `json:"failed,omitempty"`
 }
+
+const (
+	ShareFolderJobStatus_Complete = "complete"
+	ShareFolderJobStatus_Failed   = "failed"
+)
 
 func (u *ShareFolderJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -2058,6 +2379,10 @@ type ShareFolderLaunch struct {
 	Complete *SharedFolderMetadata `json:"complete,omitempty"`
 }
 
+const (
+	ShareFolderLaunch_Complete = "complete"
+)
+
 func (u *ShareFolderLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -2084,6 +2409,21 @@ type SharePathError struct {
 	// folder.
 	AlreadyShared *SharedFolderMetadata `json:"already_shared,omitempty"`
 }
+
+const (
+	SharePathError_IsFile               = "is_file"
+	SharePathError_InsideSharedFolder   = "inside_shared_folder"
+	SharePathError_ContainsSharedFolder = "contains_shared_folder"
+	SharePathError_IsAppFolder          = "is_app_folder"
+	SharePathError_InsideAppFolder      = "inside_app_folder"
+	SharePathError_IsPublicFolder       = "is_public_folder"
+	SharePathError_InsidePublicFolder   = "inside_public_folder"
+	SharePathError_AlreadyShared        = "already_shared"
+	SharePathError_InvalidPath          = "invalid_path"
+	SharePathError_IsOsxPackage         = "is_osx_package"
+	SharePathError_InsideOsxPackage     = "inside_osx_package"
+	SharePathError_Other                = "other"
+)
 
 func (u *SharePathError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -2175,9 +2515,23 @@ type SharedFolderAccessError struct {
 	dropbox.Tagged
 }
 
+const (
+	SharedFolderAccessError_InvalidId       = "invalid_id"
+	SharedFolderAccessError_NotAMember      = "not_a_member"
+	SharedFolderAccessError_EmailUnverified = "email_unverified"
+	SharedFolderAccessError_Unmounted       = "unmounted"
+	SharedFolderAccessError_Other           = "other"
+)
+
 type SharedFolderMemberError struct {
 	dropbox.Tagged
 }
+
+const (
+	SharedFolderMemberError_InvalidDropboxId = "invalid_dropbox_id"
+	SharedFolderMemberError_NotAMember       = "not_a_member"
+	SharedFolderMemberError_Other            = "other"
+)
 
 // Shared folder user and group membership.
 type SharedFolderMembers struct {
@@ -2259,10 +2613,25 @@ type SharedLinkAccessFailureReason struct {
 	dropbox.Tagged
 }
 
+const (
+	SharedLinkAccessFailureReason_LoginRequired       = "login_required"
+	SharedLinkAccessFailureReason_EmailVerifyRequired = "email_verify_required"
+	SharedLinkAccessFailureReason_PasswordRequired    = "password_required"
+	SharedLinkAccessFailureReason_TeamOnly            = "team_only"
+	SharedLinkAccessFailureReason_OwnerOnly           = "owner_only"
+	SharedLinkAccessFailureReason_Other               = "other"
+)
+
 // Policy governing who can view shared links.
 type SharedLinkPolicy struct {
 	dropbox.Tagged
 }
+
+const (
+	SharedLinkPolicy_Anyone  = "anyone"
+	SharedLinkPolicy_Members = "members"
+	SharedLinkPolicy_Other   = "other"
+)
 
 type SharedLinkSettings struct {
 	// The requested access for this shared link.
@@ -2283,15 +2652,34 @@ type SharedLinkSettingsError struct {
 	dropbox.Tagged
 }
 
+const (
+	SharedLinkSettingsError_InvalidSettings = "invalid_settings"
+	SharedLinkSettingsError_NotAuthorized   = "not_authorized"
+)
+
 // User could not access this file.
 type SharingFileAccessError struct {
 	dropbox.Tagged
 }
 
+const (
+	SharingFileAccessError_NoPermission       = "no_permission"
+	SharingFileAccessError_InvalidFile        = "invalid_file"
+	SharingFileAccessError_IsFolder           = "is_folder"
+	SharingFileAccessError_InsidePublicFolder = "inside_public_folder"
+	SharingFileAccessError_InsideOsxPackage   = "inside_osx_package"
+	SharingFileAccessError_Other              = "other"
+)
+
 // User account had a problem preventing this action.
 type SharingUserError struct {
 	dropbox.Tagged
 }
+
+const (
+	SharingUserError_EmailUnverified = "email_unverified"
+	SharingUserError_Other           = "other"
+)
 
 // Information about a team member.
 type TeamMemberInfo struct {
@@ -2330,6 +2718,17 @@ type TransferFolderError struct {
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	TransferFolderError_AccessError             = "access_error"
+	TransferFolderError_InvalidDropboxId        = "invalid_dropbox_id"
+	TransferFolderError_NewOwnerNotAMember      = "new_owner_not_a_member"
+	TransferFolderError_NewOwnerUnmounted       = "new_owner_unmounted"
+	TransferFolderError_NewOwnerEmailUnverified = "new_owner_email_unverified"
+	TransferFolderError_TeamFolder              = "team_folder"
+	TransferFolderError_NoPermission            = "no_permission"
+	TransferFolderError_Other                   = "other"
+)
+
 func (u *TransferFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -2365,6 +2764,13 @@ type UnmountFolderError struct {
 	dropbox.Tagged
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	UnmountFolderError_AccessError    = "access_error"
+	UnmountFolderError_NoPermission   = "no_permission"
+	UnmountFolderError_NotUnmountable = "not_unmountable"
+	UnmountFolderError_Other          = "other"
+)
 
 func (u *UnmountFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -2404,6 +2810,12 @@ type UnshareFileError struct {
 	UserError   *SharingUserError       `json:"user_error,omitempty"`
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
 }
+
+const (
+	UnshareFileError_UserError   = "user_error"
+	UnshareFileError_AccessError = "access_error"
+	UnshareFileError_Other       = "other"
+)
 
 func (u *UnshareFileError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -2452,6 +2864,13 @@ type UnshareFolderError struct {
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	UnshareFolderError_AccessError  = "access_error"
+	UnshareFolderError_TeamFolder   = "team_folder"
+	UnshareFolderError_NoPermission = "no_permission"
+	UnshareFolderError_Other        = "other"
+)
+
 func (u *UnshareFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -2498,6 +2917,15 @@ type UpdateFolderMemberError struct {
 	// folder and there was an error when adding the member.
 	NoExplicitAccess *AddFolderMemberError `json:"no_explicit_access,omitempty"`
 }
+
+const (
+	UpdateFolderMemberError_AccessError      = "access_error"
+	UpdateFolderMemberError_MemberError      = "member_error"
+	UpdateFolderMemberError_NoExplicitAccess = "no_explicit_access"
+	UpdateFolderMemberError_InsufficientPlan = "insufficient_plan"
+	UpdateFolderMemberError_NoPermission     = "no_permission"
+	UpdateFolderMemberError_Other            = "other"
+)
 
 func (u *UpdateFolderMemberError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
@@ -2559,6 +2987,14 @@ type UpdateFolderPolicyError struct {
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
 }
 
+const (
+	UpdateFolderPolicyError_AccessError                     = "access_error"
+	UpdateFolderPolicyError_NotOnTeam                       = "not_on_team"
+	UpdateFolderPolicyError_TeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
+	UpdateFolderPolicyError_DisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
+	UpdateFolderPolicyError_Other                           = "other"
+)
+
 func (u *UpdateFolderPolicyError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
@@ -2619,3 +3055,12 @@ func NewUserMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserMembers
 type Visibility struct {
 	dropbox.Tagged
 }
+
+const (
+	Visibility_Public           = "public"
+	Visibility_TeamOnly         = "team_only"
+	Visibility_Password         = "password"
+	Visibility_TeamAndPassword  = "team_and_password"
+	Visibility_SharedFolderOnly = "shared_folder_only"
+	Visibility_Other            = "other"
+)

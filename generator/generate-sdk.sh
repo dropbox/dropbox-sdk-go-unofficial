@@ -10,7 +10,6 @@ loc=$(realpath -e $0)
 base_dir=$(dirname "$loc")
 spec_dir="$base_dir/dropbox-api-spec"
 gen_dir=$(dirname ${base_dir})/dropbox
-# gen_dir="$GOPATH/src/github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 
 python3 -m stone.cli -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
 python3 -m stone.cli -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone

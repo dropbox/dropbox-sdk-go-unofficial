@@ -62,9 +62,7 @@ class GoTypesGenerator(CodeGenerator):
         self.emit()
         self.emit("func (u *{0}) Is{0}() {{}}".format(t))
         self.emit()
-        self._generate_union_helper(fmt_var(base.name, export=False) + 'Union',
-                                    base.namespace,
-                                    base.get_enumerated_subtypes())
+        self._generate_union_helper(base)
 
     def _generate_struct(self, struct):
         with self.block('type %s struct' % struct.name):
@@ -115,9 +113,16 @@ class GoTypesGenerator(CodeGenerator):
             self.emit('%s %s %s' % (field_name, type_name, json_tag))
 
     def _generate_union(self, union):
-        self._generate_union_helper(union.name, union.namespace, union.fields)
+        self._generate_union_helper(union)
 
-    def _generate_union_helper(self, name, namespace, fields):
+    def _generate_union_helper(self, u):
+        name = u.name
+        namespace = u.namespace
+        fields = u.fields
+        if is_struct_type(u) and u.has_enumerated_subtypes():
+            name = fmt_var(name, export=False) + 'Union'
+            fields = u.get_enumerated_subtypes()
+
         with self.block('type %s struct' % name):
             self.emit('dropbox.Tagged')
             for field in fields:
@@ -125,6 +130,10 @@ class GoTypesGenerator(CodeGenerator):
                     continue
                 self._generate_field(field, union_field=True,
                                      namespace=namespace)
+        self.emit()
+        with self.block('const', delim=('(', ')')):
+            for field in fields:
+                self.emit('%s_%s = "%s"' % (fmt_var(u.name), fmt_var(field.name), field.name))
         self.emit()
 
         num_void_fields = sum([is_void_type(f.data_type) for f in fields])
