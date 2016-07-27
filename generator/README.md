@@ -17,36 +17,44 @@ used to programmatically generate the [Dropbox Go SDK](https://github.com/dropbo
 
 ## Generated Code
 
+### Basic Types
+
+Here is how Stone [basic types](https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#basic-types) map to Go types:
+
+Stone Type | Go Type
+---------- | -------
+Int32/Int64/UInt32/UInt64 | int32/int64/uint32/uint64
+Float32/Float64 | float32/float64
+Boolean | bool
+String | string
+Timestamp | time.Time
+Void | struct{}
+
 ### Structs
 
-Stone https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct[structs] are represented as Go https://gobyexample.com/structs[structs] in a relatively straight-forward manner.
+Stone [structs](https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct) are represented as Go [structs](https://gobyexample.com/structs) in a relatively straight-forward manner. Each struct member is exported and also gets assigned the correct json tag. The latter is used for serializing requests and deserializing responses. Non-primitive types are represented as pointers to the corresponding type.
 
 ```
-struct Account <1>
+struct Account
     "The amount of detail revealed about an account depends on the user
-    being queried and the user making the query." <2>
+    being queried and the user making the query."
 
-    account_id AccountId <3>
-        "The user's unique Dropbox ID." <4>
-    name Name <5>
+    account_id AccountId
+        "The user's unique Dropbox ID."
+    name Name
         "Details of a user's name."
 ```
 
 ```go
 // The amount of detail revealed about an account depends on the user being
-// queried and the user making the query. <2>
-type Account struct {  // <1>
-  // The user's unique Dropbox ID. <4>
-  AccountId string `json:"account_id"` // <3>
-  // Details of a user's name.
-  Name *Name `json:"name"` // <5>
+// queried and the user making the query.
+type Account struct {
+	// The user's unique Dropbox ID.
+	AccountId string `json:"account_id"`
+	// Details of a user's name.
+	Name *Name `json:"name"`
 }
 ```
-<1> A struct is defined as a Go struct
-<2> The documentation shows up before the struct definition
-<3> Each struct member is exported and also gets assigned the correct json tag. The latter is used for serializing requests and deserializing responses.
-<4> Member documentation appears above the member definition
-<5> Non-primitive types are represented as pointers to the corresponding type
 
 ### Unions
 
