@@ -2,7 +2,7 @@
 
 An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.5+
 
-WARNING: This SDK is **NOT yet official**. What does this mean?
+:warning: WARNING: This SDK is **NOT yet official**. What does this mean?
 
   * There is no formal Dropbox [support](https://www.dropbox.com/developers/support) for this SDK at this point
   * Bugs may or may not get fixed
