@@ -66,7 +66,7 @@ Each Dropbox API takes in a request type and returns a response type. For instan
 Here's an example:
 
 ```go
-  arg := users.NewGetAccountArg()
+  arg := users.NewGetAccountArg(accountId)
   if resp, err := dbx.GetAccount(arg); err != nil {
     return err
   }
