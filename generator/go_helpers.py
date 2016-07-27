@@ -1,3 +1,4 @@
+from stone.api import ApiNamespace
 from stone.data_type import (
     Boolean,
     Float32,
@@ -99,8 +100,6 @@ def _doc_handler(tag, val):
     elif tag == 'val':
         if val == 'null':
             return 'nil'
-        elif val == 'true' or val == 'false':
-            return '`{}`'.format(val.capitalize())
         else:
             return val
     elif tag == 'field':
@@ -109,11 +108,15 @@ def _doc_handler(tag, val):
         raise RuntimeError('Unknown doc ref tag %r' % tag)
 
 
-def generate_doc(code_generator, doc):
-    if not doc:
-        return
-    code_generator.emit_wrapped_text(
-        code_generator.process_doc(doc, _doc_handler), prefix='// ')
+def generate_doc(code_generator, t):
+    doc = t.doc
+    if doc is None:
+        doc = 'has no documentation (yet)'
+    doc = code_generator.process_doc(doc, _doc_handler)
+    d = '%s : %s' % (fmt_var(t.name), doc)
+    if isinstance(t, ApiNamespace):
+        d = 'Package %s : %s' % (t.name, doc)
+    code_generator.emit_wrapped_text(d, prefix='// ')
 
 
 def _needs_base_type(data_type):

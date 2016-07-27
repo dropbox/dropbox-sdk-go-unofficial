@@ -18,18 +18,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// Package auth : has no documentation (yet)
 package auth
 
 import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 
-// Errors occurred during authentication.
+// AuthError : Errors occurred during authentication.
 type AuthError struct {
 	dropbox.Tagged
 }
 
+// Valid tag values for AuthError
 const (
-	AuthError_InvalidAccessToken = "invalid_access_token"
-	AuthError_InvalidSelectUser  = "invalid_select_user"
-	AuthError_InvalidSelectAdmin = "invalid_select_admin"
-	AuthError_Other              = "other"
+	AuthErrorInvalidAccessToken = "invalid_access_token"
+	AuthErrorInvalidSelectUser  = "invalid_select_user"
+	AuthErrorInvalidSelectAdmin = "invalid_select_admin"
+	AuthErrorOther              = "other"
 )

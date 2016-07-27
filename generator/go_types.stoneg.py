@@ -37,7 +37,7 @@ class GoTypesGenerator(CodeGenerator):
         with self.output_to_relative_path(file_name):
             self.emit_raw(HEADER)
             self.emit()
-            generate_doc(self, namespace.doc)
+            generate_doc(self, namespace)
             self.emit('package %s' % namespace.name)
             self.emit()
 
@@ -45,7 +45,7 @@ class GoTypesGenerator(CodeGenerator):
                 self._generate_data_type(data_type)
 
     def _generate_data_type(self, data_type):
-        generate_doc(self, data_type.doc)
+        generate_doc(self, data_type)
         if is_struct_type(data_type):
             self._generate_struct(data_type)
             if data_type.has_enumerated_subtypes():
@@ -57,9 +57,11 @@ class GoTypesGenerator(CodeGenerator):
 
     def _generate_base_type(self, base):
         t = fmt_type(base).lstrip('*')
+        self.emit('// Is{0} is the interface type for {0} and its subtypes'.format(t))
         with self.block('type Is%s interface' % t):
             self.emit('Is%s()' % t)
         self.emit()
+        self.emit('// Is{0} implements the Is{0} interface'.format(t))
         self.emit("func (u *{0}) Is{0}() {{}}".format(t))
         self.emit()
         self._generate_union_helper(base)
@@ -78,6 +80,7 @@ class GoTypesGenerator(CodeGenerator):
                              fmt_type(field.data_type, struct.namespace,
                                       use_interface=True))
                   for field in struct.all_required_fields]
+        self.emit('// New{0} returns a new {0} instance'.format(struct.name))
         signature = "func New{0}({1}) *{0}".format(struct.name, ', '.join(fields))
         with self.block(signature):
             self.emit('s := new({0})'.format(struct.name))
@@ -101,7 +104,7 @@ class GoTypesGenerator(CodeGenerator):
         self.emit()
 
     def _generate_field(self, field, union_field=False, namespace=None, raw=False):
-        generate_doc(self, field.doc)
+        generate_doc(self, field)
         field_name = fmt_var(field.name)
         type_name = fmt_type(field.data_type, namespace, use_interface=True)
         json_tag = '`json:"%s"`' % field.name
@@ -131,9 +134,10 @@ class GoTypesGenerator(CodeGenerator):
                 self._generate_field(field, union_field=True,
                                      namespace=namespace)
         self.emit()
+        self.emit('// Valid tag values for %s' % fmt_var(u.name))
         with self.block('const', delim=('(', ')')):
             for field in fields:
-                self.emit('%s_%s = "%s"' % (fmt_var(u.name), fmt_var(field.name), field.name))
+                self.emit('%s%s = "%s"' % (fmt_var(u.name), fmt_var(field.name), field.name))
         self.emit()
 
         num_void_fields = sum([is_void_type(f.data_type) for f in fields])
@@ -141,6 +145,7 @@ class GoTypesGenerator(CodeGenerator):
         if len(fields) == num_void_fields:
             return
 
+        self.emit('// UnmarshalJSON deserializes into a %s instance' % name)
         with self.block('func (u *%s) UnmarshalJSON(body []byte) error' % name):
             with self.block('type wrap struct'):
                 self.emit('dropbox.Tagged')

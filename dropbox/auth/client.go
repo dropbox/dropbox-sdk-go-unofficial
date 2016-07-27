@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+// Package auth : has no documentation (yet)
 package auth
 
 import (
@@ -29,14 +30,17 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
+// Client interface describes all routes in this namespace
 type Client interface {
-	// Disables the access token used to authenticate the call.
+	// TokenRevoke : Disables the access token used to authenticate the call.
 	TokenRevoke() (err error)
 }
 
 type apiImpl dropbox.Context
-type TokenRevokeApiError struct {
-	dropbox.ApiError
+
+//TokenRevokeAPIError is an error-wrapper for the token/revoke route
+type TokenRevokeAPIError struct {
+	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
@@ -48,8 +52,8 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 		return
 	}
 
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -73,7 +77,7 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError TokenRevokeApiError
+			var apiError TokenRevokeAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -81,7 +85,7 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -97,6 +101,7 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	return
 }
 
+// New returns a Client implementation for this namespace
 func New(c dropbox.Config) *apiImpl {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx

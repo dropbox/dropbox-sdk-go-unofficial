@@ -26,19 +26,21 @@ class GoClientGenerator(CodeGenerator):
         with self.output_to_relative_path(file_name):
             self.emit_raw(HEADER)
             self.emit()
-            generate_doc(self, namespace.doc)
+            generate_doc(self, namespace)
             self.emit('package %s' % namespace.name)
             self.emit()
 
+            self.emit('// Client interface describes all routes in this namespace')
             with self.block('type Client interface'):
                 for route in namespace.routes:
-                    generate_doc(self, route.doc)
+                    generate_doc(self, route)
                     self.emit(self._generate_route_signature(namespace, route))
             self.emit()
 
             self.emit('type apiImpl dropbox.Context')
             for route in namespace.routes:
                 self._generate_route(namespace, route)
+            self.emit('// New returns a Client implementation for this namespace')
             with self.block('func New(c dropbox.Config) *apiImpl'):
                 self.emit('ctx := apiImpl(dropbox.NewContext(c))')
                 self.emit('return &ctx')
@@ -67,8 +69,10 @@ class GoClientGenerator(CodeGenerator):
         out = self.emit
         fn = fmt_var(route.name)
         err = fmt_type(route.error_data_type, namespace)
-        with self.block('type {fn}ApiError struct'.format(fn=fn)):
-            out('dropbox.ApiError')
+        self.emit('//%sAPIError is an error-wrapper for the %s route' %
+                  (fn, route.name))
+        with self.block('type {fn}APIError struct'.format(fn=fn)):
+            out('dropbox.APIError')
             out('EndpointError {err} `json:"error"`'.format(err=err))
         out()
         host = route.attrs.get('host', 'api')
@@ -111,8 +115,8 @@ class GoClientGenerator(CodeGenerator):
             if auth == 'noauth':
                 out('req.Header.Del("Authorization")')
             elif auth != 'team':
-                with self.block('if dbx.Config.AsMemberId != ""'):
-                    out('req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)')
+                with self.block('if dbx.Config.AsMemberID != ""'):
+                    out('req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)')
 
             with self.block('if dbx.Config.Verbose'):
                 out('log.Printf("req: %v", req)')
@@ -138,13 +142,13 @@ class GoClientGenerator(CodeGenerator):
                 out('log.Printf("body: %s", body)')
             with self.block('if resp.StatusCode != 200'):
                 with self.block('if resp.StatusCode == 409'):
-                    out('var apiError {fn}ApiError'.format(fn=fn))
+                    out('var apiError {fn}APIError'.format(fn=fn))
                     with self.block('err = json.Unmarshal(body, &apiError);'
                                     'if err != nil'):
                         out('return')
                     out('err = apiError')
                     out('return')
-                out('var apiError dropbox.ApiError')
+                out('var apiError dropbox.APIError')
                 with self.block('if resp.StatusCode == 400'):
                     out('apiError.ErrorSummary = string(body)')
                     out('err = apiError')

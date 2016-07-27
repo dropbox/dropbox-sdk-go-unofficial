@@ -18,8 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// This namespace contains endpoints and data types for creating and managing
-// shared links and shared folders.
+// Package sharing : This namespace contains endpoints and data types for
+// creating and managing shared links and shared folders.
 package sharing
 
 import (
@@ -34,178 +34,194 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/async"
 )
 
+// Client interface describes all routes in this namespace
 type Client interface {
-	// Adds specified members to a file.
+	// AddFileMember : Adds specified members to a file.
 	AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActionResult, err error)
-	// Allows an owner or editor (if the ACL update policy allows) of a shared
-	// folder to add another member. For the new member to get access to all the
-	// functionality for this folder, you will need to call `mountFolder` on
-	// their behalf. Apps must have full Dropbox access to use this endpoint.
+	// AddFolderMember : Allows an owner or editor (if the ACL update policy
+	// allows) of a shared folder to add another member. For the new member to
+	// get access to all the functionality for this folder, you will need to
+	// call `mountFolder` on their behalf. Apps must have full Dropbox access to
+	// use this endpoint.
 	AddFolderMember(arg *AddFolderMemberArg) (err error)
-	// Returns the status of an asynchronous job. Apps must have full Dropbox
-	// access to use this endpoint.
+	// CheckJobStatus : Returns the status of an asynchronous job. Apps must
+	// have full Dropbox access to use this endpoint.
 	CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error)
-	// Returns the status of an asynchronous job for sharing a folder. Apps must
-	// have full Dropbox access to use this endpoint.
+	// CheckRemoveMemberJobStatus : Returns the status of an asynchronous job
+	// for sharing a folder. Apps must have full Dropbox access to use this
+	// endpoint.
 	CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveMemberJobStatus, err error)
-	// Returns the status of an asynchronous job for sharing a folder. Apps must
-	// have full Dropbox access to use this endpoint.
+	// CheckShareJobStatus : Returns the status of an asynchronous job for
+	// sharing a folder. Apps must have full Dropbox access to use this
+	// endpoint.
 	CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error)
-	// Create a shared link. If a shared link already exists for the given path,
-	// that link is returned. Note that in the returned `PathLinkMetadata`, the
-	// `PathLinkMetadata.url` field is the shortened URL if
-	// `CreateSharedLinkArg.short_url` argument is set to `True`. Previously, it
-	// was technically possible to break a shared link by moving or renaming the
-	// corresponding file or folder. In the future, this will no longer be the
-	// case, so your app shouldn't rely on this behavior. Instead, if your app
-	// needs to revoke a shared link, use `revokeSharedLink`.
+	// CreateSharedLink : Create a shared link. If a shared link already exists
+	// for the given path, that link is returned. Note that in the returned
+	// `PathLinkMetadata`, the `PathLinkMetadata.url` field is the shortened URL
+	// if `CreateSharedLinkArg.short_url` argument is set to true. Previously,
+	// it was technically possible to break a shared link by moving or renaming
+	// the corresponding file or folder. In the future, this will no longer be
+	// the case, so your app shouldn't rely on this behavior. Instead, if your
+	// app needs to revoke a shared link, use `revokeSharedLink`.
 	CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error)
-	// Create a shared link with custom settings. If no settings are given then
-	// the default visibility is `RequestedVisibility.public` (The resolved
-	// visibility, though, may depend on other aspects such as team and shared
-	// folder settings).
+	// CreateSharedLinkWithSettings : Create a shared link with custom settings.
+	// If no settings are given then the default visibility is
+	// `RequestedVisibility.public` (The resolved visibility, though, may depend
+	// on other aspects such as team and shared folder settings).
 	CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res IsSharedLinkMetadata, err error)
-	// Returns shared file metadata.
+	// GetFileMetadata : Returns shared file metadata.
 	GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMetadata, err error)
-	// Returns shared file metadata.
+	// GetFileMetadataBatch : Returns shared file metadata.
 	GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*GetFileMetadataBatchResult, err error)
-	// Returns shared folder metadata by its folder ID. Apps must have full
-	// Dropbox access to use this endpoint.
+	// GetFolderMetadata : Returns shared folder metadata by its folder ID. Apps
+	// must have full Dropbox access to use this endpoint.
 	GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error)
-	// Download the shared link's file from a user's Dropbox.
+	// GetSharedLinkFile : Download the shared link's file from a user's
+	// Dropbox.
 	GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, content io.ReadCloser, err error)
-	// Get the shared link's metadata.
+	// GetSharedLinkMetadata : Get the shared link's metadata.
 	GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error)
-	// Returns a list of `LinkMetadata` objects for this user, including
-	// collection links. If no path is given or the path is empty, returns a
-	// list of all shared links for the current user, including collection
-	// links. If a non-empty path is given, returns a list of all shared links
-	// that allow access to the given path.  Collection links are never returned
-	// in this case. Note that the url field in the response is never the
-	// shortened URL.
+	// GetSharedLinks : Returns a list of `LinkMetadata` objects for this user,
+	// including collection links. If no path is given or the path is empty,
+	// returns a list of all shared links for the current user, including
+	// collection links. If a non-empty path is given, returns a list of all
+	// shared links that allow access to the given path.  Collection links are
+	// never returned in this case. Note that the url field in the response is
+	// never the shortened URL.
 	GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error)
-	// Use to obtain the members who have been invited to a file, both inherited
-	// and uninherited members.
+	// ListFileMembers : Use to obtain the members who have been invited to a
+	// file, both inherited and uninherited members.
 	ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMembers, err error)
-	// Get members of multiple files at once. The arguments to this route are
-	// more limited, and the limit on query result size per file is more strict.
-	// To customize the results more, use the individual file endpoint.
-	// Inherited users are not included in the result, and permissions are not
-	// returned for this endpoint.
+	// ListFileMembersBatch : Get members of multiple files at once. The
+	// arguments to this route are more limited, and the limit on query result
+	// size per file is more strict. To customize the results more, use the
+	// individual file endpoint. Inherited users are not included in the result,
+	// and permissions are not returned for this endpoint.
 	ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*ListFileMembersBatchResult, err error)
-	// Once a cursor has been retrieved from `listFileMembers` or
-	// `listFileMembersBatch`, use this to paginate through all shared file
-	// members.
+	// ListFileMembersContinue : Once a cursor has been retrieved from
+	// `listFileMembers` or `listFileMembersBatch`, use this to paginate through
+	// all shared file members.
 	ListFileMembersContinue(arg *ListFileMembersContinueArg) (res *SharedFileMembers, err error)
-	// Returns shared folder membership by its folder ID. Apps must have full
-	// Dropbox access to use this endpoint.
-	ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error)
-	// Once a cursor has been retrieved from `listFolderMembers`, use this to
-	// paginate through all shared folder members. Apps must have full Dropbox
-	// access to use this endpoint.
-	ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error)
-	// Return the list of all shared folders the current user has access to.
+	// ListFolderMembers : Returns shared folder membership by its folder ID.
 	// Apps must have full Dropbox access to use this endpoint.
+	ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error)
+	// ListFolderMembersContinue : Once a cursor has been retrieved from
+	// `listFolderMembers`, use this to paginate through all shared folder
+	// members. Apps must have full Dropbox access to use this endpoint.
+	ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error)
+	// ListFolders : Return the list of all shared folders the current user has
+	// access to. Apps must have full Dropbox access to use this endpoint.
 	ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error)
-	// Once a cursor has been retrieved from `listFolders`, use this to paginate
-	// through all shared folders. The cursor must come from a previous call to
-	// `listFolders` or `listFoldersContinue`. Apps must have full Dropbox
-	// access to use this endpoint.
+	// ListFoldersContinue : Once a cursor has been retrieved from
+	// `listFolders`, use this to paginate through all shared folders. The
+	// cursor must come from a previous call to `listFolders` or
+	// `listFoldersContinue`. Apps must have full Dropbox access to use this
+	// endpoint.
 	ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
-	// Return the list of all shared folders the current user can mount or
-	// unmount. Apps must have full Dropbox access to use this endpoint.
+	// ListMountableFolders : Return the list of all shared folders the current
+	// user can mount or unmount. Apps must have full Dropbox access to use this
+	// endpoint.
 	ListMountableFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error)
-	// Once a cursor has been retrieved from `listMountableFolders`, use this to
-	// paginate through all mountable shared folders. The cursor must come from
-	// a previous call to `listMountableFolders` or
-	// `listMountableFoldersContinue`. Apps must have full Dropbox access to use
-	// this endpoint.
+	// ListMountableFoldersContinue : Once a cursor has been retrieved from
+	// `listMountableFolders`, use this to paginate through all mountable shared
+	// folders. The cursor must come from a previous call to
+	// `listMountableFolders` or `listMountableFoldersContinue`. Apps must have
+	// full Dropbox access to use this endpoint.
 	ListMountableFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
-	// Returns a list of all files shared with current user.  Does not include
-	// files the user has received via shared folders, and does  not include
-	// unclaimed invitations.
+	// ListReceivedFiles : Returns a list of all files shared with current user.
+	// Does not include files the user has received via shared folders, and does
+	// not include unclaimed invitations.
 	ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, err error)
-	// Get more results with a cursor from `listReceivedFiles`.
+	// ListReceivedFilesContinue : Get more results with a cursor from
+	// `listReceivedFiles`.
 	ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *ListFilesResult, err error)
-	// List shared links of this user. If no path is given or the path is empty,
-	// returns a list of all shared links for the current user. If a non-empty
-	// path is given, returns a list of all shared links that allow access to
-	// the given path - direct links to the given path and links to parent
-	// folders of the given path. Links to parent folders can be suppressed by
-	// setting direct_only to true.
+	// ListSharedLinks : List shared links of this user. If no path is given or
+	// the path is empty, returns a list of all shared links for the current
+	// user. If a non-empty path is given, returns a list of all shared links
+	// that allow access to the given path - direct links to the given path and
+	// links to parent folders of the given path. Links to parent folders can be
+	// suppressed by setting direct_only to true.
 	ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error)
-	// Modify the shared link's settings. If the requested visibility conflict
-	// with the shared links policy of the team or the shared folder (in case
-	// the linked file is part of a shared folder) then the
-	// `LinkPermissions.resolved_visibility` of the returned
+	// ModifySharedLinkSettings : Modify the shared link's settings. If the
+	// requested visibility conflict with the shared links policy of the team or
+	// the shared folder (in case the linked file is part of a shared folder)
+	// then the `LinkPermissions.resolved_visibility` of the returned
 	// `SharedLinkMetadata` will reflect the actual visibility of the shared
 	// link and the `LinkPermissions.requested_visibility` will reflect the
 	// requested visibility.
 	ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res IsSharedLinkMetadata, err error)
-	// The current user mounts the designated folder. Mount a shared folder for
-	// a user after they have been added as a member. Once mounted, the shared
-	// folder will appear in their Dropbox. Apps must have full Dropbox access
-	// to use this endpoint.
+	// MountFolder : The current user mounts the designated folder. Mount a
+	// shared folder for a user after they have been added as a member. Once
+	// mounted, the shared folder will appear in their Dropbox. Apps must have
+	// full Dropbox access to use this endpoint.
 	MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata, err error)
-	// The current user relinquishes their membership in the designated file.
-	// Note that the current user may still have inherited access to this file
-	// through the parent folder. Apps must have full Dropbox access to use this
-	// endpoint.
+	// RelinquishFileMembership : The current user relinquishes their membership
+	// in the designated file. Note that the current user may still have
+	// inherited access to this file through the parent folder. Apps must have
+	// full Dropbox access to use this endpoint.
 	RelinquishFileMembership(arg *RelinquishFileMembershipArg) (err error)
-	// The current user relinquishes their membership in the designated shared
-	// folder and will no longer have access to the folder.  A folder owner
-	// cannot relinquish membership in their own folder. This will run
-	// synchronously if leave_a_copy is false, and asynchronously if
-	// leave_a_copy is true. Apps must have full Dropbox access to use this
-	// endpoint.
-	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error)
-	// Identical to remove_file_member_2 but with less information returned.
-	RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error)
-	// Removes a specified member from the file.
-	RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error)
-	// Allows an owner or editor (if the ACL update policy allows) of a shared
-	// folder to remove another member. Apps must have full Dropbox access to
-	// use this endpoint.
-	RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.LaunchResultBase, err error)
-	// Revoke a shared link. Note that even after revoking a shared link to a
-	// file, the file may be accessible if there are shared links leading to any
-	// of the file parent folders. To list all shared links that enable access
-	// to a specific file, you can use the `listSharedLinks` with the file as
-	// the `ListSharedLinksArg.path` argument.
-	RevokeSharedLink(arg *RevokeSharedLinkArg) (err error)
-	// Share a folder with collaborators. Most sharing will be completed
-	// synchronously. Large folders will be completed asynchronously. To make
-	// testing the async case repeatable, set `ShareFolderArg.force_async`. If a
-	// `ShareFolderLaunch.async_job_id` is returned, you'll need to call
-	// `checkShareJobStatus` until the action completes to get the metadata for
-	// the folder. Apps must have full Dropbox access to use this endpoint.
-	ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error)
-	// Transfer ownership of a shared folder to a member of the shared folder.
-	// User must have `AccessLevel.owner` access to the shared folder to perform
-	// a transfer. Apps must have full Dropbox access to use this endpoint.
-	TransferFolder(arg *TransferFolderArg) (err error)
-	// The current user unmounts the designated folder. They can re-mount the
-	// folder at a later time using `mountFolder`. Apps must have full Dropbox
+	// RelinquishFolderMembership : The current user relinquishes their
+	// membership in the designated shared folder and will no longer have access
+	// to the folder.  A folder owner cannot relinquish membership in their own
+	// folder. This will run synchronously if leave_a_copy is false, and
+	// asynchronously if leave_a_copy is true. Apps must have full Dropbox
 	// access to use this endpoint.
+	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error)
+	// RemoveFileMember : Identical to remove_file_member_2 but with less
+	// information returned.
+	RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error)
+	// RemoveFileMember2 : Removes a specified member from the file.
+	RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error)
+	// RemoveFolderMember : Allows an owner or editor (if the ACL update policy
+	// allows) of a shared folder to remove another member. Apps must have full
+	// Dropbox access to use this endpoint.
+	RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.LaunchResultBase, err error)
+	// RevokeSharedLink : Revoke a shared link. Note that even after revoking a
+	// shared link to a file, the file may be accessible if there are shared
+	// links leading to any of the file parent folders. To list all shared links
+	// that enable access to a specific file, you can use the `listSharedLinks`
+	// with the file as the `ListSharedLinksArg.path` argument.
+	RevokeSharedLink(arg *RevokeSharedLinkArg) (err error)
+	// ShareFolder : Share a folder with collaborators. Most sharing will be
+	// completed synchronously. Large folders will be completed asynchronously.
+	// To make testing the async case repeatable, set
+	// `ShareFolderArg.force_async`. If a `ShareFolderLaunch.async_job_id` is
+	// returned, you'll need to call `checkShareJobStatus` until the action
+	// completes to get the metadata for the folder. Apps must have full Dropbox
+	// access to use this endpoint.
+	ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error)
+	// TransferFolder : Transfer ownership of a shared folder to a member of the
+	// shared folder. User must have `AccessLevel.owner` access to the shared
+	// folder to perform a transfer. Apps must have full Dropbox access to use
+	// this endpoint.
+	TransferFolder(arg *TransferFolderArg) (err error)
+	// UnmountFolder : The current user unmounts the designated folder. They can
+	// re-mount the folder at a later time using `mountFolder`. Apps must have
+	// full Dropbox access to use this endpoint.
 	UnmountFolder(arg *UnmountFolderArg) (err error)
-	// Remove all members from this file. Does not remove inherited members.
+	// UnshareFile : Remove all members from this file. Does not remove
+	// inherited members.
 	UnshareFile(arg *UnshareFileArg) (err error)
-	// Allows a shared folder owner to unshare the folder. You'll need to call
-	// `checkJobStatus` to determine if the action has completed successfully.
-	// Apps must have full Dropbox access to use this endpoint.
+	// UnshareFolder : Allows a shared folder owner to unshare the folder.
+	// You'll need to call `checkJobStatus` to determine if the action has
+	// completed successfully. Apps must have full Dropbox access to use this
+	// endpoint.
 	UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error)
-	// Allows an owner or editor of a shared folder to update another member's
-	// permissions. Apps must have full Dropbox access to use this endpoint.
+	// UpdateFolderMember : Allows an owner or editor of a shared folder to
+	// update another member's permissions. Apps must have full Dropbox access
+	// to use this endpoint.
 	UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberAccessLevelResult, err error)
-	// Update the sharing policies for a shared folder. User must have
-	// `AccessLevel.owner` access to the shared folder to update its policies.
-	// Apps must have full Dropbox access to use this endpoint.
+	// UpdateFolderPolicy : Update the sharing policies for a shared folder.
+	// User must have `AccessLevel.owner` access to the shared folder to update
+	// its policies. Apps must have full Dropbox access to use this endpoint.
 	UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedFolderMetadata, err error)
 }
 
 type apiImpl dropbox.Context
-type AddFileMemberApiError struct {
-	dropbox.ApiError
+
+//AddFileMemberAPIError is an error-wrapper for the add_file_member route
+type AddFileMemberAPIError struct {
+	dropbox.APIError
 	EndpointError *AddFileMemberError `json:"error"`
 }
 
@@ -226,8 +242,8 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -251,7 +267,7 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError AddFileMemberApiError
+			var apiError AddFileMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -259,7 +275,7 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -280,8 +296,9 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 	return
 }
 
-type AddFolderMemberApiError struct {
-	dropbox.ApiError
+//AddFolderMemberAPIError is an error-wrapper for the add_folder_member route
+type AddFolderMemberAPIError struct {
+	dropbox.APIError
 	EndpointError *AddFolderMemberError `json:"error"`
 }
 
@@ -302,8 +319,8 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -327,7 +344,7 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError AddFolderMemberApiError
+			var apiError AddFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -335,7 +352,7 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -351,8 +368,9 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	return
 }
 
-type CheckJobStatusApiError struct {
-	dropbox.ApiError
+//CheckJobStatusAPIError is an error-wrapper for the check_job_status route
+type CheckJobStatusAPIError struct {
+	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
@@ -373,8 +391,8 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -398,7 +416,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError CheckJobStatusApiError
+			var apiError CheckJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -406,7 +424,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -427,8 +445,9 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	return
 }
 
-type CheckRemoveMemberJobStatusApiError struct {
-	dropbox.ApiError
+//CheckRemoveMemberJobStatusAPIError is an error-wrapper for the check_remove_member_job_status route
+type CheckRemoveMemberJobStatusAPIError struct {
+	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
@@ -449,8 +468,8 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -474,7 +493,7 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError CheckRemoveMemberJobStatusApiError
+			var apiError CheckRemoveMemberJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -482,7 +501,7 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -503,8 +522,9 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 	return
 }
 
-type CheckShareJobStatusApiError struct {
-	dropbox.ApiError
+//CheckShareJobStatusAPIError is an error-wrapper for the check_share_job_status route
+type CheckShareJobStatusAPIError struct {
+	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
@@ -525,8 +545,8 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -550,7 +570,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError CheckShareJobStatusApiError
+			var apiError CheckShareJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -558,7 +578,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -579,8 +599,9 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	return
 }
 
-type CreateSharedLinkApiError struct {
-	dropbox.ApiError
+//CreateSharedLinkAPIError is an error-wrapper for the create_shared_link route
+type CreateSharedLinkAPIError struct {
+	dropbox.APIError
 	EndpointError *CreateSharedLinkError `json:"error"`
 }
 
@@ -601,8 +622,8 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -626,7 +647,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError CreateSharedLinkApiError
+			var apiError CreateSharedLinkAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -634,7 +655,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -655,8 +676,9 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	return
 }
 
-type CreateSharedLinkWithSettingsApiError struct {
-	dropbox.ApiError
+//CreateSharedLinkWithSettingsAPIError is an error-wrapper for the create_shared_link_with_settings route
+type CreateSharedLinkWithSettingsAPIError struct {
+	dropbox.APIError
 	EndpointError *CreateSharedLinkWithSettingsError `json:"error"`
 }
 
@@ -677,8 +699,8 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -702,7 +724,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError CreateSharedLinkWithSettingsApiError
+			var apiError CreateSharedLinkWithSettingsAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -710,7 +732,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -739,8 +761,9 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 	return
 }
 
-type GetFileMetadataApiError struct {
-	dropbox.ApiError
+//GetFileMetadataAPIError is an error-wrapper for the get_file_metadata route
+type GetFileMetadataAPIError struct {
+	dropbox.APIError
 	EndpointError *GetFileMetadataError `json:"error"`
 }
 
@@ -761,8 +784,8 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -786,7 +809,7 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetFileMetadataApiError
+			var apiError GetFileMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -794,7 +817,7 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -815,8 +838,9 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	return
 }
 
-type GetFileMetadataBatchApiError struct {
-	dropbox.ApiError
+//GetFileMetadataBatchAPIError is an error-wrapper for the get_file_metadata/batch route
+type GetFileMetadataBatchAPIError struct {
+	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
 }
 
@@ -837,8 +861,8 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -862,7 +886,7 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetFileMetadataBatchApiError
+			var apiError GetFileMetadataBatchAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -870,7 +894,7 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -891,8 +915,9 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 	return
 }
 
-type GetFolderMetadataApiError struct {
-	dropbox.ApiError
+//GetFolderMetadataAPIError is an error-wrapper for the get_folder_metadata route
+type GetFolderMetadataAPIError struct {
+	dropbox.APIError
 	EndpointError *SharedFolderAccessError `json:"error"`
 }
 
@@ -913,8 +938,8 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -938,7 +963,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetFolderMetadataApiError
+			var apiError GetFolderMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -946,7 +971,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -967,8 +992,9 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	return
 }
 
-type GetSharedLinkFileApiError struct {
-	dropbox.ApiError
+//GetSharedLinkFileAPIError is an error-wrapper for the get_shared_link_file route
+type GetSharedLinkFileAPIError struct {
+	dropbox.APIError
 	EndpointError *GetSharedLinkFileError `json:"error"`
 }
 
@@ -989,8 +1015,8 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1010,7 +1036,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetSharedLinkFileApiError
+			var apiError GetSharedLinkFileAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1018,7 +1044,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1047,8 +1073,9 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 	return
 }
 
-type GetSharedLinkMetadataApiError struct {
-	dropbox.ApiError
+//GetSharedLinkMetadataAPIError is an error-wrapper for the get_shared_link_metadata route
+type GetSharedLinkMetadataAPIError struct {
+	dropbox.APIError
 	EndpointError *SharedLinkError `json:"error"`
 }
 
@@ -1069,8 +1096,8 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1094,7 +1121,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetSharedLinkMetadataApiError
+			var apiError GetSharedLinkMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1102,7 +1129,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1131,8 +1158,9 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 	return
 }
 
-type GetSharedLinksApiError struct {
-	dropbox.ApiError
+//GetSharedLinksAPIError is an error-wrapper for the get_shared_links route
+type GetSharedLinksAPIError struct {
+	dropbox.APIError
 	EndpointError *GetSharedLinksError `json:"error"`
 }
 
@@ -1153,8 +1181,8 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1178,7 +1206,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError GetSharedLinksApiError
+			var apiError GetSharedLinksAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1186,7 +1214,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1207,8 +1235,9 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 	return
 }
 
-type ListFileMembersApiError struct {
-	dropbox.ApiError
+//ListFileMembersAPIError is an error-wrapper for the list_file_members route
+type ListFileMembersAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFileMembersError `json:"error"`
 }
 
@@ -1229,8 +1258,8 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1254,7 +1283,7 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFileMembersApiError
+			var apiError ListFileMembersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1262,7 +1291,7 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1283,8 +1312,9 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	return
 }
 
-type ListFileMembersBatchApiError struct {
-	dropbox.ApiError
+//ListFileMembersBatchAPIError is an error-wrapper for the list_file_members/batch route
+type ListFileMembersBatchAPIError struct {
+	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
 }
 
@@ -1305,8 +1335,8 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1330,7 +1360,7 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFileMembersBatchApiError
+			var apiError ListFileMembersBatchAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1338,7 +1368,7 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1359,8 +1389,9 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 	return
 }
 
-type ListFileMembersContinueApiError struct {
-	dropbox.ApiError
+//ListFileMembersContinueAPIError is an error-wrapper for the list_file_members/continue route
+type ListFileMembersContinueAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFileMembersContinueError `json:"error"`
 }
 
@@ -1381,8 +1412,8 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1406,7 +1437,7 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFileMembersContinueApiError
+			var apiError ListFileMembersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1414,7 +1445,7 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1435,8 +1466,9 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	return
 }
 
-type ListFolderMembersApiError struct {
-	dropbox.ApiError
+//ListFolderMembersAPIError is an error-wrapper for the list_folder_members route
+type ListFolderMembersAPIError struct {
+	dropbox.APIError
 	EndpointError *SharedFolderAccessError `json:"error"`
 }
 
@@ -1457,8 +1489,8 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1482,7 +1514,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFolderMembersApiError
+			var apiError ListFolderMembersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1490,7 +1522,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1511,8 +1543,9 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 	return
 }
 
-type ListFolderMembersContinueApiError struct {
-	dropbox.ApiError
+//ListFolderMembersContinueAPIError is an error-wrapper for the list_folder_members/continue route
+type ListFolderMembersContinueAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFolderMembersContinueError `json:"error"`
 }
 
@@ -1533,8 +1566,8 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1558,7 +1591,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFolderMembersContinueApiError
+			var apiError ListFolderMembersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1566,7 +1599,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1587,8 +1620,9 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	return
 }
 
-type ListFoldersApiError struct {
-	dropbox.ApiError
+//ListFoldersAPIError is an error-wrapper for the list_folders route
+type ListFoldersAPIError struct {
+	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
@@ -1609,8 +1643,8 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1634,7 +1668,7 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFoldersApiError
+			var apiError ListFoldersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1642,7 +1676,7 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1663,8 +1697,9 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 	return
 }
 
-type ListFoldersContinueApiError struct {
-	dropbox.ApiError
+//ListFoldersContinueAPIError is an error-wrapper for the list_folders/continue route
+type ListFoldersContinueAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFoldersContinueError `json:"error"`
 }
 
@@ -1685,8 +1720,8 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1710,7 +1745,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListFoldersContinueApiError
+			var apiError ListFoldersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1718,7 +1753,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1739,8 +1774,9 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	return
 }
 
-type ListMountableFoldersApiError struct {
-	dropbox.ApiError
+//ListMountableFoldersAPIError is an error-wrapper for the list_mountable_folders route
+type ListMountableFoldersAPIError struct {
+	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
@@ -1761,8 +1797,8 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1786,7 +1822,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListMountableFoldersApiError
+			var apiError ListMountableFoldersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1794,7 +1830,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1815,8 +1851,9 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 	return
 }
 
-type ListMountableFoldersContinueApiError struct {
-	dropbox.ApiError
+//ListMountableFoldersContinueAPIError is an error-wrapper for the list_mountable_folders/continue route
+type ListMountableFoldersContinueAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFoldersContinueError `json:"error"`
 }
 
@@ -1837,8 +1874,8 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1862,7 +1899,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListMountableFoldersContinueApiError
+			var apiError ListMountableFoldersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1870,7 +1907,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1891,8 +1928,9 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	return
 }
 
-type ListReceivedFilesApiError struct {
-	dropbox.ApiError
+//ListReceivedFilesAPIError is an error-wrapper for the list_received_files route
+type ListReceivedFilesAPIError struct {
+	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
 }
 
@@ -1913,8 +1951,8 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -1938,7 +1976,7 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListReceivedFilesApiError
+			var apiError ListReceivedFilesAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -1946,7 +1984,7 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -1967,8 +2005,9 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 	return
 }
 
-type ListReceivedFilesContinueApiError struct {
-	dropbox.ApiError
+//ListReceivedFilesContinueAPIError is an error-wrapper for the list_received_files/continue route
+type ListReceivedFilesContinueAPIError struct {
+	dropbox.APIError
 	EndpointError *ListFilesContinueError `json:"error"`
 }
 
@@ -1989,8 +2028,8 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2014,7 +2053,7 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListReceivedFilesContinueApiError
+			var apiError ListReceivedFilesContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2022,7 +2061,7 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2043,8 +2082,9 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 	return
 }
 
-type ListSharedLinksApiError struct {
-	dropbox.ApiError
+//ListSharedLinksAPIError is an error-wrapper for the list_shared_links route
+type ListSharedLinksAPIError struct {
+	dropbox.APIError
 	EndpointError *ListSharedLinksError `json:"error"`
 }
 
@@ -2065,8 +2105,8 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2090,7 +2130,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ListSharedLinksApiError
+			var apiError ListSharedLinksAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2098,7 +2138,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2119,8 +2159,9 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	return
 }
 
-type ModifySharedLinkSettingsApiError struct {
-	dropbox.ApiError
+//ModifySharedLinkSettingsAPIError is an error-wrapper for the modify_shared_link_settings route
+type ModifySharedLinkSettingsAPIError struct {
+	dropbox.APIError
 	EndpointError *ModifySharedLinkSettingsError `json:"error"`
 }
 
@@ -2141,8 +2182,8 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2166,7 +2207,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ModifySharedLinkSettingsApiError
+			var apiError ModifySharedLinkSettingsAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2174,7 +2215,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2203,8 +2244,9 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 	return
 }
 
-type MountFolderApiError struct {
-	dropbox.ApiError
+//MountFolderAPIError is an error-wrapper for the mount_folder route
+type MountFolderAPIError struct {
+	dropbox.APIError
 	EndpointError *MountFolderError `json:"error"`
 }
 
@@ -2225,8 +2267,8 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2250,7 +2292,7 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError MountFolderApiError
+			var apiError MountFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2258,7 +2300,7 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2279,8 +2321,9 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 	return
 }
 
-type RelinquishFileMembershipApiError struct {
-	dropbox.ApiError
+//RelinquishFileMembershipAPIError is an error-wrapper for the relinquish_file_membership route
+type RelinquishFileMembershipAPIError struct {
+	dropbox.APIError
 	EndpointError *RelinquishFileMembershipError `json:"error"`
 }
 
@@ -2301,8 +2344,8 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2326,7 +2369,7 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RelinquishFileMembershipApiError
+			var apiError RelinquishFileMembershipAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2334,7 +2377,7 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2350,8 +2393,9 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	return
 }
 
-type RelinquishFolderMembershipApiError struct {
-	dropbox.ApiError
+//RelinquishFolderMembershipAPIError is an error-wrapper for the relinquish_folder_membership route
+type RelinquishFolderMembershipAPIError struct {
+	dropbox.APIError
 	EndpointError *RelinquishFolderMembershipError `json:"error"`
 }
 
@@ -2372,8 +2416,8 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2397,7 +2441,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RelinquishFolderMembershipApiError
+			var apiError RelinquishFolderMembershipAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2405,7 +2449,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2426,8 +2470,9 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	return
 }
 
-type RemoveFileMemberApiError struct {
-	dropbox.ApiError
+//RemoveFileMemberAPIError is an error-wrapper for the remove_file_member route
+type RemoveFileMemberAPIError struct {
+	dropbox.APIError
 	EndpointError *RemoveFileMemberError `json:"error"`
 }
 
@@ -2448,8 +2493,8 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2473,7 +2518,7 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RemoveFileMemberApiError
+			var apiError RemoveFileMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2481,7 +2526,7 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2502,8 +2547,9 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 	return
 }
 
-type RemoveFileMember2ApiError struct {
-	dropbox.ApiError
+//RemoveFileMember2APIError is an error-wrapper for the remove_file_member_2 route
+type RemoveFileMember2APIError struct {
+	dropbox.APIError
 	EndpointError *RemoveFileMemberError `json:"error"`
 }
 
@@ -2524,8 +2570,8 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2549,7 +2595,7 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RemoveFileMember2ApiError
+			var apiError RemoveFileMember2APIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2557,7 +2603,7 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2578,8 +2624,9 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	return
 }
 
-type RemoveFolderMemberApiError struct {
-	dropbox.ApiError
+//RemoveFolderMemberAPIError is an error-wrapper for the remove_folder_member route
+type RemoveFolderMemberAPIError struct {
+	dropbox.APIError
 	EndpointError *RemoveFolderMemberError `json:"error"`
 }
 
@@ -2600,8 +2647,8 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2625,7 +2672,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RemoveFolderMemberApiError
+			var apiError RemoveFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2633,7 +2680,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2654,8 +2701,9 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 	return
 }
 
-type RevokeSharedLinkApiError struct {
-	dropbox.ApiError
+//RevokeSharedLinkAPIError is an error-wrapper for the revoke_shared_link route
+type RevokeSharedLinkAPIError struct {
+	dropbox.APIError
 	EndpointError *RevokeSharedLinkError `json:"error"`
 }
 
@@ -2676,8 +2724,8 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2701,7 +2749,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError RevokeSharedLinkApiError
+			var apiError RevokeSharedLinkAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2709,7 +2757,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2725,8 +2773,9 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	return
 }
 
-type ShareFolderApiError struct {
-	dropbox.ApiError
+//ShareFolderAPIError is an error-wrapper for the share_folder route
+type ShareFolderAPIError struct {
+	dropbox.APIError
 	EndpointError *ShareFolderError `json:"error"`
 }
 
@@ -2747,8 +2796,8 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2772,7 +2821,7 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError ShareFolderApiError
+			var apiError ShareFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2780,7 +2829,7 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2801,8 +2850,9 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 	return
 }
 
-type TransferFolderApiError struct {
-	dropbox.ApiError
+//TransferFolderAPIError is an error-wrapper for the transfer_folder route
+type TransferFolderAPIError struct {
+	dropbox.APIError
 	EndpointError *TransferFolderError `json:"error"`
 }
 
@@ -2823,8 +2873,8 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2848,7 +2898,7 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError TransferFolderApiError
+			var apiError TransferFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2856,7 +2906,7 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2872,8 +2922,9 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	return
 }
 
-type UnmountFolderApiError struct {
-	dropbox.ApiError
+//UnmountFolderAPIError is an error-wrapper for the unmount_folder route
+type UnmountFolderAPIError struct {
+	dropbox.APIError
 	EndpointError *UnmountFolderError `json:"error"`
 }
 
@@ -2894,8 +2945,8 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2919,7 +2970,7 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError UnmountFolderApiError
+			var apiError UnmountFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2927,7 +2978,7 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -2943,8 +2994,9 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	return
 }
 
-type UnshareFileApiError struct {
-	dropbox.ApiError
+//UnshareFileAPIError is an error-wrapper for the unshare_file route
+type UnshareFileAPIError struct {
+	dropbox.APIError
 	EndpointError *UnshareFileError `json:"error"`
 }
 
@@ -2965,8 +3017,8 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -2990,7 +3042,7 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError UnshareFileApiError
+			var apiError UnshareFileAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -2998,7 +3050,7 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -3014,8 +3066,9 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	return
 }
 
-type UnshareFolderApiError struct {
-	dropbox.ApiError
+//UnshareFolderAPIError is an error-wrapper for the unshare_folder route
+type UnshareFolderAPIError struct {
+	dropbox.APIError
 	EndpointError *UnshareFolderError `json:"error"`
 }
 
@@ -3036,8 +3089,8 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -3061,7 +3114,7 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError UnshareFolderApiError
+			var apiError UnshareFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -3069,7 +3122,7 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -3090,8 +3143,9 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	return
 }
 
-type UpdateFolderMemberApiError struct {
-	dropbox.ApiError
+//UpdateFolderMemberAPIError is an error-wrapper for the update_folder_member route
+type UpdateFolderMemberAPIError struct {
+	dropbox.APIError
 	EndpointError *UpdateFolderMemberError `json:"error"`
 }
 
@@ -3112,8 +3166,8 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -3137,7 +3191,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError UpdateFolderMemberApiError
+			var apiError UpdateFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -3145,7 +3199,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -3166,8 +3220,9 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 	return
 }
 
-type UpdateFolderPolicyApiError struct {
-	dropbox.ApiError
+//UpdateFolderPolicyAPIError is an error-wrapper for the update_folder_policy route
+type UpdateFolderPolicyAPIError struct {
+	dropbox.APIError
 	EndpointError *UpdateFolderPolicyError `json:"error"`
 }
 
@@ -3188,8 +3243,8 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.AsMemberId != "" {
-		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberId)
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
 	}
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
@@ -3213,7 +3268,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 	}
 	if resp.StatusCode != 200 {
 		if resp.StatusCode == 409 {
-			var apiError UpdateFolderPolicyApiError
+			var apiError UpdateFolderPolicyAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
 				return
@@ -3221,7 +3276,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 			err = apiError
 			return
 		}
-		var apiError dropbox.ApiError
+		var apiError dropbox.APIError
 		if resp.StatusCode == 400 {
 			apiError.ErrorSummary = string(body)
 			err = apiError
@@ -3242,6 +3297,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 	return
 }
 
+// New returns a Client implementation for this namespace
 func New(c dropbox.Config) *apiImpl {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx
