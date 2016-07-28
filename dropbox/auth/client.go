@@ -75,22 +75,11 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError TokenRevokeAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError TokenRevokeAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -98,6 +87,17 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 

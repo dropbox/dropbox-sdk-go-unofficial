@@ -261,22 +261,16 @@ func (dbx *apiImpl) AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError AlphaGroupsCreateAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError AlphaGroupsCreateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -284,11 +278,17 @@ func (dbx *apiImpl) AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -335,22 +335,16 @@ func (dbx *apiImpl) AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInf
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError AlphaGroupsGetInfoAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError AlphaGroupsGetInfoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -358,11 +352,17 @@ func (dbx *apiImpl) AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInf
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -409,22 +409,16 @@ func (dbx *apiImpl) AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError AlphaGroupsListAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError AlphaGroupsListAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -432,11 +426,17 @@ func (dbx *apiImpl) AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -483,22 +483,16 @@ func (dbx *apiImpl) AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *Gr
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError AlphaGroupsListContinueAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError AlphaGroupsListContinueAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -506,11 +500,17 @@ func (dbx *apiImpl) AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *Gr
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -557,22 +557,16 @@ func (dbx *apiImpl) AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo,
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError AlphaGroupsUpdateAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError AlphaGroupsUpdateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -580,11 +574,17 @@ func (dbx *apiImpl) AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo,
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -631,22 +631,16 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError DevicesListMemberDevicesAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DevicesListMemberDevicesAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -654,11 +648,17 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -705,22 +705,16 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError DevicesListMembersDevicesAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DevicesListMembersDevicesAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -728,11 +722,17 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -779,22 +779,16 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError DevicesListTeamDevicesAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DevicesListTeamDevicesAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -802,11 +796,17 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -853,22 +853,11 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError DevicesRevokeDeviceSessionAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DevicesRevokeDeviceSessionAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -876,6 +865,17 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -922,22 +922,16 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError DevicesRevokeDeviceSessionBatchAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DevicesRevokeDeviceSessionBatchAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -945,11 +939,17 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -987,22 +987,16 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GetInfoAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GetInfoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1010,11 +1004,17 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1061,22 +1061,16 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsCreateAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsCreateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1084,11 +1078,17 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1135,22 +1135,16 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsDeleteAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsDeleteAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1158,11 +1152,17 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1209,22 +1209,16 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsGetInfoAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsGetInfoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1232,11 +1226,17 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1283,22 +1283,16 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsJobStatusGetAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsJobStatusGetAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1306,11 +1300,17 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1357,22 +1357,16 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsListAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsListAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1380,11 +1374,17 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1431,22 +1431,16 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsListContinueAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsListContinueAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1454,11 +1448,17 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1505,22 +1505,16 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsMembersAddAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsMembersAddAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1528,11 +1522,17 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1579,22 +1579,16 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsMembersListAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsMembersListAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1602,11 +1596,17 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1653,22 +1653,16 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsMembersListContinueAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsMembersListContinueAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1676,11 +1670,17 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1727,22 +1727,16 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsMembersRemoveAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsMembersRemoveAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1750,11 +1744,17 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1801,22 +1801,16 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsMembersSetAccessTypeAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsMembersSetAccessTypeAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1824,11 +1818,17 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1875,22 +1875,16 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError GroupsUpdateAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GroupsUpdateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1898,11 +1892,17 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -1949,22 +1949,16 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError LinkedAppsListMemberLinkedAppsAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LinkedAppsListMemberLinkedAppsAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1972,11 +1966,17 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2023,22 +2023,16 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError LinkedAppsListMembersLinkedAppsAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LinkedAppsListMembersLinkedAppsAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2046,11 +2040,17 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2097,22 +2097,16 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError LinkedAppsListTeamLinkedAppsAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LinkedAppsListTeamLinkedAppsAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2120,11 +2114,17 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2171,22 +2171,11 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError LinkedAppsRevokeLinkedAppAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LinkedAppsRevokeLinkedAppAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2194,6 +2183,17 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -2240,22 +2240,16 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError LinkedAppsRevokeLinkedAppBatchAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LinkedAppsRevokeLinkedAppBatchAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2263,11 +2257,17 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2314,22 +2314,16 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersAddAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersAddAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2337,11 +2331,17 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2388,22 +2388,16 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersAddJobStatusGetAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersAddJobStatusGetAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2411,11 +2405,17 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2462,22 +2462,16 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersGetInfoAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersGetInfoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2485,11 +2479,17 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2536,22 +2536,16 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersListAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersListAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2559,11 +2553,17 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2610,22 +2610,16 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersListContinueAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersListContinueAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2633,11 +2627,17 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2684,22 +2684,11 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersRecoverAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersRecoverAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2707,6 +2696,17 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -2753,22 +2753,16 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersRemoveAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersRemoveAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2776,11 +2770,17 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2827,22 +2827,16 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersRemoveJobStatusGetAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersRemoveJobStatusGetAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2850,11 +2844,17 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -2901,22 +2901,11 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersSendWelcomeEmailAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSendWelcomeEmailAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2924,6 +2913,17 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -2970,22 +2970,16 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersSetAdminPermissionsAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetAdminPermissionsAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2993,11 +2987,17 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3044,22 +3044,16 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersSetProfileAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetProfileAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3067,11 +3061,17 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3118,22 +3118,11 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersSuspendAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSuspendAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3141,6 +3130,17 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -3187,22 +3187,11 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError MembersUnsuspendAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
-			return
-		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersUnsuspendAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3210,6 +3199,17 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 		err = apiError
 		return
 	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
 	return
 }
 
@@ -3256,22 +3256,16 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *Add
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError PropertiesTemplateAddAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PropertiesTemplateAddAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3279,11 +3273,17 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *Add
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3330,22 +3330,16 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError PropertiesTemplateGetAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PropertiesTemplateGetAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3353,11 +3347,17 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3395,22 +3395,16 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *properties.ListPropertyTempla
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError PropertiesTemplateListAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PropertiesTemplateListAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3418,11 +3412,17 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *properties.ListPropertyTempla
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3469,22 +3469,16 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *UpdatePropertyTemplateArg) (re
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError PropertiesTemplateUpdateAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PropertiesTemplateUpdateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3492,11 +3486,17 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *UpdatePropertyTemplateArg) (re
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3543,22 +3543,16 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError ReportsGetActivityAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError ReportsGetActivityAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3566,11 +3560,17 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3617,22 +3617,16 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError ReportsGetDevicesAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError ReportsGetDevicesAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3640,11 +3634,17 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3691,22 +3691,16 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError ReportsGetMembershipAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError ReportsGetMembershipAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3714,11 +3708,17 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 
@@ -3765,22 +3765,16 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != http.StatusOK {
-		if resp.StatusCode == http.StatusConflict {
-			var apiError ReportsGetStorageAPIError
-			err = json.Unmarshal(body, &apiError)
-			if err != nil {
-				return
-			}
-			err = apiError
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
 			return
 		}
-		var apiError dropbox.APIError
-		if resp.StatusCode == http.StatusBadRequest {
-			apiError.ErrorSummary = string(body)
-			err = apiError
-			return
-		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError ReportsGetStorageAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3788,11 +3782,17 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 		err = apiError
 		return
 	}
-	err = json.Unmarshal(body, &res)
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
 	}
-
+	err = apiError
 	return
 }
 

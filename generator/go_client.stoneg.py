@@ -85,8 +85,9 @@ class GoClientGenerator(CodeGenerator):
             self._generate_request(namespace, route)
             self._generate_post(route)
             self._generate_response(route)
+            with self.block('if resp.StatusCode == http.StatusOK'):
+                self._generate_result(route)
             self._generate_error_handling(route)
-            self._generate_result(route)
 
         out()
 
@@ -156,24 +157,23 @@ class GoClientGenerator(CodeGenerator):
 
     def _generate_error_handling(self, route):
         out = self.emit
-        with self.block('if resp.StatusCode != http.StatusOK'):
-            with self.block('if resp.StatusCode == http.StatusConflict'):
-                out('var apiError %sAPIError' % fmt_var(route.name))
-                with self.block('err = json.Unmarshal(body, &apiError);'
-                                'if err != nil'):
-                    out('return')
-                out('err = apiError')
-                out('return')
-            out('var apiError dropbox.APIError')
-            with self.block('if resp.StatusCode == http.StatusBadRequest'):
-                out('apiError.ErrorSummary = string(body)')
-                out('err = apiError')
-                out('return')
+        with self.block('if resp.StatusCode == http.StatusConflict'):
+            out('var apiError %sAPIError' % fmt_var(route.name))
             with self.block('err = json.Unmarshal(body, &apiError);'
                             'if err != nil'):
                 out('return')
             out('err = apiError')
             out('return')
+        out('var apiError dropbox.APIError')
+        with self.block('if resp.StatusCode == http.StatusBadRequest'):
+            out('apiError.ErrorSummary = string(body)')
+            out('err = apiError')
+            out('return')
+        with self.block('err = json.Unmarshal(body, &apiError);'
+                        'if err != nil'):
+            out('return')
+        out('err = apiError')
+        out('return')
 
     def _generate_result(self, route):
         out = self.emit
