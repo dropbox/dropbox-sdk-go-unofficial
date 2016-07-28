@@ -267,8 +267,8 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError AddFileMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -278,7 +278,7 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -344,8 +344,8 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError AddFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -355,7 +355,7 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -416,8 +416,8 @@ func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ChangeFileMemberAccessAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -427,7 +427,7 @@ func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -493,8 +493,8 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError CheckJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -504,7 +504,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -570,8 +570,8 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError CheckRemoveMemberJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -581,7 +581,7 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -647,8 +647,8 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError CheckShareJobStatusAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -658,7 +658,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -724,8 +724,8 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError CreateSharedLinkAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -735,7 +735,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -801,8 +801,8 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError CreateSharedLinkWithSettingsAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -812,7 +812,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -886,8 +886,8 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetFileMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -897,7 +897,7 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -963,8 +963,8 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetFileMetadataBatchAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -974,7 +974,7 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1040,8 +1040,8 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetFolderMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1051,7 +1051,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1113,8 +1113,8 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetSharedLinkFileAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1124,7 +1124,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1198,8 +1198,8 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetSharedLinkMetadataAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1209,7 +1209,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1283,8 +1283,8 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError GetSharedLinksAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1294,7 +1294,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1360,8 +1360,8 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFileMembersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1371,7 +1371,7 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1437,8 +1437,8 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFileMembersBatchAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1448,7 +1448,7 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1514,8 +1514,8 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFileMembersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1525,7 +1525,7 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1591,8 +1591,8 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFolderMembersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1602,7 +1602,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1668,8 +1668,8 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFolderMembersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1679,7 +1679,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1745,8 +1745,8 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFoldersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1756,7 +1756,7 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1822,8 +1822,8 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListFoldersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1833,7 +1833,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1899,8 +1899,8 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListMountableFoldersAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1910,7 +1910,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -1976,8 +1976,8 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListMountableFoldersContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -1987,7 +1987,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2053,8 +2053,8 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListReceivedFilesAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2064,7 +2064,7 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2130,8 +2130,8 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListReceivedFilesContinueAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2141,7 +2141,7 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2207,8 +2207,8 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ListSharedLinksAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2218,7 +2218,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2284,8 +2284,8 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ModifySharedLinkSettingsAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2295,7 +2295,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2369,8 +2369,8 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError MountFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2380,7 +2380,7 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2446,8 +2446,8 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RelinquishFileMembershipAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2457,7 +2457,7 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2518,8 +2518,8 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RelinquishFolderMembershipAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2529,7 +2529,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2595,8 +2595,8 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RemoveFileMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2606,7 +2606,7 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2672,8 +2672,8 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RemoveFileMember2APIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2683,7 +2683,7 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2749,8 +2749,8 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RemoveFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2760,7 +2760,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2826,8 +2826,8 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError RevokeSharedLinkAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2837,7 +2837,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2898,8 +2898,8 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError ShareFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2909,7 +2909,7 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -2975,8 +2975,8 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError TransferFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -2986,7 +2986,7 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -3047,8 +3047,8 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError UnmountFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -3058,7 +3058,7 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -3119,8 +3119,8 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError UnshareFileAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -3130,7 +3130,7 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -3191,8 +3191,8 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError UnshareFolderAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -3202,7 +3202,7 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -3268,8 +3268,8 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError UpdateFolderMemberAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -3279,7 +3279,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
@@ -3345,8 +3345,8 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError UpdateFolderPolicyAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -3356,7 +3356,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return

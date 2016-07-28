@@ -75,8 +75,8 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	if dbx.Config.Verbose {
 		log.Printf("body: %s", body)
 	}
-	if resp.StatusCode != 200 {
-		if resp.StatusCode == 409 {
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusConflict {
 			var apiError TokenRevokeAPIError
 			err = json.Unmarshal(body, &apiError)
 			if err != nil {
@@ -86,7 +86,7 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 			return
 		}
 		var apiError dropbox.APIError
-		if resp.StatusCode == 400 {
+		if resp.StatusCode == http.StatusBadRequest {
 			apiError.ErrorSummary = string(body)
 			err = apiError
 			return
