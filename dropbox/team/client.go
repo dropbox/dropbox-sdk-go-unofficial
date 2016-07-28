@@ -37,19 +37,19 @@ import (
 type Client interface {
 	// AlphaGroupsCreate : Creates a new, empty group, with a requested name.
 	// Permission : Team member management
-	AlphaGroupsCreate(arg *AlphaGroupCreateArg) (res *AlphaGroupFullInfo, err error)
+	AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error)
 	// AlphaGroupsGetInfo : Retrieves information about one or more groups.
 	// Permission : Team Information
-	AlphaGroupsGetInfo(arg *GroupsSelector) (res []*AlphaGroupsGetInfoItem, err error)
+	AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error)
 	// AlphaGroupsList : Lists groups on a team. Permission : Team Information
-	AlphaGroupsList(arg *GroupsListArg) (res *AlphaGroupsListResult, err error)
+	AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, err error)
 	// AlphaGroupsListContinue : Once a cursor has been retrieved from
 	// `alphaGroupsList`, use this to paginate through all groups. Permission :
 	// Team information
-	AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *AlphaGroupsListResult, err error)
+	AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error)
 	// AlphaGroupsUpdate : Updates a group's name, external ID or management
 	// type. Permission : Team member management
-	AlphaGroupsUpdate(arg *AlphaGroupUpdateArgs) (res *AlphaGroupFullInfo, err error)
+	AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error)
 	// DevicesListMemberDevices : List all device sessions of a team's member.
 	DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *ListMemberDevicesResult, err error)
 	// DevicesListMembersDevices : List all device sessions of a team.
@@ -99,7 +99,9 @@ type Client interface {
 	// GroupsMembersRemove : Removes members from a group. The members are
 	// removed immediately. However the revoking of group-owned resources may
 	// take additional time. Use the `groupsJobStatusGet` to determine whether
-	// this process has completed. Permission : Team member management
+	// this process has completed. This method permits removing the only owner
+	// of a group, even in cases where this is not possible via the web client.
+	// Permission : Team member management
 	GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupMembersChangeResult, err error)
 	// GroupsMembersSetAccessType : Sets a member's access type in a group.
 	// Permission : Team member management
@@ -151,6 +153,10 @@ type Client interface {
 	// `membersList`, use this to paginate through all team members. Permission
 	// : Team information
 	MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error)
+	// MembersRecover : Recover a deleted member. Permission : Team member
+	// management Exactly one of team_member_id, email, or external_id must be
+	// provided to identify the user account.
+	MembersRecover(arg *MembersRecoverArg) (err error)
 	// MembersRemove : Removes a member from a team. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
 	// provided to identify the user account. This is not a deactivation where
@@ -218,7 +224,7 @@ type AlphaGroupsCreateAPIError struct {
 	EndpointError *GroupCreateError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGroupsCreate(arg *AlphaGroupCreateArg) (res *AlphaGroupFullInfo, err error) {
+func (dbx *apiImpl) AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -292,7 +298,7 @@ type AlphaGroupsGetInfoAPIError struct {
 	EndpointError *GroupsGetInfoError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGroupsGetInfo(arg *GroupsSelector) (res []*AlphaGroupsGetInfoItem, err error) {
+func (dbx *apiImpl) AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -366,7 +372,7 @@ type AlphaGroupsListAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGroupsList(arg *GroupsListArg) (res *AlphaGroupsListResult, err error) {
+func (dbx *apiImpl) AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -440,7 +446,7 @@ type AlphaGroupsListContinueAPIError struct {
 	EndpointError *GroupsListContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *AlphaGroupsListResult, err error) {
+func (dbx *apiImpl) AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -514,7 +520,7 @@ type AlphaGroupsUpdateAPIError struct {
 	EndpointError *GroupUpdateError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGroupsUpdate(arg *AlphaGroupUpdateArgs) (res *AlphaGroupFullInfo, err error) {
+func (dbx *apiImpl) AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2632,6 +2638,75 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		return
 	}
 
+	return
+}
+
+//MembersRecoverAPIError is an error-wrapper for the members/recover route
+type MembersRecoverAPIError struct {
+	dropbox.APIError
+	EndpointError *MembersRecoverError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/recover"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var apiError MembersRecoverAPIError
+			err = json.Unmarshal(body, &apiError)
+			if err != nil {
+				return
+			}
+			err = apiError
+			return
+		}
+		var apiError dropbox.APIError
+		if resp.StatusCode == 400 {
+			apiError.ErrorSummary = string(body)
+			err = apiError
+			return
+		}
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
 	return
 }
 

@@ -187,6 +187,7 @@ const (
 	AddFolderMemberErrorTooManyMembers        = "too_many_members"
 	AddFolderMemberErrorTooManyPendingInvites = "too_many_pending_invites"
 	AddFolderMemberErrorRateLimit             = "rate_limit"
+	AddFolderMemberErrorTooManyInvitees       = "too_many_invitees"
 	AddFolderMemberErrorInsufficientPlan      = "insufficient_plan"
 	AddFolderMemberErrorTeamFolder            = "team_folder"
 	AddFolderMemberErrorNoPermission          = "no_permission"
@@ -266,6 +267,7 @@ type AddMemberSelectorError struct {
 
 // Valid tag values for AddMemberSelectorError
 const (
+	AddMemberSelectorErrorAutomaticGroup      = "automatic_group"
 	AddMemberSelectorErrorInvalidDropboxId    = "invalid_dropbox_id"
 	AddMemberSelectorErrorInvalidEmail        = "invalid_email"
 	AddMemberSelectorErrorUnverifiedDropboxId = "unverified_dropbox_id"
@@ -302,6 +304,25 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 
 	}
 	return nil
+}
+
+// ChangeFileMemberAccessArgs : Arguments for `changeFileMemberAccess`.
+type ChangeFileMemberAccessArgs struct {
+	// File : File for which we are changing a member's access.
+	File string `json:"file"`
+	// Member : The member whose access we are changing.
+	Member *MemberSelector `json:"member"`
+	// AccessLevel : The new access level for the member.
+	AccessLevel *AccessLevel `json:"access_level"`
+}
+
+// NewChangeFileMemberAccessArgs returns a new ChangeFileMemberAccessArgs instance
+func NewChangeFileMemberAccessArgs(File string, Member *MemberSelector, AccessLevel *AccessLevel) *ChangeFileMemberAccessArgs {
+	s := new(ChangeFileMemberAccessArgs)
+	s.File = File
+	s.Member = Member
+	s.AccessLevel = AccessLevel
+	return s
 }
 
 // LinkMetadata : Metadata for a shared link. This can be either a
@@ -511,11 +532,13 @@ type FileAction struct {
 
 // Valid tag values for FileAction
 const (
-	FileActionEditContents         = "edit_contents"
-	FileActionInviteViewer         = "invite_viewer"
-	FileActionUnshare              = "unshare"
-	FileActionRelinquishMembership = "relinquish_membership"
-	FileActionOther                = "other"
+	FileActionEditContents          = "edit_contents"
+	FileActionInviteViewer          = "invite_viewer"
+	FileActionInviteViewerNoComment = "invite_viewer_no_comment"
+	FileActionUnshare               = "unshare"
+	FileActionRelinquishMembership  = "relinquish_membership"
+	FileActionShareLink             = "share_link"
+	FileActionOther                 = "other"
 )
 
 // FileErrorResult : has no documentation (yet)
@@ -705,7 +728,7 @@ type FileMemberActionIndividualResult struct {
 	// Success : Member was successfully removed from this file. If AccessLevel
 	// is given, the member still has access via a parent shared folder.
 	Success *AccessLevel `json:"success,omitempty"`
-	// MemberError : User was not able to remove this member.
+	// MemberError : User was not able to perform this action.
 	MemberError *FileMemberActionError `json:"member_error,omitempty"`
 }
 
@@ -723,7 +746,7 @@ func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 		// AccessLevel is given, the member still has access via a parent shared
 		// folder.
 		Success json.RawMessage `json:"success,omitempty"`
-		// MemberError : User was not able to remove this member.
+		// MemberError : User was not able to perform this action.
 		MemberError json.RawMessage `json:"member_error,omitempty"`
 	}
 	var w wrap
@@ -747,7 +770,7 @@ func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 }
 
 // FileMemberActionResult : Per-member result for `removeFileMember2` or
-// `addFileMember`.
+// `addFileMember` or `changeFileMemberAccess`.
 type FileMemberActionResult struct {
 	// Member : One of specified input members.
 	Member *MemberSelector `json:"member"`
@@ -835,15 +858,17 @@ type FolderAction struct {
 
 // Valid tag values for FolderAction
 const (
-	FolderActionChangeOptions        = "change_options"
-	FolderActionEditContents         = "edit_contents"
-	FolderActionInviteEditor         = "invite_editor"
-	FolderActionInviteViewer         = "invite_viewer"
-	FolderActionRelinquishMembership = "relinquish_membership"
-	FolderActionUnmount              = "unmount"
-	FolderActionUnshare              = "unshare"
-	FolderActionLeaveACopy           = "leave_a_copy"
-	FolderActionOther                = "other"
+	FolderActionChangeOptions         = "change_options"
+	FolderActionEditContents          = "edit_contents"
+	FolderActionInviteEditor          = "invite_editor"
+	FolderActionInviteViewer          = "invite_viewer"
+	FolderActionInviteViewerNoComment = "invite_viewer_no_comment"
+	FolderActionRelinquishMembership  = "relinquish_membership"
+	FolderActionUnmount               = "unmount"
+	FolderActionUnshare               = "unshare"
+	FolderActionLeaveACopy            = "leave_a_copy"
+	FolderActionShareLink             = "share_link"
+	FolderActionOther                 = "other"
 )
 
 // FolderLinkMetadata : The metadata of a folder shared link
@@ -1177,10 +1202,11 @@ type GroupInfo struct {
 }
 
 // NewGroupInfo returns a new GroupInfo instance
-func NewGroupInfo(GroupName string, GroupId string, GroupType *team_common.GroupType, IsOwner bool, SameTeam bool) *GroupInfo {
+func NewGroupInfo(GroupName string, GroupId string, GroupManagementType *team_common.GroupManagementType, GroupType *team_common.GroupType, IsOwner bool, SameTeam bool) *GroupInfo {
 	s := new(GroupInfo)
 	s.GroupName = GroupName
 	s.GroupId = GroupId
+	s.GroupManagementType = GroupManagementType
 	s.GroupType = GroupType
 	s.IsOwner = IsOwner
 	s.SameTeam = SameTeam
@@ -1222,6 +1248,27 @@ func NewGroupMembershipInfo(AccessType *AccessLevel, Group *GroupInfo) *GroupMem
 	s.AccessType = AccessType
 	s.Group = Group
 	s.IsInherited = false
+	return s
+}
+
+// InsufficientQuotaAmounts : has no documentation (yet)
+type InsufficientQuotaAmounts struct {
+	// SpaceNeeded : The amount of space needed to add the item (the size of the
+	// item).
+	SpaceNeeded uint64 `json:"space_needed"`
+	// SpaceShortage : The amount of extra space needed to add the item.
+	SpaceShortage uint64 `json:"space_shortage"`
+	// SpaceLeft : The amount of space left in the user's Dropbox, less than
+	// space_needed.
+	SpaceLeft uint64 `json:"space_left"`
+}
+
+// NewInsufficientQuotaAmounts returns a new InsufficientQuotaAmounts instance
+func NewInsufficientQuotaAmounts(SpaceNeeded uint64, SpaceShortage uint64, SpaceLeft uint64) *InsufficientQuotaAmounts {
+	s := new(InsufficientQuotaAmounts)
+	s.SpaceNeeded = SpaceNeeded
+	s.SpaceShortage = SpaceShortage
+	s.SpaceLeft = SpaceLeft
 	return s
 }
 
@@ -1933,6 +1980,10 @@ type MemberAccessLevelResult struct {
 	// Warning : A localized string with additional information about why the
 	// user has this access level to the content.
 	Warning string `json:"warning,omitempty"`
+	// AccessDetails : The parent folders that a member has access to. The field
+	// is present if the user has access to the first parent folder where the
+	// member gains access.
+	AccessDetails []*ParentFolderAccessInfo `json:"access_details,omitempty"`
 }
 
 // NewMemberAccessLevelResult returns a new MemberAccessLevelResult instance
@@ -1948,12 +1999,13 @@ type MemberAction struct {
 
 // Valid tag values for MemberAction
 const (
-	MemberActionLeaveACopy = "leave_a_copy"
-	MemberActionMakeEditor = "make_editor"
-	MemberActionMakeOwner  = "make_owner"
-	MemberActionMakeViewer = "make_viewer"
-	MemberActionRemove     = "remove"
-	MemberActionOther      = "other"
+	MemberActionLeaveACopy          = "leave_a_copy"
+	MemberActionMakeEditor          = "make_editor"
+	MemberActionMakeOwner           = "make_owner"
+	MemberActionMakeViewer          = "make_viewer"
+	MemberActionMakeViewerNoComment = "make_viewer_no_comment"
+	MemberActionRemove              = "remove"
+	MemberActionOther               = "other"
 )
 
 // MemberPermission : Whether the user is allowed to take the action on the
@@ -2104,6 +2156,9 @@ type MountFolderError struct {
 	dropbox.Tagged
 	// AccessError : has no documentation (yet)
 	AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
+	// InsufficientQuota : The current user does not have enough space to mount
+	// the shared folder.
+	InsufficientQuota *InsufficientQuotaAmounts `json:"insufficient_quota,omitempty"`
 }
 
 // Valid tag values for MountFolderError
@@ -2123,6 +2178,9 @@ func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
 		AccessError json.RawMessage `json:"access_error,omitempty"`
+		// InsufficientQuota : The current user does not have enough space to
+		// mount the shared folder.
+		InsufficientQuota json.RawMessage `json:"insufficient_quota,omitempty"`
 	}
 	var w wrap
 	if err := json.Unmarshal(body, &w); err != nil {
@@ -2135,8 +2193,33 @@ func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "insufficient_quota":
+		if err := json.Unmarshal(body, &u.InsufficientQuota); err != nil {
+			return err
+		}
+
 	}
 	return nil
+}
+
+// ParentFolderAccessInfo : Contains information about a parent folder that a
+// member has access to.
+type ParentFolderAccessInfo struct {
+	// FolderName : Display name for the folder.
+	FolderName string `json:"folder_name"`
+	// SharedFolderId : The identifier of the parent shared folder.
+	SharedFolderId string `json:"shared_folder_id"`
+	// Permissions : The user's permissions for the parent shared folder.
+	Permissions []*MemberPermission `json:"permissions"`
+}
+
+// NewParentFolderAccessInfo returns a new ParentFolderAccessInfo instance
+func NewParentFolderAccessInfo(FolderName string, SharedFolderId string, Permissions []*MemberPermission) *ParentFolderAccessInfo {
+	s := new(ParentFolderAccessInfo)
+	s.FolderName = FolderName
+	s.SharedFolderId = SharedFolderId
+	s.Permissions = Permissions
+	return s
 }
 
 // PathLinkMetadata : Metadata for a path-based shared link.
@@ -2174,13 +2257,14 @@ type PermissionDeniedReason struct {
 
 // Valid tag values for PermissionDeniedReason
 const (
-	PermissionDeniedReasonUserNotSameTeamAsOwner = "user_not_same_team_as_owner"
-	PermissionDeniedReasonUserNotAllowedByOwner  = "user_not_allowed_by_owner"
-	PermissionDeniedReasonTargetIsIndirectMember = "target_is_indirect_member"
-	PermissionDeniedReasonTargetIsOwner          = "target_is_owner"
-	PermissionDeniedReasonTargetIsSelf           = "target_is_self"
-	PermissionDeniedReasonTargetNotActive        = "target_not_active"
-	PermissionDeniedReasonOther                  = "other"
+	PermissionDeniedReasonUserNotSameTeamAsOwner    = "user_not_same_team_as_owner"
+	PermissionDeniedReasonUserNotAllowedByOwner     = "user_not_allowed_by_owner"
+	PermissionDeniedReasonTargetIsIndirectMember    = "target_is_indirect_member"
+	PermissionDeniedReasonTargetIsOwner             = "target_is_owner"
+	PermissionDeniedReasonTargetIsSelf              = "target_is_self"
+	PermissionDeniedReasonTargetNotActive           = "target_not_active"
+	PermissionDeniedReasonFolderIsLimitedTeamFolder = "folder_is_limited_team_folder"
+	PermissionDeniedReasonOther                     = "other"
 )
 
 // RelinquishFileMembershipArg : has no documentation (yet)
@@ -2315,6 +2399,10 @@ type RemoveFileMemberError struct {
 	UserError *SharingUserError `json:"user_error,omitempty"`
 	// AccessError : has no documentation (yet)
 	AccessError *SharingFileAccessError `json:"access_error,omitempty"`
+	// NoExplicitAccess : This member does not have explicit access to the file
+	// and therefore cannot be removed. The return value is the access that a
+	// user might have to the file from a parent folder.
+	NoExplicitAccess *MemberAccessLevelResult `json:"no_explicit_access,omitempty"`
 }
 
 // Valid tag values for RemoveFileMemberError
@@ -2333,6 +2421,10 @@ func (u *RemoveFileMemberError) UnmarshalJSON(body []byte) error {
 		UserError json.RawMessage `json:"user_error,omitempty"`
 		// AccessError : has no documentation (yet)
 		AccessError json.RawMessage `json:"access_error,omitempty"`
+		// NoExplicitAccess : This member does not have explicit access to the
+		// file and therefore cannot be removed. The return value is the access
+		// that a user might have to the file from a parent folder.
+		NoExplicitAccess json.RawMessage `json:"no_explicit_access,omitempty"`
 	}
 	var w wrap
 	if err := json.Unmarshal(body, &w); err != nil {
@@ -2347,6 +2439,11 @@ func (u *RemoveFileMemberError) UnmarshalJSON(body []byte) error {
 
 	case "access_error":
 		if err := json.Unmarshal(w.AccessError, &u.AccessError); err != nil {
+			return err
+		}
+
+	case "no_explicit_access":
+		if err := json.Unmarshal(body, &u.NoExplicitAccess); err != nil {
 			return err
 		}
 
@@ -2812,14 +2909,41 @@ const (
 // SharedFolderMemberError : has no documentation (yet)
 type SharedFolderMemberError struct {
 	dropbox.Tagged
+	// NoExplicitAccess : The target member only has inherited access to the
+	// shared folder.
+	NoExplicitAccess *MemberAccessLevelResult `json:"no_explicit_access,omitempty"`
 }
 
 // Valid tag values for SharedFolderMemberError
 const (
 	SharedFolderMemberErrorInvalidDropboxId = "invalid_dropbox_id"
 	SharedFolderMemberErrorNotAMember       = "not_a_member"
+	SharedFolderMemberErrorNoExplicitAccess = "no_explicit_access"
 	SharedFolderMemberErrorOther            = "other"
 )
+
+// UnmarshalJSON deserializes into a SharedFolderMemberError instance
+func (u *SharedFolderMemberError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// NoExplicitAccess : The target member only has inherited access to the
+		// shared folder.
+		NoExplicitAccess json.RawMessage `json:"no_explicit_access,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "no_explicit_access":
+		if err := json.Unmarshal(body, &u.NoExplicitAccess); err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
 
 // SharedFolderMembers : Shared folder user and group membership.
 type SharedFolderMembers struct {
@@ -2888,10 +3012,12 @@ type SharedFolderMetadata struct {
 	// TimeInvited : Timestamp indicating when the current user was invited to
 	// this shared folder.
 	TimeInvited time.Time `json:"time_invited"`
+	// PreviewUrl : URL for displaying a web preview of the shared folder.
+	PreviewUrl string `json:"preview_url"`
 }
 
 // NewSharedFolderMetadata returns a new SharedFolderMetadata instance
-func NewSharedFolderMetadata(AccessType *AccessLevel, IsTeamFolder bool, Policy *FolderPolicy, Name string, SharedFolderId string, TimeInvited time.Time) *SharedFolderMetadata {
+func NewSharedFolderMetadata(AccessType *AccessLevel, IsTeamFolder bool, Policy *FolderPolicy, Name string, SharedFolderId string, TimeInvited time.Time, PreviewUrl string) *SharedFolderMetadata {
 	s := new(SharedFolderMetadata)
 	s.AccessType = AccessType
 	s.IsTeamFolder = IsTeamFolder
@@ -2899,6 +3025,7 @@ func NewSharedFolderMetadata(AccessType *AccessLevel, IsTeamFolder bool, Policy 
 	s.Name = Name
 	s.SharedFolderId = SharedFolderId
 	s.TimeInvited = TimeInvited
+	s.PreviewUrl = PreviewUrl
 	return s
 }
 
@@ -3342,6 +3469,7 @@ const (
 	UpdateFolderPolicyErrorNotOnTeam                       = "not_on_team"
 	UpdateFolderPolicyErrorTeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
 	UpdateFolderPolicyErrorDisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
+	UpdateFolderPolicyErrorNoPermission                    = "no_permission"
 	UpdateFolderPolicyErrorOther                           = "other"
 )
 

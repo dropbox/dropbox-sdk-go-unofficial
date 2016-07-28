@@ -35,3 +35,32 @@ const (
 	AuthErrorInvalidSelectAdmin = "invalid_select_admin"
 	AuthErrorOther              = "other"
 )
+
+// RateLimitError : Error occurred because the app is being rate limited.
+type RateLimitError struct {
+	// Reason : The reason why the app is being rate limited.
+	Reason *RateLimitReason `json:"reason"`
+	// RetryAfter : The number of seconds that the app should wait before making
+	// another request.
+	RetryAfter uint64 `json:"retry_after"`
+}
+
+// NewRateLimitError returns a new RateLimitError instance
+func NewRateLimitError(Reason *RateLimitReason) *RateLimitError {
+	s := new(RateLimitError)
+	s.Reason = Reason
+	s.RetryAfter = 1
+	return s
+}
+
+// RateLimitReason : has no documentation (yet)
+type RateLimitReason struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for RateLimitReason
+const (
+	RateLimitReasonTooManyRequests        = "too_many_requests"
+	RateLimitReasonTooManyWriteOperations = "too_many_write_operations"
+	RateLimitReasonOther                  = "other"
+)

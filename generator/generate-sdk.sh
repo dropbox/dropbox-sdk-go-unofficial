@@ -11,7 +11,7 @@ base_dir=$(dirname "$loc")
 spec_dir="$base_dir/dropbox-api-spec"
 gen_dir=$(dirname ${base_dir})/dropbox
 
-python3 -m stone.cli -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
-python3 -m stone.cli -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone
+stone -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
+stone -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone
 
 goimports -l -w ${gen_dir}

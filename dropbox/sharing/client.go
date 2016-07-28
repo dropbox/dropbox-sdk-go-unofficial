@@ -44,6 +44,8 @@ type Client interface {
 	// call `mountFolder` on their behalf. Apps must have full Dropbox access to
 	// use this endpoint.
 	AddFolderMember(arg *AddFolderMemberArg) (err error)
+	// ChangeFileMemberAccess : Changes a member's access on a shared file.
+	ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error)
 	// CheckJobStatus : Returns the status of an asynchronous job. Apps must
 	// have full Dropbox access to use this endpoint.
 	CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error)
@@ -365,6 +367,83 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 		err = apiError
 		return
 	}
+	return
+}
+
+//ChangeFileMemberAccessAPIError is an error-wrapper for the change_file_member_access route
+type ChangeFileMemberAccessAPIError struct {
+	dropbox.APIError
+	EndpointError *FileMemberActionError `json:"error"`
+}
+
+func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "sharing", "change_file_member_access"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode != 200 {
+		if resp.StatusCode == 409 {
+			var apiError ChangeFileMemberAccessAPIError
+			err = json.Unmarshal(body, &apiError)
+			if err != nil {
+				return
+			}
+			err = apiError
+			return
+		}
+		var apiError dropbox.APIError
+		if resp.StatusCode == 400 {
+			apiError.ErrorSummary = string(body)
+			err = apiError
+			return
+		}
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &res)
+	if err != nil {
+		return
+	}
+
 	return
 }
 
