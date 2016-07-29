@@ -103,7 +103,8 @@ class GoClientGenerator(CodeGenerator):
             with self.block('if err != nil'):
                 out('return')
             out()
-            if style is not 'upload':
+            if host != 'content':
+                print(host, namespace.name, route.name)
                 body = 'bytes.NewReader(b)'
         if style == 'upload':
             body = 'content'
@@ -114,7 +115,7 @@ class GoClientGenerator(CodeGenerator):
             out('return')
         out()
         if not is_void_type(route.arg_data_type):
-            if style == 'upload':
+            if host == 'content':
                 out('req.Header.Set("Dropbox-API-Arg", string(b))')
             else:
                 out('req.Header.Set("Content-Type", "application/json")')
