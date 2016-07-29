@@ -26,9 +26,9 @@ class GoTypesGenerator(CodeGenerator):
                     self.target_folder_path)
         for namespace in api.namespaces.values():
             self._generate_namespace(namespace)
-            if namespace.name == 'files':
+            if namespace.name == 'files' or namespace.name == 'sharing':
                 self.logger.info('Copying metadata.go to files')
-                shutil.copy(os.path.join(rsrc_folder, 'metadata.go'),
+                shutil.copy(os.path.join(rsrc_folder, namespace.name, 'metadata.go'),
                             os.path.join(self.target_folder_path, namespace.name))
 
     def _generate_namespace(self, namespace):
