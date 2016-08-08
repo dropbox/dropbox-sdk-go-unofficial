@@ -38,7 +38,7 @@ const (
 )
 
 // Version returns the current SDK version and API Spec version
-func Version() (sdkVersion, specVersion string) {
+func Version() (string, string) {
 	return sdkVersion, specVersion
 }
 
