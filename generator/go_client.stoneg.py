@@ -104,7 +104,6 @@ class GoClientGenerator(CodeGenerator):
                 out('return')
             out()
             if host != 'content':
-                print(host, namespace.name, route.name)
                 body = 'bytes.NewReader(b)'
         if style == 'upload':
             body = 'content'
