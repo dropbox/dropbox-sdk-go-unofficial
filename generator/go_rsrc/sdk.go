@@ -44,10 +44,14 @@ func Version() (string, string) {
 
 // Config contains parameters for configuring the SDK.
 type Config struct {
-	Token      string
-	Verbose    bool
+	// OAuth2 access token
+	Token string
+	// Enable verbose logging in SDK
+	Verbose bool
+	// Used with APIs that support operations as another user
 	AsMemberID string
-	Domain     string
+	// No need to set -- for testing only
+	Domain string
 }
 
 // Context is the base client context used to implement per-namespace clients.

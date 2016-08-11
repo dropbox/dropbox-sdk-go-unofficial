@@ -26,7 +26,6 @@ class GoClientGenerator(CodeGenerator):
         with self.output_to_relative_path(file_name):
             self.emit_raw(HEADER)
             self.emit()
-            generate_doc(self, namespace)
             self.emit('package %s' % namespace.name)
             self.emit()
 
