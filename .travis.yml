@@ -4,6 +4,11 @@ go:
   - 1.6.3
   - 1.7
 
-before_script: go get -u github.com/mitchellh/gox
+install:
+  - got get -u golang.org/x/oauth2
 
-script: gox -osarch="darwin/amd64 linux/amd64 windows/amd64" ./dropbox/...
+before_script:
+  - go get -u github.com/mitchellh/gox
+
+script:
+  - gox -osarch="darwin/amd64 linux/amd64 windows/amd64" ./dropbox/...
