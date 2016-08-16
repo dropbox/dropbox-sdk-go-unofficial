@@ -5,7 +5,7 @@ go:
   - 1.7
 
 install:
-  - got get -u golang.org/x/oauth2
+  - go get -u golang.org/x/oauth2
 
 before_script:
   - go get -u github.com/mitchellh/gox
