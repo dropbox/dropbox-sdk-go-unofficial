@@ -66,6 +66,20 @@ class GoTypesGenerator(CodeGenerator):
         self.emit()
         self._generate_union_helper(base)
 
+        self.emit("// Is{0}FromJSON converts JSON to a concrete Is{0} instance".format(t))
+        with self.block("func Is{0}FromJSON(data []byte) (Is{0}, error)".format(t)):
+            name = fmt_var(t, export=False) + 'Union'
+            self.emit("var t {0}".format(name))
+            with self.block("if err := json.Unmarshal(data, &t); err != nil"):
+                self.emit("return nil, err")
+            with self.block("switch t.Tag"):
+                fields = base.get_enumerated_subtypes()
+                for field in fields:
+                    with self.block('case "%s":' % field.name, delim=(None, None)):
+                        self.emit("return t.{0}, nil".format(fmt_var(field.name)))
+            # FIX THIS
+            self.emit("return nil, nil")
+
     def _generate_struct(self, struct):
         with self.block('type %s struct' % struct.name):
             if struct.parent_type:
@@ -156,7 +170,8 @@ class GoTypesGenerator(CodeGenerator):
                     self._generate_field(field, union_field=True,
                                          namespace=namespace, raw=True)
             self.emit('var w wrap')
-            with self.block('if err := json.Unmarshal(body, &w); err != nil'):
+            self.emit('var err error')
+            with self.block('if err = json.Unmarshal(body, &w); err != nil'):
                 self.emit('return err')
             self.emit('u.Tag = w.Tag')
             with self.block('switch u.Tag'):
@@ -166,14 +181,16 @@ class GoTypesGenerator(CodeGenerator):
                     field_name = fmt_var(field.name)
                     with self.block('case "%s":' % field.name, delim=(None, None)):
                         if is_union_type(field.data_type):
-                            with self.block('if err := json.Unmarshal'
-                                            '(w.{0}, &u.{0}); err != nil'
-                                            .format(field_name)):
-                                self.emit('return err')
+                            self.emit('err = json.Unmarshal(w.{0}, &u.{0})'
+                                            .format(field_name))
+                        elif is_struct_type(field.data_type) and \
+                            field.data_type.has_enumerated_subtypes():
+                            self.emit("u.{0}, err = Is{1}FromJSON(body)"
+                                      .format(field_name, field.data_type.name))
                         else:
-                            with self.block('if err := json.Unmarshal'
-                                            '(body, &u.{0}); err != nil'
-                                            .format(field_name)):
-                                self.emit('return err')
+                            self.emit('err = json.Unmarshal(body, &u.{0})'
+                                            .format(field_name))
+                    with self.block("if err != nil"):
+                        self.emit("return err")
             self.emit('return nil')
         self.emit()
