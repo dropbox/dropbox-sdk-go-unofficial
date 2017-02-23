@@ -42,7 +42,8 @@ type Client interface {
 	// call `mountFolder` on their behalf. Apps must have full Dropbox access to
 	// use this endpoint.
 	AddFolderMember(arg *AddFolderMemberArg) (err error)
-	// ChangeFileMemberAccess : Changes a member's access on a shared file.
+	// ChangeFileMemberAccess : Identical to update_file_member but with less
+	// information returned.
 	ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error)
 	// CheckJobStatus : Returns the status of an asynchronous job. Apps must
 	// have full Dropbox access to use this endpoint.
@@ -206,6 +207,8 @@ type Client interface {
 	// completed successfully. Apps must have full Dropbox access to use this
 	// endpoint.
 	UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error)
+	// UpdateFileMember : Changes a member's access on a shared file.
+	UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAccessLevelResult, err error)
 	// UpdateFolderMember : Allows an owner or editor of a shared folder to
 	// update another member's permissions. Apps must have full Dropbox access
 	// to use this endpoint.
@@ -3198,6 +3201,83 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError UnshareFolderAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//UpdateFileMemberAPIError is an error-wrapper for the update_file_member route
+type UpdateFileMemberAPIError struct {
+	dropbox.APIError
+	EndpointError *FileMemberActionError `json:"error"`
+}
+
+func (dbx *apiImpl) UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAccessLevelResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "sharing", "update_file_member"), bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	if dbx.Config.AsMemberID != "" {
+		req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError UpdateFileMemberAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

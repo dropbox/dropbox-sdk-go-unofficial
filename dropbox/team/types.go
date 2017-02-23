@@ -154,6 +154,55 @@ func NewBaseDfbReport(StartDate string) *BaseDfbReport {
 	return s
 }
 
+// BaseTeamFolderError : Base error that all errors for existing team folders
+// should extend.
+type BaseTeamFolderError struct {
+	dropbox.Tagged
+	// AccessError : has no documentation (yet)
+	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
+	// StatusError : has no documentation (yet)
+	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+}
+
+// Valid tag values for BaseTeamFolderError
+const (
+	BaseTeamFolderErrorAccessError = "access_error"
+	BaseTeamFolderErrorStatusError = "status_error"
+	BaseTeamFolderErrorOther       = "other"
+)
+
+// UnmarshalJSON deserializes into a BaseTeamFolderError instance
+func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// AccessError : has no documentation (yet)
+		AccessError json.RawMessage `json:"access_error,omitempty"`
+		// StatusError : has no documentation (yet)
+		StatusError json.RawMessage `json:"status_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "access_error":
+		err = json.Unmarshal(w.AccessError, &u.AccessError)
+
+		if err != nil {
+			return err
+		}
+	case "status_error":
+		err = json.Unmarshal(w.StatusError, &u.StatusError)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // DateRange : Input arguments that can be provided for most reports.
 type DateRange struct {
 	// StartDate : Optional starting date (inclusive)
@@ -449,7 +498,7 @@ type GroupCreateArg struct {
 	// external ID to the group.
 	GroupExternalId string `json:"group_external_id,omitempty"`
 	// GroupManagementType : Whether the team can be managed by selected users,
-	// or only by team admins
+	// or only by team admins.
 	GroupManagementType *team_common.GroupManagementType `json:"group_management_type,omitempty"`
 }
 
@@ -467,10 +516,11 @@ type GroupCreateError struct {
 
 // Valid tag values for GroupCreateError
 const (
-	GroupCreateErrorGroupNameAlreadyUsed   = "group_name_already_used"
-	GroupCreateErrorGroupNameInvalid       = "group_name_invalid"
-	GroupCreateErrorExternalIdAlreadyInUse = "external_id_already_in_use"
-	GroupCreateErrorOther                  = "other"
+	GroupCreateErrorGroupNameAlreadyUsed         = "group_name_already_used"
+	GroupCreateErrorGroupNameInvalid             = "group_name_invalid"
+	GroupCreateErrorExternalIdAlreadyInUse       = "external_id_already_in_use"
+	GroupCreateErrorSystemManagedGroupDisallowed = "system_managed_group_disallowed"
+	GroupCreateErrorOther                        = "other"
 )
 
 // GroupSelectorError : Error that can be raised when `GroupSelector` is used.
@@ -482,6 +532,17 @@ type GroupSelectorError struct {
 const (
 	GroupSelectorErrorGroupNotFound = "group_not_found"
 	GroupSelectorErrorOther         = "other"
+)
+
+// GroupSelectorWithTeamGroupError : Error that can be raised when
+// `GroupSelector` is used and team groups are disallowed from being used.
+type GroupSelectorWithTeamGroupError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for GroupSelectorWithTeamGroupError
+const (
+	GroupSelectorWithTeamGroupErrorSystemManagedGroupDisallowed = "system_managed_group_disallowed"
 )
 
 // GroupDeleteError : has no documentation (yet)
@@ -722,12 +783,50 @@ const (
 // GroupMembersRemoveError : has no documentation (yet)
 type GroupMembersRemoveError struct {
 	dropbox.Tagged
+	// MembersNotInTeam : These members are not part of your team.
+	MembersNotInTeam []string `json:"members_not_in_team,omitempty"`
+	// UsersNotFound : These users were not found in Dropbox.
+	UsersNotFound []string `json:"users_not_found,omitempty"`
 }
 
 // Valid tag values for GroupMembersRemoveError
 const (
-	GroupMembersRemoveErrorGroupNotInTeam = "group_not_in_team"
+	GroupMembersRemoveErrorGroupNotInTeam   = "group_not_in_team"
+	GroupMembersRemoveErrorMembersNotInTeam = "members_not_in_team"
+	GroupMembersRemoveErrorUsersNotFound    = "users_not_found"
 )
+
+// UnmarshalJSON deserializes into a GroupMembersRemoveError instance
+func (u *GroupMembersRemoveError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// MembersNotInTeam : These members are not part of your team.
+		MembersNotInTeam json.RawMessage `json:"members_not_in_team,omitempty"`
+		// UsersNotFound : These users were not found in Dropbox.
+		UsersNotFound json.RawMessage `json:"users_not_found,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "members_not_in_team":
+		err = json.Unmarshal(body, &u.MembersNotInTeam)
+
+		if err != nil {
+			return err
+		}
+	case "users_not_found":
+		err = json.Unmarshal(body, &u.UsersNotFound)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // GroupMembersSelector : Argument for selecting a group and a list of users.
 type GroupMembersSelector struct {
@@ -1403,6 +1502,9 @@ type MemberAddArg struct {
 	MemberSurname string `json:"member_surname"`
 	// MemberExternalId : External ID for member.
 	MemberExternalId string `json:"member_external_id,omitempty"`
+	// MemberPersistentId : Persistent ID for member. This field is only
+	// available to teams using persistent ID SAML configuration.
+	MemberPersistentId string `json:"member_persistent_id,omitempty"`
 	// SendWelcomeEmail : Whether to send a welcome email to the member. If
 	// send_welcome_email is false, no email invitation will be sent to the
 	// user. This may be useful for apps using single sign-on (SSO) flows for
@@ -1452,21 +1554,30 @@ type MemberAddResult struct {
 	// DuplicateExternalMemberId : A user with the given external member ID
 	// already exists on the team (including in recoverable state).
 	DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
+	// DuplicateMemberPersistentId : A user with the given persistent ID already
+	// exists on the team (including in recoverable state).
+	DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
+	// PersistentIdDisabled : Persistent ID is only available to teams with
+	// persistent ID SAML configuration. Please contact Dropbox for more
+	// information.
+	PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
 	// UserCreationFailed : User creation has failed.
 	UserCreationFailed string `json:"user_creation_failed,omitempty"`
 }
 
 // Valid tag values for MemberAddResult
 const (
-	MemberAddResultSuccess                    = "success"
-	MemberAddResultTeamLicenseLimit           = "team_license_limit"
-	MemberAddResultFreeTeamMemberLimitReached = "free_team_member_limit_reached"
-	MemberAddResultUserAlreadyOnTeam          = "user_already_on_team"
-	MemberAddResultUserOnAnotherTeam          = "user_on_another_team"
-	MemberAddResultUserAlreadyPaired          = "user_already_paired"
-	MemberAddResultUserMigrationFailed        = "user_migration_failed"
-	MemberAddResultDuplicateExternalMemberId  = "duplicate_external_member_id"
-	MemberAddResultUserCreationFailed         = "user_creation_failed"
+	MemberAddResultSuccess                     = "success"
+	MemberAddResultTeamLicenseLimit            = "team_license_limit"
+	MemberAddResultFreeTeamMemberLimitReached  = "free_team_member_limit_reached"
+	MemberAddResultUserAlreadyOnTeam           = "user_already_on_team"
+	MemberAddResultUserOnAnotherTeam           = "user_on_another_team"
+	MemberAddResultUserAlreadyPaired           = "user_already_paired"
+	MemberAddResultUserMigrationFailed         = "user_migration_failed"
+	MemberAddResultDuplicateExternalMemberId   = "duplicate_external_member_id"
+	MemberAddResultDuplicateMemberPersistentId = "duplicate_member_persistent_id"
+	MemberAddResultPersistentIdDisabled        = "persistent_id_disabled"
+	MemberAddResultUserCreationFailed          = "user_creation_failed"
 )
 
 // UnmarshalJSON deserializes into a MemberAddResult instance
@@ -1527,6 +1638,18 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 		}
 	case "duplicate_external_member_id":
 		err = json.Unmarshal(body, &u.DuplicateExternalMemberId)
+
+		if err != nil {
+			return err
+		}
+	case "duplicate_member_persistent_id":
+		err = json.Unmarshal(body, &u.DuplicateMemberPersistentId)
+
+		if err != nil {
+			return err
+		}
+	case "persistent_id_disabled":
+		err = json.Unmarshal(body, &u.PersistentIdDisabled)
 
 		if err != nil {
 			return err
@@ -1599,6 +1722,12 @@ type MemberProfile struct {
 	// MembershipType : The user's membership type: full (normal team member) vs
 	// limited (does not use a license; no access to the team's shared quota).
 	MembershipType *TeamMembershipType `json:"membership_type"`
+	// JoinedOn : The date and time the user joined as a member of a specific
+	// team.
+	JoinedOn time.Time `json:"joined_on,omitempty"`
+	// PersistentId : Persistent ID that a team can attach to the user. The
+	// persistent ID is unique ID to be used for SAML authentication.
+	PersistentId string `json:"persistent_id,omitempty"`
 }
 
 // NewMemberProfile returns a new MemberProfile instance
@@ -2053,6 +2182,9 @@ type MembersSetProfileArg struct {
 	NewGivenName string `json:"new_given_name,omitempty"`
 	// NewSurname : New surname for member.
 	NewSurname string `json:"new_surname,omitempty"`
+	// NewPersistentId : New persistent ID. This field only available to teams
+	// using persistent ID SAML configuration.
+	NewPersistentId string `json:"new_persistent_id,omitempty"`
 }
 
 // NewMembersSetProfileArg returns a new MembersSetProfileArg instance
@@ -2075,6 +2207,8 @@ const (
 	MembersSetProfileErrorExternalIdUsedByOtherUser        = "external_id_used_by_other_user"
 	MembersSetProfileErrorSetProfileDisallowed             = "set_profile_disallowed"
 	MembersSetProfileErrorParamCannotBeEmpty               = "param_cannot_be_empty"
+	MembersSetProfileErrorPersistentIdDisabled             = "persistent_id_disabled"
+	MembersSetProfileErrorPersistentIdUsedByOtherUser      = "persistent_id_used_by_other_user"
 	MembersSetProfileErrorOther                            = "other"
 )
 
@@ -2420,53 +2554,13 @@ const (
 	TeamFolderAccessErrorOther               = "other"
 )
 
-// TeamFolderActivateError : has no documentation (yet)
+// TeamFolderActivateError :
 type TeamFolderActivateError struct {
 	dropbox.Tagged
-	// AccessError : has no documentation (yet)
-	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
-	// StatusError : has no documentation (yet)
-	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 }
 
 // Valid tag values for TeamFolderActivateError
-const (
-	TeamFolderActivateErrorAccessError = "access_error"
-	TeamFolderActivateErrorStatusError = "status_error"
-	TeamFolderActivateErrorOther       = "other"
-)
-
-// UnmarshalJSON deserializes into a TeamFolderActivateError instance
-func (u *TeamFolderActivateError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
-		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
-
-		if err != nil {
-			return err
-		}
-	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
+const ()
 
 // TeamFolderIdArg : has no documentation (yet)
 type TeamFolderIdArg struct {
@@ -2496,53 +2590,13 @@ func NewTeamFolderArchiveArg(TeamFolderId string) *TeamFolderArchiveArg {
 	return s
 }
 
-// TeamFolderArchiveError : has no documentation (yet)
+// TeamFolderArchiveError :
 type TeamFolderArchiveError struct {
 	dropbox.Tagged
-	// AccessError : has no documentation (yet)
-	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
-	// StatusError : has no documentation (yet)
-	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 }
 
 // Valid tag values for TeamFolderArchiveError
-const (
-	TeamFolderArchiveErrorAccessError = "access_error"
-	TeamFolderArchiveErrorStatusError = "status_error"
-	TeamFolderArchiveErrorOther       = "other"
-)
-
-// UnmarshalJSON deserializes into a TeamFolderArchiveError instance
-func (u *TeamFolderArchiveError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
-		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
-
-		if err != nil {
-			return err
-		}
-	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
+const ()
 
 // TeamFolderArchiveJobStatus : has no documentation (yet)
 type TeamFolderArchiveJobStatus struct {
@@ -2653,6 +2707,7 @@ type TeamFolderCreateError struct {
 const (
 	TeamFolderCreateErrorInvalidFolderName     = "invalid_folder_name"
 	TeamFolderCreateErrorFolderNameAlreadyUsed = "folder_name_already_used"
+	TeamFolderCreateErrorFolderNameReserved    = "folder_name_reserved"
 	TeamFolderCreateErrorOther                 = "other"
 )
 
@@ -2722,9 +2777,10 @@ type TeamFolderInvalidStatusError struct {
 
 // Valid tag values for TeamFolderInvalidStatusError
 const (
-	TeamFolderInvalidStatusErrorActive   = "active"
-	TeamFolderInvalidStatusErrorArchived = "archived"
-	TeamFolderInvalidStatusErrorOther    = "other"
+	TeamFolderInvalidStatusErrorActive            = "active"
+	TeamFolderInvalidStatusErrorArchived          = "archived"
+	TeamFolderInvalidStatusErrorArchiveInProgress = "archive_in_progress"
+	TeamFolderInvalidStatusErrorOther             = "other"
 )
 
 // TeamFolderListArg : has no documentation (yet)
@@ -2785,53 +2841,13 @@ func NewTeamFolderMetadata(TeamFolderId string, Name string, Status *TeamFolderS
 	return s
 }
 
-// TeamFolderPermanentlyDeleteError : has no documentation (yet)
+// TeamFolderPermanentlyDeleteError :
 type TeamFolderPermanentlyDeleteError struct {
 	dropbox.Tagged
-	// AccessError : has no documentation (yet)
-	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
-	// StatusError : has no documentation (yet)
-	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 }
 
 // Valid tag values for TeamFolderPermanentlyDeleteError
-const (
-	TeamFolderPermanentlyDeleteErrorAccessError = "access_error"
-	TeamFolderPermanentlyDeleteErrorStatusError = "status_error"
-	TeamFolderPermanentlyDeleteErrorOther       = "other"
-)
-
-// UnmarshalJSON deserializes into a TeamFolderPermanentlyDeleteError instance
-func (u *TeamFolderPermanentlyDeleteError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
-		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
-
-		if err != nil {
-			return err
-		}
-	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
+const ()
 
 // TeamFolderRenameArg : has no documentation (yet)
 type TeamFolderRenameArg struct {
@@ -2851,41 +2867,14 @@ func NewTeamFolderRenameArg(TeamFolderId string, Name string) *TeamFolderRenameA
 // TeamFolderRenameError : has no documentation (yet)
 type TeamFolderRenameError struct {
 	dropbox.Tagged
-	// AccessError : has no documentation (yet)
-	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 }
 
 // Valid tag values for TeamFolderRenameError
 const (
-	TeamFolderRenameErrorAccessError           = "access_error"
 	TeamFolderRenameErrorInvalidFolderName     = "invalid_folder_name"
 	TeamFolderRenameErrorFolderNameAlreadyUsed = "folder_name_already_used"
-	TeamFolderRenameErrorOther                 = "other"
+	TeamFolderRenameErrorFolderNameReserved    = "folder_name_reserved"
 )
-
-// UnmarshalJSON deserializes into a TeamFolderRenameError instance
-func (u *TeamFolderRenameError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 // TeamFolderStatus : has no documentation (yet)
 type TeamFolderStatus struct {
@@ -2894,9 +2883,10 @@ type TeamFolderStatus struct {
 
 // Valid tag values for TeamFolderStatus
 const (
-	TeamFolderStatusActive   = "active"
-	TeamFolderStatusArchived = "archived"
-	TeamFolderStatusOther    = "other"
+	TeamFolderStatusActive            = "active"
+	TeamFolderStatusArchived          = "archived"
+	TeamFolderStatusArchiveInProgress = "archive_in_progress"
+	TeamFolderStatusOther             = "other"
 )
 
 // TeamGetInfoResult : has no documentation (yet)

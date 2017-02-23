@@ -34,21 +34,6 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// AlphaGroupsCreate : Creates a new, empty group, with a requested name.
-	// Permission : Team member management
-	AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error)
-	// AlphaGroupsGetInfo : Retrieves information about one or more groups.
-	// Permission : Team Information
-	AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error)
-	// AlphaGroupsList : Lists groups on a team. Permission : Team Information
-	AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, err error)
-	// AlphaGroupsListContinue : Once a cursor has been retrieved from
-	// `alphaGroupsList`, use this to paginate through all groups. Permission :
-	// Team information
-	AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error)
-	// AlphaGroupsUpdate : Updates a group's name, external ID or management
-	// type. Permission : Team member management
-	AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error)
 	// DevicesListMemberDevices : List all device sessions of a team's member.
 	DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *ListMemberDevicesResult, err error)
 	// DevicesListMembersDevices : List all device sessions of a team.
@@ -63,50 +48,51 @@ type Client interface {
 	// GetInfo : Retrieves information about a team.
 	GetInfo() (res *TeamGetInfoResult, err error)
 	// GroupsCreate : Creates a new, empty group, with a requested name.
-	// Permission : Team member management
+	// Permission : Team member management.
 	GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error)
 	// GroupsDelete : Deletes a group. The group is deleted immediately. However
 	// the revoking of group-owned resources may take additional time. Use the
 	// `groupsJobStatusGet` to determine whether this process has completed.
-	// Permission : Team member management
+	// Permission : Team member management.
 	GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResult, err error)
-	// GroupsGetInfo : Retrieves information about one or more groups.
-	// Permission : Team Information
+	// GroupsGetInfo : Retrieves information about one or more groups. Note that
+	// the optional field  `GroupFullInfo.members` is not returned for
+	// system-managed groups. Permission : Team Information.
 	GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error)
 	// GroupsJobStatusGet : Once an async_job_id is returned from
 	// `groupsDelete`, `groupsMembersAdd` , or `groupsMembersRemove` use this
 	// method to poll the status of granting/revoking group members' access to
-	// group-owned resources. Permission : Team member management
+	// group-owned resources. Permission : Team member management.
 	GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error)
-	// GroupsList : Lists groups on a team. Permission : Team Information
+	// GroupsList : Lists groups on a team. Permission : Team Information.
 	GroupsList(arg *GroupsListArg) (res *GroupsListResult, err error)
 	// GroupsListContinue : Once a cursor has been retrieved from `groupsList`,
-	// use this to paginate through all groups. Permission : Team information
+	// use this to paginate through all groups. Permission : Team Information.
 	GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error)
 	// GroupsMembersAdd : Adds members to a group. The members are added
 	// immediately. However the granting of group-owned resources may take
 	// additional time. Use the `groupsJobStatusGet` to determine whether this
-	// process has completed. Permission : Team member management
+	// process has completed. Permission : Team member management.
 	GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembersChangeResult, err error)
 	// GroupsMembersList : Lists members of a group. Permission : Team
-	// Information
+	// Information.
 	GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMembersListResult, err error)
 	// GroupsMembersListContinue : Once a cursor has been retrieved from
 	// `groupsMembersList`, use this to paginate through all members of the
-	// group. Permission : Team information
+	// group. Permission : Team information.
 	GroupsMembersListContinue(arg *GroupsMembersListContinueArg) (res *GroupsMembersListResult, err error)
 	// GroupsMembersRemove : Removes members from a group. The members are
 	// removed immediately. However the revoking of group-owned resources may
 	// take additional time. Use the `groupsJobStatusGet` to determine whether
 	// this process has completed. This method permits removing the only owner
 	// of a group, even in cases where this is not possible via the web client.
-	// Permission : Team member management
+	// Permission : Team member management.
 	GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupMembersChangeResult, err error)
 	// GroupsMembersSetAccessType : Sets a member's access type in a group.
-	// Permission : Team member management
+	// Permission : Team member management.
 	GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg) (res []*GroupsGetInfoItem, err error)
 	// GroupsUpdate : Updates a group's name and/or external ID. Permission :
-	// Team member management
+	// Team member management.
 	GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error)
 	// LinkedAppsListMemberLinkedApps : List all linked applications of the team
 	// member. Note, this endpoint does not list any team-linked applications.
@@ -158,13 +144,13 @@ type Client interface {
 	MembersRecover(arg *MembersRecoverArg) (err error)
 	// MembersRemove : Removes a member from a team. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
-	// provided to identify the user account. This is not a deactivation where
-	// the account can be re-activated again. Calling `membersAdd` with the
-	// removed user's email address will create a new account with a new
-	// team_member_id that will not have access to any content that was shared
-	// with the initial account. This endpoint may initiate an asynchronous job.
-	// To obtain the final result of the job, the client should periodically
-	// poll `membersRemoveJobStatusGet`.
+	// provided to identify the user account. Accounts can be recovered via
+	// `membersRecover` for a 7 day period or until the account has been
+	// permanently deleted or transferred to another account (whichever comes
+	// first). Calling `membersAdd` while a user is still recoverable on your
+	// team will return with `MemberAddResult.user_already_on_team`. This
+	// endpoint may initiate an asynchronous job. To obtain the final result of
+	// the job, the client should periodically poll `membersRemoveJobStatusGet`.
 	MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error)
 	// MembersRemoveJobStatusGet : Once an async_job_id is returned from
 	// `membersRemove` , use this to poll the status of the asynchronous
@@ -214,412 +200,33 @@ type Client interface {
 	// usage.
 	ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error)
 	// TeamFolderActivate : Sets an archived team folder's status to active.
-	// This endpoint is only available to teams with `improved team folders`
-	// </help/986>. Permission : Team member file access.
+	// Permission : Team member file access.
 	TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
 	// TeamFolderArchive : Sets an active team folder's status to archived and
-	// removes all folder and file members. This endpoint is only available to
-	// teams with `improved team folders` </help/986>. Permission : Team member
-	// file access.
+	// removes all folder and file members. Permission : Team member file
+	// access.
 	TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolderArchiveLaunch, err error)
 	// TeamFolderArchiveCheck : Returns the status of an asynchronous job for
-	// archiving a team folder. This endpoint is only available to teams with
-	// `improved team folders` </help/986>. Permission : Team member file
-	// access.
+	// archiving a team folder. Permission : Team member file access.
 	TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderArchiveJobStatus, err error)
-	// TeamFolderCreate : Creates a new, active, team folder. This endpoint is
-	// only available to teams with `improved team folders` </help/986>.
-	// Permission : Team member file access.
-	TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error)
-	// TeamFolderGetInfo : Retrieves metadata for team folders. This endpoint is
-	// only available to teams with `improved team folders` </help/986>.
-	// Permission : Team member file access.
-	TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFolderGetInfoItem, err error)
-	// TeamFolderList : Lists all team folders. This endpoint is only available
-	// to teams with `improved team folders` </help/986>. Permission : Team
+	// TeamFolderCreate : Creates a new, active, team folder. Permission : Team
 	// member file access.
+	TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error)
+	// TeamFolderGetInfo : Retrieves metadata for team folders. Permission :
+	// Team member file access.
+	TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFolderGetInfoItem, err error)
+	// TeamFolderList : Lists all team folders. Permission : Team member file
+	// access.
 	TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListResult, err error)
 	// TeamFolderPermanentlyDelete : Permanently deletes an archived team
-	// folder. This endpoint is only available to teams with `improved team
-	// folders` </help/986>. Permission : Team member file access.
+	// folder. Permission : Team member file access.
 	TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error)
-	// TeamFolderRename : Changes an active team folder's name. This endpoint is
-	// only available to teams with `improved team folders` </help/986>.
-	// Permission : Team member file access.
+	// TeamFolderRename : Changes an active team folder's name. Permission :
+	// Team member file access.
 	TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderMetadata, err error)
 }
 
 type apiImpl dropbox.Context
-
-//AlphaGroupsCreateAPIError is an error-wrapper for the alpha/groups/create route
-type AlphaGroupsCreateAPIError struct {
-	dropbox.APIError
-	EndpointError *GroupCreateError `json:"error"`
-}
-
-func (dbx *apiImpl) AlphaGroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error) {
-	cli := dbx.Client
-
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "alpha/groups/create"), bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
-	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
-	if err != nil {
-		return
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError AlphaGroupsCreateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
-	return
-}
-
-//AlphaGroupsGetInfoAPIError is an error-wrapper for the alpha/groups/get_info route
-type AlphaGroupsGetInfoAPIError struct {
-	dropbox.APIError
-	EndpointError *GroupsGetInfoError `json:"error"`
-}
-
-func (dbx *apiImpl) AlphaGroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error) {
-	cli := dbx.Client
-
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "alpha/groups/get_info"), bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
-	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
-	if err != nil {
-		return
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError AlphaGroupsGetInfoAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
-	return
-}
-
-//AlphaGroupsListAPIError is an error-wrapper for the alpha/groups/list route
-type AlphaGroupsListAPIError struct {
-	dropbox.APIError
-	EndpointError struct{} `json:"error"`
-}
-
-func (dbx *apiImpl) AlphaGroupsList(arg *GroupsListArg) (res *GroupsListResult, err error) {
-	cli := dbx.Client
-
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "alpha/groups/list"), bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
-	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
-	if err != nil {
-		return
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError AlphaGroupsListAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
-	return
-}
-
-//AlphaGroupsListContinueAPIError is an error-wrapper for the alpha/groups/list/continue route
-type AlphaGroupsListContinueAPIError struct {
-	dropbox.APIError
-	EndpointError *GroupsListContinueError `json:"error"`
-}
-
-func (dbx *apiImpl) AlphaGroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error) {
-	cli := dbx.Client
-
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "alpha/groups/list/continue"), bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
-	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
-	if err != nil {
-		return
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError AlphaGroupsListContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
-	return
-}
-
-//AlphaGroupsUpdateAPIError is an error-wrapper for the alpha/groups/update route
-type AlphaGroupsUpdateAPIError struct {
-	dropbox.APIError
-	EndpointError *GroupUpdateError `json:"error"`
-}
-
-func (dbx *apiImpl) AlphaGroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error) {
-	cli := dbx.Client
-
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "alpha/groups/update"), bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
-	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
-	if err != nil {
-		return
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError AlphaGroupsUpdateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
-	return
-}
 
 //DevicesListMemberDevicesAPIError is an error-wrapper for the devices/list_member_devices route
 type DevicesListMemberDevicesAPIError struct {

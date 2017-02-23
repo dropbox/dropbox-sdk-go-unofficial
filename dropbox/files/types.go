@@ -777,6 +777,10 @@ type FileMetadata struct {
 	// this could be true  in the case where a file has explicit members but is
 	// not contained within  a shared folder.
 	HasExplicitSharedMembers bool `json:"has_explicit_shared_members,omitempty"`
+	// ContentHash : A hash of the file content. This field can be used to
+	// verify data integrity. For more information see our `Content hash`
+	// </developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash,omitempty"`
 }
 
 // NewFileMetadata returns a new FileMetadata instance
@@ -1684,6 +1688,7 @@ const (
 	RelocationErrorCantNestSharedFolder     = "cant_nest_shared_folder"
 	RelocationErrorCantMoveFolderIntoItself = "cant_move_folder_into_itself"
 	RelocationErrorTooManyFiles             = "too_many_files"
+	RelocationErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
 	RelocationErrorOther                    = "other"
 )
 
@@ -1734,8 +1739,7 @@ type RelocationBatchError struct {
 
 // Valid tag values for RelocationBatchError
 const (
-	RelocationBatchErrorDuplicatedOrNestedPaths = "duplicated_or_nested_paths"
-	RelocationBatchErrorTooManyWriteOperations  = "too_many_write_operations"
+	RelocationBatchErrorTooManyWriteOperations = "too_many_write_operations"
 )
 
 // RelocationBatchJobStatus : has no documentation (yet)

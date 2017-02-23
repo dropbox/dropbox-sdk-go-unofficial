@@ -62,8 +62,8 @@ const (
 	SharedFolderMemberPolicyOther  = "other"
 )
 
-// SharedLinkCreatePolicy : Policy governing the visibility of newly created
-// shared links.
+// SharedLinkCreatePolicy : Policy governing the visibility of shared links.
+// This policy can apply to newly created shared links, or all shared links.
 type SharedLinkCreatePolicy struct {
 	dropbox.Tagged
 }
@@ -104,8 +104,7 @@ type TeamSharingPolicies struct {
 	SharedFolderMemberPolicy *SharedFolderMemberPolicy `json:"shared_folder_member_policy"`
 	// SharedFolderJoinPolicy : Which shared folders team members can join.
 	SharedFolderJoinPolicy *SharedFolderJoinPolicy `json:"shared_folder_join_policy"`
-	// SharedLinkCreatePolicy : What is the visibility of newly created shared
-	// links.
+	// SharedLinkCreatePolicy : Who can view shared links owned by team members.
 	SharedLinkCreatePolicy *SharedLinkCreatePolicy `json:"shared_link_create_policy"`
 }
 
