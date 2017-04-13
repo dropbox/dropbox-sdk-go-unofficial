@@ -245,15 +245,18 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "devices/list_member_devices"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "devices/list_member_devices", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -319,15 +322,18 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "devices/list_members_devices"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "devices/list_members_devices", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -393,15 +399,18 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "devices/list_team_devices"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "devices/list_team_devices", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -467,15 +476,18 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "devices/revoke_device_session"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "devices/revoke_device_session", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -536,15 +548,18 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "devices/revoke_device_session_batch"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "devices/revoke_device_session_batch", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -602,14 +617,16 @@ type GetInfoAPIError struct {
 func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 	cli := dbx.Client
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "get_info"), nil)
+	headers := map[string]string{}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "get_info", headers, nil)
 	if err != nil {
 		return
 	}
-
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -675,15 +692,18 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/create"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/create", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -749,15 +769,18 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/delete"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/delete", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -823,15 +846,18 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/get_info"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/get_info", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -897,15 +923,18 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/job_status/get"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/job_status/get", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -971,15 +1000,18 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/list"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/list", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1045,15 +1077,18 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/list/continue"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/list/continue", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1119,15 +1154,18 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/members/add"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/members/add", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1193,15 +1231,18 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/members/list"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/members/list", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1267,15 +1308,18 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/members/list/continue"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/members/list/continue", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1341,15 +1385,18 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/members/remove"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/members/remove", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1415,15 +1462,18 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/members/set_access_type"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/members/set_access_type", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1489,15 +1539,18 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "groups/update"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "groups/update", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1563,15 +1616,18 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "linked_apps/list_member_linked_apps"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "linked_apps/list_member_linked_apps", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1637,15 +1693,18 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "linked_apps/list_members_linked_apps"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "linked_apps/list_members_linked_apps", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1711,15 +1770,18 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "linked_apps/list_team_linked_apps"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "linked_apps/list_team_linked_apps", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1785,15 +1847,18 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "linked_apps/revoke_linked_app"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "linked_apps/revoke_linked_app", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1854,15 +1919,18 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "linked_apps/revoke_linked_app_batch"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "linked_apps/revoke_linked_app_batch", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -1928,15 +1996,18 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/add"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/add", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2002,15 +2073,18 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/add/job_status/get"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/add/job_status/get", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2076,15 +2150,18 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/get_info"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/get_info", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2150,15 +2227,18 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/list"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/list", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2224,15 +2304,18 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/list/continue"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/list/continue", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2298,15 +2381,18 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/recover"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/recover", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2367,15 +2453,18 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/remove"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/remove", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2441,15 +2530,18 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/remove/job_status/get"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/remove/job_status/get", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2515,15 +2607,18 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/send_welcome_email"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/send_welcome_email", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2584,15 +2679,18 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/set_admin_permissions"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_admin_permissions", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2658,15 +2756,18 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/set_profile"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_profile", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2732,15 +2833,18 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/suspend"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/suspend", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2801,15 +2905,18 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "members/unsuspend"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/unsuspend", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2870,15 +2977,18 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *Add
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "properties/template/add"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "properties/template/add", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -2944,15 +3054,18 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "properties/template/get"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "properties/template/get", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3010,14 +3123,16 @@ type PropertiesTemplateListAPIError struct {
 func (dbx *apiImpl) PropertiesTemplateList() (res *properties.ListPropertyTemplateIds, err error) {
 	cli := dbx.Client
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "properties/template/list"), nil)
+	headers := map[string]string{}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "properties/template/list", headers, nil)
 	if err != nil {
 		return
 	}
-
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3083,15 +3198,18 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *UpdatePropertyTemplateArg) (re
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "properties/template/update"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "properties/template/update", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3157,15 +3275,18 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "reports/get_activity"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "reports/get_activity", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3231,15 +3352,18 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "reports/get_devices"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "reports/get_devices", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3305,15 +3429,18 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "reports/get_membership"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "reports/get_membership", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3379,15 +3506,18 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "reports/get_storage"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "reports/get_storage", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3453,15 +3583,18 @@ func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMet
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/activate"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/activate", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3527,15 +3660,18 @@ func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolde
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/archive"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/archive", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3601,15 +3737,18 @@ func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderA
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/archive/check"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/archive/check", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3675,15 +3814,18 @@ func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderM
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/create"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/create", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3749,15 +3891,18 @@ func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFold
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/get_info"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/get_info", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3823,15 +3968,18 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/list"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/list", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3897,15 +4045,18 @@ func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/permanently_delete"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/permanently_delete", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
@@ -3966,15 +4117,18 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 		return
 	}
 
-	req, err := http.NewRequest("POST", (*dropbox.Context)(dbx).GenerateURL("api", "team", "team_folder/rename"), bytes.NewReader(b))
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/rename", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
-
-	req.Header.Set("Content-Type", "application/json")
 	if dbx.Config.Verbose {
 		log.Printf("req: %v", req)
 	}
+
 	resp, err := cli.Do(req)
 	if dbx.Config.Verbose {
 		log.Printf("resp: %v", resp)
