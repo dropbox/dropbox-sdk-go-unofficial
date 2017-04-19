@@ -82,6 +82,7 @@ class GoClientGenerator(CodeGenerator):
             out()
 
             self._generate_request(namespace, route)
+            self._generate_post()
             self._generate_response(route)
             with self.block('if resp.StatusCode == http.StatusOK'):
                 self._generate_result(route)
@@ -135,9 +136,8 @@ class GoClientGenerator(CodeGenerator):
             out('log.Printf("req: %v", req)')
         out()
 
-    def _generate_response(self, route):
+    def _generate_post(self):
         out = self.emit
-        style = route.attrs.get('style', 'rpc')
 
         out('resp, err := cli.Do(req)')
         with self.block('if dbx.Config.Verbose'):
@@ -147,6 +147,9 @@ class GoClientGenerator(CodeGenerator):
             out('return')
         out()
 
+    def _generate_response(self, route):
+        out = self.emit
+        style = route.attrs.get('style', 'rpc')
         if style == 'download':
             out('body := []byte(resp.Header.Get("Dropbox-API-Result"))')
             out('content = resp.Body')
