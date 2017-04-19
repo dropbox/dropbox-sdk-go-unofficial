@@ -82,7 +82,7 @@ class GoClientGenerator(CodeGenerator):
             out()
 
             self._generate_request(namespace, route)
-            self._generate_post(route)
+            self._generate_post()
             self._generate_response(route)
             with self.block('if resp.StatusCode == http.StatusOK'):
                 self._generate_result(route)
@@ -91,9 +91,11 @@ class GoClientGenerator(CodeGenerator):
         out()
 
     def _generate_request(self, namespace, route):
+        out = self.emit
+        auth = route.attrs.get('auth', '')
         host = route.attrs.get('host', 'api')
         style = route.attrs.get('style', 'rpc')
-        out = self.emit
+
         body = 'nil'
         if not is_void_type(route.arg_data_type):
             with self.block('if dbx.Config.Verbose'):
@@ -106,31 +108,37 @@ class GoClientGenerator(CodeGenerator):
                 body = 'bytes.NewReader(b)'
         if style == 'upload':
             body = 'content'
-        out('req, err := http.NewRequest("POST", '
-            '(*dropbox.Context)(dbx).GenerateURL("{}", "{}", "{}"), {})'.format(
-                host, namespace.name, route.name, body))
-        with self.block('if err != nil'):
-            out('return')
-        out()
+
+        headers = {}
         if not is_void_type(route.arg_data_type):
             if host == 'content':
-                out('req.Header.Set("Dropbox-API-Arg", string(b))')
+                headers["Dropbox-API-Arg"] = "string(b)"
             else:
-                out('req.Header.Set("Content-Type", "application/json")')
+                headers["Content-Type"] = '"application/json"'
         if style == 'upload':
-            out('req.Header.Set("Content-Type",' '"application/octet-stream")')
+            headers["Content-Type"] = '"application/octet-stream"'
 
-    def _generate_post(self, route):
-        out = self.emit
-        auth = route.attrs.get('auth', '')
-        if auth == 'noauth':
-            out('req.Header.Del("Authorization")')
-        elif auth != 'team':
+        out('headers := map[string]string{')
+        for k, v in headers.items():
+            out('\t"{}": {},'.format(k, v))
+        out('}')
+        if auth != 'noauth' and auth != 'team':
             with self.block('if dbx.Config.AsMemberID != ""'):
-                out('req.Header.Set("Dropbox-API-Select-User", dbx.Config.AsMemberID)')
+                out('headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID')
+        out()
 
+        authed = 'false' if auth == 'noauth' else 'true'
+        out('req, err := (*dropbox.Context)(dbx).NewRequest("{}", "{}", {}, "{}", "{}", headers, {})'.format(
+            host, style, authed, namespace.name, route.name, body))
+        with self.block('if err != nil'):
+            out('return')
         with self.block('if dbx.Config.Verbose'):
             out('log.Printf("req: %v", req)')
+        out()
+
+    def _generate_post(self):
+        out = self.emit
+
         out('resp, err := cli.Do(req)')
         with self.block('if dbx.Config.Verbose'):
             out('log.Printf("resp: %v", resp)')
