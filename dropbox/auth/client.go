@@ -39,7 +39,7 @@ type Client interface {
 	TokenRevoke() (err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //TokenFromOauth1APIError is an error-wrapper for the token/from_oauth1 route
 type TokenFromOauth1APIError struct {
@@ -47,7 +47,7 @@ type TokenFromOauth1APIError struct {
 	EndpointError *TokenFromOAuth1Error `json:"error"`
 }
 
-func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
+func (dbx *APIClient) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -127,7 +127,7 @@ type TokenRevokeAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) TokenRevoke() (err error) {
+func (dbx *APIClient) TokenRevoke() (err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -187,7 +187,7 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

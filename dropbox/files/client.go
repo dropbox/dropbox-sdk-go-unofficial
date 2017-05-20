@@ -230,7 +230,7 @@ type Client interface {
 	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //AlphaGetMetadataAPIError is an error-wrapper for the alpha/get_metadata route
 type AlphaGetMetadataAPIError struct {
@@ -238,7 +238,7 @@ type AlphaGetMetadataAPIError struct {
 	EndpointError *AlphaGetMetadataError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, err error) {
+func (dbx *APIClient) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -329,7 +329,7 @@ type AlphaUploadAPIError struct {
 	EndpointError *UploadErrorWithProperties `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *APIClient) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader) (res *FileMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -410,7 +410,7 @@ type CopyAPIError struct {
 	EndpointError *RelocationError `json:"error"`
 }
 
-func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
+func (dbx *APIClient) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -501,7 +501,7 @@ type CopyBatchAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
+func (dbx *APIClient) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -581,7 +581,7 @@ type CopyBatchCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
+func (dbx *APIClient) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -661,7 +661,7 @@ type CopyReferenceGetAPIError struct {
 	EndpointError *GetCopyReferenceError `json:"error"`
 }
 
-func (dbx *apiImpl) CopyReferenceGet(arg *GetCopyReferenceArg) (res *GetCopyReferenceResult, err error) {
+func (dbx *APIClient) CopyReferenceGet(arg *GetCopyReferenceArg) (res *GetCopyReferenceResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -741,7 +741,7 @@ type CopyReferenceSaveAPIError struct {
 	EndpointError *SaveCopyReferenceError `json:"error"`
 }
 
-func (dbx *apiImpl) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyReferenceResult, err error) {
+func (dbx *APIClient) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyReferenceResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -821,7 +821,7 @@ type CreateFolderAPIError struct {
 	EndpointError *CreateFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error) {
+func (dbx *APIClient) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -901,7 +901,7 @@ type DeleteAPIError struct {
 	EndpointError *DeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
+func (dbx *APIClient) Delete(arg *DeleteArg) (res IsMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -992,7 +992,7 @@ type DeleteBatchAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) DeleteBatch(arg *DeleteBatchArg) (res *DeleteBatchLaunch, err error) {
+func (dbx *APIClient) DeleteBatch(arg *DeleteBatchArg) (res *DeleteBatchLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1072,7 +1072,7 @@ type DeleteBatchCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobStatus, err error) {
+func (dbx *APIClient) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1152,7 +1152,7 @@ type DownloadAPIError struct {
 	EndpointError *DownloadError `json:"error"`
 }
 
-func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *APIClient) Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1228,7 +1228,7 @@ type GetMetadataAPIError struct {
 	EndpointError *GetMetadataError `json:"error"`
 }
 
-func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {
+func (dbx *APIClient) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1319,7 +1319,7 @@ type GetPreviewAPIError struct {
 	EndpointError *PreviewError `json:"error"`
 }
 
-func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *APIClient) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1395,7 +1395,7 @@ type GetTemporaryLinkAPIError struct {
 	EndpointError *GetTemporaryLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) GetTemporaryLink(arg *GetTemporaryLinkArg) (res *GetTemporaryLinkResult, err error) {
+func (dbx *APIClient) GetTemporaryLink(arg *GetTemporaryLinkArg) (res *GetTemporaryLinkResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1475,7 +1475,7 @@ type GetThumbnailAPIError struct {
 	EndpointError *ThumbnailError `json:"error"`
 }
 
-func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error) {
+func (dbx *APIClient) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1551,7 +1551,7 @@ type ListFolderAPIError struct {
 	EndpointError *ListFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error) {
+func (dbx *APIClient) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1631,7 +1631,7 @@ type ListFolderContinueAPIError struct {
 	EndpointError *ListFolderContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFolderResult, err error) {
+func (dbx *APIClient) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFolderResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1711,7 +1711,7 @@ type ListFolderGetLatestCursorAPIError struct {
 	EndpointError *ListFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFolderGetLatestCursorResult, err error) {
+func (dbx *APIClient) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFolderGetLatestCursorResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1791,7 +1791,7 @@ type ListFolderLongpollAPIError struct {
 	EndpointError *ListFolderLongpollError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFolderLongpollResult, err error) {
+func (dbx *APIClient) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFolderLongpollResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1868,7 +1868,7 @@ type ListRevisionsAPIError struct {
 	EndpointError *ListRevisionsError `json:"error"`
 }
 
-func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResult, err error) {
+func (dbx *APIClient) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1948,7 +1948,7 @@ type MoveAPIError struct {
 	EndpointError *RelocationError `json:"error"`
 }
 
-func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
+func (dbx *APIClient) Move(arg *RelocationArg) (res IsMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2039,7 +2039,7 @@ type MoveBatchAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
+func (dbx *APIClient) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2119,7 +2119,7 @@ type MoveBatchCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
+func (dbx *APIClient) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2199,7 +2199,7 @@ type PermanentlyDeleteAPIError struct {
 	EndpointError *DeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (err error) {
+func (dbx *APIClient) PermanentlyDelete(arg *DeleteArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2274,7 +2274,7 @@ type PropertiesAddAPIError struct {
 	EndpointError *AddPropertiesError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesAdd(arg *PropertyGroupWithPath) (err error) {
+func (dbx *APIClient) PropertiesAdd(arg *PropertyGroupWithPath) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2349,7 +2349,7 @@ type PropertiesOverwriteAPIError struct {
 	EndpointError *InvalidPropertyGroupError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesOverwrite(arg *PropertyGroupWithPath) (err error) {
+func (dbx *APIClient) PropertiesOverwrite(arg *PropertyGroupWithPath) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2424,7 +2424,7 @@ type PropertiesRemoveAPIError struct {
 	EndpointError *RemovePropertiesError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
+func (dbx *APIClient) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2499,7 +2499,7 @@ type PropertiesTemplateGetAPIError struct {
 	EndpointError *properties.PropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg) (res *properties.GetPropertyTemplateResult, err error) {
+func (dbx *APIClient) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg) (res *properties.GetPropertyTemplateResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2579,7 +2579,7 @@ type PropertiesTemplateListAPIError struct {
 	EndpointError *properties.PropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateList() (res *properties.ListPropertyTemplateIds, err error) {
+func (dbx *APIClient) PropertiesTemplateList() (res *properties.ListPropertyTemplateIds, err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -2649,7 +2649,7 @@ type PropertiesUpdateAPIError struct {
 	EndpointError *UpdatePropertiesError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertyGroupArg) (err error) {
+func (dbx *APIClient) PropertiesUpdate(arg *UpdatePropertyGroupArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2724,7 +2724,7 @@ type RestoreAPIError struct {
 	EndpointError *RestoreError `json:"error"`
 }
 
-func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
+func (dbx *APIClient) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2804,7 +2804,7 @@ type SaveUrlAPIError struct {
 	EndpointError *SaveUrlError `json:"error"`
 }
 
-func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
+func (dbx *APIClient) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2884,7 +2884,7 @@ type SaveUrlCheckJobStatusAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobStatus, err error) {
+func (dbx *APIClient) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2964,7 +2964,7 @@ type SearchAPIError struct {
 	EndpointError *SearchError `json:"error"`
 }
 
-func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
+func (dbx *APIClient) Search(arg *SearchArg) (res *SearchResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3044,7 +3044,7 @@ type UploadAPIError struct {
 	EndpointError *UploadError `json:"error"`
 }
 
-func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *APIClient) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3125,7 +3125,7 @@ type UploadSessionAppendAPIError struct {
 	EndpointError *UploadSessionLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error) {
+func (dbx *APIClient) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3201,7 +3201,7 @@ type UploadSessionAppendV2APIError struct {
 	EndpointError *UploadSessionLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error) {
+func (dbx *APIClient) UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3277,7 +3277,7 @@ type UploadSessionFinishAPIError struct {
 	EndpointError *UploadSessionFinishError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *APIClient) UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3358,7 +3358,7 @@ type UploadSessionFinishBatchAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error) {
+func (dbx *APIClient) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3438,7 +3438,7 @@ type UploadSessionFinishBatchCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *UploadSessionFinishBatchJobStatus, err error) {
+func (dbx *APIClient) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *UploadSessionFinishBatchJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3518,7 +3518,7 @@ type UploadSessionStartAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error) {
+func (dbx *APIClient) UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3594,7 +3594,7 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

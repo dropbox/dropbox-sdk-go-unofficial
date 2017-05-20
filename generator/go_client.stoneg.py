@@ -36,12 +36,12 @@ class GoClientGenerator(CodeGenerator):
                     self.emit(self._generate_route_signature(namespace, route))
             self.emit()
 
-            self.emit('type apiImpl dropbox.Context')
+            self.emit('type APIClient dropbox.Context')
             for route in namespace.routes:
                 self._generate_route(namespace, route)
             self.emit('// New returns a Client implementation for this namespace')
-            with self.block('func New(c dropbox.Config) *apiImpl'):
-                self.emit('ctx := apiImpl(dropbox.NewContext(c))')
+            with self.block('func New(c dropbox.Config) *APIClient'):
+                self.emit('ctx := APIClient(dropbox.NewContext(c))')
                 self.emit('return &ctx')
 
     def _generate_route_signature(self, namespace, route):
@@ -75,7 +75,7 @@ class GoClientGenerator(CodeGenerator):
             out('EndpointError {err} `json:"error"`'.format(err=err))
         out()
 
-        signature = 'func (dbx *apiImpl) ' + self._generate_route_signature(
+        signature = 'func (dbx *APIClient) ' + self._generate_route_signature(
             namespace, route)
         with self.block(signature):
             out('cli := dbx.Client')
