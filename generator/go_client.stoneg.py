@@ -90,7 +90,10 @@ class GoClientGenerator(CodeGenerator):
             self._generate_request(namespace, route)
             self._generate_post()
             self._generate_response(route)
-            with self.block('if resp.StatusCode == http.StatusOK'):
+            ok_check = 'if resp.StatusCode == http.StatusOK'
+            if fn == "Download":
+                ok_check += ' || resp.StatusCode == http.StatusPartialContent'
+            with self.block(ok_check):
                 self._generate_result(route)
             self._generate_error_handling(route)
 
@@ -128,6 +131,8 @@ class GoClientGenerator(CodeGenerator):
         for k, v in headers.items():
             out('\t"{}": {},'.format(k, v))
         out('}')
+        if fmt_var(route.name) == "Download":
+            out('for k, v := range arg.ExtraHeaders { headers[k] = v }')
         if auth != 'noauth' and auth != 'team':
             with self.block('if dbx.Config.AsMemberID != ""'):
                 out('headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID')
