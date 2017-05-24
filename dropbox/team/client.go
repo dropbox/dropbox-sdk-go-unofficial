@@ -45,6 +45,11 @@ type Client interface {
 	// DevicesRevokeDeviceSessionBatch : Revoke a list of device sessions of
 	// team members
 	DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatchArg) (res *RevokeDeviceSessionBatchResult, err error)
+	// FeaturesGetValues : Get the values for one or more featues. This route
+	// allows you to check your account's capability for what feature you can
+	// access or what value you have for certain features. Permission : Team
+	// information.
+	FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *FeaturesGetValuesBatchResult, err error)
 	// GetInfo : Retrieves information about a team.
 	GetInfo() (res *TeamGetInfoResult, err error)
 	// GroupsCreate : Creates a new, empty group, with a requested name.
@@ -218,12 +223,19 @@ type Client interface {
 	// TeamFolderList : Lists all team folders. Permission : Team member file
 	// access.
 	TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListResult, err error)
+	// TeamFolderListContinue : Once a cursor has been retrieved from
+	// `teamFolderList`, use this to paginate through all team folders.
+	// Permission : Team member file access.
+	TeamFolderListContinue(arg *TeamFolderListContinueArg) (res *TeamFolderListResult, err error)
 	// TeamFolderPermanentlyDelete : Permanently deletes an archived team
 	// folder. Permission : Team member file access.
 	TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error)
 	// TeamFolderRename : Changes an active team folder's name. Permission :
 	// Team member file access.
 	TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderMetadata, err error)
+	// TokenGetAuthenticatedAdmin : Returns the member profile of the admin who
+	// generated the team access token used to make the call.
+	TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdminResult, err error)
 }
 
 type apiImpl dropbox.Context
@@ -587,6 +599,83 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError DevicesRevokeDeviceSessionBatchAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//FeaturesGetValuesAPIError is an error-wrapper for the features/get_values route
+type FeaturesGetValuesAPIError struct {
+	dropbox.APIError
+	EndpointError *FeaturesGetValuesBatchError `json:"error"`
+}
+
+func (dbx *apiImpl) FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *FeaturesGetValuesBatchResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "features/get_values", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError FeaturesGetValuesAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -4028,6 +4117,83 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 	return
 }
 
+//TeamFolderListContinueAPIError is an error-wrapper for the team_folder/list/continue route
+type TeamFolderListContinueAPIError struct {
+	dropbox.APIError
+	EndpointError *TeamFolderListContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) TeamFolderListContinue(arg *TeamFolderListContinueArg) (res *TeamFolderListResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/list/continue", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError TeamFolderListContinueAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
 //TeamFolderPermanentlyDeleteAPIError is an error-wrapper for the team_folder/permanently_delete route
 type TeamFolderPermanentlyDeleteAPIError struct {
 	dropbox.APIError
@@ -4156,6 +4322,73 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError TeamFolderRenameAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//TokenGetAuthenticatedAdminAPIError is an error-wrapper for the token/get_authenticated_admin route
+type TokenGetAuthenticatedAdminAPIError struct {
+	dropbox.APIError
+	EndpointError *TokenGetAuthenticatedAdminError `json:"error"`
+}
+
+func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdminResult, err error) {
+	cli := dbx.Client
+
+	headers := map[string]string{}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "token/get_authenticated_admin", headers, nil)
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError TokenGetAuthenticatedAdminAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

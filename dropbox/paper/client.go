@@ -33,9 +33,8 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// DocsArchive : Marks the given Paper doc as deleted. This operation is
-	// non-destructive and the doc can be revived by the owner.  Note: This
-	// action can be performed only by the doc owner.
+	// DocsArchive : Marks the given Paper doc as archived. Note: This action
+	// can be performed or undone by anyone with edit permissions to the doc.
 	DocsArchive(arg *RefPaperDoc) (err error)
 	// DocsDownload : Exports and downloads Paper doc either as HTML or
 	// markdown.
@@ -77,8 +76,8 @@ type Client interface {
 	// this setting can be changed only via the team admin console.
 	DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 	// DocsUsersAdd : Allows an owner or editor to add users to a Paper doc or
-	// change their permissions using their email or Dropbox account id.  Note:
-	// The Doc owner's permissions cannot be changed.
+	// change their permissions using their email address or Dropbox account ID.
+	// Note: The Doc owner's permissions cannot be changed.
 	DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error)
 	// DocsUsersList : Lists all users who visited the Paper doc or users with
 	// explicit access. This call excludes users who have been removed. The list
@@ -90,8 +89,8 @@ type Client interface {
 	// `docsUsersList`, use this to paginate through all users on the Paper doc.
 	DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error)
 	// DocsUsersRemove : Allows an owner or editor to remove users from a Paper
-	// doc using their email or Dropbox account id.  Note: Doc owner cannot be
-	// removed.
+	// doc using their email address or Dropbox account ID.  Note: Doc owner
+	// cannot be removed.
 	DocsUsersRemove(arg *RemovePaperDocUser) (err error)
 }
 

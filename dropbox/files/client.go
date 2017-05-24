@@ -87,9 +87,12 @@ type Client interface {
 	// GetMetadata : Returns the metadata for a file or folder. Note: Metadata
 	// for the root folder is unsupported.
 	GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error)
-	// GetPreview : Get a preview for a file. Currently previews are only
-	// generated for the files with  the following extensions: .doc, .docx,
-	// .docm, .ppt, .pps, .ppsx, .ppsm, .pptx, .pptm,  .xls, .xlsx, .xlsm, .rtf.
+	// GetPreview : Get a preview for a file. Currently, PDF previews are
+	// generated for files with the following extensions: .ai, .doc, .docm,
+	// .docx, .eps, .odp, .odt, .pps, .ppsm, .ppsx, .ppt, .pptm, .pptx, .rtf.
+	// HTML previews are generated for files with the following extensions:
+	// .csv, .ods, .xls, .xlsm, .xlsx. Other formats will return an unsupported
+	// extension error.
 	GetPreview(arg *PreviewArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// GetTemporaryLink : Get a temporary link to stream content of a file. This
 	// link will expire in four hours and afterwards you will get 410 Gone.
@@ -117,7 +120,11 @@ type Client interface {
 	// entry's `FolderSharingInfo.read_only` and set all its children's
 	// read-only statuses to match. For each `DeletedMetadata`, if your local
 	// state has something at the given path, remove it and all its children. If
-	// there's nothing at the given path, ignore this entry.
+	// there's nothing at the given path, ignore this entry. Note:
+	// `auth.RateLimitError` may be returned if multiple `listFolder` or
+	// `listFolderContinue` calls with same parameters are made simultaneously
+	// by same API app for same user. If your app implements retry logic, please
+	// hold off the retry until the previous request finishes.
 	ListFolder(arg *ListFolderArg) (res *ListFolderResult, err error)
 	// ListFolderContinue : Once a cursor has been retrieved from `listFolder`,
 	// use this to paginate through all files and retrieve updates to the
@@ -193,15 +200,15 @@ type Client interface {
 	// upload session with `uploadSessionStart`.
 	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
 	// UploadSessionAppend : Append more data to an upload session. A single
-	// request should not upload more than 150 MB of file contents.
+	// request should not upload more than 150 MB.
 	UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error)
 	// UploadSessionAppendV2 : Append more data to an upload session. When the
 	// parameter close is set, this call will close the session. A single
-	// request should not upload more than 150 MB of file contents.
+	// request should not upload more than 150 MB.
 	UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error)
 	// UploadSessionFinish : Finish an upload session and save the uploaded data
 	// to the given file path. A single request should not upload more than 150
-	// MB of file contents.
+	// MB.
 	UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error)
 	// UploadSessionFinishBatch : This route helps you commit many files at once
 	// into a user's Dropbox. Use `uploadSessionStart` and
@@ -226,7 +233,11 @@ type Client interface {
 	// than 150 MB.  This call starts a new upload session with the given data.
 	// You can then use `uploadSessionAppendV2` to add more data and
 	// `uploadSessionFinish` to save all the data to a file in Dropbox. A single
-	// request should not upload more than 150 MB of file contents.
+	// request should not upload more than 150 MB. An upload session can be used
+	// for a maximum of 48 hours. Attempting to use an
+	// `UploadSessionStartResult.session_id` with `uploadSessionAppendV2` or
+	// `uploadSessionFinish` more than 48 hours after its creation will return a
+	// `UploadSessionLookupError.not_found`.
 	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
 }
 
@@ -341,8 +352,8 @@ func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3056,8 +3067,8 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3137,8 +3148,8 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3213,8 +3224,8 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3289,8 +3300,8 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3530,8 +3541,8 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 	}
 
 	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
 		"Dropbox-API-Arg": string(b),
+		"Content-Type":    "application/octet-stream",
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID

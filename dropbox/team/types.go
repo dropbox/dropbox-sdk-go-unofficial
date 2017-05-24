@@ -63,6 +63,8 @@ type ActiveWebSession struct {
 	Os string `json:"os"`
 	// Browser : Information on the browser used for this web session
 	Browser string `json:"browser"`
+	// Expires : The time this session expires
+	Expires time.Time `json:"expires,omitempty"`
 }
 
 // NewActiveWebSession returns a new ActiveWebSession instance
@@ -318,6 +320,93 @@ func NewDevicesActive(Windows []uint64, Macos []uint64, Linux []uint64, Ios []ui
 	s.Android = Android
 	s.Other = Other
 	s.Total = Total
+	return s
+}
+
+// Feature : A set of features that Dropbox for Business account support.
+type Feature struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for Feature
+const (
+	FeatureUploadApiRateLimit = "upload_api_rate_limit"
+	FeatureOther              = "other"
+)
+
+// FeatureValue : The values correspond to entries in `Feature`. You may get
+// different value according to your Dropbox for Business plan.
+type FeatureValue struct {
+	dropbox.Tagged
+	// UploadApiRateLimit : has no documentation (yet)
+	UploadApiRateLimit *UploadApiRateLimitValue `json:"upload_api_rate_limit,omitempty"`
+}
+
+// Valid tag values for FeatureValue
+const (
+	FeatureValueUploadApiRateLimit = "upload_api_rate_limit"
+	FeatureValueOther              = "other"
+)
+
+// UnmarshalJSON deserializes into a FeatureValue instance
+func (u *FeatureValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// UploadApiRateLimit : has no documentation (yet)
+		UploadApiRateLimit json.RawMessage `json:"upload_api_rate_limit,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "upload_api_rate_limit":
+		err = json.Unmarshal(w.UploadApiRateLimit, &u.UploadApiRateLimit)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FeaturesGetValuesBatchArg : has no documentation (yet)
+type FeaturesGetValuesBatchArg struct {
+	// Features : A list of features in `Feature`. If the list is empty, this
+	// route will return `FeaturesGetValuesBatchError`.
+	Features []*Feature `json:"features"`
+}
+
+// NewFeaturesGetValuesBatchArg returns a new FeaturesGetValuesBatchArg instance
+func NewFeaturesGetValuesBatchArg(Features []*Feature) *FeaturesGetValuesBatchArg {
+	s := new(FeaturesGetValuesBatchArg)
+	s.Features = Features
+	return s
+}
+
+// FeaturesGetValuesBatchError : has no documentation (yet)
+type FeaturesGetValuesBatchError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FeaturesGetValuesBatchError
+const (
+	FeaturesGetValuesBatchErrorEmptyFeaturesList = "empty_features_list"
+	FeaturesGetValuesBatchErrorOther             = "other"
+)
+
+// FeaturesGetValuesBatchResult : has no documentation (yet)
+type FeaturesGetValuesBatchResult struct {
+	// Values : has no documentation (yet)
+	Values []*FeatureValue `json:"values"`
+}
+
+// NewFeaturesGetValuesBatchResult returns a new FeaturesGetValuesBatchResult instance
+func NewFeaturesGetValuesBatchResult(Values []*FeatureValue) *FeaturesGetValuesBatchResult {
+	s := new(FeaturesGetValuesBatchResult)
+	s.Values = Values
 	return s
 }
 
@@ -1497,9 +1586,9 @@ type MemberAddArg struct {
 	// MemberEmail : has no documentation (yet)
 	MemberEmail string `json:"member_email"`
 	// MemberGivenName : Member's first name.
-	MemberGivenName string `json:"member_given_name"`
+	MemberGivenName string `json:"member_given_name,omitempty"`
 	// MemberSurname : Member's last name.
-	MemberSurname string `json:"member_surname"`
+	MemberSurname string `json:"member_surname,omitempty"`
 	// MemberExternalId : External ID for member.
 	MemberExternalId string `json:"member_external_id,omitempty"`
 	// MemberPersistentId : Persistent ID for member. This field is only
@@ -1515,11 +1604,9 @@ type MemberAddArg struct {
 }
 
 // NewMemberAddArg returns a new MemberAddArg instance
-func NewMemberAddArg(MemberEmail string, MemberGivenName string, MemberSurname string) *MemberAddArg {
+func NewMemberAddArg(MemberEmail string) *MemberAddArg {
 	s := new(MemberAddArg)
 	s.MemberEmail = MemberEmail
-	s.MemberGivenName = MemberGivenName
-	s.MemberSurname = MemberSurname
 	s.SendWelcomeEmail = true
 	s.Role = &AdminTier{Tagged: dropbox.Tagged{"member_only"}}
 	return s
@@ -2290,7 +2377,7 @@ func NewMobileClientSession(SessionId string, DeviceName string, ClientType *Mob
 
 // RemovedStatus : has no documentation (yet)
 type RemovedStatus struct {
-	// IsRecoverable : True if the removed team member is recoverable
+	// IsRecoverable : True if the removed team member is recoverable.
 	IsRecoverable bool `json:"is_recoverable"`
 }
 
@@ -2796,6 +2883,30 @@ func NewTeamFolderListArg() *TeamFolderListArg {
 	return s
 }
 
+// TeamFolderListContinueArg : has no documentation (yet)
+type TeamFolderListContinueArg struct {
+	// Cursor : Indicates from what point to get the next set of team folders.
+	Cursor string `json:"cursor"`
+}
+
+// NewTeamFolderListContinueArg returns a new TeamFolderListContinueArg instance
+func NewTeamFolderListContinueArg(Cursor string) *TeamFolderListContinueArg {
+	s := new(TeamFolderListContinueArg)
+	s.Cursor = Cursor
+	return s
+}
+
+// TeamFolderListContinueError : has no documentation (yet)
+type TeamFolderListContinueError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamFolderListContinueError
+const (
+	TeamFolderListContinueErrorInvalidCursor = "invalid_cursor"
+	TeamFolderListContinueErrorOther         = "other"
+)
+
 // TeamFolderListError : has no documentation (yet)
 type TeamFolderListError struct {
 	// AccessError : has no documentation (yet)
@@ -2809,16 +2920,26 @@ func NewTeamFolderListError(AccessError *TeamFolderAccessError) *TeamFolderListE
 	return s
 }
 
-// TeamFolderListResult : Result for `teamFolderList`.
+// TeamFolderListResult : Result for `teamFolderList` and
+// `teamFolderListContinue`.
 type TeamFolderListResult struct {
 	// TeamFolders : List of all team folders in the authenticated team.
 	TeamFolders []*TeamFolderMetadata `json:"team_folders"`
+	// Cursor : Pass the cursor into `teamFolderListContinue` to obtain
+	// additional team folders.
+	Cursor string `json:"cursor"`
+	// HasMore : Is true if there are additional team folders that have not been
+	// returned yet. An additional call to `teamFolderListContinue` can retrieve
+	// them.
+	HasMore bool `json:"has_more"`
 }
 
 // NewTeamFolderListResult returns a new TeamFolderListResult instance
-func NewTeamFolderListResult(TeamFolders []*TeamFolderMetadata) *TeamFolderListResult {
+func NewTeamFolderListResult(TeamFolders []*TeamFolderMetadata, Cursor string, HasMore bool) *TeamFolderListResult {
 	s := new(TeamFolderListResult)
 	s.TeamFolders = TeamFolders
+	s.Cursor = Cursor
+	s.HasMore = HasMore
 	return s
 }
 
@@ -3003,6 +3124,32 @@ const (
 	TeamMembershipTypeLimited = "limited"
 )
 
+// TokenGetAuthenticatedAdminError : Error returned by
+// `tokenGetAuthenticatedAdmin`.
+type TokenGetAuthenticatedAdminError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TokenGetAuthenticatedAdminError
+const (
+	TokenGetAuthenticatedAdminErrorMappingNotFound = "mapping_not_found"
+	TokenGetAuthenticatedAdminErrorAdminNotActive  = "admin_not_active"
+	TokenGetAuthenticatedAdminErrorOther           = "other"
+)
+
+// TokenGetAuthenticatedAdminResult : Results for `tokenGetAuthenticatedAdmin`.
+type TokenGetAuthenticatedAdminResult struct {
+	// AdminProfile : The admin who authorized the token.
+	AdminProfile *TeamMemberProfile `json:"admin_profile"`
+}
+
+// NewTokenGetAuthenticatedAdminResult returns a new TokenGetAuthenticatedAdminResult instance
+func NewTokenGetAuthenticatedAdminResult(AdminProfile *TeamMemberProfile) *TokenGetAuthenticatedAdminResult {
+	s := new(TokenGetAuthenticatedAdminResult)
+	s.AdminProfile = AdminProfile
+	return s
+}
+
 // UpdatePropertyTemplateArg : has no documentation (yet)
 type UpdatePropertyTemplateArg struct {
 	// TemplateId : An identifier for property template added by
@@ -3038,6 +3185,42 @@ func NewUpdatePropertyTemplateResult(TemplateId string) *UpdatePropertyTemplateR
 	s := new(UpdatePropertyTemplateResult)
 	s.TemplateId = TemplateId
 	return s
+}
+
+// UploadApiRateLimitValue : The value for `Feature.upload_api_rate_limit`.
+type UploadApiRateLimitValue struct {
+	dropbox.Tagged
+	// Limit : The number of upload API calls allowed per month.
+	Limit uint32 `json:"limit,omitempty"`
+}
+
+// Valid tag values for UploadApiRateLimitValue
+const (
+	UploadApiRateLimitValueUnlimited = "unlimited"
+	UploadApiRateLimitValueLimit     = "limit"
+	UploadApiRateLimitValueOther     = "other"
+)
+
+// UnmarshalJSON deserializes into a UploadApiRateLimitValue instance
+func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "limit":
+		err = json.Unmarshal(body, &u.Limit)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // UserSelectorArg : Argument for selecting a single user, either by

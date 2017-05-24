@@ -35,7 +35,7 @@ type AddMember struct {
 	// PermissionLevel : Permission for the user.
 	PermissionLevel *PaperDocPermissionLevel `json:"permission_level"`
 	// Member : User which should be added to the Paper doc. Specify only email
-	// or Dropbox account id.
+	// address or Dropbox account ID.
 	Member *sharing.MemberSelector `json:"member"`
 }
 
@@ -49,7 +49,7 @@ func NewAddMember(Member *sharing.MemberSelector) *AddMember {
 
 // RefPaperDoc : has no documentation (yet)
 type RefPaperDoc struct {
-	// DocId : has no documentation (yet)
+	// DocId : The Paper doc ID.
 	DocId string `json:"doc_id"`
 }
 
@@ -64,13 +64,13 @@ func NewRefPaperDoc(DocId string) *RefPaperDoc {
 type AddPaperDocUser struct {
 	RefPaperDoc
 	// Members : User which should be added to the Paper doc. Specify only email
-	// or Dropbox account id.
+	// address or Dropbox account ID.
 	Members []*AddMember `json:"members"`
 	// CustomMessage : A personal message that will be emailed to each
 	// successfully added member.
 	CustomMessage string `json:"custom_message,omitempty"`
-	// Quiet : Clients should set this to true if no email shall be sent to
-	// added users.
+	// Quiet : Clients should set this to true if no email message shall be sent
+	// to added users.
 	Quiet bool `json:"quiet"`
 }
 
@@ -191,7 +191,7 @@ const (
 
 // Folder : Data structure representing a Paper folder.
 type Folder struct {
-	// Id : Paper folder id. This id uniquely identifies the folder.
+	// Id : Paper folder ID. This ID uniquely identifies the folder.
 	Id string `json:"id"`
 	// Name : Paper folder name.
 	Name string `json:"name"`
@@ -249,7 +249,7 @@ func NewFoldersContainingPaperDoc() *FoldersContainingPaperDoc {
 
 // InviteeInfoWithPermissionLevel : has no documentation (yet)
 type InviteeInfoWithPermissionLevel struct {
-	// Invitee : Email invited to the Paper doc.
+	// Invitee : Email address invited to the Paper doc.
 	Invitee *sharing.InviteeInfo `json:"invitee"`
 	// PermissionLevel : Permission level for the invitee.
 	PermissionLevel *PaperDocPermissionLevel `json:"permission_level"`
@@ -352,7 +352,7 @@ const (
 
 // ListPaperDocsResponse : has no documentation (yet)
 type ListPaperDocsResponse struct {
-	// DocIds : The list of Paper doc ids that can be used to access the given
+	// DocIds : The list of Paper doc IDs that can be used to access the given
 	// Paper docs or supplied to other API methods. The list is sorted in the
 	// order specified by the initial call to `docsList`.
 	DocIds []string `json:"doc_ids"`
@@ -599,7 +599,7 @@ func NewPaperDocExport(DocId string, ExportFormat *ExportFormat) *PaperDocExport
 
 // PaperDocExportResult : has no documentation (yet)
 type PaperDocExportResult struct {
-	// Owner : The Paper doc owner's email.
+	// Owner : The Paper doc owner's email address.
 	Owner string `json:"owner"`
 	// Title : The Paper doc title.
 	Title string `json:"title"`
@@ -651,7 +651,7 @@ func NewPaperDocSharingPolicy(DocId string, SharingPolicy *SharingPolicy) *Paper
 type RemovePaperDocUser struct {
 	RefPaperDoc
 	// Member : User which should be removed from the Paper doc. Specify only
-	// email or Dropbox account id.
+	// email address or Dropbox account ID.
 	Member *sharing.MemberSelector `json:"member"`
 }
 

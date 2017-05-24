@@ -20,3 +20,113 @@
 
 // Package common : has no documentation (yet)
 package common
+
+import (
+	"encoding/json"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
+
+// InvalidPathRootError : has no documentation (yet)
+type InvalidPathRootError struct {
+	// PathRoot : The latest path root id for user's team if the user is still
+	// in a team.
+	PathRoot string `json:"path_root,omitempty"`
+}
+
+// NewInvalidPathRootError returns a new InvalidPathRootError instance
+func NewInvalidPathRootError() *InvalidPathRootError {
+	s := new(InvalidPathRootError)
+	return s
+}
+
+// PathRoot : has no documentation (yet)
+type PathRoot struct {
+	dropbox.Tagged
+	// Team : Paths are relative to the given team directory. (This results in
+	// `PathRootError.invalid` if the user is not a member of the team
+	// associated with that path root id.)
+	Team string `json:"team,omitempty"`
+	// SharedFolder : Paths are relative to given shared folder id (This results
+	// in `PathRootError.no_permission` if you don't have access to  this shared
+	// folder.)
+	SharedFolder string `json:"shared_folder,omitempty"`
+}
+
+// Valid tag values for PathRoot
+const (
+	PathRootHome         = "home"
+	PathRootMemberHome   = "member_home"
+	PathRootTeam         = "team"
+	PathRootUserHome     = "user_home"
+	PathRootSharedFolder = "shared_folder"
+	PathRootOther        = "other"
+)
+
+// UnmarshalJSON deserializes into a PathRoot instance
+func (u *PathRoot) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "team":
+		err = json.Unmarshal(body, &u.Team)
+
+		if err != nil {
+			return err
+		}
+	case "shared_folder":
+		err = json.Unmarshal(body, &u.SharedFolder)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// PathRootError : has no documentation (yet)
+type PathRootError struct {
+	dropbox.Tagged
+	// Invalid : The path root id value in Dropbox-API-Path-Root header is no
+	// longer valid.
+	Invalid *InvalidPathRootError `json:"invalid,omitempty"`
+}
+
+// Valid tag values for PathRootError
+const (
+	PathRootErrorInvalid      = "invalid"
+	PathRootErrorNoPermission = "no_permission"
+	PathRootErrorOther        = "other"
+)
+
+// UnmarshalJSON deserializes into a PathRootError instance
+func (u *PathRootError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Invalid : The path root id value in Dropbox-API-Path-Root header is
+		// no longer valid.
+		Invalid json.RawMessage `json:"invalid,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "invalid":
+		err = json.Unmarshal(body, &u.Invalid)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

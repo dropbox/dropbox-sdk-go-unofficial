@@ -317,6 +317,26 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// AudienceRestrictingSharedFolder : Information about the shared folder that
+// prevents the link audience for this link from being more restrictive.
+type AudienceRestrictingSharedFolder struct {
+	// SharedFolderId : The ID of the shared folder.
+	SharedFolderId string `json:"shared_folder_id"`
+	// Name : The name of the shared folder.
+	Name string `json:"name"`
+	// Audience : The link audience of the shared folder.
+	Audience *LinkAudience `json:"audience"`
+}
+
+// NewAudienceRestrictingSharedFolder returns a new AudienceRestrictingSharedFolder instance
+func NewAudienceRestrictingSharedFolder(SharedFolderId string, Name string, Audience *LinkAudience) *AudienceRestrictingSharedFolder {
+	s := new(AudienceRestrictingSharedFolder)
+	s.SharedFolderId = SharedFolderId
+	s.Name = Name
+	s.Audience = Audience
+	return s
+}
+
 // ChangeFileMemberAccessArgs : Arguments for `changeFileMemberAccess`.
 type ChangeFileMemberAccessArgs struct {
 	// File : File for which we are changing a member's access.
@@ -559,6 +579,58 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 		}
 	}
 	return nil
+}
+
+// SharedContentLinkMetadataBase : has no documentation (yet)
+type SharedContentLinkMetadataBase struct {
+	// AccessLevel : The access level on the link for this file.
+	AccessLevel *AccessLevel `json:"access_level,omitempty"`
+	// AudienceOptions : The audience options that are available for the
+	// content. Some audience options may be unavailable. For example, team_only
+	// may be unavailable if the content is not owned by a user on a team. The
+	// 'default' audience option is always available if the user can modify link
+	// settings.
+	AudienceOptions []*LinkAudience `json:"audience_options"`
+	// AudienceRestrictingSharedFolder : The shared folder that prevents the
+	// link audience for this link from being more restrictive.
+	AudienceRestrictingSharedFolder *AudienceRestrictingSharedFolder `json:"audience_restricting_shared_folder,omitempty"`
+	// CurrentAudience : The current audience of the link.
+	CurrentAudience *LinkAudience `json:"current_audience"`
+	// Expiry : Whether the link has an expiry set on it. A link with an expiry
+	// will have its  audience changed to members when the expiry is reached.
+	Expiry time.Time `json:"expiry,omitempty"`
+	// LinkPermissions : A list of permissions for actions you can perform on
+	// the link.
+	LinkPermissions []*LinkPermission `json:"link_permissions"`
+	// PasswordProtected : Whether the link is protected by a password.
+	PasswordProtected bool `json:"password_protected"`
+}
+
+// NewSharedContentLinkMetadataBase returns a new SharedContentLinkMetadataBase instance
+func NewSharedContentLinkMetadataBase(AudienceOptions []*LinkAudience, CurrentAudience *LinkAudience, LinkPermissions []*LinkPermission, PasswordProtected bool) *SharedContentLinkMetadataBase {
+	s := new(SharedContentLinkMetadataBase)
+	s.AudienceOptions = AudienceOptions
+	s.CurrentAudience = CurrentAudience
+	s.LinkPermissions = LinkPermissions
+	s.PasswordProtected = PasswordProtected
+	return s
+}
+
+// ExpectedSharedContentLinkMetadata : The expected metadata of a shared link
+// for a file or folder when a link is first created for  the content. Absent if
+// the link already exists.
+type ExpectedSharedContentLinkMetadata struct {
+	SharedContentLinkMetadataBase
+}
+
+// NewExpectedSharedContentLinkMetadata returns a new ExpectedSharedContentLinkMetadata instance
+func NewExpectedSharedContentLinkMetadata(AudienceOptions []*LinkAudience, CurrentAudience *LinkAudience, LinkPermissions []*LinkPermission, PasswordProtected bool) *ExpectedSharedContentLinkMetadata {
+	s := new(ExpectedSharedContentLinkMetadata)
+	s.AudienceOptions = AudienceOptions
+	s.CurrentAudience = CurrentAudience
+	s.LinkPermissions = LinkPermissions
+	s.PasswordProtected = PasswordProtected
+	return s
 }
 
 // FileAction : Sharing actions that may be taken on files.
@@ -1055,7 +1127,9 @@ func NewFolderPolicy(AclUpdatePolicy *AclUpdatePolicy, SharedLinkPolicy *SharedL
 type GetFileMetadataArg struct {
 	// File : The file to query.
 	File string `json:"file"`
-	// Actions : File actions to query.
+	// Actions : A list of `FileAction`s corresponding to `FilePermission`s that
+	// should appear in the  response's `SharedFileMetadata.permissions` field
+	// describing the actions the  authenticated user can perform on the file.
 	Actions []*FileAction `json:"actions,omitempty"`
 }
 
@@ -1070,7 +1144,9 @@ func NewGetFileMetadataArg(File string) *GetFileMetadataArg {
 type GetFileMetadataBatchArg struct {
 	// Files : The files to query.
 	Files []string `json:"files"`
-	// Actions : File actions to query.
+	// Actions : A list of `FileAction`s corresponding to `FilePermission`s that
+	// should appear in the  response's `SharedFileMetadata.permissions` field
+	// describing the actions the  authenticated user can perform on the file.
 	Actions []*FileAction `json:"actions,omitempty"`
 }
 
@@ -1198,9 +1274,10 @@ func (u *GetFileMetadataIndividualResult) UnmarshalJSON(body []byte) error {
 type GetMetadataArgs struct {
 	// SharedFolderId : The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
-	// Actions : This is a list indicating whether the returned folder data will
-	// include a boolean value  `FolderPermission.allow` that describes whether
-	// the current user can perform the  FolderAction on the folder.
+	// Actions : A list of `FolderAction`s corresponding to `FolderPermission`s
+	// that should appear in the  response's `SharedFolderMetadata.permissions`
+	// field describing the actions the  authenticated user can perform on the
+	// folder.
 	Actions []*FolderAction `json:"actions,omitempty"`
 }
 
@@ -1566,12 +1643,13 @@ type LinkAction struct {
 
 // Valid tag values for LinkAction
 const (
-	LinkActionChangeAudience = "change_audience"
-	LinkActionRemoveExpiry   = "remove_expiry"
-	LinkActionRemovePassword = "remove_password"
-	LinkActionSetExpiry      = "set_expiry"
-	LinkActionSetPassword    = "set_password"
-	LinkActionOther          = "other"
+	LinkActionChangeAccessLevel = "change_access_level"
+	LinkActionChangeAudience    = "change_audience"
+	LinkActionRemoveExpiry      = "remove_expiry"
+	LinkActionRemovePassword    = "remove_password"
+	LinkActionSetExpiry         = "set_expiry"
+	LinkActionSetPassword       = "set_password"
+	LinkActionOther             = "other"
 )
 
 // LinkAudience : has no documentation (yet)
@@ -1706,6 +1784,9 @@ func NewLinkPermissions(CanRevoke bool) *LinkPermissions {
 
 // LinkSettings : Settings that apply to a link.
 type LinkSettings struct {
+	// AccessLevel : The access level on the link for this file. Currently, it
+	// only accepts 'viewer' and 'viewer_no_comment'.
+	AccessLevel *AccessLevel `json:"access_level,omitempty"`
 	// Audience : The type of audience on the link for this file.
 	Audience *LinkAudience `json:"audience,omitempty"`
 	// Expiry : An expiry timestamp to set on a link.
@@ -1958,7 +2039,9 @@ type ListFilesArg struct {
 	// Limit : Number of files to return max per query. Defaults to 100 if no
 	// limit is specified.
 	Limit uint32 `json:"limit"`
-	// Actions : File actions to query.
+	// Actions : A list of `FileAction`s corresponding to `FilePermission`s that
+	// should appear in the  response's `SharedFileMetadata.permissions` field
+	// describing the actions the  authenticated user can perform on the file.
 	Actions []*FileAction `json:"actions,omitempty"`
 }
 
@@ -2124,9 +2207,9 @@ func (u *ListFolderMembersContinueError) UnmarshalJSON(body []byte) error {
 type ListFoldersArgs struct {
 	// Limit : The maximum number of results to return per request.
 	Limit uint32 `json:"limit"`
-	// Actions : This is a list indicating whether each returned folder data
-	// entry will include a boolean field `FolderPermission.allow` that
-	// describes whether the current user can perform the `FolderAction` on the
+	// Actions : A list of `FolderAction`s corresponding to `FolderPermission`s
+	// that should appear in the  response's `SharedFolderMetadata.permissions`
+	// field describing the actions the  authenticated user can perform on the
 	// folder.
 	Actions []*FolderAction `json:"actions,omitempty"`
 }
@@ -2506,14 +2589,18 @@ type ParentFolderAccessInfo struct {
 	SharedFolderId string `json:"shared_folder_id"`
 	// Permissions : The user's permissions for the parent shared folder.
 	Permissions []*MemberPermission `json:"permissions"`
+	// Path : The full path to the parent shared folder relative to the acting
+	// user's root.
+	Path string `json:"path"`
 }
 
 // NewParentFolderAccessInfo returns a new ParentFolderAccessInfo instance
-func NewParentFolderAccessInfo(FolderName string, SharedFolderId string, Permissions []*MemberPermission) *ParentFolderAccessInfo {
+func NewParentFolderAccessInfo(FolderName string, SharedFolderId string, Permissions []*MemberPermission, Path string) *ParentFolderAccessInfo {
 	s := new(ParentFolderAccessInfo)
 	s.FolderName = FolderName
 	s.SharedFolderId = SharedFolderId
 	s.Permissions = Permissions
+	s.Path = Path
 	return s
 }
 
@@ -2954,9 +3041,9 @@ type ShareFolderArg struct {
 	SharedLinkPolicy *SharedLinkPolicy `json:"shared_link_policy,omitempty"`
 	// ForceAsync : Whether to force the share to happen asynchronously.
 	ForceAsync bool `json:"force_async"`
-	// Actions : This is a list indicating whether each returned folder data
-	// entry will include a boolean field `FolderPermission.allow` that
-	// describes whether the current user can perform the `FolderAction` on the
+	// Actions : A list of `FolderAction`s corresponding to `FolderPermission`s
+	// that should appear in the  response's `SharedFolderMetadata.permissions`
+	// field describing the actions the  authenticated user can perform on the
 	// folder.
 	Actions []*FolderAction `json:"actions,omitempty"`
 	// LinkSettings : Settings on the link for this folder.
@@ -3115,8 +3202,6 @@ type SharePathError struct {
 	// AlreadyShared : Folder is already shared. Contains metadata about the
 	// existing shared folder.
 	AlreadyShared *SharedFolderMetadata `json:"already_shared,omitempty"`
-	// InvalidPathRoot : The path root parameter provided is invalid.
-	InvalidPathRoot *files.PathRootError `json:"invalid_path_root,omitempty"`
 }
 
 // Valid tag values for SharePathError
@@ -3134,7 +3219,6 @@ const (
 	SharePathErrorInvalidPath          = "invalid_path"
 	SharePathErrorIsOsxPackage         = "is_osx_package"
 	SharePathErrorInsideOsxPackage     = "inside_osx_package"
-	SharePathErrorInvalidPathRoot      = "invalid_path_root"
 	SharePathErrorOther                = "other"
 )
 
@@ -3145,8 +3229,6 @@ func (u *SharePathError) UnmarshalJSON(body []byte) error {
 		// AlreadyShared : Folder is already shared. Contains metadata about the
 		// existing shared folder.
 		AlreadyShared json.RawMessage `json:"already_shared,omitempty"`
-		// InvalidPathRoot : The path root parameter provided is invalid.
-		InvalidPathRoot json.RawMessage `json:"invalid_path_root,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3161,44 +3243,8 @@ func (u *SharePathError) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "invalid_path_root":
-		err = json.Unmarshal(body, &u.InvalidPathRoot)
-
-		if err != nil {
-			return err
-		}
 	}
 	return nil
-}
-
-// SharedContentLinkMetadataBase : has no documentation (yet)
-type SharedContentLinkMetadataBase struct {
-	// AudienceOptions : The audience options that are available for the
-	// content. Some audience options may be unavailable. For example, team_only
-	// may be unavailable if the content is not owned by a user on a team. The
-	// 'default' audience option is always available if the user can modify link
-	// settings.
-	AudienceOptions []*LinkAudience `json:"audience_options"`
-	// CurrentAudience : The current audience of the link.
-	CurrentAudience *LinkAudience `json:"current_audience"`
-	// Expiry : Whether the link has an expiry set on it. A link with an expiry
-	// will have its  audience changed to members when the expiry is reached.
-	Expiry time.Time `json:"expiry,omitempty"`
-	// LinkPermissions : A list of permissions for actions you can perform on
-	// the link.
-	LinkPermissions []*LinkPermission `json:"link_permissions"`
-	// PasswordProtected : Whether the link is protected by a password.
-	PasswordProtected bool `json:"password_protected"`
-}
-
-// NewSharedContentLinkMetadataBase returns a new SharedContentLinkMetadataBase instance
-func NewSharedContentLinkMetadataBase(AudienceOptions []*LinkAudience, CurrentAudience *LinkAudience, LinkPermissions []*LinkPermission, PasswordProtected bool) *SharedContentLinkMetadataBase {
-	s := new(SharedContentLinkMetadataBase)
-	s.AudienceOptions = AudienceOptions
-	s.CurrentAudience = CurrentAudience
-	s.LinkPermissions = LinkPermissions
-	s.PasswordProtected = PasswordProtected
-	return s
 }
 
 // SharedContentLinkMetadata : Metadata of a shared link for a file or folder.
@@ -3247,34 +3293,41 @@ func NewSharedFileMembers(Users []*UserMembershipInfo, Groups []*GroupMembership
 
 // SharedFileMetadata : Properties of the shared file.
 type SharedFileMetadata struct {
-	// LinkMetadata : The metadata of the link associated for the file.
+	// AccessType : The current user's access level for this shared file.
+	AccessType *AccessLevel `json:"access_type,omitempty"`
+	// Id : The ID of the file.
+	Id string `json:"id"`
+	// ExpectedLinkMetadata : The expected metadata of the link associated for
+	// the file when it is first shared. Absent if the link already exists. This
+	// is for an unreleased feature so it may not be returned yet.
+	ExpectedLinkMetadata *ExpectedSharedContentLinkMetadata `json:"expected_link_metadata,omitempty"`
+	// LinkMetadata : The metadata of the link associated for the file. This is
+	// for an unreleased feature so it may not be returned yet.
 	LinkMetadata *SharedContentLinkMetadata `json:"link_metadata,omitempty"`
-	// Policy : Policies governing this shared file.
-	Policy *FolderPolicy `json:"policy"`
-	// Permissions : The sharing permissions that requesting user has on this
-	// file. This corresponds to the entries given in
-	// `GetFileMetadataBatchArg.actions` or `GetFileMetadataArg.actions`.
-	Permissions []*FilePermission `json:"permissions,omitempty"`
+	// Name : The name of this file.
+	Name string `json:"name"`
 	// OwnerTeam : The team that owns the file. This field is not present if the
 	// file is not owned by a team.
 	OwnerTeam *users.Team `json:"owner_team,omitempty"`
 	// ParentSharedFolderId : The ID of the parent shared folder. This field is
 	// present only if the file is contained within a shared folder.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
-	// PreviewUrl : URL for displaying a web preview of the shared file.
-	PreviewUrl string `json:"preview_url"`
-	// PathLower : The lower-case full path of this file. Absent for unmounted
-	// files.
-	PathLower string `json:"path_lower,omitempty"`
 	// PathDisplay : The cased path to be used for display purposes only. In
 	// rare instances the casing will not correctly match the user's filesystem,
 	// but this behavior will match the path provided in the Core API v1. Absent
 	// for unmounted files.
 	PathDisplay string `json:"path_display,omitempty"`
-	// Name : The name of this file.
-	Name string `json:"name"`
-	// Id : The ID of the file.
-	Id string `json:"id"`
+	// PathLower : The lower-case full path of this file. Absent for unmounted
+	// files.
+	PathLower string `json:"path_lower,omitempty"`
+	// Permissions : The sharing permissions that requesting user has on this
+	// file. This corresponds to the entries given in
+	// `GetFileMetadataBatchArg.actions` or `GetFileMetadataArg.actions`.
+	Permissions []*FilePermission `json:"permissions,omitempty"`
+	// Policy : Policies governing this shared file.
+	Policy *FolderPolicy `json:"policy"`
+	// PreviewUrl : URL for displaying a web preview of the shared file.
+	PreviewUrl string `json:"preview_url"`
 	// TimeInvited : Timestamp indicating when the current user was invited to
 	// this shared file. If the user was not invited to the shared file, the
 	// timestamp will indicate when the user was invited to the parent shared
@@ -3283,12 +3336,12 @@ type SharedFileMetadata struct {
 }
 
 // NewSharedFileMetadata returns a new SharedFileMetadata instance
-func NewSharedFileMetadata(Policy *FolderPolicy, PreviewUrl string, Name string, Id string) *SharedFileMetadata {
+func NewSharedFileMetadata(Id string, Name string, Policy *FolderPolicy, PreviewUrl string) *SharedFileMetadata {
 	s := new(SharedFileMetadata)
+	s.Id = Id
+	s.Name = Name
 	s.Policy = Policy
 	s.PreviewUrl = PreviewUrl
-	s.Name = Name
-	s.Id = Id
 	return s
 }
 
@@ -3404,7 +3457,8 @@ func NewSharedFolderMetadataBase(AccessType *AccessLevel, IsInsideTeamFolder boo
 type SharedFolderMetadata struct {
 	SharedFolderMetadataBase
 	// LinkMetadata : The metadata of the shared content link to this shared
-	// folder. Absent if there is no link on the folder.
+	// folder. Absent if there is no link on the folder. This is for an
+	// unreleased feature so it may not be returned yet.
 	LinkMetadata *SharedContentLinkMetadata `json:"link_metadata,omitempty"`
 	// Name : The name of the this shared folder.
 	Name string `json:"name"`
@@ -3889,6 +3943,11 @@ type UpdateFolderPolicyArg struct {
 	SharedLinkPolicy *SharedLinkPolicy `json:"shared_link_policy,omitempty"`
 	// LinkSettings : Settings on the link for this folder.
 	LinkSettings *LinkSettings `json:"link_settings,omitempty"`
+	// Actions : A list of `FolderAction`s corresponding to `FolderPermission`s
+	// that should appear in the  response's `SharedFolderMetadata.permissions`
+	// field describing the actions the  authenticated user can perform on the
+	// folder.
+	Actions []*FolderAction `json:"actions,omitempty"`
 }
 
 // NewUpdateFolderPolicyArg returns a new UpdateFolderPolicyArg instance
@@ -3912,6 +3971,7 @@ const (
 	UpdateFolderPolicyErrorTeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
 	UpdateFolderPolicyErrorDisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
 	UpdateFolderPolicyErrorNoPermission                    = "no_permission"
+	UpdateFolderPolicyErrorTeamFolder                      = "team_folder"
 	UpdateFolderPolicyErrorOther                           = "other"
 )
 

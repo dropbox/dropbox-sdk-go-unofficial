@@ -1321,8 +1321,6 @@ type LookupError struct {
 	dropbox.Tagged
 	// MalformedPath : has no documentation (yet)
 	MalformedPath string `json:"malformed_path,omitempty"`
-	// InvalidPathRoot : The path root parameter provided is invalid.
-	InvalidPathRoot *PathRootError `json:"invalid_path_root,omitempty"`
 }
 
 // Valid tag values for LookupError
@@ -1332,7 +1330,6 @@ const (
 	LookupErrorNotFile           = "not_file"
 	LookupErrorNotFolder         = "not_folder"
 	LookupErrorRestrictedContent = "restricted_content"
-	LookupErrorInvalidPathRoot   = "invalid_path_root"
 	LookupErrorOther             = "other"
 )
 
@@ -1342,8 +1339,6 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// MalformedPath : has no documentation (yet)
 		MalformedPath json.RawMessage `json:"malformed_path,omitempty"`
-		// InvalidPathRoot : The path root parameter provided is invalid.
-		InvalidPathRoot json.RawMessage `json:"invalid_path_root,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1354,12 +1349,6 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "malformed_path":
 		err = json.Unmarshal(body, &u.MalformedPath)
-
-		if err != nil {
-			return err
-		}
-	case "invalid_path_root":
-		err = json.Unmarshal(body, &u.InvalidPathRoot)
 
 		if err != nil {
 			return err
@@ -1490,19 +1479,6 @@ func IsMediaMetadataFromJSON(data []byte) (IsMediaMetadata, error) {
 
 	}
 	return nil, nil
-}
-
-// PathRootError : has no documentation (yet)
-type PathRootError struct {
-	// PathRoot : The user's latest path root value. None if the user no longer
-	// has a path root.
-	PathRoot string `json:"path_root,omitempty"`
-}
-
-// NewPathRootError returns a new PathRootError instance
-func NewPathRootError() *PathRootError {
-	s := new(PathRootError)
-	return s
 }
 
 // PhotoMetadata : Metadata for a photo.
@@ -2736,6 +2712,7 @@ const (
 	UploadSessionFinishErrorLookupFailed               = "lookup_failed"
 	UploadSessionFinishErrorPath                       = "path"
 	UploadSessionFinishErrorTooManySharedFolderTargets = "too_many_shared_folder_targets"
+	UploadSessionFinishErrorTooManyWriteOperations     = "too_many_write_operations"
 	UploadSessionFinishErrorOther                      = "other"
 )
 
@@ -2920,6 +2897,7 @@ const (
 	WriteErrorNoWritePermission = "no_write_permission"
 	WriteErrorInsufficientSpace = "insufficient_space"
 	WriteErrorDisallowedName    = "disallowed_name"
+	WriteErrorTeamFolder        = "team_folder"
 	WriteErrorOther             = "other"
 )
 
