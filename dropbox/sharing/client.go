@@ -219,7 +219,7 @@ type Client interface {
 	UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedFolderMetadata, err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //AddFileMemberAPIError is an error-wrapper for the add_file_member route
 type AddFileMemberAPIError struct {
@@ -227,7 +227,7 @@ type AddFileMemberAPIError struct {
 	EndpointError *AddFileMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActionResult, err error) {
+func (dbx *APIClient) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActionResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -307,7 +307,7 @@ type AddFolderMemberAPIError struct {
 	EndpointError *AddFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
+func (dbx *APIClient) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -382,7 +382,7 @@ type ChangeFileMemberAccessAPIError struct {
 	EndpointError *FileMemberActionError `json:"error"`
 }
 
-func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error) {
+func (dbx *APIClient) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -462,7 +462,7 @@ type CheckJobStatusAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error) {
+func (dbx *APIClient) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -542,7 +542,7 @@ type CheckRemoveMemberJobStatusAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveMemberJobStatus, err error) {
+func (dbx *APIClient) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveMemberJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -622,7 +622,7 @@ type CheckShareJobStatusAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error) {
+func (dbx *APIClient) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -702,7 +702,7 @@ type CreateSharedLinkAPIError struct {
 	EndpointError *CreateSharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error) {
+func (dbx *APIClient) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -782,7 +782,7 @@ type CreateSharedLinkWithSettingsAPIError struct {
 	EndpointError *CreateSharedLinkWithSettingsError `json:"error"`
 }
 
-func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res IsSharedLinkMetadata, err error) {
+func (dbx *APIClient) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res IsSharedLinkMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -870,7 +870,7 @@ type GetFileMetadataAPIError struct {
 	EndpointError *GetFileMetadataError `json:"error"`
 }
 
-func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMetadata, err error) {
+func (dbx *APIClient) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -950,7 +950,7 @@ type GetFileMetadataBatchAPIError struct {
 	EndpointError *SharingUserError `json:"error"`
 }
 
-func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*GetFileMetadataBatchResult, err error) {
+func (dbx *APIClient) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*GetFileMetadataBatchResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1030,7 +1030,7 @@ type GetFolderMetadataAPIError struct {
 	EndpointError *SharedFolderAccessError `json:"error"`
 }
 
-func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error) {
+func (dbx *APIClient) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1110,7 +1110,7 @@ type GetSharedLinkFileAPIError struct {
 	EndpointError *GetSharedLinkFileError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, content io.ReadCloser, err error) {
+func (dbx *APIClient) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, content io.ReadCloser, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1194,7 +1194,7 @@ type GetSharedLinkMetadataAPIError struct {
 	EndpointError *SharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error) {
+func (dbx *APIClient) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1282,7 +1282,7 @@ type GetSharedLinksAPIError struct {
 	EndpointError *GetSharedLinksError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error) {
+func (dbx *APIClient) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1362,7 +1362,7 @@ type ListFileMembersAPIError struct {
 	EndpointError *ListFileMembersError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMembers, err error) {
+func (dbx *APIClient) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMembers, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1442,7 +1442,7 @@ type ListFileMembersBatchAPIError struct {
 	EndpointError *SharingUserError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*ListFileMembersBatchResult, err error) {
+func (dbx *APIClient) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*ListFileMembersBatchResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1522,7 +1522,7 @@ type ListFileMembersContinueAPIError struct {
 	EndpointError *ListFileMembersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (res *SharedFileMembers, err error) {
+func (dbx *APIClient) ListFileMembersContinue(arg *ListFileMembersContinueArg) (res *SharedFileMembers, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1602,7 +1602,7 @@ type ListFolderMembersAPIError struct {
 	EndpointError *SharedFolderAccessError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error) {
+func (dbx *APIClient) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFolderMembers, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1682,7 +1682,7 @@ type ListFolderMembersContinueAPIError struct {
 	EndpointError *ListFolderMembersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error) {
+func (dbx *APIClient) ListFolderMembersContinue(arg *ListFolderMembersContinueArg) (res *SharedFolderMembers, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1762,7 +1762,7 @@ type ListFoldersAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error) {
+func (dbx *APIClient) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1842,7 +1842,7 @@ type ListFoldersContinueAPIError struct {
 	EndpointError *ListFoldersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error) {
+func (dbx *APIClient) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1922,7 +1922,7 @@ type ListMountableFoldersAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error) {
+func (dbx *APIClient) ListMountableFolders(arg *ListFoldersArgs) (res *ListFoldersResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2002,7 +2002,7 @@ type ListMountableFoldersContinueAPIError struct {
 	EndpointError *ListFoldersContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error) {
+func (dbx *APIClient) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2082,7 +2082,7 @@ type ListReceivedFilesAPIError struct {
 	EndpointError *SharingUserError `json:"error"`
 }
 
-func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, err error) {
+func (dbx *APIClient) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2162,7 +2162,7 @@ type ListReceivedFilesContinueAPIError struct {
 	EndpointError *ListFilesContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *ListFilesResult, err error) {
+func (dbx *APIClient) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *ListFilesResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2242,7 +2242,7 @@ type ListSharedLinksAPIError struct {
 	EndpointError *ListSharedLinksError `json:"error"`
 }
 
-func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error) {
+func (dbx *APIClient) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2322,7 +2322,7 @@ type ModifySharedLinkSettingsAPIError struct {
 	EndpointError *ModifySharedLinkSettingsError `json:"error"`
 }
 
-func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res IsSharedLinkMetadata, err error) {
+func (dbx *APIClient) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res IsSharedLinkMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2410,7 +2410,7 @@ type MountFolderAPIError struct {
 	EndpointError *MountFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata, err error) {
+func (dbx *APIClient) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2490,7 +2490,7 @@ type RelinquishFileMembershipAPIError struct {
 	EndpointError *RelinquishFileMembershipError `json:"error"`
 }
 
-func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (err error) {
+func (dbx *APIClient) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2565,7 +2565,7 @@ type RelinquishFolderMembershipAPIError struct {
 	EndpointError *RelinquishFolderMembershipError `json:"error"`
 }
 
-func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error) {
+func (dbx *APIClient) RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2645,7 +2645,7 @@ type RemoveFileMemberAPIError struct {
 	EndpointError *RemoveFileMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
+func (dbx *APIClient) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2725,7 +2725,7 @@ type RemoveFileMember2APIError struct {
 	EndpointError *RemoveFileMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error) {
+func (dbx *APIClient) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2805,7 +2805,7 @@ type RemoveFolderMemberAPIError struct {
 	EndpointError *RemoveFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.LaunchResultBase, err error) {
+func (dbx *APIClient) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.LaunchResultBase, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2885,7 +2885,7 @@ type RevokeSharedLinkAPIError struct {
 	EndpointError *RevokeSharedLinkError `json:"error"`
 }
 
-func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
+func (dbx *APIClient) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2960,7 +2960,7 @@ type ShareFolderAPIError struct {
 	EndpointError *ShareFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error) {
+func (dbx *APIClient) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3040,7 +3040,7 @@ type TransferFolderAPIError struct {
 	EndpointError *TransferFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
+func (dbx *APIClient) TransferFolder(arg *TransferFolderArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3115,7 +3115,7 @@ type UnmountFolderAPIError struct {
 	EndpointError *UnmountFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
+func (dbx *APIClient) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3190,7 +3190,7 @@ type UnshareFileAPIError struct {
 	EndpointError *UnshareFileError `json:"error"`
 }
 
-func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
+func (dbx *APIClient) UnshareFile(arg *UnshareFileArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3265,7 +3265,7 @@ type UnshareFolderAPIError struct {
 	EndpointError *UnshareFolderError `json:"error"`
 }
 
-func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error) {
+func (dbx *APIClient) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3345,7 +3345,7 @@ type UpdateFileMemberAPIError struct {
 	EndpointError *FileMemberActionError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAccessLevelResult, err error) {
+func (dbx *APIClient) UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAccessLevelResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3425,7 +3425,7 @@ type UpdateFolderMemberAPIError struct {
 	EndpointError *UpdateFolderMemberError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberAccessLevelResult, err error) {
+func (dbx *APIClient) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberAccessLevelResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3505,7 +3505,7 @@ type UpdateFolderPolicyAPIError struct {
 	EndpointError *UpdateFolderPolicyError `json:"error"`
 }
 
-func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedFolderMetadata, err error) {
+func (dbx *APIClient) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3580,7 +3580,7 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

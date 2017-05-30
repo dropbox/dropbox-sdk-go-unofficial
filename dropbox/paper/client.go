@@ -94,7 +94,7 @@ type Client interface {
 	DocsUsersRemove(arg *RemovePaperDocUser) (err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //DocsArchiveAPIError is an error-wrapper for the docs/archive route
 type DocsArchiveAPIError struct {
@@ -102,7 +102,7 @@ type DocsArchiveAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
+func (dbx *APIClient) DocsArchive(arg *RefPaperDoc) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -177,7 +177,7 @@ type DocsDownloadAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error) {
+func (dbx *APIClient) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -253,7 +253,7 @@ type DocsFolderUsersListAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error) {
+func (dbx *APIClient) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -333,7 +333,7 @@ type DocsFolderUsersListContinueAPIError struct {
 	EndpointError *ListUsersCursorError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error) {
+func (dbx *APIClient) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -413,7 +413,7 @@ type DocsGetFolderInfoAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error) {
+func (dbx *APIClient) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -493,7 +493,7 @@ type DocsListAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error) {
+func (dbx *APIClient) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -573,7 +573,7 @@ type DocsListContinueAPIError struct {
 	EndpointError *ListDocsCursorError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error) {
+func (dbx *APIClient) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -653,7 +653,7 @@ type DocsPermanentlyDeleteAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
+func (dbx *APIClient) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -728,7 +728,7 @@ type DocsSharingPolicyGetAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, err error) {
+func (dbx *APIClient) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -808,7 +808,7 @@ type DocsSharingPolicySetAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error) {
+func (dbx *APIClient) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -883,7 +883,7 @@ type DocsUsersAddAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error) {
+func (dbx *APIClient) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -963,7 +963,7 @@ type DocsUsersListAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error) {
+func (dbx *APIClient) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1043,7 +1043,7 @@ type DocsUsersListContinueAPIError struct {
 	EndpointError *ListUsersCursorError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error) {
+func (dbx *APIClient) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1123,7 +1123,7 @@ type DocsUsersRemoveAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
+func (dbx *APIClient) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1193,7 +1193,7 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

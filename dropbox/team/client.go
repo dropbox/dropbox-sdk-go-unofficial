@@ -238,7 +238,7 @@ type Client interface {
 	TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdminResult, err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //DevicesListMemberDevicesAPIError is an error-wrapper for the devices/list_member_devices route
 type DevicesListMemberDevicesAPIError struct {
@@ -246,7 +246,7 @@ type DevicesListMemberDevicesAPIError struct {
 	EndpointError *ListMemberDevicesError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *ListMemberDevicesResult, err error) {
+func (dbx *APIClient) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *ListMemberDevicesResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -323,7 +323,7 @@ type DevicesListMembersDevicesAPIError struct {
 	EndpointError *ListMembersDevicesError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *ListMembersDevicesResult, err error) {
+func (dbx *APIClient) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *ListMembersDevicesResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -400,7 +400,7 @@ type DevicesListTeamDevicesAPIError struct {
 	EndpointError *ListTeamDevicesError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error) {
+func (dbx *APIClient) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -477,7 +477,7 @@ type DevicesRevokeDeviceSessionAPIError struct {
 	EndpointError *RevokeDeviceSessionError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err error) {
+func (dbx *APIClient) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -549,7 +549,7 @@ type DevicesRevokeDeviceSessionBatchAPIError struct {
 	EndpointError *RevokeDeviceSessionBatchError `json:"error"`
 }
 
-func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatchArg) (res *RevokeDeviceSessionBatchResult, err error) {
+func (dbx *APIClient) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatchArg) (res *RevokeDeviceSessionBatchResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -703,7 +703,7 @@ type GetInfoAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
+func (dbx *APIClient) GetInfo() (res *TeamGetInfoResult, err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -770,7 +770,7 @@ type GroupsCreateAPIError struct {
 	EndpointError *GroupCreateError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error) {
+func (dbx *APIClient) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -847,7 +847,7 @@ type GroupsDeleteAPIError struct {
 	EndpointError *GroupDeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResult, err error) {
+func (dbx *APIClient) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -924,7 +924,7 @@ type GroupsGetInfoAPIError struct {
 	EndpointError *GroupsGetInfoError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error) {
+func (dbx *APIClient) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1001,7 +1001,7 @@ type GroupsJobStatusGetAPIError struct {
 	EndpointError *GroupsPollError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
+func (dbx *APIClient) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1078,7 +1078,7 @@ type GroupsListAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err error) {
+func (dbx *APIClient) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1155,7 +1155,7 @@ type GroupsListContinueAPIError struct {
 	EndpointError *GroupsListContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error) {
+func (dbx *APIClient) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1232,7 +1232,7 @@ type GroupsMembersAddAPIError struct {
 	EndpointError *GroupMembersAddError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembersChangeResult, err error) {
+func (dbx *APIClient) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembersChangeResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1309,7 +1309,7 @@ type GroupsMembersListAPIError struct {
 	EndpointError *GroupSelectorError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMembersListResult, err error) {
+func (dbx *APIClient) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMembersListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1386,7 +1386,7 @@ type GroupsMembersListContinueAPIError struct {
 	EndpointError *GroupsMembersListContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg) (res *GroupsMembersListResult, err error) {
+func (dbx *APIClient) GroupsMembersListContinue(arg *GroupsMembersListContinueArg) (res *GroupsMembersListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1463,7 +1463,7 @@ type GroupsMembersRemoveAPIError struct {
 	EndpointError *GroupMembersRemoveError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupMembersChangeResult, err error) {
+func (dbx *APIClient) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupMembersChangeResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1540,7 +1540,7 @@ type GroupsMembersSetAccessTypeAPIError struct {
 	EndpointError *GroupMemberSetAccessTypeError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg) (res []*GroupsGetInfoItem, err error) {
+func (dbx *APIClient) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg) (res []*GroupsGetInfoItem, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1617,7 +1617,7 @@ type GroupsUpdateAPIError struct {
 	EndpointError *GroupUpdateError `json:"error"`
 }
 
-func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error) {
+func (dbx *APIClient) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1694,7 +1694,7 @@ type LinkedAppsListMemberLinkedAppsAPIError struct {
 	EndpointError *ListMemberAppsError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res *ListMemberAppsResult, err error) {
+func (dbx *APIClient) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res *ListMemberAppsResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1771,7 +1771,7 @@ type LinkedAppsListMembersLinkedAppsAPIError struct {
 	EndpointError *ListMembersAppsError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (res *ListMembersAppsResult, err error) {
+func (dbx *APIClient) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (res *ListMembersAppsResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1848,7 +1848,7 @@ type LinkedAppsListTeamLinkedAppsAPIError struct {
 	EndpointError *ListTeamAppsError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *ListTeamAppsResult, err error) {
+func (dbx *APIClient) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *ListTeamAppsResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1925,7 +1925,7 @@ type LinkedAppsRevokeLinkedAppAPIError struct {
 	EndpointError *RevokeLinkedAppError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err error) {
+func (dbx *APIClient) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1997,7 +1997,7 @@ type LinkedAppsRevokeLinkedAppBatchAPIError struct {
 	EndpointError *RevokeLinkedAppBatchError `json:"error"`
 }
 
-func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchArg) (res *RevokeLinkedAppBatchResult, err error) {
+func (dbx *APIClient) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchArg) (res *RevokeLinkedAppBatchResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2074,7 +2074,7 @@ type MembersAddAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err error) {
+func (dbx *APIClient) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2151,7 +2151,7 @@ type MembersAddJobStatusGetAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error) {
+func (dbx *APIClient) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2228,7 +2228,7 @@ type MembersGetInfoAPIError struct {
 	EndpointError *MembersGetInfoError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetInfoItem, err error) {
+func (dbx *APIClient) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetInfoItem, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2305,7 +2305,7 @@ type MembersListAPIError struct {
 	EndpointError *MembersListError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, err error) {
+func (dbx *APIClient) MembersList(arg *MembersListArg) (res *MembersListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2382,7 +2382,7 @@ type MembersListContinueAPIError struct {
 	EndpointError *MembersListContinueError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error) {
+func (dbx *APIClient) MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2459,7 +2459,7 @@ type MembersRecoverAPIError struct {
 	EndpointError *MembersRecoverError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
+func (dbx *APIClient) MembersRecover(arg *MembersRecoverArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2531,7 +2531,7 @@ type MembersRemoveAPIError struct {
 	EndpointError *MembersRemoveError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error) {
+func (dbx *APIClient) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2608,7 +2608,7 @@ type MembersRemoveJobStatusGetAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
+func (dbx *APIClient) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2685,7 +2685,7 @@ type MembersSendWelcomeEmailAPIError struct {
 	EndpointError *MembersSendWelcomeError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
+func (dbx *APIClient) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2757,7 +2757,7 @@ type MembersSetAdminPermissionsAPIError struct {
 	EndpointError *MembersSetPermissionsError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (res *MembersSetPermissionsResult, err error) {
+func (dbx *APIClient) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (res *MembersSetPermissionsResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2834,7 +2834,7 @@ type MembersSetProfileAPIError struct {
 	EndpointError *MembersSetProfileError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMemberInfo, err error) {
+func (dbx *APIClient) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMemberInfo, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2911,7 +2911,7 @@ type MembersSuspendAPIError struct {
 	EndpointError *MembersSuspendError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
+func (dbx *APIClient) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2983,7 +2983,7 @@ type MembersUnsuspendAPIError struct {
 	EndpointError *MembersUnsuspendError `json:"error"`
 }
 
-func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
+func (dbx *APIClient) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3055,7 +3055,7 @@ type PropertiesTemplateAddAPIError struct {
 	EndpointError *properties.ModifyPropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *AddPropertyTemplateResult, err error) {
+func (dbx *APIClient) PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *AddPropertyTemplateResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3132,7 +3132,7 @@ type PropertiesTemplateGetAPIError struct {
 	EndpointError *properties.PropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg) (res *properties.GetPropertyTemplateResult, err error) {
+func (dbx *APIClient) PropertiesTemplateGet(arg *properties.GetPropertyTemplateArg) (res *properties.GetPropertyTemplateResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3209,7 +3209,7 @@ type PropertiesTemplateListAPIError struct {
 	EndpointError *properties.PropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateList() (res *properties.ListPropertyTemplateIds, err error) {
+func (dbx *APIClient) PropertiesTemplateList() (res *properties.ListPropertyTemplateIds, err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -3276,7 +3276,7 @@ type PropertiesTemplateUpdateAPIError struct {
 	EndpointError *properties.ModifyPropertyTemplateError `json:"error"`
 }
 
-func (dbx *apiImpl) PropertiesTemplateUpdate(arg *UpdatePropertyTemplateArg) (res *UpdatePropertyTemplateResult, err error) {
+func (dbx *APIClient) PropertiesTemplateUpdate(arg *UpdatePropertyTemplateArg) (res *UpdatePropertyTemplateResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3353,7 +3353,7 @@ type ReportsGetActivityAPIError struct {
 	EndpointError *DateRangeError `json:"error"`
 }
 
-func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error) {
+func (dbx *APIClient) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3430,7 +3430,7 @@ type ReportsGetDevicesAPIError struct {
 	EndpointError *DateRangeError `json:"error"`
 }
 
-func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, err error) {
+func (dbx *APIClient) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3507,7 +3507,7 @@ type ReportsGetMembershipAPIError struct {
 	EndpointError *DateRangeError `json:"error"`
 }
 
-func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipReport, err error) {
+func (dbx *APIClient) ReportsGetMembership(arg *DateRange) (res *GetMembershipReport, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3584,7 +3584,7 @@ type ReportsGetStorageAPIError struct {
 	EndpointError *DateRangeError `json:"error"`
 }
 
-func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error) {
+func (dbx *APIClient) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3661,7 +3661,7 @@ type TeamFolderActivateAPIError struct {
 	EndpointError *TeamFolderActivateError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error) {
+func (dbx *APIClient) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3738,7 +3738,7 @@ type TeamFolderArchiveAPIError struct {
 	EndpointError *TeamFolderArchiveError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolderArchiveLaunch, err error) {
+func (dbx *APIClient) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolderArchiveLaunch, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3815,7 +3815,7 @@ type TeamFolderArchiveCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderArchiveJobStatus, err error) {
+func (dbx *APIClient) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderArchiveJobStatus, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3892,7 +3892,7 @@ type TeamFolderCreateAPIError struct {
 	EndpointError *TeamFolderCreateError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error) {
+func (dbx *APIClient) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3969,7 +3969,7 @@ type TeamFolderGetInfoAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFolderGetInfoItem, err error) {
+func (dbx *APIClient) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFolderGetInfoItem, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -4046,7 +4046,7 @@ type TeamFolderListAPIError struct {
 	EndpointError *TeamFolderListError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListResult, err error) {
+func (dbx *APIClient) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListResult, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -4200,7 +4200,7 @@ type TeamFolderPermanentlyDeleteAPIError struct {
 	EndpointError *TeamFolderPermanentlyDeleteError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error) {
+func (dbx *APIClient) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -4272,7 +4272,7 @@ type TeamFolderRenameAPIError struct {
 	EndpointError *TeamFolderRenameError `json:"error"`
 }
 
-func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderMetadata, err error) {
+func (dbx *APIClient) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderMetadata, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -4411,7 +4411,7 @@ func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdmi
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

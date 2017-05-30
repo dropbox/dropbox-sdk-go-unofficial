@@ -44,7 +44,7 @@ type Client interface {
 	GetSpaceUsage() (res *SpaceUsage, err error)
 }
 
-type apiImpl dropbox.Context
+type APIClient dropbox.Context
 
 //GetAccountAPIError is an error-wrapper for the get_account route
 type GetAccountAPIError struct {
@@ -52,7 +52,7 @@ type GetAccountAPIError struct {
 	EndpointError *GetAccountError `json:"error"`
 }
 
-func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error) {
+func (dbx *APIClient) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -132,7 +132,7 @@ type GetAccountBatchAPIError struct {
 	EndpointError *GetAccountBatchError `json:"error"`
 }
 
-func (dbx *apiImpl) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccount, err error) {
+func (dbx *APIClient) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccount, err error) {
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -212,7 +212,7 @@ type GetCurrentAccountAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
+func (dbx *APIClient) GetCurrentAccount() (res *FullAccount, err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -282,7 +282,7 @@ type GetSpaceUsageAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
+func (dbx *APIClient) GetSpaceUsage() (res *SpaceUsage, err error) {
 	cli := dbx.Client
 
 	headers := map[string]string{}
@@ -347,7 +347,7 @@ func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
 }
 
 // New returns a Client implementation for this namespace
-func New(c dropbox.Config) *apiImpl {
-	ctx := apiImpl(dropbox.NewContext(c))
+func New(c dropbox.Config) *APIClient {
+	ctx := APIClient(dropbox.NewContext(c))
 	return &ctx
 }

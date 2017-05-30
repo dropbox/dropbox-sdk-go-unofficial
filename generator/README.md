@@ -218,7 +218,7 @@ type metadataUnion struct {
 
 func (u *metadataUnion) UnmarshalJSON(body []byte) error {...}
 
-func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {
+func (dbx *APIClient) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error) {
    	...
    	var tmp metadataUnion
 	err = json.Unmarshal(body, &tmp)
