@@ -317,6 +317,40 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// AudienceExceptionContentInfo : Information about the content that has a link
+// audience different than that of this folder.
+type AudienceExceptionContentInfo struct {
+	// Name : The name of the content, which is either a file or a folder.
+	Name string `json:"name"`
+}
+
+// NewAudienceExceptionContentInfo returns a new AudienceExceptionContentInfo instance
+func NewAudienceExceptionContentInfo(Name string) *AudienceExceptionContentInfo {
+	s := new(AudienceExceptionContentInfo)
+	s.Name = Name
+	return s
+}
+
+// AudienceExceptions : The total count and truncated list of information of
+// content inside this folder that has a different audience than the link on
+// this folder. This is only returned for folders.
+type AudienceExceptions struct {
+	// Count : has no documentation (yet)
+	Count uint32 `json:"count"`
+	// Exceptions : A truncated list of some of the content that is an
+	// exception. The length of this list could be smaller than the count since
+	// it is only a sample but will not be empty as long as count is not 0.
+	Exceptions []*AudienceExceptionContentInfo `json:"exceptions"`
+}
+
+// NewAudienceExceptions returns a new AudienceExceptions instance
+func NewAudienceExceptions(Count uint32, Exceptions []*AudienceExceptionContentInfo) *AudienceExceptions {
+	s := new(AudienceExceptions)
+	s.Count = Count
+	s.Exceptions = Exceptions
+	return s
+}
+
 // AudienceRestrictingSharedFolder : Information about the shared folder that
 // prevents the link audience for this link from being more restrictive.
 type AudienceRestrictingSharedFolder struct {
@@ -617,7 +651,7 @@ func NewSharedContentLinkMetadataBase(AudienceOptions []*LinkAudience, CurrentAu
 }
 
 // ExpectedSharedContentLinkMetadata : The expected metadata of a shared link
-// for a file or folder when a link is first created for  the content. Absent if
+// for a file or folder when a link is first created for the content. Absent if
 // the link already exists.
 type ExpectedSharedContentLinkMetadata struct {
 	SharedContentLinkMetadataBase
@@ -1455,6 +1489,24 @@ func NewGroupMembershipInfo(AccessType *AccessLevel, Group *GroupInfo) *GroupMem
 	s.AccessType = AccessType
 	s.Group = Group
 	s.IsInherited = false
+	return s
+}
+
+// InsufficientPlan : has no documentation (yet)
+type InsufficientPlan struct {
+	// Message : A message to tell the user to upgrade in order to support
+	// expected action.
+	Message string `json:"message"`
+	// UpsellUrl : A URL to send the user to in order to obtain the account type
+	// they need, e.g. upgrading. Absent if there is no action the user can take
+	// to upgrade.
+	UpsellUrl string `json:"upsell_url,omitempty"`
+}
+
+// NewInsufficientPlan returns a new InsufficientPlan instance
+func NewInsufficientPlan(Message string) *InsufficientPlan {
+	s := new(InsufficientPlan)
+	s.Message = Message
 	return s
 }
 
@@ -2635,6 +2687,8 @@ const (
 // PermissionDeniedReason : Possible reasons the user is denied a permission.
 type PermissionDeniedReason struct {
 	dropbox.Tagged
+	// InsufficientPlan : has no documentation (yet)
+	InsufficientPlan *InsufficientPlan `json:"insufficient_plan,omitempty"`
 }
 
 // Valid tag values for PermissionDeniedReason
@@ -2652,8 +2706,33 @@ const (
 	PermissionDeniedReasonUserAccountType            = "user_account_type"
 	PermissionDeniedReasonUserNotOnTeam              = "user_not_on_team"
 	PermissionDeniedReasonFolderIsInsideSharedFolder = "folder_is_inside_shared_folder"
+	PermissionDeniedReasonInsufficientPlan           = "insufficient_plan"
 	PermissionDeniedReasonOther                      = "other"
 )
+
+// UnmarshalJSON deserializes into a PermissionDeniedReason instance
+func (u *PermissionDeniedReason) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// InsufficientPlan : has no documentation (yet)
+		InsufficientPlan json.RawMessage `json:"insufficient_plan,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "insufficient_plan":
+		err = json.Unmarshal(body, &u.InsufficientPlan)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // RelinquishFileMembershipArg : has no documentation (yet)
 type RelinquishFileMembershipArg struct {
@@ -3025,22 +3104,38 @@ const (
 	RevokeSharedLinkErrorSharedLinkMalformed = "shared_link_malformed"
 )
 
-// ShareFolderArg : has no documentation (yet)
-type ShareFolderArg struct {
-	// Path : The path to the folder to share. If it does not exist, then a new
-	// one is created.
-	Path string `json:"path"`
+// ShareFolderArgBase : has no documentation (yet)
+type ShareFolderArgBase struct {
+	// AclUpdatePolicy : Who can add and remove members of this shared folder.
+	AclUpdatePolicy *AclUpdatePolicy `json:"acl_update_policy,omitempty"`
+	// ForceAsync : Whether to force the share to happen asynchronously.
+	ForceAsync bool `json:"force_async"`
 	// MemberPolicy : Who can be a member of this shared folder. Only applicable
 	// if the current user is on a team.
 	MemberPolicy *MemberPolicy `json:"member_policy,omitempty"`
-	// AclUpdatePolicy : Who can add and remove members of this shared folder.
-	AclUpdatePolicy *AclUpdatePolicy `json:"acl_update_policy,omitempty"`
+	// Path : The path to the folder to share. If it does not exist, then a new
+	// one is created.
+	Path string `json:"path"`
 	// SharedLinkPolicy : The policy to apply to shared links created for
 	// content inside this shared folder.  The current user must be on a team to
 	// set this policy to `SharedLinkPolicy.members`.
 	SharedLinkPolicy *SharedLinkPolicy `json:"shared_link_policy,omitempty"`
-	// ForceAsync : Whether to force the share to happen asynchronously.
-	ForceAsync bool `json:"force_async"`
+	// ViewerInfoPolicy : Who can enable/disable viewer info for this shared
+	// folder.
+	ViewerInfoPolicy *ViewerInfoPolicy `json:"viewer_info_policy,omitempty"`
+}
+
+// NewShareFolderArgBase returns a new ShareFolderArgBase instance
+func NewShareFolderArgBase(Path string) *ShareFolderArgBase {
+	s := new(ShareFolderArgBase)
+	s.Path = Path
+	s.ForceAsync = false
+	return s
+}
+
+// ShareFolderArg : has no documentation (yet)
+type ShareFolderArg struct {
+	ShareFolderArgBase
 	// Actions : A list of `FolderAction`s corresponding to `FolderPermission`s
 	// that should appear in the  response's `SharedFolderMetadata.permissions`
 	// field describing the actions the  authenticated user can perform on the
@@ -3048,9 +3143,6 @@ type ShareFolderArg struct {
 	Actions []*FolderAction `json:"actions,omitempty"`
 	// LinkSettings : Settings on the link for this folder.
 	LinkSettings *LinkSettings `json:"link_settings,omitempty"`
-	// ViewerInfoPolicy : Who can enable/disable viewer info for this shared
-	// folder.
-	ViewerInfoPolicy *ViewerInfoPolicy `json:"viewer_info_policy,omitempty"`
 }
 
 // NewShareFolderArg returns a new ShareFolderArg instance
@@ -3250,6 +3342,11 @@ func (u *SharePathError) UnmarshalJSON(body []byte) error {
 // SharedContentLinkMetadata : Metadata of a shared link for a file or folder.
 type SharedContentLinkMetadata struct {
 	SharedContentLinkMetadataBase
+	// AudienceExceptions : The content inside this folder with link audience
+	// different than this folder's. This is only returned when an endpoint that
+	// returns metadata for a single shared folder is called, e.g.
+	// /get_folder_metadata.
+	AudienceExceptions *AudienceExceptions `json:"audience_exceptions,omitempty"`
 	// Url : The URL of the link.
 	Url string `json:"url"`
 }
@@ -3306,6 +3403,10 @@ type SharedFileMetadata struct {
 	LinkMetadata *SharedContentLinkMetadata `json:"link_metadata,omitempty"`
 	// Name : The name of this file.
 	Name string `json:"name"`
+	// OwnerDisplayNames : The display names of the users that own the file. If
+	// the file is part of a team folder, the display names of the team admins
+	// are also included. Absent if the owner display names cannot be fetched.
+	OwnerDisplayNames []string `json:"owner_display_names,omitempty"`
 	// OwnerTeam : The team that owns the file. This field is not present if the
 	// file is not owned by a team.
 	OwnerTeam *users.Team `json:"owner_team,omitempty"`
@@ -3432,6 +3533,11 @@ type SharedFolderMetadataBase struct {
 	// IsTeamFolder : Whether this folder is a `team folder`
 	// <https://www.dropbox.com/en/help/986>.
 	IsTeamFolder bool `json:"is_team_folder"`
+	// OwnerDisplayNames : The display names of the users that own the folder.
+	// If the folder is part of a team folder, the display names of the team
+	// admins are also included. Absent if the owner display names cannot be
+	// fetched.
+	OwnerDisplayNames []string `json:"owner_display_names,omitempty"`
 	// OwnerTeam : The team that owns the folder. This field is not present if
 	// the folder is not owned by a team.
 	OwnerTeam *users.Team `json:"owner_team,omitempty"`

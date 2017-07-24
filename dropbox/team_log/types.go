@@ -110,14 +110,32 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// AccountCaptureAvailability : has no documentation (yet)
+type AccountCaptureAvailability struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AccountCaptureAvailability
+const (
+	AccountCaptureAvailabilityUnavailable = "unavailable"
+	AccountCaptureAvailabilityAvailable   = "available"
+	AccountCaptureAvailabilityOther       = "other"
+)
+
 // AccountCaptureChangeAvailabilityDetails : Granted or revoked the option to
 // enable account capture on domains belonging to the team.
 type AccountCaptureChangeAvailabilityDetails struct {
+	// NewValue : New account capture availabilty value.
+	NewValue *AccountCaptureAvailability `json:"new_value"`
+	// PreviousValue : Previous account capture availabilty value. Might be
+	// missing due to historical data gap.
+	PreviousValue *AccountCaptureAvailability `json:"previous_value,omitempty"`
 }
 
 // NewAccountCaptureChangeAvailabilityDetails returns a new AccountCaptureChangeAvailabilityDetails instance
-func NewAccountCaptureChangeAvailabilityDetails() *AccountCaptureChangeAvailabilityDetails {
+func NewAccountCaptureChangeAvailabilityDetails(NewValue *AccountCaptureAvailability) *AccountCaptureChangeAvailabilityDetails {
 	s := new(AccountCaptureChangeAvailabilityDetails)
+	s.NewValue = NewValue
 	return s
 }
 
@@ -141,12 +159,12 @@ func NewAccountCaptureChangePolicyDetails(NewValue *AccountCapturePolicy) *Accou
 // AccountCaptureMigrateAccountDetails : Account captured user migrated their
 // account to the team.
 type AccountCaptureMigrateAccountDetails struct {
-	// DomainName : Domain names.
-	DomainName []string `json:"domain_name"`
+	// DomainName : Domain name.
+	DomainName string `json:"domain_name"`
 }
 
 // NewAccountCaptureMigrateAccountDetails returns a new AccountCaptureMigrateAccountDetails instance
-func NewAccountCaptureMigrateAccountDetails(DomainName []string) *AccountCaptureMigrateAccountDetails {
+func NewAccountCaptureMigrateAccountDetails(DomainName string) *AccountCaptureMigrateAccountDetails {
 	s := new(AccountCaptureMigrateAccountDetails)
 	s.DomainName = DomainName
 	return s
@@ -168,12 +186,12 @@ const (
 // AccountCaptureRelinquishAccountDetails : Account captured user relinquished
 // their account by changing the email address associated with it.
 type AccountCaptureRelinquishAccountDetails struct {
-	// DomainName : Domain names.
-	DomainName []string `json:"domain_name"`
+	// DomainName : Domain name.
+	DomainName string `json:"domain_name"`
 }
 
 // NewAccountCaptureRelinquishAccountDetails returns a new AccountCaptureRelinquishAccountDetails instance
-func NewAccountCaptureRelinquishAccountDetails(DomainName []string) *AccountCaptureRelinquishAccountDetails {
+func NewAccountCaptureRelinquishAccountDetails(DomainName string) *AccountCaptureRelinquishAccountDetails {
 	s := new(AccountCaptureRelinquishAccountDetails)
 	s.DomainName = DomainName
 	return s
@@ -249,6 +267,21 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	return nil
 }
+
+// AdminRole : has no documentation (yet)
+type AdminRole struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminRole
+const (
+	AdminRoleUser                = "user"
+	AdminRoleLimitedAdmin        = "limited_admin"
+	AdminRoleSupportAdmin        = "support_admin"
+	AdminRoleUserManagementAdmin = "user_management_admin"
+	AdminRoleTeamAdmin           = "team_admin"
+	AdminRoleOther               = "other"
+)
 
 // AllowDownloadDisabledDetails : Disabled allow downloads.
 type AllowDownloadDisabledDetails struct {
@@ -505,6 +538,37 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// Certificate : Certificate details.
+type Certificate struct {
+	// Subject : Certificate subject.
+	Subject string `json:"subject"`
+	// Issuer : Certificate issuer.
+	Issuer string `json:"issuer"`
+	// IssueDate : Certificate issue date.
+	IssueDate string `json:"issue_date"`
+	// ExpirationDate : Certificate expiration date.
+	ExpirationDate string `json:"expiration_date"`
+	// SerialNumber : Certificate serial number.
+	SerialNumber string `json:"serial_number"`
+	// Sha1Fingerprint : Certificate sha1 fingerprint.
+	Sha1Fingerprint string `json:"sha1_fingerprint"`
+	// CommonName : Certificate common name.
+	CommonName string `json:"common_name"`
+}
+
+// NewCertificate returns a new Certificate instance
+func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationDate string, SerialNumber string, Sha1Fingerprint string, CommonName string) *Certificate {
+	s := new(Certificate)
+	s.Subject = Subject
+	s.Issuer = Issuer
+	s.IssueDate = IssueDate
+	s.ExpirationDate = ExpirationDate
+	s.SerialNumber = SerialNumber
+	s.Sha1Fingerprint = Sha1Fingerprint
+	s.CommonName = CommonName
+	return s
+}
+
 // CollectionShareDetails : Shared an album.
 type CollectionShareDetails struct {
 	// AlbumName : Album name.
@@ -528,6 +592,18 @@ const (
 	ConfidentialityConfidential    = "confidential"
 	ConfidentialityNonConfidential = "non_confidential"
 	ConfidentialityOther           = "other"
+)
+
+// ContentPermanentDeletePolicy : Policy for pemanent content deletion
+type ContentPermanentDeletePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ContentPermanentDeletePolicy
+const (
+	ContentPermanentDeletePolicyDisabled = "disabled"
+	ContentPermanentDeletePolicyEnabled  = "enabled"
+	ContentPermanentDeletePolicyOther    = "other"
 )
 
 // ContextLogInfo : The primary entity on which the action was done.
@@ -808,12 +884,7 @@ type DeviceApprovalsPolicy struct {
 // Valid tag values for DeviceApprovalsPolicy
 const (
 	DeviceApprovalsPolicyUnlimited = "unlimited"
-	DeviceApprovalsPolicyZero      = "zero"
-	DeviceApprovalsPolicyOne       = "one"
-	DeviceApprovalsPolicyTwo       = "two"
-	DeviceApprovalsPolicyThree     = "three"
-	DeviceApprovalsPolicyFour      = "four"
-	DeviceApprovalsPolicyFive      = "five"
+	DeviceApprovalsPolicyLimited   = "limited"
 	DeviceApprovalsPolicyOther     = "other"
 )
 
@@ -861,6 +932,9 @@ func NewDeviceChangeIpMobileDetails(DeviceInfo *DeviceLogInfo) *DeviceChangeIpMo
 // DeviceChangeIpWebDetails : IP address associated with active Web session
 // changed.
 type DeviceChangeIpWebDetails struct {
+	// DeviceInfo : Device information. Might be missing due to historical data
+	// gap.
+	DeviceInfo *DeviceLogInfo `json:"device_info,omitempty"`
 	// UserAgent : Web browser name.
 	UserAgent string `json:"user_agent"`
 }
@@ -905,6 +979,9 @@ func NewDeviceDeleteOnUnlinkSuccessDetails(DeviceInfo *DeviceLogInfo) *DeviceDel
 
 // DeviceLinkFailDetails : Failed to link a device.
 type DeviceLinkFailDetails struct {
+	// DeviceInfo : Device information. Might be missing due to historical data
+	// gap.
+	DeviceInfo *DeviceLogInfo `json:"device_info,omitempty"`
 	// DeviceType : A description of the device used while user approval
 	// blocked.
 	DeviceType *DeviceType `json:"device_type"`
@@ -921,9 +998,6 @@ func NewDeviceLinkFailDetails(DeviceType *DeviceType) *DeviceLinkFailDetails {
 type DeviceLinkSuccessDetails struct {
 	// DeviceInfo : Device information.
 	DeviceInfo *DeviceLogInfo `json:"device_info"`
-	// AppVersion : Linking app version. Might be missing due to historical data
-	// gap.
-	AppVersion string `json:"app_version,omitempty"`
 }
 
 // NewDeviceLinkSuccessDetails returns a new DeviceLinkSuccessDetails instance
@@ -959,6 +1033,9 @@ type DeviceLogInfo struct {
 	// LastActivity : Last activity. Might be missing due to historical data
 	// gap.
 	LastActivity string `json:"last_activity,omitempty"`
+	// AppVersion : Linking app version. Might be missing due to historical data
+	// gap.
+	AppVersion string `json:"app_version,omitempty"`
 }
 
 // NewDeviceLogInfo returns a new DeviceLogInfo instance
@@ -994,8 +1071,8 @@ type DeviceType struct {
 
 // Valid tag values for DeviceType
 const (
-	DeviceTypeMobile  = "mobile"
 	DeviceTypeDesktop = "desktop"
+	DeviceTypeMobile  = "mobile"
 	DeviceTypeOther   = "other"
 )
 
@@ -1112,16 +1189,17 @@ func NewDomainInvitesSetInviteNewUserPrefToYesDetails() *DomainInvitesSetInviteN
 // DomainVerificationAddDomainFailDetails : Failed to verify a domain belonging
 // to the team.
 type DomainVerificationAddDomainFailDetails struct {
-	// DomainNames : Domain names.
-	DomainNames []string `json:"domain_names"`
-	// VerificationMethod : Domain name verification method.
+	// DomainName : Domain name.
+	DomainName string `json:"domain_name"`
+	// VerificationMethod : Domain name verification method. Might be missing
+	// due to historical data gap.
 	VerificationMethod string `json:"verification_method,omitempty"`
 }
 
 // NewDomainVerificationAddDomainFailDetails returns a new DomainVerificationAddDomainFailDetails instance
-func NewDomainVerificationAddDomainFailDetails(DomainNames []string) *DomainVerificationAddDomainFailDetails {
+func NewDomainVerificationAddDomainFailDetails(DomainName string) *DomainVerificationAddDomainFailDetails {
 	s := new(DomainVerificationAddDomainFailDetails)
-	s.DomainNames = DomainNames
+	s.DomainName = DomainName
 	return s
 }
 
@@ -1130,7 +1208,8 @@ func NewDomainVerificationAddDomainFailDetails(DomainNames []string) *DomainVeri
 type DomainVerificationAddDomainSuccessDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
-	// VerificationMethod : Domain name verification method.
+	// VerificationMethod : Domain name verification method. Might be missing
+	// due to historical data gap.
 	VerificationMethod string `json:"verification_method,omitempty"`
 }
 
@@ -1146,12 +1225,31 @@ func NewDomainVerificationAddDomainSuccessDetails(DomainNames []string) *DomainV
 type DomainVerificationRemoveDomainDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
+	// VerificationMethod : Domain name verification method. Might be missing
+	// due to historical data gap.
+	VerificationMethod string `json:"verification_method,omitempty"`
 }
 
 // NewDomainVerificationRemoveDomainDetails returns a new DomainVerificationRemoveDomainDetails instance
 func NewDomainVerificationRemoveDomainDetails(DomainNames []string) *DomainVerificationRemoveDomainDetails {
 	s := new(DomainVerificationRemoveDomainDetails)
 	s.DomainNames = DomainNames
+	return s
+}
+
+// DurationLogInfo : Represents a time duration: unit and amount
+type DurationLogInfo struct {
+	// Unit : Time unit.
+	Unit *TimeUnit `json:"unit"`
+	// Amount : Amount of time.
+	Amount uint64 `json:"amount"`
+}
+
+// NewDurationLogInfo returns a new DurationLogInfo instance
+func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
+	s := new(DurationLogInfo)
+	s.Unit = Unit
+	s.Amount = Amount
 	return s
 }
 
@@ -1170,14 +1268,14 @@ func NewEmmAddExceptionDetails() *EmmAddExceptionDetails {
 // for team members.
 type EmmChangePolicyDetails struct {
 	// NewValue : New enterprise mobility management policy.
-	NewValue *OptionalChangePolicy `json:"new_value"`
+	NewValue *EmmPolicy `json:"new_value"`
 	// PreviousValue : Previous enterprise mobility management policy. Might be
 	// missing due to historical data gap.
-	PreviousValue *OptionalChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *EmmPolicy `json:"previous_value,omitempty"`
 }
 
 // NewEmmChangePolicyDetails returns a new EmmChangePolicyDetails instance
-func NewEmmChangePolicyDetails(NewValue *OptionalChangePolicy) *EmmChangePolicyDetails {
+func NewEmmChangePolicyDetails(NewValue *EmmPolicy) *EmmChangePolicyDetails {
 	s := new(EmmChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -1213,6 +1311,19 @@ func NewEmmLoginSuccessDetails() *EmmLoginSuccessDetails {
 	return s
 }
 
+// EmmPolicy : Enterprise mobility management policy
+type EmmPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for EmmPolicy
+const (
+	EmmPolicyDisabled = "disabled"
+	EmmPolicyOptional = "optional"
+	EmmPolicyRequired = "required"
+	EmmPolicyOther    = "other"
+)
+
 // EmmRefreshAuthTokenDetails : Refreshed the auth token used for setting up
 // enterprise mobility management.
 type EmmRefreshAuthTokenDetails struct {
@@ -1234,18 +1345,6 @@ func NewEmmRemoveExceptionDetails() *EmmRemoveExceptionDetails {
 	s := new(EmmRemoveExceptionDetails)
 	return s
 }
-
-// EnableDisableChangePolicy : has no documentation (yet)
-type EnableDisableChangePolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for EnableDisableChangePolicy
-const (
-	EnableDisableChangePolicyDisabled = "disabled"
-	EnableDisableChangePolicyEnabled  = "enabled"
-	EnableDisableChangePolicyOther    = "other"
-)
 
 // EnabledDomainInvitesDetails : Enabled domain invites.
 type EnabledDomainInvitesDetails struct {
@@ -1332,8 +1431,10 @@ type EventDetails struct {
 	// SfExternalInviteWarnDetails : Admin settings: team members see a warning
 	// before sharing folders outside the team (DEPRECATED FEATURE).
 	SfExternalInviteWarnDetails *SfExternalInviteWarnDetails `json:"sf_external_invite_warn_details,omitempty"`
-	// TeamMergeDetails : Merged the team into another team.
-	TeamMergeDetails *TeamMergeDetails `json:"team_merge_details,omitempty"`
+	// TeamMergeFromDetails : Merged another team into this team.
+	TeamMergeFromDetails *TeamMergeFromDetails `json:"team_merge_from_details,omitempty"`
+	// TeamMergeToDetails : Merged this team into another team.
+	TeamMergeToDetails *TeamMergeToDetails `json:"team_merge_to_details,omitempty"`
 	// AppLinkTeamDetails : Linked an app for team.
 	AppLinkTeamDetails *AppLinkTeamDetails `json:"app_link_team_details,omitempty"`
 	// AppLinkUserDetails : Linked an app for team member.
@@ -1505,28 +1606,19 @@ type EventDetails struct {
 	SsoLoginFailDetails *SsoLoginFailDetails `json:"sso_login_fail_details,omitempty"`
 	// MemberAddNameDetails : Set team member name when joining team.
 	MemberAddNameDetails *MemberAddNameDetails `json:"member_add_name_details,omitempty"`
+	// MemberChangeAdminRoleDetails : Change the admin role belonging to team
+	// member.
+	MemberChangeAdminRoleDetails *MemberChangeAdminRoleDetails `json:"member_change_admin_role_details,omitempty"`
 	// MemberChangeEmailDetails : Changed team member email address.
 	MemberChangeEmailDetails *MemberChangeEmailDetails `json:"member_change_email_details,omitempty"`
 	// MemberChangeNameDetails : Changed team member name.
 	MemberChangeNameDetails *MemberChangeNameDetails `json:"member_change_name_details,omitempty"`
-	// MemberChangeRoleDetails : Change the admin permissions belonging to team
+	// MemberChangeStatusDetails : Changed the membership status of a team
 	// member.
-	MemberChangeRoleDetails *MemberChangeRoleDetails `json:"member_change_role_details,omitempty"`
-	// MemberInviteDetails : Invited a user to join the team.
-	MemberInviteDetails *MemberInviteDetails `json:"member_invite_details,omitempty"`
-	// MemberJoinDetails : Joined the team.
-	MemberJoinDetails *MemberJoinDetails `json:"member_join_details,omitempty"`
-	// MemberLeaveDetails : Removed a team member.
-	MemberLeaveDetails *MemberLeaveDetails `json:"member_leave_details,omitempty"`
-	// MemberRecoverDetails : Recovered a removed member.
-	MemberRecoverDetails *MemberRecoverDetails `json:"member_recover_details,omitempty"`
+	MemberChangeStatusDetails *MemberChangeStatusDetails `json:"member_change_status_details,omitempty"`
 	// MemberSuggestDetails : Suggested a new team member to be added to the
 	// team.
 	MemberSuggestDetails *MemberSuggestDetails `json:"member_suggest_details,omitempty"`
-	// MemberSuspendDetails : Suspended a team member.
-	MemberSuspendDetails *MemberSuspendDetails `json:"member_suspend_details,omitempty"`
-	// MemberUnsuspendDetails : Unsuspended a team member.
-	MemberUnsuspendDetails *MemberUnsuspendDetails `json:"member_unsuspend_details,omitempty"`
 	// PaperContentAddMemberDetails : Added users to the membership of a Paper
 	// doc or folder.
 	PaperContentAddMemberDetails *PaperContentAddMemberDetails `json:"paper_content_add_member_details,omitempty"`
@@ -1907,6 +1999,10 @@ type EventDetails struct {
 	// SmartSyncChangePolicyDetails : Changed the default Smart Sync policy for
 	// team members.
 	SmartSyncChangePolicyDetails *SmartSyncChangePolicyDetails `json:"smart_sync_change_policy_details,omitempty"`
+	// SmartSyncNotOptOutDetails : Opted team into Smart Sync.
+	SmartSyncNotOptOutDetails *SmartSyncNotOptOutDetails `json:"smart_sync_not_opt_out_details,omitempty"`
+	// SmartSyncOptOutDetails : Opted team out of Smart Sync.
+	SmartSyncOptOutDetails *SmartSyncOptOutDetails `json:"smart_sync_opt_out_details,omitempty"`
 	// SsoChangePolicyDetails : Change the single sign-on policy for the team.
 	SsoChangePolicyDetails *SsoChangePolicyDetails `json:"sso_change_policy_details,omitempty"`
 	// TfaChangePolicyDetails : Change two-step verification policy for the
@@ -1970,7 +2066,8 @@ const (
 	EventDetailsPaperExternalViewDefaultTeamDetails             = "paper_external_view_default_team_details"
 	EventDetailsPaperExternalViewForbidDetails                  = "paper_external_view_forbid_details"
 	EventDetailsSfExternalInviteWarnDetails                     = "sf_external_invite_warn_details"
-	EventDetailsTeamMergeDetails                                = "team_merge_details"
+	EventDetailsTeamMergeFromDetails                            = "team_merge_from_details"
+	EventDetailsTeamMergeToDetails                              = "team_merge_to_details"
 	EventDetailsAppLinkTeamDetails                              = "app_link_team_details"
 	EventDetailsAppLinkUserDetails                              = "app_link_user_details"
 	EventDetailsAppUnlinkTeamDetails                            = "app_unlink_team_details"
@@ -2046,16 +2143,11 @@ const (
 	EventDetailsSignInAsSessionStartDetails                     = "sign_in_as_session_start_details"
 	EventDetailsSsoLoginFailDetails                             = "sso_login_fail_details"
 	EventDetailsMemberAddNameDetails                            = "member_add_name_details"
+	EventDetailsMemberChangeAdminRoleDetails                    = "member_change_admin_role_details"
 	EventDetailsMemberChangeEmailDetails                        = "member_change_email_details"
 	EventDetailsMemberChangeNameDetails                         = "member_change_name_details"
-	EventDetailsMemberChangeRoleDetails                         = "member_change_role_details"
-	EventDetailsMemberInviteDetails                             = "member_invite_details"
-	EventDetailsMemberJoinDetails                               = "member_join_details"
-	EventDetailsMemberLeaveDetails                              = "member_leave_details"
-	EventDetailsMemberRecoverDetails                            = "member_recover_details"
+	EventDetailsMemberChangeStatusDetails                       = "member_change_status_details"
 	EventDetailsMemberSuggestDetails                            = "member_suggest_details"
-	EventDetailsMemberSuspendDetails                            = "member_suspend_details"
-	EventDetailsMemberUnsuspendDetails                          = "member_unsuspend_details"
 	EventDetailsPaperContentAddMemberDetails                    = "paper_content_add_member_details"
 	EventDetailsPaperContentAddToFolderDetails                  = "paper_content_add_to_folder_details"
 	EventDetailsPaperContentArchiveDetails                      = "paper_content_archive_details"
@@ -2204,6 +2296,8 @@ const (
 	EventDetailsSharingChangeLinkPolicyDetails                  = "sharing_change_link_policy_details"
 	EventDetailsSharingChangeMemberPolicyDetails                = "sharing_change_member_policy_details"
 	EventDetailsSmartSyncChangePolicyDetails                    = "smart_sync_change_policy_details"
+	EventDetailsSmartSyncNotOptOutDetails                       = "smart_sync_not_opt_out_details"
+	EventDetailsSmartSyncOptOutDetails                          = "smart_sync_opt_out_details"
 	EventDetailsSsoChangePolicyDetails                          = "sso_change_policy_details"
 	EventDetailsTfaChangePolicyDetails                          = "tfa_change_policy_details"
 	EventDetailsTwoAccountChangePolicyDetails                   = "two_account_change_policy_details"
@@ -2259,8 +2353,10 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		// SfExternalInviteWarnDetails : Admin settings: team members see a
 		// warning before sharing folders outside the team (DEPRECATED FEATURE).
 		SfExternalInviteWarnDetails json.RawMessage `json:"sf_external_invite_warn_details,omitempty"`
-		// TeamMergeDetails : Merged the team into another team.
-		TeamMergeDetails json.RawMessage `json:"team_merge_details,omitempty"`
+		// TeamMergeFromDetails : Merged another team into this team.
+		TeamMergeFromDetails json.RawMessage `json:"team_merge_from_details,omitempty"`
+		// TeamMergeToDetails : Merged this team into another team.
+		TeamMergeToDetails json.RawMessage `json:"team_merge_to_details,omitempty"`
 		// AppLinkTeamDetails : Linked an app for team.
 		AppLinkTeamDetails json.RawMessage `json:"app_link_team_details,omitempty"`
 		// AppLinkUserDetails : Linked an app for team member.
@@ -2435,28 +2531,19 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SsoLoginFailDetails json.RawMessage `json:"sso_login_fail_details,omitempty"`
 		// MemberAddNameDetails : Set team member name when joining team.
 		MemberAddNameDetails json.RawMessage `json:"member_add_name_details,omitempty"`
+		// MemberChangeAdminRoleDetails : Change the admin role belonging to
+		// team member.
+		MemberChangeAdminRoleDetails json.RawMessage `json:"member_change_admin_role_details,omitempty"`
 		// MemberChangeEmailDetails : Changed team member email address.
 		MemberChangeEmailDetails json.RawMessage `json:"member_change_email_details,omitempty"`
 		// MemberChangeNameDetails : Changed team member name.
 		MemberChangeNameDetails json.RawMessage `json:"member_change_name_details,omitempty"`
-		// MemberChangeRoleDetails : Change the admin permissions belonging to
-		// team member.
-		MemberChangeRoleDetails json.RawMessage `json:"member_change_role_details,omitempty"`
-		// MemberInviteDetails : Invited a user to join the team.
-		MemberInviteDetails json.RawMessage `json:"member_invite_details,omitempty"`
-		// MemberJoinDetails : Joined the team.
-		MemberJoinDetails json.RawMessage `json:"member_join_details,omitempty"`
-		// MemberLeaveDetails : Removed a team member.
-		MemberLeaveDetails json.RawMessage `json:"member_leave_details,omitempty"`
-		// MemberRecoverDetails : Recovered a removed member.
-		MemberRecoverDetails json.RawMessage `json:"member_recover_details,omitempty"`
+		// MemberChangeStatusDetails : Changed the membership status of a team
+		// member.
+		MemberChangeStatusDetails json.RawMessage `json:"member_change_status_details,omitempty"`
 		// MemberSuggestDetails : Suggested a new team member to be added to the
 		// team.
 		MemberSuggestDetails json.RawMessage `json:"member_suggest_details,omitempty"`
-		// MemberSuspendDetails : Suspended a team member.
-		MemberSuspendDetails json.RawMessage `json:"member_suspend_details,omitempty"`
-		// MemberUnsuspendDetails : Unsuspended a team member.
-		MemberUnsuspendDetails json.RawMessage `json:"member_unsuspend_details,omitempty"`
 		// PaperContentAddMemberDetails : Added users to the membership of a
 		// Paper doc or folder.
 		PaperContentAddMemberDetails json.RawMessage `json:"paper_content_add_member_details,omitempty"`
@@ -2850,6 +2937,10 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		// SmartSyncChangePolicyDetails : Changed the default Smart Sync policy
 		// for team members.
 		SmartSyncChangePolicyDetails json.RawMessage `json:"smart_sync_change_policy_details,omitempty"`
+		// SmartSyncNotOptOutDetails : Opted team into Smart Sync.
+		SmartSyncNotOptOutDetails json.RawMessage `json:"smart_sync_not_opt_out_details,omitempty"`
+		// SmartSyncOptOutDetails : Opted team out of Smart Sync.
+		SmartSyncOptOutDetails json.RawMessage `json:"smart_sync_opt_out_details,omitempty"`
 		// SsoChangePolicyDetails : Change the single sign-on policy for the
 		// team.
 		SsoChangePolicyDetails json.RawMessage `json:"sso_change_policy_details,omitempty"`
@@ -2968,8 +3059,14 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "team_merge_details":
-		err = json.Unmarshal(body, &u.TeamMergeDetails)
+	case "team_merge_from_details":
+		err = json.Unmarshal(body, &u.TeamMergeFromDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_to_details":
+		err = json.Unmarshal(body, &u.TeamMergeToDetails)
 
 		if err != nil {
 			return err
@@ -3424,6 +3521,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_change_admin_role_details":
+		err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_email_details":
 		err = json.Unmarshal(body, &u.MemberChangeEmailDetails)
 
@@ -3436,50 +3539,14 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "member_change_role_details":
-		err = json.Unmarshal(body, &u.MemberChangeRoleDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_invite_details":
-		err = json.Unmarshal(body, &u.MemberInviteDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_join_details":
-		err = json.Unmarshal(body, &u.MemberJoinDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_leave_details":
-		err = json.Unmarshal(body, &u.MemberLeaveDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_recover_details":
-		err = json.Unmarshal(body, &u.MemberRecoverDetails)
+	case "member_change_status_details":
+		err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
 	case "member_suggest_details":
 		err = json.Unmarshal(body, &u.MemberSuggestDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_suspend_details":
-		err = json.Unmarshal(body, &u.MemberSuspendDetails)
-
-		if err != nil {
-			return err
-		}
-	case "member_unsuspend_details":
-		err = json.Unmarshal(body, &u.MemberUnsuspendDetails)
 
 		if err != nil {
 			return err
@@ -4372,6 +4439,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "smart_sync_not_opt_out_details":
+		err = json.Unmarshal(body, &u.SmartSyncNotOptOutDetails)
+
+		if err != nil {
+			return err
+		}
+	case "smart_sync_opt_out_details":
+		err = json.Unmarshal(body, &u.SmartSyncOptOutDetails)
+
+		if err != nil {
+			return err
+		}
 	case "sso_change_policy_details":
 		err = json.Unmarshal(body, &u.SsoChangePolicyDetails)
 
@@ -4495,7 +4574,8 @@ const (
 	EventTypePaperExternalViewDefaultTeam             = "paper_external_view_default_team"
 	EventTypePaperExternalViewForbid                  = "paper_external_view_forbid"
 	EventTypeSfExternalInviteWarn                     = "sf_external_invite_warn"
-	EventTypeTeamMerge                                = "team_merge"
+	EventTypeTeamMergeFrom                            = "team_merge_from"
+	EventTypeTeamMergeTo                              = "team_merge_to"
 	EventTypeAppLinkTeam                              = "app_link_team"
 	EventTypeAppLinkUser                              = "app_link_user"
 	EventTypeAppUnlinkTeam                            = "app_unlink_team"
@@ -4571,16 +4651,11 @@ const (
 	EventTypeSignInAsSessionStart                     = "sign_in_as_session_start"
 	EventTypeSsoLoginFail                             = "sso_login_fail"
 	EventTypeMemberAddName                            = "member_add_name"
+	EventTypeMemberChangeAdminRole                    = "member_change_admin_role"
 	EventTypeMemberChangeEmail                        = "member_change_email"
 	EventTypeMemberChangeName                         = "member_change_name"
-	EventTypeMemberChangeRole                         = "member_change_role"
-	EventTypeMemberInvite                             = "member_invite"
-	EventTypeMemberJoin                               = "member_join"
-	EventTypeMemberLeave                              = "member_leave"
-	EventTypeMemberRecover                            = "member_recover"
+	EventTypeMemberChangeStatus                       = "member_change_status"
 	EventTypeMemberSuggest                            = "member_suggest"
-	EventTypeMemberSuspend                            = "member_suspend"
-	EventTypeMemberUnsuspend                          = "member_unsuspend"
 	EventTypePaperContentAddMember                    = "paper_content_add_member"
 	EventTypePaperContentAddToFolder                  = "paper_content_add_to_folder"
 	EventTypePaperContentArchive                      = "paper_content_archive"
@@ -4729,6 +4804,8 @@ const (
 	EventTypeSharingChangeLinkPolicy                  = "sharing_change_link_policy"
 	EventTypeSharingChangeMemberPolicy                = "sharing_change_member_policy"
 	EventTypeSmartSyncChangePolicy                    = "smart_sync_change_policy"
+	EventTypeSmartSyncNotOptOut                       = "smart_sync_not_opt_out"
+	EventTypeSmartSyncOptOut                          = "smart_sync_opt_out"
 	EventTypeSsoChangePolicy                          = "sso_change_policy"
 	EventTypeTfaChangePolicy                          = "tfa_change_policy"
 	EventTypeTwoAccountChangePolicy                   = "two_account_change_policy"
@@ -4777,30 +4854,21 @@ const (
 	ExtendedVersionHistoryPolicyOther     = "other"
 )
 
-// ExternalSharingAccessibilityPolicy : has no documentation (yet)
-type ExternalSharingAccessibilityPolicy struct {
-	dropbox.Tagged
+// FailureDetailsLogInfo : Provides details about a failure
+type FailureDetailsLogInfo struct {
+	// UserFriendlyMessage : A user friendly explanation of the error. Might be
+	// missing due to historical data gap.
+	UserFriendlyMessage string `json:"user_friendly_message,omitempty"`
+	// TechnicalErrorMessage : A technical explanation of the error. This is
+	// relevant for some errors.
+	TechnicalErrorMessage string `json:"technical_error_message,omitempty"`
 }
 
-// Valid tag values for ExternalSharingAccessibilityPolicy
-const (
-	ExternalSharingAccessibilityPolicyTeamOnly        = "team_only"
-	ExternalSharingAccessibilityPolicyDefaultTeamOnly = "default_team_only"
-	ExternalSharingAccessibilityPolicyDefaultAnyone   = "default_anyone"
-	ExternalSharingAccessibilityPolicyOther           = "other"
-)
-
-// ExternalSharingPolicy : has no documentation (yet)
-type ExternalSharingPolicy struct {
-	dropbox.Tagged
+// NewFailureDetailsLogInfo returns a new FailureDetailsLogInfo instance
+func NewFailureDetailsLogInfo() *FailureDetailsLogInfo {
+	s := new(FailureDetailsLogInfo)
+	return s
 }
-
-// Valid tag values for ExternalSharingPolicy
-const (
-	ExternalSharingPolicyTeamOnly = "team_only"
-	ExternalSharingPolicyAnyone   = "anyone"
-	ExternalSharingPolicyOther    = "other"
-)
 
 // FileAddCommentDetails : Added a file comment.
 type FileAddCommentDetails struct {
@@ -4831,32 +4899,41 @@ func NewFileAddDetails() *FileAddDetails {
 // files.
 type FileCommentsChangePolicyDetails struct {
 	// NewValue : New commenting on team files policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *FileCommentsPolicy `json:"new_value"`
 	// PreviousValue : Previous commenting on team files policy. Might be
 	// missing due to historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *FileCommentsPolicy `json:"previous_value,omitempty"`
 }
 
 // NewFileCommentsChangePolicyDetails returns a new FileCommentsChangePolicyDetails instance
-func NewFileCommentsChangePolicyDetails(NewValue *EnableDisableChangePolicy) *FileCommentsChangePolicyDetails {
+func NewFileCommentsChangePolicyDetails(NewValue *FileCommentsPolicy) *FileCommentsChangePolicyDetails {
 	s := new(FileCommentsChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
+// FileCommentsPolicy : File comments policy
+type FileCommentsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileCommentsPolicy
+const (
+	FileCommentsPolicyDisabled = "disabled"
+	FileCommentsPolicyEnabled  = "enabled"
+	FileCommentsPolicyOther    = "other"
+)
+
 // FileCopyDetails : Copied files and/or folders.
 type FileCopyDetails struct {
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
+	// RelocateActionDetails : Relocate action details.
+	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewFileCopyDetails returns a new FileCopyDetails instance
-func NewFileCopyDetails(SrcIndex int64, DestIndex int64) *FileCopyDetails {
+func NewFileCopyDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileCopyDetails {
 	s := new(FileCopyDetails)
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -4946,17 +5023,14 @@ func NewFileLogInfo(Path *PathLogInfo) *FileLogInfo {
 
 // FileMoveDetails : Moved files and/or folders.
 type FileMoveDetails struct {
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
+	// RelocateActionDetails : Relocate action details.
+	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewFileMoveDetails returns a new FileMoveDetails instance
-func NewFileMoveDetails(SrcIndex int64, DestIndex int64) *FileMoveDetails {
+func NewFileMoveDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileMoveDetails {
 	s := new(FileMoveDetails)
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -4982,17 +5056,14 @@ func NewFilePreviewDetails() *FilePreviewDetails {
 
 // FileRenameDetails : Renamed files and/or folders.
 type FileRenameDetails struct {
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
+	// RelocateActionDetails : Relocate action details.
+	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewFileRenameDetails returns a new FileRenameDetails instance
-func NewFileRenameDetails(SrcIndex int64, DestIndex int64) *FileRenameDetails {
+func NewFileRenameDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileRenameDetails {
 	s := new(FileRenameDetails)
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -5106,14 +5177,14 @@ func NewFileRequestSendDetails(RequestTitle string) *FileRequestSendDetails {
 // FileRequestsChangePolicyDetails : Enabled or disabled file requests.
 type FileRequestsChangePolicyDetails struct {
 	// NewValue : New file requests policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *FileRequestsPolicy `json:"new_value"`
 	// PreviousValue : Previous file requests policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *FileRequestsPolicy `json:"previous_value,omitempty"`
 }
 
 // NewFileRequestsChangePolicyDetails returns a new FileRequestsChangePolicyDetails instance
-func NewFileRequestsChangePolicyDetails(NewValue *EnableDisableChangePolicy) *FileRequestsChangePolicyDetails {
+func NewFileRequestsChangePolicyDetails(NewValue *FileRequestsPolicy) *FileRequestsChangePolicyDetails {
 	s := new(FileRequestsChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -5139,6 +5210,18 @@ func NewFileRequestsEmailsRestrictedToTeamOnlyDetails() *FileRequestsEmailsRestr
 	s := new(FileRequestsEmailsRestrictedToTeamOnlyDetails)
 	return s
 }
+
+// FileRequestsPolicy : File requests policy
+type FileRequestsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileRequestsPolicy
+const (
+	FileRequestsPolicyDisabled = "disabled"
+	FileRequestsPolicyEnabled  = "enabled"
+	FileRequestsPolicyOther    = "other"
+)
 
 // FileRestoreDetails : Restored deleted files and/or folders.
 type FileRestoreDetails struct {
@@ -5172,17 +5255,14 @@ func NewFileRollbackChangesDetails() *FileRollbackChangesDetails {
 
 // FileSaveCopyReferenceDetails : Save a file or folder using a copy reference.
 type FileSaveCopyReferenceDetails struct {
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
+	// RelocateActionDetails : Relocate action details.
+	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewFileSaveCopyReferenceDetails returns a new FileSaveCopyReferenceDetails instance
-func NewFileSaveCopyReferenceDetails(SrcIndex int64, DestIndex int64) *FileSaveCopyReferenceDetails {
+func NewFileSaveCopyReferenceDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileSaveCopyReferenceDetails {
 	s := new(FileSaveCopyReferenceDetails)
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -5241,6 +5321,8 @@ type GetTeamEventsArg struct {
 	AccountId string `json:"account_id,omitempty"`
 	// Time : Filter by time range.
 	Time *team_common.TimeRange `json:"time,omitempty"`
+	// Category : Filter the returned events to a single category.
+	Category *EventCategory `json:"category,omitempty"`
 }
 
 // NewGetTeamEventsArg returns a new GetTeamEventsArg instance
@@ -5313,55 +5395,59 @@ func NewGetTeamEventsResult(Events []*TeamEvent, Cursor string, HasMore bool) *G
 // the team.
 type GoogleSsoChangePolicyDetails struct {
 	// NewValue : New Google single sign-on policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *GoogleSsoPolicy `json:"new_value"`
 	// PreviousValue : Previous Google single sign-on policy. Might be missing
 	// due to historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *GoogleSsoPolicy `json:"previous_value,omitempty"`
 }
 
 // NewGoogleSsoChangePolicyDetails returns a new GoogleSsoChangePolicyDetails instance
-func NewGoogleSsoChangePolicyDetails(NewValue *EnableDisableChangePolicy) *GoogleSsoChangePolicyDetails {
+func NewGoogleSsoChangePolicyDetails(NewValue *GoogleSsoPolicy) *GoogleSsoChangePolicyDetails {
 	s := new(GoogleSsoChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
+// GoogleSsoPolicy : Google SSO policy
+type GoogleSsoPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for GoogleSsoPolicy
+const (
+	GoogleSsoPolicyDisabled = "disabled"
+	GoogleSsoPolicyEnabled  = "enabled"
+	GoogleSsoPolicyOther    = "other"
+)
+
 // GroupAddExternalIdDetails : Added an external ID for group.
 type GroupAddExternalIdDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
 }
 
 // NewGroupAddExternalIdDetails returns a new GroupAddExternalIdDetails instance
-func NewGroupAddExternalIdDetails(GroupInfo *GroupLogInfo, NewValue string) *GroupAddExternalIdDetails {
+func NewGroupAddExternalIdDetails(NewValue string) *GroupAddExternalIdDetails {
 	s := new(GroupAddExternalIdDetails)
-	s.GroupInfo = GroupInfo
 	s.NewValue = NewValue
 	return s
 }
 
 // GroupAddMemberDetails : Added team members to a group.
 type GroupAddMemberDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
 }
 
 // NewGroupAddMemberDetails returns a new GroupAddMemberDetails instance
-func NewGroupAddMemberDetails(GroupInfo *GroupLogInfo, IsGroupOwner bool) *GroupAddMemberDetails {
+func NewGroupAddMemberDetails(IsGroupOwner bool) *GroupAddMemberDetails {
 	s := new(GroupAddMemberDetails)
-	s.GroupInfo = GroupInfo
 	s.IsGroupOwner = IsGroupOwner
 	return s
 }
 
 // GroupChangeExternalIdDetails : Changed the external ID for group.
 type GroupChangeExternalIdDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
 	// PreviousValue : Old external id.
@@ -5369,9 +5455,8 @@ type GroupChangeExternalIdDetails struct {
 }
 
 // NewGroupChangeExternalIdDetails returns a new GroupChangeExternalIdDetails instance
-func NewGroupChangeExternalIdDetails(GroupInfo *GroupLogInfo, NewValue string, PreviousValue string) *GroupChangeExternalIdDetails {
+func NewGroupChangeExternalIdDetails(NewValue string, PreviousValue string) *GroupChangeExternalIdDetails {
 	s := new(GroupChangeExternalIdDetails)
-	s.GroupInfo = GroupInfo
 	s.NewValue = NewValue
 	s.PreviousValue = PreviousValue
 	return s
@@ -5379,8 +5464,6 @@ func NewGroupChangeExternalIdDetails(GroupInfo *GroupLogInfo, NewValue string, P
 
 // GroupChangeManagementTypeDetails : Changed group management type.
 type GroupChangeManagementTypeDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// NewValue : New group management type.
 	NewValue *GroupManagementType `json:"new_value"`
 	// PreviousValue : Previous group management type. Might be missing due to
@@ -5389,9 +5472,8 @@ type GroupChangeManagementTypeDetails struct {
 }
 
 // NewGroupChangeManagementTypeDetails returns a new GroupChangeManagementTypeDetails instance
-func NewGroupChangeManagementTypeDetails(GroupInfo *GroupLogInfo, NewValue *GroupManagementType) *GroupChangeManagementTypeDetails {
+func NewGroupChangeManagementTypeDetails(NewValue *GroupManagementType) *GroupChangeManagementTypeDetails {
 	s := new(GroupChangeManagementTypeDetails)
-	s.GroupInfo = GroupInfo
 	s.NewValue = NewValue
 	return s
 }
@@ -5399,24 +5481,19 @@ func NewGroupChangeManagementTypeDetails(GroupInfo *GroupLogInfo, NewValue *Grou
 // GroupChangeMemberRoleDetails : Changed the manager permissions belonging to a
 // group member.
 type GroupChangeMemberRoleDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
 }
 
 // NewGroupChangeMemberRoleDetails returns a new GroupChangeMemberRoleDetails instance
-func NewGroupChangeMemberRoleDetails(GroupInfo *GroupLogInfo, IsGroupOwner bool) *GroupChangeMemberRoleDetails {
+func NewGroupChangeMemberRoleDetails(IsGroupOwner bool) *GroupChangeMemberRoleDetails {
 	s := new(GroupChangeMemberRoleDetails)
-	s.GroupInfo = GroupInfo
 	s.IsGroupOwner = IsGroupOwner
 	return s
 }
 
 // GroupCreateDetails : Created a group.
 type GroupCreateDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// IsAdminManaged : Is admin managed group. Might be missing due to
 	// historical data gap.
 	IsAdminManaged bool `json:"is_admin_managed,omitempty"`
@@ -5425,39 +5502,32 @@ type GroupCreateDetails struct {
 }
 
 // NewGroupCreateDetails returns a new GroupCreateDetails instance
-func NewGroupCreateDetails(GroupInfo *GroupLogInfo, JoinPolicy *GroupJoinPolicy) *GroupCreateDetails {
+func NewGroupCreateDetails(JoinPolicy *GroupJoinPolicy) *GroupCreateDetails {
 	s := new(GroupCreateDetails)
-	s.GroupInfo = GroupInfo
 	s.JoinPolicy = JoinPolicy
 	return s
 }
 
 // GroupDeleteDetails : Deleted a group.
 type GroupDeleteDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// IsAdminManaged : Is admin managed group. Might be missing due to
 	// historical data gap.
 	IsAdminManaged bool `json:"is_admin_managed,omitempty"`
 }
 
 // NewGroupDeleteDetails returns a new GroupDeleteDetails instance
-func NewGroupDeleteDetails(GroupInfo *GroupLogInfo) *GroupDeleteDetails {
+func NewGroupDeleteDetails() *GroupDeleteDetails {
 	s := new(GroupDeleteDetails)
-	s.GroupInfo = GroupInfo
 	return s
 }
 
 // GroupDescriptionUpdatedDetails : Updated a group.
 type GroupDescriptionUpdatedDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 }
 
 // NewGroupDescriptionUpdatedDetails returns a new GroupDescriptionUpdatedDetails instance
-func NewGroupDescriptionUpdatedDetails(GroupInfo *GroupLogInfo) *GroupDescriptionUpdatedDetails {
+func NewGroupDescriptionUpdatedDetails() *GroupDescriptionUpdatedDetails {
 	s := new(GroupDescriptionUpdatedDetails)
-	s.GroupInfo = GroupInfo
 	return s
 }
 
@@ -5475,8 +5545,6 @@ const (
 
 // GroupJoinPolicyUpdatedDetails : Updated a group join policy.
 type GroupJoinPolicyUpdatedDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// IsAdminManaged : Is admin managed group. Might be missing due to
 	// historical data gap.
 	IsAdminManaged bool `json:"is_admin_managed,omitempty"`
@@ -5485,9 +5553,8 @@ type GroupJoinPolicyUpdatedDetails struct {
 }
 
 // NewGroupJoinPolicyUpdatedDetails returns a new GroupJoinPolicyUpdatedDetails instance
-func NewGroupJoinPolicyUpdatedDetails(GroupInfo *GroupLogInfo, JoinPolicy *GroupJoinPolicy) *GroupJoinPolicyUpdatedDetails {
+func NewGroupJoinPolicyUpdatedDetails(JoinPolicy *GroupJoinPolicy) *GroupJoinPolicyUpdatedDetails {
 	s := new(GroupJoinPolicyUpdatedDetails)
-	s.GroupInfo = GroupInfo
 	s.JoinPolicy = JoinPolicy
 	return s
 }
@@ -5525,58 +5592,46 @@ const (
 
 // GroupMovedDetails : Moved a group.
 type GroupMovedDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 }
 
 // NewGroupMovedDetails returns a new GroupMovedDetails instance
-func NewGroupMovedDetails(GroupInfo *GroupLogInfo) *GroupMovedDetails {
+func NewGroupMovedDetails() *GroupMovedDetails {
 	s := new(GroupMovedDetails)
-	s.GroupInfo = GroupInfo
 	return s
 }
 
 // GroupRemoveExternalIdDetails : Removed the external ID for group.
 type GroupRemoveExternalIdDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
 }
 
 // NewGroupRemoveExternalIdDetails returns a new GroupRemoveExternalIdDetails instance
-func NewGroupRemoveExternalIdDetails(GroupInfo *GroupLogInfo, PreviousValue string) *GroupRemoveExternalIdDetails {
+func NewGroupRemoveExternalIdDetails(PreviousValue string) *GroupRemoveExternalIdDetails {
 	s := new(GroupRemoveExternalIdDetails)
-	s.GroupInfo = GroupInfo
 	s.PreviousValue = PreviousValue
 	return s
 }
 
 // GroupRemoveMemberDetails : Removed team members from a group.
 type GroupRemoveMemberDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 }
 
 // NewGroupRemoveMemberDetails returns a new GroupRemoveMemberDetails instance
-func NewGroupRemoveMemberDetails(GroupInfo *GroupLogInfo) *GroupRemoveMemberDetails {
+func NewGroupRemoveMemberDetails() *GroupRemoveMemberDetails {
 	s := new(GroupRemoveMemberDetails)
-	s.GroupInfo = GroupInfo
 	return s
 }
 
 // GroupRenameDetails : Renamed a group.
 type GroupRenameDetails struct {
-	// GroupInfo : Group details.
-	GroupInfo *GroupLogInfo `json:"group_info"`
 	// PreviousValue : Previous display name.
 	PreviousValue string `json:"previous_value"`
 }
 
 // NewGroupRenameDetails returns a new GroupRenameDetails instance
-func NewGroupRenameDetails(GroupInfo *GroupLogInfo, PreviousValue string) *GroupRenameDetails {
+func NewGroupRenameDetails(PreviousValue string) *GroupRenameDetails {
 	s := new(GroupRenameDetails)
-	s.GroupInfo = GroupInfo
 	s.PreviousValue = PreviousValue
 	return s
 }
@@ -5584,29 +5639,29 @@ func NewGroupRenameDetails(GroupInfo *GroupLogInfo, PreviousValue string) *Group
 // GroupUserManagementChangePolicyDetails : Changed who can create groups.
 type GroupUserManagementChangePolicyDetails struct {
 	// NewValue : New group users management policy.
-	NewValue *GroupsUserManagementPolicy `json:"new_value"`
+	NewValue *GroupUserManagementPolicy `json:"new_value"`
 	// PreviousValue : Previous group users management policy. Might be missing
 	// due to historical data gap.
-	PreviousValue *GroupsUserManagementPolicy `json:"previous_value,omitempty"`
+	PreviousValue *GroupUserManagementPolicy `json:"previous_value,omitempty"`
 }
 
 // NewGroupUserManagementChangePolicyDetails returns a new GroupUserManagementChangePolicyDetails instance
-func NewGroupUserManagementChangePolicyDetails(NewValue *GroupsUserManagementPolicy) *GroupUserManagementChangePolicyDetails {
+func NewGroupUserManagementChangePolicyDetails(NewValue *GroupUserManagementPolicy) *GroupUserManagementChangePolicyDetails {
 	s := new(GroupUserManagementChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
-// GroupsUserManagementPolicy : has no documentation (yet)
-type GroupsUserManagementPolicy struct {
+// GroupUserManagementPolicy : has no documentation (yet)
+type GroupUserManagementPolicy struct {
 	dropbox.Tagged
 }
 
-// Valid tag values for GroupsUserManagementPolicy
+// Valid tag values for GroupUserManagementPolicy
 const (
-	GroupsUserManagementPolicyAllUsers   = "all_users"
-	GroupsUserManagementPolicyOnlyAdmins = "only_admins"
-	GroupsUserManagementPolicyOther      = "other"
+	GroupUserManagementPolicyAllUsers   = "all_users"
+	GroupUserManagementPolicyOnlyAdmins = "only_admins"
+	GroupUserManagementPolicyOther      = "other"
 )
 
 // HostLogInfo : Host details.
@@ -5620,6 +5675,26 @@ type HostLogInfo struct {
 // NewHostLogInfo returns a new HostLogInfo instance
 func NewHostLogInfo() *HostLogInfo {
 	s := new(HostLogInfo)
+	return s
+}
+
+// JoinTeamDetails : Additional information relevant when a new member joins the
+// team.
+type JoinTeamDetails struct {
+	// LinkedApps : Linked applications.
+	LinkedApps []IsAppLogInfo `json:"linked_apps"`
+	// LinkedDevices : Linked devices.
+	LinkedDevices []*DeviceLogInfo `json:"linked_devices"`
+	// LinkedSharedFolders : Linked shared folders.
+	LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
+}
+
+// NewJoinTeamDetails returns a new JoinTeamDetails instance
+func NewJoinTeamDetails(LinkedApps []IsAppLogInfo, LinkedDevices []*DeviceLogInfo, LinkedSharedFolders []*FolderLogInfo) *JoinTeamDetails {
+	s := new(JoinTeamDetails)
+	s.LinkedApps = LinkedApps
+	s.LinkedDevices = LinkedDevices
+	s.LinkedSharedFolders = LinkedSharedFolders
 	return s
 }
 
@@ -5648,14 +5723,32 @@ func NewLogoutDetails() *LogoutDetails {
 
 // MemberAddNameDetails : Set team member name when joining team.
 type MemberAddNameDetails struct {
-	// NewValue : User's name.
-	NewValue *UserNameLogInfo `json:"new_value"`
+	// Value : User's name.
+	Value *UserNameLogInfo `json:"value"`
 }
 
 // NewMemberAddNameDetails returns a new MemberAddNameDetails instance
-func NewMemberAddNameDetails(NewValue *UserNameLogInfo) *MemberAddNameDetails {
+func NewMemberAddNameDetails(Value *UserNameLogInfo) *MemberAddNameDetails {
 	s := new(MemberAddNameDetails)
-	s.NewValue = NewValue
+	s.Value = Value
+	return s
+}
+
+// MemberChangeAdminRoleDetails : Change the admin role belonging to team
+// member.
+type MemberChangeAdminRoleDetails struct {
+	// NewValue : New admin role. This field is relevant when the admin role is
+	// changed or whenthe user role changes from no admin rights to with admin
+	// rights.
+	NewValue *AdminRole `json:"new_value,omitempty"`
+	// PreviousValue : Previous admin role. This field is relevant when the
+	// admin role is changed or when the admin role is removed.
+	PreviousValue *AdminRole `json:"previous_value,omitempty"`
+}
+
+// NewMemberChangeAdminRoleDetails returns a new MemberChangeAdminRoleDetails instance
+func NewMemberChangeAdminRoleDetails() *MemberChangeAdminRoleDetails {
+	s := new(MemberChangeAdminRoleDetails)
 	return s
 }
 
@@ -5678,17 +5771,17 @@ func NewMemberChangeEmailDetails(NewValue string) *MemberChangeEmailDetails {
 // MemberChangeMembershipTypeDetails : Changed the membership type (limited vs
 // full) for team member.
 type MemberChangeMembershipTypeDetails struct {
-	// PrevMembershipType : Previous membership type.
-	PrevMembershipType int64 `json:"prev_membership_type"`
-	// NewMembershipType : New membership type.
-	NewMembershipType int64 `json:"new_membership_type"`
+	// PrevValue : Previous membership type.
+	PrevValue *TeamMembershipType `json:"prev_value"`
+	// NewValue : New membership type.
+	NewValue *TeamMembershipType `json:"new_value"`
 }
 
 // NewMemberChangeMembershipTypeDetails returns a new MemberChangeMembershipTypeDetails instance
-func NewMemberChangeMembershipTypeDetails(PrevMembershipType int64, NewMembershipType int64) *MemberChangeMembershipTypeDetails {
+func NewMemberChangeMembershipTypeDetails(PrevValue *TeamMembershipType, NewValue *TeamMembershipType) *MemberChangeMembershipTypeDetails {
 	s := new(MemberChangeMembershipTypeDetails)
-	s.PrevMembershipType = PrevMembershipType
-	s.NewMembershipType = NewMembershipType
+	s.PrevValue = PrevValue
+	s.NewValue = NewValue
 	return s
 }
 
@@ -5708,62 +5801,22 @@ func NewMemberChangeNameDetails(NewValue *UserNameLogInfo, PreviousValue *UserNa
 	return s
 }
 
-// MemberChangeRoleDetails : Change the admin permissions belonging to team
-// member.
-type MemberChangeRoleDetails struct {
-	// NewValue : New admin role. Might be missing due to historical data gap.
-	NewValue string `json:"new_value,omitempty"`
-	// PreviousValue : Previous admin role. Might be missing due to historical
-	// data gap.
-	PreviousValue string `json:"previous_value,omitempty"`
+// MemberChangeStatusDetails : Changed the membership status of a team member.
+type MemberChangeStatusDetails struct {
+	// PreviousValue : Previous member status. Might be missing due to
+	// historical data gap.
+	PreviousValue *MemberStatus `json:"previous_value,omitempty"`
+	// NewValue : New member status.
+	NewValue *MemberStatus `json:"new_value"`
+	// TeamJoinDetails : Additional information relevant when a new member joins
+	// the team.
+	TeamJoinDetails *JoinTeamDetails `json:"team_join_details,omitempty"`
 }
 
-// NewMemberChangeRoleDetails returns a new MemberChangeRoleDetails instance
-func NewMemberChangeRoleDetails() *MemberChangeRoleDetails {
-	s := new(MemberChangeRoleDetails)
-	return s
-}
-
-// MemberInviteDetails : Invited a user to join the team.
-type MemberInviteDetails struct {
-}
-
-// NewMemberInviteDetails returns a new MemberInviteDetails instance
-func NewMemberInviteDetails() *MemberInviteDetails {
-	s := new(MemberInviteDetails)
-	return s
-}
-
-// MemberJoinDetails : Joined the team.
-type MemberJoinDetails struct {
-	// LinkedApps : Linked Applications.
-	LinkedApps []IsAppLogInfo `json:"linked_apps"`
-	// InitialSharedFolders : Shared folders.
-	InitialSharedFolders []*SharedFolderLogInfo `json:"initial_shared_folders"`
-	// LinkedDevices : Linked devices.
-	LinkedDevices []*DeviceLogInfo `json:"linked_devices"`
-}
-
-// NewMemberJoinDetails returns a new MemberJoinDetails instance
-func NewMemberJoinDetails(LinkedApps []IsAppLogInfo, InitialSharedFolders []*SharedFolderLogInfo, LinkedDevices []*DeviceLogInfo) *MemberJoinDetails {
-	s := new(MemberJoinDetails)
-	s.LinkedApps = LinkedApps
-	s.InitialSharedFolders = InitialSharedFolders
-	s.LinkedDevices = LinkedDevices
-	return s
-}
-
-// MemberLeaveDetails : Removed a team member.
-type MemberLeaveDetails struct {
-	// MemberWasOnTeam : True if the member had joined the team before leaving,
-	// False otherwise.
-	MemberWasOnTeam bool `json:"member_was_on_team"`
-}
-
-// NewMemberLeaveDetails returns a new MemberLeaveDetails instance
-func NewMemberLeaveDetails(MemberWasOnTeam bool) *MemberLeaveDetails {
-	s := new(MemberLeaveDetails)
-	s.MemberWasOnTeam = MemberWasOnTeam
+// NewMemberChangeStatusDetails returns a new MemberChangeStatusDetails instance
+func NewMemberChangeStatusDetails(NewValue *MemberStatus) *MemberChangeStatusDetails {
+	s := new(MemberChangeStatusDetails)
+	s.NewValue = NewValue
 	return s
 }
 
@@ -5778,45 +5831,35 @@ func NewMemberPermanentlyDeleteAccountContentsDetails() *MemberPermanentlyDelete
 	return s
 }
 
-// MemberRecoverDetails : Recovered a removed member.
-type MemberRecoverDetails struct {
-}
-
-// NewMemberRecoverDetails returns a new MemberRecoverDetails instance
-func NewMemberRecoverDetails() *MemberRecoverDetails {
-	s := new(MemberRecoverDetails)
-	return s
-}
-
-// MemberRequestsChangePolicy : has no documentation (yet)
-type MemberRequestsChangePolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for MemberRequestsChangePolicy
-const (
-	MemberRequestsChangePolicyDisabled        = "disabled"
-	MemberRequestsChangePolicyRequireApproval = "require_approval"
-	MemberRequestsChangePolicyAutoApproval    = "auto_approval"
-	MemberRequestsChangePolicyOther           = "other"
-)
-
 // MemberRequestsChangePolicyDetails : Changed whether users can find the team
 // when not invited.
 type MemberRequestsChangePolicyDetails struct {
 	// NewValue : New member change requests policy.
-	NewValue *MemberRequestsChangePolicy `json:"new_value"`
+	NewValue *MemberRequestsPolicy `json:"new_value"`
 	// PreviousValue : Previous member change requests policy. Might be missing
 	// due to historical data gap.
-	PreviousValue *MemberRequestsChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *MemberRequestsPolicy `json:"previous_value,omitempty"`
 }
 
 // NewMemberRequestsChangePolicyDetails returns a new MemberRequestsChangePolicyDetails instance
-func NewMemberRequestsChangePolicyDetails(NewValue *MemberRequestsChangePolicy) *MemberRequestsChangePolicyDetails {
+func NewMemberRequestsChangePolicyDetails(NewValue *MemberRequestsPolicy) *MemberRequestsChangePolicyDetails {
 	s := new(MemberRequestsChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
+
+// MemberRequestsPolicy : has no documentation (yet)
+type MemberRequestsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MemberRequestsPolicy
+const (
+	MemberRequestsPolicyDisabled        = "disabled"
+	MemberRequestsPolicyRequireApproval = "require_approval"
+	MemberRequestsPolicyAutoApproval    = "auto_approval"
+	MemberRequestsPolicyOther           = "other"
+)
 
 // MemberSpaceLimitsAddExceptionDetails : Added an exception for one or more
 // team members to bypass space limits imposed by policy.
@@ -5849,17 +5892,17 @@ func NewMemberSpaceLimitsChangePolicyDetails(PreviousValue *SpaceLimitsLevel, Ne
 // MemberSpaceLimitsChangeStatusDetails : Changed the status with respect to
 // whether the team member is under or over storage quota specified by policy.
 type MemberSpaceLimitsChangeStatusDetails struct {
-	// PreviousStatus : Previous storage quota status.
-	PreviousStatus *SpaceLimitsStatus `json:"previous_status"`
-	// NewStatus : New storage quota status.
-	NewStatus *SpaceLimitsStatus `json:"new_status"`
+	// PreviousValue : Previous storage quota status.
+	PreviousValue *SpaceLimitsStatus `json:"previous_value"`
+	// NewValue : New storage quota status.
+	NewValue *SpaceLimitsStatus `json:"new_value"`
 }
 
 // NewMemberSpaceLimitsChangeStatusDetails returns a new MemberSpaceLimitsChangeStatusDetails instance
-func NewMemberSpaceLimitsChangeStatusDetails(PreviousStatus *SpaceLimitsStatus, NewStatus *SpaceLimitsStatus) *MemberSpaceLimitsChangeStatusDetails {
+func NewMemberSpaceLimitsChangeStatusDetails(PreviousValue *SpaceLimitsStatus, NewValue *SpaceLimitsStatus) *MemberSpaceLimitsChangeStatusDetails {
 	s := new(MemberSpaceLimitsChangeStatusDetails)
-	s.PreviousStatus = PreviousStatus
-	s.NewStatus = NewStatus
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
 	return s
 }
 
@@ -5873,6 +5916,21 @@ func NewMemberSpaceLimitsRemoveExceptionDetails() *MemberSpaceLimitsRemoveExcept
 	s := new(MemberSpaceLimitsRemoveExceptionDetails)
 	return s
 }
+
+// MemberStatus : has no documentation (yet)
+type MemberStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MemberStatus
+const (
+	MemberStatusNotJoined = "not_joined"
+	MemberStatusInvited   = "invited"
+	MemberStatusActive    = "active"
+	MemberStatusSuspended = "suspended"
+	MemberStatusRemoved   = "removed"
+	MemberStatusOther     = "other"
+)
 
 // MemberSuggestDetails : Suggested a new team member to be added to the team.
 type MemberSuggestDetails struct {
@@ -5888,28 +5946,30 @@ func NewMemberSuggestDetails() *MemberSuggestDetails {
 // team members to suggest new members to add to the team.
 type MemberSuggestionsChangePolicyDetails struct {
 	// NewValue : New team member suggestions policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *MemberSuggestionsPolicy `json:"new_value"`
 	// PreviousValue : Previous team member suggestions policy. Might be missing
 	// due to historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *MemberSuggestionsPolicy `json:"previous_value,omitempty"`
 }
 
 // NewMemberSuggestionsChangePolicyDetails returns a new MemberSuggestionsChangePolicyDetails instance
-func NewMemberSuggestionsChangePolicyDetails(NewValue *EnableDisableChangePolicy) *MemberSuggestionsChangePolicyDetails {
+func NewMemberSuggestionsChangePolicyDetails(NewValue *MemberSuggestionsPolicy) *MemberSuggestionsChangePolicyDetails {
 	s := new(MemberSuggestionsChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
-// MemberSuspendDetails : Suspended a team member.
-type MemberSuspendDetails struct {
+// MemberSuggestionsPolicy : Member suggestions policy
+type MemberSuggestionsPolicy struct {
+	dropbox.Tagged
 }
 
-// NewMemberSuspendDetails returns a new MemberSuspendDetails instance
-func NewMemberSuspendDetails() *MemberSuspendDetails {
-	s := new(MemberSuspendDetails)
-	return s
-}
+// Valid tag values for MemberSuggestionsPolicy
+const (
+	MemberSuggestionsPolicyDisabled = "disabled"
+	MemberSuggestionsPolicyEnabled  = "enabled"
+	MemberSuggestionsPolicyOther    = "other"
+)
 
 // MemberTransferAccountContentsDetails : Transferred contents of a removed team
 // member account to another member.
@@ -5928,33 +5988,35 @@ func NewMemberTransferAccountContentsDetails(SrcIndex int64, DestIndex int64) *M
 	return s
 }
 
-// MemberUnsuspendDetails : Unsuspended a team member.
-type MemberUnsuspendDetails struct {
-}
-
-// NewMemberUnsuspendDetails returns a new MemberUnsuspendDetails instance
-func NewMemberUnsuspendDetails() *MemberUnsuspendDetails {
-	s := new(MemberUnsuspendDetails)
-	return s
-}
-
 // MicrosoftOfficeAddinChangePolicyDetails : Enabled or disabled the Microsoft
 // Office add-in, which lets team members save files to Dropbox directly from
 // Microsoft Office.
 type MicrosoftOfficeAddinChangePolicyDetails struct {
 	// NewValue : New Microsoft Office addin policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *MicrosoftOfficeAddinPolicy `json:"new_value"`
 	// PreviousValue : Previous Microsoft Office addin policy. Might be missing
 	// due to historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *MicrosoftOfficeAddinPolicy `json:"previous_value,omitempty"`
 }
 
 // NewMicrosoftOfficeAddinChangePolicyDetails returns a new MicrosoftOfficeAddinChangePolicyDetails instance
-func NewMicrosoftOfficeAddinChangePolicyDetails(NewValue *EnableDisableChangePolicy) *MicrosoftOfficeAddinChangePolicyDetails {
+func NewMicrosoftOfficeAddinChangePolicyDetails(NewValue *MicrosoftOfficeAddinPolicy) *MicrosoftOfficeAddinChangePolicyDetails {
 	s := new(MicrosoftOfficeAddinChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
+
+// MicrosoftOfficeAddinPolicy : Microsoft Office addin policy
+type MicrosoftOfficeAddinPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MicrosoftOfficeAddinPolicy
+const (
+	MicrosoftOfficeAddinPolicyDisabled = "disabled"
+	MicrosoftOfficeAddinPolicyEnabled  = "enabled"
+	MicrosoftOfficeAddinPolicyOther    = "other"
+)
 
 // MissingDetails : An indication that an event was returned with missing
 // details
@@ -5996,18 +6058,30 @@ func NewNamespaceRelativePathLogInfo() *NamespaceRelativePathLogInfo {
 // NetworkControlChangePolicyDetails : Enabled or disabled network control.
 type NetworkControlChangePolicyDetails struct {
 	// NewValue : New network control policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *NetworkControlPolicy `json:"new_value"`
 	// PreviousValue : Previous network control policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *NetworkControlPolicy `json:"previous_value,omitempty"`
 }
 
 // NewNetworkControlChangePolicyDetails returns a new NetworkControlChangePolicyDetails instance
-func NewNetworkControlChangePolicyDetails(NewValue *EnableDisableChangePolicy) *NetworkControlChangePolicyDetails {
+func NewNetworkControlChangePolicyDetails(NewValue *NetworkControlPolicy) *NetworkControlChangePolicyDetails {
 	s := new(NetworkControlChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
+
+// NetworkControlPolicy : Network control policy
+type NetworkControlPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for NetworkControlPolicy
+const (
+	NetworkControlPolicyDisabled = "disabled"
+	NetworkControlPolicyEnabled  = "enabled"
+	NetworkControlPolicyOther    = "other"
+)
 
 // UserLogInfo : User's logged information.
 type UserLogInfo struct {
@@ -6169,19 +6243,6 @@ func NewOpenNoteSharedDetails() *OpenNoteSharedDetails {
 	return s
 }
 
-// OptionalChangePolicy : has no documentation (yet)
-type OptionalChangePolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for OptionalChangePolicy
-const (
-	OptionalChangePolicyDisabled = "disabled"
-	OptionalChangePolicyOptional = "optional"
-	OptionalChangePolicyRequired = "required"
-	OptionalChangePolicyOther    = "other"
-)
-
 // OriginLogInfo : The origin from which the actor performed the action.
 type OriginLogInfo struct {
 	// GeoLocation : Geographic location details.
@@ -6234,14 +6295,14 @@ func NewPaperChangeDeploymentPolicyDetails(NewValue *PaperDeploymentPolicy) *Pap
 // be accessible only by team members or anyone by default.
 type PaperChangeMemberPolicyDetails struct {
 	// NewValue : New paper external accessibility policy.
-	NewValue *ExternalSharingAccessibilityPolicy `json:"new_value"`
+	NewValue *PaperMemberPolicy `json:"new_value"`
 	// PreviousValue : Previous paper external accessibility policy. Might be
 	// missing due to historical data gap.
-	PreviousValue *ExternalSharingAccessibilityPolicy `json:"previous_value,omitempty"`
+	PreviousValue *PaperMemberPolicy `json:"previous_value,omitempty"`
 }
 
 // NewPaperChangeMemberPolicyDetails returns a new PaperChangeMemberPolicyDetails instance
-func NewPaperChangeMemberPolicyDetails(NewValue *ExternalSharingAccessibilityPolicy) *PaperChangeMemberPolicyDetails {
+func NewPaperChangeMemberPolicyDetails(NewValue *PaperMemberPolicy) *PaperChangeMemberPolicyDetails {
 	s := new(PaperChangeMemberPolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -6250,14 +6311,14 @@ func NewPaperChangeMemberPolicyDetails(NewValue *ExternalSharingAccessibilityPol
 // PaperChangePolicyDetails : Enabled or disabled Dropbox Paper for the team.
 type PaperChangePolicyDetails struct {
 	// NewValue : New Dropbox Paper policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *PaperPolicy `json:"new_value"`
 	// PreviousValue : Previous Dropbox Paper policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *PaperPolicy `json:"previous_value,omitempty"`
 }
 
 // NewPaperChangePolicyDetails returns a new PaperChangePolicyDetails instance
-func NewPaperChangePolicyDetails(NewValue *EnableDisableChangePolicy) *PaperChangePolicyDetails {
+func NewPaperChangePolicyDetails(NewValue *PaperPolicy) *PaperChangePolicyDetails {
 	s := new(PaperChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -6807,6 +6868,32 @@ func NewPaperFolderTeamInviteDetails(EventUuid string) *PaperFolderTeamInviteDet
 	return s
 }
 
+// PaperMemberPolicy : Policy for controlling if team members can share Paper
+// documents externally.
+type PaperMemberPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperMemberPolicy
+const (
+	PaperMemberPolicyTeamOnly        = "team_only"
+	PaperMemberPolicyDefaultTeamOnly = "default_team_only"
+	PaperMemberPolicyDefaultAnyone   = "default_anyone"
+	PaperMemberPolicyOther           = "other"
+)
+
+// PaperPolicy : Policy for enabling or disabling Dropbox Paper for the team.
+type PaperPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperPolicy
+const (
+	PaperPolicyDisabled = "disabled"
+	PaperPolicyEnabled  = "enabled"
+	PaperPolicyOther    = "other"
+)
+
 // PaperTaggedValue : Paper tagged value.
 type PaperTaggedValue struct {
 	// Tag : Tag.
@@ -6880,27 +6967,24 @@ func NewPasswordChangeDetails() *PasswordChangeDetails {
 
 // PasswordLoginFailDetails : Failed to sign in using a password.
 type PasswordLoginFailDetails struct {
-	// FailureReason : Login failure reason. Might be missing due to historical
-	// data gap.
-	FailureReason string `json:"failure_reason,omitempty"`
+	// ErrorDetails : Login failure details.
+	ErrorDetails *FailureDetailsLogInfo `json:"error_details"`
 }
 
 // NewPasswordLoginFailDetails returns a new PasswordLoginFailDetails instance
-func NewPasswordLoginFailDetails() *PasswordLoginFailDetails {
+func NewPasswordLoginFailDetails(ErrorDetails *FailureDetailsLogInfo) *PasswordLoginFailDetails {
 	s := new(PasswordLoginFailDetails)
+	s.ErrorDetails = ErrorDetails
 	return s
 }
 
 // PasswordLoginSuccessDetails : Signed in using a password.
 type PasswordLoginSuccessDetails struct {
-	// IsEmmManaged : Tells if the user signed in from an EMM managed device.
-	IsEmmManaged bool `json:"is_emm_managed"`
 }
 
 // NewPasswordLoginSuccessDetails returns a new PasswordLoginSuccessDetails instance
-func NewPasswordLoginSuccessDetails(IsEmmManaged bool) *PasswordLoginSuccessDetails {
+func NewPasswordLoginSuccessDetails() *PasswordLoginSuccessDetails {
 	s := new(PasswordLoginSuccessDetails)
-	s.IsEmmManaged = IsEmmManaged
 	return s
 }
 
@@ -6945,14 +7029,14 @@ func NewPathLogInfo(NamespaceRelative *NamespaceRelativePathLogInfo) *PathLogInf
 // members to permanently delete content.
 type PermanentDeleteChangePolicyDetails struct {
 	// NewValue : New permanent delete content policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *ContentPermanentDeletePolicy `json:"new_value"`
 	// PreviousValue : Previous permanent delete content policy. Might be
 	// missing due to historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *ContentPermanentDeletePolicy `json:"previous_value,omitempty"`
 }
 
 // NewPermanentDeleteChangePolicyDetails returns a new PermanentDeleteChangePolicyDetails instance
-func NewPermanentDeleteChangePolicyDetails(NewValue *EnableDisableChangePolicy) *PermanentDeleteChangePolicyDetails {
+func NewPermanentDeleteChangePolicyDetails(NewValue *ContentPermanentDeletePolicy) *PermanentDeleteChangePolicyDetails {
 	s := new(PermanentDeleteChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -6970,32 +7054,49 @@ const (
 	PlacementRestrictionOther      = "other"
 )
 
+// RelocateAssetReferencesLogInfo : Provides the indices of the source asset and
+// the destination asset for a relocate action.
+type RelocateAssetReferencesLogInfo struct {
+	// SrcIndex : Source asset index.
+	SrcIndex int64 `json:"src_index"`
+	// DestIndex : Destination asset index.
+	DestIndex int64 `json:"dest_index"`
+}
+
+// NewRelocateAssetReferencesLogInfo returns a new RelocateAssetReferencesLogInfo instance
+func NewRelocateAssetReferencesLogInfo(SrcIndex int64, DestIndex int64) *RelocateAssetReferencesLogInfo {
+	s := new(RelocateAssetReferencesLogInfo)
+	s.SrcIndex = SrcIndex
+	s.DestIndex = DestIndex
+	return s
+}
+
 // RemoveLogoutUrlDetails : Removed single sign-on logout URL.
 type RemoveLogoutUrlDetails struct {
-	// PreviousSsoLogoutUrl : Previous single sign-on logout URL.
-	PreviousSsoLogoutUrl string `json:"previous_sso_logout_url"`
-	// NewSsoLogoutUrl : New single sign-on logout URL. Might be missing due to
+	// PreviousValue : Previous single sign-on logout URL.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New single sign-on logout URL. Might be missing due to
 	// historical data gap.
-	NewSsoLogoutUrl string `json:"new_sso_logout_url,omitempty"`
+	NewValue string `json:"new_value,omitempty"`
 }
 
 // NewRemoveLogoutUrlDetails returns a new RemoveLogoutUrlDetails instance
-func NewRemoveLogoutUrlDetails(PreviousSsoLogoutUrl string) *RemoveLogoutUrlDetails {
+func NewRemoveLogoutUrlDetails(PreviousValue string) *RemoveLogoutUrlDetails {
 	s := new(RemoveLogoutUrlDetails)
-	s.PreviousSsoLogoutUrl = PreviousSsoLogoutUrl
+	s.PreviousValue = PreviousValue
 	return s
 }
 
 // RemoveSsoUrlDetails : Changed the sign-out URL for SSO.
 type RemoveSsoUrlDetails struct {
-	// PreviousSsoUrl : Previous SSO Url.
-	PreviousSsoUrl string `json:"previous_sso_url"`
+	// PreviousValue : Previous single sign-on logout URL.
+	PreviousValue string `json:"previous_value"`
 }
 
 // NewRemoveSsoUrlDetails returns a new RemoveSsoUrlDetails instance
-func NewRemoveSsoUrlDetails(PreviousSsoUrl string) *RemoveSsoUrlDetails {
+func NewRemoveSsoUrlDetails(PreviousValue string) *RemoveSsoUrlDetails {
 	s := new(RemoveSsoUrlDetails)
-	s.PreviousSsoUrl = PreviousSsoUrl
+	s.PreviousValue = PreviousValue
 	return s
 }
 
@@ -7034,40 +7135,6 @@ func NewResellerSupportSessionStartDetails() *ResellerSupportSessionStartDetails
 	s := new(ResellerSupportSessionStartDetails)
 	return s
 }
-
-// SessionsManagementIdleLengthPolicy : has no documentation (yet)
-type SessionsManagementIdleLengthPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SessionsManagementIdleLengthPolicy
-const (
-	SessionsManagementIdleLengthPolicyNone     = "none"
-	SessionsManagementIdleLengthPolicyMinute10 = "minute_10"
-	SessionsManagementIdleLengthPolicyMinute30 = "minute_30"
-	SessionsManagementIdleLengthPolicyHour1    = "hour_1"
-	SessionsManagementIdleLengthPolicyHour8    = "hour_8"
-	SessionsManagementIdleLengthPolicyHour24   = "hour_24"
-	SessionsManagementIdleLengthPolicyHour48   = "hour_48"
-	SessionsManagementIdleLengthPolicyOther    = "other"
-)
-
-// SessionsManagementSessionLengthPolicy : has no documentation (yet)
-type SessionsManagementSessionLengthPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SessionsManagementSessionLengthPolicy
-const (
-	SessionsManagementSessionLengthPolicyDay1   = "day_1"
-	SessionsManagementSessionLengthPolicyDay7   = "day_7"
-	SessionsManagementSessionLengthPolicyDay14  = "day_14"
-	SessionsManagementSessionLengthPolicyMonth1 = "month_1"
-	SessionsManagementSessionLengthPolicyMonth3 = "month_3"
-	SessionsManagementSessionLengthPolicyMonth6 = "month_6"
-	SessionsManagementSessionLengthPolicyYear1  = "year_1"
-	SessionsManagementSessionLengthPolicyOther  = "other"
-)
 
 // SfAddGroupDetails : Added the team to a shared folder.
 type SfAddGroupDetails struct {
@@ -7197,9 +7264,9 @@ type SfTeamInviteChangeRoleDetails struct {
 	TargetIndex int64 `json:"target_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
+	// NewSharingPermission : New sharing permission. Might be missing due to
 	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
+	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
 	// PreviousSharingPermission : Previous sharing permission. Might be missing
 	// due to historical data gap.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
@@ -7383,14 +7450,14 @@ type SharedContentChangeDownloadsPolicyDetails struct {
 	// data gap.
 	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New downlaod policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *SharedContentDownloadsPolicy `json:"new_value"`
 	// PreviousValue : Previous downlaod policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharedContentDownloadsPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeDownloadsPolicyDetails returns a new SharedContentChangeDownloadsPolicyDetails instance
-func NewSharedContentChangeDownloadsPolicyDetails(TargetIndex int64, NewValue *EnableDisableChangePolicy) *SharedContentChangeDownloadsPolicyDetails {
+func NewSharedContentChangeDownloadsPolicyDetails(TargetIndex int64, NewValue *SharedContentDownloadsPolicy) *SharedContentChangeDownloadsPolicyDetails {
 	s := new(SharedContentChangeDownloadsPolicyDetails)
 	s.TargetIndex = TargetIndex
 	s.NewValue = NewValue
@@ -7404,12 +7471,12 @@ type SharedContentChangeInviteeRoleDetails struct {
 	TargetIndex int64 `json:"target_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
+	// NewSharingPermission : New sharing permission. Might be missing due to
+	// historical data gap.
+	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
 	// PreviousSharingPermission : Previous sharing permission. Might be missing
 	// due to historical data gap.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
 }
 
 // NewSharedContentChangeInviteeRoleDetails returns a new SharedContentChangeInviteeRoleDetails instance
@@ -7497,15 +7564,15 @@ type SharedContentChangeMemberRoleDetails struct {
 	TargetIndex int64 `json:"target_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
+	// NewSharingPermission : New sharing permission. Might be missing due to
 	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
 	// PreviousSharingPermission : Previous sharing permission. Might be missing
 	// due to historical data gap.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
+	// SharedFolderType : Shared folder type. Might be missing due to historical
+	// data gap.
+	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
 
 // NewSharedContentChangeMemberRoleDetails returns a new SharedContentChangeMemberRoleDetails instance
@@ -7526,14 +7593,14 @@ type SharedContentChangeViewerInfoPolicyDetails struct {
 	// data gap.
 	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New viewer info policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *SharedContentViewerInfoPolicy `json:"new_value"`
 	// PreviousValue : Previous view info policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharedContentViewerInfoPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeViewerInfoPolicyDetails returns a new SharedContentChangeViewerInfoPolicyDetails instance
-func NewSharedContentChangeViewerInfoPolicyDetails(TargetIndex int64, NewValue *EnableDisableChangePolicy) *SharedContentChangeViewerInfoPolicyDetails {
+func NewSharedContentChangeViewerInfoPolicyDetails(TargetIndex int64, NewValue *SharedContentViewerInfoPolicy) *SharedContentChangeViewerInfoPolicyDetails {
 	s := new(SharedContentChangeViewerInfoPolicyDetails)
 	s.TargetIndex = TargetIndex
 	s.NewValue = NewValue
@@ -7565,21 +7632,19 @@ type SharedContentCopyDetails struct {
 	// SharingPermission : Sharing permission. Might be missing due to
 	// historical data gap.
 	SharingPermission string `json:"sharing_permission,omitempty"`
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
 	// TargetIndex : Target asset index.
 	TargetIndex int64 `json:"target_index"`
+	// RelocateActionDetails : Specifies the source and destination indices in
+	// the assets list.
+	RelocateActionDetails *RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewSharedContentCopyDetails returns a new SharedContentCopyDetails instance
-func NewSharedContentCopyDetails(SharedContentLink string, SrcIndex int64, DestIndex int64, TargetIndex int64) *SharedContentCopyDetails {
+func NewSharedContentCopyDetails(SharedContentLink string, TargetIndex int64, RelocateActionDetails *RelocateAssetReferencesLogInfo) *SharedContentCopyDetails {
 	s := new(SharedContentCopyDetails)
 	s.SharedContentLink = SharedContentLink
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
 	s.TargetIndex = TargetIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -7601,6 +7666,18 @@ func NewSharedContentDownloadDetails(SharedContentLink string, TargetIndex int64
 	s.TargetIndex = TargetIndex
 	return s
 }
+
+// SharedContentDownloadsPolicy : Shared content downloads policy
+type SharedContentDownloadsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SharedContentDownloadsPolicy
+const (
+	SharedContentDownloadsPolicyDisabled = "disabled"
+	SharedContentDownloadsPolicyEnabled  = "enabled"
+	SharedContentDownloadsPolicyOther    = "other"
+)
 
 // SharedContentRelinquishMembershipDetails : Left the membership of a shared
 // file or folder.
@@ -7749,6 +7826,18 @@ func NewSharedContentViewDetails(SharedContentLink string, TargetIndex int64) *S
 	return s
 }
 
+// SharedContentViewerInfoPolicy : Shared content viewer info policy
+type SharedContentViewerInfoPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SharedContentViewerInfoPolicy
+const (
+	SharedContentViewerInfoPolicyDisabled = "disabled"
+	SharedContentViewerInfoPolicyEnabled  = "enabled"
+	SharedContentViewerInfoPolicyOther    = "other"
+)
+
 // SharedFolderChangeConfidentialityDetails : Set or unset the confidential flag
 // on a shared folder.
 type SharedFolderChangeConfidentialityDetails struct {
@@ -7835,14 +7924,14 @@ type SharedFolderChangeMemberPolicyDetails struct {
 	// data gap.
 	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New external invite policy.
-	NewValue *ExternalSharingPolicy `json:"new_value"`
+	NewValue *SharedFolderMemberPolicy `json:"new_value"`
 	// PreviousValue : Previous external invite policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *ExternalSharingPolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharedFolderMemberPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharedFolderChangeMemberPolicyDetails returns a new SharedFolderChangeMemberPolicyDetails instance
-func NewSharedFolderChangeMemberPolicyDetails(TargetIndex int64, OriginalFolderName string, NewValue *ExternalSharingPolicy) *SharedFolderChangeMemberPolicyDetails {
+func NewSharedFolderChangeMemberPolicyDetails(TargetIndex int64, OriginalFolderName string, NewValue *SharedFolderMemberPolicy) *SharedFolderChangeMemberPolicyDetails {
 	s := new(SharedFolderChangeMemberPolicyDetails)
 	s.TargetIndex = TargetIndex
 	s.OriginalFolderName = OriginalFolderName
@@ -7879,20 +7968,18 @@ const (
 	SharedFolderLinkPolicyOther          = "other"
 )
 
-// SharedFolderLogInfo : SharedFolder's logged information.
-type SharedFolderLogInfo struct {
-	// NsId : Namespace ID. Might be missing due to historical data gap.
-	NsId string `json:"ns_id,omitempty"`
-	// DisplayName : Shared folder display name.
-	DisplayName string `json:"display_name"`
+// SharedFolderMemberPolicy : Policy for controlling who can become a member of
+// a shared folder
+type SharedFolderMemberPolicy struct {
+	dropbox.Tagged
 }
 
-// NewSharedFolderLogInfo returns a new SharedFolderLogInfo instance
-func NewSharedFolderLogInfo(DisplayName string) *SharedFolderLogInfo {
-	s := new(SharedFolderLogInfo)
-	s.DisplayName = DisplayName
-	return s
-}
+// Valid tag values for SharedFolderMemberPolicy
+const (
+	SharedFolderMemberPolicyTeamOnly = "team_only"
+	SharedFolderMemberPolicyAnyone   = "anyone"
+	SharedFolderMemberPolicyOther    = "other"
+)
 
 // SharedFolderMembershipManagementPolicy : has no documentation (yet)
 type SharedFolderMembershipManagementPolicy struct {
@@ -7969,14 +8056,14 @@ func NewSharedNoteOpenedDetails() *SharedNoteOpenedDetails {
 // shared folders owned externally (i.e. outside the team).
 type SharingChangeFolderJoinPolicyDetails struct {
 	// NewValue : New external join policy.
-	NewValue *ExternalSharingPolicy `json:"new_value"`
+	NewValue *SharingFolderJoinPolicy `json:"new_value"`
 	// PreviousValue : Previous external join policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *ExternalSharingPolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharingFolderJoinPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharingChangeFolderJoinPolicyDetails returns a new SharingChangeFolderJoinPolicyDetails instance
-func NewSharingChangeFolderJoinPolicyDetails(NewValue *ExternalSharingPolicy) *SharingChangeFolderJoinPolicyDetails {
+func NewSharingChangeFolderJoinPolicyDetails(NewValue *SharingFolderJoinPolicy) *SharingChangeFolderJoinPolicyDetails {
 	s := new(SharingChangeFolderJoinPolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -7987,14 +8074,14 @@ func NewSharingChangeFolderJoinPolicyDetails(NewValue *ExternalSharingPolicy) *S
 // accessible only by team members or anyone by default.
 type SharingChangeLinkPolicyDetails struct {
 	// NewValue : New external link accessibility policy.
-	NewValue *ExternalSharingAccessibilityPolicy `json:"new_value"`
+	NewValue *SharingLinkPolicy `json:"new_value"`
 	// PreviousValue : Previous external link accessibility policy. Might be
 	// missing due to historical data gap.
-	PreviousValue *ExternalSharingAccessibilityPolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharingLinkPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharingChangeLinkPolicyDetails returns a new SharingChangeLinkPolicyDetails instance
-func NewSharingChangeLinkPolicyDetails(NewValue *ExternalSharingAccessibilityPolicy) *SharingChangeLinkPolicyDetails {
+func NewSharingChangeLinkPolicyDetails(NewValue *SharingLinkPolicy) *SharingChangeLinkPolicyDetails {
 	s := new(SharingChangeLinkPolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -8004,18 +8091,57 @@ func NewSharingChangeLinkPolicyDetails(NewValue *ExternalSharingAccessibilityPol
 // files and folders externally (i.e. outside the team).
 type SharingChangeMemberPolicyDetails struct {
 	// NewValue : New external invite policy.
-	NewValue *ExternalSharingPolicy `json:"new_value"`
+	NewValue *SharingMemberPolicy `json:"new_value"`
 	// PreviousValue : Previous external invite policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *ExternalSharingPolicy `json:"previous_value,omitempty"`
+	PreviousValue *SharingMemberPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharingChangeMemberPolicyDetails returns a new SharingChangeMemberPolicyDetails instance
-func NewSharingChangeMemberPolicyDetails(NewValue *ExternalSharingPolicy) *SharingChangeMemberPolicyDetails {
+func NewSharingChangeMemberPolicyDetails(NewValue *SharingMemberPolicy) *SharingChangeMemberPolicyDetails {
 	s := new(SharingChangeMemberPolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
+
+// SharingFolderJoinPolicy : Policy for controlling if team members can join
+// shared folders owned by non team members.
+type SharingFolderJoinPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SharingFolderJoinPolicy
+const (
+	SharingFolderJoinPolicyTeamOnly = "team_only"
+	SharingFolderJoinPolicyAnyone   = "anyone"
+	SharingFolderJoinPolicyOther    = "other"
+)
+
+// SharingLinkPolicy : Policy for controlling if team members can share links
+// externally
+type SharingLinkPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SharingLinkPolicy
+const (
+	SharingLinkPolicyTeamOnly        = "team_only"
+	SharingLinkPolicyDefaultTeamOnly = "default_team_only"
+	SharingLinkPolicyDefaultAnyone   = "default_anyone"
+	SharingLinkPolicyOther           = "other"
+)
+
+// SharingMemberPolicy : External sharing policy
+type SharingMemberPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SharingMemberPolicy
+const (
+	SharingMemberPolicyTeamOnly = "team_only"
+	SharingMemberPolicyAnyone   = "anyone"
+	SharingMemberPolicyOther    = "other"
+)
 
 // ShmodelAppCreateDetails : Created a link to a file using an app.
 type ShmodelAppCreateDetails struct {
@@ -8234,6 +8360,50 @@ func NewSmartSyncCreateAdminPrivilegeReportDetails() *SmartSyncCreateAdminPrivil
 	return s
 }
 
+// SmartSyncNotOptOutDetails : Opted team into Smart Sync.
+type SmartSyncNotOptOutDetails struct {
+	// PreviousValue : Previous Smart Sync opt out policy.
+	PreviousValue *SmartSyncOptOutPolicy `json:"previous_value"`
+	// NewValue : New Smart Sync opt out policy.
+	NewValue *SmartSyncOptOutPolicy `json:"new_value"`
+}
+
+// NewSmartSyncNotOptOutDetails returns a new SmartSyncNotOptOutDetails instance
+func NewSmartSyncNotOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue *SmartSyncOptOutPolicy) *SmartSyncNotOptOutDetails {
+	s := new(SmartSyncNotOptOutDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// SmartSyncOptOutDetails : Opted team out of Smart Sync.
+type SmartSyncOptOutDetails struct {
+	// PreviousValue : Previous Smart Sync opt out policy.
+	PreviousValue *SmartSyncOptOutPolicy `json:"previous_value"`
+	// NewValue : New Smart Sync opt out policy.
+	NewValue *SmartSyncOptOutPolicy `json:"new_value"`
+}
+
+// NewSmartSyncOptOutDetails returns a new SmartSyncOptOutDetails instance
+func NewSmartSyncOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue *SmartSyncOptOutPolicy) *SmartSyncOptOutDetails {
+	s := new(SmartSyncOptOutDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// SmartSyncOptOutPolicy : has no documentation (yet)
+type SmartSyncOptOutPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SmartSyncOptOutPolicy
+const (
+	SmartSyncOptOutPolicyOptedOut = "opted_out"
+	SmartSyncOptOutPolicyDefault  = "default"
+	SmartSyncOptOutPolicyOther    = "other"
+)
+
 // SmartSyncPolicy : has no documentation (yet)
 type SmartSyncPolicy struct {
 	dropbox.Tagged
@@ -8275,78 +8445,60 @@ const (
 
 // SsoChangeCertDetails : Changed the X.509 certificate for SSO.
 type SsoChangeCertDetails struct {
-	// Subject : Certificate subject.
-	Subject string `json:"subject"`
-	// Issuer : Certificate issuer.
-	Issuer string `json:"issuer"`
-	// IssueDate : Certificate issue date.
-	IssueDate string `json:"issue_date"`
-	// ExpirationDate : Certificate expiration date.
-	ExpirationDate string `json:"expiration_date"`
-	// SerialNumber : Certificate serial number.
-	SerialNumber string `json:"serial_number"`
-	// Sha1Fingerprint : Certificate sha1 fingerprint.
-	Sha1Fingerprint string `json:"sha1_fingerprint"`
-	// CommonName : Certificate common name.
-	CommonName string `json:"common_name"`
+	// CertificateDetails : SSO certificate details.
+	CertificateDetails *Certificate `json:"certificate_details"`
 }
 
 // NewSsoChangeCertDetails returns a new SsoChangeCertDetails instance
-func NewSsoChangeCertDetails(Subject string, Issuer string, IssueDate string, ExpirationDate string, SerialNumber string, Sha1Fingerprint string, CommonName string) *SsoChangeCertDetails {
+func NewSsoChangeCertDetails(CertificateDetails *Certificate) *SsoChangeCertDetails {
 	s := new(SsoChangeCertDetails)
-	s.Subject = Subject
-	s.Issuer = Issuer
-	s.IssueDate = IssueDate
-	s.ExpirationDate = ExpirationDate
-	s.SerialNumber = SerialNumber
-	s.Sha1Fingerprint = Sha1Fingerprint
-	s.CommonName = CommonName
+	s.CertificateDetails = CertificateDetails
 	return s
 }
 
 // SsoChangeLoginUrlDetails : Changed the sign-in URL for SSO.
 type SsoChangeLoginUrlDetails struct {
-	// PreviousSsoUrl : Previous SSO Url.
-	PreviousSsoUrl string `json:"previous_sso_url"`
-	// NewSsoUrl : New SSO Url.
-	NewSsoUrl string `json:"new_sso_url"`
+	// PreviousValue : Previous single sign-on login URL.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New single sign-on login URL.
+	NewValue string `json:"new_value"`
 }
 
 // NewSsoChangeLoginUrlDetails returns a new SsoChangeLoginUrlDetails instance
-func NewSsoChangeLoginUrlDetails(PreviousSsoUrl string, NewSsoUrl string) *SsoChangeLoginUrlDetails {
+func NewSsoChangeLoginUrlDetails(PreviousValue string, NewValue string) *SsoChangeLoginUrlDetails {
 	s := new(SsoChangeLoginUrlDetails)
-	s.PreviousSsoUrl = PreviousSsoUrl
-	s.NewSsoUrl = NewSsoUrl
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
 	return s
 }
 
 // SsoChangeLogoutUrlDetails : Changed the sign-out URL for SSO.
 type SsoChangeLogoutUrlDetails struct {
-	// PreviousSsoLogoutUrl : Previous single sign-on logout URL.
-	PreviousSsoLogoutUrl string `json:"previous_sso_logout_url"`
-	// NewSsoLogoutUrl : New single sign-on logout URL. Might be missing due to
+	// PreviousValue : Previous single sign-on logout URL.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New single sign-on logout URL. Might be missing due to
 	// historical data gap.
-	NewSsoLogoutUrl string `json:"new_sso_logout_url,omitempty"`
+	NewValue string `json:"new_value,omitempty"`
 }
 
 // NewSsoChangeLogoutUrlDetails returns a new SsoChangeLogoutUrlDetails instance
-func NewSsoChangeLogoutUrlDetails(PreviousSsoLogoutUrl string) *SsoChangeLogoutUrlDetails {
+func NewSsoChangeLogoutUrlDetails(PreviousValue string) *SsoChangeLogoutUrlDetails {
 	s := new(SsoChangeLogoutUrlDetails)
-	s.PreviousSsoLogoutUrl = PreviousSsoLogoutUrl
+	s.PreviousValue = PreviousValue
 	return s
 }
 
 // SsoChangePolicyDetails : Change the single sign-on policy for the team.
 type SsoChangePolicyDetails struct {
 	// NewValue : New single sign-on policy.
-	NewValue *OptionalChangePolicy `json:"new_value"`
+	NewValue *SsoPolicy `json:"new_value"`
 	// PreviousValue : Previous single sign-on policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *OptionalChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *SsoPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSsoChangePolicyDetails returns a new SsoChangePolicyDetails instance
-func NewSsoChangePolicyDetails(NewValue *OptionalChangePolicy) *SsoChangePolicyDetails {
+func NewSsoChangePolicyDetails(NewValue *SsoPolicy) *SsoChangePolicyDetails {
 	s := new(SsoChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -8354,46 +8506,56 @@ func NewSsoChangePolicyDetails(NewValue *OptionalChangePolicy) *SsoChangePolicyD
 
 // SsoChangeSamlIdentityModeDetails : Changed the SAML identity mode for SSO.
 type SsoChangeSamlIdentityModeDetails struct {
-	// PreviousSamlIdentityMode : Previous single sign-on identity mode.
-	PreviousSamlIdentityMode int64 `json:"previous_saml_identity_mode"`
-	// NewSamlIdentityMode : New single sign-on identity mode.
-	NewSamlIdentityMode int64 `json:"new_saml_identity_mode"`
+	// PreviousValue : Previous single sign-on identity mode.
+	PreviousValue int64 `json:"previous_value"`
+	// NewValue : New single sign-on identity mode.
+	NewValue int64 `json:"new_value"`
 }
 
 // NewSsoChangeSamlIdentityModeDetails returns a new SsoChangeSamlIdentityModeDetails instance
-func NewSsoChangeSamlIdentityModeDetails(PreviousSamlIdentityMode int64, NewSamlIdentityMode int64) *SsoChangeSamlIdentityModeDetails {
+func NewSsoChangeSamlIdentityModeDetails(PreviousValue int64, NewValue int64) *SsoChangeSamlIdentityModeDetails {
 	s := new(SsoChangeSamlIdentityModeDetails)
-	s.PreviousSamlIdentityMode = PreviousSamlIdentityMode
-	s.NewSamlIdentityMode = NewSamlIdentityMode
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
 	return s
 }
 
 // SsoLoginFailDetails : Failed to sign in using SSO.
 type SsoLoginFailDetails struct {
-	// SystemMessage : A technical description of the error.
-	SystemMessage string `json:"system_message"`
-	// AdminMessage : A user friendly description of the error.
-	AdminMessage string `json:"admin_message"`
+	// ErrorDetails : Login failure details.
+	ErrorDetails *FailureDetailsLogInfo `json:"error_details"`
 }
 
 // NewSsoLoginFailDetails returns a new SsoLoginFailDetails instance
-func NewSsoLoginFailDetails(SystemMessage string, AdminMessage string) *SsoLoginFailDetails {
+func NewSsoLoginFailDetails(ErrorDetails *FailureDetailsLogInfo) *SsoLoginFailDetails {
 	s := new(SsoLoginFailDetails)
-	s.SystemMessage = SystemMessage
-	s.AdminMessage = AdminMessage
+	s.ErrorDetails = ErrorDetails
 	return s
 }
+
+// SsoPolicy : SSO policy
+type SsoPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SsoPolicy
+const (
+	SsoPolicyDisabled = "disabled"
+	SsoPolicyOptional = "optional"
+	SsoPolicyRequired = "required"
+	SsoPolicyOther    = "other"
+)
 
 // TeamActivityCreateReportDetails : Created a team activity report.
 type TeamActivityCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate string `json:"start_date"`
+	StartDate time.Time `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate string `json:"end_date"`
+	EndDate time.Time `json:"end_date"`
 }
 
 // NewTeamActivityCreateReportDetails returns a new TeamActivityCreateReportDetails instance
-func NewTeamActivityCreateReportDetails(StartDate string, EndDate string) *TeamActivityCreateReportDetails {
+func NewTeamActivityCreateReportDetails(StartDate time.Time, EndDate time.Time) *TeamActivityCreateReportDetails {
 	s := new(TeamActivityCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -8404,9 +8566,8 @@ func NewTeamActivityCreateReportDetails(StartDate string, EndDate string) *TeamA
 type TeamEvent struct {
 	// Timestamp : The Dropbox timestamp representing when the action was taken.
 	Timestamp time.Time `json:"timestamp"`
-	// EventCategories : One or more categories that this type of action belongs
-	// to.
-	EventCategories []*EventCategory `json:"event_categories"`
+	// EventCategory : The category that this type of action belongs to.
+	EventCategory *EventCategory `json:"event_category"`
 	// Actor : The entity who actually performed the action.
 	Actor *ActorLogInfo `json:"actor"`
 	// Origin : The origin from which the actor performed the action including
@@ -8436,10 +8597,10 @@ type TeamEvent struct {
 }
 
 // NewTeamEvent returns a new TeamEvent instance
-func NewTeamEvent(Timestamp time.Time, EventCategories []*EventCategory, Actor *ActorLogInfo, InvolveNonTeamMember bool, Context *ContextLogInfo, EventType *EventType, Details *EventDetails) *TeamEvent {
+func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, Actor *ActorLogInfo, InvolveNonTeamMember bool, Context *ContextLogInfo, EventType *EventType, Details *EventDetails) *TeamEvent {
 	s := new(TeamEvent)
 	s.Timestamp = Timestamp
-	s.EventCategories = EventCategories
+	s.EventCategory = EventCategory
 	s.Actor = Actor
 	s.InvolveNonTeamMember = InvolveNonTeamMember
 	s.Context = Context
@@ -8450,17 +8611,17 @@ func NewTeamEvent(Timestamp time.Time, EventCategories []*EventCategory, Actor *
 
 // TeamFolderChangeStatusDetails : Changed the archival status of a team folder.
 type TeamFolderChangeStatusDetails struct {
-	// NewStatus : New team folder status.
-	NewStatus *TeamFolderStatus `json:"new_status"`
-	// PreviousStatus : Previous team folder status. Might be missing due to
+	// NewValue : New team folder status.
+	NewValue *TeamFolderStatus `json:"new_value"`
+	// PreviousValue : Previous team folder status. Might be missing due to
 	// historical data gap.
-	PreviousStatus *TeamFolderStatus `json:"previous_status,omitempty"`
+	PreviousValue *TeamFolderStatus `json:"previous_value,omitempty"`
 }
 
 // NewTeamFolderChangeStatusDetails returns a new TeamFolderChangeStatusDetails instance
-func NewTeamFolderChangeStatusDetails(NewStatus *TeamFolderStatus) *TeamFolderChangeStatusDetails {
+func NewTeamFolderChangeStatusDetails(NewValue *TeamFolderStatus) *TeamFolderChangeStatusDetails {
 	s := new(TeamFolderChangeStatusDetails)
-	s.NewStatus = NewStatus
+	s.NewValue = NewValue
 	return s
 }
 
@@ -8501,17 +8662,15 @@ func NewTeamFolderPermanentlyDeleteDetails() *TeamFolderPermanentlyDeleteDetails
 
 // TeamFolderRenameDetails : Renamed an active or archived team folder.
 type TeamFolderRenameDetails struct {
-	// SrcIndex : Source asset index.
-	SrcIndex int64 `json:"src_index"`
-	// DestIndex : Destination asset index.
-	DestIndex int64 `json:"dest_index"`
+	// RelocateActionDetails : Specifies the source and destination indices in
+	// the assets list.
+	RelocateActionDetails *RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
 
 // NewTeamFolderRenameDetails returns a new TeamFolderRenameDetails instance
-func NewTeamFolderRenameDetails(SrcIndex int64, DestIndex int64) *TeamFolderRenameDetails {
+func NewTeamFolderRenameDetails(RelocateActionDetails *RelocateAssetReferencesLogInfo) *TeamFolderRenameDetails {
 	s := new(TeamFolderRenameDetails)
-	s.SrcIndex = SrcIndex
-	s.DestIndex = DestIndex
+	s.RelocateActionDetails = RelocateActionDetails
 	return s
 }
 
@@ -8554,19 +8713,57 @@ func NewTeamMemberLogInfo() *TeamMemberLogInfo {
 	return s
 }
 
-// TeamMergeDetails : Merged the team into another team.
-type TeamMergeDetails struct {
-	// MergedFromTeamName : Merged from team name. Might be missing due to
-	// historical data gap.
-	MergedFromTeamName string `json:"merged_from_team_name,omitempty"`
-	// MergedToTeamName : Merged to team name. Might be missing due to
-	// historical data gap.
-	MergedToTeamName string `json:"merged_to_team_name,omitempty"`
+// TeamMembershipType : has no documentation (yet)
+type TeamMembershipType struct {
+	dropbox.Tagged
 }
 
-// NewTeamMergeDetails returns a new TeamMergeDetails instance
-func NewTeamMergeDetails() *TeamMergeDetails {
-	s := new(TeamMergeDetails)
+// Valid tag values for TeamMembershipType
+const (
+	TeamMembershipTypeFree  = "free"
+	TeamMembershipTypeFull  = "full"
+	TeamMembershipTypeOther = "other"
+)
+
+// TeamMergeFromDetails : Merged another team into this team.
+type TeamMergeFromDetails struct {
+	// TeamName : The name of the team that was merged into this team.
+	TeamName string `json:"team_name"`
+}
+
+// NewTeamMergeFromDetails returns a new TeamMergeFromDetails instance
+func NewTeamMergeFromDetails(TeamName string) *TeamMergeFromDetails {
+	s := new(TeamMergeFromDetails)
+	s.TeamName = TeamName
+	return s
+}
+
+// TeamMergeToDetails : Merged this team into another team.
+type TeamMergeToDetails struct {
+	// TeamName : The name of the team that this team was merged into.
+	TeamName string `json:"team_name"`
+}
+
+// NewTeamMergeToDetails returns a new TeamMergeToDetails instance
+func NewTeamMergeToDetails(TeamName string) *TeamMergeToDetails {
+	s := new(TeamMergeToDetails)
+	s.TeamName = TeamName
+	return s
+}
+
+// TeamName : Team name details
+type TeamName struct {
+	// TeamDisplayName : Team's display name.
+	TeamDisplayName string `json:"team_display_name"`
+	// TeamLegalName : Team's legal name.
+	TeamLegalName string `json:"team_legal_name"`
+}
+
+// NewTeamName returns a new TeamName instance
+func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
+	s := new(TeamName)
+	s.TeamDisplayName = TeamDisplayName
+	s.TeamLegalName = TeamLegalName
 	return s
 }
 
@@ -8594,17 +8791,17 @@ func NewTeamProfileChangeLogoDetails() *TeamProfileChangeLogoDetails {
 
 // TeamProfileChangeNameDetails : Changed the team name.
 type TeamProfileChangeNameDetails struct {
-	// TeamDisplayName : Team's display name.
-	TeamDisplayName string `json:"team_display_name"`
-	// TeamLegalName : Team's legal name.
-	TeamLegalName string `json:"team_legal_name"`
+	// PreviousValue : Previous teams name. Might be missing due to historical
+	// data gap.
+	PreviousValue *TeamName `json:"previous_value,omitempty"`
+	// NewValue : New team name.
+	NewValue *TeamName `json:"new_value"`
 }
 
 // NewTeamProfileChangeNameDetails returns a new TeamProfileChangeNameDetails instance
-func NewTeamProfileChangeNameDetails(TeamDisplayName string, TeamLegalName string) *TeamProfileChangeNameDetails {
+func NewTeamProfileChangeNameDetails(NewValue *TeamName) *TeamProfileChangeNameDetails {
 	s := new(TeamProfileChangeNameDetails)
-	s.TeamDisplayName = TeamDisplayName
-	s.TeamLegalName = TeamLegalName
+	s.NewValue = NewValue
 	return s
 }
 
@@ -8653,14 +8850,14 @@ func NewTfaChangeBackupPhoneDetails() *TfaChangeBackupPhoneDetails {
 // TfaChangePolicyDetails : Change two-step verification policy for the team.
 type TfaChangePolicyDetails struct {
 	// NewValue : New change policy.
-	NewValue *OptionalChangePolicy `json:"new_value"`
+	NewValue *TfaPolicy `json:"new_value"`
 	// PreviousValue : Previous change policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *OptionalChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *TfaPolicy `json:"previous_value,omitempty"`
 }
 
 // NewTfaChangePolicyDetails returns a new TfaChangePolicyDetails instance
-func NewTfaChangePolicyDetails(NewValue *OptionalChangePolicy) *TfaChangePolicyDetails {
+func NewTfaChangePolicyDetails(NewValue *TfaPolicy) *TfaChangePolicyDetails {
 	s := new(TfaChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
@@ -8674,7 +8871,8 @@ type TfaChangeStatusDetails struct {
 	// PreviousValue : The previous two factor authentication configuration.
 	// Might be missing due to historical data gap.
 	PreviousValue *TfaConfiguration `json:"previous_value,omitempty"`
-	// UsedRescueCode : Used two factor authentication code.
+	// UsedRescueCode : Used two factor authentication rescue code. This flag is
+	// relevant when the two factor authentication configuration is disabled.
 	UsedRescueCode bool `json:"used_rescue_code,omitempty"`
 }
 
@@ -8685,7 +8883,8 @@ func NewTfaChangeStatusDetails(NewValue *TfaConfiguration) *TfaChangeStatusDetai
 	return s
 }
 
-// TfaConfiguration : has no documentation (yet)
+// TfaConfiguration : Two factor authentication configuration. Note: the enabled
+// option is deprecated.
 type TfaConfiguration struct {
 	dropbox.Tagged
 }
@@ -8697,6 +8896,19 @@ const (
 	TfaConfigurationSms           = "sms"
 	TfaConfigurationAuthenticator = "authenticator"
 	TfaConfigurationOther         = "other"
+)
+
+// TfaPolicy : Two factor authentication policy
+type TfaPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TfaPolicy
+const (
+	TfaPolicyDisabled = "disabled"
+	TfaPolicyOptional = "optional"
+	TfaPolicyRequired = "required"
+	TfaPolicyOther    = "other"
 )
 
 // TfaRemoveBackupPhoneDetails : Removed the backup phone for two-step
@@ -8731,23 +8943,53 @@ func NewTfaResetDetails() *TfaResetDetails {
 	return s
 }
 
+// TimeUnit : has no documentation (yet)
+type TimeUnit struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TimeUnit
+const (
+	TimeUnitMilliseconds = "milliseconds"
+	TimeUnitSeconds      = "seconds"
+	TimeUnitMinutes      = "minutes"
+	TimeUnitHours        = "hours"
+	TimeUnitDays         = "days"
+	TimeUnitWeeks        = "weeks"
+	TimeUnitMonths       = "months"
+	TimeUnitYears        = "years"
+	TimeUnitOther        = "other"
+)
+
 // TwoAccountChangePolicyDetails : Enabled or disabled the option for team
 // members to link a personal Dropbox account in addition to their work account
 // to the same computer.
 type TwoAccountChangePolicyDetails struct {
 	// NewValue : New two account policy.
-	NewValue *EnableDisableChangePolicy `json:"new_value"`
+	NewValue *TwoAccountPolicy `json:"new_value"`
 	// PreviousValue : Previous two account policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *EnableDisableChangePolicy `json:"previous_value,omitempty"`
+	PreviousValue *TwoAccountPolicy `json:"previous_value,omitempty"`
 }
 
 // NewTwoAccountChangePolicyDetails returns a new TwoAccountChangePolicyDetails instance
-func NewTwoAccountChangePolicyDetails(NewValue *EnableDisableChangePolicy) *TwoAccountChangePolicyDetails {
+func NewTwoAccountChangePolicyDetails(NewValue *TwoAccountPolicy) *TwoAccountChangePolicyDetails {
 	s := new(TwoAccountChangePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
+
+// TwoAccountPolicy : Policy for pairing personal account to work account
+type TwoAccountPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TwoAccountPolicy
+const (
+	TwoAccountPolicyDisabled = "disabled"
+	TwoAccountPolicyEnabled  = "enabled"
+	TwoAccountPolicyOther    = "other"
+)
 
 // UserLinkedAppLogInfo : User linked app
 type UserLinkedAppLogInfo struct {
@@ -8805,13 +9047,13 @@ func NewWebSessionLogInfo() *WebSessionLogInfo {
 // stay signed in to Dropbox on the web.
 type WebSessionsChangeFixedLengthPolicyDetails struct {
 	// NewValue : New session length policy.
-	NewValue *SessionsManagementSessionLengthPolicy `json:"new_value"`
+	NewValue *WebSessionsFixedLengthPolicy `json:"new_value"`
 	// PreviousValue : Previous session length policy.
-	PreviousValue *SessionsManagementSessionLengthPolicy `json:"previous_value"`
+	PreviousValue *WebSessionsFixedLengthPolicy `json:"previous_value"`
 }
 
 // NewWebSessionsChangeFixedLengthPolicyDetails returns a new WebSessionsChangeFixedLengthPolicyDetails instance
-func NewWebSessionsChangeFixedLengthPolicyDetails(NewValue *SessionsManagementSessionLengthPolicy, PreviousValue *SessionsManagementSessionLengthPolicy) *WebSessionsChangeFixedLengthPolicyDetails {
+func NewWebSessionsChangeFixedLengthPolicyDetails(NewValue *WebSessionsFixedLengthPolicy, PreviousValue *WebSessionsFixedLengthPolicy) *WebSessionsChangeFixedLengthPolicyDetails {
 	s := new(WebSessionsChangeFixedLengthPolicyDetails)
 	s.NewValue = NewValue
 	s.PreviousValue = PreviousValue
@@ -8822,15 +9064,91 @@ func NewWebSessionsChangeFixedLengthPolicyDetails(NewValue *SessionsManagementSe
 // be idle while signed in to Dropbox on the web.
 type WebSessionsChangeIdleLengthPolicyDetails struct {
 	// NewValue : New idle length policy.
-	NewValue *SessionsManagementIdleLengthPolicy `json:"new_value"`
+	NewValue *WebSessionsIdleLengthPolicy `json:"new_value"`
 	// PreviousValue : Previous idle length policy.
-	PreviousValue *SessionsManagementIdleLengthPolicy `json:"previous_value"`
+	PreviousValue *WebSessionsIdleLengthPolicy `json:"previous_value"`
 }
 
 // NewWebSessionsChangeIdleLengthPolicyDetails returns a new WebSessionsChangeIdleLengthPolicyDetails instance
-func NewWebSessionsChangeIdleLengthPolicyDetails(NewValue *SessionsManagementIdleLengthPolicy, PreviousValue *SessionsManagementIdleLengthPolicy) *WebSessionsChangeIdleLengthPolicyDetails {
+func NewWebSessionsChangeIdleLengthPolicyDetails(NewValue *WebSessionsIdleLengthPolicy, PreviousValue *WebSessionsIdleLengthPolicy) *WebSessionsChangeIdleLengthPolicyDetails {
 	s := new(WebSessionsChangeIdleLengthPolicyDetails)
 	s.NewValue = NewValue
 	s.PreviousValue = PreviousValue
 	return s
+}
+
+// WebSessionsFixedLengthPolicy : Web sessions fixed length policy.
+type WebSessionsFixedLengthPolicy struct {
+	dropbox.Tagged
+	// Defined : Defined fixed session length.
+	Defined *DurationLogInfo `json:"defined,omitempty"`
+}
+
+// Valid tag values for WebSessionsFixedLengthPolicy
+const (
+	WebSessionsFixedLengthPolicyDefined   = "defined"
+	WebSessionsFixedLengthPolicyUndefined = "undefined"
+	WebSessionsFixedLengthPolicyOther     = "other"
+)
+
+// UnmarshalJSON deserializes into a WebSessionsFixedLengthPolicy instance
+func (u *WebSessionsFixedLengthPolicy) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Defined : Defined fixed session length.
+		Defined json.RawMessage `json:"defined,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "defined":
+		err = json.Unmarshal(body, &u.Defined)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// WebSessionsIdleLengthPolicy : Web sessions idle length policy.
+type WebSessionsIdleLengthPolicy struct {
+	dropbox.Tagged
+	// Defined : Defined idle session length.
+	Defined *DurationLogInfo `json:"defined,omitempty"`
+}
+
+// Valid tag values for WebSessionsIdleLengthPolicy
+const (
+	WebSessionsIdleLengthPolicyDefined   = "defined"
+	WebSessionsIdleLengthPolicyUndefined = "undefined"
+	WebSessionsIdleLengthPolicyOther     = "other"
+)
+
+// UnmarshalJSON deserializes into a WebSessionsIdleLengthPolicy instance
+func (u *WebSessionsIdleLengthPolicy) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Defined : Defined idle session length.
+		Defined json.RawMessage `json:"defined,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "defined":
+		err = json.Unmarshal(body, &u.Defined)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

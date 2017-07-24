@@ -164,13 +164,16 @@ type BaseTeamFolderError struct {
 	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 	// StatusError : has no documentation (yet)
 	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+	// TeamSharedDropboxError : has no documentation (yet)
+	TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 }
 
 // Valid tag values for BaseTeamFolderError
 const (
-	BaseTeamFolderErrorAccessError = "access_error"
-	BaseTeamFolderErrorStatusError = "status_error"
-	BaseTeamFolderErrorOther       = "other"
+	BaseTeamFolderErrorAccessError            = "access_error"
+	BaseTeamFolderErrorStatusError            = "status_error"
+	BaseTeamFolderErrorTeamSharedDropboxError = "team_shared_dropbox_error"
+	BaseTeamFolderErrorOther                  = "other"
 )
 
 // UnmarshalJSON deserializes into a BaseTeamFolderError instance
@@ -181,6 +184,8 @@ func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
 		AccessError json.RawMessage `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
 		StatusError json.RawMessage `json:"status_error,omitempty"`
+		// TeamSharedDropboxError : has no documentation (yet)
+		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -197,6 +202,12 @@ func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
 		}
 	case "status_error":
 		err = json.Unmarshal(w.StatusError, &u.StatusError)
+
+		if err != nil {
+			return err
+		}
+	case "team_shared_dropbox_error":
+		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
 
 		if err != nil {
 			return err
@@ -330,8 +341,9 @@ type Feature struct {
 
 // Valid tag values for Feature
 const (
-	FeatureUploadApiRateLimit = "upload_api_rate_limit"
-	FeatureOther              = "other"
+	FeatureUploadApiRateLimit   = "upload_api_rate_limit"
+	FeatureHasTeamSharedDropbox = "has_team_shared_dropbox"
+	FeatureOther                = "other"
 )
 
 // FeatureValue : The values correspond to entries in `Feature`. You may get
@@ -340,12 +352,15 @@ type FeatureValue struct {
 	dropbox.Tagged
 	// UploadApiRateLimit : has no documentation (yet)
 	UploadApiRateLimit *UploadApiRateLimitValue `json:"upload_api_rate_limit,omitempty"`
+	// HasTeamSharedDropbox : has no documentation (yet)
+	HasTeamSharedDropbox *HasTeamSharedDropboxValue `json:"has_team_shared_dropbox,omitempty"`
 }
 
 // Valid tag values for FeatureValue
 const (
-	FeatureValueUploadApiRateLimit = "upload_api_rate_limit"
-	FeatureValueOther              = "other"
+	FeatureValueUploadApiRateLimit   = "upload_api_rate_limit"
+	FeatureValueHasTeamSharedDropbox = "has_team_shared_dropbox"
+	FeatureValueOther                = "other"
 )
 
 // UnmarshalJSON deserializes into a FeatureValue instance
@@ -354,6 +369,8 @@ func (u *FeatureValue) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// UploadApiRateLimit : has no documentation (yet)
 		UploadApiRateLimit json.RawMessage `json:"upload_api_rate_limit,omitempty"`
+		// HasTeamSharedDropbox : has no documentation (yet)
+		HasTeamSharedDropbox json.RawMessage `json:"has_team_shared_dropbox,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -364,6 +381,12 @@ func (u *FeatureValue) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "upload_api_rate_limit":
 		err = json.Unmarshal(w.UploadApiRateLimit, &u.UploadApiRateLimit)
+
+		if err != nil {
+			return err
+		}
+	case "has_team_shared_dropbox":
+		err = json.Unmarshal(w.HasTeamSharedDropbox, &u.HasTeamSharedDropbox)
 
 		if err != nil {
 			return err
@@ -1262,6 +1285,41 @@ func (u *GroupsSelector) UnmarshalJSON(body []byte) error {
 		}
 	case "group_external_ids":
 		err = json.Unmarshal(body, &u.GroupExternalIds)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// HasTeamSharedDropboxValue : The value for `Feature.has_team_shared_dropbox`.
+type HasTeamSharedDropboxValue struct {
+	dropbox.Tagged
+	// HasTeamSharedDropbox : Does this team have a team shared dropbox.
+	HasTeamSharedDropbox bool `json:"has_team_shared_dropbox,omitempty"`
+}
+
+// Valid tag values for HasTeamSharedDropboxValue
+const (
+	HasTeamSharedDropboxValueHasTeamSharedDropbox = "has_team_shared_dropbox"
+	HasTeamSharedDropboxValueOther                = "other"
+)
+
+// UnmarshalJSON deserializes into a HasTeamSharedDropboxValue instance
+func (u *HasTeamSharedDropboxValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "has_team_shared_dropbox":
+		err = json.Unmarshal(body, &u.HasTeamSharedDropbox)
 
 		if err != nil {
 			return err
@@ -2375,6 +2433,42 @@ func NewMobileClientSession(SessionId string, DeviceName string, ClientType *Mob
 	return s
 }
 
+// NamespaceMetadata : Properties of a namespace.
+type NamespaceMetadata struct {
+	// Name : The name of this namespace.
+	Name string `json:"name"`
+	// NamespaceId : The ID of this namespace.
+	NamespaceId string `json:"namespace_id"`
+	// NamespaceType : The type of this namespace.
+	NamespaceType *NamespaceType `json:"namespace_type"`
+	// TeamMemberId : If this is a team member folder, the ID of the team
+	// member. Otherwise, this field is not present.
+	TeamMemberId string `json:"team_member_id,omitempty"`
+}
+
+// NewNamespaceMetadata returns a new NamespaceMetadata instance
+func NewNamespaceMetadata(Name string, NamespaceId string, NamespaceType *NamespaceType) *NamespaceMetadata {
+	s := new(NamespaceMetadata)
+	s.Name = Name
+	s.NamespaceId = NamespaceId
+	s.NamespaceType = NamespaceType
+	return s
+}
+
+// NamespaceType : has no documentation (yet)
+type NamespaceType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for NamespaceType
+const (
+	NamespaceTypeAppFolder        = "app_folder"
+	NamespaceTypeSharedFolder     = "shared_folder"
+	NamespaceTypeTeamFolder       = "team_folder"
+	NamespaceTypeTeamMemberFolder = "team_member_folder"
+	NamespaceTypeOther            = "other"
+)
+
 // RemovedStatus : has no documentation (yet)
 type RemovedStatus struct {
 	// IsRecoverable : True if the removed team member is recoverable.
@@ -2951,14 +3045,18 @@ type TeamFolderMetadata struct {
 	Name string `json:"name"`
 	// Status : The status of the team folder.
 	Status *TeamFolderStatus `json:"status"`
+	// IsTeamSharedDropbox : True if this team folder is the team shared
+	// dropbox.
+	IsTeamSharedDropbox bool `json:"is_team_shared_dropbox"`
 }
 
 // NewTeamFolderMetadata returns a new TeamFolderMetadata instance
-func NewTeamFolderMetadata(TeamFolderId string, Name string, Status *TeamFolderStatus) *TeamFolderMetadata {
+func NewTeamFolderMetadata(TeamFolderId string, Name string, Status *TeamFolderStatus, IsTeamSharedDropbox bool) *TeamFolderMetadata {
 	s := new(TeamFolderMetadata)
 	s.TeamFolderId = TeamFolderId
 	s.Name = Name
 	s.Status = Status
+	s.IsTeamSharedDropbox = IsTeamSharedDropbox
 	return s
 }
 
@@ -3010,6 +3108,17 @@ const (
 	TeamFolderStatusOther             = "other"
 )
 
+// TeamFolderTeamSharedDropboxError : has no documentation (yet)
+type TeamFolderTeamSharedDropboxError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamFolderTeamSharedDropboxError
+const (
+	TeamFolderTeamSharedDropboxErrorDisallowed = "disallowed"
+	TeamFolderTeamSharedDropboxErrorOther      = "other"
+)
+
 // TeamGetInfoResult : has no documentation (yet)
 type TeamGetInfoResult struct {
 	// Name : The name of the team.
@@ -3057,10 +3166,12 @@ type TeamMemberProfile struct {
 	MemberProfile
 	// Groups : List of group IDs of groups that the user belongs to.
 	Groups []string `json:"groups"`
+	// MemberFolderId : The namespace id of the user's root folder.
+	MemberFolderId string `json:"member_folder_id"`
 }
 
 // NewTeamMemberProfile returns a new TeamMemberProfile instance
-func NewTeamMemberProfile(TeamMemberId string, Email string, EmailVerified bool, Status *TeamMemberStatus, Name *users.Name, MembershipType *TeamMembershipType, Groups []string) *TeamMemberProfile {
+func NewTeamMemberProfile(TeamMemberId string, Email string, EmailVerified bool, Status *TeamMemberStatus, Name *users.Name, MembershipType *TeamMembershipType, Groups []string, MemberFolderId string) *TeamMemberProfile {
 	s := new(TeamMemberProfile)
 	s.TeamMemberId = TeamMemberId
 	s.Email = Email
@@ -3069,6 +3180,7 @@ func NewTeamMemberProfile(TeamMemberId string, Email string, EmailVerified bool,
 	s.Name = Name
 	s.MembershipType = MembershipType
 	s.Groups = Groups
+	s.MemberFolderId = MemberFolderId
 	return s
 }
 
@@ -3123,6 +3235,66 @@ const (
 	TeamMembershipTypeFull    = "full"
 	TeamMembershipTypeLimited = "limited"
 )
+
+// TeamNamespacesListArg : has no documentation (yet)
+type TeamNamespacesListArg struct {
+	// Limit : The approximate maximum number of results to return per request.
+	// This limit may be exceeded.
+	Limit uint32 `json:"limit"`
+}
+
+// NewTeamNamespacesListArg returns a new TeamNamespacesListArg instance
+func NewTeamNamespacesListArg() *TeamNamespacesListArg {
+	s := new(TeamNamespacesListArg)
+	s.Limit = 1000
+	return s
+}
+
+// TeamNamespacesListContinueArg : has no documentation (yet)
+type TeamNamespacesListContinueArg struct {
+	// Cursor : Indicates from what point to get the next set of team-accessible
+	// namespaces.
+	Cursor string `json:"cursor"`
+}
+
+// NewTeamNamespacesListContinueArg returns a new TeamNamespacesListContinueArg instance
+func NewTeamNamespacesListContinueArg(Cursor string) *TeamNamespacesListContinueArg {
+	s := new(TeamNamespacesListContinueArg)
+	s.Cursor = Cursor
+	return s
+}
+
+// TeamNamespacesListContinueError : has no documentation (yet)
+type TeamNamespacesListContinueError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamNamespacesListContinueError
+const (
+	TeamNamespacesListContinueErrorInvalidCursor = "invalid_cursor"
+	TeamNamespacesListContinueErrorOther         = "other"
+)
+
+// TeamNamespacesListResult : Result for `namespacesList`.
+type TeamNamespacesListResult struct {
+	// Namespaces : List of all namespaces the team can access.
+	Namespaces []*NamespaceMetadata `json:"namespaces"`
+	// Cursor : Pass the cursor into `namespacesListContinue` to obtain
+	// additional namespaces. Note that duplicate namespaces may be returned.
+	Cursor string `json:"cursor"`
+	// HasMore : Is true if there are additional namespaces that have not been
+	// returned yet.
+	HasMore bool `json:"has_more"`
+}
+
+// NewTeamNamespacesListResult returns a new TeamNamespacesListResult instance
+func NewTeamNamespacesListResult(Namespaces []*NamespaceMetadata, Cursor string, HasMore bool) *TeamNamespacesListResult {
+	s := new(TeamNamespacesListResult)
+	s.Namespaces = Namespaces
+	s.Cursor = Cursor
+	s.HasMore = HasMore
+	return s
+}
 
 // TokenGetAuthenticatedAdminError : Error returned by
 // `tokenGetAuthenticatedAdmin`.

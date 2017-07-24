@@ -305,6 +305,30 @@ func (u *CreateFolderError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// FileOpsResult : has no documentation (yet)
+type FileOpsResult struct {
+}
+
+// NewFileOpsResult returns a new FileOpsResult instance
+func NewFileOpsResult() *FileOpsResult {
+	s := new(FileOpsResult)
+	return s
+}
+
+// CreateFolderResult : has no documentation (yet)
+type CreateFolderResult struct {
+	FileOpsResult
+	// Metadata : Metadata of the created folder.
+	Metadata *FolderMetadata `json:"metadata"`
+}
+
+// NewCreateFolderResult returns a new CreateFolderResult instance
+func NewCreateFolderResult(Metadata *FolderMetadata) *CreateFolderResult {
+	s := new(CreateFolderResult)
+	s.Metadata = Metadata
+	return s
+}
+
 // DeleteArg : has no documentation (yet)
 type DeleteArg struct {
 	// Path : Path in the user's Dropbox to delete.
@@ -430,6 +454,7 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 
 // DeleteBatchResult : has no documentation (yet)
 type DeleteBatchResult struct {
+	FileOpsResult
 	// Entries : has no documentation (yet)
 	Entries []*DeleteBatchResultEntry `json:"entries"`
 }
@@ -441,11 +466,24 @@ func NewDeleteBatchResult(Entries []*DeleteBatchResultEntry) *DeleteBatchResult 
 	return s
 }
 
+// DeleteBatchResultData : has no documentation (yet)
+type DeleteBatchResultData struct {
+	// Metadata : Metadata of the deleted object.
+	Metadata IsMetadata `json:"metadata"`
+}
+
+// NewDeleteBatchResultData returns a new DeleteBatchResultData instance
+func NewDeleteBatchResultData(Metadata IsMetadata) *DeleteBatchResultData {
+	s := new(DeleteBatchResultData)
+	s.Metadata = Metadata
+	return s
+}
+
 // DeleteBatchResultEntry : has no documentation (yet)
 type DeleteBatchResultEntry struct {
 	dropbox.Tagged
 	// Success : has no documentation (yet)
-	Success *DeleteResult `json:"success,omitempty"`
+	Success *DeleteBatchResultData `json:"success,omitempty"`
 	// Failure : has no documentation (yet)
 	Failure *DeleteError `json:"failure,omitempty"`
 }
@@ -499,9 +537,11 @@ type DeleteError struct {
 
 // Valid tag values for DeleteError
 const (
-	DeleteErrorPathLookup = "path_lookup"
-	DeleteErrorPathWrite  = "path_write"
-	DeleteErrorOther      = "other"
+	DeleteErrorPathLookup             = "path_lookup"
+	DeleteErrorPathWrite              = "path_write"
+	DeleteErrorTooManyWriteOperations = "too_many_write_operations"
+	DeleteErrorTooManyFiles           = "too_many_files"
+	DeleteErrorOther                  = "other"
 )
 
 // UnmarshalJSON deserializes into a DeleteError instance
@@ -538,7 +578,8 @@ func (u *DeleteError) UnmarshalJSON(body []byte) error {
 
 // DeleteResult : has no documentation (yet)
 type DeleteResult struct {
-	// Metadata : has no documentation (yet)
+	FileOpsResult
+	// Metadata : Metadata of the deleted object.
 	Metadata IsMetadata `json:"metadata"`
 }
 
@@ -1034,7 +1075,7 @@ func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 
 // ListFolderArg : has no documentation (yet)
 type ListFolderArg struct {
-	// Path : The path to the folder you want to see the contents of.
+	// Path : A unique identifier for the file.
 	Path string `json:"path"`
 	// Recursive : If true, the list folder operation will be applied
 	// recursively to all subfolders and the response will contain contents of
@@ -1293,8 +1334,10 @@ func (u *ListRevisionsError) UnmarshalJSON(body []byte) error {
 type ListRevisionsResult struct {
 	// IsDeleted : If the file is deleted.
 	IsDeleted bool `json:"is_deleted"`
-	// Entries : The revisions for the file. Only non-delete revisions will show
-	// up here.
+	// ServerDeleted : The time of deletion if the file was deleted.
+	ServerDeleted time.Time `json:"server_deleted,omitempty"`
+	// Entries : The revisions for the file. Only revisions that are not deleted
+	// will show up here.
 	Entries []*FileMetadata `json:"entries"`
 }
 
@@ -1608,6 +1651,10 @@ type RelocationArg struct {
 	// Autorename : If there's a conflict, have the Dropbox server try to
 	// autorename the file to avoid the conflict.
 	Autorename bool `json:"autorename"`
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
+	// an ownership transfer for the content being moved. This does not apply to
+	// copies.
+	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
 }
 
 // NewRelocationArg returns a new RelocationArg instance
@@ -1617,6 +1664,7 @@ func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 	s.ToPath = ToPath
 	s.AllowSharedFolder = false
 	s.Autorename = false
+	s.AllowOwnershipTransfer = false
 	return s
 }
 
@@ -1633,6 +1681,10 @@ type RelocationBatchArg struct {
 	// Autorename : If there's a conflict with any file, have the Dropbox server
 	// try to autorename that file to avoid the conflict.
 	Autorename bool `json:"autorename"`
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
+	// an ownership transfer for the content being moved. This does not apply to
+	// copies.
+	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
 }
 
 // NewRelocationBatchArg returns a new RelocationBatchArg instance
@@ -1641,6 +1693,7 @@ func NewRelocationBatchArg(Entries []*RelocationPath) *RelocationBatchArg {
 	s.Entries = Entries
 	s.AllowSharedFolder = false
 	s.Autorename = false
+	s.AllowOwnershipTransfer = false
 	return s
 }
 
@@ -1665,6 +1718,7 @@ const (
 	RelocationErrorCantMoveFolderIntoItself = "cant_move_folder_into_itself"
 	RelocationErrorTooManyFiles             = "too_many_files"
 	RelocationErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
+	RelocationErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationErrorOther                    = "other"
 )
 
@@ -1805,20 +1859,35 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 
 // RelocationBatchResult : has no documentation (yet)
 type RelocationBatchResult struct {
+	FileOpsResult
 	// Entries : has no documentation (yet)
-	Entries []*RelocationResult `json:"entries"`
+	Entries []*RelocationBatchResultData `json:"entries"`
 }
 
 // NewRelocationBatchResult returns a new RelocationBatchResult instance
-func NewRelocationBatchResult(Entries []*RelocationResult) *RelocationBatchResult {
+func NewRelocationBatchResult(Entries []*RelocationBatchResultData) *RelocationBatchResult {
 	s := new(RelocationBatchResult)
 	s.Entries = Entries
 	return s
 }
 
+// RelocationBatchResultData : has no documentation (yet)
+type RelocationBatchResultData struct {
+	// Metadata : Metadata of the relocated object.
+	Metadata IsMetadata `json:"metadata"`
+}
+
+// NewRelocationBatchResultData returns a new RelocationBatchResultData instance
+func NewRelocationBatchResultData(Metadata IsMetadata) *RelocationBatchResultData {
+	s := new(RelocationBatchResultData)
+	s.Metadata = Metadata
+	return s
+}
+
 // RelocationResult : has no documentation (yet)
 type RelocationResult struct {
-	// Metadata : has no documentation (yet)
+	FileOpsResult
+	// Metadata : Metadata of the relocated object.
 	Metadata IsMetadata `json:"metadata"`
 }
 
@@ -2937,11 +3006,12 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 // WriteMode : Your intent when writing a file to some path. This is used to
 // determine what constitutes a conflict and what the autorename strategy is. In
 // some situations, the conflict behavior is identical: (a) If the target path
-// doesn't contain anything, the file is always written; no conflict. (b) If the
-// target path contains a folder, it's always a conflict. (c) If the target path
-// contains a file with identical contents, nothing gets written; no conflict.
-// The conflict checking differs in the case where there's a file at the target
-// path with contents different from the contents you're trying to write.
+// doesn't refer to anything, the file is always written; no conflict. (b) If
+// the target path refers to a folder, it's always a conflict. (c) If the target
+// path refers to a file with identical contents, nothing gets written; no
+// conflict. The conflict checking differs in the case where there's a file at
+// the target path with contents different from the contents you're trying to
+// write.
 type WriteMode struct {
 	dropbox.Tagged
 	// Update : Overwrite if the given "rev" matches the existing file's "rev".

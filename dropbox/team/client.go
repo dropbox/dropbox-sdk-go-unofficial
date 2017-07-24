@@ -180,6 +180,17 @@ type Client interface {
 	// member management Exactly one of team_member_id, email, or external_id
 	// must be provided to identify the user account.
 	MembersUnsuspend(arg *MembersUnsuspendArg) (err error)
+	// NamespacesList : Returns a list of all team-accessible namespaces. This
+	// list includes team folders, shared folders containing team members, team
+	// members' home namespaces, and team members' app folders. Home namespaces
+	// and app folders are always owned by this team or members of the team, but
+	// shared folders may be owned by other users or other teams. Duplicates may
+	// occur in the list.
+	NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespacesListResult, err error)
+	// NamespacesListContinue : Once a cursor has been retrieved from
+	// `namespacesList`, use this to paginate through all team-accessible
+	// namespaces. Duplicates may occur in the list.
+	NamespacesListContinue(arg *TeamNamespacesListContinueArg) (res *TeamNamespacesListResult, err error)
 	// PropertiesTemplateAdd : Add a property template. See route
 	// files/properties/add to add properties to a file.
 	PropertiesTemplateAdd(arg *AddPropertyTemplateArg) (res *AddPropertyTemplateResult, err error)
@@ -3028,6 +3039,160 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersUnsuspendAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//NamespacesListAPIError is an error-wrapper for the namespaces/list route
+type NamespacesListAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespacesListResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "namespaces/list", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError NamespacesListAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//NamespacesListContinueAPIError is an error-wrapper for the namespaces/list/continue route
+type NamespacesListContinueAPIError struct {
+	dropbox.APIError
+	EndpointError *TeamNamespacesListContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) NamespacesListContinue(arg *TeamNamespacesListContinueArg) (res *TeamNamespacesListResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "namespaces/list/continue", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError NamespacesListContinueAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

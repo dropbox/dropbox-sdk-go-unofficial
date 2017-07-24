@@ -67,8 +67,13 @@ type Client interface {
 	// CopyReferenceSave : Save a copy reference returned by `copyReferenceGet`
 	// to the user's Dropbox.
 	CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyReferenceResult, err error)
+	// CopyV2 : Copy a file or folder to a different location in the user's
+	// Dropbox. If the source path is a folder all its contents will be copied.
+	CopyV2(arg *RelocationArg) (res *RelocationResult, err error)
 	// CreateFolder : Create a folder at a given path.
 	CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error)
+	// CreateFolderV2 : Create a folder at a given path.
+	CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResult, err error)
 	// Delete : Delete the file or folder at a given path. If the path is a
 	// folder, all its contents will be deleted too. A successful response
 	// indicates that the file or folder was deleted. The returned metadata will
@@ -82,6 +87,12 @@ type Client interface {
 	// DeleteBatchCheck : Returns the status of an asynchronous job for
 	// `deleteBatch`. If success, it returns list of result for each entry.
 	DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobStatus, err error)
+	// DeleteV2 : Delete the file or folder at a given path. If the path is a
+	// folder, all its contents will be deleted too. A successful response
+	// indicates that the file or folder was deleted. The returned metadata will
+	// be the corresponding `FileMetadata` or `FolderMetadata` for the item at
+	// time of deletion, and not a `DeletedMetadata` object.
+	DeleteV2(arg *DeleteArg) (res *DeleteResult, err error)
 	// Download : Download a file from a user's Dropbox.
 	Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// GetMetadata : Returns the metadata for a file or folder. Note: Metadata
@@ -158,6 +169,9 @@ type Client interface {
 	// MoveBatchCheck : Returns the status of an asynchronous job for
 	// `moveBatch`. If success, it returns list of results for each entry.
 	MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error)
+	// MoveV2 : Move a file or folder to a different location in the user's
+	// Dropbox. If the source path is a folder all its contents will be moved.
+	MoveV2(arg *RelocationArg) (res *RelocationResult, err error)
 	// PermanentlyDelete : Permanently delete the file or folder at a given path
 	// (see https://www.dropbox.com/en/help/40). Note: This endpoint is only
 	// available for Dropbox Business apps.
@@ -826,6 +840,86 @@ func (dbx *apiImpl) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyR
 	return
 }
 
+//CopyV2APIError is an error-wrapper for the copy_v2 route
+type CopyV2APIError struct {
+	dropbox.APIError
+	EndpointError *RelocationError `json:"error"`
+}
+
+func (dbx *apiImpl) CopyV2(arg *RelocationArg) (res *RelocationResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "copy_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CopyV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
 //CreateFolderAPIError is an error-wrapper for the create_folder route
 type CreateFolderAPIError struct {
 	dropbox.APIError
@@ -885,6 +979,86 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError CreateFolderAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//CreateFolderV2APIError is an error-wrapper for the create_folder_v2 route
+type CreateFolderV2APIError struct {
+	dropbox.APIError
+	EndpointError *CreateFolderError `json:"error"`
+}
+
+func (dbx *apiImpl) CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "create_folder_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CreateFolderV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1136,6 +1310,86 @@ func (dbx *apiImpl) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobSta
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError DeleteBatchCheckAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//DeleteV2APIError is an error-wrapper for the delete_v2 route
+type DeleteV2APIError struct {
+	dropbox.APIError
+	EndpointError *DeleteError `json:"error"`
+}
+
+func (dbx *apiImpl) DeleteV2(arg *DeleteArg) (res *DeleteResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "delete_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DeleteV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2183,6 +2437,86 @@ func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MoveBatchCheckAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MoveV2APIError is an error-wrapper for the move_v2 route
+type MoveV2APIError struct {
+	dropbox.APIError
+	EndpointError *RelocationError `json:"error"`
+}
+
+func (dbx *apiImpl) MoveV2(arg *RelocationArg) (res *RelocationResult, err error) {
+	cli := dbx.Client
+
+	if dbx.Config.Verbose {
+		log.Printf("arg: %v", arg)
+	}
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "move_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	if dbx.Config.Verbose {
+		log.Printf("req: %v", req)
+	}
+
+	resp, err := cli.Do(req)
+	if dbx.Config.Verbose {
+		log.Printf("resp: %v", resp)
+	}
+	if err != nil {
+		return
+	}
+
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	if dbx.Config.Verbose {
+		log.Printf("body: %s", body)
+	}
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MoveV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

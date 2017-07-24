@@ -84,10 +84,11 @@ type Client interface {
 	GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error)
 	// GetSharedLinks : Returns a list of `LinkMetadata` objects for this user,
 	// including collection links. If no path is given, returns a list of all
-	// shared links for the current user, including collection links. If a
-	// non-empty path is given, returns a list of all shared links that allow
-	// access to the given path.  Collection links are never returned in this
-	// case. Note that the url field in the response is never the shortened URL.
+	// shared links for the current user, including collection links, up to a
+	// maximum of 1000 links. If a non-empty path is given, returns a list of
+	// all shared links that allow access to the given path.  Collection links
+	// are never returned in this case. Note that the url field in the response
+	// is never the shortened URL.
 	GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error)
 	// ListFileMembers : Use to obtain the members who have been invited to a
 	// file, both inherited and uninherited members.

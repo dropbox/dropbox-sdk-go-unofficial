@@ -145,14 +145,17 @@ type FullTeam struct {
 	Team
 	// SharingPolicies : Team policies governing sharing.
 	SharingPolicies *team_policies.TeamSharingPolicies `json:"sharing_policies"`
+	// OfficeAddinPolicy : Team policy governing the use of the Office Add-In.
+	OfficeAddinPolicy *team_policies.OfficeAddInPolicy `json:"office_addin_policy"`
 }
 
 // NewFullTeam returns a new FullTeam instance
-func NewFullTeam(Id string, Name string, SharingPolicies *team_policies.TeamSharingPolicies) *FullTeam {
+func NewFullTeam(Id string, Name string, SharingPolicies *team_policies.TeamSharingPolicies, OfficeAddinPolicy *team_policies.OfficeAddInPolicy) *FullTeam {
 	s := new(FullTeam)
 	s.Id = Id
 	s.Name = Name
 	s.SharingPolicies = SharingPolicies
+	s.OfficeAddinPolicy = OfficeAddinPolicy
 	return s
 }
 

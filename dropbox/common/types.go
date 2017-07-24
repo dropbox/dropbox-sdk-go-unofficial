@@ -47,20 +47,20 @@ type PathRoot struct {
 	// `PathRootError.invalid` if the user is not a member of the team
 	// associated with that path root id.)
 	Team string `json:"team,omitempty"`
-	// SharedFolder : Paths are relative to given shared folder id (This results
-	// in `PathRootError.no_permission` if you don't have access to  this shared
-	// folder.)
-	SharedFolder string `json:"shared_folder,omitempty"`
+	// NamespaceId : Paths are relative to given namespace id (This results in
+	// `PathRootError.no_permission` if you don't have access to this
+	// namespace.)
+	NamespaceId string `json:"namespace_id,omitempty"`
 }
 
 // Valid tag values for PathRoot
 const (
-	PathRootHome         = "home"
-	PathRootMemberHome   = "member_home"
-	PathRootTeam         = "team"
-	PathRootUserHome     = "user_home"
-	PathRootSharedFolder = "shared_folder"
-	PathRootOther        = "other"
+	PathRootHome        = "home"
+	PathRootMemberHome  = "member_home"
+	PathRootTeam        = "team"
+	PathRootUserHome    = "user_home"
+	PathRootNamespaceId = "namespace_id"
+	PathRootOther       = "other"
 )
 
 // UnmarshalJSON deserializes into a PathRoot instance
@@ -81,8 +81,8 @@ func (u *PathRoot) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "shared_folder":
-		err = json.Unmarshal(body, &u.SharedFolder)
+	case "namespace_id":
+		err = json.Unmarshal(body, &u.NamespaceId)
 
 		if err != nil {
 			return err
