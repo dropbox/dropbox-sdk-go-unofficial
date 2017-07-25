@@ -384,6 +384,9 @@ type ChangeFileMemberAccessAPIError struct {
 }
 
 func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error) {
+	log.Printf("WARNING: API `ChangeFileMemberAccess` is deprecated")
+	log.Printf("Use API `UpdateFileMember` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -704,6 +707,9 @@ type CreateSharedLinkAPIError struct {
 }
 
 func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error) {
+	log.Printf("WARNING: API `CreateSharedLink` is deprecated")
+	log.Printf("Use API `CreateSharedLinkWithSettings` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1284,6 +1290,9 @@ type GetSharedLinksAPIError struct {
 }
 
 func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error) {
+	log.Printf("WARNING: API `GetSharedLinks` is deprecated")
+	log.Printf("Use API `ListSharedLinks` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2647,6 +2656,9 @@ type RemoveFileMemberAPIError struct {
 }
 
 func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
+	log.Printf("WARNING: API `RemoveFileMember` is deprecated")
+	log.Printf("Use API `RemoveFileMember2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {

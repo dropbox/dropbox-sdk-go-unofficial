@@ -436,6 +436,9 @@ type CopyAPIError struct {
 }
 
 func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
+	log.Printf("WARNING: API `Copy` is deprecated")
+	log.Printf("Use API `CopyV2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -927,6 +930,9 @@ type CreateFolderAPIError struct {
 }
 
 func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error) {
+	log.Printf("WARNING: API `CreateFolder` is deprecated")
+	log.Printf("Use API `CreateFolderV2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1087,6 +1093,9 @@ type DeleteAPIError struct {
 }
 
 func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
+	log.Printf("WARNING: API `Delete` is deprecated")
+	log.Printf("Use API `DeleteV2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -2214,6 +2223,9 @@ type MoveAPIError struct {
 }
 
 func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
+	log.Printf("WARNING: API `Move` is deprecated")
+	log.Printf("Use API `MoveV2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -3471,6 +3483,9 @@ type UploadSessionAppendAPIError struct {
 }
 
 func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error) {
+	log.Printf("WARNING: API `UploadSessionAppend` is deprecated")
+	log.Printf("Use API `UploadSessionAppendV2` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {

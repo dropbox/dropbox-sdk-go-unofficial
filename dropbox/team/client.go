@@ -412,6 +412,9 @@ type DevicesListTeamDevicesAPIError struct {
 }
 
 func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error) {
+	log.Printf("WARNING: API `DevicesListTeamDevices` is deprecated")
+	log.Printf("Use API `DevicesListMembersDevices` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
@@ -1860,6 +1863,9 @@ type LinkedAppsListTeamLinkedAppsAPIError struct {
 }
 
 func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *ListTeamAppsResult, err error) {
+	log.Printf("WARNING: API `LinkedAppsListTeamLinkedApps` is deprecated")
+	log.Printf("Use API `LinkedAppsListMembersLinkedApps` instead")
+
 	cli := dbx.Client
 
 	if dbx.Config.Verbose {
