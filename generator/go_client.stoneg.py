@@ -11,6 +11,7 @@ from go_helpers import (
     fmt_type,
     fmt_var,
     generate_doc,
+    generate_if_else,
 )
 
 
@@ -99,7 +100,12 @@ class GoClientGenerator(CodeGenerator):
         body = 'nil'
         if not is_void_type(route.arg_data_type):
             with self.block('if dbx.Config.Verbose'):
-                out('log.Printf("arg: %v", arg)')
+                generate_if_else(self,
+                    'dbx.Config.Logger != nil',
+                        'dbx.Config.Logger.Printf("arg: %v", arg)',
+                    'log.Printf("arg: %v", arg)')
+            out()
+
             out('b, err := json.Marshal(arg)')
             with self.block('if err != nil'):
                 out('return')
@@ -132,8 +138,12 @@ class GoClientGenerator(CodeGenerator):
             host, style, authed, namespace.name, route.name, body))
         with self.block('if err != nil'):
             out('return')
+
         with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("req: %v", req)')
+            generate_if_else(self,
+                'dbx.Config.Logger != nil',
+                    'dbx.Config.Logger.Printf("req: %v", req)',
+                'log.Printf("req: %v", req)')
         out()
 
     def _generate_post(self):
@@ -141,7 +151,11 @@ class GoClientGenerator(CodeGenerator):
 
         out('resp, err := cli.Do(req)')
         with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("resp: %v", resp)')
+            generate_if_else(self,
+                'dbx.Config.Logger != nil',
+                    'dbx.Config.Logger.Printf("resp: %v", resp)',
+                'log.Printf("resp: %v", resp)')
+        out()
 
         with self.block('if err != nil'):
             out('return')
@@ -160,7 +174,11 @@ class GoClientGenerator(CodeGenerator):
                 out('return')
             out()
         with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("body: %s", body)')
+            generate_if_else(self,
+                'dbx.Config.Logger != nil',
+                    'dbx.Config.Logger.Printf("body: %v", body)',
+                'log.Printf("body: %v", body)')
+        out()
 
     def _generate_error_handling(self, route):
         out = self.emit

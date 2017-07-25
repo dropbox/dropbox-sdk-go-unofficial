@@ -23,6 +23,7 @@ package dropbox
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 
 	"golang.org/x/oauth2"
@@ -49,6 +50,8 @@ type Config struct {
 	Token string
 	// Enable verbose logging in SDK
 	Verbose bool
+	// Logging target for verbose SDK logging
+	Logger *log.Logger
 	// Used with APIs that support operations as another user
 	AsMemberID string
 	// No need to set -- for testing only
