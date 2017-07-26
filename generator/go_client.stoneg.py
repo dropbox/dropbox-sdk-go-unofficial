@@ -78,6 +78,12 @@ class GoClientGenerator(CodeGenerator):
         signature = 'func (dbx *apiImpl) ' + self._generate_route_signature(
             namespace, route)
         with self.block(signature):
+            if route.deprecated is not None:
+                out('log.Printf("WARNING: API `%s` is deprecated")' % fn)
+                if route.deprecated.by is not None:
+                    out('log.Printf("Use API `%s` instead")' % fmt_var(route.deprecated.by.name))
+                out()
+
             out('cli := dbx.Client')
             out()
 

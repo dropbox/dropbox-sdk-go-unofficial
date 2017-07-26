@@ -1,4 +1,4 @@
-from stone.api import ApiNamespace
+from stone.api import (ApiNamespace, ApiRoute)
 from stone.data_type import (
     Boolean,
     Float32,
@@ -117,6 +117,15 @@ def generate_doc(code_generator, t):
     if isinstance(t, ApiNamespace):
         d = 'Package %s : %s' % (t.name, doc)
     code_generator.emit_wrapped_text(d, prefix='// ')
+
+    # Generate comment for deprecated routes
+    if isinstance(t, ApiRoute):
+        if t.deprecated is not None:
+            d = 'Deprecated: '
+            if t.deprecated.by is not None:
+                d += 'Use `%s` instead' % fmt_var(t.deprecated.by.name)
+            code_generator.emit_wrapped_text(d, prefix='// ')
+
 
 def _needs_base_type(data_type):
     if is_struct_type(data_type) and data_type.has_enumerated_subtypes():
