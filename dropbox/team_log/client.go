@@ -24,7 +24,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
@@ -50,9 +49,7 @@ type GetEventsAPIError struct {
 func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error) {
 	cli := dbx.Client
 
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
+	dbx.Config.TryLog("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -66,27 +63,21 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 	if err != nil {
 		return
 	}
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
+	dbx.Config.TryLog("req: %v", req)
 
 	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
 	if err != nil {
 		return
 	}
 
+	dbx.Config.TryLog("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
+	dbx.Config.TryLog("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -127,9 +118,7 @@ type GetEventsContinueAPIError struct {
 func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error) {
 	cli := dbx.Client
 
-	if dbx.Config.Verbose {
-		log.Printf("arg: %v", arg)
-	}
+	dbx.Config.TryLog("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -143,27 +132,21 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 	if err != nil {
 		return
 	}
-	if dbx.Config.Verbose {
-		log.Printf("req: %v", req)
-	}
+	dbx.Config.TryLog("req: %v", req)
 
 	resp, err := cli.Do(req)
-	if dbx.Config.Verbose {
-		log.Printf("resp: %v", resp)
-	}
 	if err != nil {
 		return
 	}
 
+	dbx.Config.TryLog("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	if dbx.Config.Verbose {
-		log.Printf("body: %s", body)
-	}
+	dbx.Config.TryLog("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
