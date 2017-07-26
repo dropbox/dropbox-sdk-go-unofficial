@@ -104,8 +104,8 @@ class GoClientGenerator(CodeGenerator):
 
         body = 'nil'
         if not is_void_type(route.arg_data_type):
-            with self.block('if dbx.Config.Verbose'):
-                out('log.Printf("arg: %v", arg)')
+            out('dbx.Config.TryLog("arg: %v", arg)')
+
             out('b, err := json.Marshal(arg)')
             with self.block('if err != nil'):
                 out('return')
@@ -138,20 +138,21 @@ class GoClientGenerator(CodeGenerator):
             host, style, authed, namespace.name, route.name, body))
         with self.block('if err != nil'):
             out('return')
-        with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("req: %v", req)')
+
+        out('dbx.Config.TryLog("req: %v", req)')
+
         out()
 
     def _generate_post(self):
         out = self.emit
 
         out('resp, err := cli.Do(req)')
-        with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("resp: %v", resp)')
 
         with self.block('if err != nil'):
             out('return')
         out()
+
+        out('dbx.Config.TryLog("resp: %v", resp)')
 
     def _generate_response(self, route):
         out = self.emit
@@ -165,8 +166,8 @@ class GoClientGenerator(CodeGenerator):
                             'if err != nil'):
                 out('return')
             out()
-        with self.block('if dbx.Config.Verbose'):
-            out('log.Printf("body: %s", body)')
+
+        out('dbx.Config.TryLog("body: %v", body)')
 
     def _generate_error_handling(self, route):
         out = self.emit

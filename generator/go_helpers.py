@@ -126,6 +126,7 @@ def generate_doc(code_generator, t):
                 d += 'Use `%s` instead' % fmt_var(t.deprecated.by.name)
             code_generator.emit_wrapped_text(d, prefix='// ')
 
+
 def _needs_base_type(data_type):
     if is_struct_type(data_type) and data_type.has_enumerated_subtypes():
         return True
