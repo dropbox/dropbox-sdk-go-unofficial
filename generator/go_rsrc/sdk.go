@@ -64,6 +64,19 @@ type Config struct {
 	URLGenerator func(hostType string, style string, namespace string, route string) string
 }
 
+// TryLog will, if Verbose is set, log to the config's logger
+// or the default log (stderr) if Config.Logger is nil.
+func (c *Config) TryLog(format string, v ...interface{}) {
+	if !c.Verbose {
+		return
+	}
+	if c.Logger != nil {
+		c.Logger.Printf(format, v...)
+	} else {
+		log.Printf(format, v...)
+	}
+}
+
 // Context is the base client context used to implement per-namespace clients.
 type Context struct {
 	Config          Config

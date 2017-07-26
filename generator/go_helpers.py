@@ -118,13 +118,6 @@ def generate_doc(code_generator, t):
         d = 'Package %s : %s' % (t.name, doc)
     code_generator.emit_wrapped_text(d, prefix='// ')
 
-def generate_if_else(code_generator, ifcond, ifbody, elsebody):
-    with code_generator.block('if %s' % ifcond, after=" else {"):
-        code_generator.emit(ifbody)
-    with code_generator.indent():
-        code_generator.emit(elsebody)
-    code_generator.emit('}')
-
 def _needs_base_type(data_type):
     if is_struct_type(data_type) and data_type.has_enumerated_subtypes():
         return True
