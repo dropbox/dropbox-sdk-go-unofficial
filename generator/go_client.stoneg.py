@@ -125,7 +125,7 @@ class GoClientGenerator(CodeGenerator):
             headers["Content-Type"] = '"application/octet-stream"'
 
         out('headers := map[string]string{')
-        for k, v in headers.items():
+        for k, v in sorted(headers.items()):
             out('\t"{}": {},'.format(k, v))
         out('}')
         if auth != 'noauth' and auth != 'team':
