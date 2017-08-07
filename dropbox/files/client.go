@@ -1331,6 +1331,9 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 	headers := map[string]string{
 		"Dropbox-API-Arg": string(b),
 	}
+	for k, v := range arg.ExtraHeaders {
+		headers[k] = v
+	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
 	}
@@ -1350,7 +1353,7 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
 	dbx.Config.TryLog("body: %v", body)
-	if resp.StatusCode == http.StatusOK {
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
 			return

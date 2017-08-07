@@ -86,7 +86,9 @@ class GoTypesGenerator(CodeGenerator):
                 self.emit(fmt_type(struct.parent_type, struct.namespace).lstrip('*'))
             for field in struct.fields:
                 self._generate_field(field, namespace=struct.namespace)
-            self.emit()
+            if struct.name in ('DownloadArg',):
+                self.emit('// ExtraHeaders can be used to pass Range, If-None-Match headers')
+                self.emit('ExtraHeaders map[string]string `json:"-"`')
         self._generate_struct_builder(struct)
 
     def _generate_struct_builder(self, struct):
