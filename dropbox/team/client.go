@@ -41,10 +41,10 @@ type Client interface {
 	// DevicesListTeamDevices : List all device sessions of a team.
 	// Deprecated: Use `DevicesListMembersDevices` instead
 	DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error)
-	// DevicesRevokeDeviceSession : Revoke a device session of a team's member
+	// DevicesRevokeDeviceSession : Revoke a device session of a team's member.
 	DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err error)
 	// DevicesRevokeDeviceSessionBatch : Revoke a list of device sessions of
-	// team members
+	// team members.
 	DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatchArg) (res *RevokeDeviceSessionBatchResult, err error)
 	// FeaturesGetValues : Get the values for one or more featues. This route
 	// allows you to check your account's capability for what feature you can
@@ -113,11 +113,22 @@ type Client interface {
 	// Deprecated: Use `LinkedAppsListMembersLinkedApps` instead
 	LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *ListTeamAppsResult, err error)
 	// LinkedAppsRevokeLinkedApp : Revoke a linked application of the team
-	// member
+	// member.
 	LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err error)
 	// LinkedAppsRevokeLinkedAppBatch : Revoke a list of linked applications of
-	// the team members
+	// the team members.
 	LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchArg) (res *RevokeLinkedAppBatchResult, err error)
+	// MemberSpaceLimitsGetCustomQuota : Get users custom quota. Returns none as
+	// the custom quota if none was set. A maximum of 1000 members can be
+	// specified in a single call.
+	MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (res []*CustomQuotaResult, err error)
+	// MemberSpaceLimitsRemoveCustomQuota : Remove users custom quota. A maximum
+	// of 1000 members can be specified in a single call.
+	MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg) (res []*RemoveCustomQuotaResult, err error)
+	// MemberSpaceLimitsSetCustomQuota : Set users custom quota. Custom quota
+	// has to be at least 25GB. A maximum of 1000 members can be specified in a
+	// single call.
+	MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res []*CustomQuotaResult, err error)
 	// MembersAdd : Adds members to a team. Permission : Team member management
 	// A maximum of 20 members can be specified in a single call. If no Dropbox
 	// account exists with the email address specified, a new Dropbox account
@@ -132,18 +143,18 @@ type Client interface {
 	MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err error)
 	// MembersAddJobStatusGet : Once an async_job_id is returned from
 	// `membersAdd` , use this to poll the status of the asynchronous request.
-	// Permission : Team member management
+	// Permission : Team member management.
 	MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error)
 	// MembersGetInfo : Returns information about multiple team members.
 	// Permission : Team information This endpoint will return
 	// `MembersGetInfoItem.id_not_found`, for IDs (or emails) that cannot be
 	// matched to a valid team member.
 	MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetInfoItem, err error)
-	// MembersList : Lists members of a team. Permission : Team information
+	// MembersList : Lists members of a team. Permission : Team information.
 	MembersList(arg *MembersListArg) (res *MembersListResult, err error)
 	// MembersListContinue : Once a cursor has been retrieved from
 	// `membersList`, use this to paginate through all team members. Permission
-	// : Team information
+	// : Team information.
 	MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error)
 	// MembersRecover : Recover a deleted member. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
@@ -161,7 +172,7 @@ type Client interface {
 	MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmptyResult, err error)
 	// MembersRemoveJobStatusGet : Once an async_job_id is returned from
 	// `membersRemove` , use this to poll the status of the asynchronous
-	// request. Permission : Team member management
+	// request. Permission : Team member management.
 	MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error)
 	// MembersSendWelcomeEmail : Sends welcome email to pending team member.
 	// Permission : Team member management Exactly one of team_member_id, email,
@@ -169,10 +180,10 @@ type Client interface {
 	// team member is not pending.
 	MembersSendWelcomeEmail(arg *UserSelectorArg) (err error)
 	// MembersSetAdminPermissions : Updates a team member's permissions.
-	// Permission : Team member management
+	// Permission : Team member management.
 	MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (res *MembersSetPermissionsResult, err error)
 	// MembersSetProfile : Updates a team member's profile. Permission : Team
-	// member management
+	// member management.
 	MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMemberInfo, err error)
 	// MembersSuspend : Suspend a member from a team. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
@@ -1876,6 +1887,213 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError LinkedAppsRevokeLinkedAppBatchAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MemberSpaceLimitsGetCustomQuotaAPIError is an error-wrapper for the member_space_limits/get_custom_quota route
+type MemberSpaceLimitsGetCustomQuotaAPIError struct {
+	dropbox.APIError
+	EndpointError *CustomQuotaError `json:"error"`
+}
+
+func (dbx *apiImpl) MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (res []*CustomQuotaResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.TryLog("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "member_space_limits/get_custom_quota", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.TryLog("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MemberSpaceLimitsGetCustomQuotaAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MemberSpaceLimitsRemoveCustomQuotaAPIError is an error-wrapper for the member_space_limits/remove_custom_quota route
+type MemberSpaceLimitsRemoveCustomQuotaAPIError struct {
+	dropbox.APIError
+	EndpointError *CustomQuotaError `json:"error"`
+}
+
+func (dbx *apiImpl) MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg) (res []*RemoveCustomQuotaResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.TryLog("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "member_space_limits/remove_custom_quota", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.TryLog("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MemberSpaceLimitsRemoveCustomQuotaAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MemberSpaceLimitsSetCustomQuotaAPIError is an error-wrapper for the member_space_limits/set_custom_quota route
+type MemberSpaceLimitsSetCustomQuotaAPIError struct {
+	dropbox.APIError
+	EndpointError *CustomQuotaError `json:"error"`
+}
+
+func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res []*CustomQuotaResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.TryLog("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "member_space_limits/set_custom_quota", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.TryLog("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MemberSpaceLimitsSetCustomQuotaAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

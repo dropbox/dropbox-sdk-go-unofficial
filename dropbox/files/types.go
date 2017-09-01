@@ -606,7 +606,7 @@ type Metadata struct {
 	// only the casing of paths won't be returned by `listFolderContinue`. This
 	// field will be null if the file or folder is not mounted.
 	PathDisplay string `json:"path_display,omitempty"`
-	// ParentSharedFolderId : Deprecated. Please use
+	// ParentSharedFolderId : Please use
 	// `FileSharingInfo.parent_shared_folder_id` or
 	// `FolderSharingInfo.parent_shared_folder_id` instead.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
@@ -737,7 +737,7 @@ func NewDimensions(Height uint64, Width uint64) *Dimensions {
 type DownloadArg struct {
 	// Path : The path of the file to download.
 	Path string `json:"path"`
-	// Rev : Deprecated. Please specify revision in `path` instead.
+	// Rev : Please specify revision in `path` instead.
 	Rev string `json:"rev,omitempty"`
 	// ExtraHeaders can be used to pass Range, If-None-Match headers
 	ExtraHeaders map[string]string `json:"-"`
@@ -876,7 +876,7 @@ type FolderMetadata struct {
 	Metadata
 	// Id : A unique identifier for the folder.
 	Id string `json:"id"`
-	// SharedFolderId : Deprecated. Please use `sharing_info` instead.
+	// SharedFolderId : Please use `sharing_info` instead.
 	SharedFolderId string `json:"shared_folder_id,omitempty"`
 	// SharingInfo : Set if the folder is contained in a shared folder or is a
 	// shared folder mount point.
@@ -1059,6 +1059,107 @@ func NewGetTemporaryLinkResult(Metadata *FileMetadata, Link string) *GetTemporar
 	return s
 }
 
+// GetThumbnailBatchArg : Arguments for `getThumbnailBatch`.
+type GetThumbnailBatchArg struct {
+	// Entries : List of files to get thumbnails.
+	Entries []*ThumbnailArg `json:"entries"`
+}
+
+// NewGetThumbnailBatchArg returns a new GetThumbnailBatchArg instance
+func NewGetThumbnailBatchArg(Entries []*ThumbnailArg) *GetThumbnailBatchArg {
+	s := new(GetThumbnailBatchArg)
+	s.Entries = Entries
+	return s
+}
+
+// GetThumbnailBatchError : has no documentation (yet)
+type GetThumbnailBatchError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for GetThumbnailBatchError
+const (
+	GetThumbnailBatchErrorTooManyFiles = "too_many_files"
+	GetThumbnailBatchErrorOther        = "other"
+)
+
+// GetThumbnailBatchResult : has no documentation (yet)
+type GetThumbnailBatchResult struct {
+	// Entries : List of files and their thumbnails.
+	Entries []*GetThumbnailBatchResultEntry `json:"entries"`
+}
+
+// NewGetThumbnailBatchResult returns a new GetThumbnailBatchResult instance
+func NewGetThumbnailBatchResult(Entries []*GetThumbnailBatchResultEntry) *GetThumbnailBatchResult {
+	s := new(GetThumbnailBatchResult)
+	s.Entries = Entries
+	return s
+}
+
+// GetThumbnailBatchResultData : has no documentation (yet)
+type GetThumbnailBatchResultData struct {
+	// Metadata : has no documentation (yet)
+	Metadata *FileMetadata `json:"metadata"`
+	// Thumbnail : has no documentation (yet)
+	Thumbnail string `json:"thumbnail"`
+}
+
+// NewGetThumbnailBatchResultData returns a new GetThumbnailBatchResultData instance
+func NewGetThumbnailBatchResultData(Metadata *FileMetadata, Thumbnail string) *GetThumbnailBatchResultData {
+	s := new(GetThumbnailBatchResultData)
+	s.Metadata = Metadata
+	s.Thumbnail = Thumbnail
+	return s
+}
+
+// GetThumbnailBatchResultEntry : has no documentation (yet)
+type GetThumbnailBatchResultEntry struct {
+	dropbox.Tagged
+	// Success : has no documentation (yet)
+	Success *GetThumbnailBatchResultData `json:"success,omitempty"`
+	// Failure : The result for this file if it was an error.
+	Failure *ThumbnailError `json:"failure,omitempty"`
+}
+
+// Valid tag values for GetThumbnailBatchResultEntry
+const (
+	GetThumbnailBatchResultEntrySuccess = "success"
+	GetThumbnailBatchResultEntryFailure = "failure"
+	GetThumbnailBatchResultEntryOther   = "other"
+)
+
+// UnmarshalJSON deserializes into a GetThumbnailBatchResultEntry instance
+func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Success : has no documentation (yet)
+		Success json.RawMessage `json:"success,omitempty"`
+		// Failure : The result for this file if it was an error.
+		Failure json.RawMessage `json:"failure,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "failure":
+		err = json.Unmarshal(w.Failure, &u.Failure)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // GpsCoordinates : GPS coordinates for a photo or video.
 type GpsCoordinates struct {
 	// Latitude : Latitude of the GPS coordinates.
@@ -1093,6 +1194,13 @@ type ListFolderArg struct {
 	// flag for each file indicating whether or not  that file has any explicit
 	// members.
 	IncludeHasExplicitSharedMembers bool `json:"include_has_explicit_shared_members"`
+	// IncludeMountedFolders : If true, the results will include entries under
+	// mounted folders which includes app folder, shared folder and team folder.
+	IncludeMountedFolders bool `json:"include_mounted_folders"`
+	// Limit : The maximum number of results to return per request. Note: This
+	// is an approximate number and there can be slightly more entries returned
+	// in some cases.
+	Limit uint32 `json:"limit,omitempty"`
 }
 
 // NewListFolderArg returns a new ListFolderArg instance
@@ -1103,6 +1211,7 @@ func NewListFolderArg(Path string) *ListFolderArg {
 	s.IncludeMediaInfo = false
 	s.IncludeDeleted = false
 	s.IncludeHasExplicitSharedMembers = false
+	s.IncludeMountedFolders = true
 	return s
 }
 
@@ -1541,7 +1650,7 @@ func NewPhotoMetadata() *PhotoMetadata {
 type PreviewArg struct {
 	// Path : The path of the file to preview.
 	Path string `json:"path"`
-	// Rev : Deprecated. Please specify revision in `path` instead.
+	// Rev : Please specify revision in `path` instead.
 	Rev string `json:"rev,omitempty"`
 }
 

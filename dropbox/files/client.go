@@ -118,6 +118,12 @@ type Client interface {
 	// tif, gif and bmp. Photos that are larger than 20MB in size won't be
 	// converted to a thumbnail.
 	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error)
+	// GetThumbnailBatch : Get thumbnails for a list of images. We allow up to
+	// 25 thumbnails in a single batch. This method currently supports files
+	// with the following file extensions: jpg, jpeg, png, tiff, tif, gif and
+	// bmp. Photos that are larger than 20MB in size won't be converted to a
+	// thumbnail.
+	GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbnailBatchResult, err error)
 	// ListFolder : Starts returning the contents of a folder. If the result's
 	// `ListFolderResult.has_more` field is true, call `listFolderContinue` with
 	// the returned `ListFolderResult.cursor` to retrieve more entries. If
@@ -1654,6 +1660,78 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError GetThumbnailAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//GetThumbnailBatchAPIError is an error-wrapper for the get_thumbnail_batch route
+type GetThumbnailBatchAPIError struct {
+	dropbox.APIError
+	EndpointError *GetThumbnailBatchError `json:"error"`
+}
+
+func (dbx *apiImpl) GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbnailBatchResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.TryLog("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Dropbox-API-Arg": string(b),
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("content", "rpc", true, "files", "get_thumbnail_batch", headers, nil)
+	if err != nil {
+		return
+	}
+	dbx.Config.TryLog("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.TryLog("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError GetThumbnailBatchAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
