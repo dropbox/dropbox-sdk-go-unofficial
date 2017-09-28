@@ -35,7 +35,7 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "2.1.0"
+	sdkVersion    = "1.0.0-beta"
 	specVersion   = "52ee619"
 )
 
