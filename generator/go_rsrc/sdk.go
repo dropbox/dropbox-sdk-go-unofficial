@@ -81,9 +81,7 @@ func (l LogLevel) ShouldLog(v LogLevel) bool {
 	return l > v || l & v == v
 }
 
-// TryLog will, if Verbose is set, log to the config's logger
-// or the default log (stderr) if Config.Logger is nil.
-func (c *Config) TryLog(l LogLevel, format string, v ...interface{}) {
+func (c *Config) doLog(l LogLevel, format string, v ...interface{}) {
 	if !c.LogLevel.ShouldLog(l) {
 		return
 	}
@@ -93,6 +91,16 @@ func (c *Config) TryLog(l LogLevel, format string, v ...interface{}) {
 	} else {
 		log.Printf(format, v...)
 	}
+}
+
+// LogDebug emits a debug level SDK log if config's log level is at least LogDebug
+func (c *Config) LogDebug(format string, v ...interface{}) {
+	c.doLog(LogDebug, format, v...)
+}
+
+// LogInfo emits an info level SDK log if config's log level is at least LogInfo
+func (c *Config) LogInfo(format string, v ...interface{}) {
+	c.doLog(LogInfo, format, v...)
 }
 
 // Context is the base client context used to implement per-namespace clients.
