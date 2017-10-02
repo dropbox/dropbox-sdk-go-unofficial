@@ -48,8 +48,8 @@ func Version() (string, string) {
 type Config struct {
 	// OAuth2 access token
 	Token string
-	// Enable verbose logging in SDK
-	Verbose bool
+	// Logging level for SDK generated logs
+	LogLevel LogLevel
 	// Logging target for verbose SDK logging
 	Logger *log.Logger
 	// Used with APIs that support operations as another user
@@ -64,12 +64,30 @@ type Config struct {
 	URLGenerator func(hostType string, style string, namespace string, route string) string
 }
 
+// LogLevel defines a type that can set the desired level of logging the SDK will generate.
+type LogLevel uint
+
+const (
+	// LogOff will disable all SDK logging. This is the default log level
+	LogOff LogLevel = iota * (1 << 8)
+	// LogDebug will enable detailed SDK debug logs. It will log requests (including arguments),
+	// response and body contents.
+	LogDebug
+	// LogInfo will log SDK request (not including arguments) and responses.
+	LogInfo
+)
+
+func (l LogLevel) ShouldLog(v LogLevel) bool {
+	return l > v || l & v == v
+}
+
 // TryLog will, if Verbose is set, log to the config's logger
 // or the default log (stderr) if Config.Logger is nil.
-func (c *Config) TryLog(format string, v ...interface{}) {
-	if !c.Verbose {
+func (c *Config) TryLog(l LogLevel, format string, v ...interface{}) {
+	if !c.LogLevel.ShouldLog(l) {
 		return
 	}
+
 	if c.Logger != nil {
 		c.Logger.Printf(format, v...)
 	} else {
