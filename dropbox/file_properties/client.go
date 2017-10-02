@@ -94,7 +94,7 @@ type PropertiesAddAPIError struct {
 func (dbx *apiImpl) PropertiesAdd(arg *AddPropertiesArg) (err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -111,21 +111,21 @@ func (dbx *apiImpl) PropertiesAdd(arg *AddPropertiesArg) (err error) {
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -161,7 +161,7 @@ type PropertiesOverwriteAPIError struct {
 func (dbx *apiImpl) PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -178,21 +178,21 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err err
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -228,7 +228,7 @@ type PropertiesRemoveAPIError struct {
 func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -245,21 +245,21 @@ func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -295,7 +295,7 @@ type PropertiesSearchAPIError struct {
 func (dbx *apiImpl) PropertiesSearch(arg *PropertiesSearchArg) (res *PropertiesSearchResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -312,21 +312,21 @@ func (dbx *apiImpl) PropertiesSearch(arg *PropertiesSearchArg) (res *PropertiesS
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -367,7 +367,7 @@ type PropertiesUpdateAPIError struct {
 func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertiesArg) (err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -384,21 +384,21 @@ func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertiesArg) (err error) {
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -434,7 +434,7 @@ type TemplatesAddForTeamAPIError struct {
 func (dbx *apiImpl) TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -448,21 +448,21 @@ func (dbx *apiImpl) TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateRe
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -503,7 +503,7 @@ type TemplatesAddForUserAPIError struct {
 func (dbx *apiImpl) TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -520,21 +520,21 @@ func (dbx *apiImpl) TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateRe
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -575,7 +575,7 @@ type TemplatesGetForTeamAPIError struct {
 func (dbx *apiImpl) TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -589,21 +589,21 @@ func (dbx *apiImpl) TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateRe
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -644,7 +644,7 @@ type TemplatesGetForUserAPIError struct {
 func (dbx *apiImpl) TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -661,21 +661,21 @@ func (dbx *apiImpl) TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateRe
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -722,21 +722,21 @@ func (dbx *apiImpl) TemplatesListForTeam() (res *ListTemplateResult, err error) 
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -786,21 +786,21 @@ func (dbx *apiImpl) TemplatesListForUser() (res *ListTemplateResult, err error) 
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -841,7 +841,7 @@ type TemplatesUpdateForTeamAPIError struct {
 func (dbx *apiImpl) TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -855,21 +855,21 @@ func (dbx *apiImpl) TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateT
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -910,7 +910,7 @@ type TemplatesUpdateForUserAPIError struct {
 func (dbx *apiImpl) TemplatesUpdateForUser(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.TryLog("arg: %v", arg)
+	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -927,21 +927,21 @@ func (dbx *apiImpl) TemplatesUpdateForUser(arg *UpdateTemplateArg) (res *UpdateT
 	if err != nil {
 		return
 	}
-	dbx.Config.TryLog("req: %v", req)
+	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("resp: %v", resp)
+	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.TryLog("body: %v", body)
+	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
