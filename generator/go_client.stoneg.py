@@ -107,7 +107,7 @@ class GoClientBackend(CodeBackend):
 
         body = 'nil'
         if not is_void_type(route.arg_data_type):
-            out('dbx.Config.TryLog("arg: %v", arg)')
+            out('dbx.Config.LogDebug("arg: %v", arg)')
 
             out('b, err := json.Marshal(arg)')
             with self.block('if err != nil'):
@@ -144,7 +144,7 @@ class GoClientBackend(CodeBackend):
         with self.block('if err != nil'):
             out('return')
 
-        out('dbx.Config.TryLog("req: %v", req)')
+        out('dbx.Config.LogInfo("req: %v", req)')
 
         out()
 
@@ -157,7 +157,7 @@ class GoClientBackend(CodeBackend):
             out('return')
         out()
 
-        out('dbx.Config.TryLog("resp: %v", resp)')
+        out('dbx.Config.LogInfo("resp: %v", resp)')
 
     def _generate_response(self, route):
         out = self.emit
@@ -172,7 +172,7 @@ class GoClientBackend(CodeBackend):
                 out('return')
             out()
 
-        out('dbx.Config.TryLog("body: %v", body)')
+        out('dbx.Config.LogDebug("body: %v", body)')
 
     def _generate_error_handling(self, route):
         out = self.emit
