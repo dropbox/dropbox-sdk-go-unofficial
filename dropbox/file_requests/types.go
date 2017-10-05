@@ -19,8 +19,7 @@
 // THE SOFTWARE.
 
 // Package file_requests : This namespace contains endpoints and data types for
-// file request operations. Warning: This namespace is in beta and is subject to
-// backwards-incompatible changes.
+// file request operations.
 package file_requests
 
 import (

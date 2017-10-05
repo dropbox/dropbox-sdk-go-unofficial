@@ -241,8 +241,8 @@ type Client interface {
 	// TeamFolderArchiveCheck : Returns the status of an asynchronous job for
 	// archiving a team folder. Permission : Team member file access.
 	TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderArchiveJobStatus, err error)
-	// TeamFolderCreate : Creates a new, active, team folder. Permission : Team
-	// member file access.
+	// TeamFolderCreate : Creates a new, active, team folder with no members.
+	// Permission : Team member file access.
 	TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error)
 	// TeamFolderGetInfo : Retrieves metadata for team folders. Permission :
 	// Team member file access.

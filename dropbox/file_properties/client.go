@@ -42,8 +42,8 @@ type Client interface {
 	// explicitly marked for deletion.
 	PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err error)
 	// PropertiesRemove : Remove the specified property group from the file. To
-	// remove specific property field key value pairs, see route
-	// `propertiesUpdate`. To update a template, see `templatesUpdateForUser` or
+	// remove specific property field key value pairs, see `propertiesUpdate`.
+	// To update a template, see `templatesUpdateForUser` or
 	// `templatesUpdateForTeam`. Templates can't be removed once created.
 	PropertiesRemove(arg *RemovePropertiesArg) (err error)
 	// PropertiesSearch : Search across property templates for particular
@@ -57,21 +57,24 @@ type Client interface {
 	// `propertiesOverwrite` will delete any fields that are omitted from a
 	// property group.
 	PropertiesUpdate(arg *UpdatePropertiesArg) (err error)
-	// TemplatesAddForTeam : Add a template associated with a team. See route
+	// TemplatesAddForTeam : Add a template associated with a team. See
 	// `propertiesAdd` to add properties to a file or folder.
 	TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateResult, err error)
-	// TemplatesAddForUser : Add a template associated with a user. See route
-	// `propertiesAdd` to add properties to a file.
+	// TemplatesAddForUser : Add a template associated with a user. See
+	// `propertiesAdd` to add properties to a file. This endpoint can't be
+	// called on a team member or admin's behalf.
 	TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateResult, err error)
 	// TemplatesGetForTeam : Get the schema for a specified template.
 	TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateResult, err error)
-	// TemplatesGetForUser : Get the schema for a specified template.
+	// TemplatesGetForUser : Get the schema for a specified template. This
+	// endpoint can't be called on a team member or admin's behalf.
 	TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateResult, err error)
 	// TemplatesListForTeam : Get the template identifiers for a team. To get
 	// the schema of each template use `templatesGetForTeam`.
 	TemplatesListForTeam() (res *ListTemplateResult, err error)
 	// TemplatesListForUser : Get the template identifiers for a team. To get
-	// the schema of each template use `templatesGetForUser`.
+	// the schema of each template use `templatesGetForUser`. This endpoint
+	// can't be called on a team member or admin's behalf.
 	TemplatesListForUser() (res *ListTemplateResult, err error)
 	// TemplatesUpdateForTeam : Update a template associated with a team. This
 	// route can update the template name, the template description and add
@@ -79,7 +82,8 @@ type Client interface {
 	TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error)
 	// TemplatesUpdateForUser : Update a template associated with a user. This
 	// route can update the template name, the template description and add
-	// optional properties to templates.
+	// optional properties to templates. This endpoint can't be called on a team
+	// member or admin's behalf.
 	TemplatesUpdateForUser(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error)
 }
 

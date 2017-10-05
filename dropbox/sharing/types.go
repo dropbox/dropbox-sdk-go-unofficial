@@ -3368,7 +3368,7 @@ func NewSharedContentLinkMetadata(AudienceOptions []*LinkAudience, CurrentAudien
 // part of the results for `listFileMembersBatch`.
 type SharedFileMembers struct {
 	// Users : The list of user members of the shared file.
-	Users []*UserMembershipInfo `json:"users"`
+	Users []*UserFileMembershipInfo `json:"users"`
 	// Groups : The list of group members of the shared file.
 	Groups []*GroupMembershipInfo `json:"groups"`
 	// Invitees : The list of invited members of a file, but have not logged in
@@ -3381,7 +3381,7 @@ type SharedFileMembers struct {
 }
 
 // NewSharedFileMembers returns a new SharedFileMembers instance
-func NewSharedFileMembers(Users []*UserMembershipInfo, Groups []*GroupMembershipInfo, Invitees []*InviteeMembershipInfo) *SharedFileMembers {
+func NewSharedFileMembers(Users []*UserFileMembershipInfo, Groups []*GroupMembershipInfo, Invitees []*InviteeMembershipInfo) *SharedFileMembers {
 	s := new(SharedFileMembers)
 	s.Users = Users
 	s.Groups = Groups
@@ -4106,6 +4106,41 @@ func (u *UpdateFolderPolicyError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// UserMembershipInfo : The information about a user member of the shared
+// content.
+type UserMembershipInfo struct {
+	MembershipInfo
+	// User : The account information for the membership user.
+	User *UserInfo `json:"user"`
+}
+
+// NewUserMembershipInfo returns a new UserMembershipInfo instance
+func NewUserMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserMembershipInfo {
+	s := new(UserMembershipInfo)
+	s.AccessType = AccessType
+	s.User = User
+	s.IsInherited = false
+	return s
+}
+
+// UserFileMembershipInfo : The information about a user member of the shared
+// content with an appended last seen timestamp.
+type UserFileMembershipInfo struct {
+	UserMembershipInfo
+	// TimeLastSeen : The UTC timestamp of when the user has last seen the
+	// content, if they have.
+	TimeLastSeen time.Time `json:"time_last_seen,omitempty"`
+}
+
+// NewUserFileMembershipInfo returns a new UserFileMembershipInfo instance
+func NewUserFileMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserFileMembershipInfo {
+	s := new(UserFileMembershipInfo)
+	s.AccessType = AccessType
+	s.User = User
+	s.IsInherited = false
+	return s
+}
+
 // UserInfo : Basic information about a user. Use `usersAccount` and
 // `usersAccountBatch` to obtain more detailed information.
 type UserInfo struct {
@@ -4123,23 +4158,6 @@ func NewUserInfo(AccountId string, SameTeam bool) *UserInfo {
 	s := new(UserInfo)
 	s.AccountId = AccountId
 	s.SameTeam = SameTeam
-	return s
-}
-
-// UserMembershipInfo : The information about a user member of the shared
-// content.
-type UserMembershipInfo struct {
-	MembershipInfo
-	// User : The account information for the membership user.
-	User *UserInfo `json:"user"`
-}
-
-// NewUserMembershipInfo returns a new UserMembershipInfo instance
-func NewUserMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserMembershipInfo {
-	s := new(UserMembershipInfo)
-	s.AccessType = AccessType
-	s.User = User
-	s.IsInherited = false
 	return s
 }
 

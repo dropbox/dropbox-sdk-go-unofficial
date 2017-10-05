@@ -1123,6 +1123,11 @@ func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 type ListFolderArg struct {
 	// Path : A unique identifier for the file.
 	Path string `json:"path"`
+	// SharedLink : A shared link to list the contents of, if the link is
+	// protected provide the password. if this field is present,
+	// `ListFolderArg.path` will be relative to root of the shared link. Only
+	// non-recursive mode is supported for shared link.
+	SharedLink *SharedLink `json:"shared_link,omitempty"`
 	// Recursive : If true, the list folder operation will be applied
 	// recursively to all subfolders and the response will contain contents of
 	// all subfolders.
@@ -2307,6 +2312,21 @@ func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchRes
 	s.Matches = Matches
 	s.More = More
 	s.Start = Start
+	return s
+}
+
+// SharedLink : has no documentation (yet)
+type SharedLink struct {
+	// Url : Shared link url.
+	Url string `json:"url"`
+	// Password : Password for the shared link.
+	Password string `json:"password,omitempty"`
+}
+
+// NewSharedLink returns a new SharedLink instance
+func NewSharedLink(Url string) *SharedLink {
+	s := new(SharedLink)
+	s.Url = Url
 	return s
 }
 
