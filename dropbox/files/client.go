@@ -1373,6 +1373,11 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 		var apiError DownloadAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
@@ -1524,6 +1529,11 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 		var apiError GetPreviewAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
@@ -1664,6 +1674,11 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 		var apiError GetThumbnailAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {

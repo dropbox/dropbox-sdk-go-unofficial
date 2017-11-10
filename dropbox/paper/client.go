@@ -285,6 +285,11 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 		var apiError DocsDownloadAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {

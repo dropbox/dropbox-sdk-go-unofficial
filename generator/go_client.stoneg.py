@@ -176,7 +176,15 @@ class GoClientBackend(CodeBackend):
 
     def _generate_error_handling(self, route):
         out = self.emit
+        style = route.attrs.get('style', 'rpc')
         with self.block('if resp.StatusCode == http.StatusConflict'):
+            # If style was download, body was assigned to a header.
+            # Need to re-read the response body to parse the error
+            if style == 'download':
+                out('defer resp.Body.Close()')
+                with self.block('body, err = ioutil.ReadAll(resp.Body);'
+                                'if err != nil'):
+                    out('return')
             out('var apiError %sAPIError' % fmt_var(route.name))
             with self.block('err = json.Unmarshal(body, &apiError);'
                             'if err != nil'):

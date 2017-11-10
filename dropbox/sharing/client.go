@@ -1081,6 +1081,11 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
+		defer resp.Body.Close()
+		body, err = ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return
+		}
 		var apiError GetSharedLinkFileAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
