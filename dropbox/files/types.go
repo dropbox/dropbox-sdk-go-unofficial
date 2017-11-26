@@ -392,6 +392,10 @@ const (
 func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
+		AsyncJobId string `json:"async_job_id,omitempty"`
 		// Complete : has no documentation (yet)
 		Complete json.RawMessage `json:"complete,omitempty"`
 	}
@@ -403,11 +407,8 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case DeleteBatchLaunchAsyncJobId:
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case DeleteBatchLaunchComplete:
 		err = json.Unmarshal(body, &u.Complete)
 
@@ -1952,6 +1953,10 @@ const (
 func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
+		AsyncJobId string `json:"async_job_id,omitempty"`
 		// Complete : has no documentation (yet)
 		Complete json.RawMessage `json:"complete,omitempty"`
 	}
@@ -1963,11 +1968,8 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case RelocationBatchLaunchAsyncJobId:
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case RelocationBatchLaunchComplete:
 		err = json.Unmarshal(body, &u.Complete)
 
@@ -2281,6 +2283,10 @@ const (
 func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
+		AsyncJobId string `json:"async_job_id,omitempty"`
 		// Complete : Metadata of the file where the URL is saved to.
 		Complete json.RawMessage `json:"complete,omitempty"`
 	}
@@ -2292,11 +2298,8 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case SaveUrlResultAsyncJobId:
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case SaveUrlResultComplete:
 		err = json.Unmarshal(body, &u.Complete)
 
@@ -2746,6 +2749,10 @@ const (
 func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
+		AsyncJobId string `json:"async_job_id,omitempty"`
 		// Complete : has no documentation (yet)
 		Complete json.RawMessage `json:"complete,omitempty"`
 	}
@@ -2757,11 +2764,8 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case UploadSessionFinishBatchLaunchAsyncJobId:
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case UploadSessionFinishBatchLaunchComplete:
 		err = json.Unmarshal(body, &u.Complete)
 
