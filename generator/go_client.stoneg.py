@@ -40,7 +40,7 @@ class GoClientBackend(CodeBackend):
             for route in namespace.routes:
                 self._generate_route(namespace, route)
             self.emit('// New returns a Client implementation for this namespace')
-            with self.block('func New(c dropbox.Config) *apiImpl'):
+            with self.block('func New(c dropbox.Config) Client'):
                 self.emit('ctx := apiImpl(dropbox.NewContext(c))')
                 self.emit('return &ctx')
 
