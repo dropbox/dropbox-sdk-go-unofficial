@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
@@ -35,9 +36,10 @@ func generateURL(base string, namespace string, route string) string {
 }
 
 func TestInternalError(t *testing.T) {
+	eString := "internal server error"
 	ts := httptest.NewServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			http.Error(w, "internal server error", http.StatusInternalServerError)
+			http.Error(w, eString, http.StatusInternalServerError)
 		}))
 	defer ts.Close()
 
@@ -47,7 +49,7 @@ func TestInternalError(t *testing.T) {
 		}}
 	client := users.New(config)
 	v, e := client.GetCurrentAccount()
-	if v != nil && e.Error() != "internal server error" {
-		t.Errorf("v: %v e: %v", v, e)
+	if v != nil || strings.Trim(e.Error(), "\n") != eString {
+		t.Errorf("v: %v e: '%s'\n", v, e.Error())
 	}
 }
