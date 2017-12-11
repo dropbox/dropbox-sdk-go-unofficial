@@ -26,8 +26,8 @@ class GoTypesBackend(CodeBackend):
                     self.target_folder_path)
         for namespace in api.namespaces.values():
             self._generate_namespace(namespace)
-            if namespace.name == 'files' or namespace.name == 'sharing':
-                self.logger.info('Copying metadata.go to files')
+            if namespace.name in ['files', 'sharing', 'users']:
+                self.logger.info('Copying metadata.go to %s', namespace.name)
                 shutil.copy(os.path.join(rsrc_folder, namespace.name, 'metadata.go'),
                             os.path.join(self.target_folder_path, namespace.name))
 
