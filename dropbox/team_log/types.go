@@ -330,6 +330,24 @@ func NewAppLinkTeamDetails(AppInfo IsAppLogInfo) *AppLinkTeamDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a AppLinkTeamDetails instance
+func (u *AppLinkTeamDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// AppInfo : Relevant application details.
+		AppInfo json.RawMessage `json:"app_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	AppInfo, err := IsAppLogInfoFromJSON(w.AppInfo)
+	if err != nil {
+		return err
+	}
+	u.AppInfo = AppInfo
+	return nil
+}
+
 // AppLinkUserDetails : Linked an app for team member.
 type AppLinkUserDetails struct {
 	// AppInfo : Relevant application details.
@@ -341,6 +359,24 @@ func NewAppLinkUserDetails(AppInfo IsAppLogInfo) *AppLinkUserDetails {
 	s := new(AppLinkUserDetails)
 	s.AppInfo = AppInfo
 	return s
+}
+
+// UnmarshalJSON deserializes into a AppLinkUserDetails instance
+func (u *AppLinkUserDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// AppInfo : Relevant application details.
+		AppInfo json.RawMessage `json:"app_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	AppInfo, err := IsAppLogInfoFromJSON(w.AppInfo)
+	if err != nil {
+		return err
+	}
+	u.AppInfo = AppInfo
+	return nil
 }
 
 // AppLogInfo : App's logged information.
@@ -456,6 +492,24 @@ func NewAppUnlinkTeamDetails(AppInfo IsAppLogInfo) *AppUnlinkTeamDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a AppUnlinkTeamDetails instance
+func (u *AppUnlinkTeamDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// AppInfo : Relevant application details.
+		AppInfo json.RawMessage `json:"app_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	AppInfo, err := IsAppLogInfoFromJSON(w.AppInfo)
+	if err != nil {
+		return err
+	}
+	u.AppInfo = AppInfo
+	return nil
+}
+
 // AppUnlinkUserDetails : Unlinked an app for team member.
 type AppUnlinkUserDetails struct {
 	// AppInfo : Relevant application details.
@@ -467,6 +521,24 @@ func NewAppUnlinkUserDetails(AppInfo IsAppLogInfo) *AppUnlinkUserDetails {
 	s := new(AppUnlinkUserDetails)
 	s.AppInfo = AppInfo
 	return s
+}
+
+// UnmarshalJSON deserializes into a AppUnlinkUserDetails instance
+func (u *AppUnlinkUserDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// AppInfo : Relevant application details.
+		AppInfo json.RawMessage `json:"app_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	AppInfo, err := IsAppLogInfoFromJSON(w.AppInfo)
+	if err != nil {
+		return err
+	}
+	u.AppInfo = AppInfo
+	return nil
 }
 
 // AssetLogInfo : Asset details.
@@ -5858,6 +5930,33 @@ func NewJoinTeamDetails(LinkedApps []IsAppLogInfo, LinkedDevices []*DeviceLogInf
 	s.LinkedDevices = LinkedDevices
 	s.LinkedSharedFolders = LinkedSharedFolders
 	return s
+}
+
+// UnmarshalJSON deserializes into a JoinTeamDetails instance
+func (u *JoinTeamDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// LinkedApps : Linked applications.
+		LinkedApps []json.RawMessage `json:"linked_apps"`
+		// LinkedDevices : Linked devices.
+		LinkedDevices []*DeviceLogInfo `json:"linked_devices"`
+		// LinkedSharedFolders : Linked shared folders.
+		LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.LinkedApps = make([]IsAppLogInfo, len(w.LinkedApps))
+	for i, e := range w.LinkedApps {
+		v, err := IsAppLogInfoFromJSON(e)
+		if err != nil {
+			return err
+		}
+		u.LinkedApps[i] = v
+	}
+	u.LinkedDevices = w.LinkedDevices
+	u.LinkedSharedFolders = w.LinkedSharedFolders
+	return nil
 }
 
 // LinkAudience : has no documentation (yet)
