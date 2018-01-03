@@ -94,13 +94,13 @@ class GoTypesBackend(CodeBackend):
             self.emit('// UnmarshalJSON deserializes into a %s instance' % struct.name)
             with self.block('func (u *%s) UnmarshalJSON(b []byte) error' % struct.name):
                 with self.block('type wrap struct'):
-                    for field in struct.fields:
+                    for field in struct.all_fields:
                         self._generate_field(field, namespace=struct.namespace,
                                              raw=_needs_base_type(field.data_type))
                 self.emit('var w wrap')
                 with self.block('if err := json.Unmarshal(b, &w); err != nil'):
                     self.emit('return err')
-                for field in struct.fields:
+                for field in struct.all_fields:
                     dt = field.data_type
                     fn = fmt_var(field.name)
                     tn = fmt_type(dt, namespace=struct.namespace, use_interface=True)
