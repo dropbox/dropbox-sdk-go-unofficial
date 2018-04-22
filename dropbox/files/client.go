@@ -76,6 +76,18 @@ type Client interface {
 	// CreateFolder : Create a folder at a given path.
 	// Deprecated: Use `CreateFolderV2` instead
 	CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error)
+	// CreateFolderBatch : Create multiple folders at once. This route is
+	// asynchronous for large batches, which returns a job ID immediately and
+	// runs the create folder batch asynchronously. Otherwise, creates the
+	// folders and returns the result synchronously for smaller inputs. You can
+	// force asynchronous behaviour by using the
+	// `CreateFolderBatchArg.force_async` flag.  Use `createFolderBatchCheck` to
+	// check the job status.
+	CreateFolderBatch(arg *CreateFolderBatchArg) (res *CreateFolderBatchLaunch, err error)
+	// CreateFolderBatchCheck : Returns the status of an asynchronous job for
+	// `createFolderBatch`. If success, it returns list of result for each
+	// entry.
+	CreateFolderBatchCheck(arg *async.PollArg) (res *CreateFolderBatchJobStatus, err error)
 	// CreateFolderV2 : Create a folder at a given path.
 	CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResult, err error)
 	// Delete : Delete the file or folder at a given path. If the path is a
@@ -941,6 +953,150 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError CreateFolderAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//CreateFolderBatchAPIError is an error-wrapper for the create_folder_batch route
+type CreateFolderBatchAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) CreateFolderBatch(arg *CreateFolderBatchArg) (res *CreateFolderBatchLaunch, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "create_folder_batch", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CreateFolderBatchAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//CreateFolderBatchCheckAPIError is an error-wrapper for the create_folder_batch/check route
+type CreateFolderBatchCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) CreateFolderBatchCheck(arg *async.PollArg) (res *CreateFolderBatchJobStatus, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "create_folder_batch/check", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CreateFolderBatchCheckAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

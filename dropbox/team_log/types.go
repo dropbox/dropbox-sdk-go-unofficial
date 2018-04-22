@@ -26,6 +26,8 @@ import (
 	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
@@ -124,8 +126,8 @@ const (
 	AccountCaptureAvailabilityOther       = "other"
 )
 
-// AccountCaptureChangeAvailabilityDetails : Granted or revoked the option to
-// enable account capture on domains belonging to the team.
+// AccountCaptureChangeAvailabilityDetails : Granted/revoked option to enable
+// account capture on team domains.
 type AccountCaptureChangeAvailabilityDetails struct {
 	// NewValue : New account capture availabilty value.
 	NewValue *AccountCaptureAvailability `json:"new_value"`
@@ -154,8 +156,8 @@ func NewAccountCaptureChangeAvailabilityType(Description string) *AccountCapture
 	return s
 }
 
-// AccountCaptureChangePolicyDetails : Changed the account capture policy on a
-// domain belonging to the team.
+// AccountCaptureChangePolicyDetails : Changed account capture setting on team
+// domain.
 type AccountCaptureChangePolicyDetails struct {
 	// NewValue : New account capture policy.
 	NewValue *AccountCapturePolicy `json:"new_value"`
@@ -184,8 +186,8 @@ func NewAccountCaptureChangePolicyType(Description string) *AccountCaptureChange
 	return s
 }
 
-// AccountCaptureMigrateAccountDetails : Account captured user migrated their
-// account to the team.
+// AccountCaptureMigrateAccountDetails : Account-captured user migrated account
+// to team.
 type AccountCaptureMigrateAccountDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
@@ -211,6 +213,33 @@ func NewAccountCaptureMigrateAccountType(Description string) *AccountCaptureMigr
 	return s
 }
 
+// AccountCaptureNotificationEmailsSentDetails : Sent proactive account capture
+// email to all unmanaged members.
+type AccountCaptureNotificationEmailsSentDetails struct {
+	// DomainName : Domain name.
+	DomainName string `json:"domain_name"`
+}
+
+// NewAccountCaptureNotificationEmailsSentDetails returns a new AccountCaptureNotificationEmailsSentDetails instance
+func NewAccountCaptureNotificationEmailsSentDetails(DomainName string) *AccountCaptureNotificationEmailsSentDetails {
+	s := new(AccountCaptureNotificationEmailsSentDetails)
+	s.DomainName = DomainName
+	return s
+}
+
+// AccountCaptureNotificationEmailsSentType : has no documentation (yet)
+type AccountCaptureNotificationEmailsSentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAccountCaptureNotificationEmailsSentType returns a new AccountCaptureNotificationEmailsSentType instance
+func NewAccountCaptureNotificationEmailsSentType(Description string) *AccountCaptureNotificationEmailsSentType {
+	s := new(AccountCaptureNotificationEmailsSentType)
+	s.Description = Description
+	return s
+}
+
 // AccountCapturePolicy : has no documentation (yet)
 type AccountCapturePolicy struct {
 	dropbox.Tagged
@@ -224,8 +253,8 @@ const (
 	AccountCapturePolicyOther        = "other"
 )
 
-// AccountCaptureRelinquishAccountDetails : Account captured user relinquished
-// their account by changing the email address associated with it.
+// AccountCaptureRelinquishAccountDetails : Account-captured user changed
+// account email to personal email.
 type AccountCaptureRelinquishAccountDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
@@ -249,6 +278,57 @@ func NewAccountCaptureRelinquishAccountType(Description string) *AccountCaptureR
 	s := new(AccountCaptureRelinquishAccountType)
 	s.Description = Description
 	return s
+}
+
+// ActionDetails : Additional information indicating the action taken that
+// caused status change.
+type ActionDetails struct {
+	dropbox.Tagged
+	// TeamJoinDetails : Additional information relevant when a new member joins
+	// the team.
+	TeamJoinDetails *JoinTeamDetails `json:"team_join_details,omitempty"`
+	// RemoveAction : Define how the user was removed from the team.
+	RemoveAction *MemberRemoveActionType `json:"remove_action,omitempty"`
+}
+
+// Valid tag values for ActionDetails
+const (
+	ActionDetailsTeamJoinDetails = "team_join_details"
+	ActionDetailsRemoveAction    = "remove_action"
+	ActionDetailsOther           = "other"
+)
+
+// UnmarshalJSON deserializes into a ActionDetails instance
+func (u *ActionDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// TeamJoinDetails : Additional information relevant when a new member
+		// joins the team.
+		TeamJoinDetails json.RawMessage `json:"team_join_details,omitempty"`
+		// RemoveAction : Define how the user was removed from the team.
+		RemoveAction json.RawMessage `json:"remove_action,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "team_join_details":
+		err = json.Unmarshal(body, &u.TeamJoinDetails)
+
+		if err != nil {
+			return err
+		}
+	case "remove_action":
+		err = json.Unmarshal(w.RemoveAction, &u.RemoveAction)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // ActorLogInfo : The entity who performed the action.
@@ -338,7 +418,7 @@ const (
 	AdminRoleOther               = "other"
 )
 
-// AllowDownloadDisabledDetails : Disabled allow downloads.
+// AllowDownloadDisabledDetails : Disabled downloads.
 type AllowDownloadDisabledDetails struct {
 }
 
@@ -361,7 +441,7 @@ func NewAllowDownloadDisabledType(Description string) *AllowDownloadDisabledType
 	return s
 }
 
-// AllowDownloadEnabledDetails : Enabled allow downloads.
+// AllowDownloadEnabledDetails : Enabled downloads.
 type AllowDownloadEnabledDetails struct {
 }
 
@@ -397,7 +477,7 @@ func NewApiSessionLogInfo(RequestId string) *ApiSessionLogInfo {
 	return s
 }
 
-// AppLinkTeamDetails : Linked an app for team.
+// AppLinkTeamDetails : Linked app for team.
 type AppLinkTeamDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
@@ -441,7 +521,7 @@ func NewAppLinkTeamType(Description string) *AppLinkTeamType {
 	return s
 }
 
-// AppLinkUserDetails : Linked an app for team member.
+// AppLinkUserDetails : Linked app for member.
 type AppLinkUserDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
@@ -585,7 +665,7 @@ func IsAppLogInfoFromJSON(data []byte) (IsAppLogInfo, error) {
 	return nil, nil
 }
 
-// AppUnlinkTeamDetails : Unlinked an app for team.
+// AppUnlinkTeamDetails : Unlinked app for team.
 type AppUnlinkTeamDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
@@ -629,7 +709,7 @@ func NewAppUnlinkTeamType(Description string) *AppUnlinkTeamType {
 	return s
 }
 
-// AppUnlinkUserDetails : Unlinked an app for team member.
+// AppUnlinkUserDetails : Unlinked app for member.
 type AppUnlinkUserDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
@@ -684,15 +764,18 @@ type AssetLogInfo struct {
 	PaperDocument *PaperDocumentLogInfo `json:"paper_document,omitempty"`
 	// PaperFolder : Paper folder's details.
 	PaperFolder *PaperFolderLogInfo `json:"paper_folder,omitempty"`
+	// ShowcaseDocument : Showcase document's details.
+	ShowcaseDocument *ShowcaseDocumentLogInfo `json:"showcase_document,omitempty"`
 }
 
 // Valid tag values for AssetLogInfo
 const (
-	AssetLogInfoFile          = "file"
-	AssetLogInfoFolder        = "folder"
-	AssetLogInfoPaperDocument = "paper_document"
-	AssetLogInfoPaperFolder   = "paper_folder"
-	AssetLogInfoOther         = "other"
+	AssetLogInfoFile             = "file"
+	AssetLogInfoFolder           = "folder"
+	AssetLogInfoPaperDocument    = "paper_document"
+	AssetLogInfoPaperFolder      = "paper_folder"
+	AssetLogInfoShowcaseDocument = "showcase_document"
+	AssetLogInfoOther            = "other"
 )
 
 // UnmarshalJSON deserializes into a AssetLogInfo instance
@@ -707,6 +790,8 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 		PaperDocument json.RawMessage `json:"paper_document,omitempty"`
 		// PaperFolder : Paper folder's details.
 		PaperFolder json.RawMessage `json:"paper_folder,omitempty"`
+		// ShowcaseDocument : Showcase document's details.
+		ShowcaseDocument json.RawMessage `json:"showcase_document,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -735,6 +820,12 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 		}
 	case "paper_folder":
 		err = json.Unmarshal(body, &u.PaperFolder)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_document":
+		err = json.Unmarshal(body, &u.ShowcaseDocument)
 
 		if err != nil {
 			return err
@@ -773,7 +864,7 @@ func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationD
 	return s
 }
 
-// CollectionShareDetails : Shared an album.
+// CollectionShareDetails : Shared album.
 type CollectionShareDetails struct {
 	// AlbumName : Album name.
 	AlbumName string `json:"album_name"`
@@ -798,18 +889,6 @@ func NewCollectionShareType(Description string) *CollectionShareType {
 	s.Description = Description
 	return s
 }
-
-// Confidentiality : has no documentation (yet)
-type Confidentiality struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for Confidentiality
-const (
-	ConfidentialityConfidential    = "confidential"
-	ConfidentialityNonConfidential = "non_confidential"
-	ConfidentialityOther           = "other"
-)
 
 // ContentPermanentDeletePolicy : Policy for pemanent content deletion
 type ContentPermanentDeletePolicy struct {
@@ -896,8 +975,8 @@ func NewCreateFolderType(Description string) *CreateFolderType {
 	return s
 }
 
-// DataPlacementRestrictionChangePolicyDetails : Set a restriction policy
-// regarding the location of data centers where team data resides.
+// DataPlacementRestrictionChangePolicyDetails : Set restrictions on data center
+// locations where team data resides.
 type DataPlacementRestrictionChangePolicyDetails struct {
 	// PreviousValue : Previous placement restriction.
 	PreviousValue *PlacementRestriction `json:"previous_value"`
@@ -926,10 +1005,8 @@ func NewDataPlacementRestrictionChangePolicyType(Description string) *DataPlacem
 	return s
 }
 
-// DataPlacementRestrictionSatisfyPolicyDetails : Satisfied a previously set
-// restriction policy regarding the location of data centers where team data
-// resides (i.e. all data have been migrated according to the restriction
-// placed).
+// DataPlacementRestrictionSatisfyPolicyDetails : Completed restrictions on data
+// center locations where team data resides.
 type DataPlacementRestrictionSatisfyPolicyDetails struct {
 	// PlacementRestriction : Placement restriction.
 	PlacementRestriction *PlacementRestriction `json:"placement_restriction"`
@@ -952,6 +1029,154 @@ type DataPlacementRestrictionSatisfyPolicyType struct {
 func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlacementRestrictionSatisfyPolicyType {
 	s := new(DataPlacementRestrictionSatisfyPolicyType)
 	s.Description = Description
+	return s
+}
+
+// DeviceSessionLogInfo : Device's session logged information.
+type DeviceSessionLogInfo struct {
+	// IpAddress : The IP address of the last activity from this session. Might
+	// be missing due to historical data gap.
+	IpAddress string `json:"ip_address,omitempty"`
+	// Created : The time this session was created. Might be missing due to
+	// historical data gap.
+	Created time.Time `json:"created,omitempty"`
+	// Updated : The time of the last activity from this session. Might be
+	// missing due to historical data gap.
+	Updated time.Time `json:"updated,omitempty"`
+}
+
+// NewDeviceSessionLogInfo returns a new DeviceSessionLogInfo instance
+func NewDeviceSessionLogInfo() *DeviceSessionLogInfo {
+	s := new(DeviceSessionLogInfo)
+	return s
+}
+
+// IsDeviceSessionLogInfo is the interface type for DeviceSessionLogInfo and its subtypes
+type IsDeviceSessionLogInfo interface {
+	IsDeviceSessionLogInfo()
+}
+
+// IsDeviceSessionLogInfo implements the IsDeviceSessionLogInfo interface
+func (u *DeviceSessionLogInfo) IsDeviceSessionLogInfo() {}
+
+type deviceSessionLogInfoUnion struct {
+	dropbox.Tagged
+	// DesktopDeviceSession : has no documentation (yet)
+	DesktopDeviceSession *DesktopDeviceSessionLogInfo `json:"desktop_device_session,omitempty"`
+	// MobileDeviceSession : has no documentation (yet)
+	MobileDeviceSession *MobileDeviceSessionLogInfo `json:"mobile_device_session,omitempty"`
+	// WebDeviceSession : has no documentation (yet)
+	WebDeviceSession *WebDeviceSessionLogInfo `json:"web_device_session,omitempty"`
+	// LegacyDeviceSession : has no documentation (yet)
+	LegacyDeviceSession *LegacyDeviceSessionLogInfo `json:"legacy_device_session,omitempty"`
+}
+
+// Valid tag values for DeviceSessionLogInfo
+const (
+	DeviceSessionLogInfoDesktopDeviceSession = "desktop_device_session"
+	DeviceSessionLogInfoMobileDeviceSession  = "mobile_device_session"
+	DeviceSessionLogInfoWebDeviceSession     = "web_device_session"
+	DeviceSessionLogInfoLegacyDeviceSession  = "legacy_device_session"
+)
+
+// UnmarshalJSON deserializes into a deviceSessionLogInfoUnion instance
+func (u *deviceSessionLogInfoUnion) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// DesktopDeviceSession : has no documentation (yet)
+		DesktopDeviceSession json.RawMessage `json:"desktop_device_session,omitempty"`
+		// MobileDeviceSession : has no documentation (yet)
+		MobileDeviceSession json.RawMessage `json:"mobile_device_session,omitempty"`
+		// WebDeviceSession : has no documentation (yet)
+		WebDeviceSession json.RawMessage `json:"web_device_session,omitempty"`
+		// LegacyDeviceSession : has no documentation (yet)
+		LegacyDeviceSession json.RawMessage `json:"legacy_device_session,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "desktop_device_session":
+		err = json.Unmarshal(body, &u.DesktopDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "mobile_device_session":
+		err = json.Unmarshal(body, &u.MobileDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "web_device_session":
+		err = json.Unmarshal(body, &u.WebDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "legacy_device_session":
+		err = json.Unmarshal(body, &u.LegacyDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// IsDeviceSessionLogInfoFromJSON converts JSON to a concrete IsDeviceSessionLogInfo instance
+func IsDeviceSessionLogInfoFromJSON(data []byte) (IsDeviceSessionLogInfo, error) {
+	var t deviceSessionLogInfoUnion
+	if err := json.Unmarshal(data, &t); err != nil {
+		return nil, err
+	}
+	switch t.Tag {
+	case "desktop_device_session":
+		return t.DesktopDeviceSession, nil
+
+	case "mobile_device_session":
+		return t.MobileDeviceSession, nil
+
+	case "web_device_session":
+		return t.WebDeviceSession, nil
+
+	case "legacy_device_session":
+		return t.LegacyDeviceSession, nil
+
+	}
+	return nil, nil
+}
+
+// DesktopDeviceSessionLogInfo : Information about linked Dropbox desktop client
+// sessions
+type DesktopDeviceSessionLogInfo struct {
+	DeviceSessionLogInfo
+	// SessionInfo : Desktop session unique id. Might be missing due to
+	// historical data gap.
+	SessionInfo *DesktopSessionLogInfo `json:"session_info,omitempty"`
+	// HostName : Name of the hosting desktop.
+	HostName string `json:"host_name"`
+	// ClientType : The Dropbox desktop client type.
+	ClientType *team.DesktopPlatform `json:"client_type"`
+	// ClientVersion : The Dropbox client version.
+	ClientVersion string `json:"client_version,omitempty"`
+	// Platform : Information on the hosting platform.
+	Platform string `json:"platform"`
+	// IsDeleteOnUnlinkSupported : Whether itu2019s possible to delete all of
+	// the account files upon unlinking.
+	IsDeleteOnUnlinkSupported bool `json:"is_delete_on_unlink_supported"`
+}
+
+// NewDesktopDeviceSessionLogInfo returns a new DesktopDeviceSessionLogInfo instance
+func NewDesktopDeviceSessionLogInfo(HostName string, ClientType *team.DesktopPlatform, Platform string, IsDeleteOnUnlinkSupported bool) *DesktopDeviceSessionLogInfo {
+	s := new(DesktopDeviceSessionLogInfo)
+	s.HostName = HostName
+	s.ClientType = ClientType
+	s.Platform = Platform
+	s.IsDeleteOnUnlinkSupported = IsDeleteOnUnlinkSupported
 	return s
 }
 
@@ -1063,8 +1288,8 @@ func NewDesktopSessionLogInfo() *DesktopSessionLogInfo {
 	return s
 }
 
-// DeviceApprovalsChangeDesktopPolicyDetails : Set or removed a limit on the
-// number of computers each team member can link to their work Dropbox account.
+// DeviceApprovalsChangeDesktopPolicyDetails : Set/removed limit on number of
+// computers member can link to team Dropbox account.
 type DeviceApprovalsChangeDesktopPolicyDetails struct {
 	// NewValue : New desktop device approvals policy. Might be missing due to
 	// historical data gap.
@@ -1093,9 +1318,8 @@ func NewDeviceApprovalsChangeDesktopPolicyType(Description string) *DeviceApprov
 	return s
 }
 
-// DeviceApprovalsChangeMobilePolicyDetails : Set or removed a limit on the
-// number of mobiles devices each team member can link to their work Dropbox
-// account.
+// DeviceApprovalsChangeMobilePolicyDetails : Set/removed limit on number of
+// mobile devices member can link to team Dropbox account.
 type DeviceApprovalsChangeMobilePolicyDetails struct {
 	// NewValue : New mobile device approvals policy. Might be missing due to
 	// historical data gap.
@@ -1124,9 +1348,8 @@ func NewDeviceApprovalsChangeMobilePolicyType(Description string) *DeviceApprova
 	return s
 }
 
-// DeviceApprovalsChangeOverageActionDetails : Changed the action taken when a
-// team member is already over the limits (e.g when they join the team, an admin
-// lowers limits, etc.).
+// DeviceApprovalsChangeOverageActionDetails : Changed device approvals setting
+// when member is over limit.
 type DeviceApprovalsChangeOverageActionDetails struct {
 	// NewValue : New over the limits policy. Might be missing due to historical
 	// data gap.
@@ -1155,8 +1378,8 @@ func NewDeviceApprovalsChangeOverageActionType(Description string) *DeviceApprov
 	return s
 }
 
-// DeviceApprovalsChangeUnlinkActionDetails : Changed the action taken with
-// respect to approval limits when a team member unlinks an approved device.
+// DeviceApprovalsChangeUnlinkActionDetails : Changed device approvals setting
+// when member unlinks approved device.
 type DeviceApprovalsChangeUnlinkActionDetails struct {
 	// NewValue : New device unlink policy. Might be missing due to historical
 	// data gap.
@@ -1197,18 +1420,36 @@ const (
 	DeviceApprovalsPolicyOther     = "other"
 )
 
-// DeviceChangeIpDesktopDetails : IP address associated with active desktop
-// session changed.
+// DeviceChangeIpDesktopDetails : Changed IP address associated with active
+// desktop session.
 type DeviceChangeIpDesktopDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// DeviceSessionInfo : Device's session logged information.
+	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info"`
 }
 
 // NewDeviceChangeIpDesktopDetails returns a new DeviceChangeIpDesktopDetails instance
-func NewDeviceChangeIpDesktopDetails(DeviceInfo *DeviceLogInfo) *DeviceChangeIpDesktopDetails {
+func NewDeviceChangeIpDesktopDetails(DeviceSessionInfo IsDeviceSessionLogInfo) *DeviceChangeIpDesktopDetails {
 	s := new(DeviceChangeIpDesktopDetails)
-	s.DeviceInfo = DeviceInfo
+	s.DeviceSessionInfo = DeviceSessionInfo
 	return s
+}
+
+// UnmarshalJSON deserializes into a DeviceChangeIpDesktopDetails instance
+func (u *DeviceChangeIpDesktopDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeviceSessionInfo : Device's session logged information.
+		DeviceSessionInfo json.RawMessage `json:"device_session_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	DeviceSessionInfo, err := IsDeviceSessionLogInfoFromJSON(w.DeviceSessionInfo)
+	if err != nil {
+		return err
+	}
+	u.DeviceSessionInfo = DeviceSessionInfo
+	return nil
 }
 
 // DeviceChangeIpDesktopType : has no documentation (yet)
@@ -1224,17 +1465,16 @@ func NewDeviceChangeIpDesktopType(Description string) *DeviceChangeIpDesktopType
 	return s
 }
 
-// DeviceChangeIpMobileDetails : IP address associated with active mobile
-// session changed.
+// DeviceChangeIpMobileDetails : Changed IP address associated with active
+// mobile session.
 type DeviceChangeIpMobileDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// DeviceSessionInfo : Device's session logged information.
+	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info,omitempty"`
 }
 
 // NewDeviceChangeIpMobileDetails returns a new DeviceChangeIpMobileDetails instance
-func NewDeviceChangeIpMobileDetails(DeviceInfo *DeviceLogInfo) *DeviceChangeIpMobileDetails {
+func NewDeviceChangeIpMobileDetails() *DeviceChangeIpMobileDetails {
 	s := new(DeviceChangeIpMobileDetails)
-	s.DeviceInfo = DeviceInfo
 	return s
 }
 
@@ -1251,12 +1491,9 @@ func NewDeviceChangeIpMobileType(Description string) *DeviceChangeIpMobileType {
 	return s
 }
 
-// DeviceChangeIpWebDetails : IP address associated with active Web session
-// changed.
+// DeviceChangeIpWebDetails : Changed IP address associated with active web
+// session.
 type DeviceChangeIpWebDetails struct {
-	// DeviceInfo : Device information. Might be missing due to historical data
-	// gap.
-	DeviceInfo *DeviceLogInfo `json:"device_info,omitempty"`
 	// UserAgent : Web browser name.
 	UserAgent string `json:"user_agent"`
 }
@@ -1281,19 +1518,22 @@ func NewDeviceChangeIpWebType(Description string) *DeviceChangeIpWebType {
 	return s
 }
 
-// DeviceDeleteOnUnlinkFailDetails : Failed to delete all files from an unlinked
+// DeviceDeleteOnUnlinkFailDetails : Failed to delete all files from unlinked
 // device.
 type DeviceDeleteOnUnlinkFailDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// SessionInfo : Session unique id. Might be missing due to historical data
+	// gap.
+	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
+	// DisplayName : The device name. Might be missing due to historical data
+	// gap.
+	DisplayName string `json:"display_name,omitempty"`
 	// NumFailures : The number of times that remote file deletion failed.
 	NumFailures int64 `json:"num_failures"`
 }
 
 // NewDeviceDeleteOnUnlinkFailDetails returns a new DeviceDeleteOnUnlinkFailDetails instance
-func NewDeviceDeleteOnUnlinkFailDetails(DeviceInfo *DeviceLogInfo, NumFailures int64) *DeviceDeleteOnUnlinkFailDetails {
+func NewDeviceDeleteOnUnlinkFailDetails(NumFailures int64) *DeviceDeleteOnUnlinkFailDetails {
 	s := new(DeviceDeleteOnUnlinkFailDetails)
-	s.DeviceInfo = DeviceInfo
 	s.NumFailures = NumFailures
 	return s
 }
@@ -1311,17 +1551,19 @@ func NewDeviceDeleteOnUnlinkFailType(Description string) *DeviceDeleteOnUnlinkFa
 	return s
 }
 
-// DeviceDeleteOnUnlinkSuccessDetails : Deleted all files from an unlinked
-// device.
+// DeviceDeleteOnUnlinkSuccessDetails : Deleted all files from unlinked device.
 type DeviceDeleteOnUnlinkSuccessDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// SessionInfo : Session unique id. Might be missing due to historical data
+	// gap.
+	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
+	// DisplayName : The device name. Might be missing due to historical data
+	// gap.
+	DisplayName string `json:"display_name,omitempty"`
 }
 
 // NewDeviceDeleteOnUnlinkSuccessDetails returns a new DeviceDeleteOnUnlinkSuccessDetails instance
-func NewDeviceDeleteOnUnlinkSuccessDetails(DeviceInfo *DeviceLogInfo) *DeviceDeleteOnUnlinkSuccessDetails {
+func NewDeviceDeleteOnUnlinkSuccessDetails() *DeviceDeleteOnUnlinkSuccessDetails {
 	s := new(DeviceDeleteOnUnlinkSuccessDetails)
-	s.DeviceInfo = DeviceInfo
 	return s
 }
 
@@ -1338,11 +1580,10 @@ func NewDeviceDeleteOnUnlinkSuccessType(Description string) *DeviceDeleteOnUnlin
 	return s
 }
 
-// DeviceLinkFailDetails : Failed to link a device.
+// DeviceLinkFailDetails : Failed to link device.
 type DeviceLinkFailDetails struct {
-	// DeviceInfo : Device information. Might be missing due to historical data
-	// gap.
-	DeviceInfo *DeviceLogInfo `json:"device_info,omitempty"`
+	// IpAddress : IP address. Might be missing due to historical data gap.
+	IpAddress string `json:"ip_address,omitempty"`
 	// DeviceType : A description of the device used while user approval
 	// blocked.
 	DeviceType *DeviceType `json:"device_type"`
@@ -1368,16 +1609,15 @@ func NewDeviceLinkFailType(Description string) *DeviceLinkFailType {
 	return s
 }
 
-// DeviceLinkSuccessDetails : Linked a device.
+// DeviceLinkSuccessDetails : Linked device.
 type DeviceLinkSuccessDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// DeviceSessionInfo : Device's session logged information.
+	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info,omitempty"`
 }
 
 // NewDeviceLinkSuccessDetails returns a new DeviceLinkSuccessDetails instance
-func NewDeviceLinkSuccessDetails(DeviceInfo *DeviceLogInfo) *DeviceLinkSuccessDetails {
+func NewDeviceLinkSuccessDetails() *DeviceLinkSuccessDetails {
 	s := new(DeviceLinkSuccessDetails)
-	s.DeviceInfo = DeviceInfo
 	return s
 }
 
@@ -1394,44 +1634,7 @@ func NewDeviceLinkSuccessType(Description string) *DeviceLinkSuccessType {
 	return s
 }
 
-// DeviceLogInfo : Device's logged information.
-type DeviceLogInfo struct {
-	// DeviceId : Device unique id. Might be missing due to historical data gap.
-	DeviceId string `json:"device_id,omitempty"`
-	// DisplayName : Device display name. Might be missing due to historical
-	// data gap.
-	DisplayName string `json:"display_name,omitempty"`
-	// IsEmmManaged : True if this device is emm managed, false otherwise. Might
-	// be missing due to historical data gap.
-	IsEmmManaged bool `json:"is_emm_managed,omitempty"`
-	// Platform : Device platform name. Might be missing due to historical data
-	// gap.
-	Platform string `json:"platform,omitempty"`
-	// MacAddress : Device mac address. Might be missing due to historical data
-	// gap.
-	MacAddress string `json:"mac_address,omitempty"`
-	// OsVersion : Device OS version. Might be missing due to historical data
-	// gap.
-	OsVersion string `json:"os_version,omitempty"`
-	// DeviceType : Device type. Might be missing due to historical data gap.
-	DeviceType string `json:"device_type,omitempty"`
-	// IpAddress : IP address. Might be missing due to historical data gap.
-	IpAddress string `json:"ip_address,omitempty"`
-	// LastActivity : Last activity. Might be missing due to historical data
-	// gap.
-	LastActivity string `json:"last_activity,omitempty"`
-	// AppVersion : Linking app version. Might be missing due to historical data
-	// gap.
-	AppVersion string `json:"app_version,omitempty"`
-}
-
-// NewDeviceLogInfo returns a new DeviceLogInfo instance
-func NewDeviceLogInfo() *DeviceLogInfo {
-	s := new(DeviceLogInfo)
-	return s
-}
-
-// DeviceManagementDisabledDetails : Disable Device Management.
+// DeviceManagementDisabledDetails : Disabled device management.
 type DeviceManagementDisabledDetails struct {
 }
 
@@ -1454,7 +1657,7 @@ func NewDeviceManagementDisabledType(Description string) *DeviceManagementDisabl
 	return s
 }
 
-// DeviceManagementEnabledDetails : Enable Device Management.
+// DeviceManagementEnabledDetails : Enabled device management.
 type DeviceManagementEnabledDetails struct {
 }
 
@@ -1489,19 +1692,21 @@ const (
 	DeviceTypeOther   = "other"
 )
 
-// DeviceUnlinkDetails : Disconnected a device.
+// DeviceUnlinkDetails : Disconnected device.
 type DeviceUnlinkDetails struct {
-	// DeviceInfo : Device information.
-	DeviceInfo *DeviceLogInfo `json:"device_info"`
+	// SessionInfo : Session unique id.
+	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
+	// DisplayName : The device name. Might be missing due to historical data
+	// gap.
+	DisplayName string `json:"display_name,omitempty"`
 	// DeleteData : True if the user requested to delete data after device
 	// unlink, false otherwise.
 	DeleteData bool `json:"delete_data"`
 }
 
 // NewDeviceUnlinkDetails returns a new DeviceUnlinkDetails instance
-func NewDeviceUnlinkDetails(DeviceInfo *DeviceLogInfo, DeleteData bool) *DeviceUnlinkDetails {
+func NewDeviceUnlinkDetails(DeleteData bool) *DeviceUnlinkDetails {
 	s := new(DeviceUnlinkDetails)
-	s.DeviceInfo = DeviceInfo
 	s.DeleteData = DeleteData
 	return s
 }
@@ -1554,8 +1759,8 @@ func NewDisabledDomainInvitesType(Description string) *DisabledDomainInvitesType
 	return s
 }
 
-// DomainInvitesApproveRequestToJoinTeamDetails : Approved a member's request to
-// join the team.
+// DomainInvitesApproveRequestToJoinTeamDetails : Approved user's request to
+// join team.
 type DomainInvitesApproveRequestToJoinTeamDetails struct {
 }
 
@@ -1578,8 +1783,8 @@ func NewDomainInvitesApproveRequestToJoinTeamType(Description string) *DomainInv
 	return s
 }
 
-// DomainInvitesDeclineRequestToJoinTeamDetails : Declined a user's request to
-// join the team.
+// DomainInvitesDeclineRequestToJoinTeamDetails : Declined user's request to
+// join team.
 type DomainInvitesDeclineRequestToJoinTeamDetails struct {
 }
 
@@ -1606,13 +1811,13 @@ func NewDomainInvitesDeclineRequestToJoinTeamType(Description string) *DomainInv
 // domain accounts.
 type DomainInvitesEmailExistingUsersDetails struct {
 	// DomainName : Domain names.
-	DomainName []string `json:"domain_name"`
+	DomainName string `json:"domain_name"`
 	// NumRecipients : Number of recipients.
 	NumRecipients uint64 `json:"num_recipients"`
 }
 
 // NewDomainInvitesEmailExistingUsersDetails returns a new DomainInvitesEmailExistingUsersDetails instance
-func NewDomainInvitesEmailExistingUsersDetails(DomainName []string, NumRecipients uint64) *DomainInvitesEmailExistingUsersDetails {
+func NewDomainInvitesEmailExistingUsersDetails(DomainName string, NumRecipients uint64) *DomainInvitesEmailExistingUsersDetails {
 	s := new(DomainInvitesEmailExistingUsersDetails)
 	s.DomainName = DomainName
 	s.NumRecipients = NumRecipients
@@ -1632,7 +1837,7 @@ func NewDomainInvitesEmailExistingUsersType(Description string) *DomainInvitesEm
 	return s
 }
 
-// DomainInvitesRequestToJoinTeamDetails : Asked to join the team.
+// DomainInvitesRequestToJoinTeamDetails : Requested to join team.
 type DomainInvitesRequestToJoinTeamDetails struct {
 }
 
@@ -1655,8 +1860,8 @@ func NewDomainInvitesRequestToJoinTeamType(Description string) *DomainInvitesReq
 	return s
 }
 
-// DomainInvitesSetInviteNewUserPrefToNoDetails : Turned off u201cAutomatically
-// invite new usersu201d.
+// DomainInvitesSetInviteNewUserPrefToNoDetails : Disabled "Automatically invite
+// new users".
 type DomainInvitesSetInviteNewUserPrefToNoDetails struct {
 }
 
@@ -1679,8 +1884,8 @@ func NewDomainInvitesSetInviteNewUserPrefToNoType(Description string) *DomainInv
 	return s
 }
 
-// DomainInvitesSetInviteNewUserPrefToYesDetails : Turned on u201cAutomatically
-// invite new usersu201d.
+// DomainInvitesSetInviteNewUserPrefToYesDetails : Enabled "Automatically invite
+// new users".
 type DomainInvitesSetInviteNewUserPrefToYesDetails struct {
 }
 
@@ -1703,8 +1908,7 @@ func NewDomainInvitesSetInviteNewUserPrefToYesType(Description string) *DomainIn
 	return s
 }
 
-// DomainVerificationAddDomainFailDetails : Failed to verify a domain belonging
-// to the team.
+// DomainVerificationAddDomainFailDetails : Failed to verify team domain.
 type DomainVerificationAddDomainFailDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
@@ -1733,8 +1937,7 @@ func NewDomainVerificationAddDomainFailType(Description string) *DomainVerificat
 	return s
 }
 
-// DomainVerificationAddDomainSuccessDetails : Verified a domain belonging to
-// the team.
+// DomainVerificationAddDomainSuccessDetails : Verified team domain.
 type DomainVerificationAddDomainSuccessDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
@@ -1763,8 +1966,8 @@ func NewDomainVerificationAddDomainSuccessType(Description string) *DomainVerifi
 	return s
 }
 
-// DomainVerificationRemoveDomainDetails : Removed a domain from the list of
-// verified domains belonging to the team.
+// DomainVerificationRemoveDomainDetails : Removed domain from list of verified
+// team domains.
 type DomainVerificationRemoveDomainDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
@@ -1790,6 +1993,18 @@ func NewDomainVerificationRemoveDomainType(Description string) *DomainVerificati
 	return s
 }
 
+// DownloadPolicyType : Shared content downloads policy
+type DownloadPolicyType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DownloadPolicyType
+const (
+	DownloadPolicyTypeAllow    = "allow"
+	DownloadPolicyTypeDisallow = "disallow"
+	DownloadPolicyTypeOther    = "other"
+)
+
 // DurationLogInfo : Represents a time duration: unit and amount
 type DurationLogInfo struct {
 	// Unit : Time unit.
@@ -1806,8 +2021,7 @@ func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
 	return s
 }
 
-// EmmAddExceptionDetails : Added an exception for one or more team members to
-// optionally use the regular Dropbox app when EMM is enabled.
+// EmmAddExceptionDetails : Added members to EMM exception list.
 type EmmAddExceptionDetails struct {
 }
 
@@ -1830,8 +2044,8 @@ func NewEmmAddExceptionType(Description string) *EmmAddExceptionType {
 	return s
 }
 
-// EmmChangePolicyDetails : Enabled or disabled enterprise mobility management
-// for team members.
+// EmmChangePolicyDetails : Enabled/disabled enterprise mobility management for
+// members.
 type EmmChangePolicyDetails struct {
 	// NewValue : New enterprise mobility management policy.
 	NewValue *team_policies.EmmState `json:"new_value"`
@@ -1860,7 +2074,7 @@ func NewEmmChangePolicyType(Description string) *EmmChangePolicyType {
 	return s
 }
 
-// EmmCreateExceptionsReportDetails : EMM excluded users report created.
+// EmmCreateExceptionsReportDetails : Created EMM-excluded users report.
 type EmmCreateExceptionsReportDetails struct {
 }
 
@@ -1883,7 +2097,7 @@ func NewEmmCreateExceptionsReportType(Description string) *EmmCreateExceptionsRe
 	return s
 }
 
-// EmmCreateUsageReportDetails : EMM mobile app usage report created.
+// EmmCreateUsageReportDetails : Created EMM mobile app usage report.
 type EmmCreateUsageReportDetails struct {
 }
 
@@ -1932,7 +2146,7 @@ func NewEmmErrorType(Description string) *EmmErrorType {
 	return s
 }
 
-// EmmRefreshAuthTokenDetails : Refreshed the auth token used for setting up
+// EmmRefreshAuthTokenDetails : Refreshed auth token used for setting up
 // enterprise mobility management.
 type EmmRefreshAuthTokenDetails struct {
 }
@@ -1956,8 +2170,7 @@ func NewEmmRefreshAuthTokenType(Description string) *EmmRefreshAuthTokenType {
 	return s
 }
 
-// EmmRemoveExceptionDetails : Removed an exception for one or more team members
-// to optionally use the regular Dropbox app when EMM is enabled.
+// EmmRemoveExceptionDetails : Removed members from EMM exception list.
 type EmmRemoveExceptionDetails struct {
 }
 
@@ -2023,6 +2236,7 @@ const (
 	EventCategoryPasswords      = "passwords"
 	EventCategoryReports        = "reports"
 	EventCategorySharing        = "sharing"
+	EventCategoryShowcase       = "showcase"
 	EventCategorySso            = "sso"
 	EventCategoryTeamFolders    = "team_folders"
 	EventCategoryTeamPolicies   = "team_policies"
@@ -2082,6 +2296,8 @@ type EventDetails struct {
 	AccountCaptureChangeAvailabilityDetails *AccountCaptureChangeAvailabilityDetails `json:"account_capture_change_availability_details,omitempty"`
 	// AccountCaptureMigrateAccountDetails : has no documentation (yet)
 	AccountCaptureMigrateAccountDetails *AccountCaptureMigrateAccountDetails `json:"account_capture_migrate_account_details,omitempty"`
+	// AccountCaptureNotificationEmailsSentDetails : has no documentation (yet)
+	AccountCaptureNotificationEmailsSentDetails *AccountCaptureNotificationEmailsSentDetails `json:"account_capture_notification_emails_sent_details,omitempty"`
 	// AccountCaptureRelinquishAccountDetails : has no documentation (yet)
 	AccountCaptureRelinquishAccountDetails *AccountCaptureRelinquishAccountDetails `json:"account_capture_relinquish_account_details,omitempty"`
 	// DisabledDomainInvitesDetails : has no documentation (yet)
@@ -2137,22 +2353,14 @@ type EventDetails struct {
 	FileRollbackChangesDetails *FileRollbackChangesDetails `json:"file_rollback_changes_details,omitempty"`
 	// FileSaveCopyReferenceDetails : has no documentation (yet)
 	FileSaveCopyReferenceDetails *FileSaveCopyReferenceDetails `json:"file_save_copy_reference_details,omitempty"`
-	// FileRequestAddDeadlineDetails : has no documentation (yet)
-	FileRequestAddDeadlineDetails *FileRequestAddDeadlineDetails `json:"file_request_add_deadline_details,omitempty"`
 	// FileRequestChangeDetails : has no documentation (yet)
 	FileRequestChangeDetails *FileRequestChangeDetails `json:"file_request_change_details,omitempty"`
-	// FileRequestChangeFolderDetails : has no documentation (yet)
-	FileRequestChangeFolderDetails *FileRequestChangeFolderDetails `json:"file_request_change_folder_details,omitempty"`
 	// FileRequestCloseDetails : has no documentation (yet)
 	FileRequestCloseDetails *FileRequestCloseDetails `json:"file_request_close_details,omitempty"`
 	// FileRequestCreateDetails : has no documentation (yet)
 	FileRequestCreateDetails *FileRequestCreateDetails `json:"file_request_create_details,omitempty"`
 	// FileRequestReceiveFileDetails : has no documentation (yet)
 	FileRequestReceiveFileDetails *FileRequestReceiveFileDetails `json:"file_request_receive_file_details,omitempty"`
-	// FileRequestRemoveDeadlineDetails : has no documentation (yet)
-	FileRequestRemoveDeadlineDetails *FileRequestRemoveDeadlineDetails `json:"file_request_remove_deadline_details,omitempty"`
-	// FileRequestSendDetails : has no documentation (yet)
-	FileRequestSendDetails *FileRequestSendDetails `json:"file_request_send_details,omitempty"`
 	// GroupAddExternalIdDetails : has no documentation (yet)
 	GroupAddExternalIdDetails *GroupAddExternalIdDetails `json:"group_add_external_id_details,omitempty"`
 	// GroupAddMemberDetails : has no documentation (yet)
@@ -2167,6 +2375,10 @@ type EventDetails struct {
 	GroupCreateDetails *GroupCreateDetails `json:"group_create_details,omitempty"`
 	// GroupDeleteDetails : has no documentation (yet)
 	GroupDeleteDetails *GroupDeleteDetails `json:"group_delete_details,omitempty"`
+	// GroupDescriptionUpdatedDetails : has no documentation (yet)
+	GroupDescriptionUpdatedDetails *GroupDescriptionUpdatedDetails `json:"group_description_updated_details,omitempty"`
+	// GroupJoinPolicyUpdatedDetails : has no documentation (yet)
+	GroupJoinPolicyUpdatedDetails *GroupJoinPolicyUpdatedDetails `json:"group_join_policy_updated_details,omitempty"`
 	// GroupMovedDetails : has no documentation (yet)
 	GroupMovedDetails *GroupMovedDetails `json:"group_moved_details,omitempty"`
 	// GroupRemoveExternalIdDetails : has no documentation (yet)
@@ -2193,6 +2405,8 @@ type EventDetails struct {
 	SignInAsSessionStartDetails *SignInAsSessionStartDetails `json:"sign_in_as_session_start_details,omitempty"`
 	// SsoErrorDetails : has no documentation (yet)
 	SsoErrorDetails *SsoErrorDetails `json:"sso_error_details,omitempty"`
+	// MemberAddNameDetails : has no documentation (yet)
+	MemberAddNameDetails *MemberAddNameDetails `json:"member_add_name_details,omitempty"`
 	// MemberChangeAdminRoleDetails : has no documentation (yet)
 	MemberChangeAdminRoleDetails *MemberChangeAdminRoleDetails `json:"member_change_admin_role_details,omitempty"`
 	// MemberChangeEmailDetails : has no documentation (yet)
@@ -2206,8 +2420,14 @@ type EventDetails struct {
 	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
 	// (yet)
 	MemberPermanentlyDeleteAccountContentsDetails *MemberPermanentlyDeleteAccountContentsDetails `json:"member_permanently_delete_account_contents_details,omitempty"`
+	// MemberSpaceLimitsAddCustomQuotaDetails : has no documentation (yet)
+	MemberSpaceLimitsAddCustomQuotaDetails *MemberSpaceLimitsAddCustomQuotaDetails `json:"member_space_limits_add_custom_quota_details,omitempty"`
+	// MemberSpaceLimitsChangeCustomQuotaDetails : has no documentation (yet)
+	MemberSpaceLimitsChangeCustomQuotaDetails *MemberSpaceLimitsChangeCustomQuotaDetails `json:"member_space_limits_change_custom_quota_details,omitempty"`
 	// MemberSpaceLimitsChangeStatusDetails : has no documentation (yet)
 	MemberSpaceLimitsChangeStatusDetails *MemberSpaceLimitsChangeStatusDetails `json:"member_space_limits_change_status_details,omitempty"`
+	// MemberSpaceLimitsRemoveCustomQuotaDetails : has no documentation (yet)
+	MemberSpaceLimitsRemoveCustomQuotaDetails *MemberSpaceLimitsRemoveCustomQuotaDetails `json:"member_space_limits_remove_custom_quota_details,omitempty"`
 	// MemberSuggestDetails : has no documentation (yet)
 	MemberSuggestDetails *MemberSuggestDetails `json:"member_suggest_details,omitempty"`
 	// MemberTransferAccountContentsDetails : has no documentation (yet)
@@ -2294,6 +2514,8 @@ type EventDetails struct {
 	EmmCreateExceptionsReportDetails *EmmCreateExceptionsReportDetails `json:"emm_create_exceptions_report_details,omitempty"`
 	// EmmCreateUsageReportDetails : has no documentation (yet)
 	EmmCreateUsageReportDetails *EmmCreateUsageReportDetails `json:"emm_create_usage_report_details,omitempty"`
+	// ExportMembersReportDetails : has no documentation (yet)
+	ExportMembersReportDetails *ExportMembersReportDetails `json:"export_members_report_details,omitempty"`
 	// PaperAdminExportStartDetails : has no documentation (yet)
 	PaperAdminExportStartDetails *PaperAdminExportStartDetails `json:"paper_admin_export_start_details,omitempty"`
 	// SmartSyncCreateAdminPrivilegeReportDetails : has no documentation (yet)
@@ -2320,6 +2542,12 @@ type EventDetails struct {
 	SfAllowNonMembersToViewSharedLinksDetails *SfAllowNonMembersToViewSharedLinksDetails `json:"sf_allow_non_members_to_view_shared_links_details,omitempty"`
 	// SfExternalInviteWarnDetails : has no documentation (yet)
 	SfExternalInviteWarnDetails *SfExternalInviteWarnDetails `json:"sf_external_invite_warn_details,omitempty"`
+	// SfFbInviteDetails : has no documentation (yet)
+	SfFbInviteDetails *SfFbInviteDetails `json:"sf_fb_invite_details,omitempty"`
+	// SfFbInviteChangeRoleDetails : has no documentation (yet)
+	SfFbInviteChangeRoleDetails *SfFbInviteChangeRoleDetails `json:"sf_fb_invite_change_role_details,omitempty"`
+	// SfFbUninviteDetails : has no documentation (yet)
+	SfFbUninviteDetails *SfFbUninviteDetails `json:"sf_fb_uninvite_details,omitempty"`
 	// SfInviteGroupDetails : has no documentation (yet)
 	SfInviteGroupDetails *SfInviteGroupDetails `json:"sf_invite_group_details,omitempty"`
 	// SfTeamGrantAccessDetails : has no documentation (yet)
@@ -2364,8 +2592,8 @@ type EventDetails struct {
 	SharedContentDownloadDetails *SharedContentDownloadDetails `json:"shared_content_download_details,omitempty"`
 	// SharedContentRelinquishMembershipDetails : has no documentation (yet)
 	SharedContentRelinquishMembershipDetails *SharedContentRelinquishMembershipDetails `json:"shared_content_relinquish_membership_details,omitempty"`
-	// SharedContentRemoveInviteeDetails : has no documentation (yet)
-	SharedContentRemoveInviteeDetails *SharedContentRemoveInviteeDetails `json:"shared_content_remove_invitee_details,omitempty"`
+	// SharedContentRemoveInviteesDetails : has no documentation (yet)
+	SharedContentRemoveInviteesDetails *SharedContentRemoveInviteesDetails `json:"shared_content_remove_invitees_details,omitempty"`
 	// SharedContentRemoveLinkExpiryDetails : has no documentation (yet)
 	SharedContentRemoveLinkExpiryDetails *SharedContentRemoveLinkExpiryDetails `json:"shared_content_remove_link_expiry_details,omitempty"`
 	// SharedContentRemoveLinkPasswordDetails : has no documentation (yet)
@@ -2378,15 +2606,16 @@ type EventDetails struct {
 	SharedContentUnshareDetails *SharedContentUnshareDetails `json:"shared_content_unshare_details,omitempty"`
 	// SharedContentViewDetails : has no documentation (yet)
 	SharedContentViewDetails *SharedContentViewDetails `json:"shared_content_view_details,omitempty"`
-	// SharedFolderChangeConfidentialityDetails : has no documentation (yet)
-	SharedFolderChangeConfidentialityDetails *SharedFolderChangeConfidentialityDetails `json:"shared_folder_change_confidentiality_details,omitempty"`
 	// SharedFolderChangeLinkPolicyDetails : has no documentation (yet)
 	SharedFolderChangeLinkPolicyDetails *SharedFolderChangeLinkPolicyDetails `json:"shared_folder_change_link_policy_details,omitempty"`
-	// SharedFolderChangeMemberManagementPolicyDetails : has no documentation
+	// SharedFolderChangeMembersInheritancePolicyDetails : has no documentation
 	// (yet)
-	SharedFolderChangeMemberManagementPolicyDetails *SharedFolderChangeMemberManagementPolicyDetails `json:"shared_folder_change_member_management_policy_details,omitempty"`
-	// SharedFolderChangeMemberPolicyDetails : has no documentation (yet)
-	SharedFolderChangeMemberPolicyDetails *SharedFolderChangeMemberPolicyDetails `json:"shared_folder_change_member_policy_details,omitempty"`
+	SharedFolderChangeMembersInheritancePolicyDetails *SharedFolderChangeMembersInheritancePolicyDetails `json:"shared_folder_change_members_inheritance_policy_details,omitempty"`
+	// SharedFolderChangeMembersManagementPolicyDetails : has no documentation
+	// (yet)
+	SharedFolderChangeMembersManagementPolicyDetails *SharedFolderChangeMembersManagementPolicyDetails `json:"shared_folder_change_members_management_policy_details,omitempty"`
+	// SharedFolderChangeMembersPolicyDetails : has no documentation (yet)
+	SharedFolderChangeMembersPolicyDetails *SharedFolderChangeMembersPolicyDetails `json:"shared_folder_change_members_policy_details,omitempty"`
 	// SharedFolderCreateDetails : has no documentation (yet)
 	SharedFolderCreateDetails *SharedFolderCreateDetails `json:"shared_folder_create_details,omitempty"`
 	// SharedFolderDeclineInvitationDetails : has no documentation (yet)
@@ -2423,6 +2652,50 @@ type EventDetails struct {
 	SharedNoteOpenedDetails *SharedNoteOpenedDetails `json:"shared_note_opened_details,omitempty"`
 	// ShmodelGroupShareDetails : has no documentation (yet)
 	ShmodelGroupShareDetails *ShmodelGroupShareDetails `json:"shmodel_group_share_details,omitempty"`
+	// ShowcaseAccessGrantedDetails : has no documentation (yet)
+	ShowcaseAccessGrantedDetails *ShowcaseAccessGrantedDetails `json:"showcase_access_granted_details,omitempty"`
+	// ShowcaseAddMemberDetails : has no documentation (yet)
+	ShowcaseAddMemberDetails *ShowcaseAddMemberDetails `json:"showcase_add_member_details,omitempty"`
+	// ShowcaseArchivedDetails : has no documentation (yet)
+	ShowcaseArchivedDetails *ShowcaseArchivedDetails `json:"showcase_archived_details,omitempty"`
+	// ShowcaseCreatedDetails : has no documentation (yet)
+	ShowcaseCreatedDetails *ShowcaseCreatedDetails `json:"showcase_created_details,omitempty"`
+	// ShowcaseDeleteCommentDetails : has no documentation (yet)
+	ShowcaseDeleteCommentDetails *ShowcaseDeleteCommentDetails `json:"showcase_delete_comment_details,omitempty"`
+	// ShowcaseEditedDetails : has no documentation (yet)
+	ShowcaseEditedDetails *ShowcaseEditedDetails `json:"showcase_edited_details,omitempty"`
+	// ShowcaseEditCommentDetails : has no documentation (yet)
+	ShowcaseEditCommentDetails *ShowcaseEditCommentDetails `json:"showcase_edit_comment_details,omitempty"`
+	// ShowcaseFileAddedDetails : has no documentation (yet)
+	ShowcaseFileAddedDetails *ShowcaseFileAddedDetails `json:"showcase_file_added_details,omitempty"`
+	// ShowcaseFileDownloadDetails : has no documentation (yet)
+	ShowcaseFileDownloadDetails *ShowcaseFileDownloadDetails `json:"showcase_file_download_details,omitempty"`
+	// ShowcaseFileRemovedDetails : has no documentation (yet)
+	ShowcaseFileRemovedDetails *ShowcaseFileRemovedDetails `json:"showcase_file_removed_details,omitempty"`
+	// ShowcaseFileViewDetails : has no documentation (yet)
+	ShowcaseFileViewDetails *ShowcaseFileViewDetails `json:"showcase_file_view_details,omitempty"`
+	// ShowcasePermanentlyDeletedDetails : has no documentation (yet)
+	ShowcasePermanentlyDeletedDetails *ShowcasePermanentlyDeletedDetails `json:"showcase_permanently_deleted_details,omitempty"`
+	// ShowcasePostCommentDetails : has no documentation (yet)
+	ShowcasePostCommentDetails *ShowcasePostCommentDetails `json:"showcase_post_comment_details,omitempty"`
+	// ShowcaseRemoveMemberDetails : has no documentation (yet)
+	ShowcaseRemoveMemberDetails *ShowcaseRemoveMemberDetails `json:"showcase_remove_member_details,omitempty"`
+	// ShowcaseRenamedDetails : has no documentation (yet)
+	ShowcaseRenamedDetails *ShowcaseRenamedDetails `json:"showcase_renamed_details,omitempty"`
+	// ShowcaseRequestAccessDetails : has no documentation (yet)
+	ShowcaseRequestAccessDetails *ShowcaseRequestAccessDetails `json:"showcase_request_access_details,omitempty"`
+	// ShowcaseResolveCommentDetails : has no documentation (yet)
+	ShowcaseResolveCommentDetails *ShowcaseResolveCommentDetails `json:"showcase_resolve_comment_details,omitempty"`
+	// ShowcaseRestoredDetails : has no documentation (yet)
+	ShowcaseRestoredDetails *ShowcaseRestoredDetails `json:"showcase_restored_details,omitempty"`
+	// ShowcaseTrashedDetails : has no documentation (yet)
+	ShowcaseTrashedDetails *ShowcaseTrashedDetails `json:"showcase_trashed_details,omitempty"`
+	// ShowcaseUnresolveCommentDetails : has no documentation (yet)
+	ShowcaseUnresolveCommentDetails *ShowcaseUnresolveCommentDetails `json:"showcase_unresolve_comment_details,omitempty"`
+	// ShowcaseUntrashedDetails : has no documentation (yet)
+	ShowcaseUntrashedDetails *ShowcaseUntrashedDetails `json:"showcase_untrashed_details,omitempty"`
+	// ShowcaseViewDetails : has no documentation (yet)
+	ShowcaseViewDetails *ShowcaseViewDetails `json:"showcase_view_details,omitempty"`
 	// SsoAddCertDetails : has no documentation (yet)
 	SsoAddCertDetails *SsoAddCertDetails `json:"sso_add_cert_details,omitempty"`
 	// SsoAddLoginUrlDetails : has no documentation (yet)
@@ -2453,6 +2726,8 @@ type EventDetails struct {
 	TeamFolderPermanentlyDeleteDetails *TeamFolderPermanentlyDeleteDetails `json:"team_folder_permanently_delete_details,omitempty"`
 	// TeamFolderRenameDetails : has no documentation (yet)
 	TeamFolderRenameDetails *TeamFolderRenameDetails `json:"team_folder_rename_details,omitempty"`
+	// TeamSelectiveSyncSettingsChangedDetails : has no documentation (yet)
+	TeamSelectiveSyncSettingsChangedDetails *TeamSelectiveSyncSettingsChangedDetails `json:"team_selective_sync_settings_changed_details,omitempty"`
 	// AccountCaptureChangePolicyDetails : has no documentation (yet)
 	AccountCaptureChangePolicyDetails *AccountCaptureChangePolicyDetails `json:"account_capture_change_policy_details,omitempty"`
 	// AllowDownloadDisabledDetails : has no documentation (yet)
@@ -2496,6 +2771,8 @@ type EventDetails struct {
 	MemberRequestsChangePolicyDetails *MemberRequestsChangePolicyDetails `json:"member_requests_change_policy_details,omitempty"`
 	// MemberSpaceLimitsAddExceptionDetails : has no documentation (yet)
 	MemberSpaceLimitsAddExceptionDetails *MemberSpaceLimitsAddExceptionDetails `json:"member_space_limits_add_exception_details,omitempty"`
+	// MemberSpaceLimitsChangeCapsTypePolicyDetails : has no documentation (yet)
+	MemberSpaceLimitsChangeCapsTypePolicyDetails *MemberSpaceLimitsChangeCapsTypePolicyDetails `json:"member_space_limits_change_caps_type_policy_details,omitempty"`
 	// MemberSpaceLimitsChangePolicyDetails : has no documentation (yet)
 	MemberSpaceLimitsChangePolicyDetails *MemberSpaceLimitsChangePolicyDetails `json:"member_space_limits_change_policy_details,omitempty"`
 	// MemberSpaceLimitsRemoveExceptionDetails : has no documentation (yet)
@@ -2577,274 +2854,305 @@ type EventDetails struct {
 
 // Valid tag values for EventDetails
 const (
-	EventDetailsAppLinkTeamDetails                              = "app_link_team_details"
-	EventDetailsAppLinkUserDetails                              = "app_link_user_details"
-	EventDetailsAppUnlinkTeamDetails                            = "app_unlink_team_details"
-	EventDetailsAppUnlinkUserDetails                            = "app_unlink_user_details"
-	EventDetailsFileAddCommentDetails                           = "file_add_comment_details"
-	EventDetailsFileChangeCommentSubscriptionDetails            = "file_change_comment_subscription_details"
-	EventDetailsFileDeleteCommentDetails                        = "file_delete_comment_details"
-	EventDetailsFileLikeCommentDetails                          = "file_like_comment_details"
-	EventDetailsFileResolveCommentDetails                       = "file_resolve_comment_details"
-	EventDetailsFileUnlikeCommentDetails                        = "file_unlike_comment_details"
-	EventDetailsFileUnresolveCommentDetails                     = "file_unresolve_comment_details"
-	EventDetailsDeviceChangeIpDesktopDetails                    = "device_change_ip_desktop_details"
-	EventDetailsDeviceChangeIpMobileDetails                     = "device_change_ip_mobile_details"
-	EventDetailsDeviceChangeIpWebDetails                        = "device_change_ip_web_details"
-	EventDetailsDeviceDeleteOnUnlinkFailDetails                 = "device_delete_on_unlink_fail_details"
-	EventDetailsDeviceDeleteOnUnlinkSuccessDetails              = "device_delete_on_unlink_success_details"
-	EventDetailsDeviceLinkFailDetails                           = "device_link_fail_details"
-	EventDetailsDeviceLinkSuccessDetails                        = "device_link_success_details"
-	EventDetailsDeviceManagementDisabledDetails                 = "device_management_disabled_details"
-	EventDetailsDeviceManagementEnabledDetails                  = "device_management_enabled_details"
-	EventDetailsDeviceUnlinkDetails                             = "device_unlink_details"
-	EventDetailsEmmRefreshAuthTokenDetails                      = "emm_refresh_auth_token_details"
-	EventDetailsAccountCaptureChangeAvailabilityDetails         = "account_capture_change_availability_details"
-	EventDetailsAccountCaptureMigrateAccountDetails             = "account_capture_migrate_account_details"
-	EventDetailsAccountCaptureRelinquishAccountDetails          = "account_capture_relinquish_account_details"
-	EventDetailsDisabledDomainInvitesDetails                    = "disabled_domain_invites_details"
-	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails    = "domain_invites_approve_request_to_join_team_details"
-	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails    = "domain_invites_decline_request_to_join_team_details"
-	EventDetailsDomainInvitesEmailExistingUsersDetails          = "domain_invites_email_existing_users_details"
-	EventDetailsDomainInvitesRequestToJoinTeamDetails           = "domain_invites_request_to_join_team_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails    = "domain_invites_set_invite_new_user_pref_to_no_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails   = "domain_invites_set_invite_new_user_pref_to_yes_details"
-	EventDetailsDomainVerificationAddDomainFailDetails          = "domain_verification_add_domain_fail_details"
-	EventDetailsDomainVerificationAddDomainSuccessDetails       = "domain_verification_add_domain_success_details"
-	EventDetailsDomainVerificationRemoveDomainDetails           = "domain_verification_remove_domain_details"
-	EventDetailsEnabledDomainInvitesDetails                     = "enabled_domain_invites_details"
-	EventDetailsCreateFolderDetails                             = "create_folder_details"
-	EventDetailsFileAddDetails                                  = "file_add_details"
-	EventDetailsFileCopyDetails                                 = "file_copy_details"
-	EventDetailsFileDeleteDetails                               = "file_delete_details"
-	EventDetailsFileDownloadDetails                             = "file_download_details"
-	EventDetailsFileEditDetails                                 = "file_edit_details"
-	EventDetailsFileGetCopyReferenceDetails                     = "file_get_copy_reference_details"
-	EventDetailsFileMoveDetails                                 = "file_move_details"
-	EventDetailsFilePermanentlyDeleteDetails                    = "file_permanently_delete_details"
-	EventDetailsFilePreviewDetails                              = "file_preview_details"
-	EventDetailsFileRenameDetails                               = "file_rename_details"
-	EventDetailsFileRestoreDetails                              = "file_restore_details"
-	EventDetailsFileRevertDetails                               = "file_revert_details"
-	EventDetailsFileRollbackChangesDetails                      = "file_rollback_changes_details"
-	EventDetailsFileSaveCopyReferenceDetails                    = "file_save_copy_reference_details"
-	EventDetailsFileRequestAddDeadlineDetails                   = "file_request_add_deadline_details"
-	EventDetailsFileRequestChangeDetails                        = "file_request_change_details"
-	EventDetailsFileRequestChangeFolderDetails                  = "file_request_change_folder_details"
-	EventDetailsFileRequestCloseDetails                         = "file_request_close_details"
-	EventDetailsFileRequestCreateDetails                        = "file_request_create_details"
-	EventDetailsFileRequestReceiveFileDetails                   = "file_request_receive_file_details"
-	EventDetailsFileRequestRemoveDeadlineDetails                = "file_request_remove_deadline_details"
-	EventDetailsFileRequestSendDetails                          = "file_request_send_details"
-	EventDetailsGroupAddExternalIdDetails                       = "group_add_external_id_details"
-	EventDetailsGroupAddMemberDetails                           = "group_add_member_details"
-	EventDetailsGroupChangeExternalIdDetails                    = "group_change_external_id_details"
-	EventDetailsGroupChangeManagementTypeDetails                = "group_change_management_type_details"
-	EventDetailsGroupChangeMemberRoleDetails                    = "group_change_member_role_details"
-	EventDetailsGroupCreateDetails                              = "group_create_details"
-	EventDetailsGroupDeleteDetails                              = "group_delete_details"
-	EventDetailsGroupMovedDetails                               = "group_moved_details"
-	EventDetailsGroupRemoveExternalIdDetails                    = "group_remove_external_id_details"
-	EventDetailsGroupRemoveMemberDetails                        = "group_remove_member_details"
-	EventDetailsGroupRenameDetails                              = "group_rename_details"
-	EventDetailsEmmErrorDetails                                 = "emm_error_details"
-	EventDetailsLoginFailDetails                                = "login_fail_details"
-	EventDetailsLoginSuccessDetails                             = "login_success_details"
-	EventDetailsLogoutDetails                                   = "logout_details"
-	EventDetailsResellerSupportSessionEndDetails                = "reseller_support_session_end_details"
-	EventDetailsResellerSupportSessionStartDetails              = "reseller_support_session_start_details"
-	EventDetailsSignInAsSessionEndDetails                       = "sign_in_as_session_end_details"
-	EventDetailsSignInAsSessionStartDetails                     = "sign_in_as_session_start_details"
-	EventDetailsSsoErrorDetails                                 = "sso_error_details"
-	EventDetailsMemberChangeAdminRoleDetails                    = "member_change_admin_role_details"
-	EventDetailsMemberChangeEmailDetails                        = "member_change_email_details"
-	EventDetailsMemberChangeMembershipTypeDetails               = "member_change_membership_type_details"
-	EventDetailsMemberChangeNameDetails                         = "member_change_name_details"
-	EventDetailsMemberChangeStatusDetails                       = "member_change_status_details"
-	EventDetailsMemberPermanentlyDeleteAccountContentsDetails   = "member_permanently_delete_account_contents_details"
-	EventDetailsMemberSpaceLimitsChangeStatusDetails            = "member_space_limits_change_status_details"
-	EventDetailsMemberSuggestDetails                            = "member_suggest_details"
-	EventDetailsMemberTransferAccountContentsDetails            = "member_transfer_account_contents_details"
-	EventDetailsPaperContentAddMemberDetails                    = "paper_content_add_member_details"
-	EventDetailsPaperContentAddToFolderDetails                  = "paper_content_add_to_folder_details"
-	EventDetailsPaperContentArchiveDetails                      = "paper_content_archive_details"
-	EventDetailsPaperContentCreateDetails                       = "paper_content_create_details"
-	EventDetailsPaperContentPermanentlyDeleteDetails            = "paper_content_permanently_delete_details"
-	EventDetailsPaperContentRemoveFromFolderDetails             = "paper_content_remove_from_folder_details"
-	EventDetailsPaperContentRemoveMemberDetails                 = "paper_content_remove_member_details"
-	EventDetailsPaperContentRenameDetails                       = "paper_content_rename_details"
-	EventDetailsPaperContentRestoreDetails                      = "paper_content_restore_details"
-	EventDetailsPaperDocAddCommentDetails                       = "paper_doc_add_comment_details"
-	EventDetailsPaperDocChangeMemberRoleDetails                 = "paper_doc_change_member_role_details"
-	EventDetailsPaperDocChangeSharingPolicyDetails              = "paper_doc_change_sharing_policy_details"
-	EventDetailsPaperDocChangeSubscriptionDetails               = "paper_doc_change_subscription_details"
-	EventDetailsPaperDocDeletedDetails                          = "paper_doc_deleted_details"
-	EventDetailsPaperDocDeleteCommentDetails                    = "paper_doc_delete_comment_details"
-	EventDetailsPaperDocDownloadDetails                         = "paper_doc_download_details"
-	EventDetailsPaperDocEditDetails                             = "paper_doc_edit_details"
-	EventDetailsPaperDocEditCommentDetails                      = "paper_doc_edit_comment_details"
-	EventDetailsPaperDocFollowedDetails                         = "paper_doc_followed_details"
-	EventDetailsPaperDocMentionDetails                          = "paper_doc_mention_details"
-	EventDetailsPaperDocRequestAccessDetails                    = "paper_doc_request_access_details"
-	EventDetailsPaperDocResolveCommentDetails                   = "paper_doc_resolve_comment_details"
-	EventDetailsPaperDocRevertDetails                           = "paper_doc_revert_details"
-	EventDetailsPaperDocSlackShareDetails                       = "paper_doc_slack_share_details"
-	EventDetailsPaperDocTeamInviteDetails                       = "paper_doc_team_invite_details"
-	EventDetailsPaperDocTrashedDetails                          = "paper_doc_trashed_details"
-	EventDetailsPaperDocUnresolveCommentDetails                 = "paper_doc_unresolve_comment_details"
-	EventDetailsPaperDocUntrashedDetails                        = "paper_doc_untrashed_details"
-	EventDetailsPaperDocViewDetails                             = "paper_doc_view_details"
-	EventDetailsPaperExternalViewAllowDetails                   = "paper_external_view_allow_details"
-	EventDetailsPaperExternalViewDefaultTeamDetails             = "paper_external_view_default_team_details"
-	EventDetailsPaperExternalViewForbidDetails                  = "paper_external_view_forbid_details"
-	EventDetailsPaperFolderChangeSubscriptionDetails            = "paper_folder_change_subscription_details"
-	EventDetailsPaperFolderDeletedDetails                       = "paper_folder_deleted_details"
-	EventDetailsPaperFolderFollowedDetails                      = "paper_folder_followed_details"
-	EventDetailsPaperFolderTeamInviteDetails                    = "paper_folder_team_invite_details"
-	EventDetailsPasswordChangeDetails                           = "password_change_details"
-	EventDetailsPasswordResetDetails                            = "password_reset_details"
-	EventDetailsPasswordResetAllDetails                         = "password_reset_all_details"
-	EventDetailsEmmCreateExceptionsReportDetails                = "emm_create_exceptions_report_details"
-	EventDetailsEmmCreateUsageReportDetails                     = "emm_create_usage_report_details"
-	EventDetailsPaperAdminExportStartDetails                    = "paper_admin_export_start_details"
-	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails      = "smart_sync_create_admin_privilege_report_details"
-	EventDetailsTeamActivityCreateReportDetails                 = "team_activity_create_report_details"
-	EventDetailsCollectionShareDetails                          = "collection_share_details"
-	EventDetailsNoteAclInviteOnlyDetails                        = "note_acl_invite_only_details"
-	EventDetailsNoteAclLinkDetails                              = "note_acl_link_details"
-	EventDetailsNoteAclTeamLinkDetails                          = "note_acl_team_link_details"
-	EventDetailsNoteSharedDetails                               = "note_shared_details"
-	EventDetailsNoteShareReceiveDetails                         = "note_share_receive_details"
-	EventDetailsOpenNoteSharedDetails                           = "open_note_shared_details"
-	EventDetailsSfAddGroupDetails                               = "sf_add_group_details"
-	EventDetailsSfAllowNonMembersToViewSharedLinksDetails       = "sf_allow_non_members_to_view_shared_links_details"
-	EventDetailsSfExternalInviteWarnDetails                     = "sf_external_invite_warn_details"
-	EventDetailsSfInviteGroupDetails                            = "sf_invite_group_details"
-	EventDetailsSfTeamGrantAccessDetails                        = "sf_team_grant_access_details"
-	EventDetailsSfTeamInviteDetails                             = "sf_team_invite_details"
-	EventDetailsSfTeamInviteChangeRoleDetails                   = "sf_team_invite_change_role_details"
-	EventDetailsSfTeamJoinDetails                               = "sf_team_join_details"
-	EventDetailsSfTeamJoinFromOobLinkDetails                    = "sf_team_join_from_oob_link_details"
-	EventDetailsSfTeamUninviteDetails                           = "sf_team_uninvite_details"
-	EventDetailsSharedContentAddInviteesDetails                 = "shared_content_add_invitees_details"
-	EventDetailsSharedContentAddLinkExpiryDetails               = "shared_content_add_link_expiry_details"
-	EventDetailsSharedContentAddLinkPasswordDetails             = "shared_content_add_link_password_details"
-	EventDetailsSharedContentAddMemberDetails                   = "shared_content_add_member_details"
-	EventDetailsSharedContentChangeDownloadsPolicyDetails       = "shared_content_change_downloads_policy_details"
-	EventDetailsSharedContentChangeInviteeRoleDetails           = "shared_content_change_invitee_role_details"
-	EventDetailsSharedContentChangeLinkAudienceDetails          = "shared_content_change_link_audience_details"
-	EventDetailsSharedContentChangeLinkExpiryDetails            = "shared_content_change_link_expiry_details"
-	EventDetailsSharedContentChangeLinkPasswordDetails          = "shared_content_change_link_password_details"
-	EventDetailsSharedContentChangeMemberRoleDetails            = "shared_content_change_member_role_details"
-	EventDetailsSharedContentChangeViewerInfoPolicyDetails      = "shared_content_change_viewer_info_policy_details"
-	EventDetailsSharedContentClaimInvitationDetails             = "shared_content_claim_invitation_details"
-	EventDetailsSharedContentCopyDetails                        = "shared_content_copy_details"
-	EventDetailsSharedContentDownloadDetails                    = "shared_content_download_details"
-	EventDetailsSharedContentRelinquishMembershipDetails        = "shared_content_relinquish_membership_details"
-	EventDetailsSharedContentRemoveInviteeDetails               = "shared_content_remove_invitee_details"
-	EventDetailsSharedContentRemoveLinkExpiryDetails            = "shared_content_remove_link_expiry_details"
-	EventDetailsSharedContentRemoveLinkPasswordDetails          = "shared_content_remove_link_password_details"
-	EventDetailsSharedContentRemoveMemberDetails                = "shared_content_remove_member_details"
-	EventDetailsSharedContentRequestAccessDetails               = "shared_content_request_access_details"
-	EventDetailsSharedContentUnshareDetails                     = "shared_content_unshare_details"
-	EventDetailsSharedContentViewDetails                        = "shared_content_view_details"
-	EventDetailsSharedFolderChangeConfidentialityDetails        = "shared_folder_change_confidentiality_details"
-	EventDetailsSharedFolderChangeLinkPolicyDetails             = "shared_folder_change_link_policy_details"
-	EventDetailsSharedFolderChangeMemberManagementPolicyDetails = "shared_folder_change_member_management_policy_details"
-	EventDetailsSharedFolderChangeMemberPolicyDetails           = "shared_folder_change_member_policy_details"
-	EventDetailsSharedFolderCreateDetails                       = "shared_folder_create_details"
-	EventDetailsSharedFolderDeclineInvitationDetails            = "shared_folder_decline_invitation_details"
-	EventDetailsSharedFolderMountDetails                        = "shared_folder_mount_details"
-	EventDetailsSharedFolderNestDetails                         = "shared_folder_nest_details"
-	EventDetailsSharedFolderTransferOwnershipDetails            = "shared_folder_transfer_ownership_details"
-	EventDetailsSharedFolderUnmountDetails                      = "shared_folder_unmount_details"
-	EventDetailsSharedLinkAddExpiryDetails                      = "shared_link_add_expiry_details"
-	EventDetailsSharedLinkChangeExpiryDetails                   = "shared_link_change_expiry_details"
-	EventDetailsSharedLinkChangeVisibilityDetails               = "shared_link_change_visibility_details"
-	EventDetailsSharedLinkCopyDetails                           = "shared_link_copy_details"
-	EventDetailsSharedLinkCreateDetails                         = "shared_link_create_details"
-	EventDetailsSharedLinkDisableDetails                        = "shared_link_disable_details"
-	EventDetailsSharedLinkDownloadDetails                       = "shared_link_download_details"
-	EventDetailsSharedLinkRemoveExpiryDetails                   = "shared_link_remove_expiry_details"
-	EventDetailsSharedLinkShareDetails                          = "shared_link_share_details"
-	EventDetailsSharedLinkViewDetails                           = "shared_link_view_details"
-	EventDetailsSharedNoteOpenedDetails                         = "shared_note_opened_details"
-	EventDetailsShmodelGroupShareDetails                        = "shmodel_group_share_details"
-	EventDetailsSsoAddCertDetails                               = "sso_add_cert_details"
-	EventDetailsSsoAddLoginUrlDetails                           = "sso_add_login_url_details"
-	EventDetailsSsoAddLogoutUrlDetails                          = "sso_add_logout_url_details"
-	EventDetailsSsoChangeCertDetails                            = "sso_change_cert_details"
-	EventDetailsSsoChangeLoginUrlDetails                        = "sso_change_login_url_details"
-	EventDetailsSsoChangeLogoutUrlDetails                       = "sso_change_logout_url_details"
-	EventDetailsSsoChangeSamlIdentityModeDetails                = "sso_change_saml_identity_mode_details"
-	EventDetailsSsoRemoveCertDetails                            = "sso_remove_cert_details"
-	EventDetailsSsoRemoveLoginUrlDetails                        = "sso_remove_login_url_details"
-	EventDetailsSsoRemoveLogoutUrlDetails                       = "sso_remove_logout_url_details"
-	EventDetailsTeamFolderChangeStatusDetails                   = "team_folder_change_status_details"
-	EventDetailsTeamFolderCreateDetails                         = "team_folder_create_details"
-	EventDetailsTeamFolderDowngradeDetails                      = "team_folder_downgrade_details"
-	EventDetailsTeamFolderPermanentlyDeleteDetails              = "team_folder_permanently_delete_details"
-	EventDetailsTeamFolderRenameDetails                         = "team_folder_rename_details"
-	EventDetailsAccountCaptureChangePolicyDetails               = "account_capture_change_policy_details"
-	EventDetailsAllowDownloadDisabledDetails                    = "allow_download_disabled_details"
-	EventDetailsAllowDownloadEnabledDetails                     = "allow_download_enabled_details"
-	EventDetailsDataPlacementRestrictionChangePolicyDetails     = "data_placement_restriction_change_policy_details"
-	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails    = "data_placement_restriction_satisfy_policy_details"
-	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails       = "device_approvals_change_desktop_policy_details"
-	EventDetailsDeviceApprovalsChangeMobilePolicyDetails        = "device_approvals_change_mobile_policy_details"
-	EventDetailsDeviceApprovalsChangeOverageActionDetails       = "device_approvals_change_overage_action_details"
-	EventDetailsDeviceApprovalsChangeUnlinkActionDetails        = "device_approvals_change_unlink_action_details"
-	EventDetailsEmmAddExceptionDetails                          = "emm_add_exception_details"
-	EventDetailsEmmChangePolicyDetails                          = "emm_change_policy_details"
-	EventDetailsEmmRemoveExceptionDetails                       = "emm_remove_exception_details"
-	EventDetailsExtendedVersionHistoryChangePolicyDetails       = "extended_version_history_change_policy_details"
-	EventDetailsFileCommentsChangePolicyDetails                 = "file_comments_change_policy_details"
-	EventDetailsFileRequestsChangePolicyDetails                 = "file_requests_change_policy_details"
-	EventDetailsFileRequestsEmailsEnabledDetails                = "file_requests_emails_enabled_details"
-	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails   = "file_requests_emails_restricted_to_team_only_details"
-	EventDetailsGoogleSsoChangePolicyDetails                    = "google_sso_change_policy_details"
-	EventDetailsGroupUserManagementChangePolicyDetails          = "group_user_management_change_policy_details"
-	EventDetailsMemberRequestsChangePolicyDetails               = "member_requests_change_policy_details"
-	EventDetailsMemberSpaceLimitsAddExceptionDetails            = "member_space_limits_add_exception_details"
-	EventDetailsMemberSpaceLimitsChangePolicyDetails            = "member_space_limits_change_policy_details"
-	EventDetailsMemberSpaceLimitsRemoveExceptionDetails         = "member_space_limits_remove_exception_details"
-	EventDetailsMemberSuggestionsChangePolicyDetails            = "member_suggestions_change_policy_details"
-	EventDetailsMicrosoftOfficeAddinChangePolicyDetails         = "microsoft_office_addin_change_policy_details"
-	EventDetailsNetworkControlChangePolicyDetails               = "network_control_change_policy_details"
-	EventDetailsPaperChangeDeploymentPolicyDetails              = "paper_change_deployment_policy_details"
-	EventDetailsPaperChangeMemberLinkPolicyDetails              = "paper_change_member_link_policy_details"
-	EventDetailsPaperChangeMemberPolicyDetails                  = "paper_change_member_policy_details"
-	EventDetailsPaperChangePolicyDetails                        = "paper_change_policy_details"
-	EventDetailsPaperEnabledUsersGroupAdditionDetails           = "paper_enabled_users_group_addition_details"
-	EventDetailsPaperEnabledUsersGroupRemovalDetails            = "paper_enabled_users_group_removal_details"
-	EventDetailsPermanentDeleteChangePolicyDetails              = "permanent_delete_change_policy_details"
-	EventDetailsSharingChangeFolderJoinPolicyDetails            = "sharing_change_folder_join_policy_details"
-	EventDetailsSharingChangeLinkPolicyDetails                  = "sharing_change_link_policy_details"
-	EventDetailsSharingChangeMemberPolicyDetails                = "sharing_change_member_policy_details"
-	EventDetailsSmartSyncChangePolicyDetails                    = "smart_sync_change_policy_details"
-	EventDetailsSmartSyncNotOptOutDetails                       = "smart_sync_not_opt_out_details"
-	EventDetailsSmartSyncOptOutDetails                          = "smart_sync_opt_out_details"
-	EventDetailsSsoChangePolicyDetails                          = "sso_change_policy_details"
-	EventDetailsTfaChangePolicyDetails                          = "tfa_change_policy_details"
-	EventDetailsTwoAccountChangePolicyDetails                   = "two_account_change_policy_details"
-	EventDetailsWebSessionsChangeFixedLengthPolicyDetails       = "web_sessions_change_fixed_length_policy_details"
-	EventDetailsWebSessionsChangeIdleLengthPolicyDetails        = "web_sessions_change_idle_length_policy_details"
-	EventDetailsTeamMergeFromDetails                            = "team_merge_from_details"
-	EventDetailsTeamMergeToDetails                              = "team_merge_to_details"
-	EventDetailsTeamProfileAddLogoDetails                       = "team_profile_add_logo_details"
-	EventDetailsTeamProfileChangeDefaultLanguageDetails         = "team_profile_change_default_language_details"
-	EventDetailsTeamProfileChangeLogoDetails                    = "team_profile_change_logo_details"
-	EventDetailsTeamProfileChangeNameDetails                    = "team_profile_change_name_details"
-	EventDetailsTeamProfileRemoveLogoDetails                    = "team_profile_remove_logo_details"
-	EventDetailsTfaAddBackupPhoneDetails                        = "tfa_add_backup_phone_details"
-	EventDetailsTfaAddSecurityKeyDetails                        = "tfa_add_security_key_details"
-	EventDetailsTfaChangeBackupPhoneDetails                     = "tfa_change_backup_phone_details"
-	EventDetailsTfaChangeStatusDetails                          = "tfa_change_status_details"
-	EventDetailsTfaRemoveBackupPhoneDetails                     = "tfa_remove_backup_phone_details"
-	EventDetailsTfaRemoveSecurityKeyDetails                     = "tfa_remove_security_key_details"
-	EventDetailsTfaResetDetails                                 = "tfa_reset_details"
-	EventDetailsMissingDetails                                  = "missing_details"
-	EventDetailsOther                                           = "other"
+	EventDetailsAppLinkTeamDetails                                = "app_link_team_details"
+	EventDetailsAppLinkUserDetails                                = "app_link_user_details"
+	EventDetailsAppUnlinkTeamDetails                              = "app_unlink_team_details"
+	EventDetailsAppUnlinkUserDetails                              = "app_unlink_user_details"
+	EventDetailsFileAddCommentDetails                             = "file_add_comment_details"
+	EventDetailsFileChangeCommentSubscriptionDetails              = "file_change_comment_subscription_details"
+	EventDetailsFileDeleteCommentDetails                          = "file_delete_comment_details"
+	EventDetailsFileLikeCommentDetails                            = "file_like_comment_details"
+	EventDetailsFileResolveCommentDetails                         = "file_resolve_comment_details"
+	EventDetailsFileUnlikeCommentDetails                          = "file_unlike_comment_details"
+	EventDetailsFileUnresolveCommentDetails                       = "file_unresolve_comment_details"
+	EventDetailsDeviceChangeIpDesktopDetails                      = "device_change_ip_desktop_details"
+	EventDetailsDeviceChangeIpMobileDetails                       = "device_change_ip_mobile_details"
+	EventDetailsDeviceChangeIpWebDetails                          = "device_change_ip_web_details"
+	EventDetailsDeviceDeleteOnUnlinkFailDetails                   = "device_delete_on_unlink_fail_details"
+	EventDetailsDeviceDeleteOnUnlinkSuccessDetails                = "device_delete_on_unlink_success_details"
+	EventDetailsDeviceLinkFailDetails                             = "device_link_fail_details"
+	EventDetailsDeviceLinkSuccessDetails                          = "device_link_success_details"
+	EventDetailsDeviceManagementDisabledDetails                   = "device_management_disabled_details"
+	EventDetailsDeviceManagementEnabledDetails                    = "device_management_enabled_details"
+	EventDetailsDeviceUnlinkDetails                               = "device_unlink_details"
+	EventDetailsEmmRefreshAuthTokenDetails                        = "emm_refresh_auth_token_details"
+	EventDetailsAccountCaptureChangeAvailabilityDetails           = "account_capture_change_availability_details"
+	EventDetailsAccountCaptureMigrateAccountDetails               = "account_capture_migrate_account_details"
+	EventDetailsAccountCaptureNotificationEmailsSentDetails       = "account_capture_notification_emails_sent_details"
+	EventDetailsAccountCaptureRelinquishAccountDetails            = "account_capture_relinquish_account_details"
+	EventDetailsDisabledDomainInvitesDetails                      = "disabled_domain_invites_details"
+	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails      = "domain_invites_approve_request_to_join_team_details"
+	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails      = "domain_invites_decline_request_to_join_team_details"
+	EventDetailsDomainInvitesEmailExistingUsersDetails            = "domain_invites_email_existing_users_details"
+	EventDetailsDomainInvitesRequestToJoinTeamDetails             = "domain_invites_request_to_join_team_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails      = "domain_invites_set_invite_new_user_pref_to_no_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails     = "domain_invites_set_invite_new_user_pref_to_yes_details"
+	EventDetailsDomainVerificationAddDomainFailDetails            = "domain_verification_add_domain_fail_details"
+	EventDetailsDomainVerificationAddDomainSuccessDetails         = "domain_verification_add_domain_success_details"
+	EventDetailsDomainVerificationRemoveDomainDetails             = "domain_verification_remove_domain_details"
+	EventDetailsEnabledDomainInvitesDetails                       = "enabled_domain_invites_details"
+	EventDetailsCreateFolderDetails                               = "create_folder_details"
+	EventDetailsFileAddDetails                                    = "file_add_details"
+	EventDetailsFileCopyDetails                                   = "file_copy_details"
+	EventDetailsFileDeleteDetails                                 = "file_delete_details"
+	EventDetailsFileDownloadDetails                               = "file_download_details"
+	EventDetailsFileEditDetails                                   = "file_edit_details"
+	EventDetailsFileGetCopyReferenceDetails                       = "file_get_copy_reference_details"
+	EventDetailsFileMoveDetails                                   = "file_move_details"
+	EventDetailsFilePermanentlyDeleteDetails                      = "file_permanently_delete_details"
+	EventDetailsFilePreviewDetails                                = "file_preview_details"
+	EventDetailsFileRenameDetails                                 = "file_rename_details"
+	EventDetailsFileRestoreDetails                                = "file_restore_details"
+	EventDetailsFileRevertDetails                                 = "file_revert_details"
+	EventDetailsFileRollbackChangesDetails                        = "file_rollback_changes_details"
+	EventDetailsFileSaveCopyReferenceDetails                      = "file_save_copy_reference_details"
+	EventDetailsFileRequestChangeDetails                          = "file_request_change_details"
+	EventDetailsFileRequestCloseDetails                           = "file_request_close_details"
+	EventDetailsFileRequestCreateDetails                          = "file_request_create_details"
+	EventDetailsFileRequestReceiveFileDetails                     = "file_request_receive_file_details"
+	EventDetailsGroupAddExternalIdDetails                         = "group_add_external_id_details"
+	EventDetailsGroupAddMemberDetails                             = "group_add_member_details"
+	EventDetailsGroupChangeExternalIdDetails                      = "group_change_external_id_details"
+	EventDetailsGroupChangeManagementTypeDetails                  = "group_change_management_type_details"
+	EventDetailsGroupChangeMemberRoleDetails                      = "group_change_member_role_details"
+	EventDetailsGroupCreateDetails                                = "group_create_details"
+	EventDetailsGroupDeleteDetails                                = "group_delete_details"
+	EventDetailsGroupDescriptionUpdatedDetails                    = "group_description_updated_details"
+	EventDetailsGroupJoinPolicyUpdatedDetails                     = "group_join_policy_updated_details"
+	EventDetailsGroupMovedDetails                                 = "group_moved_details"
+	EventDetailsGroupRemoveExternalIdDetails                      = "group_remove_external_id_details"
+	EventDetailsGroupRemoveMemberDetails                          = "group_remove_member_details"
+	EventDetailsGroupRenameDetails                                = "group_rename_details"
+	EventDetailsEmmErrorDetails                                   = "emm_error_details"
+	EventDetailsLoginFailDetails                                  = "login_fail_details"
+	EventDetailsLoginSuccessDetails                               = "login_success_details"
+	EventDetailsLogoutDetails                                     = "logout_details"
+	EventDetailsResellerSupportSessionEndDetails                  = "reseller_support_session_end_details"
+	EventDetailsResellerSupportSessionStartDetails                = "reseller_support_session_start_details"
+	EventDetailsSignInAsSessionEndDetails                         = "sign_in_as_session_end_details"
+	EventDetailsSignInAsSessionStartDetails                       = "sign_in_as_session_start_details"
+	EventDetailsSsoErrorDetails                                   = "sso_error_details"
+	EventDetailsMemberAddNameDetails                              = "member_add_name_details"
+	EventDetailsMemberChangeAdminRoleDetails                      = "member_change_admin_role_details"
+	EventDetailsMemberChangeEmailDetails                          = "member_change_email_details"
+	EventDetailsMemberChangeMembershipTypeDetails                 = "member_change_membership_type_details"
+	EventDetailsMemberChangeNameDetails                           = "member_change_name_details"
+	EventDetailsMemberChangeStatusDetails                         = "member_change_status_details"
+	EventDetailsMemberPermanentlyDeleteAccountContentsDetails     = "member_permanently_delete_account_contents_details"
+	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails            = "member_space_limits_add_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails         = "member_space_limits_change_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeStatusDetails              = "member_space_limits_change_status_details"
+	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails         = "member_space_limits_remove_custom_quota_details"
+	EventDetailsMemberSuggestDetails                              = "member_suggest_details"
+	EventDetailsMemberTransferAccountContentsDetails              = "member_transfer_account_contents_details"
+	EventDetailsPaperContentAddMemberDetails                      = "paper_content_add_member_details"
+	EventDetailsPaperContentAddToFolderDetails                    = "paper_content_add_to_folder_details"
+	EventDetailsPaperContentArchiveDetails                        = "paper_content_archive_details"
+	EventDetailsPaperContentCreateDetails                         = "paper_content_create_details"
+	EventDetailsPaperContentPermanentlyDeleteDetails              = "paper_content_permanently_delete_details"
+	EventDetailsPaperContentRemoveFromFolderDetails               = "paper_content_remove_from_folder_details"
+	EventDetailsPaperContentRemoveMemberDetails                   = "paper_content_remove_member_details"
+	EventDetailsPaperContentRenameDetails                         = "paper_content_rename_details"
+	EventDetailsPaperContentRestoreDetails                        = "paper_content_restore_details"
+	EventDetailsPaperDocAddCommentDetails                         = "paper_doc_add_comment_details"
+	EventDetailsPaperDocChangeMemberRoleDetails                   = "paper_doc_change_member_role_details"
+	EventDetailsPaperDocChangeSharingPolicyDetails                = "paper_doc_change_sharing_policy_details"
+	EventDetailsPaperDocChangeSubscriptionDetails                 = "paper_doc_change_subscription_details"
+	EventDetailsPaperDocDeletedDetails                            = "paper_doc_deleted_details"
+	EventDetailsPaperDocDeleteCommentDetails                      = "paper_doc_delete_comment_details"
+	EventDetailsPaperDocDownloadDetails                           = "paper_doc_download_details"
+	EventDetailsPaperDocEditDetails                               = "paper_doc_edit_details"
+	EventDetailsPaperDocEditCommentDetails                        = "paper_doc_edit_comment_details"
+	EventDetailsPaperDocFollowedDetails                           = "paper_doc_followed_details"
+	EventDetailsPaperDocMentionDetails                            = "paper_doc_mention_details"
+	EventDetailsPaperDocRequestAccessDetails                      = "paper_doc_request_access_details"
+	EventDetailsPaperDocResolveCommentDetails                     = "paper_doc_resolve_comment_details"
+	EventDetailsPaperDocRevertDetails                             = "paper_doc_revert_details"
+	EventDetailsPaperDocSlackShareDetails                         = "paper_doc_slack_share_details"
+	EventDetailsPaperDocTeamInviteDetails                         = "paper_doc_team_invite_details"
+	EventDetailsPaperDocTrashedDetails                            = "paper_doc_trashed_details"
+	EventDetailsPaperDocUnresolveCommentDetails                   = "paper_doc_unresolve_comment_details"
+	EventDetailsPaperDocUntrashedDetails                          = "paper_doc_untrashed_details"
+	EventDetailsPaperDocViewDetails                               = "paper_doc_view_details"
+	EventDetailsPaperExternalViewAllowDetails                     = "paper_external_view_allow_details"
+	EventDetailsPaperExternalViewDefaultTeamDetails               = "paper_external_view_default_team_details"
+	EventDetailsPaperExternalViewForbidDetails                    = "paper_external_view_forbid_details"
+	EventDetailsPaperFolderChangeSubscriptionDetails              = "paper_folder_change_subscription_details"
+	EventDetailsPaperFolderDeletedDetails                         = "paper_folder_deleted_details"
+	EventDetailsPaperFolderFollowedDetails                        = "paper_folder_followed_details"
+	EventDetailsPaperFolderTeamInviteDetails                      = "paper_folder_team_invite_details"
+	EventDetailsPasswordChangeDetails                             = "password_change_details"
+	EventDetailsPasswordResetDetails                              = "password_reset_details"
+	EventDetailsPasswordResetAllDetails                           = "password_reset_all_details"
+	EventDetailsEmmCreateExceptionsReportDetails                  = "emm_create_exceptions_report_details"
+	EventDetailsEmmCreateUsageReportDetails                       = "emm_create_usage_report_details"
+	EventDetailsExportMembersReportDetails                        = "export_members_report_details"
+	EventDetailsPaperAdminExportStartDetails                      = "paper_admin_export_start_details"
+	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails        = "smart_sync_create_admin_privilege_report_details"
+	EventDetailsTeamActivityCreateReportDetails                   = "team_activity_create_report_details"
+	EventDetailsCollectionShareDetails                            = "collection_share_details"
+	EventDetailsNoteAclInviteOnlyDetails                          = "note_acl_invite_only_details"
+	EventDetailsNoteAclLinkDetails                                = "note_acl_link_details"
+	EventDetailsNoteAclTeamLinkDetails                            = "note_acl_team_link_details"
+	EventDetailsNoteSharedDetails                                 = "note_shared_details"
+	EventDetailsNoteShareReceiveDetails                           = "note_share_receive_details"
+	EventDetailsOpenNoteSharedDetails                             = "open_note_shared_details"
+	EventDetailsSfAddGroupDetails                                 = "sf_add_group_details"
+	EventDetailsSfAllowNonMembersToViewSharedLinksDetails         = "sf_allow_non_members_to_view_shared_links_details"
+	EventDetailsSfExternalInviteWarnDetails                       = "sf_external_invite_warn_details"
+	EventDetailsSfFbInviteDetails                                 = "sf_fb_invite_details"
+	EventDetailsSfFbInviteChangeRoleDetails                       = "sf_fb_invite_change_role_details"
+	EventDetailsSfFbUninviteDetails                               = "sf_fb_uninvite_details"
+	EventDetailsSfInviteGroupDetails                              = "sf_invite_group_details"
+	EventDetailsSfTeamGrantAccessDetails                          = "sf_team_grant_access_details"
+	EventDetailsSfTeamInviteDetails                               = "sf_team_invite_details"
+	EventDetailsSfTeamInviteChangeRoleDetails                     = "sf_team_invite_change_role_details"
+	EventDetailsSfTeamJoinDetails                                 = "sf_team_join_details"
+	EventDetailsSfTeamJoinFromOobLinkDetails                      = "sf_team_join_from_oob_link_details"
+	EventDetailsSfTeamUninviteDetails                             = "sf_team_uninvite_details"
+	EventDetailsSharedContentAddInviteesDetails                   = "shared_content_add_invitees_details"
+	EventDetailsSharedContentAddLinkExpiryDetails                 = "shared_content_add_link_expiry_details"
+	EventDetailsSharedContentAddLinkPasswordDetails               = "shared_content_add_link_password_details"
+	EventDetailsSharedContentAddMemberDetails                     = "shared_content_add_member_details"
+	EventDetailsSharedContentChangeDownloadsPolicyDetails         = "shared_content_change_downloads_policy_details"
+	EventDetailsSharedContentChangeInviteeRoleDetails             = "shared_content_change_invitee_role_details"
+	EventDetailsSharedContentChangeLinkAudienceDetails            = "shared_content_change_link_audience_details"
+	EventDetailsSharedContentChangeLinkExpiryDetails              = "shared_content_change_link_expiry_details"
+	EventDetailsSharedContentChangeLinkPasswordDetails            = "shared_content_change_link_password_details"
+	EventDetailsSharedContentChangeMemberRoleDetails              = "shared_content_change_member_role_details"
+	EventDetailsSharedContentChangeViewerInfoPolicyDetails        = "shared_content_change_viewer_info_policy_details"
+	EventDetailsSharedContentClaimInvitationDetails               = "shared_content_claim_invitation_details"
+	EventDetailsSharedContentCopyDetails                          = "shared_content_copy_details"
+	EventDetailsSharedContentDownloadDetails                      = "shared_content_download_details"
+	EventDetailsSharedContentRelinquishMembershipDetails          = "shared_content_relinquish_membership_details"
+	EventDetailsSharedContentRemoveInviteesDetails                = "shared_content_remove_invitees_details"
+	EventDetailsSharedContentRemoveLinkExpiryDetails              = "shared_content_remove_link_expiry_details"
+	EventDetailsSharedContentRemoveLinkPasswordDetails            = "shared_content_remove_link_password_details"
+	EventDetailsSharedContentRemoveMemberDetails                  = "shared_content_remove_member_details"
+	EventDetailsSharedContentRequestAccessDetails                 = "shared_content_request_access_details"
+	EventDetailsSharedContentUnshareDetails                       = "shared_content_unshare_details"
+	EventDetailsSharedContentViewDetails                          = "shared_content_view_details"
+	EventDetailsSharedFolderChangeLinkPolicyDetails               = "shared_folder_change_link_policy_details"
+	EventDetailsSharedFolderChangeMembersInheritancePolicyDetails = "shared_folder_change_members_inheritance_policy_details"
+	EventDetailsSharedFolderChangeMembersManagementPolicyDetails  = "shared_folder_change_members_management_policy_details"
+	EventDetailsSharedFolderChangeMembersPolicyDetails            = "shared_folder_change_members_policy_details"
+	EventDetailsSharedFolderCreateDetails                         = "shared_folder_create_details"
+	EventDetailsSharedFolderDeclineInvitationDetails              = "shared_folder_decline_invitation_details"
+	EventDetailsSharedFolderMountDetails                          = "shared_folder_mount_details"
+	EventDetailsSharedFolderNestDetails                           = "shared_folder_nest_details"
+	EventDetailsSharedFolderTransferOwnershipDetails              = "shared_folder_transfer_ownership_details"
+	EventDetailsSharedFolderUnmountDetails                        = "shared_folder_unmount_details"
+	EventDetailsSharedLinkAddExpiryDetails                        = "shared_link_add_expiry_details"
+	EventDetailsSharedLinkChangeExpiryDetails                     = "shared_link_change_expiry_details"
+	EventDetailsSharedLinkChangeVisibilityDetails                 = "shared_link_change_visibility_details"
+	EventDetailsSharedLinkCopyDetails                             = "shared_link_copy_details"
+	EventDetailsSharedLinkCreateDetails                           = "shared_link_create_details"
+	EventDetailsSharedLinkDisableDetails                          = "shared_link_disable_details"
+	EventDetailsSharedLinkDownloadDetails                         = "shared_link_download_details"
+	EventDetailsSharedLinkRemoveExpiryDetails                     = "shared_link_remove_expiry_details"
+	EventDetailsSharedLinkShareDetails                            = "shared_link_share_details"
+	EventDetailsSharedLinkViewDetails                             = "shared_link_view_details"
+	EventDetailsSharedNoteOpenedDetails                           = "shared_note_opened_details"
+	EventDetailsShmodelGroupShareDetails                          = "shmodel_group_share_details"
+	EventDetailsShowcaseAccessGrantedDetails                      = "showcase_access_granted_details"
+	EventDetailsShowcaseAddMemberDetails                          = "showcase_add_member_details"
+	EventDetailsShowcaseArchivedDetails                           = "showcase_archived_details"
+	EventDetailsShowcaseCreatedDetails                            = "showcase_created_details"
+	EventDetailsShowcaseDeleteCommentDetails                      = "showcase_delete_comment_details"
+	EventDetailsShowcaseEditedDetails                             = "showcase_edited_details"
+	EventDetailsShowcaseEditCommentDetails                        = "showcase_edit_comment_details"
+	EventDetailsShowcaseFileAddedDetails                          = "showcase_file_added_details"
+	EventDetailsShowcaseFileDownloadDetails                       = "showcase_file_download_details"
+	EventDetailsShowcaseFileRemovedDetails                        = "showcase_file_removed_details"
+	EventDetailsShowcaseFileViewDetails                           = "showcase_file_view_details"
+	EventDetailsShowcasePermanentlyDeletedDetails                 = "showcase_permanently_deleted_details"
+	EventDetailsShowcasePostCommentDetails                        = "showcase_post_comment_details"
+	EventDetailsShowcaseRemoveMemberDetails                       = "showcase_remove_member_details"
+	EventDetailsShowcaseRenamedDetails                            = "showcase_renamed_details"
+	EventDetailsShowcaseRequestAccessDetails                      = "showcase_request_access_details"
+	EventDetailsShowcaseResolveCommentDetails                     = "showcase_resolve_comment_details"
+	EventDetailsShowcaseRestoredDetails                           = "showcase_restored_details"
+	EventDetailsShowcaseTrashedDetails                            = "showcase_trashed_details"
+	EventDetailsShowcaseUnresolveCommentDetails                   = "showcase_unresolve_comment_details"
+	EventDetailsShowcaseUntrashedDetails                          = "showcase_untrashed_details"
+	EventDetailsShowcaseViewDetails                               = "showcase_view_details"
+	EventDetailsSsoAddCertDetails                                 = "sso_add_cert_details"
+	EventDetailsSsoAddLoginUrlDetails                             = "sso_add_login_url_details"
+	EventDetailsSsoAddLogoutUrlDetails                            = "sso_add_logout_url_details"
+	EventDetailsSsoChangeCertDetails                              = "sso_change_cert_details"
+	EventDetailsSsoChangeLoginUrlDetails                          = "sso_change_login_url_details"
+	EventDetailsSsoChangeLogoutUrlDetails                         = "sso_change_logout_url_details"
+	EventDetailsSsoChangeSamlIdentityModeDetails                  = "sso_change_saml_identity_mode_details"
+	EventDetailsSsoRemoveCertDetails                              = "sso_remove_cert_details"
+	EventDetailsSsoRemoveLoginUrlDetails                          = "sso_remove_login_url_details"
+	EventDetailsSsoRemoveLogoutUrlDetails                         = "sso_remove_logout_url_details"
+	EventDetailsTeamFolderChangeStatusDetails                     = "team_folder_change_status_details"
+	EventDetailsTeamFolderCreateDetails                           = "team_folder_create_details"
+	EventDetailsTeamFolderDowngradeDetails                        = "team_folder_downgrade_details"
+	EventDetailsTeamFolderPermanentlyDeleteDetails                = "team_folder_permanently_delete_details"
+	EventDetailsTeamFolderRenameDetails                           = "team_folder_rename_details"
+	EventDetailsTeamSelectiveSyncSettingsChangedDetails           = "team_selective_sync_settings_changed_details"
+	EventDetailsAccountCaptureChangePolicyDetails                 = "account_capture_change_policy_details"
+	EventDetailsAllowDownloadDisabledDetails                      = "allow_download_disabled_details"
+	EventDetailsAllowDownloadEnabledDetails                       = "allow_download_enabled_details"
+	EventDetailsDataPlacementRestrictionChangePolicyDetails       = "data_placement_restriction_change_policy_details"
+	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails      = "data_placement_restriction_satisfy_policy_details"
+	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails         = "device_approvals_change_desktop_policy_details"
+	EventDetailsDeviceApprovalsChangeMobilePolicyDetails          = "device_approvals_change_mobile_policy_details"
+	EventDetailsDeviceApprovalsChangeOverageActionDetails         = "device_approvals_change_overage_action_details"
+	EventDetailsDeviceApprovalsChangeUnlinkActionDetails          = "device_approvals_change_unlink_action_details"
+	EventDetailsEmmAddExceptionDetails                            = "emm_add_exception_details"
+	EventDetailsEmmChangePolicyDetails                            = "emm_change_policy_details"
+	EventDetailsEmmRemoveExceptionDetails                         = "emm_remove_exception_details"
+	EventDetailsExtendedVersionHistoryChangePolicyDetails         = "extended_version_history_change_policy_details"
+	EventDetailsFileCommentsChangePolicyDetails                   = "file_comments_change_policy_details"
+	EventDetailsFileRequestsChangePolicyDetails                   = "file_requests_change_policy_details"
+	EventDetailsFileRequestsEmailsEnabledDetails                  = "file_requests_emails_enabled_details"
+	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails     = "file_requests_emails_restricted_to_team_only_details"
+	EventDetailsGoogleSsoChangePolicyDetails                      = "google_sso_change_policy_details"
+	EventDetailsGroupUserManagementChangePolicyDetails            = "group_user_management_change_policy_details"
+	EventDetailsMemberRequestsChangePolicyDetails                 = "member_requests_change_policy_details"
+	EventDetailsMemberSpaceLimitsAddExceptionDetails              = "member_space_limits_add_exception_details"
+	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails      = "member_space_limits_change_caps_type_policy_details"
+	EventDetailsMemberSpaceLimitsChangePolicyDetails              = "member_space_limits_change_policy_details"
+	EventDetailsMemberSpaceLimitsRemoveExceptionDetails           = "member_space_limits_remove_exception_details"
+	EventDetailsMemberSuggestionsChangePolicyDetails              = "member_suggestions_change_policy_details"
+	EventDetailsMicrosoftOfficeAddinChangePolicyDetails           = "microsoft_office_addin_change_policy_details"
+	EventDetailsNetworkControlChangePolicyDetails                 = "network_control_change_policy_details"
+	EventDetailsPaperChangeDeploymentPolicyDetails                = "paper_change_deployment_policy_details"
+	EventDetailsPaperChangeMemberLinkPolicyDetails                = "paper_change_member_link_policy_details"
+	EventDetailsPaperChangeMemberPolicyDetails                    = "paper_change_member_policy_details"
+	EventDetailsPaperChangePolicyDetails                          = "paper_change_policy_details"
+	EventDetailsPaperEnabledUsersGroupAdditionDetails             = "paper_enabled_users_group_addition_details"
+	EventDetailsPaperEnabledUsersGroupRemovalDetails              = "paper_enabled_users_group_removal_details"
+	EventDetailsPermanentDeleteChangePolicyDetails                = "permanent_delete_change_policy_details"
+	EventDetailsSharingChangeFolderJoinPolicyDetails              = "sharing_change_folder_join_policy_details"
+	EventDetailsSharingChangeLinkPolicyDetails                    = "sharing_change_link_policy_details"
+	EventDetailsSharingChangeMemberPolicyDetails                  = "sharing_change_member_policy_details"
+	EventDetailsSmartSyncChangePolicyDetails                      = "smart_sync_change_policy_details"
+	EventDetailsSmartSyncNotOptOutDetails                         = "smart_sync_not_opt_out_details"
+	EventDetailsSmartSyncOptOutDetails                            = "smart_sync_opt_out_details"
+	EventDetailsSsoChangePolicyDetails                            = "sso_change_policy_details"
+	EventDetailsTfaChangePolicyDetails                            = "tfa_change_policy_details"
+	EventDetailsTwoAccountChangePolicyDetails                     = "two_account_change_policy_details"
+	EventDetailsWebSessionsChangeFixedLengthPolicyDetails         = "web_sessions_change_fixed_length_policy_details"
+	EventDetailsWebSessionsChangeIdleLengthPolicyDetails          = "web_sessions_change_idle_length_policy_details"
+	EventDetailsTeamMergeFromDetails                              = "team_merge_from_details"
+	EventDetailsTeamMergeToDetails                                = "team_merge_to_details"
+	EventDetailsTeamProfileAddLogoDetails                         = "team_profile_add_logo_details"
+	EventDetailsTeamProfileChangeDefaultLanguageDetails           = "team_profile_change_default_language_details"
+	EventDetailsTeamProfileChangeLogoDetails                      = "team_profile_change_logo_details"
+	EventDetailsTeamProfileChangeNameDetails                      = "team_profile_change_name_details"
+	EventDetailsTeamProfileRemoveLogoDetails                      = "team_profile_remove_logo_details"
+	EventDetailsTfaAddBackupPhoneDetails                          = "tfa_add_backup_phone_details"
+	EventDetailsTfaAddSecurityKeyDetails                          = "tfa_add_security_key_details"
+	EventDetailsTfaChangeBackupPhoneDetails                       = "tfa_change_backup_phone_details"
+	EventDetailsTfaChangeStatusDetails                            = "tfa_change_status_details"
+	EventDetailsTfaRemoveBackupPhoneDetails                       = "tfa_remove_backup_phone_details"
+	EventDetailsTfaRemoveSecurityKeyDetails                       = "tfa_remove_security_key_details"
+	EventDetailsTfaResetDetails                                   = "tfa_reset_details"
+	EventDetailsMissingDetails                                    = "missing_details"
+	EventDetailsOther                                             = "other"
 )
 
 // UnmarshalJSON deserializes into a EventDetails instance
@@ -2899,6 +3207,9 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		AccountCaptureChangeAvailabilityDetails json.RawMessage `json:"account_capture_change_availability_details,omitempty"`
 		// AccountCaptureMigrateAccountDetails : has no documentation (yet)
 		AccountCaptureMigrateAccountDetails json.RawMessage `json:"account_capture_migrate_account_details,omitempty"`
+		// AccountCaptureNotificationEmailsSentDetails : has no documentation
+		// (yet)
+		AccountCaptureNotificationEmailsSentDetails json.RawMessage `json:"account_capture_notification_emails_sent_details,omitempty"`
 		// AccountCaptureRelinquishAccountDetails : has no documentation (yet)
 		AccountCaptureRelinquishAccountDetails json.RawMessage `json:"account_capture_relinquish_account_details,omitempty"`
 		// DisabledDomainInvitesDetails : has no documentation (yet)
@@ -2958,22 +3269,14 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		FileRollbackChangesDetails json.RawMessage `json:"file_rollback_changes_details,omitempty"`
 		// FileSaveCopyReferenceDetails : has no documentation (yet)
 		FileSaveCopyReferenceDetails json.RawMessage `json:"file_save_copy_reference_details,omitempty"`
-		// FileRequestAddDeadlineDetails : has no documentation (yet)
-		FileRequestAddDeadlineDetails json.RawMessage `json:"file_request_add_deadline_details,omitempty"`
 		// FileRequestChangeDetails : has no documentation (yet)
 		FileRequestChangeDetails json.RawMessage `json:"file_request_change_details,omitempty"`
-		// FileRequestChangeFolderDetails : has no documentation (yet)
-		FileRequestChangeFolderDetails json.RawMessage `json:"file_request_change_folder_details,omitempty"`
 		// FileRequestCloseDetails : has no documentation (yet)
 		FileRequestCloseDetails json.RawMessage `json:"file_request_close_details,omitempty"`
 		// FileRequestCreateDetails : has no documentation (yet)
 		FileRequestCreateDetails json.RawMessage `json:"file_request_create_details,omitempty"`
 		// FileRequestReceiveFileDetails : has no documentation (yet)
 		FileRequestReceiveFileDetails json.RawMessage `json:"file_request_receive_file_details,omitempty"`
-		// FileRequestRemoveDeadlineDetails : has no documentation (yet)
-		FileRequestRemoveDeadlineDetails json.RawMessage `json:"file_request_remove_deadline_details,omitempty"`
-		// FileRequestSendDetails : has no documentation (yet)
-		FileRequestSendDetails json.RawMessage `json:"file_request_send_details,omitempty"`
 		// GroupAddExternalIdDetails : has no documentation (yet)
 		GroupAddExternalIdDetails json.RawMessage `json:"group_add_external_id_details,omitempty"`
 		// GroupAddMemberDetails : has no documentation (yet)
@@ -2988,6 +3291,10 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		GroupCreateDetails json.RawMessage `json:"group_create_details,omitempty"`
 		// GroupDeleteDetails : has no documentation (yet)
 		GroupDeleteDetails json.RawMessage `json:"group_delete_details,omitempty"`
+		// GroupDescriptionUpdatedDetails : has no documentation (yet)
+		GroupDescriptionUpdatedDetails json.RawMessage `json:"group_description_updated_details,omitempty"`
+		// GroupJoinPolicyUpdatedDetails : has no documentation (yet)
+		GroupJoinPolicyUpdatedDetails json.RawMessage `json:"group_join_policy_updated_details,omitempty"`
 		// GroupMovedDetails : has no documentation (yet)
 		GroupMovedDetails json.RawMessage `json:"group_moved_details,omitempty"`
 		// GroupRemoveExternalIdDetails : has no documentation (yet)
@@ -3014,6 +3321,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SignInAsSessionStartDetails json.RawMessage `json:"sign_in_as_session_start_details,omitempty"`
 		// SsoErrorDetails : has no documentation (yet)
 		SsoErrorDetails json.RawMessage `json:"sso_error_details,omitempty"`
+		// MemberAddNameDetails : has no documentation (yet)
+		MemberAddNameDetails json.RawMessage `json:"member_add_name_details,omitempty"`
 		// MemberChangeAdminRoleDetails : has no documentation (yet)
 		MemberChangeAdminRoleDetails json.RawMessage `json:"member_change_admin_role_details,omitempty"`
 		// MemberChangeEmailDetails : has no documentation (yet)
@@ -3027,8 +3336,16 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
 		// (yet)
 		MemberPermanentlyDeleteAccountContentsDetails json.RawMessage `json:"member_permanently_delete_account_contents_details,omitempty"`
+		// MemberSpaceLimitsAddCustomQuotaDetails : has no documentation (yet)
+		MemberSpaceLimitsAddCustomQuotaDetails json.RawMessage `json:"member_space_limits_add_custom_quota_details,omitempty"`
+		// MemberSpaceLimitsChangeCustomQuotaDetails : has no documentation
+		// (yet)
+		MemberSpaceLimitsChangeCustomQuotaDetails json.RawMessage `json:"member_space_limits_change_custom_quota_details,omitempty"`
 		// MemberSpaceLimitsChangeStatusDetails : has no documentation (yet)
 		MemberSpaceLimitsChangeStatusDetails json.RawMessage `json:"member_space_limits_change_status_details,omitempty"`
+		// MemberSpaceLimitsRemoveCustomQuotaDetails : has no documentation
+		// (yet)
+		MemberSpaceLimitsRemoveCustomQuotaDetails json.RawMessage `json:"member_space_limits_remove_custom_quota_details,omitempty"`
 		// MemberSuggestDetails : has no documentation (yet)
 		MemberSuggestDetails json.RawMessage `json:"member_suggest_details,omitempty"`
 		// MemberTransferAccountContentsDetails : has no documentation (yet)
@@ -3115,6 +3432,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		EmmCreateExceptionsReportDetails json.RawMessage `json:"emm_create_exceptions_report_details,omitempty"`
 		// EmmCreateUsageReportDetails : has no documentation (yet)
 		EmmCreateUsageReportDetails json.RawMessage `json:"emm_create_usage_report_details,omitempty"`
+		// ExportMembersReportDetails : has no documentation (yet)
+		ExportMembersReportDetails json.RawMessage `json:"export_members_report_details,omitempty"`
 		// PaperAdminExportStartDetails : has no documentation (yet)
 		PaperAdminExportStartDetails json.RawMessage `json:"paper_admin_export_start_details,omitempty"`
 		// SmartSyncCreateAdminPrivilegeReportDetails : has no documentation
@@ -3143,6 +3462,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SfAllowNonMembersToViewSharedLinksDetails json.RawMessage `json:"sf_allow_non_members_to_view_shared_links_details,omitempty"`
 		// SfExternalInviteWarnDetails : has no documentation (yet)
 		SfExternalInviteWarnDetails json.RawMessage `json:"sf_external_invite_warn_details,omitempty"`
+		// SfFbInviteDetails : has no documentation (yet)
+		SfFbInviteDetails json.RawMessage `json:"sf_fb_invite_details,omitempty"`
+		// SfFbInviteChangeRoleDetails : has no documentation (yet)
+		SfFbInviteChangeRoleDetails json.RawMessage `json:"sf_fb_invite_change_role_details,omitempty"`
+		// SfFbUninviteDetails : has no documentation (yet)
+		SfFbUninviteDetails json.RawMessage `json:"sf_fb_uninvite_details,omitempty"`
 		// SfInviteGroupDetails : has no documentation (yet)
 		SfInviteGroupDetails json.RawMessage `json:"sf_invite_group_details,omitempty"`
 		// SfTeamGrantAccessDetails : has no documentation (yet)
@@ -3189,8 +3514,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SharedContentDownloadDetails json.RawMessage `json:"shared_content_download_details,omitempty"`
 		// SharedContentRelinquishMembershipDetails : has no documentation (yet)
 		SharedContentRelinquishMembershipDetails json.RawMessage `json:"shared_content_relinquish_membership_details,omitempty"`
-		// SharedContentRemoveInviteeDetails : has no documentation (yet)
-		SharedContentRemoveInviteeDetails json.RawMessage `json:"shared_content_remove_invitee_details,omitempty"`
+		// SharedContentRemoveInviteesDetails : has no documentation (yet)
+		SharedContentRemoveInviteesDetails json.RawMessage `json:"shared_content_remove_invitees_details,omitempty"`
 		// SharedContentRemoveLinkExpiryDetails : has no documentation (yet)
 		SharedContentRemoveLinkExpiryDetails json.RawMessage `json:"shared_content_remove_link_expiry_details,omitempty"`
 		// SharedContentRemoveLinkPasswordDetails : has no documentation (yet)
@@ -3203,15 +3528,16 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SharedContentUnshareDetails json.RawMessage `json:"shared_content_unshare_details,omitempty"`
 		// SharedContentViewDetails : has no documentation (yet)
 		SharedContentViewDetails json.RawMessage `json:"shared_content_view_details,omitempty"`
-		// SharedFolderChangeConfidentialityDetails : has no documentation (yet)
-		SharedFolderChangeConfidentialityDetails json.RawMessage `json:"shared_folder_change_confidentiality_details,omitempty"`
 		// SharedFolderChangeLinkPolicyDetails : has no documentation (yet)
 		SharedFolderChangeLinkPolicyDetails json.RawMessage `json:"shared_folder_change_link_policy_details,omitempty"`
-		// SharedFolderChangeMemberManagementPolicyDetails : has no
+		// SharedFolderChangeMembersInheritancePolicyDetails : has no
 		// documentation (yet)
-		SharedFolderChangeMemberManagementPolicyDetails json.RawMessage `json:"shared_folder_change_member_management_policy_details,omitempty"`
-		// SharedFolderChangeMemberPolicyDetails : has no documentation (yet)
-		SharedFolderChangeMemberPolicyDetails json.RawMessage `json:"shared_folder_change_member_policy_details,omitempty"`
+		SharedFolderChangeMembersInheritancePolicyDetails json.RawMessage `json:"shared_folder_change_members_inheritance_policy_details,omitempty"`
+		// SharedFolderChangeMembersManagementPolicyDetails : has no
+		// documentation (yet)
+		SharedFolderChangeMembersManagementPolicyDetails json.RawMessage `json:"shared_folder_change_members_management_policy_details,omitempty"`
+		// SharedFolderChangeMembersPolicyDetails : has no documentation (yet)
+		SharedFolderChangeMembersPolicyDetails json.RawMessage `json:"shared_folder_change_members_policy_details,omitempty"`
 		// SharedFolderCreateDetails : has no documentation (yet)
 		SharedFolderCreateDetails json.RawMessage `json:"shared_folder_create_details,omitempty"`
 		// SharedFolderDeclineInvitationDetails : has no documentation (yet)
@@ -3248,6 +3574,50 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SharedNoteOpenedDetails json.RawMessage `json:"shared_note_opened_details,omitempty"`
 		// ShmodelGroupShareDetails : has no documentation (yet)
 		ShmodelGroupShareDetails json.RawMessage `json:"shmodel_group_share_details,omitempty"`
+		// ShowcaseAccessGrantedDetails : has no documentation (yet)
+		ShowcaseAccessGrantedDetails json.RawMessage `json:"showcase_access_granted_details,omitempty"`
+		// ShowcaseAddMemberDetails : has no documentation (yet)
+		ShowcaseAddMemberDetails json.RawMessage `json:"showcase_add_member_details,omitempty"`
+		// ShowcaseArchivedDetails : has no documentation (yet)
+		ShowcaseArchivedDetails json.RawMessage `json:"showcase_archived_details,omitempty"`
+		// ShowcaseCreatedDetails : has no documentation (yet)
+		ShowcaseCreatedDetails json.RawMessage `json:"showcase_created_details,omitempty"`
+		// ShowcaseDeleteCommentDetails : has no documentation (yet)
+		ShowcaseDeleteCommentDetails json.RawMessage `json:"showcase_delete_comment_details,omitempty"`
+		// ShowcaseEditedDetails : has no documentation (yet)
+		ShowcaseEditedDetails json.RawMessage `json:"showcase_edited_details,omitempty"`
+		// ShowcaseEditCommentDetails : has no documentation (yet)
+		ShowcaseEditCommentDetails json.RawMessage `json:"showcase_edit_comment_details,omitempty"`
+		// ShowcaseFileAddedDetails : has no documentation (yet)
+		ShowcaseFileAddedDetails json.RawMessage `json:"showcase_file_added_details,omitempty"`
+		// ShowcaseFileDownloadDetails : has no documentation (yet)
+		ShowcaseFileDownloadDetails json.RawMessage `json:"showcase_file_download_details,omitempty"`
+		// ShowcaseFileRemovedDetails : has no documentation (yet)
+		ShowcaseFileRemovedDetails json.RawMessage `json:"showcase_file_removed_details,omitempty"`
+		// ShowcaseFileViewDetails : has no documentation (yet)
+		ShowcaseFileViewDetails json.RawMessage `json:"showcase_file_view_details,omitempty"`
+		// ShowcasePermanentlyDeletedDetails : has no documentation (yet)
+		ShowcasePermanentlyDeletedDetails json.RawMessage `json:"showcase_permanently_deleted_details,omitempty"`
+		// ShowcasePostCommentDetails : has no documentation (yet)
+		ShowcasePostCommentDetails json.RawMessage `json:"showcase_post_comment_details,omitempty"`
+		// ShowcaseRemoveMemberDetails : has no documentation (yet)
+		ShowcaseRemoveMemberDetails json.RawMessage `json:"showcase_remove_member_details,omitempty"`
+		// ShowcaseRenamedDetails : has no documentation (yet)
+		ShowcaseRenamedDetails json.RawMessage `json:"showcase_renamed_details,omitempty"`
+		// ShowcaseRequestAccessDetails : has no documentation (yet)
+		ShowcaseRequestAccessDetails json.RawMessage `json:"showcase_request_access_details,omitempty"`
+		// ShowcaseResolveCommentDetails : has no documentation (yet)
+		ShowcaseResolveCommentDetails json.RawMessage `json:"showcase_resolve_comment_details,omitempty"`
+		// ShowcaseRestoredDetails : has no documentation (yet)
+		ShowcaseRestoredDetails json.RawMessage `json:"showcase_restored_details,omitempty"`
+		// ShowcaseTrashedDetails : has no documentation (yet)
+		ShowcaseTrashedDetails json.RawMessage `json:"showcase_trashed_details,omitempty"`
+		// ShowcaseUnresolveCommentDetails : has no documentation (yet)
+		ShowcaseUnresolveCommentDetails json.RawMessage `json:"showcase_unresolve_comment_details,omitempty"`
+		// ShowcaseUntrashedDetails : has no documentation (yet)
+		ShowcaseUntrashedDetails json.RawMessage `json:"showcase_untrashed_details,omitempty"`
+		// ShowcaseViewDetails : has no documentation (yet)
+		ShowcaseViewDetails json.RawMessage `json:"showcase_view_details,omitempty"`
 		// SsoAddCertDetails : has no documentation (yet)
 		SsoAddCertDetails json.RawMessage `json:"sso_add_cert_details,omitempty"`
 		// SsoAddLoginUrlDetails : has no documentation (yet)
@@ -3278,6 +3648,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		TeamFolderPermanentlyDeleteDetails json.RawMessage `json:"team_folder_permanently_delete_details,omitempty"`
 		// TeamFolderRenameDetails : has no documentation (yet)
 		TeamFolderRenameDetails json.RawMessage `json:"team_folder_rename_details,omitempty"`
+		// TeamSelectiveSyncSettingsChangedDetails : has no documentation (yet)
+		TeamSelectiveSyncSettingsChangedDetails json.RawMessage `json:"team_selective_sync_settings_changed_details,omitempty"`
 		// AccountCaptureChangePolicyDetails : has no documentation (yet)
 		AccountCaptureChangePolicyDetails json.RawMessage `json:"account_capture_change_policy_details,omitempty"`
 		// AllowDownloadDisabledDetails : has no documentation (yet)
@@ -3326,6 +3698,9 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		MemberRequestsChangePolicyDetails json.RawMessage `json:"member_requests_change_policy_details,omitempty"`
 		// MemberSpaceLimitsAddExceptionDetails : has no documentation (yet)
 		MemberSpaceLimitsAddExceptionDetails json.RawMessage `json:"member_space_limits_add_exception_details,omitempty"`
+		// MemberSpaceLimitsChangeCapsTypePolicyDetails : has no documentation
+		// (yet)
+		MemberSpaceLimitsChangeCapsTypePolicyDetails json.RawMessage `json:"member_space_limits_change_caps_type_policy_details,omitempty"`
 		// MemberSpaceLimitsChangePolicyDetails : has no documentation (yet)
 		MemberSpaceLimitsChangePolicyDetails json.RawMessage `json:"member_space_limits_change_policy_details,omitempty"`
 		// MemberSpaceLimitsRemoveExceptionDetails : has no documentation (yet)
@@ -3556,6 +3931,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "account_capture_notification_emails_sent_details":
+		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSentDetails)
+
+		if err != nil {
+			return err
+		}
 	case "account_capture_relinquish_account_details":
 		err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccountDetails)
 
@@ -3718,20 +4099,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "file_request_add_deadline_details":
-		err = json.Unmarshal(body, &u.FileRequestAddDeadlineDetails)
-
-		if err != nil {
-			return err
-		}
 	case "file_request_change_details":
 		err = json.Unmarshal(body, &u.FileRequestChangeDetails)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_change_folder_details":
-		err = json.Unmarshal(body, &u.FileRequestChangeFolderDetails)
 
 		if err != nil {
 			return err
@@ -3750,18 +4119,6 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "file_request_receive_file_details":
 		err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_remove_deadline_details":
-		err = json.Unmarshal(body, &u.FileRequestRemoveDeadlineDetails)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_send_details":
-		err = json.Unmarshal(body, &u.FileRequestSendDetails)
 
 		if err != nil {
 			return err
@@ -3804,6 +4161,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "group_delete_details":
 		err = json.Unmarshal(body, &u.GroupDeleteDetails)
+
+		if err != nil {
+			return err
+		}
+	case "group_description_updated_details":
+		err = json.Unmarshal(body, &u.GroupDescriptionUpdatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "group_join_policy_updated_details":
+		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdatedDetails)
 
 		if err != nil {
 			return err
@@ -3886,6 +4255,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_add_name_details":
+		err = json.Unmarshal(body, &u.MemberAddNameDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_admin_role_details":
 		err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails)
 
@@ -3922,8 +4297,26 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_space_limits_add_custom_quota_details":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuotaDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_change_custom_quota_details":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuotaDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_space_limits_change_status_details":
 		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatusDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_remove_custom_quota_details":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuotaDetails)
 
 		if err != nil {
 			return err
@@ -4186,6 +4579,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "export_members_report_details":
+		err = json.Unmarshal(body, &u.ExportMembersReportDetails)
+
+		if err != nil {
+			return err
+		}
 	case "paper_admin_export_start_details":
 		err = json.Unmarshal(body, &u.PaperAdminExportStartDetails)
 
@@ -4260,6 +4659,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "sf_external_invite_warn_details":
 		err = json.Unmarshal(body, &u.SfExternalInviteWarnDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_invite_details":
+		err = json.Unmarshal(body, &u.SfFbInviteDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_invite_change_role_details":
+		err = json.Unmarshal(body, &u.SfFbInviteChangeRoleDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_uninvite_details":
+		err = json.Unmarshal(body, &u.SfFbUninviteDetails)
 
 		if err != nil {
 			return err
@@ -4396,8 +4813,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_invitee_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInviteeDetails)
+	case "shared_content_remove_invitees_details":
+		err = json.Unmarshal(body, &u.SharedContentRemoveInviteesDetails)
 
 		if err != nil {
 			return err
@@ -4438,26 +4855,26 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_confidentiality_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeConfidentialityDetails)
-
-		if err != nil {
-			return err
-		}
 	case "shared_folder_change_link_policy_details":
 		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_member_management_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMemberManagementPolicyDetails)
+	case "shared_folder_change_members_inheritance_policy_details":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_member_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMemberPolicyDetails)
+	case "shared_folder_change_members_management_policy_details":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_folder_change_members_policy_details":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicyDetails)
 
 		if err != nil {
 			return err
@@ -4570,6 +4987,138 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "showcase_access_granted_details":
+		err = json.Unmarshal(body, &u.ShowcaseAccessGrantedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_add_member_details":
+		err = json.Unmarshal(body, &u.ShowcaseAddMemberDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_archived_details":
+		err = json.Unmarshal(body, &u.ShowcaseArchivedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_created_details":
+		err = json.Unmarshal(body, &u.ShowcaseCreatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_delete_comment_details":
+		err = json.Unmarshal(body, &u.ShowcaseDeleteCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_edited_details":
+		err = json.Unmarshal(body, &u.ShowcaseEditedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_edit_comment_details":
+		err = json.Unmarshal(body, &u.ShowcaseEditCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_added_details":
+		err = json.Unmarshal(body, &u.ShowcaseFileAddedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_download_details":
+		err = json.Unmarshal(body, &u.ShowcaseFileDownloadDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_removed_details":
+		err = json.Unmarshal(body, &u.ShowcaseFileRemovedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_view_details":
+		err = json.Unmarshal(body, &u.ShowcaseFileViewDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_permanently_deleted_details":
+		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeletedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_post_comment_details":
+		err = json.Unmarshal(body, &u.ShowcasePostCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_remove_member_details":
+		err = json.Unmarshal(body, &u.ShowcaseRemoveMemberDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_renamed_details":
+		err = json.Unmarshal(body, &u.ShowcaseRenamedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_request_access_details":
+		err = json.Unmarshal(body, &u.ShowcaseRequestAccessDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_resolve_comment_details":
+		err = json.Unmarshal(body, &u.ShowcaseResolveCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_restored_details":
+		err = json.Unmarshal(body, &u.ShowcaseRestoredDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_trashed_details":
+		err = json.Unmarshal(body, &u.ShowcaseTrashedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_unresolve_comment_details":
+		err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_untrashed_details":
+		err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_view_details":
+		err = json.Unmarshal(body, &u.ShowcaseViewDetails)
+
+		if err != nil {
+			return err
+		}
 	case "sso_add_cert_details":
 		err = json.Unmarshal(body, &u.SsoAddCertDetails)
 
@@ -4656,6 +5205,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "team_folder_rename_details":
 		err = json.Unmarshal(body, &u.TeamFolderRenameDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_selective_sync_settings_changed_details":
+		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChangedDetails)
 
 		if err != nil {
 			return err
@@ -4782,6 +5337,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_space_limits_add_exception_details":
 		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddExceptionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_change_caps_type_policy_details":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicyDetails)
 
 		if err != nil {
 			return err
@@ -5021,1846 +5582,1828 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 // EventType : The type of the event.
 type EventType struct {
 	dropbox.Tagged
-	// AppLinkTeam : (apps) Linked an app for team.
+	// AppLinkTeam : (apps) Linked app for team
 	AppLinkTeam *AppLinkTeamType `json:"app_link_team,omitempty"`
-	// AppLinkUser : (apps) Linked an app for team member.
+	// AppLinkUser : (apps) Linked app for member
 	AppLinkUser *AppLinkUserType `json:"app_link_user,omitempty"`
-	// AppUnlinkTeam : (apps) Unlinked an app for team.
+	// AppUnlinkTeam : (apps) Unlinked app for team
 	AppUnlinkTeam *AppUnlinkTeamType `json:"app_unlink_team,omitempty"`
-	// AppUnlinkUser : (apps) Unlinked an app for team member.
+	// AppUnlinkUser : (apps) Unlinked app for member
 	AppUnlinkUser *AppUnlinkUserType `json:"app_unlink_user,omitempty"`
-	// FileAddComment : (comments) Added a file comment.
+	// FileAddComment : (comments) Added file comment
 	FileAddComment *FileAddCommentType `json:"file_add_comment,omitempty"`
 	// FileChangeCommentSubscription : (comments) Subscribed to or unsubscribed
-	// from comment notifications for file.
+	// from comment notifications for file
 	FileChangeCommentSubscription *FileChangeCommentSubscriptionType `json:"file_change_comment_subscription,omitempty"`
-	// FileDeleteComment : (comments) Deleted a file comment.
+	// FileDeleteComment : (comments) Deleted file comment
 	FileDeleteComment *FileDeleteCommentType `json:"file_delete_comment,omitempty"`
-	// FileLikeComment : (comments) Liked a file comment. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// FileLikeComment : (comments) Liked file comment (deprecated, no longer
+	// logged)
 	FileLikeComment *FileLikeCommentType `json:"file_like_comment,omitempty"`
-	// FileResolveComment : (comments) Resolved a file comment.
+	// FileResolveComment : (comments) Resolved file comment
 	FileResolveComment *FileResolveCommentType `json:"file_resolve_comment,omitempty"`
-	// FileUnlikeComment : (comments) Unliked a file comment. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// FileUnlikeComment : (comments) Unliked file comment (deprecated, no
+	// longer logged)
 	FileUnlikeComment *FileUnlikeCommentType `json:"file_unlike_comment,omitempty"`
-	// FileUnresolveComment : (comments) Unresolved a file comment.
+	// FileUnresolveComment : (comments) Unresolved file comment
 	FileUnresolveComment *FileUnresolveCommentType `json:"file_unresolve_comment,omitempty"`
-	// DeviceChangeIpDesktop : (devices) IP address associated with active
-	// desktop session changed.
+	// DeviceChangeIpDesktop : (devices) Changed IP address associated with
+	// active desktop session
 	DeviceChangeIpDesktop *DeviceChangeIpDesktopType `json:"device_change_ip_desktop,omitempty"`
-	// DeviceChangeIpMobile : (devices) IP address associated with active mobile
-	// session changed.
+	// DeviceChangeIpMobile : (devices) Changed IP address associated with
+	// active mobile session
 	DeviceChangeIpMobile *DeviceChangeIpMobileType `json:"device_change_ip_mobile,omitempty"`
-	// DeviceChangeIpWeb : (devices) IP address associated with active Web
-	// session changed.
+	// DeviceChangeIpWeb : (devices) Changed IP address associated with active
+	// web session
 	DeviceChangeIpWeb *DeviceChangeIpWebType `json:"device_change_ip_web,omitempty"`
-	// DeviceDeleteOnUnlinkFail : (devices) Failed to delete all files from an
-	// unlinked device.
+	// DeviceDeleteOnUnlinkFail : (devices) Failed to delete all files from
+	// unlinked device
 	DeviceDeleteOnUnlinkFail *DeviceDeleteOnUnlinkFailType `json:"device_delete_on_unlink_fail,omitempty"`
-	// DeviceDeleteOnUnlinkSuccess : (devices) Deleted all files from an
-	// unlinked device.
+	// DeviceDeleteOnUnlinkSuccess : (devices) Deleted all files from unlinked
+	// device
 	DeviceDeleteOnUnlinkSuccess *DeviceDeleteOnUnlinkSuccessType `json:"device_delete_on_unlink_success,omitempty"`
-	// DeviceLinkFail : (devices) Failed to link a device.
+	// DeviceLinkFail : (devices) Failed to link device
 	DeviceLinkFail *DeviceLinkFailType `json:"device_link_fail,omitempty"`
-	// DeviceLinkSuccess : (devices) Linked a device.
+	// DeviceLinkSuccess : (devices) Linked device
 	DeviceLinkSuccess *DeviceLinkSuccessType `json:"device_link_success,omitempty"`
-	// DeviceManagementDisabled : (devices) Disable Device Management. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// DeviceManagementDisabled : (devices) Disabled device management
+	// (deprecated, no longer logged)
 	DeviceManagementDisabled *DeviceManagementDisabledType `json:"device_management_disabled,omitempty"`
-	// DeviceManagementEnabled : (devices) Enable Device Management. This event
-	// is deprecated and will not be logged going forward as the associated
-	// product functionality no longer exists.
+	// DeviceManagementEnabled : (devices) Enabled device management
+	// (deprecated, no longer logged)
 	DeviceManagementEnabled *DeviceManagementEnabledType `json:"device_management_enabled,omitempty"`
-	// DeviceUnlink : (devices) Disconnected a device.
+	// DeviceUnlink : (devices) Disconnected device
 	DeviceUnlink *DeviceUnlinkType `json:"device_unlink,omitempty"`
-	// EmmRefreshAuthToken : (devices) Refreshed the auth token used for setting
-	// up enterprise mobility management.
+	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up
+	// enterprise mobility management
 	EmmRefreshAuthToken *EmmRefreshAuthTokenType `json:"emm_refresh_auth_token,omitempty"`
-	// AccountCaptureChangeAvailability : (domains) Granted or revoked the
-	// option to enable account capture on domains belonging to the team.
+	// AccountCaptureChangeAvailability : (domains) Granted/revoked option to
+	// enable account capture on team domains
 	AccountCaptureChangeAvailability *AccountCaptureChangeAvailabilityType `json:"account_capture_change_availability,omitempty"`
-	// AccountCaptureMigrateAccount : (domains) Account captured user migrated
-	// their account to the team.
+	// AccountCaptureMigrateAccount : (domains) Account-captured user migrated
+	// account to team
 	AccountCaptureMigrateAccount *AccountCaptureMigrateAccountType `json:"account_capture_migrate_account,omitempty"`
-	// AccountCaptureRelinquishAccount : (domains) Account captured user
-	// relinquished their account by changing the email address associated with
-	// it.
+	// AccountCaptureNotificationEmailsSent : (domains) Sent proactive account
+	// capture email to all unmanaged members
+	AccountCaptureNotificationEmailsSent *AccountCaptureNotificationEmailsSentType `json:"account_capture_notification_emails_sent,omitempty"`
+	// AccountCaptureRelinquishAccount : (domains) Account-captured user changed
+	// account email to personal email
 	AccountCaptureRelinquishAccount *AccountCaptureRelinquishAccountType `json:"account_capture_relinquish_account,omitempty"`
-	// DisabledDomainInvites : (domains) Disabled domain invites. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// DisabledDomainInvites : (domains) Disabled domain invites (deprecated, no
+	// longer logged)
 	DisabledDomainInvites *DisabledDomainInvitesType `json:"disabled_domain_invites,omitempty"`
-	// DomainInvitesApproveRequestToJoinTeam : (domains) Approved a member's
-	// request to join the team.
+	// DomainInvitesApproveRequestToJoinTeam : (domains) Approved user's request
+	// to join team
 	DomainInvitesApproveRequestToJoinTeam *DomainInvitesApproveRequestToJoinTeamType `json:"domain_invites_approve_request_to_join_team,omitempty"`
-	// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined a user's
-	// request to join the team.
+	// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined user's request
+	// to join team
 	DomainInvitesDeclineRequestToJoinTeam *DomainInvitesDeclineRequestToJoinTeamType `json:"domain_invites_decline_request_to_join_team,omitempty"`
 	// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-	// existing domain accounts.
+	// existing domain accounts
 	DomainInvitesEmailExistingUsers *DomainInvitesEmailExistingUsersType `json:"domain_invites_email_existing_users,omitempty"`
-	// DomainInvitesRequestToJoinTeam : (domains) Asked to join the team.
+	// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
 	DomainInvitesRequestToJoinTeam *DomainInvitesRequestToJoinTeamType `json:"domain_invites_request_to_join_team,omitempty"`
-	// DomainInvitesSetInviteNewUserPrefToNo : (domains) Turned off
-	// u201cAutomatically invite new usersu201d. This event is deprecated and
-	// will not be logged going forward as the associated product functionality
-	// no longer exists.
+	// DomainInvitesSetInviteNewUserPrefToNo : (domains) Disabled "Automatically
+	// invite new users" (deprecated, no longer logged)
 	DomainInvitesSetInviteNewUserPrefToNo *DomainInvitesSetInviteNewUserPrefToNoType `json:"domain_invites_set_invite_new_user_pref_to_no,omitempty"`
-	// DomainInvitesSetInviteNewUserPrefToYes : (domains) Turned on
-	// u201cAutomatically invite new usersu201d. This event is deprecated and
-	// will not be logged going forward as the associated product functionality
-	// no longer exists.
+	// DomainInvitesSetInviteNewUserPrefToYes : (domains) Enabled "Automatically
+	// invite new users" (deprecated, no longer logged)
 	DomainInvitesSetInviteNewUserPrefToYes *DomainInvitesSetInviteNewUserPrefToYesType `json:"domain_invites_set_invite_new_user_pref_to_yes,omitempty"`
-	// DomainVerificationAddDomainFail : (domains) Failed to verify a domain
-	// belonging to the team.
+	// DomainVerificationAddDomainFail : (domains) Failed to verify team domain
 	DomainVerificationAddDomainFail *DomainVerificationAddDomainFailType `json:"domain_verification_add_domain_fail,omitempty"`
-	// DomainVerificationAddDomainSuccess : (domains) Verified a domain
-	// belonging to the team.
+	// DomainVerificationAddDomainSuccess : (domains) Verified team domain
 	DomainVerificationAddDomainSuccess *DomainVerificationAddDomainSuccessType `json:"domain_verification_add_domain_success,omitempty"`
-	// DomainVerificationRemoveDomain : (domains) Removed a domain from the list
-	// of verified domains belonging to the team.
+	// DomainVerificationRemoveDomain : (domains) Removed domain from list of
+	// verified team domains
 	DomainVerificationRemoveDomain *DomainVerificationRemoveDomainType `json:"domain_verification_remove_domain,omitempty"`
-	// EnabledDomainInvites : (domains) Enabled domain invites. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// EnabledDomainInvites : (domains) Enabled domain invites (deprecated, no
+	// longer logged)
 	EnabledDomainInvites *EnabledDomainInvitesType `json:"enabled_domain_invites,omitempty"`
-	// CreateFolder : (file_operations) Created folders. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// CreateFolder : (file_operations) Created folders (deprecated, no longer
+	// logged)
 	CreateFolder *CreateFolderType `json:"create_folder,omitempty"`
-	// FileAdd : (file_operations) Added files and/or folders.
+	// FileAdd : (file_operations) Added files and/or folders
 	FileAdd *FileAddType `json:"file_add,omitempty"`
-	// FileCopy : (file_operations) Copied files and/or folders.
+	// FileCopy : (file_operations) Copied files and/or folders
 	FileCopy *FileCopyType `json:"file_copy,omitempty"`
-	// FileDelete : (file_operations) Deleted files and/or folders.
+	// FileDelete : (file_operations) Deleted files and/or folders
 	FileDelete *FileDeleteType `json:"file_delete,omitempty"`
-	// FileDownload : (file_operations) Downloaded files and/or folders.
+	// FileDownload : (file_operations) Downloaded files and/or folders
 	FileDownload *FileDownloadType `json:"file_download,omitempty"`
-	// FileEdit : (file_operations) Edited files.
+	// FileEdit : (file_operations) Edited files
 	FileEdit *FileEditType `json:"file_edit,omitempty"`
-	// FileGetCopyReference : (file_operations) Create a copy reference to a
-	// file or folder.
+	// FileGetCopyReference : (file_operations) Created copy reference to
+	// file/folder
 	FileGetCopyReference *FileGetCopyReferenceType `json:"file_get_copy_reference,omitempty"`
-	// FileMove : (file_operations) Moved files and/or folders.
+	// FileMove : (file_operations) Moved files and/or folders
 	FileMove *FileMoveType `json:"file_move,omitempty"`
 	// FilePermanentlyDelete : (file_operations) Permanently deleted files
-	// and/or folders.
+	// and/or folders
 	FilePermanentlyDelete *FilePermanentlyDeleteType `json:"file_permanently_delete,omitempty"`
-	// FilePreview : (file_operations) Previewed files and/or folders.
+	// FilePreview : (file_operations) Previewed files and/or folders
 	FilePreview *FilePreviewType `json:"file_preview,omitempty"`
-	// FileRename : (file_operations) Renamed files and/or folders.
+	// FileRename : (file_operations) Renamed files and/or folders
 	FileRename *FileRenameType `json:"file_rename,omitempty"`
-	// FileRestore : (file_operations) Restored deleted files and/or folders.
+	// FileRestore : (file_operations) Restored deleted files and/or folders
 	FileRestore *FileRestoreType `json:"file_restore,omitempty"`
-	// FileRevert : (file_operations) Reverted files to a previous version.
+	// FileRevert : (file_operations) Reverted files to previous version
 	FileRevert *FileRevertType `json:"file_revert,omitempty"`
-	// FileRollbackChanges : (file_operations) Rolled back file change location
-	// changes.
+	// FileRollbackChanges : (file_operations) Rolled back file actions
 	FileRollbackChanges *FileRollbackChangesType `json:"file_rollback_changes,omitempty"`
-	// FileSaveCopyReference : (file_operations) Save a file or folder using a
-	// copy reference.
+	// FileSaveCopyReference : (file_operations) Saved file/folder using copy
+	// reference
 	FileSaveCopyReference *FileSaveCopyReferenceType `json:"file_save_copy_reference,omitempty"`
-	// FileRequestAddDeadline : (file_requests) Added a deadline to a file
-	// request. This event is replaced by file_request_change and will not be
-	// logged going forward.
-	FileRequestAddDeadline *FileRequestAddDeadlineType `json:"file_request_add_deadline,omitempty"`
-	// FileRequestChange : (file_requests) Change a file request.
+	// FileRequestChange : (file_requests) Changed file request
 	FileRequestChange *FileRequestChangeType `json:"file_request_change,omitempty"`
-	// FileRequestChangeFolder : (file_requests) Changed the file request
-	// folder. This event is replaced by file_request_change and will not be
-	// logged going forward.
-	FileRequestChangeFolder *FileRequestChangeFolderType `json:"file_request_change_folder,omitempty"`
-	// FileRequestClose : (file_requests) Closed a file request.
+	// FileRequestClose : (file_requests) Closed file request
 	FileRequestClose *FileRequestCloseType `json:"file_request_close,omitempty"`
-	// FileRequestCreate : (file_requests) Created a file request.
+	// FileRequestCreate : (file_requests) Created file request
 	FileRequestCreate *FileRequestCreateType `json:"file_request_create,omitempty"`
-	// FileRequestReceiveFile : (file_requests) Received files for a file
-	// request.
+	// FileRequestReceiveFile : (file_requests) Received files for file request
 	FileRequestReceiveFile *FileRequestReceiveFileType `json:"file_request_receive_file,omitempty"`
-	// FileRequestRemoveDeadline : (file_requests) Removed the file request
-	// deadline. This event is replaced by file_request_change and will not be
-	// logged going forward.
-	FileRequestRemoveDeadline *FileRequestRemoveDeadlineType `json:"file_request_remove_deadline,omitempty"`
-	// FileRequestSend : (file_requests) Sent file request to users via email.
-	// This event is replaced by file_request_change and will not be logged
-	// going forward.
-	FileRequestSend *FileRequestSendType `json:"file_request_send,omitempty"`
-	// GroupAddExternalId : (groups) Added an external ID for group.
+	// GroupAddExternalId : (groups) Added external ID for group
 	GroupAddExternalId *GroupAddExternalIdType `json:"group_add_external_id,omitempty"`
-	// GroupAddMember : (groups) Added team members to a group.
+	// GroupAddMember : (groups) Added team members to group
 	GroupAddMember *GroupAddMemberType `json:"group_add_member,omitempty"`
-	// GroupChangeExternalId : (groups) Changed the external ID for group.
+	// GroupChangeExternalId : (groups) Changed external ID for group
 	GroupChangeExternalId *GroupChangeExternalIdType `json:"group_change_external_id,omitempty"`
-	// GroupChangeManagementType : (groups) Changed group management type.
+	// GroupChangeManagementType : (groups) Changed group management type
 	GroupChangeManagementType *GroupChangeManagementTypeType `json:"group_change_management_type,omitempty"`
-	// GroupChangeMemberRole : (groups) Changed the manager permissions
-	// belonging to a group member.
+	// GroupChangeMemberRole : (groups) Changed manager permissions of group
+	// member
 	GroupChangeMemberRole *GroupChangeMemberRoleType `json:"group_change_member_role,omitempty"`
-	// GroupCreate : (groups) Created a group.
+	// GroupCreate : (groups) Created group
 	GroupCreate *GroupCreateType `json:"group_create,omitempty"`
-	// GroupDelete : (groups) Deleted a group.
+	// GroupDelete : (groups) Deleted group
 	GroupDelete *GroupDeleteType `json:"group_delete,omitempty"`
-	// GroupMoved : (groups) Moved a group. This event is deprecated and will
-	// not be logged going forward as the associated product functionality no
-	// longer exists.
+	// GroupDescriptionUpdated : (groups) Updated group (deprecated, no longer
+	// logged)
+	GroupDescriptionUpdated *GroupDescriptionUpdatedType `json:"group_description_updated,omitempty"`
+	// GroupJoinPolicyUpdated : (groups) Updated group join policy (deprecated,
+	// no longer logged)
+	GroupJoinPolicyUpdated *GroupJoinPolicyUpdatedType `json:"group_join_policy_updated,omitempty"`
+	// GroupMoved : (groups) Moved group (deprecated, no longer logged)
 	GroupMoved *GroupMovedType `json:"group_moved,omitempty"`
-	// GroupRemoveExternalId : (groups) Removed the external ID for group.
+	// GroupRemoveExternalId : (groups) Removed external ID for group
 	GroupRemoveExternalId *GroupRemoveExternalIdType `json:"group_remove_external_id,omitempty"`
-	// GroupRemoveMember : (groups) Removed team members from a group.
+	// GroupRemoveMember : (groups) Removed team members from group
 	GroupRemoveMember *GroupRemoveMemberType `json:"group_remove_member,omitempty"`
-	// GroupRename : (groups) Renamed a group.
+	// GroupRename : (groups) Renamed group
 	GroupRename *GroupRenameType `json:"group_rename,omitempty"`
-	// EmmError : (logins) Failed to sign in via EMM. This event is replaced by
-	// login_fail and will not be logged going forward.
+	// EmmError : (logins) Failed to sign in via EMM (deprecated, replaced by
+	// 'Failed to sign in')
 	EmmError *EmmErrorType `json:"emm_error,omitempty"`
-	// LoginFail : (logins) Failed to sign in.
+	// LoginFail : (logins) Failed to sign in
 	LoginFail *LoginFailType `json:"login_fail,omitempty"`
-	// LoginSuccess : (logins) Signed in.
+	// LoginSuccess : (logins) Signed in
 	LoginSuccess *LoginSuccessType `json:"login_success,omitempty"`
-	// Logout : (logins) Signed out.
+	// Logout : (logins) Signed out
 	Logout *LogoutType `json:"logout,omitempty"`
-	// ResellerSupportSessionEnd : (logins) Ended reseller support session.
+	// ResellerSupportSessionEnd : (logins) Ended reseller support session
 	ResellerSupportSessionEnd *ResellerSupportSessionEndType `json:"reseller_support_session_end,omitempty"`
-	// ResellerSupportSessionStart : (logins) Started reseller support session.
+	// ResellerSupportSessionStart : (logins) Started reseller support session
 	ResellerSupportSessionStart *ResellerSupportSessionStartType `json:"reseller_support_session_start,omitempty"`
-	// SignInAsSessionEnd : (logins) Ended admin sign-in-as session.
+	// SignInAsSessionEnd : (logins) Ended admin sign-in-as session
 	SignInAsSessionEnd *SignInAsSessionEndType `json:"sign_in_as_session_end,omitempty"`
-	// SignInAsSessionStart : (logins) Started admin sign-in-as session.
+	// SignInAsSessionStart : (logins) Started admin sign-in-as session
 	SignInAsSessionStart *SignInAsSessionStartType `json:"sign_in_as_session_start,omitempty"`
-	// SsoError : (logins) Failed to sign in via SSO. This event is replaced by
-	// login_fail and will not be logged going forward.
+	// SsoError : (logins) Failed to sign in via SSO (deprecated, replaced by
+	// 'Failed to sign in')
 	SsoError *SsoErrorType `json:"sso_error,omitempty"`
-	// MemberChangeAdminRole : (members) Change the admin role belonging to team
-	// member.
+	// MemberAddName : (members) Added team member name
+	MemberAddName *MemberAddNameType `json:"member_add_name,omitempty"`
+	// MemberChangeAdminRole : (members) Changed team member admin role
 	MemberChangeAdminRole *MemberChangeAdminRoleType `json:"member_change_admin_role,omitempty"`
-	// MemberChangeEmail : (members) Changed team member email address.
+	// MemberChangeEmail : (members) Changed team member email
 	MemberChangeEmail *MemberChangeEmailType `json:"member_change_email,omitempty"`
-	// MemberChangeMembershipType : (members) Changed the membership type
-	// (limited vs full) for team member. This event is deprecated and will not
-	// be logged going forward as the associated product functionality no longer
-	// exists.
+	// MemberChangeMembershipType : (members) Changed membership type
+	// (limited/full) of member (deprecated, no longer logged)
 	MemberChangeMembershipType *MemberChangeMembershipTypeType `json:"member_change_membership_type,omitempty"`
-	// MemberChangeName : (members) Changed team member name.
+	// MemberChangeName : (members) Changed team member name
 	MemberChangeName *MemberChangeNameType `json:"member_change_name,omitempty"`
-	// MemberChangeStatus : (members) Changed the membership status of a team
-	// member.
+	// MemberChangeStatus : (members) Changed membership status of team member
 	MemberChangeStatus *MemberChangeStatusType `json:"member_change_status,omitempty"`
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
-	// contents of a removed team member account.
+	// contents of deleted team member account
 	MemberPermanentlyDeleteAccountContents *MemberPermanentlyDeleteAccountContentsType `json:"member_permanently_delete_account_contents,omitempty"`
-	// MemberSpaceLimitsChangeStatus : (members) Changed the status with respect
-	// to whether the team member is under or over storage quota specified by
-	// policy.
+	// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space limit
+	MemberSpaceLimitsAddCustomQuota *MemberSpaceLimitsAddCustomQuotaType `json:"member_space_limits_add_custom_quota,omitempty"`
+	// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
+	// space limit
+	MemberSpaceLimitsChangeCustomQuota *MemberSpaceLimitsChangeCustomQuotaType `json:"member_space_limits_change_custom_quota,omitempty"`
+	// MemberSpaceLimitsChangeStatus : (members) Changed space limit status
 	MemberSpaceLimitsChangeStatus *MemberSpaceLimitsChangeStatusType `json:"member_space_limits_change_status,omitempty"`
-	// MemberSuggest : (members) Suggested a new team member to be added to the
-	// team.
+	// MemberSpaceLimitsRemoveCustomQuota : (members) Removed custom member
+	// space limit
+	MemberSpaceLimitsRemoveCustomQuota *MemberSpaceLimitsRemoveCustomQuotaType `json:"member_space_limits_remove_custom_quota,omitempty"`
+	// MemberSuggest : (members) Suggested person to add to team
 	MemberSuggest *MemberSuggestType `json:"member_suggest,omitempty"`
-	// MemberTransferAccountContents : (members) Transferred contents of a
-	// removed team member account to another member.
+	// MemberTransferAccountContents : (members) Transferred contents of deleted
+	// member account to another member
 	MemberTransferAccountContents *MemberTransferAccountContentsType `json:"member_transfer_account_contents,omitempty"`
-	// PaperContentAddMember : (paper) Added users to the membership of a Paper
-	// doc or folder.
+	// PaperContentAddMember : (paper) Added team member to Paper doc/folder
 	PaperContentAddMember *PaperContentAddMemberType `json:"paper_content_add_member,omitempty"`
-	// PaperContentAddToFolder : (paper) Added Paper doc or folder to a folder.
+	// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
 	PaperContentAddToFolder *PaperContentAddToFolderType `json:"paper_content_add_to_folder,omitempty"`
-	// PaperContentArchive : (paper) Archived Paper doc or folder.
+	// PaperContentArchive : (paper) Archived Paper doc/folder
 	PaperContentArchive *PaperContentArchiveType `json:"paper_content_archive,omitempty"`
-	// PaperContentCreate : (paper) Created a Paper doc or folder.
+	// PaperContentCreate : (paper) Created Paper doc/folder
 	PaperContentCreate *PaperContentCreateType `json:"paper_content_create,omitempty"`
-	// PaperContentPermanentlyDelete : (paper) Permanently deleted a Paper doc
-	// or folder.
+	// PaperContentPermanentlyDelete : (paper) Permanently deleted Paper
+	// doc/folder
 	PaperContentPermanentlyDelete *PaperContentPermanentlyDeleteType `json:"paper_content_permanently_delete,omitempty"`
-	// PaperContentRemoveFromFolder : (paper) Removed Paper doc or folder from a
-	// folder.
+	// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from
+	// folder
 	PaperContentRemoveFromFolder *PaperContentRemoveFromFolderType `json:"paper_content_remove_from_folder,omitempty"`
-	// PaperContentRemoveMember : (paper) Removed a user from the membership of
-	// a Paper doc or folder.
+	// PaperContentRemoveMember : (paper) Removed team member from Paper
+	// doc/folder
 	PaperContentRemoveMember *PaperContentRemoveMemberType `json:"paper_content_remove_member,omitempty"`
-	// PaperContentRename : (paper) Renamed Paper doc or folder.
+	// PaperContentRename : (paper) Renamed Paper doc/folder
 	PaperContentRename *PaperContentRenameType `json:"paper_content_rename,omitempty"`
-	// PaperContentRestore : (paper) Restored an archived Paper doc or folder.
+	// PaperContentRestore : (paper) Restored archived Paper doc/folder
 	PaperContentRestore *PaperContentRestoreType `json:"paper_content_restore,omitempty"`
-	// PaperDocAddComment : (paper) Added a Paper doc comment.
+	// PaperDocAddComment : (paper) Added Paper doc comment
 	PaperDocAddComment *PaperDocAddCommentType `json:"paper_doc_add_comment,omitempty"`
-	// PaperDocChangeMemberRole : (paper) Changed the access type of a Paper doc
-	// member.
+	// PaperDocChangeMemberRole : (paper) Changed team member permissions for
+	// Paper doc
 	PaperDocChangeMemberRole *PaperDocChangeMemberRoleType `json:"paper_doc_change_member_role,omitempty"`
-	// PaperDocChangeSharingPolicy : (paper) Changed the sharing policy for
-	// Paper doc.
+	// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for Paper
+	// doc
 	PaperDocChangeSharingPolicy *PaperDocChangeSharingPolicyType `json:"paper_doc_change_sharing_policy,omitempty"`
-	// PaperDocChangeSubscription : (paper) Followed or unfollowed a Paper doc.
+	// PaperDocChangeSubscription : (paper) Followed/unfollowed Paper doc
 	PaperDocChangeSubscription *PaperDocChangeSubscriptionType `json:"paper_doc_change_subscription,omitempty"`
-	// PaperDocDeleted : (paper) Paper doc archived. This event is deprecated
-	// and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// PaperDocDeleted : (paper) Archived Paper doc (deprecated, no longer
+	// logged)
 	PaperDocDeleted *PaperDocDeletedType `json:"paper_doc_deleted,omitempty"`
-	// PaperDocDeleteComment : (paper) Deleted a Paper doc comment.
+	// PaperDocDeleteComment : (paper) Deleted Paper doc comment
 	PaperDocDeleteComment *PaperDocDeleteCommentType `json:"paper_doc_delete_comment,omitempty"`
-	// PaperDocDownload : (paper) Downloaded a Paper doc in a particular output
-	// format.
+	// PaperDocDownload : (paper) Downloaded Paper doc in specific format
 	PaperDocDownload *PaperDocDownloadType `json:"paper_doc_download,omitempty"`
-	// PaperDocEdit : (paper) Edited a Paper doc.
+	// PaperDocEdit : (paper) Edited Paper doc
 	PaperDocEdit *PaperDocEditType `json:"paper_doc_edit,omitempty"`
-	// PaperDocEditComment : (paper) Edited a Paper doc comment.
+	// PaperDocEditComment : (paper) Edited Paper doc comment
 	PaperDocEditComment *PaperDocEditCommentType `json:"paper_doc_edit_comment,omitempty"`
-	// PaperDocFollowed : (paper) Followed a Paper doc. This event is replaced
-	// by paper_doc_change_subscription and will not be logged going forward.
+	// PaperDocFollowed : (paper) Followed Paper doc (deprecated, replaced by
+	// 'Followed/unfollowed Paper doc')
 	PaperDocFollowed *PaperDocFollowedType `json:"paper_doc_followed,omitempty"`
-	// PaperDocMention : (paper) Mentioned a member in a Paper doc.
+	// PaperDocMention : (paper) Mentioned team member in Paper doc
 	PaperDocMention *PaperDocMentionType `json:"paper_doc_mention,omitempty"`
-	// PaperDocRequestAccess : (paper) Requested to be a member on a Paper doc.
+	// PaperDocRequestAccess : (paper) Requested access to Paper doc
 	PaperDocRequestAccess *PaperDocRequestAccessType `json:"paper_doc_request_access,omitempty"`
-	// PaperDocResolveComment : (paper) Paper doc comment resolved.
+	// PaperDocResolveComment : (paper) Resolved Paper doc comment
 	PaperDocResolveComment *PaperDocResolveCommentType `json:"paper_doc_resolve_comment,omitempty"`
-	// PaperDocRevert : (paper) Restored a Paper doc to previous revision.
+	// PaperDocRevert : (paper) Restored Paper doc to previous version
 	PaperDocRevert *PaperDocRevertType `json:"paper_doc_revert,omitempty"`
-	// PaperDocSlackShare : (paper) Paper doc link shared via slack.
+	// PaperDocSlackShare : (paper) Shared Paper doc via Slack
 	PaperDocSlackShare *PaperDocSlackShareType `json:"paper_doc_slack_share,omitempty"`
-	// PaperDocTeamInvite : (paper) Paper doc shared with team member. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// PaperDocTeamInvite : (paper) Shared Paper doc with team member
+	// (deprecated, no longer logged)
 	PaperDocTeamInvite *PaperDocTeamInviteType `json:"paper_doc_team_invite,omitempty"`
-	// PaperDocTrashed : (paper) Paper doc trashed.
+	// PaperDocTrashed : (paper) Deleted Paper doc
 	PaperDocTrashed *PaperDocTrashedType `json:"paper_doc_trashed,omitempty"`
-	// PaperDocUnresolveComment : (paper) Unresolved a Paper doc comment.
+	// PaperDocUnresolveComment : (paper) Unresolved Paper doc comment
 	PaperDocUnresolveComment *PaperDocUnresolveCommentType `json:"paper_doc_unresolve_comment,omitempty"`
-	// PaperDocUntrashed : (paper) Paper doc untrashed.
+	// PaperDocUntrashed : (paper) Restored Paper doc
 	PaperDocUntrashed *PaperDocUntrashedType `json:"paper_doc_untrashed,omitempty"`
-	// PaperDocView : (paper) Viewed Paper doc.
+	// PaperDocView : (paper) Viewed Paper doc
 	PaperDocView *PaperDocViewType `json:"paper_doc_view,omitempty"`
-	// PaperExternalViewAllow : (paper) Paper external sharing policy changed:
-	// anyone. This event is deprecated and will not be logged going forward as
-	// the associated product functionality no longer exists.
+	// PaperExternalViewAllow : (paper) Changed Paper external sharing setting
+	// to anyone (deprecated, no longer logged)
 	PaperExternalViewAllow *PaperExternalViewAllowType `json:"paper_external_view_allow,omitempty"`
-	// PaperExternalViewDefaultTeam : (paper) Paper external sharing policy
-	// changed: default team. This event is deprecated and will not be logged
-	// going forward as the associated product functionality no longer exists.
+	// PaperExternalViewDefaultTeam : (paper) Changed Paper external sharing
+	// setting to default team (deprecated, no longer logged)
 	PaperExternalViewDefaultTeam *PaperExternalViewDefaultTeamType `json:"paper_external_view_default_team,omitempty"`
-	// PaperExternalViewForbid : (paper) Paper external sharing policy changed:
-	// team-only. This event is deprecated and will not be logged going forward
-	// as the associated product functionality no longer exists.
+	// PaperExternalViewForbid : (paper) Changed Paper external sharing setting
+	// to team-only (deprecated, no longer logged)
 	PaperExternalViewForbid *PaperExternalViewForbidType `json:"paper_external_view_forbid,omitempty"`
-	// PaperFolderChangeSubscription : (paper) Followed or unfollowed a Paper
-	// folder.
+	// PaperFolderChangeSubscription : (paper) Followed/unfollowed Paper folder
 	PaperFolderChangeSubscription *PaperFolderChangeSubscriptionType `json:"paper_folder_change_subscription,omitempty"`
-	// PaperFolderDeleted : (paper) Paper folder archived. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// PaperFolderDeleted : (paper) Archived Paper folder (deprecated, no longer
+	// logged)
 	PaperFolderDeleted *PaperFolderDeletedType `json:"paper_folder_deleted,omitempty"`
-	// PaperFolderFollowed : (paper) Followed a Paper folder. This event is
-	// replaced by paper_folder_change_subscription and will not be logged going
-	// forward.
+	// PaperFolderFollowed : (paper) Followed Paper folder (deprecated, replaced
+	// by 'Followed/unfollowed Paper folder')
 	PaperFolderFollowed *PaperFolderFollowedType `json:"paper_folder_followed,omitempty"`
-	// PaperFolderTeamInvite : (paper) Paper folder shared with team member.
-	// This event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// PaperFolderTeamInvite : (paper) Shared Paper folder with member
+	// (deprecated, no longer logged)
 	PaperFolderTeamInvite *PaperFolderTeamInviteType `json:"paper_folder_team_invite,omitempty"`
-	// PasswordChange : (passwords) Changed password.
+	// PasswordChange : (passwords) Changed password
 	PasswordChange *PasswordChangeType `json:"password_change,omitempty"`
-	// PasswordReset : (passwords) Reset password.
+	// PasswordReset : (passwords) Reset password
 	PasswordReset *PasswordResetType `json:"password_reset,omitempty"`
-	// PasswordResetAll : (passwords) Reset all team member passwords.
+	// PasswordResetAll : (passwords) Reset all team member passwords
 	PasswordResetAll *PasswordResetAllType `json:"password_reset_all,omitempty"`
-	// EmmCreateExceptionsReport : (reports) EMM excluded users report created.
+	// EmmCreateExceptionsReport : (reports) Created EMM-excluded users report
 	EmmCreateExceptionsReport *EmmCreateExceptionsReportType `json:"emm_create_exceptions_report,omitempty"`
-	// EmmCreateUsageReport : (reports) EMM mobile app usage report created.
+	// EmmCreateUsageReport : (reports) Created EMM mobile app usage report
 	EmmCreateUsageReport *EmmCreateUsageReportType `json:"emm_create_usage_report,omitempty"`
-	// PaperAdminExportStart : (reports) Exported all Paper documents in the
-	// team.
+	// ExportMembersReport : (reports) Created member data report
+	ExportMembersReport *ExportMembersReportType `json:"export_members_report,omitempty"`
+	// PaperAdminExportStart : (reports) Exported all team Paper docs
 	PaperAdminExportStart *PaperAdminExportStartType `json:"paper_admin_export_start,omitempty"`
-	// SmartSyncCreateAdminPrivilegeReport : (reports) Smart Sync non-admin
-	// devices report created.
+	// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync
+	// non-admin devices report
 	SmartSyncCreateAdminPrivilegeReport *SmartSyncCreateAdminPrivilegeReportType `json:"smart_sync_create_admin_privilege_report,omitempty"`
-	// TeamActivityCreateReport : (reports) Created a team activity report.
+	// TeamActivityCreateReport : (reports) Created team activity report
 	TeamActivityCreateReport *TeamActivityCreateReportType `json:"team_activity_create_report,omitempty"`
-	// CollectionShare : (sharing) Shared an album.
+	// CollectionShare : (sharing) Shared album
 	CollectionShare *CollectionShareType `json:"collection_share,omitempty"`
-	// NoteAclInviteOnly : (sharing) Changed a Paper document to be invite-only.
-	// This event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
+	// (deprecated, no longer logged)
 	NoteAclInviteOnly *NoteAclInviteOnlyType `json:"note_acl_invite_only,omitempty"`
-	// NoteAclLink : (sharing) Changed a Paper document to be link accessible.
-	// This event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// NoteAclLink : (sharing) Changed Paper doc to link-accessible (deprecated,
+	// no longer logged)
 	NoteAclLink *NoteAclLinkType `json:"note_acl_link,omitempty"`
-	// NoteAclTeamLink : (sharing) Changed a Paper document to be link
-	// accessible for the team. This event is deprecated and will not be logged
-	// going forward as the associated product functionality no longer exists.
+	// NoteAclTeamLink : (sharing) Changed Paper doc to link-accessible for team
+	// (deprecated, no longer logged)
 	NoteAclTeamLink *NoteAclTeamLinkType `json:"note_acl_team_link,omitempty"`
-	// NoteShared : (sharing) Shared a Paper doc. This event is deprecated and
-	// will not be logged going forward as the associated product functionality
-	// no longer exists.
+	// NoteShared : (sharing) Shared Paper doc (deprecated, no longer logged)
 	NoteShared *NoteSharedType `json:"note_shared,omitempty"`
-	// NoteShareReceive : (sharing) Shared Paper document received. This event
-	// is deprecated and will not be logged going forward as the associated
-	// product functionality no longer exists.
+	// NoteShareReceive : (sharing) Shared received Paper doc (deprecated, no
+	// longer logged)
 	NoteShareReceive *NoteShareReceiveType `json:"note_share_receive,omitempty"`
-	// OpenNoteShared : (sharing) Opened a shared Paper doc. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// OpenNoteShared : (sharing) Opened shared Paper doc (deprecated, no longer
+	// logged)
 	OpenNoteShared *OpenNoteSharedType `json:"open_note_shared,omitempty"`
-	// SfAddGroup : (sharing) Added the team to a shared folder. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// SfAddGroup : (sharing) Added team to shared folder (deprecated, no longer
+	// logged)
 	SfAddGroup *SfAddGroupType `json:"sf_add_group,omitempty"`
-	// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed non collaborators
-	// to view links to files in a shared folder. This event is deprecated and
-	// will not be logged going forward as the associated product functionality
-	// no longer exists.
+	// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed non-collaborators
+	// to view links to files in shared folder (deprecated, no longer logged)
 	SfAllowNonMembersToViewSharedLinks *SfAllowNonMembersToViewSharedLinksType `json:"sf_allow_non_members_to_view_shared_links,omitempty"`
-	// SfExternalInviteWarn : (sharing) Admin settings: team members see a
-	// warning before sharing folders outside the team (DEPRECATED FEATURE).
-	// This event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// SfExternalInviteWarn : (sharing) Set team members to see warning before
+	// sharing folders outside team (deprecated, no longer logged)
 	SfExternalInviteWarn *SfExternalInviteWarnType `json:"sf_external_invite_warn,omitempty"`
-	// SfInviteGroup : (sharing) Invited a group to a shared folder. This event
-	// is deprecated and will not be logged going forward as the associated
-	// product functionality no longer exists.
+	// SfFbInvite : (sharing) Invited Facebook users to shared folder
+	// (deprecated, no longer logged)
+	SfFbInvite *SfFbInviteType `json:"sf_fb_invite,omitempty"`
+	// SfFbInviteChangeRole : (sharing) Changed Facebook user's role in shared
+	// folder (deprecated, no longer logged)
+	SfFbInviteChangeRole *SfFbInviteChangeRoleType `json:"sf_fb_invite_change_role,omitempty"`
+	// SfFbUninvite : (sharing) Uninvited Facebook user from shared folder
+	// (deprecated, no longer logged)
+	SfFbUninvite *SfFbUninviteType `json:"sf_fb_uninvite,omitempty"`
+	// SfInviteGroup : (sharing) Invited group to shared folder (deprecated, no
+	// longer logged)
 	SfInviteGroup *SfInviteGroupType `json:"sf_invite_group,omitempty"`
-	// SfTeamGrantAccess : (sharing) Granted access to a shared folder. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// SfTeamGrantAccess : (sharing) Granted access to shared folder
+	// (deprecated, no longer logged)
 	SfTeamGrantAccess *SfTeamGrantAccessType `json:"sf_team_grant_access,omitempty"`
-	// SfTeamInvite : (sharing) Invited team members to a shared folder. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// SfTeamInvite : (sharing) Invited team members to shared folder
+	// (deprecated, replaced by 'Invited user to Dropbox and added them to
+	// shared file/folder')
 	SfTeamInvite *SfTeamInviteType `json:"sf_team_invite,omitempty"`
-	// SfTeamInviteChangeRole : (sharing) Changed a team member's role in a
-	// shared folder. This event is deprecated and will not be logged going
-	// forward as the associated product functionality no longer exists.
+	// SfTeamInviteChangeRole : (sharing) Changed team member's role in shared
+	// folder (deprecated, no longer logged)
 	SfTeamInviteChangeRole *SfTeamInviteChangeRoleType `json:"sf_team_invite_change_role,omitempty"`
-	// SfTeamJoin : (sharing) Joined a team member's shared folder. This event
-	// is deprecated and will not be logged going forward as the associated
-	// product functionality no longer exists.
+	// SfTeamJoin : (sharing) Joined team member's shared folder (deprecated, no
+	// longer logged)
 	SfTeamJoin *SfTeamJoinType `json:"sf_team_join,omitempty"`
-	// SfTeamJoinFromOobLink : (sharing) Joined a team member's shared folder
-	// from a link. This event is deprecated and will not be logged going
-	// forward as the associated product functionality no longer exists.
+	// SfTeamJoinFromOobLink : (sharing) Joined team member's shared folder from
+	// link (deprecated, no longer logged)
 	SfTeamJoinFromOobLink *SfTeamJoinFromOobLinkType `json:"sf_team_join_from_oob_link,omitempty"`
-	// SfTeamUninvite : (sharing) Unshared a folder with a team member. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// SfTeamUninvite : (sharing) Unshared folder with team member (deprecated,
+	// replaced by 'Removed invitee from shared file/folder before invite
+	// accepted')
 	SfTeamUninvite *SfTeamUninviteType `json:"sf_team_uninvite,omitempty"`
-	// SharedContentAddInvitees : (sharing) Sent an email invitation to the
-	// membership of a shared file or folder.
+	// SharedContentAddInvitees : (sharing) Invited user to Dropbox and added
+	// them to shared file/folder
 	SharedContentAddInvitees *SharedContentAddInviteesType `json:"shared_content_add_invitees,omitempty"`
-	// SharedContentAddLinkExpiry : (sharing) Added an expiry to the link for
-	// the shared file or folder.
+	// SharedContentAddLinkExpiry : (sharing) Added expiration date to link for
+	// shared file/folder
 	SharedContentAddLinkExpiry *SharedContentAddLinkExpiryType `json:"shared_content_add_link_expiry,omitempty"`
-	// SharedContentAddLinkPassword : (sharing) Added a password to the link for
-	// the shared file or folder.
+	// SharedContentAddLinkPassword : (sharing) Added password to link for
+	// shared file/folder
 	SharedContentAddLinkPassword *SharedContentAddLinkPasswordType `json:"shared_content_add_link_password,omitempty"`
-	// SharedContentAddMember : (sharing) Added users and/or groups to the
-	// membership of a shared file or folder.
+	// SharedContentAddMember : (sharing) Added users and/or groups to shared
+	// file/folder
 	SharedContentAddMember *SharedContentAddMemberType `json:"shared_content_add_member,omitempty"`
 	// SharedContentChangeDownloadsPolicy : (sharing) Changed whether members
-	// can download the shared file or folder.
+	// can download shared file/folder
 	SharedContentChangeDownloadsPolicy *SharedContentChangeDownloadsPolicyType `json:"shared_content_change_downloads_policy,omitempty"`
-	// SharedContentChangeInviteeRole : (sharing) Changed the access type of an
-	// invitee to a shared file or folder before the invitation was claimed.
+	// SharedContentChangeInviteeRole : (sharing) Changed access type of invitee
+	// to shared file/folder before invite accepted
 	SharedContentChangeInviteeRole *SharedContentChangeInviteeRoleType `json:"shared_content_change_invitee_role,omitempty"`
-	// SharedContentChangeLinkAudience : (sharing) Changed the audience of the
-	// link for a shared file or folder.
+	// SharedContentChangeLinkAudience : (sharing) Changed link audience of
+	// shared file/folder
 	SharedContentChangeLinkAudience *SharedContentChangeLinkAudienceType `json:"shared_content_change_link_audience,omitempty"`
-	// SharedContentChangeLinkExpiry : (sharing) Changed the expiry of the link
-	// for the shared file or folder.
+	// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of
+	// shared file/folder
 	SharedContentChangeLinkExpiry *SharedContentChangeLinkExpiryType `json:"shared_content_change_link_expiry,omitempty"`
-	// SharedContentChangeLinkPassword : (sharing) Changed the password on the
-	// link for the shared file or folder.
+	// SharedContentChangeLinkPassword : (sharing) Changed link password of
+	// shared file/folder
 	SharedContentChangeLinkPassword *SharedContentChangeLinkPasswordType `json:"shared_content_change_link_password,omitempty"`
-	// SharedContentChangeMemberRole : (sharing) Changed the access type of a
-	// shared file or folder member.
+	// SharedContentChangeMemberRole : (sharing) Changed access type of shared
+	// file/folder member
 	SharedContentChangeMemberRole *SharedContentChangeMemberRoleType `json:"shared_content_change_member_role,omitempty"`
 	// SharedContentChangeViewerInfoPolicy : (sharing) Changed whether members
-	// can see who viewed the shared file or folder.
+	// can see who viewed shared file/folder
 	SharedContentChangeViewerInfoPolicy *SharedContentChangeViewerInfoPolicyType `json:"shared_content_change_viewer_info_policy,omitempty"`
-	// SharedContentClaimInvitation : (sharing) Claimed membership to a team
-	// member's shared folder.
+	// SharedContentClaimInvitation : (sharing) Acquired membership of shared
+	// file/folder by accepting invite
 	SharedContentClaimInvitation *SharedContentClaimInvitationType `json:"shared_content_claim_invitation,omitempty"`
-	// SharedContentCopy : (sharing) Copied the shared file or folder to own
-	// Dropbox.
+	// SharedContentCopy : (sharing) Copied shared file/folder to own Dropbox
 	SharedContentCopy *SharedContentCopyType `json:"shared_content_copy,omitempty"`
-	// SharedContentDownload : (sharing) Downloaded the shared file or folder.
+	// SharedContentDownload : (sharing) Downloaded shared file/folder
 	SharedContentDownload *SharedContentDownloadType `json:"shared_content_download,omitempty"`
-	// SharedContentRelinquishMembership : (sharing) Left the membership of a
-	// shared file or folder.
+	// SharedContentRelinquishMembership : (sharing) Left shared file/folder
 	SharedContentRelinquishMembership *SharedContentRelinquishMembershipType `json:"shared_content_relinquish_membership,omitempty"`
-	// SharedContentRemoveInvitee : (sharing) Removed an invitee from the
-	// membership of a shared file or folder before it was claimed.
-	SharedContentRemoveInvitee *SharedContentRemoveInviteeType `json:"shared_content_remove_invitee,omitempty"`
-	// SharedContentRemoveLinkExpiry : (sharing) Removed the expiry of the link
-	// for the shared file or folder.
+	// SharedContentRemoveInvitees : (sharing) Removed invitee from shared
+	// file/folder before invite accepted
+	SharedContentRemoveInvitees *SharedContentRemoveInviteesType `json:"shared_content_remove_invitees,omitempty"`
+	// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration date of
+	// shared file/folder
 	SharedContentRemoveLinkExpiry *SharedContentRemoveLinkExpiryType `json:"shared_content_remove_link_expiry,omitempty"`
-	// SharedContentRemoveLinkPassword : (sharing) Removed the password on the
-	// link for the shared file or folder.
+	// SharedContentRemoveLinkPassword : (sharing) Removed link password of
+	// shared file/folder
 	SharedContentRemoveLinkPassword *SharedContentRemoveLinkPasswordType `json:"shared_content_remove_link_password,omitempty"`
-	// SharedContentRemoveMember : (sharing) Removed a user or a group from the
-	// membership of a shared file or folder.
+	// SharedContentRemoveMember : (sharing) Removed user/group from shared
+	// file/folder
 	SharedContentRemoveMember *SharedContentRemoveMemberType `json:"shared_content_remove_member,omitempty"`
-	// SharedContentRequestAccess : (sharing) Requested to be on the membership
-	// of a shared file or folder.
+	// SharedContentRequestAccess : (sharing) Requested access to shared
+	// file/folder
 	SharedContentRequestAccess *SharedContentRequestAccessType `json:"shared_content_request_access,omitempty"`
-	// SharedContentUnshare : (sharing) Unshared a shared file or folder by
-	// clearing its membership and turning off its link.
+	// SharedContentUnshare : (sharing) Unshared file/folder by clearing
+	// membership and turning off link
 	SharedContentUnshare *SharedContentUnshareType `json:"shared_content_unshare,omitempty"`
-	// SharedContentView : (sharing) Previewed the shared file or folder.
+	// SharedContentView : (sharing) Previewed shared file/folder
 	SharedContentView *SharedContentViewType `json:"shared_content_view,omitempty"`
-	// SharedFolderChangeConfidentiality : (sharing) Set or unset the
-	// confidential flag on a shared folder.
-	SharedFolderChangeConfidentiality *SharedFolderChangeConfidentialityType `json:"shared_folder_change_confidentiality,omitempty"`
-	// SharedFolderChangeLinkPolicy : (sharing) Changed who can access the
-	// shared folder via a link.
+	// SharedFolderChangeLinkPolicy : (sharing) Changed who can access shared
+	// folder via link
 	SharedFolderChangeLinkPolicy *SharedFolderChangeLinkPolicyType `json:"shared_folder_change_link_policy,omitempty"`
-	// SharedFolderChangeMemberManagementPolicy : (sharing) Changed who can
-	// manage the membership of a shared folder.
-	SharedFolderChangeMemberManagementPolicy *SharedFolderChangeMemberManagementPolicyType `json:"shared_folder_change_member_management_policy,omitempty"`
-	// SharedFolderChangeMemberPolicy : (sharing) Changed who can become a
-	// member of the shared folder.
-	SharedFolderChangeMemberPolicy *SharedFolderChangeMemberPolicyType `json:"shared_folder_change_member_policy,omitempty"`
-	// SharedFolderCreate : (sharing) Created a shared folder.
+	// SharedFolderChangeMembersInheritancePolicy : (sharing) Changed whether
+	// shared folder inherits members from parent folder
+	SharedFolderChangeMembersInheritancePolicy *SharedFolderChangeMembersInheritancePolicyType `json:"shared_folder_change_members_inheritance_policy,omitempty"`
+	// SharedFolderChangeMembersManagementPolicy : (sharing) Changed who can
+	// add/remove members of shared folder
+	SharedFolderChangeMembersManagementPolicy *SharedFolderChangeMembersManagementPolicyType `json:"shared_folder_change_members_management_policy,omitempty"`
+	// SharedFolderChangeMembersPolicy : (sharing) Changed who can become member
+	// of shared folder
+	SharedFolderChangeMembersPolicy *SharedFolderChangeMembersPolicyType `json:"shared_folder_change_members_policy,omitempty"`
+	// SharedFolderCreate : (sharing) Created shared folder
 	SharedFolderCreate *SharedFolderCreateType `json:"shared_folder_create,omitempty"`
-	// SharedFolderDeclineInvitation : (sharing) Declined a team member's
-	// invitation to a shared folder.
+	// SharedFolderDeclineInvitation : (sharing) Declined team member's invite
+	// to shared folder
 	SharedFolderDeclineInvitation *SharedFolderDeclineInvitationType `json:"shared_folder_decline_invitation,omitempty"`
-	// SharedFolderMount : (sharing) Added a shared folder to own Dropbox.
+	// SharedFolderMount : (sharing) Added shared folder to own Dropbox
 	SharedFolderMount *SharedFolderMountType `json:"shared_folder_mount,omitempty"`
-	// SharedFolderNest : (sharing) Changed the parent of a shared folder.
+	// SharedFolderNest : (sharing) Changed parent of shared folder
 	SharedFolderNest *SharedFolderNestType `json:"shared_folder_nest,omitempty"`
-	// SharedFolderTransferOwnership : (sharing) Transferred the ownership of a
-	// shared folder to another member.
+	// SharedFolderTransferOwnership : (sharing) Transferred ownership of shared
+	// folder to another member
 	SharedFolderTransferOwnership *SharedFolderTransferOwnershipType `json:"shared_folder_transfer_ownership,omitempty"`
-	// SharedFolderUnmount : (sharing) Deleted a shared folder from Dropbox.
+	// SharedFolderUnmount : (sharing) Deleted shared folder from Dropbox
 	SharedFolderUnmount *SharedFolderUnmountType `json:"shared_folder_unmount,omitempty"`
-	// SharedLinkAddExpiry : (sharing) Added a shared link expiration date.
+	// SharedLinkAddExpiry : (sharing) Added shared link expiration date
 	SharedLinkAddExpiry *SharedLinkAddExpiryType `json:"shared_link_add_expiry,omitempty"`
-	// SharedLinkChangeExpiry : (sharing) Changed the shared link expiration
-	// date.
+	// SharedLinkChangeExpiry : (sharing) Changed shared link expiration date
 	SharedLinkChangeExpiry *SharedLinkChangeExpiryType `json:"shared_link_change_expiry,omitempty"`
-	// SharedLinkChangeVisibility : (sharing) Changed the visibility of a shared
-	// link.
+	// SharedLinkChangeVisibility : (sharing) Changed visibility of shared link
 	SharedLinkChangeVisibility *SharedLinkChangeVisibilityType `json:"shared_link_change_visibility,omitempty"`
-	// SharedLinkCopy : (sharing) Added a file/folder to their Dropbox from a
-	// shared link.
+	// SharedLinkCopy : (sharing) Added file/folder to Dropbox from shared link
 	SharedLinkCopy *SharedLinkCopyType `json:"shared_link_copy,omitempty"`
-	// SharedLinkCreate : (sharing) Created a new shared link.
+	// SharedLinkCreate : (sharing) Created shared link
 	SharedLinkCreate *SharedLinkCreateType `json:"shared_link_create,omitempty"`
-	// SharedLinkDisable : (sharing) Removed a shared link.
+	// SharedLinkDisable : (sharing) Removed shared link
 	SharedLinkDisable *SharedLinkDisableType `json:"shared_link_disable,omitempty"`
-	// SharedLinkDownload : (sharing) Downloaded a file/folder from a shared
-	// link.
+	// SharedLinkDownload : (sharing) Downloaded file/folder from shared link
 	SharedLinkDownload *SharedLinkDownloadType `json:"shared_link_download,omitempty"`
-	// SharedLinkRemoveExpiry : (sharing) Removed a shared link expiration date.
+	// SharedLinkRemoveExpiry : (sharing) Removed shared link expiration date
 	SharedLinkRemoveExpiry *SharedLinkRemoveExpiryType `json:"shared_link_remove_expiry,omitempty"`
-	// SharedLinkShare : (sharing) Added new members as the audience of a shared
-	// link.
+	// SharedLinkShare : (sharing) Added members as audience of shared link
 	SharedLinkShare *SharedLinkShareType `json:"shared_link_share,omitempty"`
-	// SharedLinkView : (sharing) Opened a shared link.
+	// SharedLinkView : (sharing) Opened shared link
 	SharedLinkView *SharedLinkViewType `json:"shared_link_view,omitempty"`
-	// SharedNoteOpened : (sharing) Shared Paper document was opened. This event
-	// is deprecated and will not be logged going forward as the associated
-	// product functionality no longer exists.
+	// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no
+	// longer logged)
 	SharedNoteOpened *SharedNoteOpenedType `json:"shared_note_opened,omitempty"`
-	// ShmodelGroupShare : (sharing) Shared a link with a group. This event is
-	// deprecated and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no
+	// longer logged)
 	ShmodelGroupShare *ShmodelGroupShareType `json:"shmodel_group_share,omitempty"`
-	// SsoAddCert : (sso) Added the X.509 certificate for SSO.
+	// ShowcaseAccessGranted : (showcase) Granted access to showcase
+	ShowcaseAccessGranted *ShowcaseAccessGrantedType `json:"showcase_access_granted,omitempty"`
+	// ShowcaseAddMember : (showcase) Added member to showcase
+	ShowcaseAddMember *ShowcaseAddMemberType `json:"showcase_add_member,omitempty"`
+	// ShowcaseArchived : (showcase) Archived showcase
+	ShowcaseArchived *ShowcaseArchivedType `json:"showcase_archived,omitempty"`
+	// ShowcaseCreated : (showcase) Created showcase
+	ShowcaseCreated *ShowcaseCreatedType `json:"showcase_created,omitempty"`
+	// ShowcaseDeleteComment : (showcase) Deleted showcase comment
+	ShowcaseDeleteComment *ShowcaseDeleteCommentType `json:"showcase_delete_comment,omitempty"`
+	// ShowcaseEdited : (showcase) Edited showcase
+	ShowcaseEdited *ShowcaseEditedType `json:"showcase_edited,omitempty"`
+	// ShowcaseEditComment : (showcase) Edited showcase comment
+	ShowcaseEditComment *ShowcaseEditCommentType `json:"showcase_edit_comment,omitempty"`
+	// ShowcaseFileAdded : (showcase) Added file to showcase
+	ShowcaseFileAdded *ShowcaseFileAddedType `json:"showcase_file_added,omitempty"`
+	// ShowcaseFileDownload : (showcase) Downloaded file from showcase
+	ShowcaseFileDownload *ShowcaseFileDownloadType `json:"showcase_file_download,omitempty"`
+	// ShowcaseFileRemoved : (showcase) Removed file from showcase
+	ShowcaseFileRemoved *ShowcaseFileRemovedType `json:"showcase_file_removed,omitempty"`
+	// ShowcaseFileView : (showcase) Viewed file in showcase
+	ShowcaseFileView *ShowcaseFileViewType `json:"showcase_file_view,omitempty"`
+	// ShowcasePermanentlyDeleted : (showcase) Permanently deleted showcase
+	ShowcasePermanentlyDeleted *ShowcasePermanentlyDeletedType `json:"showcase_permanently_deleted,omitempty"`
+	// ShowcasePostComment : (showcase) Added showcase comment
+	ShowcasePostComment *ShowcasePostCommentType `json:"showcase_post_comment,omitempty"`
+	// ShowcaseRemoveMember : (showcase) Removed member from showcase
+	ShowcaseRemoveMember *ShowcaseRemoveMemberType `json:"showcase_remove_member,omitempty"`
+	// ShowcaseRenamed : (showcase) Renamed showcase
+	ShowcaseRenamed *ShowcaseRenamedType `json:"showcase_renamed,omitempty"`
+	// ShowcaseRequestAccess : (showcase) Requested access to showcase
+	ShowcaseRequestAccess *ShowcaseRequestAccessType `json:"showcase_request_access,omitempty"`
+	// ShowcaseResolveComment : (showcase) Resolved showcase comment
+	ShowcaseResolveComment *ShowcaseResolveCommentType `json:"showcase_resolve_comment,omitempty"`
+	// ShowcaseRestored : (showcase) Unarchived showcase
+	ShowcaseRestored *ShowcaseRestoredType `json:"showcase_restored,omitempty"`
+	// ShowcaseTrashed : (showcase) Deleted showcase
+	ShowcaseTrashed *ShowcaseTrashedType `json:"showcase_trashed,omitempty"`
+	// ShowcaseUnresolveComment : (showcase) Unresolved showcase comment
+	ShowcaseUnresolveComment *ShowcaseUnresolveCommentType `json:"showcase_unresolve_comment,omitempty"`
+	// ShowcaseUntrashed : (showcase) Restored showcase
+	ShowcaseUntrashed *ShowcaseUntrashedType `json:"showcase_untrashed,omitempty"`
+	// ShowcaseView : (showcase) Viewed showcase
+	ShowcaseView *ShowcaseViewType `json:"showcase_view,omitempty"`
+	// SsoAddCert : (sso) Added X.509 certificate for SSO
 	SsoAddCert *SsoAddCertType `json:"sso_add_cert,omitempty"`
-	// SsoAddLoginUrl : (sso) Added sign-in URL for SSO.
+	// SsoAddLoginUrl : (sso) Added sign-in URL for SSO
 	SsoAddLoginUrl *SsoAddLoginUrlType `json:"sso_add_login_url,omitempty"`
-	// SsoAddLogoutUrl : (sso) Added sign-out URL for SSO.
+	// SsoAddLogoutUrl : (sso) Added sign-out URL for SSO
 	SsoAddLogoutUrl *SsoAddLogoutUrlType `json:"sso_add_logout_url,omitempty"`
-	// SsoChangeCert : (sso) Changed the X.509 certificate for SSO.
+	// SsoChangeCert : (sso) Changed X.509 certificate for SSO
 	SsoChangeCert *SsoChangeCertType `json:"sso_change_cert,omitempty"`
-	// SsoChangeLoginUrl : (sso) Changed the sign-in URL for SSO.
+	// SsoChangeLoginUrl : (sso) Changed sign-in URL for SSO
 	SsoChangeLoginUrl *SsoChangeLoginUrlType `json:"sso_change_login_url,omitempty"`
-	// SsoChangeLogoutUrl : (sso) Changed the sign-out URL for SSO.
+	// SsoChangeLogoutUrl : (sso) Changed sign-out URL for SSO
 	SsoChangeLogoutUrl *SsoChangeLogoutUrlType `json:"sso_change_logout_url,omitempty"`
-	// SsoChangeSamlIdentityMode : (sso) Changed the SAML identity mode for SSO.
+	// SsoChangeSamlIdentityMode : (sso) Changed SAML identity mode for SSO
 	SsoChangeSamlIdentityMode *SsoChangeSamlIdentityModeType `json:"sso_change_saml_identity_mode,omitempty"`
-	// SsoRemoveCert : (sso) Removed the X.509 certificate for SSO.
+	// SsoRemoveCert : (sso) Removed X.509 certificate for SSO
 	SsoRemoveCert *SsoRemoveCertType `json:"sso_remove_cert,omitempty"`
-	// SsoRemoveLoginUrl : (sso) Removed the sign-in URL for SSO.
+	// SsoRemoveLoginUrl : (sso) Removed sign-in URL for SSO
 	SsoRemoveLoginUrl *SsoRemoveLoginUrlType `json:"sso_remove_login_url,omitempty"`
-	// SsoRemoveLogoutUrl : (sso) Removed single sign-on logout URL.
+	// SsoRemoveLogoutUrl : (sso) Removed sign-out URL for SSO
 	SsoRemoveLogoutUrl *SsoRemoveLogoutUrlType `json:"sso_remove_logout_url,omitempty"`
-	// TeamFolderChangeStatus : (team_folders) Changed the archival status of a
-	// team folder.
+	// TeamFolderChangeStatus : (team_folders) Changed archival status of team
+	// folder
 	TeamFolderChangeStatus *TeamFolderChangeStatusType `json:"team_folder_change_status,omitempty"`
-	// TeamFolderCreate : (team_folders) Created a new team folder in active
-	// status.
+	// TeamFolderCreate : (team_folders) Created team folder in active status
 	TeamFolderCreate *TeamFolderCreateType `json:"team_folder_create,omitempty"`
-	// TeamFolderDowngrade : (team_folders) Downgraded a team folder to a
-	// regular shared folder.
+	// TeamFolderDowngrade : (team_folders) Downgraded team folder to regular
+	// shared folder
 	TeamFolderDowngrade *TeamFolderDowngradeType `json:"team_folder_downgrade,omitempty"`
-	// TeamFolderPermanentlyDelete : (team_folders) Permanently deleted an
-	// archived team folder.
+	// TeamFolderPermanentlyDelete : (team_folders) Permanently deleted archived
+	// team folder
 	TeamFolderPermanentlyDelete *TeamFolderPermanentlyDeleteType `json:"team_folder_permanently_delete,omitempty"`
-	// TeamFolderRename : (team_folders) Renamed an active or archived team
-	// folder.
+	// TeamFolderRename : (team_folders) Renamed active/archived team folder
 	TeamFolderRename *TeamFolderRenameType `json:"team_folder_rename,omitempty"`
-	// AccountCaptureChangePolicy : (team_policies) Changed the account capture
-	// policy on a domain belonging to the team.
+	// TeamSelectiveSyncSettingsChanged : (team_folders) Changed sync default
+	TeamSelectiveSyncSettingsChanged *TeamSelectiveSyncSettingsChangedType `json:"team_selective_sync_settings_changed,omitempty"`
+	// AccountCaptureChangePolicy : (team_policies) Changed account capture
+	// setting on team domain
 	AccountCaptureChangePolicy *AccountCaptureChangePolicyType `json:"account_capture_change_policy,omitempty"`
-	// AllowDownloadDisabled : (team_policies) Disabled allow downloads. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// AllowDownloadDisabled : (team_policies) Disabled downloads (deprecated,
+	// no longer logged)
 	AllowDownloadDisabled *AllowDownloadDisabledType `json:"allow_download_disabled,omitempty"`
-	// AllowDownloadEnabled : (team_policies) Enabled allow downloads. This
-	// event is deprecated and will not be logged going forward as the
-	// associated product functionality no longer exists.
+	// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated, no
+	// longer logged)
 	AllowDownloadEnabled *AllowDownloadEnabledType `json:"allow_download_enabled,omitempty"`
-	// DataPlacementRestrictionChangePolicy : (team_policies) Set a restriction
-	// policy regarding the location of data centers where team data resides.
+	// DataPlacementRestrictionChangePolicy : (team_policies) Set restrictions
+	// on data center locations where team data resides
 	DataPlacementRestrictionChangePolicy *DataPlacementRestrictionChangePolicyType `json:"data_placement_restriction_change_policy,omitempty"`
-	// DataPlacementRestrictionSatisfyPolicy : (team_policies) Satisfied a
-	// previously set restriction policy regarding the location of data centers
-	// where team data resides (i.e. all data have been migrated according to
-	// the restriction placed).
+	// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
+	// restrictions on data center locations where team data resides
 	DataPlacementRestrictionSatisfyPolicy *DataPlacementRestrictionSatisfyPolicyType `json:"data_placement_restriction_satisfy_policy,omitempty"`
-	// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set or removed a
-	// limit on the number of computers each team member can link to their work
-	// Dropbox account.
+	// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set/removed limit on
+	// number of computers member can link to team Dropbox account
 	DeviceApprovalsChangeDesktopPolicy *DeviceApprovalsChangeDesktopPolicyType `json:"device_approvals_change_desktop_policy,omitempty"`
-	// DeviceApprovalsChangeMobilePolicy : (team_policies) Set or removed a
-	// limit on the number of mobiles devices each team member can link to their
-	// work Dropbox account.
+	// DeviceApprovalsChangeMobilePolicy : (team_policies) Set/removed limit on
+	// number of mobile devices member can link to team Dropbox account
 	DeviceApprovalsChangeMobilePolicy *DeviceApprovalsChangeMobilePolicyType `json:"device_approvals_change_mobile_policy,omitempty"`
-	// DeviceApprovalsChangeOverageAction : (team_policies) Changed the action
-	// taken when a team member is already over the limits (e.g when they join
-	// the team, an admin lowers limits, etc.).
+	// DeviceApprovalsChangeOverageAction : (team_policies) Changed device
+	// approvals setting when member is over limit
 	DeviceApprovalsChangeOverageAction *DeviceApprovalsChangeOverageActionType `json:"device_approvals_change_overage_action,omitempty"`
-	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed the action
-	// taken with respect to approval limits when a team member unlinks an
-	// approved device.
+	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
+	// approvals setting when member unlinks approved device
 	DeviceApprovalsChangeUnlinkAction *DeviceApprovalsChangeUnlinkActionType `json:"device_approvals_change_unlink_action,omitempty"`
-	// EmmAddException : (team_policies) Added an exception for one or more team
-	// members to optionally use the regular Dropbox app when EMM is enabled.
+	// EmmAddException : (team_policies) Added members to EMM exception list
 	EmmAddException *EmmAddExceptionType `json:"emm_add_exception,omitempty"`
-	// EmmChangePolicy : (team_policies) Enabled or disabled enterprise mobility
-	// management for team members.
+	// EmmChangePolicy : (team_policies) Enabled/disabled enterprise mobility
+	// management for members
 	EmmChangePolicy *EmmChangePolicyType `json:"emm_change_policy,omitempty"`
-	// EmmRemoveException : (team_policies) Removed an exception for one or more
-	// team members to optionally use the regular Dropbox app when EMM is
-	// enabled.
+	// EmmRemoveException : (team_policies) Removed members from EMM exception
+	// list
 	EmmRemoveException *EmmRemoveExceptionType `json:"emm_remove_exception,omitempty"`
-	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted or opted
-	// out of extended version history.
+	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted out
+	// of extended version history
 	ExtendedVersionHistoryChangePolicy *ExtendedVersionHistoryChangePolicyType `json:"extended_version_history_change_policy,omitempty"`
-	// FileCommentsChangePolicy : (team_policies) Enabled or disabled commenting
-	// on team files.
+	// FileCommentsChangePolicy : (team_policies) Enabled/disabled commenting on
+	// team files
 	FileCommentsChangePolicy *FileCommentsChangePolicyType `json:"file_comments_change_policy,omitempty"`
-	// FileRequestsChangePolicy : (team_policies) Enabled or disabled file
-	// requests.
+	// FileRequestsChangePolicy : (team_policies) Enabled/disabled file requests
 	FileRequestsChangePolicy *FileRequestsChangePolicyType `json:"file_requests_change_policy,omitempty"`
 	// FileRequestsEmailsEnabled : (team_policies) Enabled file request emails
-	// for everyone. This event is deprecated and will not be logged going
-	// forward as the associated product functionality no longer exists.
+	// for everyone (deprecated, no longer logged)
 	FileRequestsEmailsEnabled *FileRequestsEmailsEnabledType `json:"file_requests_emails_enabled,omitempty"`
-	// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Allowed file
-	// request emails for the team. This event is deprecated and will not be
-	// logged going forward as the associated product functionality no longer
-	// exists.
+	// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Enabled file
+	// request emails for team (deprecated, no longer logged)
 	FileRequestsEmailsRestrictedToTeamOnly *FileRequestsEmailsRestrictedToTeamOnlyType `json:"file_requests_emails_restricted_to_team_only,omitempty"`
-	// GoogleSsoChangePolicy : (team_policies) Enabled or disabled Google single
-	// sign-on for the team.
+	// GoogleSsoChangePolicy : (team_policies) Enabled/disabled Google single
+	// sign-on for team
 	GoogleSsoChangePolicy *GoogleSsoChangePolicyType `json:"google_sso_change_policy,omitempty"`
 	// GroupUserManagementChangePolicy : (team_policies) Changed who can create
-	// groups.
+	// groups
 	GroupUserManagementChangePolicy *GroupUserManagementChangePolicyType `json:"group_user_management_change_policy,omitempty"`
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
-	// find the team when not invited.
+	// find team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
-	// MemberSpaceLimitsAddException : (team_policies) Added an exception for
-	// one or more team members to bypass space limits imposed by policy.
+	// MemberSpaceLimitsAddException : (team_policies) Added members to member
+	// space limit exception list
 	MemberSpaceLimitsAddException *MemberSpaceLimitsAddExceptionType `json:"member_space_limits_add_exception,omitempty"`
-	// MemberSpaceLimitsChangePolicy : (team_policies) Changed the team default
-	// limit level.
+	// MemberSpaceLimitsChangeCapsTypePolicy : (team_policies) Changed member
+	// space limit type for team
+	MemberSpaceLimitsChangeCapsTypePolicy *MemberSpaceLimitsChangeCapsTypePolicyType `json:"member_space_limits_change_caps_type_policy,omitempty"`
+	// MemberSpaceLimitsChangePolicy : (team_policies) Changed team default
+	// member space limit
 	MemberSpaceLimitsChangePolicy *MemberSpaceLimitsChangePolicyType `json:"member_space_limits_change_policy,omitempty"`
-	// MemberSpaceLimitsRemoveException : (team_policies) Removed an exception
-	// for one or more team members to bypass space limits imposed by policy.
+	// MemberSpaceLimitsRemoveException : (team_policies) Removed members from
+	// member space limit exception list
 	MemberSpaceLimitsRemoveException *MemberSpaceLimitsRemoveExceptionType `json:"member_space_limits_remove_exception,omitempty"`
-	// MemberSuggestionsChangePolicy : (team_policies) Enabled or disabled the
-	// option for team members to suggest new members to add to the team.
+	// MemberSuggestionsChangePolicy : (team_policies) Enabled/disabled option
+	// for team members to suggest people to add to team
 	MemberSuggestionsChangePolicy *MemberSuggestionsChangePolicyType `json:"member_suggestions_change_policy,omitempty"`
-	// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled or disabled
-	// the Microsoft Office add-in, which lets team members save files to
-	// Dropbox directly from Microsoft Office.
+	// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled/disabled
+	// Microsoft Office add-in
 	MicrosoftOfficeAddinChangePolicy *MicrosoftOfficeAddinChangePolicyType `json:"microsoft_office_addin_change_policy,omitempty"`
-	// NetworkControlChangePolicy : (team_policies) Enabled or disabled network
-	// control.
+	// NetworkControlChangePolicy : (team_policies) Enabled/disabled network
+	// control
 	NetworkControlChangePolicy *NetworkControlChangePolicyType `json:"network_control_change_policy,omitempty"`
 	// PaperChangeDeploymentPolicy : (team_policies) Changed whether Dropbox
-	// Paper, when enabled, is deployed to all teams or to specific members of
-	// the team.
+	// Paper, when enabled, is deployed to all members or to specific members
 	PaperChangeDeploymentPolicy *PaperChangeDeploymentPolicyType `json:"paper_change_deployment_policy,omitempty"`
-	// PaperChangeMemberLinkPolicy : (team_policies) Changed whether non team
-	// members can view Paper documents using a link. This event is deprecated
-	// and will not be logged going forward as the associated product
-	// functionality no longer exists.
+	// PaperChangeMemberLinkPolicy : (team_policies) Changed whether non-members
+	// can view Paper docs with link (deprecated, no longer logged)
 	PaperChangeMemberLinkPolicy *PaperChangeMemberLinkPolicyType `json:"paper_change_member_link_policy,omitempty"`
-	// PaperChangeMemberPolicy : (team_policies) Changed whether team members
-	// can share Paper documents externally (i.e. outside the team), and if so,
-	// whether they should be accessible only by team members or anyone by
-	// default.
+	// PaperChangeMemberPolicy : (team_policies) Changed whether members can
+	// share Paper docs outside team, and if docs are accessible only by team
+	// members or anyone by default
 	PaperChangeMemberPolicy *PaperChangeMemberPolicyType `json:"paper_change_member_policy,omitempty"`
-	// PaperChangePolicy : (team_policies) Enabled or disabled Dropbox Paper for
-	// the team.
+	// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper for
+	// team
 	PaperChangePolicy *PaperChangePolicyType `json:"paper_change_policy,omitempty"`
-	// PaperEnabledUsersGroupAddition : (team_policies) Users added to Paper
-	// enabled users list.
+	// PaperEnabledUsersGroupAddition : (team_policies) Added users to
+	// Paper-enabled users list
 	PaperEnabledUsersGroupAddition *PaperEnabledUsersGroupAdditionType `json:"paper_enabled_users_group_addition,omitempty"`
-	// PaperEnabledUsersGroupRemoval : (team_policies) Users removed from Paper
-	// enabled users list.
+	// PaperEnabledUsersGroupRemoval : (team_policies) Removed users from
+	// Paper-enabled users list
 	PaperEnabledUsersGroupRemoval *PaperEnabledUsersGroupRemovalType `json:"paper_enabled_users_group_removal,omitempty"`
-	// PermanentDeleteChangePolicy : (team_policies) Enabled or disabled the
-	// ability of team members to permanently delete content.
+	// PermanentDeleteChangePolicy : (team_policies) Enabled/disabled ability of
+	// team members to permanently delete content
 	PermanentDeleteChangePolicy *PermanentDeleteChangePolicyType `json:"permanent_delete_change_policy,omitempty"`
 	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
-	// members can join shared folders owned externally (i.e. outside the team).
+	// members can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
-	// SharingChangeLinkPolicy : (team_policies) Changed whether team members
-	// can share links externally (i.e. outside the team), and if so, whether
-	// links should be accessible only by team members or anyone by default.
+	// SharingChangeLinkPolicy : (team_policies) Changed whether members can
+	// share links outside team, and if links are accessible only by team
+	// members or anyone by default
 	SharingChangeLinkPolicy *SharingChangeLinkPolicyType `json:"sharing_change_link_policy,omitempty"`
-	// SharingChangeMemberPolicy : (team_policies) Changed whether team members
-	// can share files and folders externally (i.e. outside the team).
+	// SharingChangeMemberPolicy : (team_policies) Changed whether members can
+	// share files/folders outside team
 	SharingChangeMemberPolicy *SharingChangeMemberPolicyType `json:"sharing_change_member_policy,omitempty"`
-	// SmartSyncChangePolicy : (team_policies) Changed the default Smart Sync
-	// policy for team members.
+	// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
+	// setting for team members
 	SmartSyncChangePolicy *SmartSyncChangePolicyType `json:"smart_sync_change_policy,omitempty"`
-	// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync.
+	// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync
 	SmartSyncNotOptOut *SmartSyncNotOptOutType `json:"smart_sync_not_opt_out,omitempty"`
-	// SmartSyncOptOut : (team_policies) Opted team out of Smart Sync.
+	// SmartSyncOptOut : (team_policies) Opted team out of Smart Sync
 	SmartSyncOptOut *SmartSyncOptOutType `json:"smart_sync_opt_out,omitempty"`
-	// SsoChangePolicy : (team_policies) Change the single sign-on policy for
-	// the team.
+	// SsoChangePolicy : (team_policies) Changed single sign-on setting for team
 	SsoChangePolicy *SsoChangePolicyType `json:"sso_change_policy,omitempty"`
-	// TfaChangePolicy : (team_policies) Change two-step verification policy for
-	// the team.
+	// TfaChangePolicy : (team_policies) Changed two-step verification setting
+	// for team
 	TfaChangePolicy *TfaChangePolicyType `json:"tfa_change_policy,omitempty"`
-	// TwoAccountChangePolicy : (team_policies) Enabled or disabled the option
-	// for team members to link a personal Dropbox account in addition to their
-	// work account to the same computer.
+	// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for
+	// members to link personal Dropbox account and team account to same
+	// computer
 	TwoAccountChangePolicy *TwoAccountChangePolicyType `json:"two_account_change_policy,omitempty"`
 	// WebSessionsChangeFixedLengthPolicy : (team_policies) Changed how long
-	// team members can stay signed in to Dropbox on the web.
+	// members can stay signed in to Dropbox.com
 	WebSessionsChangeFixedLengthPolicy *WebSessionsChangeFixedLengthPolicyType `json:"web_sessions_change_fixed_length_policy,omitempty"`
 	// WebSessionsChangeIdleLengthPolicy : (team_policies) Changed how long team
-	// members can be idle while signed in to Dropbox on the web.
+	// members can be idle while signed in to Dropbox.com
 	WebSessionsChangeIdleLengthPolicy *WebSessionsChangeIdleLengthPolicyType `json:"web_sessions_change_idle_length_policy,omitempty"`
-	// TeamMergeFrom : (team_profile) Merged another team into this team.
+	// TeamMergeFrom : (team_profile) Merged another team into this team
 	TeamMergeFrom *TeamMergeFromType `json:"team_merge_from,omitempty"`
-	// TeamMergeTo : (team_profile) Merged this team into another team.
+	// TeamMergeTo : (team_profile) Merged this team into another team
 	TeamMergeTo *TeamMergeToType `json:"team_merge_to,omitempty"`
-	// TeamProfileAddLogo : (team_profile) Added a team logo to be displayed on
-	// shared link headers.
+	// TeamProfileAddLogo : (team_profile) Added team logo to display on shared
+	// link headers
 	TeamProfileAddLogo *TeamProfileAddLogoType `json:"team_profile_add_logo,omitempty"`
-	// TeamProfileChangeDefaultLanguage : (team_profile) Changed the default
-	// language for the team.
+	// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
+	// language for team
 	TeamProfileChangeDefaultLanguage *TeamProfileChangeDefaultLanguageType `json:"team_profile_change_default_language,omitempty"`
-	// TeamProfileChangeLogo : (team_profile) Changed the team logo to be
-	// displayed on shared link headers.
+	// TeamProfileChangeLogo : (team_profile) Changed team logo displayed on
+	// shared link headers
 	TeamProfileChangeLogo *TeamProfileChangeLogoType `json:"team_profile_change_logo,omitempty"`
-	// TeamProfileChangeName : (team_profile) Changed the team name.
+	// TeamProfileChangeName : (team_profile) Changed team name
 	TeamProfileChangeName *TeamProfileChangeNameType `json:"team_profile_change_name,omitempty"`
-	// TeamProfileRemoveLogo : (team_profile) Removed the team logo to be
-	// displayed on shared link headers.
+	// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
+	// shared link headers
 	TeamProfileRemoveLogo *TeamProfileRemoveLogoType `json:"team_profile_remove_logo,omitempty"`
-	// TfaAddBackupPhone : (tfa) Added a backup phone for two-step verification.
+	// TfaAddBackupPhone : (tfa) Added backup phone for two-step verification
 	TfaAddBackupPhone *TfaAddBackupPhoneType `json:"tfa_add_backup_phone,omitempty"`
-	// TfaAddSecurityKey : (tfa) Added a security key for two-step verification.
+	// TfaAddSecurityKey : (tfa) Added security key for two-step verification
 	TfaAddSecurityKey *TfaAddSecurityKeyType `json:"tfa_add_security_key,omitempty"`
-	// TfaChangeBackupPhone : (tfa) Changed the backup phone for two-step
-	// verification.
+	// TfaChangeBackupPhone : (tfa) Changed backup phone for two-step
+	// verification
 	TfaChangeBackupPhone *TfaChangeBackupPhoneType `json:"tfa_change_backup_phone,omitempty"`
-	// TfaChangeStatus : (tfa) Enabled, disabled or changed the configuration
-	// for two-step verification.
+	// TfaChangeStatus : (tfa) Enabled/disabled/changed two-step verification
+	// setting
 	TfaChangeStatus *TfaChangeStatusType `json:"tfa_change_status,omitempty"`
-	// TfaRemoveBackupPhone : (tfa) Removed the backup phone for two-step
-	// verification.
+	// TfaRemoveBackupPhone : (tfa) Removed backup phone for two-step
+	// verification
 	TfaRemoveBackupPhone *TfaRemoveBackupPhoneType `json:"tfa_remove_backup_phone,omitempty"`
-	// TfaRemoveSecurityKey : (tfa) Removed a security key for two-step
-	// verification.
+	// TfaRemoveSecurityKey : (tfa) Removed security key for two-step
+	// verification
 	TfaRemoveSecurityKey *TfaRemoveSecurityKeyType `json:"tfa_remove_security_key,omitempty"`
-	// TfaReset : (tfa) Reset two-step verification for team member.
+	// TfaReset : (tfa) Reset two-step verification for team member
 	TfaReset *TfaResetType `json:"tfa_reset,omitempty"`
 }
 
 // Valid tag values for EventType
 const (
-	EventTypeAppLinkTeam                              = "app_link_team"
-	EventTypeAppLinkUser                              = "app_link_user"
-	EventTypeAppUnlinkTeam                            = "app_unlink_team"
-	EventTypeAppUnlinkUser                            = "app_unlink_user"
-	EventTypeFileAddComment                           = "file_add_comment"
-	EventTypeFileChangeCommentSubscription            = "file_change_comment_subscription"
-	EventTypeFileDeleteComment                        = "file_delete_comment"
-	EventTypeFileLikeComment                          = "file_like_comment"
-	EventTypeFileResolveComment                       = "file_resolve_comment"
-	EventTypeFileUnlikeComment                        = "file_unlike_comment"
-	EventTypeFileUnresolveComment                     = "file_unresolve_comment"
-	EventTypeDeviceChangeIpDesktop                    = "device_change_ip_desktop"
-	EventTypeDeviceChangeIpMobile                     = "device_change_ip_mobile"
-	EventTypeDeviceChangeIpWeb                        = "device_change_ip_web"
-	EventTypeDeviceDeleteOnUnlinkFail                 = "device_delete_on_unlink_fail"
-	EventTypeDeviceDeleteOnUnlinkSuccess              = "device_delete_on_unlink_success"
-	EventTypeDeviceLinkFail                           = "device_link_fail"
-	EventTypeDeviceLinkSuccess                        = "device_link_success"
-	EventTypeDeviceManagementDisabled                 = "device_management_disabled"
-	EventTypeDeviceManagementEnabled                  = "device_management_enabled"
-	EventTypeDeviceUnlink                             = "device_unlink"
-	EventTypeEmmRefreshAuthToken                      = "emm_refresh_auth_token"
-	EventTypeAccountCaptureChangeAvailability         = "account_capture_change_availability"
-	EventTypeAccountCaptureMigrateAccount             = "account_capture_migrate_account"
-	EventTypeAccountCaptureRelinquishAccount          = "account_capture_relinquish_account"
-	EventTypeDisabledDomainInvites                    = "disabled_domain_invites"
-	EventTypeDomainInvitesApproveRequestToJoinTeam    = "domain_invites_approve_request_to_join_team"
-	EventTypeDomainInvitesDeclineRequestToJoinTeam    = "domain_invites_decline_request_to_join_team"
-	EventTypeDomainInvitesEmailExistingUsers          = "domain_invites_email_existing_users"
-	EventTypeDomainInvitesRequestToJoinTeam           = "domain_invites_request_to_join_team"
-	EventTypeDomainInvitesSetInviteNewUserPrefToNo    = "domain_invites_set_invite_new_user_pref_to_no"
-	EventTypeDomainInvitesSetInviteNewUserPrefToYes   = "domain_invites_set_invite_new_user_pref_to_yes"
-	EventTypeDomainVerificationAddDomainFail          = "domain_verification_add_domain_fail"
-	EventTypeDomainVerificationAddDomainSuccess       = "domain_verification_add_domain_success"
-	EventTypeDomainVerificationRemoveDomain           = "domain_verification_remove_domain"
-	EventTypeEnabledDomainInvites                     = "enabled_domain_invites"
-	EventTypeCreateFolder                             = "create_folder"
-	EventTypeFileAdd                                  = "file_add"
-	EventTypeFileCopy                                 = "file_copy"
-	EventTypeFileDelete                               = "file_delete"
-	EventTypeFileDownload                             = "file_download"
-	EventTypeFileEdit                                 = "file_edit"
-	EventTypeFileGetCopyReference                     = "file_get_copy_reference"
-	EventTypeFileMove                                 = "file_move"
-	EventTypeFilePermanentlyDelete                    = "file_permanently_delete"
-	EventTypeFilePreview                              = "file_preview"
-	EventTypeFileRename                               = "file_rename"
-	EventTypeFileRestore                              = "file_restore"
-	EventTypeFileRevert                               = "file_revert"
-	EventTypeFileRollbackChanges                      = "file_rollback_changes"
-	EventTypeFileSaveCopyReference                    = "file_save_copy_reference"
-	EventTypeFileRequestAddDeadline                   = "file_request_add_deadline"
-	EventTypeFileRequestChange                        = "file_request_change"
-	EventTypeFileRequestChangeFolder                  = "file_request_change_folder"
-	EventTypeFileRequestClose                         = "file_request_close"
-	EventTypeFileRequestCreate                        = "file_request_create"
-	EventTypeFileRequestReceiveFile                   = "file_request_receive_file"
-	EventTypeFileRequestRemoveDeadline                = "file_request_remove_deadline"
-	EventTypeFileRequestSend                          = "file_request_send"
-	EventTypeGroupAddExternalId                       = "group_add_external_id"
-	EventTypeGroupAddMember                           = "group_add_member"
-	EventTypeGroupChangeExternalId                    = "group_change_external_id"
-	EventTypeGroupChangeManagementType                = "group_change_management_type"
-	EventTypeGroupChangeMemberRole                    = "group_change_member_role"
-	EventTypeGroupCreate                              = "group_create"
-	EventTypeGroupDelete                              = "group_delete"
-	EventTypeGroupMoved                               = "group_moved"
-	EventTypeGroupRemoveExternalId                    = "group_remove_external_id"
-	EventTypeGroupRemoveMember                        = "group_remove_member"
-	EventTypeGroupRename                              = "group_rename"
-	EventTypeEmmError                                 = "emm_error"
-	EventTypeLoginFail                                = "login_fail"
-	EventTypeLoginSuccess                             = "login_success"
-	EventTypeLogout                                   = "logout"
-	EventTypeResellerSupportSessionEnd                = "reseller_support_session_end"
-	EventTypeResellerSupportSessionStart              = "reseller_support_session_start"
-	EventTypeSignInAsSessionEnd                       = "sign_in_as_session_end"
-	EventTypeSignInAsSessionStart                     = "sign_in_as_session_start"
-	EventTypeSsoError                                 = "sso_error"
-	EventTypeMemberChangeAdminRole                    = "member_change_admin_role"
-	EventTypeMemberChangeEmail                        = "member_change_email"
-	EventTypeMemberChangeMembershipType               = "member_change_membership_type"
-	EventTypeMemberChangeName                         = "member_change_name"
-	EventTypeMemberChangeStatus                       = "member_change_status"
-	EventTypeMemberPermanentlyDeleteAccountContents   = "member_permanently_delete_account_contents"
-	EventTypeMemberSpaceLimitsChangeStatus            = "member_space_limits_change_status"
-	EventTypeMemberSuggest                            = "member_suggest"
-	EventTypeMemberTransferAccountContents            = "member_transfer_account_contents"
-	EventTypePaperContentAddMember                    = "paper_content_add_member"
-	EventTypePaperContentAddToFolder                  = "paper_content_add_to_folder"
-	EventTypePaperContentArchive                      = "paper_content_archive"
-	EventTypePaperContentCreate                       = "paper_content_create"
-	EventTypePaperContentPermanentlyDelete            = "paper_content_permanently_delete"
-	EventTypePaperContentRemoveFromFolder             = "paper_content_remove_from_folder"
-	EventTypePaperContentRemoveMember                 = "paper_content_remove_member"
-	EventTypePaperContentRename                       = "paper_content_rename"
-	EventTypePaperContentRestore                      = "paper_content_restore"
-	EventTypePaperDocAddComment                       = "paper_doc_add_comment"
-	EventTypePaperDocChangeMemberRole                 = "paper_doc_change_member_role"
-	EventTypePaperDocChangeSharingPolicy              = "paper_doc_change_sharing_policy"
-	EventTypePaperDocChangeSubscription               = "paper_doc_change_subscription"
-	EventTypePaperDocDeleted                          = "paper_doc_deleted"
-	EventTypePaperDocDeleteComment                    = "paper_doc_delete_comment"
-	EventTypePaperDocDownload                         = "paper_doc_download"
-	EventTypePaperDocEdit                             = "paper_doc_edit"
-	EventTypePaperDocEditComment                      = "paper_doc_edit_comment"
-	EventTypePaperDocFollowed                         = "paper_doc_followed"
-	EventTypePaperDocMention                          = "paper_doc_mention"
-	EventTypePaperDocRequestAccess                    = "paper_doc_request_access"
-	EventTypePaperDocResolveComment                   = "paper_doc_resolve_comment"
-	EventTypePaperDocRevert                           = "paper_doc_revert"
-	EventTypePaperDocSlackShare                       = "paper_doc_slack_share"
-	EventTypePaperDocTeamInvite                       = "paper_doc_team_invite"
-	EventTypePaperDocTrashed                          = "paper_doc_trashed"
-	EventTypePaperDocUnresolveComment                 = "paper_doc_unresolve_comment"
-	EventTypePaperDocUntrashed                        = "paper_doc_untrashed"
-	EventTypePaperDocView                             = "paper_doc_view"
-	EventTypePaperExternalViewAllow                   = "paper_external_view_allow"
-	EventTypePaperExternalViewDefaultTeam             = "paper_external_view_default_team"
-	EventTypePaperExternalViewForbid                  = "paper_external_view_forbid"
-	EventTypePaperFolderChangeSubscription            = "paper_folder_change_subscription"
-	EventTypePaperFolderDeleted                       = "paper_folder_deleted"
-	EventTypePaperFolderFollowed                      = "paper_folder_followed"
-	EventTypePaperFolderTeamInvite                    = "paper_folder_team_invite"
-	EventTypePasswordChange                           = "password_change"
-	EventTypePasswordReset                            = "password_reset"
-	EventTypePasswordResetAll                         = "password_reset_all"
-	EventTypeEmmCreateExceptionsReport                = "emm_create_exceptions_report"
-	EventTypeEmmCreateUsageReport                     = "emm_create_usage_report"
-	EventTypePaperAdminExportStart                    = "paper_admin_export_start"
-	EventTypeSmartSyncCreateAdminPrivilegeReport      = "smart_sync_create_admin_privilege_report"
-	EventTypeTeamActivityCreateReport                 = "team_activity_create_report"
-	EventTypeCollectionShare                          = "collection_share"
-	EventTypeNoteAclInviteOnly                        = "note_acl_invite_only"
-	EventTypeNoteAclLink                              = "note_acl_link"
-	EventTypeNoteAclTeamLink                          = "note_acl_team_link"
-	EventTypeNoteShared                               = "note_shared"
-	EventTypeNoteShareReceive                         = "note_share_receive"
-	EventTypeOpenNoteShared                           = "open_note_shared"
-	EventTypeSfAddGroup                               = "sf_add_group"
-	EventTypeSfAllowNonMembersToViewSharedLinks       = "sf_allow_non_members_to_view_shared_links"
-	EventTypeSfExternalInviteWarn                     = "sf_external_invite_warn"
-	EventTypeSfInviteGroup                            = "sf_invite_group"
-	EventTypeSfTeamGrantAccess                        = "sf_team_grant_access"
-	EventTypeSfTeamInvite                             = "sf_team_invite"
-	EventTypeSfTeamInviteChangeRole                   = "sf_team_invite_change_role"
-	EventTypeSfTeamJoin                               = "sf_team_join"
-	EventTypeSfTeamJoinFromOobLink                    = "sf_team_join_from_oob_link"
-	EventTypeSfTeamUninvite                           = "sf_team_uninvite"
-	EventTypeSharedContentAddInvitees                 = "shared_content_add_invitees"
-	EventTypeSharedContentAddLinkExpiry               = "shared_content_add_link_expiry"
-	EventTypeSharedContentAddLinkPassword             = "shared_content_add_link_password"
-	EventTypeSharedContentAddMember                   = "shared_content_add_member"
-	EventTypeSharedContentChangeDownloadsPolicy       = "shared_content_change_downloads_policy"
-	EventTypeSharedContentChangeInviteeRole           = "shared_content_change_invitee_role"
-	EventTypeSharedContentChangeLinkAudience          = "shared_content_change_link_audience"
-	EventTypeSharedContentChangeLinkExpiry            = "shared_content_change_link_expiry"
-	EventTypeSharedContentChangeLinkPassword          = "shared_content_change_link_password"
-	EventTypeSharedContentChangeMemberRole            = "shared_content_change_member_role"
-	EventTypeSharedContentChangeViewerInfoPolicy      = "shared_content_change_viewer_info_policy"
-	EventTypeSharedContentClaimInvitation             = "shared_content_claim_invitation"
-	EventTypeSharedContentCopy                        = "shared_content_copy"
-	EventTypeSharedContentDownload                    = "shared_content_download"
-	EventTypeSharedContentRelinquishMembership        = "shared_content_relinquish_membership"
-	EventTypeSharedContentRemoveInvitee               = "shared_content_remove_invitee"
-	EventTypeSharedContentRemoveLinkExpiry            = "shared_content_remove_link_expiry"
-	EventTypeSharedContentRemoveLinkPassword          = "shared_content_remove_link_password"
-	EventTypeSharedContentRemoveMember                = "shared_content_remove_member"
-	EventTypeSharedContentRequestAccess               = "shared_content_request_access"
-	EventTypeSharedContentUnshare                     = "shared_content_unshare"
-	EventTypeSharedContentView                        = "shared_content_view"
-	EventTypeSharedFolderChangeConfidentiality        = "shared_folder_change_confidentiality"
-	EventTypeSharedFolderChangeLinkPolicy             = "shared_folder_change_link_policy"
-	EventTypeSharedFolderChangeMemberManagementPolicy = "shared_folder_change_member_management_policy"
-	EventTypeSharedFolderChangeMemberPolicy           = "shared_folder_change_member_policy"
-	EventTypeSharedFolderCreate                       = "shared_folder_create"
-	EventTypeSharedFolderDeclineInvitation            = "shared_folder_decline_invitation"
-	EventTypeSharedFolderMount                        = "shared_folder_mount"
-	EventTypeSharedFolderNest                         = "shared_folder_nest"
-	EventTypeSharedFolderTransferOwnership            = "shared_folder_transfer_ownership"
-	EventTypeSharedFolderUnmount                      = "shared_folder_unmount"
-	EventTypeSharedLinkAddExpiry                      = "shared_link_add_expiry"
-	EventTypeSharedLinkChangeExpiry                   = "shared_link_change_expiry"
-	EventTypeSharedLinkChangeVisibility               = "shared_link_change_visibility"
-	EventTypeSharedLinkCopy                           = "shared_link_copy"
-	EventTypeSharedLinkCreate                         = "shared_link_create"
-	EventTypeSharedLinkDisable                        = "shared_link_disable"
-	EventTypeSharedLinkDownload                       = "shared_link_download"
-	EventTypeSharedLinkRemoveExpiry                   = "shared_link_remove_expiry"
-	EventTypeSharedLinkShare                          = "shared_link_share"
-	EventTypeSharedLinkView                           = "shared_link_view"
-	EventTypeSharedNoteOpened                         = "shared_note_opened"
-	EventTypeShmodelGroupShare                        = "shmodel_group_share"
-	EventTypeSsoAddCert                               = "sso_add_cert"
-	EventTypeSsoAddLoginUrl                           = "sso_add_login_url"
-	EventTypeSsoAddLogoutUrl                          = "sso_add_logout_url"
-	EventTypeSsoChangeCert                            = "sso_change_cert"
-	EventTypeSsoChangeLoginUrl                        = "sso_change_login_url"
-	EventTypeSsoChangeLogoutUrl                       = "sso_change_logout_url"
-	EventTypeSsoChangeSamlIdentityMode                = "sso_change_saml_identity_mode"
-	EventTypeSsoRemoveCert                            = "sso_remove_cert"
-	EventTypeSsoRemoveLoginUrl                        = "sso_remove_login_url"
-	EventTypeSsoRemoveLogoutUrl                       = "sso_remove_logout_url"
-	EventTypeTeamFolderChangeStatus                   = "team_folder_change_status"
-	EventTypeTeamFolderCreate                         = "team_folder_create"
-	EventTypeTeamFolderDowngrade                      = "team_folder_downgrade"
-	EventTypeTeamFolderPermanentlyDelete              = "team_folder_permanently_delete"
-	EventTypeTeamFolderRename                         = "team_folder_rename"
-	EventTypeAccountCaptureChangePolicy               = "account_capture_change_policy"
-	EventTypeAllowDownloadDisabled                    = "allow_download_disabled"
-	EventTypeAllowDownloadEnabled                     = "allow_download_enabled"
-	EventTypeDataPlacementRestrictionChangePolicy     = "data_placement_restriction_change_policy"
-	EventTypeDataPlacementRestrictionSatisfyPolicy    = "data_placement_restriction_satisfy_policy"
-	EventTypeDeviceApprovalsChangeDesktopPolicy       = "device_approvals_change_desktop_policy"
-	EventTypeDeviceApprovalsChangeMobilePolicy        = "device_approvals_change_mobile_policy"
-	EventTypeDeviceApprovalsChangeOverageAction       = "device_approvals_change_overage_action"
-	EventTypeDeviceApprovalsChangeUnlinkAction        = "device_approvals_change_unlink_action"
-	EventTypeEmmAddException                          = "emm_add_exception"
-	EventTypeEmmChangePolicy                          = "emm_change_policy"
-	EventTypeEmmRemoveException                       = "emm_remove_exception"
-	EventTypeExtendedVersionHistoryChangePolicy       = "extended_version_history_change_policy"
-	EventTypeFileCommentsChangePolicy                 = "file_comments_change_policy"
-	EventTypeFileRequestsChangePolicy                 = "file_requests_change_policy"
-	EventTypeFileRequestsEmailsEnabled                = "file_requests_emails_enabled"
-	EventTypeFileRequestsEmailsRestrictedToTeamOnly   = "file_requests_emails_restricted_to_team_only"
-	EventTypeGoogleSsoChangePolicy                    = "google_sso_change_policy"
-	EventTypeGroupUserManagementChangePolicy          = "group_user_management_change_policy"
-	EventTypeMemberRequestsChangePolicy               = "member_requests_change_policy"
-	EventTypeMemberSpaceLimitsAddException            = "member_space_limits_add_exception"
-	EventTypeMemberSpaceLimitsChangePolicy            = "member_space_limits_change_policy"
-	EventTypeMemberSpaceLimitsRemoveException         = "member_space_limits_remove_exception"
-	EventTypeMemberSuggestionsChangePolicy            = "member_suggestions_change_policy"
-	EventTypeMicrosoftOfficeAddinChangePolicy         = "microsoft_office_addin_change_policy"
-	EventTypeNetworkControlChangePolicy               = "network_control_change_policy"
-	EventTypePaperChangeDeploymentPolicy              = "paper_change_deployment_policy"
-	EventTypePaperChangeMemberLinkPolicy              = "paper_change_member_link_policy"
-	EventTypePaperChangeMemberPolicy                  = "paper_change_member_policy"
-	EventTypePaperChangePolicy                        = "paper_change_policy"
-	EventTypePaperEnabledUsersGroupAddition           = "paper_enabled_users_group_addition"
-	EventTypePaperEnabledUsersGroupRemoval            = "paper_enabled_users_group_removal"
-	EventTypePermanentDeleteChangePolicy              = "permanent_delete_change_policy"
-	EventTypeSharingChangeFolderJoinPolicy            = "sharing_change_folder_join_policy"
-	EventTypeSharingChangeLinkPolicy                  = "sharing_change_link_policy"
-	EventTypeSharingChangeMemberPolicy                = "sharing_change_member_policy"
-	EventTypeSmartSyncChangePolicy                    = "smart_sync_change_policy"
-	EventTypeSmartSyncNotOptOut                       = "smart_sync_not_opt_out"
-	EventTypeSmartSyncOptOut                          = "smart_sync_opt_out"
-	EventTypeSsoChangePolicy                          = "sso_change_policy"
-	EventTypeTfaChangePolicy                          = "tfa_change_policy"
-	EventTypeTwoAccountChangePolicy                   = "two_account_change_policy"
-	EventTypeWebSessionsChangeFixedLengthPolicy       = "web_sessions_change_fixed_length_policy"
-	EventTypeWebSessionsChangeIdleLengthPolicy        = "web_sessions_change_idle_length_policy"
-	EventTypeTeamMergeFrom                            = "team_merge_from"
-	EventTypeTeamMergeTo                              = "team_merge_to"
-	EventTypeTeamProfileAddLogo                       = "team_profile_add_logo"
-	EventTypeTeamProfileChangeDefaultLanguage         = "team_profile_change_default_language"
-	EventTypeTeamProfileChangeLogo                    = "team_profile_change_logo"
-	EventTypeTeamProfileChangeName                    = "team_profile_change_name"
-	EventTypeTeamProfileRemoveLogo                    = "team_profile_remove_logo"
-	EventTypeTfaAddBackupPhone                        = "tfa_add_backup_phone"
-	EventTypeTfaAddSecurityKey                        = "tfa_add_security_key"
-	EventTypeTfaChangeBackupPhone                     = "tfa_change_backup_phone"
-	EventTypeTfaChangeStatus                          = "tfa_change_status"
-	EventTypeTfaRemoveBackupPhone                     = "tfa_remove_backup_phone"
-	EventTypeTfaRemoveSecurityKey                     = "tfa_remove_security_key"
-	EventTypeTfaReset                                 = "tfa_reset"
-	EventTypeOther                                    = "other"
+	EventTypeAppLinkTeam                                = "app_link_team"
+	EventTypeAppLinkUser                                = "app_link_user"
+	EventTypeAppUnlinkTeam                              = "app_unlink_team"
+	EventTypeAppUnlinkUser                              = "app_unlink_user"
+	EventTypeFileAddComment                             = "file_add_comment"
+	EventTypeFileChangeCommentSubscription              = "file_change_comment_subscription"
+	EventTypeFileDeleteComment                          = "file_delete_comment"
+	EventTypeFileLikeComment                            = "file_like_comment"
+	EventTypeFileResolveComment                         = "file_resolve_comment"
+	EventTypeFileUnlikeComment                          = "file_unlike_comment"
+	EventTypeFileUnresolveComment                       = "file_unresolve_comment"
+	EventTypeDeviceChangeIpDesktop                      = "device_change_ip_desktop"
+	EventTypeDeviceChangeIpMobile                       = "device_change_ip_mobile"
+	EventTypeDeviceChangeIpWeb                          = "device_change_ip_web"
+	EventTypeDeviceDeleteOnUnlinkFail                   = "device_delete_on_unlink_fail"
+	EventTypeDeviceDeleteOnUnlinkSuccess                = "device_delete_on_unlink_success"
+	EventTypeDeviceLinkFail                             = "device_link_fail"
+	EventTypeDeviceLinkSuccess                          = "device_link_success"
+	EventTypeDeviceManagementDisabled                   = "device_management_disabled"
+	EventTypeDeviceManagementEnabled                    = "device_management_enabled"
+	EventTypeDeviceUnlink                               = "device_unlink"
+	EventTypeEmmRefreshAuthToken                        = "emm_refresh_auth_token"
+	EventTypeAccountCaptureChangeAvailability           = "account_capture_change_availability"
+	EventTypeAccountCaptureMigrateAccount               = "account_capture_migrate_account"
+	EventTypeAccountCaptureNotificationEmailsSent       = "account_capture_notification_emails_sent"
+	EventTypeAccountCaptureRelinquishAccount            = "account_capture_relinquish_account"
+	EventTypeDisabledDomainInvites                      = "disabled_domain_invites"
+	EventTypeDomainInvitesApproveRequestToJoinTeam      = "domain_invites_approve_request_to_join_team"
+	EventTypeDomainInvitesDeclineRequestToJoinTeam      = "domain_invites_decline_request_to_join_team"
+	EventTypeDomainInvitesEmailExistingUsers            = "domain_invites_email_existing_users"
+	EventTypeDomainInvitesRequestToJoinTeam             = "domain_invites_request_to_join_team"
+	EventTypeDomainInvitesSetInviteNewUserPrefToNo      = "domain_invites_set_invite_new_user_pref_to_no"
+	EventTypeDomainInvitesSetInviteNewUserPrefToYes     = "domain_invites_set_invite_new_user_pref_to_yes"
+	EventTypeDomainVerificationAddDomainFail            = "domain_verification_add_domain_fail"
+	EventTypeDomainVerificationAddDomainSuccess         = "domain_verification_add_domain_success"
+	EventTypeDomainVerificationRemoveDomain             = "domain_verification_remove_domain"
+	EventTypeEnabledDomainInvites                       = "enabled_domain_invites"
+	EventTypeCreateFolder                               = "create_folder"
+	EventTypeFileAdd                                    = "file_add"
+	EventTypeFileCopy                                   = "file_copy"
+	EventTypeFileDelete                                 = "file_delete"
+	EventTypeFileDownload                               = "file_download"
+	EventTypeFileEdit                                   = "file_edit"
+	EventTypeFileGetCopyReference                       = "file_get_copy_reference"
+	EventTypeFileMove                                   = "file_move"
+	EventTypeFilePermanentlyDelete                      = "file_permanently_delete"
+	EventTypeFilePreview                                = "file_preview"
+	EventTypeFileRename                                 = "file_rename"
+	EventTypeFileRestore                                = "file_restore"
+	EventTypeFileRevert                                 = "file_revert"
+	EventTypeFileRollbackChanges                        = "file_rollback_changes"
+	EventTypeFileSaveCopyReference                      = "file_save_copy_reference"
+	EventTypeFileRequestChange                          = "file_request_change"
+	EventTypeFileRequestClose                           = "file_request_close"
+	EventTypeFileRequestCreate                          = "file_request_create"
+	EventTypeFileRequestReceiveFile                     = "file_request_receive_file"
+	EventTypeGroupAddExternalId                         = "group_add_external_id"
+	EventTypeGroupAddMember                             = "group_add_member"
+	EventTypeGroupChangeExternalId                      = "group_change_external_id"
+	EventTypeGroupChangeManagementType                  = "group_change_management_type"
+	EventTypeGroupChangeMemberRole                      = "group_change_member_role"
+	EventTypeGroupCreate                                = "group_create"
+	EventTypeGroupDelete                                = "group_delete"
+	EventTypeGroupDescriptionUpdated                    = "group_description_updated"
+	EventTypeGroupJoinPolicyUpdated                     = "group_join_policy_updated"
+	EventTypeGroupMoved                                 = "group_moved"
+	EventTypeGroupRemoveExternalId                      = "group_remove_external_id"
+	EventTypeGroupRemoveMember                          = "group_remove_member"
+	EventTypeGroupRename                                = "group_rename"
+	EventTypeEmmError                                   = "emm_error"
+	EventTypeLoginFail                                  = "login_fail"
+	EventTypeLoginSuccess                               = "login_success"
+	EventTypeLogout                                     = "logout"
+	EventTypeResellerSupportSessionEnd                  = "reseller_support_session_end"
+	EventTypeResellerSupportSessionStart                = "reseller_support_session_start"
+	EventTypeSignInAsSessionEnd                         = "sign_in_as_session_end"
+	EventTypeSignInAsSessionStart                       = "sign_in_as_session_start"
+	EventTypeSsoError                                   = "sso_error"
+	EventTypeMemberAddName                              = "member_add_name"
+	EventTypeMemberChangeAdminRole                      = "member_change_admin_role"
+	EventTypeMemberChangeEmail                          = "member_change_email"
+	EventTypeMemberChangeMembershipType                 = "member_change_membership_type"
+	EventTypeMemberChangeName                           = "member_change_name"
+	EventTypeMemberChangeStatus                         = "member_change_status"
+	EventTypeMemberPermanentlyDeleteAccountContents     = "member_permanently_delete_account_contents"
+	EventTypeMemberSpaceLimitsAddCustomQuota            = "member_space_limits_add_custom_quota"
+	EventTypeMemberSpaceLimitsChangeCustomQuota         = "member_space_limits_change_custom_quota"
+	EventTypeMemberSpaceLimitsChangeStatus              = "member_space_limits_change_status"
+	EventTypeMemberSpaceLimitsRemoveCustomQuota         = "member_space_limits_remove_custom_quota"
+	EventTypeMemberSuggest                              = "member_suggest"
+	EventTypeMemberTransferAccountContents              = "member_transfer_account_contents"
+	EventTypePaperContentAddMember                      = "paper_content_add_member"
+	EventTypePaperContentAddToFolder                    = "paper_content_add_to_folder"
+	EventTypePaperContentArchive                        = "paper_content_archive"
+	EventTypePaperContentCreate                         = "paper_content_create"
+	EventTypePaperContentPermanentlyDelete              = "paper_content_permanently_delete"
+	EventTypePaperContentRemoveFromFolder               = "paper_content_remove_from_folder"
+	EventTypePaperContentRemoveMember                   = "paper_content_remove_member"
+	EventTypePaperContentRename                         = "paper_content_rename"
+	EventTypePaperContentRestore                        = "paper_content_restore"
+	EventTypePaperDocAddComment                         = "paper_doc_add_comment"
+	EventTypePaperDocChangeMemberRole                   = "paper_doc_change_member_role"
+	EventTypePaperDocChangeSharingPolicy                = "paper_doc_change_sharing_policy"
+	EventTypePaperDocChangeSubscription                 = "paper_doc_change_subscription"
+	EventTypePaperDocDeleted                            = "paper_doc_deleted"
+	EventTypePaperDocDeleteComment                      = "paper_doc_delete_comment"
+	EventTypePaperDocDownload                           = "paper_doc_download"
+	EventTypePaperDocEdit                               = "paper_doc_edit"
+	EventTypePaperDocEditComment                        = "paper_doc_edit_comment"
+	EventTypePaperDocFollowed                           = "paper_doc_followed"
+	EventTypePaperDocMention                            = "paper_doc_mention"
+	EventTypePaperDocRequestAccess                      = "paper_doc_request_access"
+	EventTypePaperDocResolveComment                     = "paper_doc_resolve_comment"
+	EventTypePaperDocRevert                             = "paper_doc_revert"
+	EventTypePaperDocSlackShare                         = "paper_doc_slack_share"
+	EventTypePaperDocTeamInvite                         = "paper_doc_team_invite"
+	EventTypePaperDocTrashed                            = "paper_doc_trashed"
+	EventTypePaperDocUnresolveComment                   = "paper_doc_unresolve_comment"
+	EventTypePaperDocUntrashed                          = "paper_doc_untrashed"
+	EventTypePaperDocView                               = "paper_doc_view"
+	EventTypePaperExternalViewAllow                     = "paper_external_view_allow"
+	EventTypePaperExternalViewDefaultTeam               = "paper_external_view_default_team"
+	EventTypePaperExternalViewForbid                    = "paper_external_view_forbid"
+	EventTypePaperFolderChangeSubscription              = "paper_folder_change_subscription"
+	EventTypePaperFolderDeleted                         = "paper_folder_deleted"
+	EventTypePaperFolderFollowed                        = "paper_folder_followed"
+	EventTypePaperFolderTeamInvite                      = "paper_folder_team_invite"
+	EventTypePasswordChange                             = "password_change"
+	EventTypePasswordReset                              = "password_reset"
+	EventTypePasswordResetAll                           = "password_reset_all"
+	EventTypeEmmCreateExceptionsReport                  = "emm_create_exceptions_report"
+	EventTypeEmmCreateUsageReport                       = "emm_create_usage_report"
+	EventTypeExportMembersReport                        = "export_members_report"
+	EventTypePaperAdminExportStart                      = "paper_admin_export_start"
+	EventTypeSmartSyncCreateAdminPrivilegeReport        = "smart_sync_create_admin_privilege_report"
+	EventTypeTeamActivityCreateReport                   = "team_activity_create_report"
+	EventTypeCollectionShare                            = "collection_share"
+	EventTypeNoteAclInviteOnly                          = "note_acl_invite_only"
+	EventTypeNoteAclLink                                = "note_acl_link"
+	EventTypeNoteAclTeamLink                            = "note_acl_team_link"
+	EventTypeNoteShared                                 = "note_shared"
+	EventTypeNoteShareReceive                           = "note_share_receive"
+	EventTypeOpenNoteShared                             = "open_note_shared"
+	EventTypeSfAddGroup                                 = "sf_add_group"
+	EventTypeSfAllowNonMembersToViewSharedLinks         = "sf_allow_non_members_to_view_shared_links"
+	EventTypeSfExternalInviteWarn                       = "sf_external_invite_warn"
+	EventTypeSfFbInvite                                 = "sf_fb_invite"
+	EventTypeSfFbInviteChangeRole                       = "sf_fb_invite_change_role"
+	EventTypeSfFbUninvite                               = "sf_fb_uninvite"
+	EventTypeSfInviteGroup                              = "sf_invite_group"
+	EventTypeSfTeamGrantAccess                          = "sf_team_grant_access"
+	EventTypeSfTeamInvite                               = "sf_team_invite"
+	EventTypeSfTeamInviteChangeRole                     = "sf_team_invite_change_role"
+	EventTypeSfTeamJoin                                 = "sf_team_join"
+	EventTypeSfTeamJoinFromOobLink                      = "sf_team_join_from_oob_link"
+	EventTypeSfTeamUninvite                             = "sf_team_uninvite"
+	EventTypeSharedContentAddInvitees                   = "shared_content_add_invitees"
+	EventTypeSharedContentAddLinkExpiry                 = "shared_content_add_link_expiry"
+	EventTypeSharedContentAddLinkPassword               = "shared_content_add_link_password"
+	EventTypeSharedContentAddMember                     = "shared_content_add_member"
+	EventTypeSharedContentChangeDownloadsPolicy         = "shared_content_change_downloads_policy"
+	EventTypeSharedContentChangeInviteeRole             = "shared_content_change_invitee_role"
+	EventTypeSharedContentChangeLinkAudience            = "shared_content_change_link_audience"
+	EventTypeSharedContentChangeLinkExpiry              = "shared_content_change_link_expiry"
+	EventTypeSharedContentChangeLinkPassword            = "shared_content_change_link_password"
+	EventTypeSharedContentChangeMemberRole              = "shared_content_change_member_role"
+	EventTypeSharedContentChangeViewerInfoPolicy        = "shared_content_change_viewer_info_policy"
+	EventTypeSharedContentClaimInvitation               = "shared_content_claim_invitation"
+	EventTypeSharedContentCopy                          = "shared_content_copy"
+	EventTypeSharedContentDownload                      = "shared_content_download"
+	EventTypeSharedContentRelinquishMembership          = "shared_content_relinquish_membership"
+	EventTypeSharedContentRemoveInvitees                = "shared_content_remove_invitees"
+	EventTypeSharedContentRemoveLinkExpiry              = "shared_content_remove_link_expiry"
+	EventTypeSharedContentRemoveLinkPassword            = "shared_content_remove_link_password"
+	EventTypeSharedContentRemoveMember                  = "shared_content_remove_member"
+	EventTypeSharedContentRequestAccess                 = "shared_content_request_access"
+	EventTypeSharedContentUnshare                       = "shared_content_unshare"
+	EventTypeSharedContentView                          = "shared_content_view"
+	EventTypeSharedFolderChangeLinkPolicy               = "shared_folder_change_link_policy"
+	EventTypeSharedFolderChangeMembersInheritancePolicy = "shared_folder_change_members_inheritance_policy"
+	EventTypeSharedFolderChangeMembersManagementPolicy  = "shared_folder_change_members_management_policy"
+	EventTypeSharedFolderChangeMembersPolicy            = "shared_folder_change_members_policy"
+	EventTypeSharedFolderCreate                         = "shared_folder_create"
+	EventTypeSharedFolderDeclineInvitation              = "shared_folder_decline_invitation"
+	EventTypeSharedFolderMount                          = "shared_folder_mount"
+	EventTypeSharedFolderNest                           = "shared_folder_nest"
+	EventTypeSharedFolderTransferOwnership              = "shared_folder_transfer_ownership"
+	EventTypeSharedFolderUnmount                        = "shared_folder_unmount"
+	EventTypeSharedLinkAddExpiry                        = "shared_link_add_expiry"
+	EventTypeSharedLinkChangeExpiry                     = "shared_link_change_expiry"
+	EventTypeSharedLinkChangeVisibility                 = "shared_link_change_visibility"
+	EventTypeSharedLinkCopy                             = "shared_link_copy"
+	EventTypeSharedLinkCreate                           = "shared_link_create"
+	EventTypeSharedLinkDisable                          = "shared_link_disable"
+	EventTypeSharedLinkDownload                         = "shared_link_download"
+	EventTypeSharedLinkRemoveExpiry                     = "shared_link_remove_expiry"
+	EventTypeSharedLinkShare                            = "shared_link_share"
+	EventTypeSharedLinkView                             = "shared_link_view"
+	EventTypeSharedNoteOpened                           = "shared_note_opened"
+	EventTypeShmodelGroupShare                          = "shmodel_group_share"
+	EventTypeShowcaseAccessGranted                      = "showcase_access_granted"
+	EventTypeShowcaseAddMember                          = "showcase_add_member"
+	EventTypeShowcaseArchived                           = "showcase_archived"
+	EventTypeShowcaseCreated                            = "showcase_created"
+	EventTypeShowcaseDeleteComment                      = "showcase_delete_comment"
+	EventTypeShowcaseEdited                             = "showcase_edited"
+	EventTypeShowcaseEditComment                        = "showcase_edit_comment"
+	EventTypeShowcaseFileAdded                          = "showcase_file_added"
+	EventTypeShowcaseFileDownload                       = "showcase_file_download"
+	EventTypeShowcaseFileRemoved                        = "showcase_file_removed"
+	EventTypeShowcaseFileView                           = "showcase_file_view"
+	EventTypeShowcasePermanentlyDeleted                 = "showcase_permanently_deleted"
+	EventTypeShowcasePostComment                        = "showcase_post_comment"
+	EventTypeShowcaseRemoveMember                       = "showcase_remove_member"
+	EventTypeShowcaseRenamed                            = "showcase_renamed"
+	EventTypeShowcaseRequestAccess                      = "showcase_request_access"
+	EventTypeShowcaseResolveComment                     = "showcase_resolve_comment"
+	EventTypeShowcaseRestored                           = "showcase_restored"
+	EventTypeShowcaseTrashed                            = "showcase_trashed"
+	EventTypeShowcaseUnresolveComment                   = "showcase_unresolve_comment"
+	EventTypeShowcaseUntrashed                          = "showcase_untrashed"
+	EventTypeShowcaseView                               = "showcase_view"
+	EventTypeSsoAddCert                                 = "sso_add_cert"
+	EventTypeSsoAddLoginUrl                             = "sso_add_login_url"
+	EventTypeSsoAddLogoutUrl                            = "sso_add_logout_url"
+	EventTypeSsoChangeCert                              = "sso_change_cert"
+	EventTypeSsoChangeLoginUrl                          = "sso_change_login_url"
+	EventTypeSsoChangeLogoutUrl                         = "sso_change_logout_url"
+	EventTypeSsoChangeSamlIdentityMode                  = "sso_change_saml_identity_mode"
+	EventTypeSsoRemoveCert                              = "sso_remove_cert"
+	EventTypeSsoRemoveLoginUrl                          = "sso_remove_login_url"
+	EventTypeSsoRemoveLogoutUrl                         = "sso_remove_logout_url"
+	EventTypeTeamFolderChangeStatus                     = "team_folder_change_status"
+	EventTypeTeamFolderCreate                           = "team_folder_create"
+	EventTypeTeamFolderDowngrade                        = "team_folder_downgrade"
+	EventTypeTeamFolderPermanentlyDelete                = "team_folder_permanently_delete"
+	EventTypeTeamFolderRename                           = "team_folder_rename"
+	EventTypeTeamSelectiveSyncSettingsChanged           = "team_selective_sync_settings_changed"
+	EventTypeAccountCaptureChangePolicy                 = "account_capture_change_policy"
+	EventTypeAllowDownloadDisabled                      = "allow_download_disabled"
+	EventTypeAllowDownloadEnabled                       = "allow_download_enabled"
+	EventTypeDataPlacementRestrictionChangePolicy       = "data_placement_restriction_change_policy"
+	EventTypeDataPlacementRestrictionSatisfyPolicy      = "data_placement_restriction_satisfy_policy"
+	EventTypeDeviceApprovalsChangeDesktopPolicy         = "device_approvals_change_desktop_policy"
+	EventTypeDeviceApprovalsChangeMobilePolicy          = "device_approvals_change_mobile_policy"
+	EventTypeDeviceApprovalsChangeOverageAction         = "device_approvals_change_overage_action"
+	EventTypeDeviceApprovalsChangeUnlinkAction          = "device_approvals_change_unlink_action"
+	EventTypeEmmAddException                            = "emm_add_exception"
+	EventTypeEmmChangePolicy                            = "emm_change_policy"
+	EventTypeEmmRemoveException                         = "emm_remove_exception"
+	EventTypeExtendedVersionHistoryChangePolicy         = "extended_version_history_change_policy"
+	EventTypeFileCommentsChangePolicy                   = "file_comments_change_policy"
+	EventTypeFileRequestsChangePolicy                   = "file_requests_change_policy"
+	EventTypeFileRequestsEmailsEnabled                  = "file_requests_emails_enabled"
+	EventTypeFileRequestsEmailsRestrictedToTeamOnly     = "file_requests_emails_restricted_to_team_only"
+	EventTypeGoogleSsoChangePolicy                      = "google_sso_change_policy"
+	EventTypeGroupUserManagementChangePolicy            = "group_user_management_change_policy"
+	EventTypeMemberRequestsChangePolicy                 = "member_requests_change_policy"
+	EventTypeMemberSpaceLimitsAddException              = "member_space_limits_add_exception"
+	EventTypeMemberSpaceLimitsChangeCapsTypePolicy      = "member_space_limits_change_caps_type_policy"
+	EventTypeMemberSpaceLimitsChangePolicy              = "member_space_limits_change_policy"
+	EventTypeMemberSpaceLimitsRemoveException           = "member_space_limits_remove_exception"
+	EventTypeMemberSuggestionsChangePolicy              = "member_suggestions_change_policy"
+	EventTypeMicrosoftOfficeAddinChangePolicy           = "microsoft_office_addin_change_policy"
+	EventTypeNetworkControlChangePolicy                 = "network_control_change_policy"
+	EventTypePaperChangeDeploymentPolicy                = "paper_change_deployment_policy"
+	EventTypePaperChangeMemberLinkPolicy                = "paper_change_member_link_policy"
+	EventTypePaperChangeMemberPolicy                    = "paper_change_member_policy"
+	EventTypePaperChangePolicy                          = "paper_change_policy"
+	EventTypePaperEnabledUsersGroupAddition             = "paper_enabled_users_group_addition"
+	EventTypePaperEnabledUsersGroupRemoval              = "paper_enabled_users_group_removal"
+	EventTypePermanentDeleteChangePolicy                = "permanent_delete_change_policy"
+	EventTypeSharingChangeFolderJoinPolicy              = "sharing_change_folder_join_policy"
+	EventTypeSharingChangeLinkPolicy                    = "sharing_change_link_policy"
+	EventTypeSharingChangeMemberPolicy                  = "sharing_change_member_policy"
+	EventTypeSmartSyncChangePolicy                      = "smart_sync_change_policy"
+	EventTypeSmartSyncNotOptOut                         = "smart_sync_not_opt_out"
+	EventTypeSmartSyncOptOut                            = "smart_sync_opt_out"
+	EventTypeSsoChangePolicy                            = "sso_change_policy"
+	EventTypeTfaChangePolicy                            = "tfa_change_policy"
+	EventTypeTwoAccountChangePolicy                     = "two_account_change_policy"
+	EventTypeWebSessionsChangeFixedLengthPolicy         = "web_sessions_change_fixed_length_policy"
+	EventTypeWebSessionsChangeIdleLengthPolicy          = "web_sessions_change_idle_length_policy"
+	EventTypeTeamMergeFrom                              = "team_merge_from"
+	EventTypeTeamMergeTo                                = "team_merge_to"
+	EventTypeTeamProfileAddLogo                         = "team_profile_add_logo"
+	EventTypeTeamProfileChangeDefaultLanguage           = "team_profile_change_default_language"
+	EventTypeTeamProfileChangeLogo                      = "team_profile_change_logo"
+	EventTypeTeamProfileChangeName                      = "team_profile_change_name"
+	EventTypeTeamProfileRemoveLogo                      = "team_profile_remove_logo"
+	EventTypeTfaAddBackupPhone                          = "tfa_add_backup_phone"
+	EventTypeTfaAddSecurityKey                          = "tfa_add_security_key"
+	EventTypeTfaChangeBackupPhone                       = "tfa_change_backup_phone"
+	EventTypeTfaChangeStatus                            = "tfa_change_status"
+	EventTypeTfaRemoveBackupPhone                       = "tfa_remove_backup_phone"
+	EventTypeTfaRemoveSecurityKey                       = "tfa_remove_security_key"
+	EventTypeTfaReset                                   = "tfa_reset"
+	EventTypeOther                                      = "other"
 )
 
 // UnmarshalJSON deserializes into a EventType instance
 func (u *EventType) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AppLinkTeam : (apps) Linked an app for team.
+		// AppLinkTeam : (apps) Linked app for team
 		AppLinkTeam json.RawMessage `json:"app_link_team,omitempty"`
-		// AppLinkUser : (apps) Linked an app for team member.
+		// AppLinkUser : (apps) Linked app for member
 		AppLinkUser json.RawMessage `json:"app_link_user,omitempty"`
-		// AppUnlinkTeam : (apps) Unlinked an app for team.
+		// AppUnlinkTeam : (apps) Unlinked app for team
 		AppUnlinkTeam json.RawMessage `json:"app_unlink_team,omitempty"`
-		// AppUnlinkUser : (apps) Unlinked an app for team member.
+		// AppUnlinkUser : (apps) Unlinked app for member
 		AppUnlinkUser json.RawMessage `json:"app_unlink_user,omitempty"`
-		// FileAddComment : (comments) Added a file comment.
+		// FileAddComment : (comments) Added file comment
 		FileAddComment json.RawMessage `json:"file_add_comment,omitempty"`
 		// FileChangeCommentSubscription : (comments) Subscribed to or
-		// unsubscribed from comment notifications for file.
+		// unsubscribed from comment notifications for file
 		FileChangeCommentSubscription json.RawMessage `json:"file_change_comment_subscription,omitempty"`
-		// FileDeleteComment : (comments) Deleted a file comment.
+		// FileDeleteComment : (comments) Deleted file comment
 		FileDeleteComment json.RawMessage `json:"file_delete_comment,omitempty"`
-		// FileLikeComment : (comments) Liked a file comment. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// FileLikeComment : (comments) Liked file comment (deprecated, no
+		// longer logged)
 		FileLikeComment json.RawMessage `json:"file_like_comment,omitempty"`
-		// FileResolveComment : (comments) Resolved a file comment.
+		// FileResolveComment : (comments) Resolved file comment
 		FileResolveComment json.RawMessage `json:"file_resolve_comment,omitempty"`
-		// FileUnlikeComment : (comments) Unliked a file comment. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// FileUnlikeComment : (comments) Unliked file comment (deprecated, no
+		// longer logged)
 		FileUnlikeComment json.RawMessage `json:"file_unlike_comment,omitempty"`
-		// FileUnresolveComment : (comments) Unresolved a file comment.
+		// FileUnresolveComment : (comments) Unresolved file comment
 		FileUnresolveComment json.RawMessage `json:"file_unresolve_comment,omitempty"`
-		// DeviceChangeIpDesktop : (devices) IP address associated with active
-		// desktop session changed.
+		// DeviceChangeIpDesktop : (devices) Changed IP address associated with
+		// active desktop session
 		DeviceChangeIpDesktop json.RawMessage `json:"device_change_ip_desktop,omitempty"`
-		// DeviceChangeIpMobile : (devices) IP address associated with active
-		// mobile session changed.
+		// DeviceChangeIpMobile : (devices) Changed IP address associated with
+		// active mobile session
 		DeviceChangeIpMobile json.RawMessage `json:"device_change_ip_mobile,omitempty"`
-		// DeviceChangeIpWeb : (devices) IP address associated with active Web
-		// session changed.
+		// DeviceChangeIpWeb : (devices) Changed IP address associated with
+		// active web session
 		DeviceChangeIpWeb json.RawMessage `json:"device_change_ip_web,omitempty"`
 		// DeviceDeleteOnUnlinkFail : (devices) Failed to delete all files from
-		// an unlinked device.
+		// unlinked device
 		DeviceDeleteOnUnlinkFail json.RawMessage `json:"device_delete_on_unlink_fail,omitempty"`
-		// DeviceDeleteOnUnlinkSuccess : (devices) Deleted all files from an
-		// unlinked device.
+		// DeviceDeleteOnUnlinkSuccess : (devices) Deleted all files from
+		// unlinked device
 		DeviceDeleteOnUnlinkSuccess json.RawMessage `json:"device_delete_on_unlink_success,omitempty"`
-		// DeviceLinkFail : (devices) Failed to link a device.
+		// DeviceLinkFail : (devices) Failed to link device
 		DeviceLinkFail json.RawMessage `json:"device_link_fail,omitempty"`
-		// DeviceLinkSuccess : (devices) Linked a device.
+		// DeviceLinkSuccess : (devices) Linked device
 		DeviceLinkSuccess json.RawMessage `json:"device_link_success,omitempty"`
-		// DeviceManagementDisabled : (devices) Disable Device Management. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// DeviceManagementDisabled : (devices) Disabled device management
+		// (deprecated, no longer logged)
 		DeviceManagementDisabled json.RawMessage `json:"device_management_disabled,omitempty"`
-		// DeviceManagementEnabled : (devices) Enable Device Management. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// DeviceManagementEnabled : (devices) Enabled device management
+		// (deprecated, no longer logged)
 		DeviceManagementEnabled json.RawMessage `json:"device_management_enabled,omitempty"`
-		// DeviceUnlink : (devices) Disconnected a device.
+		// DeviceUnlink : (devices) Disconnected device
 		DeviceUnlink json.RawMessage `json:"device_unlink,omitempty"`
-		// EmmRefreshAuthToken : (devices) Refreshed the auth token used for
-		// setting up enterprise mobility management.
+		// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting
+		// up enterprise mobility management
 		EmmRefreshAuthToken json.RawMessage `json:"emm_refresh_auth_token,omitempty"`
-		// AccountCaptureChangeAvailability : (domains) Granted or revoked the
-		// option to enable account capture on domains belonging to the team.
+		// AccountCaptureChangeAvailability : (domains) Granted/revoked option
+		// to enable account capture on team domains
 		AccountCaptureChangeAvailability json.RawMessage `json:"account_capture_change_availability,omitempty"`
-		// AccountCaptureMigrateAccount : (domains) Account captured user
-		// migrated their account to the team.
+		// AccountCaptureMigrateAccount : (domains) Account-captured user
+		// migrated account to team
 		AccountCaptureMigrateAccount json.RawMessage `json:"account_capture_migrate_account,omitempty"`
-		// AccountCaptureRelinquishAccount : (domains) Account captured user
-		// relinquished their account by changing the email address associated
-		// with it.
+		// AccountCaptureNotificationEmailsSent : (domains) Sent proactive
+		// account capture email to all unmanaged members
+		AccountCaptureNotificationEmailsSent json.RawMessage `json:"account_capture_notification_emails_sent,omitempty"`
+		// AccountCaptureRelinquishAccount : (domains) Account-captured user
+		// changed account email to personal email
 		AccountCaptureRelinquishAccount json.RawMessage `json:"account_capture_relinquish_account,omitempty"`
-		// DisabledDomainInvites : (domains) Disabled domain invites. This event
-		// is deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// DisabledDomainInvites : (domains) Disabled domain invites
+		// (deprecated, no longer logged)
 		DisabledDomainInvites json.RawMessage `json:"disabled_domain_invites,omitempty"`
-		// DomainInvitesApproveRequestToJoinTeam : (domains) Approved a member's
-		// request to join the team.
+		// DomainInvitesApproveRequestToJoinTeam : (domains) Approved user's
+		// request to join team
 		DomainInvitesApproveRequestToJoinTeam json.RawMessage `json:"domain_invites_approve_request_to_join_team,omitempty"`
-		// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined a user's
-		// request to join the team.
+		// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined user's
+		// request to join team
 		DomainInvitesDeclineRequestToJoinTeam json.RawMessage `json:"domain_invites_decline_request_to_join_team,omitempty"`
 		// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-		// existing domain accounts.
+		// existing domain accounts
 		DomainInvitesEmailExistingUsers json.RawMessage `json:"domain_invites_email_existing_users,omitempty"`
-		// DomainInvitesRequestToJoinTeam : (domains) Asked to join the team.
+		// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
 		DomainInvitesRequestToJoinTeam json.RawMessage `json:"domain_invites_request_to_join_team,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToNo : (domains) Turned off
-		// u201cAutomatically invite new usersu201d. This event is deprecated
-		// and will not be logged going forward as the associated product
-		// functionality no longer exists.
+		// DomainInvitesSetInviteNewUserPrefToNo : (domains) Disabled
+		// "Automatically invite new users" (deprecated, no longer logged)
 		DomainInvitesSetInviteNewUserPrefToNo json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_no,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToYes : (domains) Turned on
-		// u201cAutomatically invite new usersu201d. This event is deprecated
-		// and will not be logged going forward as the associated product
-		// functionality no longer exists.
+		// DomainInvitesSetInviteNewUserPrefToYes : (domains) Enabled
+		// "Automatically invite new users" (deprecated, no longer logged)
 		DomainInvitesSetInviteNewUserPrefToYes json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_yes,omitempty"`
-		// DomainVerificationAddDomainFail : (domains) Failed to verify a domain
-		// belonging to the team.
+		// DomainVerificationAddDomainFail : (domains) Failed to verify team
+		// domain
 		DomainVerificationAddDomainFail json.RawMessage `json:"domain_verification_add_domain_fail,omitempty"`
-		// DomainVerificationAddDomainSuccess : (domains) Verified a domain
-		// belonging to the team.
+		// DomainVerificationAddDomainSuccess : (domains) Verified team domain
 		DomainVerificationAddDomainSuccess json.RawMessage `json:"domain_verification_add_domain_success,omitempty"`
-		// DomainVerificationRemoveDomain : (domains) Removed a domain from the
-		// list of verified domains belonging to the team.
+		// DomainVerificationRemoveDomain : (domains) Removed domain from list
+		// of verified team domains
 		DomainVerificationRemoveDomain json.RawMessage `json:"domain_verification_remove_domain,omitempty"`
-		// EnabledDomainInvites : (domains) Enabled domain invites. This event
-		// is deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// EnabledDomainInvites : (domains) Enabled domain invites (deprecated,
+		// no longer logged)
 		EnabledDomainInvites json.RawMessage `json:"enabled_domain_invites,omitempty"`
-		// CreateFolder : (file_operations) Created folders. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// CreateFolder : (file_operations) Created folders (deprecated, no
+		// longer logged)
 		CreateFolder json.RawMessage `json:"create_folder,omitempty"`
-		// FileAdd : (file_operations) Added files and/or folders.
+		// FileAdd : (file_operations) Added files and/or folders
 		FileAdd json.RawMessage `json:"file_add,omitempty"`
-		// FileCopy : (file_operations) Copied files and/or folders.
+		// FileCopy : (file_operations) Copied files and/or folders
 		FileCopy json.RawMessage `json:"file_copy,omitempty"`
-		// FileDelete : (file_operations) Deleted files and/or folders.
+		// FileDelete : (file_operations) Deleted files and/or folders
 		FileDelete json.RawMessage `json:"file_delete,omitempty"`
-		// FileDownload : (file_operations) Downloaded files and/or folders.
+		// FileDownload : (file_operations) Downloaded files and/or folders
 		FileDownload json.RawMessage `json:"file_download,omitempty"`
-		// FileEdit : (file_operations) Edited files.
+		// FileEdit : (file_operations) Edited files
 		FileEdit json.RawMessage `json:"file_edit,omitempty"`
-		// FileGetCopyReference : (file_operations) Create a copy reference to a
-		// file or folder.
+		// FileGetCopyReference : (file_operations) Created copy reference to
+		// file/folder
 		FileGetCopyReference json.RawMessage `json:"file_get_copy_reference,omitempty"`
-		// FileMove : (file_operations) Moved files and/or folders.
+		// FileMove : (file_operations) Moved files and/or folders
 		FileMove json.RawMessage `json:"file_move,omitempty"`
 		// FilePermanentlyDelete : (file_operations) Permanently deleted files
-		// and/or folders.
+		// and/or folders
 		FilePermanentlyDelete json.RawMessage `json:"file_permanently_delete,omitempty"`
-		// FilePreview : (file_operations) Previewed files and/or folders.
+		// FilePreview : (file_operations) Previewed files and/or folders
 		FilePreview json.RawMessage `json:"file_preview,omitempty"`
-		// FileRename : (file_operations) Renamed files and/or folders.
+		// FileRename : (file_operations) Renamed files and/or folders
 		FileRename json.RawMessage `json:"file_rename,omitempty"`
-		// FileRestore : (file_operations) Restored deleted files and/or
-		// folders.
+		// FileRestore : (file_operations) Restored deleted files and/or folders
 		FileRestore json.RawMessage `json:"file_restore,omitempty"`
-		// FileRevert : (file_operations) Reverted files to a previous version.
+		// FileRevert : (file_operations) Reverted files to previous version
 		FileRevert json.RawMessage `json:"file_revert,omitempty"`
-		// FileRollbackChanges : (file_operations) Rolled back file change
-		// location changes.
+		// FileRollbackChanges : (file_operations) Rolled back file actions
 		FileRollbackChanges json.RawMessage `json:"file_rollback_changes,omitempty"`
-		// FileSaveCopyReference : (file_operations) Save a file or folder using
-		// a copy reference.
+		// FileSaveCopyReference : (file_operations) Saved file/folder using
+		// copy reference
 		FileSaveCopyReference json.RawMessage `json:"file_save_copy_reference,omitempty"`
-		// FileRequestAddDeadline : (file_requests) Added a deadline to a file
-		// request. This event is replaced by file_request_change and will not
-		// be logged going forward.
-		FileRequestAddDeadline json.RawMessage `json:"file_request_add_deadline,omitempty"`
-		// FileRequestChange : (file_requests) Change a file request.
+		// FileRequestChange : (file_requests) Changed file request
 		FileRequestChange json.RawMessage `json:"file_request_change,omitempty"`
-		// FileRequestChangeFolder : (file_requests) Changed the file request
-		// folder. This event is replaced by file_request_change and will not be
-		// logged going forward.
-		FileRequestChangeFolder json.RawMessage `json:"file_request_change_folder,omitempty"`
-		// FileRequestClose : (file_requests) Closed a file request.
+		// FileRequestClose : (file_requests) Closed file request
 		FileRequestClose json.RawMessage `json:"file_request_close,omitempty"`
-		// FileRequestCreate : (file_requests) Created a file request.
+		// FileRequestCreate : (file_requests) Created file request
 		FileRequestCreate json.RawMessage `json:"file_request_create,omitempty"`
-		// FileRequestReceiveFile : (file_requests) Received files for a file
-		// request.
+		// FileRequestReceiveFile : (file_requests) Received files for file
+		// request
 		FileRequestReceiveFile json.RawMessage `json:"file_request_receive_file,omitempty"`
-		// FileRequestRemoveDeadline : (file_requests) Removed the file request
-		// deadline. This event is replaced by file_request_change and will not
-		// be logged going forward.
-		FileRequestRemoveDeadline json.RawMessage `json:"file_request_remove_deadline,omitempty"`
-		// FileRequestSend : (file_requests) Sent file request to users via
-		// email. This event is replaced by file_request_change and will not be
-		// logged going forward.
-		FileRequestSend json.RawMessage `json:"file_request_send,omitempty"`
-		// GroupAddExternalId : (groups) Added an external ID for group.
+		// GroupAddExternalId : (groups) Added external ID for group
 		GroupAddExternalId json.RawMessage `json:"group_add_external_id,omitempty"`
-		// GroupAddMember : (groups) Added team members to a group.
+		// GroupAddMember : (groups) Added team members to group
 		GroupAddMember json.RawMessage `json:"group_add_member,omitempty"`
-		// GroupChangeExternalId : (groups) Changed the external ID for group.
+		// GroupChangeExternalId : (groups) Changed external ID for group
 		GroupChangeExternalId json.RawMessage `json:"group_change_external_id,omitempty"`
-		// GroupChangeManagementType : (groups) Changed group management type.
+		// GroupChangeManagementType : (groups) Changed group management type
 		GroupChangeManagementType json.RawMessage `json:"group_change_management_type,omitempty"`
-		// GroupChangeMemberRole : (groups) Changed the manager permissions
-		// belonging to a group member.
+		// GroupChangeMemberRole : (groups) Changed manager permissions of group
+		// member
 		GroupChangeMemberRole json.RawMessage `json:"group_change_member_role,omitempty"`
-		// GroupCreate : (groups) Created a group.
+		// GroupCreate : (groups) Created group
 		GroupCreate json.RawMessage `json:"group_create,omitempty"`
-		// GroupDelete : (groups) Deleted a group.
+		// GroupDelete : (groups) Deleted group
 		GroupDelete json.RawMessage `json:"group_delete,omitempty"`
-		// GroupMoved : (groups) Moved a group. This event is deprecated and
-		// will not be logged going forward as the associated product
-		// functionality no longer exists.
+		// GroupDescriptionUpdated : (groups) Updated group (deprecated, no
+		// longer logged)
+		GroupDescriptionUpdated json.RawMessage `json:"group_description_updated,omitempty"`
+		// GroupJoinPolicyUpdated : (groups) Updated group join policy
+		// (deprecated, no longer logged)
+		GroupJoinPolicyUpdated json.RawMessage `json:"group_join_policy_updated,omitempty"`
+		// GroupMoved : (groups) Moved group (deprecated, no longer logged)
 		GroupMoved json.RawMessage `json:"group_moved,omitempty"`
-		// GroupRemoveExternalId : (groups) Removed the external ID for group.
+		// GroupRemoveExternalId : (groups) Removed external ID for group
 		GroupRemoveExternalId json.RawMessage `json:"group_remove_external_id,omitempty"`
-		// GroupRemoveMember : (groups) Removed team members from a group.
+		// GroupRemoveMember : (groups) Removed team members from group
 		GroupRemoveMember json.RawMessage `json:"group_remove_member,omitempty"`
-		// GroupRename : (groups) Renamed a group.
+		// GroupRename : (groups) Renamed group
 		GroupRename json.RawMessage `json:"group_rename,omitempty"`
-		// EmmError : (logins) Failed to sign in via EMM. This event is replaced
-		// by login_fail and will not be logged going forward.
+		// EmmError : (logins) Failed to sign in via EMM (deprecated, replaced
+		// by 'Failed to sign in')
 		EmmError json.RawMessage `json:"emm_error,omitempty"`
-		// LoginFail : (logins) Failed to sign in.
+		// LoginFail : (logins) Failed to sign in
 		LoginFail json.RawMessage `json:"login_fail,omitempty"`
-		// LoginSuccess : (logins) Signed in.
+		// LoginSuccess : (logins) Signed in
 		LoginSuccess json.RawMessage `json:"login_success,omitempty"`
-		// Logout : (logins) Signed out.
+		// Logout : (logins) Signed out
 		Logout json.RawMessage `json:"logout,omitempty"`
-		// ResellerSupportSessionEnd : (logins) Ended reseller support session.
+		// ResellerSupportSessionEnd : (logins) Ended reseller support session
 		ResellerSupportSessionEnd json.RawMessage `json:"reseller_support_session_end,omitempty"`
 		// ResellerSupportSessionStart : (logins) Started reseller support
-		// session.
+		// session
 		ResellerSupportSessionStart json.RawMessage `json:"reseller_support_session_start,omitempty"`
-		// SignInAsSessionEnd : (logins) Ended admin sign-in-as session.
+		// SignInAsSessionEnd : (logins) Ended admin sign-in-as session
 		SignInAsSessionEnd json.RawMessage `json:"sign_in_as_session_end,omitempty"`
-		// SignInAsSessionStart : (logins) Started admin sign-in-as session.
+		// SignInAsSessionStart : (logins) Started admin sign-in-as session
 		SignInAsSessionStart json.RawMessage `json:"sign_in_as_session_start,omitempty"`
-		// SsoError : (logins) Failed to sign in via SSO. This event is replaced
-		// by login_fail and will not be logged going forward.
+		// SsoError : (logins) Failed to sign in via SSO (deprecated, replaced
+		// by 'Failed to sign in')
 		SsoError json.RawMessage `json:"sso_error,omitempty"`
-		// MemberChangeAdminRole : (members) Change the admin role belonging to
-		// team member.
+		// MemberAddName : (members) Added team member name
+		MemberAddName json.RawMessage `json:"member_add_name,omitempty"`
+		// MemberChangeAdminRole : (members) Changed team member admin role
 		MemberChangeAdminRole json.RawMessage `json:"member_change_admin_role,omitempty"`
-		// MemberChangeEmail : (members) Changed team member email address.
+		// MemberChangeEmail : (members) Changed team member email
 		MemberChangeEmail json.RawMessage `json:"member_change_email,omitempty"`
-		// MemberChangeMembershipType : (members) Changed the membership type
-		// (limited vs full) for team member. This event is deprecated and will
-		// not be logged going forward as the associated product functionality
-		// no longer exists.
+		// MemberChangeMembershipType : (members) Changed membership type
+		// (limited/full) of member (deprecated, no longer logged)
 		MemberChangeMembershipType json.RawMessage `json:"member_change_membership_type,omitempty"`
-		// MemberChangeName : (members) Changed team member name.
+		// MemberChangeName : (members) Changed team member name
 		MemberChangeName json.RawMessage `json:"member_change_name,omitempty"`
-		// MemberChangeStatus : (members) Changed the membership status of a
-		// team member.
+		// MemberChangeStatus : (members) Changed membership status of team
+		// member
 		MemberChangeStatus json.RawMessage `json:"member_change_status,omitempty"`
 		// MemberPermanentlyDeleteAccountContents : (members) Permanently
-		// deleted contents of a removed team member account.
+		// deleted contents of deleted team member account
 		MemberPermanentlyDeleteAccountContents json.RawMessage `json:"member_permanently_delete_account_contents,omitempty"`
-		// MemberSpaceLimitsChangeStatus : (members) Changed the status with
-		// respect to whether the team member is under or over storage quota
-		// specified by policy.
+		// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space
+		// limit
+		MemberSpaceLimitsAddCustomQuota json.RawMessage `json:"member_space_limits_add_custom_quota,omitempty"`
+		// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
+		// space limit
+		MemberSpaceLimitsChangeCustomQuota json.RawMessage `json:"member_space_limits_change_custom_quota,omitempty"`
+		// MemberSpaceLimitsChangeStatus : (members) Changed space limit status
 		MemberSpaceLimitsChangeStatus json.RawMessage `json:"member_space_limits_change_status,omitempty"`
-		// MemberSuggest : (members) Suggested a new team member to be added to
-		// the team.
+		// MemberSpaceLimitsRemoveCustomQuota : (members) Removed custom member
+		// space limit
+		MemberSpaceLimitsRemoveCustomQuota json.RawMessage `json:"member_space_limits_remove_custom_quota,omitempty"`
+		// MemberSuggest : (members) Suggested person to add to team
 		MemberSuggest json.RawMessage `json:"member_suggest,omitempty"`
-		// MemberTransferAccountContents : (members) Transferred contents of a
-		// removed team member account to another member.
+		// MemberTransferAccountContents : (members) Transferred contents of
+		// deleted member account to another member
 		MemberTransferAccountContents json.RawMessage `json:"member_transfer_account_contents,omitempty"`
-		// PaperContentAddMember : (paper) Added users to the membership of a
-		// Paper doc or folder.
+		// PaperContentAddMember : (paper) Added team member to Paper doc/folder
 		PaperContentAddMember json.RawMessage `json:"paper_content_add_member,omitempty"`
-		// PaperContentAddToFolder : (paper) Added Paper doc or folder to a
-		// folder.
+		// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
 		PaperContentAddToFolder json.RawMessage `json:"paper_content_add_to_folder,omitempty"`
-		// PaperContentArchive : (paper) Archived Paper doc or folder.
+		// PaperContentArchive : (paper) Archived Paper doc/folder
 		PaperContentArchive json.RawMessage `json:"paper_content_archive,omitempty"`
-		// PaperContentCreate : (paper) Created a Paper doc or folder.
+		// PaperContentCreate : (paper) Created Paper doc/folder
 		PaperContentCreate json.RawMessage `json:"paper_content_create,omitempty"`
-		// PaperContentPermanentlyDelete : (paper) Permanently deleted a Paper
-		// doc or folder.
+		// PaperContentPermanentlyDelete : (paper) Permanently deleted Paper
+		// doc/folder
 		PaperContentPermanentlyDelete json.RawMessage `json:"paper_content_permanently_delete,omitempty"`
-		// PaperContentRemoveFromFolder : (paper) Removed Paper doc or folder
-		// from a folder.
+		// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from
+		// folder
 		PaperContentRemoveFromFolder json.RawMessage `json:"paper_content_remove_from_folder,omitempty"`
-		// PaperContentRemoveMember : (paper) Removed a user from the membership
-		// of a Paper doc or folder.
+		// PaperContentRemoveMember : (paper) Removed team member from Paper
+		// doc/folder
 		PaperContentRemoveMember json.RawMessage `json:"paper_content_remove_member,omitempty"`
-		// PaperContentRename : (paper) Renamed Paper doc or folder.
+		// PaperContentRename : (paper) Renamed Paper doc/folder
 		PaperContentRename json.RawMessage `json:"paper_content_rename,omitempty"`
-		// PaperContentRestore : (paper) Restored an archived Paper doc or
-		// folder.
+		// PaperContentRestore : (paper) Restored archived Paper doc/folder
 		PaperContentRestore json.RawMessage `json:"paper_content_restore,omitempty"`
-		// PaperDocAddComment : (paper) Added a Paper doc comment.
+		// PaperDocAddComment : (paper) Added Paper doc comment
 		PaperDocAddComment json.RawMessage `json:"paper_doc_add_comment,omitempty"`
-		// PaperDocChangeMemberRole : (paper) Changed the access type of a Paper
-		// doc member.
+		// PaperDocChangeMemberRole : (paper) Changed team member permissions
+		// for Paper doc
 		PaperDocChangeMemberRole json.RawMessage `json:"paper_doc_change_member_role,omitempty"`
-		// PaperDocChangeSharingPolicy : (paper) Changed the sharing policy for
-		// Paper doc.
+		// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for
+		// Paper doc
 		PaperDocChangeSharingPolicy json.RawMessage `json:"paper_doc_change_sharing_policy,omitempty"`
-		// PaperDocChangeSubscription : (paper) Followed or unfollowed a Paper
-		// doc.
+		// PaperDocChangeSubscription : (paper) Followed/unfollowed Paper doc
 		PaperDocChangeSubscription json.RawMessage `json:"paper_doc_change_subscription,omitempty"`
-		// PaperDocDeleted : (paper) Paper doc archived. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// PaperDocDeleted : (paper) Archived Paper doc (deprecated, no longer
+		// logged)
 		PaperDocDeleted json.RawMessage `json:"paper_doc_deleted,omitempty"`
-		// PaperDocDeleteComment : (paper) Deleted a Paper doc comment.
+		// PaperDocDeleteComment : (paper) Deleted Paper doc comment
 		PaperDocDeleteComment json.RawMessage `json:"paper_doc_delete_comment,omitempty"`
-		// PaperDocDownload : (paper) Downloaded a Paper doc in a particular
-		// output format.
+		// PaperDocDownload : (paper) Downloaded Paper doc in specific format
 		PaperDocDownload json.RawMessage `json:"paper_doc_download,omitempty"`
-		// PaperDocEdit : (paper) Edited a Paper doc.
+		// PaperDocEdit : (paper) Edited Paper doc
 		PaperDocEdit json.RawMessage `json:"paper_doc_edit,omitempty"`
-		// PaperDocEditComment : (paper) Edited a Paper doc comment.
+		// PaperDocEditComment : (paper) Edited Paper doc comment
 		PaperDocEditComment json.RawMessage `json:"paper_doc_edit_comment,omitempty"`
-		// PaperDocFollowed : (paper) Followed a Paper doc. This event is
-		// replaced by paper_doc_change_subscription and will not be logged
-		// going forward.
+		// PaperDocFollowed : (paper) Followed Paper doc (deprecated, replaced
+		// by 'Followed/unfollowed Paper doc')
 		PaperDocFollowed json.RawMessage `json:"paper_doc_followed,omitempty"`
-		// PaperDocMention : (paper) Mentioned a member in a Paper doc.
+		// PaperDocMention : (paper) Mentioned team member in Paper doc
 		PaperDocMention json.RawMessage `json:"paper_doc_mention,omitempty"`
-		// PaperDocRequestAccess : (paper) Requested to be a member on a Paper
-		// doc.
+		// PaperDocRequestAccess : (paper) Requested access to Paper doc
 		PaperDocRequestAccess json.RawMessage `json:"paper_doc_request_access,omitempty"`
-		// PaperDocResolveComment : (paper) Paper doc comment resolved.
+		// PaperDocResolveComment : (paper) Resolved Paper doc comment
 		PaperDocResolveComment json.RawMessage `json:"paper_doc_resolve_comment,omitempty"`
-		// PaperDocRevert : (paper) Restored a Paper doc to previous revision.
+		// PaperDocRevert : (paper) Restored Paper doc to previous version
 		PaperDocRevert json.RawMessage `json:"paper_doc_revert,omitempty"`
-		// PaperDocSlackShare : (paper) Paper doc link shared via slack.
+		// PaperDocSlackShare : (paper) Shared Paper doc via Slack
 		PaperDocSlackShare json.RawMessage `json:"paper_doc_slack_share,omitempty"`
-		// PaperDocTeamInvite : (paper) Paper doc shared with team member. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// PaperDocTeamInvite : (paper) Shared Paper doc with team member
+		// (deprecated, no longer logged)
 		PaperDocTeamInvite json.RawMessage `json:"paper_doc_team_invite,omitempty"`
-		// PaperDocTrashed : (paper) Paper doc trashed.
+		// PaperDocTrashed : (paper) Deleted Paper doc
 		PaperDocTrashed json.RawMessage `json:"paper_doc_trashed,omitempty"`
-		// PaperDocUnresolveComment : (paper) Unresolved a Paper doc comment.
+		// PaperDocUnresolveComment : (paper) Unresolved Paper doc comment
 		PaperDocUnresolveComment json.RawMessage `json:"paper_doc_unresolve_comment,omitempty"`
-		// PaperDocUntrashed : (paper) Paper doc untrashed.
+		// PaperDocUntrashed : (paper) Restored Paper doc
 		PaperDocUntrashed json.RawMessage `json:"paper_doc_untrashed,omitempty"`
-		// PaperDocView : (paper) Viewed Paper doc.
+		// PaperDocView : (paper) Viewed Paper doc
 		PaperDocView json.RawMessage `json:"paper_doc_view,omitempty"`
-		// PaperExternalViewAllow : (paper) Paper external sharing policy
-		// changed: anyone. This event is deprecated and will not be logged
-		// going forward as the associated product functionality no longer
-		// exists.
+		// PaperExternalViewAllow : (paper) Changed Paper external sharing
+		// setting to anyone (deprecated, no longer logged)
 		PaperExternalViewAllow json.RawMessage `json:"paper_external_view_allow,omitempty"`
-		// PaperExternalViewDefaultTeam : (paper) Paper external sharing policy
-		// changed: default team. This event is deprecated and will not be
-		// logged going forward as the associated product functionality no
-		// longer exists.
+		// PaperExternalViewDefaultTeam : (paper) Changed Paper external sharing
+		// setting to default team (deprecated, no longer logged)
 		PaperExternalViewDefaultTeam json.RawMessage `json:"paper_external_view_default_team,omitempty"`
-		// PaperExternalViewForbid : (paper) Paper external sharing policy
-		// changed: team-only. This event is deprecated and will not be logged
-		// going forward as the associated product functionality no longer
-		// exists.
+		// PaperExternalViewForbid : (paper) Changed Paper external sharing
+		// setting to team-only (deprecated, no longer logged)
 		PaperExternalViewForbid json.RawMessage `json:"paper_external_view_forbid,omitempty"`
-		// PaperFolderChangeSubscription : (paper) Followed or unfollowed a
-		// Paper folder.
+		// PaperFolderChangeSubscription : (paper) Followed/unfollowed Paper
+		// folder
 		PaperFolderChangeSubscription json.RawMessage `json:"paper_folder_change_subscription,omitempty"`
-		// PaperFolderDeleted : (paper) Paper folder archived. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// PaperFolderDeleted : (paper) Archived Paper folder (deprecated, no
+		// longer logged)
 		PaperFolderDeleted json.RawMessage `json:"paper_folder_deleted,omitempty"`
-		// PaperFolderFollowed : (paper) Followed a Paper folder. This event is
-		// replaced by paper_folder_change_subscription and will not be logged
-		// going forward.
+		// PaperFolderFollowed : (paper) Followed Paper folder (deprecated,
+		// replaced by 'Followed/unfollowed Paper folder')
 		PaperFolderFollowed json.RawMessage `json:"paper_folder_followed,omitempty"`
-		// PaperFolderTeamInvite : (paper) Paper folder shared with team member.
-		// This event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// PaperFolderTeamInvite : (paper) Shared Paper folder with member
+		// (deprecated, no longer logged)
 		PaperFolderTeamInvite json.RawMessage `json:"paper_folder_team_invite,omitempty"`
-		// PasswordChange : (passwords) Changed password.
+		// PasswordChange : (passwords) Changed password
 		PasswordChange json.RawMessage `json:"password_change,omitempty"`
-		// PasswordReset : (passwords) Reset password.
+		// PasswordReset : (passwords) Reset password
 		PasswordReset json.RawMessage `json:"password_reset,omitempty"`
-		// PasswordResetAll : (passwords) Reset all team member passwords.
+		// PasswordResetAll : (passwords) Reset all team member passwords
 		PasswordResetAll json.RawMessage `json:"password_reset_all,omitempty"`
-		// EmmCreateExceptionsReport : (reports) EMM excluded users report
-		// created.
+		// EmmCreateExceptionsReport : (reports) Created EMM-excluded users
+		// report
 		EmmCreateExceptionsReport json.RawMessage `json:"emm_create_exceptions_report,omitempty"`
-		// EmmCreateUsageReport : (reports) EMM mobile app usage report created.
+		// EmmCreateUsageReport : (reports) Created EMM mobile app usage report
 		EmmCreateUsageReport json.RawMessage `json:"emm_create_usage_report,omitempty"`
-		// PaperAdminExportStart : (reports) Exported all Paper documents in the
-		// team.
+		// ExportMembersReport : (reports) Created member data report
+		ExportMembersReport json.RawMessage `json:"export_members_report,omitempty"`
+		// PaperAdminExportStart : (reports) Exported all team Paper docs
 		PaperAdminExportStart json.RawMessage `json:"paper_admin_export_start,omitempty"`
-		// SmartSyncCreateAdminPrivilegeReport : (reports) Smart Sync non-admin
-		// devices report created.
+		// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync
+		// non-admin devices report
 		SmartSyncCreateAdminPrivilegeReport json.RawMessage `json:"smart_sync_create_admin_privilege_report,omitempty"`
-		// TeamActivityCreateReport : (reports) Created a team activity report.
+		// TeamActivityCreateReport : (reports) Created team activity report
 		TeamActivityCreateReport json.RawMessage `json:"team_activity_create_report,omitempty"`
-		// CollectionShare : (sharing) Shared an album.
+		// CollectionShare : (sharing) Shared album
 		CollectionShare json.RawMessage `json:"collection_share,omitempty"`
-		// NoteAclInviteOnly : (sharing) Changed a Paper document to be
-		// invite-only. This event is deprecated and will not be logged going
-		// forward as the associated product functionality no longer exists.
+		// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
+		// (deprecated, no longer logged)
 		NoteAclInviteOnly json.RawMessage `json:"note_acl_invite_only,omitempty"`
-		// NoteAclLink : (sharing) Changed a Paper document to be link
-		// accessible. This event is deprecated and will not be logged going
-		// forward as the associated product functionality no longer exists.
+		// NoteAclLink : (sharing) Changed Paper doc to link-accessible
+		// (deprecated, no longer logged)
 		NoteAclLink json.RawMessage `json:"note_acl_link,omitempty"`
-		// NoteAclTeamLink : (sharing) Changed a Paper document to be link
-		// accessible for the team. This event is deprecated and will not be
-		// logged going forward as the associated product functionality no
-		// longer exists.
+		// NoteAclTeamLink : (sharing) Changed Paper doc to link-accessible for
+		// team (deprecated, no longer logged)
 		NoteAclTeamLink json.RawMessage `json:"note_acl_team_link,omitempty"`
-		// NoteShared : (sharing) Shared a Paper doc. This event is deprecated
-		// and will not be logged going forward as the associated product
-		// functionality no longer exists.
+		// NoteShared : (sharing) Shared Paper doc (deprecated, no longer
+		// logged)
 		NoteShared json.RawMessage `json:"note_shared,omitempty"`
-		// NoteShareReceive : (sharing) Shared Paper document received. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// NoteShareReceive : (sharing) Shared received Paper doc (deprecated,
+		// no longer logged)
 		NoteShareReceive json.RawMessage `json:"note_share_receive,omitempty"`
-		// OpenNoteShared : (sharing) Opened a shared Paper doc. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// OpenNoteShared : (sharing) Opened shared Paper doc (deprecated, no
+		// longer logged)
 		OpenNoteShared json.RawMessage `json:"open_note_shared,omitempty"`
-		// SfAddGroup : (sharing) Added the team to a shared folder. This event
-		// is deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// SfAddGroup : (sharing) Added team to shared folder (deprecated, no
+		// longer logged)
 		SfAddGroup json.RawMessage `json:"sf_add_group,omitempty"`
-		// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed non
-		// collaborators to view links to files in a shared folder. This event
-		// is deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed
+		// non-collaborators to view links to files in shared folder
+		// (deprecated, no longer logged)
 		SfAllowNonMembersToViewSharedLinks json.RawMessage `json:"sf_allow_non_members_to_view_shared_links,omitempty"`
-		// SfExternalInviteWarn : (sharing) Admin settings: team members see a
-		// warning before sharing folders outside the team (DEPRECATED FEATURE).
-		// This event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfExternalInviteWarn : (sharing) Set team members to see warning
+		// before sharing folders outside team (deprecated, no longer logged)
 		SfExternalInviteWarn json.RawMessage `json:"sf_external_invite_warn,omitempty"`
-		// SfInviteGroup : (sharing) Invited a group to a shared folder. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfFbInvite : (sharing) Invited Facebook users to shared folder
+		// (deprecated, no longer logged)
+		SfFbInvite json.RawMessage `json:"sf_fb_invite,omitempty"`
+		// SfFbInviteChangeRole : (sharing) Changed Facebook user's role in
+		// shared folder (deprecated, no longer logged)
+		SfFbInviteChangeRole json.RawMessage `json:"sf_fb_invite_change_role,omitempty"`
+		// SfFbUninvite : (sharing) Uninvited Facebook user from shared folder
+		// (deprecated, no longer logged)
+		SfFbUninvite json.RawMessage `json:"sf_fb_uninvite,omitempty"`
+		// SfInviteGroup : (sharing) Invited group to shared folder (deprecated,
+		// no longer logged)
 		SfInviteGroup json.RawMessage `json:"sf_invite_group,omitempty"`
-		// SfTeamGrantAccess : (sharing) Granted access to a shared folder. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfTeamGrantAccess : (sharing) Granted access to shared folder
+		// (deprecated, no longer logged)
 		SfTeamGrantAccess json.RawMessage `json:"sf_team_grant_access,omitempty"`
-		// SfTeamInvite : (sharing) Invited team members to a shared folder.
-		// This event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfTeamInvite : (sharing) Invited team members to shared folder
+		// (deprecated, replaced by 'Invited user to Dropbox and added them to
+		// shared file/folder')
 		SfTeamInvite json.RawMessage `json:"sf_team_invite,omitempty"`
-		// SfTeamInviteChangeRole : (sharing) Changed a team member's role in a
-		// shared folder. This event is deprecated and will not be logged going
-		// forward as the associated product functionality no longer exists.
+		// SfTeamInviteChangeRole : (sharing) Changed team member's role in
+		// shared folder (deprecated, no longer logged)
 		SfTeamInviteChangeRole json.RawMessage `json:"sf_team_invite_change_role,omitempty"`
-		// SfTeamJoin : (sharing) Joined a team member's shared folder. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfTeamJoin : (sharing) Joined team member's shared folder
+		// (deprecated, no longer logged)
 		SfTeamJoin json.RawMessage `json:"sf_team_join,omitempty"`
-		// SfTeamJoinFromOobLink : (sharing) Joined a team member's shared
-		// folder from a link. This event is deprecated and will not be logged
-		// going forward as the associated product functionality no longer
-		// exists.
+		// SfTeamJoinFromOobLink : (sharing) Joined team member's shared folder
+		// from link (deprecated, no longer logged)
 		SfTeamJoinFromOobLink json.RawMessage `json:"sf_team_join_from_oob_link,omitempty"`
-		// SfTeamUninvite : (sharing) Unshared a folder with a team member. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SfTeamUninvite : (sharing) Unshared folder with team member
+		// (deprecated, replaced by 'Removed invitee from shared file/folder
+		// before invite accepted')
 		SfTeamUninvite json.RawMessage `json:"sf_team_uninvite,omitempty"`
-		// SharedContentAddInvitees : (sharing) Sent an email invitation to the
-		// membership of a shared file or folder.
+		// SharedContentAddInvitees : (sharing) Invited user to Dropbox and
+		// added them to shared file/folder
 		SharedContentAddInvitees json.RawMessage `json:"shared_content_add_invitees,omitempty"`
-		// SharedContentAddLinkExpiry : (sharing) Added an expiry to the link
-		// for the shared file or folder.
+		// SharedContentAddLinkExpiry : (sharing) Added expiration date to link
+		// for shared file/folder
 		SharedContentAddLinkExpiry json.RawMessage `json:"shared_content_add_link_expiry,omitempty"`
-		// SharedContentAddLinkPassword : (sharing) Added a password to the link
-		// for the shared file or folder.
+		// SharedContentAddLinkPassword : (sharing) Added password to link for
+		// shared file/folder
 		SharedContentAddLinkPassword json.RawMessage `json:"shared_content_add_link_password,omitempty"`
-		// SharedContentAddMember : (sharing) Added users and/or groups to the
-		// membership of a shared file or folder.
+		// SharedContentAddMember : (sharing) Added users and/or groups to
+		// shared file/folder
 		SharedContentAddMember json.RawMessage `json:"shared_content_add_member,omitempty"`
 		// SharedContentChangeDownloadsPolicy : (sharing) Changed whether
-		// members can download the shared file or folder.
+		// members can download shared file/folder
 		SharedContentChangeDownloadsPolicy json.RawMessage `json:"shared_content_change_downloads_policy,omitempty"`
-		// SharedContentChangeInviteeRole : (sharing) Changed the access type of
-		// an invitee to a shared file or folder before the invitation was
-		// claimed.
+		// SharedContentChangeInviteeRole : (sharing) Changed access type of
+		// invitee to shared file/folder before invite accepted
 		SharedContentChangeInviteeRole json.RawMessage `json:"shared_content_change_invitee_role,omitempty"`
-		// SharedContentChangeLinkAudience : (sharing) Changed the audience of
-		// the link for a shared file or folder.
+		// SharedContentChangeLinkAudience : (sharing) Changed link audience of
+		// shared file/folder
 		SharedContentChangeLinkAudience json.RawMessage `json:"shared_content_change_link_audience,omitempty"`
-		// SharedContentChangeLinkExpiry : (sharing) Changed the expiry of the
-		// link for the shared file or folder.
+		// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of
+		// shared file/folder
 		SharedContentChangeLinkExpiry json.RawMessage `json:"shared_content_change_link_expiry,omitempty"`
-		// SharedContentChangeLinkPassword : (sharing) Changed the password on
-		// the link for the shared file or folder.
+		// SharedContentChangeLinkPassword : (sharing) Changed link password of
+		// shared file/folder
 		SharedContentChangeLinkPassword json.RawMessage `json:"shared_content_change_link_password,omitempty"`
-		// SharedContentChangeMemberRole : (sharing) Changed the access type of
-		// a shared file or folder member.
+		// SharedContentChangeMemberRole : (sharing) Changed access type of
+		// shared file/folder member
 		SharedContentChangeMemberRole json.RawMessage `json:"shared_content_change_member_role,omitempty"`
 		// SharedContentChangeViewerInfoPolicy : (sharing) Changed whether
-		// members can see who viewed the shared file or folder.
+		// members can see who viewed shared file/folder
 		SharedContentChangeViewerInfoPolicy json.RawMessage `json:"shared_content_change_viewer_info_policy,omitempty"`
-		// SharedContentClaimInvitation : (sharing) Claimed membership to a team
-		// member's shared folder.
+		// SharedContentClaimInvitation : (sharing) Acquired membership of
+		// shared file/folder by accepting invite
 		SharedContentClaimInvitation json.RawMessage `json:"shared_content_claim_invitation,omitempty"`
-		// SharedContentCopy : (sharing) Copied the shared file or folder to own
-		// Dropbox.
+		// SharedContentCopy : (sharing) Copied shared file/folder to own
+		// Dropbox
 		SharedContentCopy json.RawMessage `json:"shared_content_copy,omitempty"`
-		// SharedContentDownload : (sharing) Downloaded the shared file or
-		// folder.
+		// SharedContentDownload : (sharing) Downloaded shared file/folder
 		SharedContentDownload json.RawMessage `json:"shared_content_download,omitempty"`
-		// SharedContentRelinquishMembership : (sharing) Left the membership of
-		// a shared file or folder.
+		// SharedContentRelinquishMembership : (sharing) Left shared file/folder
 		SharedContentRelinquishMembership json.RawMessage `json:"shared_content_relinquish_membership,omitempty"`
-		// SharedContentRemoveInvitee : (sharing) Removed an invitee from the
-		// membership of a shared file or folder before it was claimed.
-		SharedContentRemoveInvitee json.RawMessage `json:"shared_content_remove_invitee,omitempty"`
-		// SharedContentRemoveLinkExpiry : (sharing) Removed the expiry of the
-		// link for the shared file or folder.
+		// SharedContentRemoveInvitees : (sharing) Removed invitee from shared
+		// file/folder before invite accepted
+		SharedContentRemoveInvitees json.RawMessage `json:"shared_content_remove_invitees,omitempty"`
+		// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration
+		// date of shared file/folder
 		SharedContentRemoveLinkExpiry json.RawMessage `json:"shared_content_remove_link_expiry,omitempty"`
-		// SharedContentRemoveLinkPassword : (sharing) Removed the password on
-		// the link for the shared file or folder.
+		// SharedContentRemoveLinkPassword : (sharing) Removed link password of
+		// shared file/folder
 		SharedContentRemoveLinkPassword json.RawMessage `json:"shared_content_remove_link_password,omitempty"`
-		// SharedContentRemoveMember : (sharing) Removed a user or a group from
-		// the membership of a shared file or folder.
+		// SharedContentRemoveMember : (sharing) Removed user/group from shared
+		// file/folder
 		SharedContentRemoveMember json.RawMessage `json:"shared_content_remove_member,omitempty"`
-		// SharedContentRequestAccess : (sharing) Requested to be on the
-		// membership of a shared file or folder.
+		// SharedContentRequestAccess : (sharing) Requested access to shared
+		// file/folder
 		SharedContentRequestAccess json.RawMessage `json:"shared_content_request_access,omitempty"`
-		// SharedContentUnshare : (sharing) Unshared a shared file or folder by
-		// clearing its membership and turning off its link.
+		// SharedContentUnshare : (sharing) Unshared file/folder by clearing
+		// membership and turning off link
 		SharedContentUnshare json.RawMessage `json:"shared_content_unshare,omitempty"`
-		// SharedContentView : (sharing) Previewed the shared file or folder.
+		// SharedContentView : (sharing) Previewed shared file/folder
 		SharedContentView json.RawMessage `json:"shared_content_view,omitempty"`
-		// SharedFolderChangeConfidentiality : (sharing) Set or unset the
-		// confidential flag on a shared folder.
-		SharedFolderChangeConfidentiality json.RawMessage `json:"shared_folder_change_confidentiality,omitempty"`
-		// SharedFolderChangeLinkPolicy : (sharing) Changed who can access the
-		// shared folder via a link.
+		// SharedFolderChangeLinkPolicy : (sharing) Changed who can access
+		// shared folder via link
 		SharedFolderChangeLinkPolicy json.RawMessage `json:"shared_folder_change_link_policy,omitempty"`
-		// SharedFolderChangeMemberManagementPolicy : (sharing) Changed who can
-		// manage the membership of a shared folder.
-		SharedFolderChangeMemberManagementPolicy json.RawMessage `json:"shared_folder_change_member_management_policy,omitempty"`
-		// SharedFolderChangeMemberPolicy : (sharing) Changed who can become a
-		// member of the shared folder.
-		SharedFolderChangeMemberPolicy json.RawMessage `json:"shared_folder_change_member_policy,omitempty"`
-		// SharedFolderCreate : (sharing) Created a shared folder.
+		// SharedFolderChangeMembersInheritancePolicy : (sharing) Changed
+		// whether shared folder inherits members from parent folder
+		SharedFolderChangeMembersInheritancePolicy json.RawMessage `json:"shared_folder_change_members_inheritance_policy,omitempty"`
+		// SharedFolderChangeMembersManagementPolicy : (sharing) Changed who can
+		// add/remove members of shared folder
+		SharedFolderChangeMembersManagementPolicy json.RawMessage `json:"shared_folder_change_members_management_policy,omitempty"`
+		// SharedFolderChangeMembersPolicy : (sharing) Changed who can become
+		// member of shared folder
+		SharedFolderChangeMembersPolicy json.RawMessage `json:"shared_folder_change_members_policy,omitempty"`
+		// SharedFolderCreate : (sharing) Created shared folder
 		SharedFolderCreate json.RawMessage `json:"shared_folder_create,omitempty"`
-		// SharedFolderDeclineInvitation : (sharing) Declined a team member's
-		// invitation to a shared folder.
+		// SharedFolderDeclineInvitation : (sharing) Declined team member's
+		// invite to shared folder
 		SharedFolderDeclineInvitation json.RawMessage `json:"shared_folder_decline_invitation,omitempty"`
-		// SharedFolderMount : (sharing) Added a shared folder to own Dropbox.
+		// SharedFolderMount : (sharing) Added shared folder to own Dropbox
 		SharedFolderMount json.RawMessage `json:"shared_folder_mount,omitempty"`
-		// SharedFolderNest : (sharing) Changed the parent of a shared folder.
+		// SharedFolderNest : (sharing) Changed parent of shared folder
 		SharedFolderNest json.RawMessage `json:"shared_folder_nest,omitempty"`
-		// SharedFolderTransferOwnership : (sharing) Transferred the ownership
-		// of a shared folder to another member.
+		// SharedFolderTransferOwnership : (sharing) Transferred ownership of
+		// shared folder to another member
 		SharedFolderTransferOwnership json.RawMessage `json:"shared_folder_transfer_ownership,omitempty"`
-		// SharedFolderUnmount : (sharing) Deleted a shared folder from Dropbox.
+		// SharedFolderUnmount : (sharing) Deleted shared folder from Dropbox
 		SharedFolderUnmount json.RawMessage `json:"shared_folder_unmount,omitempty"`
-		// SharedLinkAddExpiry : (sharing) Added a shared link expiration date.
+		// SharedLinkAddExpiry : (sharing) Added shared link expiration date
 		SharedLinkAddExpiry json.RawMessage `json:"shared_link_add_expiry,omitempty"`
-		// SharedLinkChangeExpiry : (sharing) Changed the shared link expiration
-		// date.
+		// SharedLinkChangeExpiry : (sharing) Changed shared link expiration
+		// date
 		SharedLinkChangeExpiry json.RawMessage `json:"shared_link_change_expiry,omitempty"`
-		// SharedLinkChangeVisibility : (sharing) Changed the visibility of a
-		// shared link.
+		// SharedLinkChangeVisibility : (sharing) Changed visibility of shared
+		// link
 		SharedLinkChangeVisibility json.RawMessage `json:"shared_link_change_visibility,omitempty"`
-		// SharedLinkCopy : (sharing) Added a file/folder to their Dropbox from
-		// a shared link.
+		// SharedLinkCopy : (sharing) Added file/folder to Dropbox from shared
+		// link
 		SharedLinkCopy json.RawMessage `json:"shared_link_copy,omitempty"`
-		// SharedLinkCreate : (sharing) Created a new shared link.
+		// SharedLinkCreate : (sharing) Created shared link
 		SharedLinkCreate json.RawMessage `json:"shared_link_create,omitempty"`
-		// SharedLinkDisable : (sharing) Removed a shared link.
+		// SharedLinkDisable : (sharing) Removed shared link
 		SharedLinkDisable json.RawMessage `json:"shared_link_disable,omitempty"`
-		// SharedLinkDownload : (sharing) Downloaded a file/folder from a shared
-		// link.
+		// SharedLinkDownload : (sharing) Downloaded file/folder from shared
+		// link
 		SharedLinkDownload json.RawMessage `json:"shared_link_download,omitempty"`
-		// SharedLinkRemoveExpiry : (sharing) Removed a shared link expiration
-		// date.
+		// SharedLinkRemoveExpiry : (sharing) Removed shared link expiration
+		// date
 		SharedLinkRemoveExpiry json.RawMessage `json:"shared_link_remove_expiry,omitempty"`
-		// SharedLinkShare : (sharing) Added new members as the audience of a
-		// shared link.
+		// SharedLinkShare : (sharing) Added members as audience of shared link
 		SharedLinkShare json.RawMessage `json:"shared_link_share,omitempty"`
-		// SharedLinkView : (sharing) Opened a shared link.
+		// SharedLinkView : (sharing) Opened shared link
 		SharedLinkView json.RawMessage `json:"shared_link_view,omitempty"`
-		// SharedNoteOpened : (sharing) Shared Paper document was opened. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no
+		// longer logged)
 		SharedNoteOpened json.RawMessage `json:"shared_note_opened,omitempty"`
-		// ShmodelGroupShare : (sharing) Shared a link with a group. This event
-		// is deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no
+		// longer logged)
 		ShmodelGroupShare json.RawMessage `json:"shmodel_group_share,omitempty"`
-		// SsoAddCert : (sso) Added the X.509 certificate for SSO.
+		// ShowcaseAccessGranted : (showcase) Granted access to showcase
+		ShowcaseAccessGranted json.RawMessage `json:"showcase_access_granted,omitempty"`
+		// ShowcaseAddMember : (showcase) Added member to showcase
+		ShowcaseAddMember json.RawMessage `json:"showcase_add_member,omitempty"`
+		// ShowcaseArchived : (showcase) Archived showcase
+		ShowcaseArchived json.RawMessage `json:"showcase_archived,omitempty"`
+		// ShowcaseCreated : (showcase) Created showcase
+		ShowcaseCreated json.RawMessage `json:"showcase_created,omitempty"`
+		// ShowcaseDeleteComment : (showcase) Deleted showcase comment
+		ShowcaseDeleteComment json.RawMessage `json:"showcase_delete_comment,omitempty"`
+		// ShowcaseEdited : (showcase) Edited showcase
+		ShowcaseEdited json.RawMessage `json:"showcase_edited,omitempty"`
+		// ShowcaseEditComment : (showcase) Edited showcase comment
+		ShowcaseEditComment json.RawMessage `json:"showcase_edit_comment,omitempty"`
+		// ShowcaseFileAdded : (showcase) Added file to showcase
+		ShowcaseFileAdded json.RawMessage `json:"showcase_file_added,omitempty"`
+		// ShowcaseFileDownload : (showcase) Downloaded file from showcase
+		ShowcaseFileDownload json.RawMessage `json:"showcase_file_download,omitempty"`
+		// ShowcaseFileRemoved : (showcase) Removed file from showcase
+		ShowcaseFileRemoved json.RawMessage `json:"showcase_file_removed,omitempty"`
+		// ShowcaseFileView : (showcase) Viewed file in showcase
+		ShowcaseFileView json.RawMessage `json:"showcase_file_view,omitempty"`
+		// ShowcasePermanentlyDeleted : (showcase) Permanently deleted showcase
+		ShowcasePermanentlyDeleted json.RawMessage `json:"showcase_permanently_deleted,omitempty"`
+		// ShowcasePostComment : (showcase) Added showcase comment
+		ShowcasePostComment json.RawMessage `json:"showcase_post_comment,omitempty"`
+		// ShowcaseRemoveMember : (showcase) Removed member from showcase
+		ShowcaseRemoveMember json.RawMessage `json:"showcase_remove_member,omitempty"`
+		// ShowcaseRenamed : (showcase) Renamed showcase
+		ShowcaseRenamed json.RawMessage `json:"showcase_renamed,omitempty"`
+		// ShowcaseRequestAccess : (showcase) Requested access to showcase
+		ShowcaseRequestAccess json.RawMessage `json:"showcase_request_access,omitempty"`
+		// ShowcaseResolveComment : (showcase) Resolved showcase comment
+		ShowcaseResolveComment json.RawMessage `json:"showcase_resolve_comment,omitempty"`
+		// ShowcaseRestored : (showcase) Unarchived showcase
+		ShowcaseRestored json.RawMessage `json:"showcase_restored,omitempty"`
+		// ShowcaseTrashed : (showcase) Deleted showcase
+		ShowcaseTrashed json.RawMessage `json:"showcase_trashed,omitempty"`
+		// ShowcaseUnresolveComment : (showcase) Unresolved showcase comment
+		ShowcaseUnresolveComment json.RawMessage `json:"showcase_unresolve_comment,omitempty"`
+		// ShowcaseUntrashed : (showcase) Restored showcase
+		ShowcaseUntrashed json.RawMessage `json:"showcase_untrashed,omitempty"`
+		// ShowcaseView : (showcase) Viewed showcase
+		ShowcaseView json.RawMessage `json:"showcase_view,omitempty"`
+		// SsoAddCert : (sso) Added X.509 certificate for SSO
 		SsoAddCert json.RawMessage `json:"sso_add_cert,omitempty"`
-		// SsoAddLoginUrl : (sso) Added sign-in URL for SSO.
+		// SsoAddLoginUrl : (sso) Added sign-in URL for SSO
 		SsoAddLoginUrl json.RawMessage `json:"sso_add_login_url,omitempty"`
-		// SsoAddLogoutUrl : (sso) Added sign-out URL for SSO.
+		// SsoAddLogoutUrl : (sso) Added sign-out URL for SSO
 		SsoAddLogoutUrl json.RawMessage `json:"sso_add_logout_url,omitempty"`
-		// SsoChangeCert : (sso) Changed the X.509 certificate for SSO.
+		// SsoChangeCert : (sso) Changed X.509 certificate for SSO
 		SsoChangeCert json.RawMessage `json:"sso_change_cert,omitempty"`
-		// SsoChangeLoginUrl : (sso) Changed the sign-in URL for SSO.
+		// SsoChangeLoginUrl : (sso) Changed sign-in URL for SSO
 		SsoChangeLoginUrl json.RawMessage `json:"sso_change_login_url,omitempty"`
-		// SsoChangeLogoutUrl : (sso) Changed the sign-out URL for SSO.
+		// SsoChangeLogoutUrl : (sso) Changed sign-out URL for SSO
 		SsoChangeLogoutUrl json.RawMessage `json:"sso_change_logout_url,omitempty"`
-		// SsoChangeSamlIdentityMode : (sso) Changed the SAML identity mode for
-		// SSO.
+		// SsoChangeSamlIdentityMode : (sso) Changed SAML identity mode for SSO
 		SsoChangeSamlIdentityMode json.RawMessage `json:"sso_change_saml_identity_mode,omitempty"`
-		// SsoRemoveCert : (sso) Removed the X.509 certificate for SSO.
+		// SsoRemoveCert : (sso) Removed X.509 certificate for SSO
 		SsoRemoveCert json.RawMessage `json:"sso_remove_cert,omitempty"`
-		// SsoRemoveLoginUrl : (sso) Removed the sign-in URL for SSO.
+		// SsoRemoveLoginUrl : (sso) Removed sign-in URL for SSO
 		SsoRemoveLoginUrl json.RawMessage `json:"sso_remove_login_url,omitempty"`
-		// SsoRemoveLogoutUrl : (sso) Removed single sign-on logout URL.
+		// SsoRemoveLogoutUrl : (sso) Removed sign-out URL for SSO
 		SsoRemoveLogoutUrl json.RawMessage `json:"sso_remove_logout_url,omitempty"`
-		// TeamFolderChangeStatus : (team_folders) Changed the archival status
-		// of a team folder.
+		// TeamFolderChangeStatus : (team_folders) Changed archival status of
+		// team folder
 		TeamFolderChangeStatus json.RawMessage `json:"team_folder_change_status,omitempty"`
-		// TeamFolderCreate : (team_folders) Created a new team folder in active
-		// status.
+		// TeamFolderCreate : (team_folders) Created team folder in active
+		// status
 		TeamFolderCreate json.RawMessage `json:"team_folder_create,omitempty"`
-		// TeamFolderDowngrade : (team_folders) Downgraded a team folder to a
-		// regular shared folder.
+		// TeamFolderDowngrade : (team_folders) Downgraded team folder to
+		// regular shared folder
 		TeamFolderDowngrade json.RawMessage `json:"team_folder_downgrade,omitempty"`
-		// TeamFolderPermanentlyDelete : (team_folders) Permanently deleted an
-		// archived team folder.
+		// TeamFolderPermanentlyDelete : (team_folders) Permanently deleted
+		// archived team folder
 		TeamFolderPermanentlyDelete json.RawMessage `json:"team_folder_permanently_delete,omitempty"`
-		// TeamFolderRename : (team_folders) Renamed an active or archived team
-		// folder.
+		// TeamFolderRename : (team_folders) Renamed active/archived team folder
 		TeamFolderRename json.RawMessage `json:"team_folder_rename,omitempty"`
-		// AccountCaptureChangePolicy : (team_policies) Changed the account
-		// capture policy on a domain belonging to the team.
+		// TeamSelectiveSyncSettingsChanged : (team_folders) Changed sync
+		// default
+		TeamSelectiveSyncSettingsChanged json.RawMessage `json:"team_selective_sync_settings_changed,omitempty"`
+		// AccountCaptureChangePolicy : (team_policies) Changed account capture
+		// setting on team domain
 		AccountCaptureChangePolicy json.RawMessage `json:"account_capture_change_policy,omitempty"`
-		// AllowDownloadDisabled : (team_policies) Disabled allow downloads.
-		// This event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// AllowDownloadDisabled : (team_policies) Disabled downloads
+		// (deprecated, no longer logged)
 		AllowDownloadDisabled json.RawMessage `json:"allow_download_disabled,omitempty"`
-		// AllowDownloadEnabled : (team_policies) Enabled allow downloads. This
-		// event is deprecated and will not be logged going forward as the
-		// associated product functionality no longer exists.
+		// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated,
+		// no longer logged)
 		AllowDownloadEnabled json.RawMessage `json:"allow_download_enabled,omitempty"`
-		// DataPlacementRestrictionChangePolicy : (team_policies) Set a
-		// restriction policy regarding the location of data centers where team
-		// data resides.
+		// DataPlacementRestrictionChangePolicy : (team_policies) Set
+		// restrictions on data center locations where team data resides
 		DataPlacementRestrictionChangePolicy json.RawMessage `json:"data_placement_restriction_change_policy,omitempty"`
-		// DataPlacementRestrictionSatisfyPolicy : (team_policies) Satisfied a
-		// previously set restriction policy regarding the location of data
-		// centers where team data resides (i.e. all data have been migrated
-		// according to the restriction placed).
+		// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
+		// restrictions on data center locations where team data resides
 		DataPlacementRestrictionSatisfyPolicy json.RawMessage `json:"data_placement_restriction_satisfy_policy,omitempty"`
-		// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set or removed a
-		// limit on the number of computers each team member can link to their
-		// work Dropbox account.
+		// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set/removed
+		// limit on number of computers member can link to team Dropbox account
 		DeviceApprovalsChangeDesktopPolicy json.RawMessage `json:"device_approvals_change_desktop_policy,omitempty"`
-		// DeviceApprovalsChangeMobilePolicy : (team_policies) Set or removed a
-		// limit on the number of mobiles devices each team member can link to
-		// their work Dropbox account.
+		// DeviceApprovalsChangeMobilePolicy : (team_policies) Set/removed limit
+		// on number of mobile devices member can link to team Dropbox account
 		DeviceApprovalsChangeMobilePolicy json.RawMessage `json:"device_approvals_change_mobile_policy,omitempty"`
-		// DeviceApprovalsChangeOverageAction : (team_policies) Changed the
-		// action taken when a team member is already over the limits (e.g when
-		// they join the team, an admin lowers limits, etc.).
+		// DeviceApprovalsChangeOverageAction : (team_policies) Changed device
+		// approvals setting when member is over limit
 		DeviceApprovalsChangeOverageAction json.RawMessage `json:"device_approvals_change_overage_action,omitempty"`
-		// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed the
-		// action taken with respect to approval limits when a team member
-		// unlinks an approved device.
+		// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
+		// approvals setting when member unlinks approved device
 		DeviceApprovalsChangeUnlinkAction json.RawMessage `json:"device_approvals_change_unlink_action,omitempty"`
-		// EmmAddException : (team_policies) Added an exception for one or more
-		// team members to optionally use the regular Dropbox app when EMM is
-		// enabled.
+		// EmmAddException : (team_policies) Added members to EMM exception list
 		EmmAddException json.RawMessage `json:"emm_add_exception,omitempty"`
-		// EmmChangePolicy : (team_policies) Enabled or disabled enterprise
-		// mobility management for team members.
+		// EmmChangePolicy : (team_policies) Enabled/disabled enterprise
+		// mobility management for members
 		EmmChangePolicy json.RawMessage `json:"emm_change_policy,omitempty"`
-		// EmmRemoveException : (team_policies) Removed an exception for one or
-		// more team members to optionally use the regular Dropbox app when EMM
-		// is enabled.
+		// EmmRemoveException : (team_policies) Removed members from EMM
+		// exception list
 		EmmRemoveException json.RawMessage `json:"emm_remove_exception,omitempty"`
-		// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted or
-		// opted out of extended version history.
+		// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted
+		// out of extended version history
 		ExtendedVersionHistoryChangePolicy json.RawMessage `json:"extended_version_history_change_policy,omitempty"`
-		// FileCommentsChangePolicy : (team_policies) Enabled or disabled
-		// commenting on team files.
+		// FileCommentsChangePolicy : (team_policies) Enabled/disabled
+		// commenting on team files
 		FileCommentsChangePolicy json.RawMessage `json:"file_comments_change_policy,omitempty"`
-		// FileRequestsChangePolicy : (team_policies) Enabled or disabled file
-		// requests.
+		// FileRequestsChangePolicy : (team_policies) Enabled/disabled file
+		// requests
 		FileRequestsChangePolicy json.RawMessage `json:"file_requests_change_policy,omitempty"`
 		// FileRequestsEmailsEnabled : (team_policies) Enabled file request
-		// emails for everyone. This event is deprecated and will not be logged
-		// going forward as the associated product functionality no longer
-		// exists.
+		// emails for everyone (deprecated, no longer logged)
 		FileRequestsEmailsEnabled json.RawMessage `json:"file_requests_emails_enabled,omitempty"`
-		// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Allowed file
-		// request emails for the team. This event is deprecated and will not be
-		// logged going forward as the associated product functionality no
-		// longer exists.
+		// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Enabled file
+		// request emails for team (deprecated, no longer logged)
 		FileRequestsEmailsRestrictedToTeamOnly json.RawMessage `json:"file_requests_emails_restricted_to_team_only,omitempty"`
-		// GoogleSsoChangePolicy : (team_policies) Enabled or disabled Google
-		// single sign-on for the team.
+		// GoogleSsoChangePolicy : (team_policies) Enabled/disabled Google
+		// single sign-on for team
 		GoogleSsoChangePolicy json.RawMessage `json:"google_sso_change_policy,omitempty"`
 		// GroupUserManagementChangePolicy : (team_policies) Changed who can
-		// create groups.
+		// create groups
 		GroupUserManagementChangePolicy json.RawMessage `json:"group_user_management_change_policy,omitempty"`
 		// MemberRequestsChangePolicy : (team_policies) Changed whether users
-		// can find the team when not invited.
+		// can find team when not invited
 		MemberRequestsChangePolicy json.RawMessage `json:"member_requests_change_policy,omitempty"`
-		// MemberSpaceLimitsAddException : (team_policies) Added an exception
-		// for one or more team members to bypass space limits imposed by
-		// policy.
+		// MemberSpaceLimitsAddException : (team_policies) Added members to
+		// member space limit exception list
 		MemberSpaceLimitsAddException json.RawMessage `json:"member_space_limits_add_exception,omitempty"`
-		// MemberSpaceLimitsChangePolicy : (team_policies) Changed the team
-		// default limit level.
+		// MemberSpaceLimitsChangeCapsTypePolicy : (team_policies) Changed
+		// member space limit type for team
+		MemberSpaceLimitsChangeCapsTypePolicy json.RawMessage `json:"member_space_limits_change_caps_type_policy,omitempty"`
+		// MemberSpaceLimitsChangePolicy : (team_policies) Changed team default
+		// member space limit
 		MemberSpaceLimitsChangePolicy json.RawMessage `json:"member_space_limits_change_policy,omitempty"`
-		// MemberSpaceLimitsRemoveException : (team_policies) Removed an
-		// exception for one or more team members to bypass space limits imposed
-		// by policy.
+		// MemberSpaceLimitsRemoveException : (team_policies) Removed members
+		// from member space limit exception list
 		MemberSpaceLimitsRemoveException json.RawMessage `json:"member_space_limits_remove_exception,omitempty"`
-		// MemberSuggestionsChangePolicy : (team_policies) Enabled or disabled
-		// the option for team members to suggest new members to add to the
-		// team.
+		// MemberSuggestionsChangePolicy : (team_policies) Enabled/disabled
+		// option for team members to suggest people to add to team
 		MemberSuggestionsChangePolicy json.RawMessage `json:"member_suggestions_change_policy,omitempty"`
-		// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled or
-		// disabled the Microsoft Office add-in, which lets team members save
-		// files to Dropbox directly from Microsoft Office.
+		// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled/disabled
+		// Microsoft Office add-in
 		MicrosoftOfficeAddinChangePolicy json.RawMessage `json:"microsoft_office_addin_change_policy,omitempty"`
-		// NetworkControlChangePolicy : (team_policies) Enabled or disabled
-		// network control.
+		// NetworkControlChangePolicy : (team_policies) Enabled/disabled network
+		// control
 		NetworkControlChangePolicy json.RawMessage `json:"network_control_change_policy,omitempty"`
 		// PaperChangeDeploymentPolicy : (team_policies) Changed whether Dropbox
-		// Paper, when enabled, is deployed to all teams or to specific members
-		// of the team.
+		// Paper, when enabled, is deployed to all members or to specific
+		// members
 		PaperChangeDeploymentPolicy json.RawMessage `json:"paper_change_deployment_policy,omitempty"`
-		// PaperChangeMemberLinkPolicy : (team_policies) Changed whether non
-		// team members can view Paper documents using a link. This event is
-		// deprecated and will not be logged going forward as the associated
-		// product functionality no longer exists.
+		// PaperChangeMemberLinkPolicy : (team_policies) Changed whether
+		// non-members can view Paper docs with link (deprecated, no longer
+		// logged)
 		PaperChangeMemberLinkPolicy json.RawMessage `json:"paper_change_member_link_policy,omitempty"`
-		// PaperChangeMemberPolicy : (team_policies) Changed whether team
-		// members can share Paper documents externally (i.e. outside the team),
-		// and if so, whether they should be accessible only by team members or
-		// anyone by default.
+		// PaperChangeMemberPolicy : (team_policies) Changed whether members can
+		// share Paper docs outside team, and if docs are accessible only by
+		// team members or anyone by default
 		PaperChangeMemberPolicy json.RawMessage `json:"paper_change_member_policy,omitempty"`
-		// PaperChangePolicy : (team_policies) Enabled or disabled Dropbox Paper
-		// for the team.
+		// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper
+		// for team
 		PaperChangePolicy json.RawMessage `json:"paper_change_policy,omitempty"`
-		// PaperEnabledUsersGroupAddition : (team_policies) Users added to Paper
-		// enabled users list.
+		// PaperEnabledUsersGroupAddition : (team_policies) Added users to
+		// Paper-enabled users list
 		PaperEnabledUsersGroupAddition json.RawMessage `json:"paper_enabled_users_group_addition,omitempty"`
-		// PaperEnabledUsersGroupRemoval : (team_policies) Users removed from
-		// Paper enabled users list.
+		// PaperEnabledUsersGroupRemoval : (team_policies) Removed users from
+		// Paper-enabled users list
 		PaperEnabledUsersGroupRemoval json.RawMessage `json:"paper_enabled_users_group_removal,omitempty"`
-		// PermanentDeleteChangePolicy : (team_policies) Enabled or disabled the
-		// ability of team members to permanently delete content.
+		// PermanentDeleteChangePolicy : (team_policies) Enabled/disabled
+		// ability of team members to permanently delete content
 		PermanentDeleteChangePolicy json.RawMessage `json:"permanent_delete_change_policy,omitempty"`
 		// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
-		// members can join shared folders owned externally (i.e. outside the
-		// team).
+		// members can join shared folders owned outside team
 		SharingChangeFolderJoinPolicy json.RawMessage `json:"sharing_change_folder_join_policy,omitempty"`
-		// SharingChangeLinkPolicy : (team_policies) Changed whether team
-		// members can share links externally (i.e. outside the team), and if
-		// so, whether links should be accessible only by team members or anyone
-		// by default.
+		// SharingChangeLinkPolicy : (team_policies) Changed whether members can
+		// share links outside team, and if links are accessible only by team
+		// members or anyone by default
 		SharingChangeLinkPolicy json.RawMessage `json:"sharing_change_link_policy,omitempty"`
-		// SharingChangeMemberPolicy : (team_policies) Changed whether team
-		// members can share files and folders externally (i.e. outside the
-		// team).
+		// SharingChangeMemberPolicy : (team_policies) Changed whether members
+		// can share files/folders outside team
 		SharingChangeMemberPolicy json.RawMessage `json:"sharing_change_member_policy,omitempty"`
-		// SmartSyncChangePolicy : (team_policies) Changed the default Smart
-		// Sync policy for team members.
+		// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
+		// setting for team members
 		SmartSyncChangePolicy json.RawMessage `json:"smart_sync_change_policy,omitempty"`
-		// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync.
+		// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync
 		SmartSyncNotOptOut json.RawMessage `json:"smart_sync_not_opt_out,omitempty"`
-		// SmartSyncOptOut : (team_policies) Opted team out of Smart Sync.
+		// SmartSyncOptOut : (team_policies) Opted team out of Smart Sync
 		SmartSyncOptOut json.RawMessage `json:"smart_sync_opt_out,omitempty"`
-		// SsoChangePolicy : (team_policies) Change the single sign-on policy
-		// for the team.
+		// SsoChangePolicy : (team_policies) Changed single sign-on setting for
+		// team
 		SsoChangePolicy json.RawMessage `json:"sso_change_policy,omitempty"`
-		// TfaChangePolicy : (team_policies) Change two-step verification policy
-		// for the team.
+		// TfaChangePolicy : (team_policies) Changed two-step verification
+		// setting for team
 		TfaChangePolicy json.RawMessage `json:"tfa_change_policy,omitempty"`
-		// TwoAccountChangePolicy : (team_policies) Enabled or disabled the
-		// option for team members to link a personal Dropbox account in
-		// addition to their work account to the same computer.
+		// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for
+		// members to link personal Dropbox account and team account to same
+		// computer
 		TwoAccountChangePolicy json.RawMessage `json:"two_account_change_policy,omitempty"`
 		// WebSessionsChangeFixedLengthPolicy : (team_policies) Changed how long
-		// team members can stay signed in to Dropbox on the web.
+		// members can stay signed in to Dropbox.com
 		WebSessionsChangeFixedLengthPolicy json.RawMessage `json:"web_sessions_change_fixed_length_policy,omitempty"`
 		// WebSessionsChangeIdleLengthPolicy : (team_policies) Changed how long
-		// team members can be idle while signed in to Dropbox on the web.
+		// team members can be idle while signed in to Dropbox.com
 		WebSessionsChangeIdleLengthPolicy json.RawMessage `json:"web_sessions_change_idle_length_policy,omitempty"`
-		// TeamMergeFrom : (team_profile) Merged another team into this team.
+		// TeamMergeFrom : (team_profile) Merged another team into this team
 		TeamMergeFrom json.RawMessage `json:"team_merge_from,omitempty"`
-		// TeamMergeTo : (team_profile) Merged this team into another team.
+		// TeamMergeTo : (team_profile) Merged this team into another team
 		TeamMergeTo json.RawMessage `json:"team_merge_to,omitempty"`
-		// TeamProfileAddLogo : (team_profile) Added a team logo to be displayed
-		// on shared link headers.
+		// TeamProfileAddLogo : (team_profile) Added team logo to display on
+		// shared link headers
 		TeamProfileAddLogo json.RawMessage `json:"team_profile_add_logo,omitempty"`
-		// TeamProfileChangeDefaultLanguage : (team_profile) Changed the default
-		// language for the team.
+		// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
+		// language for team
 		TeamProfileChangeDefaultLanguage json.RawMessage `json:"team_profile_change_default_language,omitempty"`
-		// TeamProfileChangeLogo : (team_profile) Changed the team logo to be
-		// displayed on shared link headers.
+		// TeamProfileChangeLogo : (team_profile) Changed team logo displayed on
+		// shared link headers
 		TeamProfileChangeLogo json.RawMessage `json:"team_profile_change_logo,omitempty"`
-		// TeamProfileChangeName : (team_profile) Changed the team name.
+		// TeamProfileChangeName : (team_profile) Changed team name
 		TeamProfileChangeName json.RawMessage `json:"team_profile_change_name,omitempty"`
-		// TeamProfileRemoveLogo : (team_profile) Removed the team logo to be
-		// displayed on shared link headers.
+		// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
+		// shared link headers
 		TeamProfileRemoveLogo json.RawMessage `json:"team_profile_remove_logo,omitempty"`
-		// TfaAddBackupPhone : (tfa) Added a backup phone for two-step
-		// verification.
+		// TfaAddBackupPhone : (tfa) Added backup phone for two-step
+		// verification
 		TfaAddBackupPhone json.RawMessage `json:"tfa_add_backup_phone,omitempty"`
-		// TfaAddSecurityKey : (tfa) Added a security key for two-step
-		// verification.
+		// TfaAddSecurityKey : (tfa) Added security key for two-step
+		// verification
 		TfaAddSecurityKey json.RawMessage `json:"tfa_add_security_key,omitempty"`
-		// TfaChangeBackupPhone : (tfa) Changed the backup phone for two-step
-		// verification.
+		// TfaChangeBackupPhone : (tfa) Changed backup phone for two-step
+		// verification
 		TfaChangeBackupPhone json.RawMessage `json:"tfa_change_backup_phone,omitempty"`
-		// TfaChangeStatus : (tfa) Enabled, disabled or changed the
-		// configuration for two-step verification.
+		// TfaChangeStatus : (tfa) Enabled/disabled/changed two-step
+		// verification setting
 		TfaChangeStatus json.RawMessage `json:"tfa_change_status,omitempty"`
-		// TfaRemoveBackupPhone : (tfa) Removed the backup phone for two-step
-		// verification.
+		// TfaRemoveBackupPhone : (tfa) Removed backup phone for two-step
+		// verification
 		TfaRemoveBackupPhone json.RawMessage `json:"tfa_remove_backup_phone,omitempty"`
-		// TfaRemoveSecurityKey : (tfa) Removed a security key for two-step
-		// verification.
+		// TfaRemoveSecurityKey : (tfa) Removed security key for two-step
+		// verification
 		TfaRemoveSecurityKey json.RawMessage `json:"tfa_remove_security_key,omitempty"`
-		// TfaReset : (tfa) Reset two-step verification for team member.
+		// TfaReset : (tfa) Reset two-step verification for team member
 		TfaReset json.RawMessage `json:"tfa_reset,omitempty"`
 	}
 	var w wrap
@@ -7010,6 +7553,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "account_capture_migrate_account":
 		err = json.Unmarshal(body, &u.AccountCaptureMigrateAccount)
+
+		if err != nil {
+			return err
+		}
+	case "account_capture_notification_emails_sent":
+		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSent)
 
 		if err != nil {
 			return err
@@ -7176,20 +7725,8 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "file_request_add_deadline":
-		err = json.Unmarshal(body, &u.FileRequestAddDeadline)
-
-		if err != nil {
-			return err
-		}
 	case "file_request_change":
 		err = json.Unmarshal(body, &u.FileRequestChange)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_change_folder":
-		err = json.Unmarshal(body, &u.FileRequestChangeFolder)
 
 		if err != nil {
 			return err
@@ -7208,18 +7745,6 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "file_request_receive_file":
 		err = json.Unmarshal(body, &u.FileRequestReceiveFile)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_remove_deadline":
-		err = json.Unmarshal(body, &u.FileRequestRemoveDeadline)
-
-		if err != nil {
-			return err
-		}
-	case "file_request_send":
-		err = json.Unmarshal(body, &u.FileRequestSend)
 
 		if err != nil {
 			return err
@@ -7262,6 +7787,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "group_delete":
 		err = json.Unmarshal(body, &u.GroupDelete)
+
+		if err != nil {
+			return err
+		}
+	case "group_description_updated":
+		err = json.Unmarshal(body, &u.GroupDescriptionUpdated)
+
+		if err != nil {
+			return err
+		}
+	case "group_join_policy_updated":
+		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdated)
 
 		if err != nil {
 			return err
@@ -7344,6 +7881,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_add_name":
+		err = json.Unmarshal(body, &u.MemberAddName)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_admin_role":
 		err = json.Unmarshal(body, &u.MemberChangeAdminRole)
 
@@ -7380,8 +7923,26 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_space_limits_add_custom_quota":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuota)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_change_custom_quota":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuota)
+
+		if err != nil {
+			return err
+		}
 	case "member_space_limits_change_status":
 		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatus)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_remove_custom_quota":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuota)
 
 		if err != nil {
 			return err
@@ -7644,6 +8205,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "export_members_report":
+		err = json.Unmarshal(body, &u.ExportMembersReport)
+
+		if err != nil {
+			return err
+		}
 	case "paper_admin_export_start":
 		err = json.Unmarshal(body, &u.PaperAdminExportStart)
 
@@ -7718,6 +8285,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "sf_external_invite_warn":
 		err = json.Unmarshal(body, &u.SfExternalInviteWarn)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_invite":
+		err = json.Unmarshal(body, &u.SfFbInvite)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_invite_change_role":
+		err = json.Unmarshal(body, &u.SfFbInviteChangeRole)
+
+		if err != nil {
+			return err
+		}
+	case "sf_fb_uninvite":
+		err = json.Unmarshal(body, &u.SfFbUninvite)
 
 		if err != nil {
 			return err
@@ -7854,8 +8439,8 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_invitee":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInvitee)
+	case "shared_content_remove_invitees":
+		err = json.Unmarshal(body, &u.SharedContentRemoveInvitees)
 
 		if err != nil {
 			return err
@@ -7896,26 +8481,26 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_confidentiality":
-		err = json.Unmarshal(body, &u.SharedFolderChangeConfidentiality)
-
-		if err != nil {
-			return err
-		}
 	case "shared_folder_change_link_policy":
 		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_member_management_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMemberManagementPolicy)
+	case "shared_folder_change_members_inheritance_policy":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_member_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMemberPolicy)
+	case "shared_folder_change_members_management_policy":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "shared_folder_change_members_policy":
+		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicy)
 
 		if err != nil {
 			return err
@@ -8028,6 +8613,138 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "showcase_access_granted":
+		err = json.Unmarshal(body, &u.ShowcaseAccessGranted)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_add_member":
+		err = json.Unmarshal(body, &u.ShowcaseAddMember)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_archived":
+		err = json.Unmarshal(body, &u.ShowcaseArchived)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_created":
+		err = json.Unmarshal(body, &u.ShowcaseCreated)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_delete_comment":
+		err = json.Unmarshal(body, &u.ShowcaseDeleteComment)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_edited":
+		err = json.Unmarshal(body, &u.ShowcaseEdited)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_edit_comment":
+		err = json.Unmarshal(body, &u.ShowcaseEditComment)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_added":
+		err = json.Unmarshal(body, &u.ShowcaseFileAdded)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_download":
+		err = json.Unmarshal(body, &u.ShowcaseFileDownload)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_removed":
+		err = json.Unmarshal(body, &u.ShowcaseFileRemoved)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_file_view":
+		err = json.Unmarshal(body, &u.ShowcaseFileView)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_permanently_deleted":
+		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeleted)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_post_comment":
+		err = json.Unmarshal(body, &u.ShowcasePostComment)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_remove_member":
+		err = json.Unmarshal(body, &u.ShowcaseRemoveMember)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_renamed":
+		err = json.Unmarshal(body, &u.ShowcaseRenamed)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_request_access":
+		err = json.Unmarshal(body, &u.ShowcaseRequestAccess)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_resolve_comment":
+		err = json.Unmarshal(body, &u.ShowcaseResolveComment)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_restored":
+		err = json.Unmarshal(body, &u.ShowcaseRestored)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_trashed":
+		err = json.Unmarshal(body, &u.ShowcaseTrashed)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_unresolve_comment":
+		err = json.Unmarshal(body, &u.ShowcaseUnresolveComment)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_untrashed":
+		err = json.Unmarshal(body, &u.ShowcaseUntrashed)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_view":
+		err = json.Unmarshal(body, &u.ShowcaseView)
+
+		if err != nil {
+			return err
+		}
 	case "sso_add_cert":
 		err = json.Unmarshal(body, &u.SsoAddCert)
 
@@ -8114,6 +8831,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "team_folder_rename":
 		err = json.Unmarshal(body, &u.TeamFolderRename)
+
+		if err != nil {
+			return err
+		}
+	case "team_selective_sync_settings_changed":
+		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChanged)
 
 		if err != nil {
 			return err
@@ -8240,6 +8963,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_space_limits_add_exception":
 		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddException)
+
+		if err != nil {
+			return err
+		}
+	case "member_space_limits_change_caps_type_policy":
+		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicy)
 
 		if err != nil {
 			return err
@@ -8470,7 +9199,30 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// ExtendedVersionHistoryChangePolicyDetails : Accepted or opted out of extended
+// ExportMembersReportDetails : Created member data report.
+type ExportMembersReportDetails struct {
+}
+
+// NewExportMembersReportDetails returns a new ExportMembersReportDetails instance
+func NewExportMembersReportDetails() *ExportMembersReportDetails {
+	s := new(ExportMembersReportDetails)
+	return s
+}
+
+// ExportMembersReportType : has no documentation (yet)
+type ExportMembersReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExportMembersReportType returns a new ExportMembersReportType instance
+func NewExportMembersReportType(Description string) *ExportMembersReportType {
+	s := new(ExportMembersReportType)
+	s.Description = Description
+	return s
+}
+
+// ExtendedVersionHistoryChangePolicyDetails : Accepted/opted out of extended
 // version history.
 type ExtendedVersionHistoryChangePolicyDetails struct {
 	// NewValue : New extended version history policy.
@@ -8510,6 +9262,7 @@ const (
 	ExtendedVersionHistoryPolicyExplicitlyLimited   = "explicitly_limited"
 	ExtendedVersionHistoryPolicyExplicitlyUnlimited = "explicitly_unlimited"
 	ExtendedVersionHistoryPolicyImplicitlyLimited   = "implicitly_limited"
+	ExtendedVersionHistoryPolicyImplicitlyUnlimited = "implicitly_unlimited"
 	ExtendedVersionHistoryPolicyOther               = "other"
 )
 
@@ -8545,7 +9298,7 @@ func NewFailureDetailsLogInfo() *FailureDetailsLogInfo {
 	return s
 }
 
-// FileAddCommentDetails : Added a file comment.
+// FileAddCommentDetails : Added file comment.
 type FileAddCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -8635,8 +9388,7 @@ const (
 	FileCommentNotificationPolicyOther    = "other"
 )
 
-// FileCommentsChangePolicyDetails : Enabled or disabled commenting on team
-// files.
+// FileCommentsChangePolicyDetails : Enabled/disabled commenting on team files.
 type FileCommentsChangePolicyDetails struct {
 	// NewValue : New commenting on team files policy.
 	NewValue *FileCommentsPolicy `json:"new_value"`
@@ -8703,7 +9455,7 @@ func NewFileCopyType(Description string) *FileCopyType {
 	return s
 }
 
-// FileDeleteCommentDetails : Deleted a file comment.
+// FileDeleteCommentDetails : Deleted file comment.
 type FileDeleteCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -8797,7 +9549,7 @@ func NewFileEditType(Description string) *FileEditType {
 	return s
 }
 
-// FileGetCopyReferenceDetails : Create a copy reference to a file or folder.
+// FileGetCopyReferenceDetails : Created copy reference to file/folder.
 type FileGetCopyReferenceDetails struct {
 }
 
@@ -8820,7 +9572,7 @@ func NewFileGetCopyReferenceType(Description string) *FileGetCopyReferenceType {
 	return s
 }
 
-// FileLikeCommentDetails : Liked a file comment.
+// FileLikeCommentDetails : Liked file comment.
 type FileLikeCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -8972,35 +9724,7 @@ func NewFileRenameType(Description string) *FileRenameType {
 	return s
 }
 
-// FileRequestAddDeadlineDetails : Added a deadline to a file request.
-type FileRequestAddDeadlineDetails struct {
-	// FileRequestId : File request id. Might be missing due to historical data
-	// gap.
-	FileRequestId string `json:"file_request_id,omitempty"`
-	// RequestTitle : File request title.
-	RequestTitle string `json:"request_title,omitempty"`
-}
-
-// NewFileRequestAddDeadlineDetails returns a new FileRequestAddDeadlineDetails instance
-func NewFileRequestAddDeadlineDetails() *FileRequestAddDeadlineDetails {
-	s := new(FileRequestAddDeadlineDetails)
-	return s
-}
-
-// FileRequestAddDeadlineType : has no documentation (yet)
-type FileRequestAddDeadlineType struct {
-	// Description : has no documentation (yet)
-	Description string `json:"description"`
-}
-
-// NewFileRequestAddDeadlineType returns a new FileRequestAddDeadlineType instance
-func NewFileRequestAddDeadlineType(Description string) *FileRequestAddDeadlineType {
-	s := new(FileRequestAddDeadlineType)
-	s.Description = Description
-	return s
-}
-
-// FileRequestChangeDetails : Change a file request.
+// FileRequestChangeDetails : Changed file request.
 type FileRequestChangeDetails struct {
 	// FileRequestId : File request id. Might be missing due to historical data
 	// gap.
@@ -9019,34 +9743,6 @@ func NewFileRequestChangeDetails(NewDetails *FileRequestDetails) *FileRequestCha
 	return s
 }
 
-// FileRequestChangeFolderDetails : Changed the file request folder.
-type FileRequestChangeFolderDetails struct {
-	// FileRequestId : File request id. Might be missing due to historical data
-	// gap.
-	FileRequestId string `json:"file_request_id,omitempty"`
-	// RequestTitle : File request title.
-	RequestTitle string `json:"request_title,omitempty"`
-}
-
-// NewFileRequestChangeFolderDetails returns a new FileRequestChangeFolderDetails instance
-func NewFileRequestChangeFolderDetails() *FileRequestChangeFolderDetails {
-	s := new(FileRequestChangeFolderDetails)
-	return s
-}
-
-// FileRequestChangeFolderType : has no documentation (yet)
-type FileRequestChangeFolderType struct {
-	// Description : has no documentation (yet)
-	Description string `json:"description"`
-}
-
-// NewFileRequestChangeFolderType returns a new FileRequestChangeFolderType instance
-func NewFileRequestChangeFolderType(Description string) *FileRequestChangeFolderType {
-	s := new(FileRequestChangeFolderType)
-	s.Description = Description
-	return s
-}
-
 // FileRequestChangeType : has no documentation (yet)
 type FileRequestChangeType struct {
 	// Description : has no documentation (yet)
@@ -9060,7 +9756,7 @@ func NewFileRequestChangeType(Description string) *FileRequestChangeType {
 	return s
 }
 
-// FileRequestCloseDetails : Closed a file request.
+// FileRequestCloseDetails : Closed file request.
 type FileRequestCloseDetails struct {
 	// FileRequestId : File request id. Might be missing due to historical data
 	// gap.
@@ -9089,7 +9785,7 @@ func NewFileRequestCloseType(Description string) *FileRequestCloseType {
 	return s
 }
 
-// FileRequestCreateDetails : Created a file request.
+// FileRequestCreateDetails : Created file request.
 type FileRequestCreateDetails struct {
 	// FileRequestId : File request id. Might be missing due to historical data
 	// gap.
@@ -9150,15 +9846,22 @@ func NewFileRequestDetails(AssetIndex uint64) *FileRequestDetails {
 	return s
 }
 
-// FileRequestReceiveFileDetails : Received files for a file request.
+// FileRequestReceiveFileDetails : Received files for file request.
 type FileRequestReceiveFileDetails struct {
 	// FileRequestId : File request id. Might be missing due to historical data
 	// gap.
 	FileRequestId string `json:"file_request_id,omitempty"`
-	// RequestTitle : File request title.
-	RequestTitle string `json:"request_title,omitempty"`
+	// FileRequestDetails : File request details. Might be missing due to
+	// historical data gap.
+	FileRequestDetails *FileRequestDetails `json:"file_request_details,omitempty"`
 	// SubmittedFileNames : Submitted file names.
 	SubmittedFileNames []string `json:"submitted_file_names"`
+	// SubmitterName : The name as provided by the submitter. Might be missing
+	// due to historical data gap.
+	SubmitterName string `json:"submitter_name,omitempty"`
+	// SubmitterEmail : The email as provided by the submitter. Might be missing
+	// due to historical data gap.
+	SubmitterEmail string `json:"submitter_email,omitempty"`
 }
 
 // NewFileRequestReceiveFileDetails returns a new FileRequestReceiveFileDetails instance
@@ -9181,63 +9884,7 @@ func NewFileRequestReceiveFileType(Description string) *FileRequestReceiveFileTy
 	return s
 }
 
-// FileRequestRemoveDeadlineDetails : Removed the file request deadline.
-type FileRequestRemoveDeadlineDetails struct {
-	// FileRequestId : File request id. Might be missing due to historical data
-	// gap.
-	FileRequestId string `json:"file_request_id,omitempty"`
-	// RequestTitle : File request title.
-	RequestTitle string `json:"request_title,omitempty"`
-}
-
-// NewFileRequestRemoveDeadlineDetails returns a new FileRequestRemoveDeadlineDetails instance
-func NewFileRequestRemoveDeadlineDetails() *FileRequestRemoveDeadlineDetails {
-	s := new(FileRequestRemoveDeadlineDetails)
-	return s
-}
-
-// FileRequestRemoveDeadlineType : has no documentation (yet)
-type FileRequestRemoveDeadlineType struct {
-	// Description : has no documentation (yet)
-	Description string `json:"description"`
-}
-
-// NewFileRequestRemoveDeadlineType returns a new FileRequestRemoveDeadlineType instance
-func NewFileRequestRemoveDeadlineType(Description string) *FileRequestRemoveDeadlineType {
-	s := new(FileRequestRemoveDeadlineType)
-	s.Description = Description
-	return s
-}
-
-// FileRequestSendDetails : Sent file request to users via email.
-type FileRequestSendDetails struct {
-	// FileRequestId : File request id. Might be missing due to historical data
-	// gap.
-	FileRequestId string `json:"file_request_id,omitempty"`
-	// RequestTitle : File request title.
-	RequestTitle string `json:"request_title,omitempty"`
-}
-
-// NewFileRequestSendDetails returns a new FileRequestSendDetails instance
-func NewFileRequestSendDetails() *FileRequestSendDetails {
-	s := new(FileRequestSendDetails)
-	return s
-}
-
-// FileRequestSendType : has no documentation (yet)
-type FileRequestSendType struct {
-	// Description : has no documentation (yet)
-	Description string `json:"description"`
-}
-
-// NewFileRequestSendType returns a new FileRequestSendType instance
-func NewFileRequestSendType(Description string) *FileRequestSendType {
-	s := new(FileRequestSendType)
-	s.Description = Description
-	return s
-}
-
-// FileRequestsChangePolicyDetails : Enabled or disabled file requests.
+// FileRequestsChangePolicyDetails : Enabled/disabled file requests.
 type FileRequestsChangePolicyDetails struct {
 	// NewValue : New file requests policy.
 	NewValue *FileRequestsPolicy `json:"new_value"`
@@ -9289,8 +9936,8 @@ func NewFileRequestsEmailsEnabledType(Description string) *FileRequestsEmailsEna
 	return s
 }
 
-// FileRequestsEmailsRestrictedToTeamOnlyDetails : Allowed file request emails
-// for the team.
+// FileRequestsEmailsRestrictedToTeamOnlyDetails : Enabled file request emails
+// for team.
 type FileRequestsEmailsRestrictedToTeamOnlyDetails struct {
 }
 
@@ -9325,7 +9972,7 @@ const (
 	FileRequestsPolicyOther    = "other"
 )
 
-// FileResolveCommentDetails : Resolved a file comment.
+// FileResolveCommentDetails : Resolved file comment.
 type FileResolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -9373,7 +10020,7 @@ func NewFileRestoreType(Description string) *FileRestoreType {
 	return s
 }
 
-// FileRevertDetails : Reverted files to a previous version.
+// FileRevertDetails : Reverted files to previous version.
 type FileRevertDetails struct {
 }
 
@@ -9396,7 +10043,7 @@ func NewFileRevertType(Description string) *FileRevertType {
 	return s
 }
 
-// FileRollbackChangesDetails : Rolled back file change location changes.
+// FileRollbackChangesDetails : Rolled back file actions.
 type FileRollbackChangesDetails struct {
 }
 
@@ -9419,7 +10066,7 @@ func NewFileRollbackChangesType(Description string) *FileRollbackChangesType {
 	return s
 }
 
-// FileSaveCopyReferenceDetails : Save a file or folder using a copy reference.
+// FileSaveCopyReferenceDetails : Saved file/folder using copy reference.
 type FileSaveCopyReferenceDetails struct {
 	// RelocateActionDetails : Relocate action details.
 	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
@@ -9445,7 +10092,7 @@ func NewFileSaveCopyReferenceType(Description string) *FileSaveCopyReferenceType
 	return s
 }
 
-// FileUnlikeCommentDetails : Unliked a file comment.
+// FileUnlikeCommentDetails : Unliked file comment.
 type FileUnlikeCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -9470,7 +10117,7 @@ func NewFileUnlikeCommentType(Description string) *FileUnlikeCommentType {
 	return s
 }
 
-// FileUnresolveCommentDetails : Unresolved a file comment.
+// FileUnresolveCommentDetails : Unresolved file comment.
 type FileUnresolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
@@ -9605,8 +10252,8 @@ func NewGetTeamEventsResult(Events []*TeamEvent, Cursor string, HasMore bool) *G
 	return s
 }
 
-// GoogleSsoChangePolicyDetails : Enabled or disabled Google single sign-on for
-// the team.
+// GoogleSsoChangePolicyDetails : Enabled/disabled Google single sign-on for
+// team.
 type GoogleSsoChangePolicyDetails struct {
 	// NewValue : New Google single sign-on policy.
 	NewValue *GoogleSsoPolicy `json:"new_value"`
@@ -9647,7 +10294,7 @@ const (
 	GoogleSsoPolicyOther    = "other"
 )
 
-// GroupAddExternalIdDetails : Added an external ID for group.
+// GroupAddExternalIdDetails : Added external ID for group.
 type GroupAddExternalIdDetails struct {
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
@@ -9673,7 +10320,7 @@ func NewGroupAddExternalIdType(Description string) *GroupAddExternalIdType {
 	return s
 }
 
-// GroupAddMemberDetails : Added team members to a group.
+// GroupAddMemberDetails : Added team members to group.
 type GroupAddMemberDetails struct {
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
@@ -9699,7 +10346,7 @@ func NewGroupAddMemberType(Description string) *GroupAddMemberType {
 	return s
 }
 
-// GroupChangeExternalIdDetails : Changed the external ID for group.
+// GroupChangeExternalIdDetails : Changed external ID for group.
 type GroupChangeExternalIdDetails struct {
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
@@ -9757,8 +10404,7 @@ func NewGroupChangeManagementTypeType(Description string) *GroupChangeManagement
 	return s
 }
 
-// GroupChangeMemberRoleDetails : Changed the manager permissions belonging to a
-// group member.
+// GroupChangeMemberRoleDetails : Changed manager permissions of group member.
 type GroupChangeMemberRoleDetails struct {
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
@@ -9784,19 +10430,18 @@ func NewGroupChangeMemberRoleType(Description string) *GroupChangeMemberRoleType
 	return s
 }
 
-// GroupCreateDetails : Created a group.
+// GroupCreateDetails : Created group.
 type GroupCreateDetails struct {
 	// IsCompanyManaged : Is company managed group. Might be missing due to
 	// historical data gap.
 	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
 	// JoinPolicy : Group join policy.
-	JoinPolicy *GroupJoinPolicy `json:"join_policy"`
+	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
 }
 
 // NewGroupCreateDetails returns a new GroupCreateDetails instance
-func NewGroupCreateDetails(JoinPolicy *GroupJoinPolicy) *GroupCreateDetails {
+func NewGroupCreateDetails() *GroupCreateDetails {
 	s := new(GroupCreateDetails)
-	s.JoinPolicy = JoinPolicy
 	return s
 }
 
@@ -9813,7 +10458,7 @@ func NewGroupCreateType(Description string) *GroupCreateType {
 	return s
 }
 
-// GroupDeleteDetails : Deleted a group.
+// GroupDeleteDetails : Deleted group.
 type GroupDeleteDetails struct {
 	// IsCompanyManaged : Is company managed group. Might be missing due to
 	// historical data gap.
@@ -9839,6 +10484,29 @@ func NewGroupDeleteType(Description string) *GroupDeleteType {
 	return s
 }
 
+// GroupDescriptionUpdatedDetails : Updated group.
+type GroupDescriptionUpdatedDetails struct {
+}
+
+// NewGroupDescriptionUpdatedDetails returns a new GroupDescriptionUpdatedDetails instance
+func NewGroupDescriptionUpdatedDetails() *GroupDescriptionUpdatedDetails {
+	s := new(GroupDescriptionUpdatedDetails)
+	return s
+}
+
+// GroupDescriptionUpdatedType : has no documentation (yet)
+type GroupDescriptionUpdatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGroupDescriptionUpdatedType returns a new GroupDescriptionUpdatedType instance
+func NewGroupDescriptionUpdatedType(Description string) *GroupDescriptionUpdatedType {
+	s := new(GroupDescriptionUpdatedType)
+	s.Description = Description
+	return s
+}
+
 // GroupJoinPolicy : has no documentation (yet)
 type GroupJoinPolicy struct {
 	dropbox.Tagged
@@ -9850,6 +10518,34 @@ const (
 	GroupJoinPolicyRequestToJoin = "request_to_join"
 	GroupJoinPolicyOther         = "other"
 )
+
+// GroupJoinPolicyUpdatedDetails : Updated group join policy.
+type GroupJoinPolicyUpdatedDetails struct {
+	// IsCompanyManaged : Is company managed group. Might be missing due to
+	// historical data gap.
+	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
+	// JoinPolicy : Group join policy.
+	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
+}
+
+// NewGroupJoinPolicyUpdatedDetails returns a new GroupJoinPolicyUpdatedDetails instance
+func NewGroupJoinPolicyUpdatedDetails() *GroupJoinPolicyUpdatedDetails {
+	s := new(GroupJoinPolicyUpdatedDetails)
+	return s
+}
+
+// GroupJoinPolicyUpdatedType : has no documentation (yet)
+type GroupJoinPolicyUpdatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGroupJoinPolicyUpdatedType returns a new GroupJoinPolicyUpdatedType instance
+func NewGroupJoinPolicyUpdatedType(Description string) *GroupJoinPolicyUpdatedType {
+	s := new(GroupJoinPolicyUpdatedType)
+	s.Description = Description
+	return s
+}
 
 // GroupLogInfo : Group's logged information.
 type GroupLogInfo struct {
@@ -9870,7 +10566,7 @@ func NewGroupLogInfo(DisplayName string) *GroupLogInfo {
 	return s
 }
 
-// GroupMovedDetails : Moved a group.
+// GroupMovedDetails : Moved group.
 type GroupMovedDetails struct {
 }
 
@@ -9893,7 +10589,7 @@ func NewGroupMovedType(Description string) *GroupMovedType {
 	return s
 }
 
-// GroupRemoveExternalIdDetails : Removed the external ID for group.
+// GroupRemoveExternalIdDetails : Removed external ID for group.
 type GroupRemoveExternalIdDetails struct {
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
@@ -9919,7 +10615,7 @@ func NewGroupRemoveExternalIdType(Description string) *GroupRemoveExternalIdType
 	return s
 }
 
-// GroupRemoveMemberDetails : Removed team members from a group.
+// GroupRemoveMemberDetails : Removed team members from group.
 type GroupRemoveMemberDetails struct {
 }
 
@@ -9942,7 +10638,7 @@ func NewGroupRemoveMemberType(Description string) *GroupRemoveMemberType {
 	return s
 }
 
-// GroupRenameDetails : Renamed a group.
+// GroupRenameDetails : Renamed group.
 type GroupRenameDetails struct {
 	// PreviousValue : Previous display name.
 	PreviousValue string `json:"previous_value"`
@@ -10016,15 +10712,15 @@ const (
 // team.
 type JoinTeamDetails struct {
 	// LinkedApps : Linked applications.
-	LinkedApps []IsAppLogInfo `json:"linked_apps"`
+	LinkedApps []*UserLinkedAppLogInfo `json:"linked_apps"`
 	// LinkedDevices : Linked devices.
-	LinkedDevices []*DeviceLogInfo `json:"linked_devices"`
+	LinkedDevices []*LinkedDeviceLogInfo `json:"linked_devices"`
 	// LinkedSharedFolders : Linked shared folders.
 	LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
 }
 
 // NewJoinTeamDetails returns a new JoinTeamDetails instance
-func NewJoinTeamDetails(LinkedApps []IsAppLogInfo, LinkedDevices []*DeviceLogInfo, LinkedSharedFolders []*FolderLogInfo) *JoinTeamDetails {
+func NewJoinTeamDetails(LinkedApps []*UserLinkedAppLogInfo, LinkedDevices []*LinkedDeviceLogInfo, LinkedSharedFolders []*FolderLogInfo) *JoinTeamDetails {
 	s := new(JoinTeamDetails)
 	s.LinkedApps = LinkedApps
 	s.LinkedDevices = LinkedDevices
@@ -10032,45 +10728,113 @@ func NewJoinTeamDetails(LinkedApps []IsAppLogInfo, LinkedDevices []*DeviceLogInf
 	return s
 }
 
-// UnmarshalJSON deserializes into a JoinTeamDetails instance
-func (u *JoinTeamDetails) UnmarshalJSON(b []byte) error {
+// LegacyDeviceSessionLogInfo : Information on sessions, in legacy format
+type LegacyDeviceSessionLogInfo struct {
+	DeviceSessionLogInfo
+	// SessionInfo : Session unique id. Might be missing due to historical data
+	// gap.
+	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
+	// DisplayName : The device name. Might be missing due to historical data
+	// gap.
+	DisplayName string `json:"display_name,omitempty"`
+	// IsEmmManaged : Is device managed by emm. Might be missing due to
+	// historical data gap.
+	IsEmmManaged bool `json:"is_emm_managed,omitempty"`
+	// Platform : Information on the hosting platform. Might be missing due to
+	// historical data gap.
+	Platform string `json:"platform,omitempty"`
+	// MacAddress : The mac address of the last activity from this session.
+	// Might be missing due to historical data gap.
+	MacAddress string `json:"mac_address,omitempty"`
+	// OsVersion : The hosting OS version. Might be missing due to historical
+	// data gap.
+	OsVersion string `json:"os_version,omitempty"`
+	// DeviceType : Information on the hosting device type. Might be missing due
+	// to historical data gap.
+	DeviceType string `json:"device_type,omitempty"`
+	// ClientVersion : The Dropbox client version. Might be missing due to
+	// historical data gap.
+	ClientVersion string `json:"client_version,omitempty"`
+	// LegacyUniqId : Alternative unique device session id, instead of session
+	// id field. Might be missing due to historical data gap.
+	LegacyUniqId string `json:"legacy_uniq_id,omitempty"`
+}
+
+// NewLegacyDeviceSessionLogInfo returns a new LegacyDeviceSessionLogInfo instance
+func NewLegacyDeviceSessionLogInfo() *LegacyDeviceSessionLogInfo {
+	s := new(LegacyDeviceSessionLogInfo)
+	return s
+}
+
+// LinkedDeviceLogInfo : The device sessions that user is linked to.
+type LinkedDeviceLogInfo struct {
+	dropbox.Tagged
+	// MobileDeviceSession : mobile device session's details.
+	MobileDeviceSession *MobileDeviceSessionLogInfo `json:"mobile_device_session,omitempty"`
+	// DesktopDeviceSession : desktop device session's details.
+	DesktopDeviceSession *DesktopDeviceSessionLogInfo `json:"desktop_device_session,omitempty"`
+	// WebDeviceSession : web device session's details.
+	WebDeviceSession *WebDeviceSessionLogInfo `json:"web_device_session,omitempty"`
+	// LegacyDeviceSession : legacy device session's details.
+	LegacyDeviceSession *LegacyDeviceSessionLogInfo `json:"legacy_device_session,omitempty"`
+}
+
+// Valid tag values for LinkedDeviceLogInfo
+const (
+	LinkedDeviceLogInfoMobileDeviceSession  = "mobile_device_session"
+	LinkedDeviceLogInfoDesktopDeviceSession = "desktop_device_session"
+	LinkedDeviceLogInfoWebDeviceSession     = "web_device_session"
+	LinkedDeviceLogInfoLegacyDeviceSession  = "legacy_device_session"
+	LinkedDeviceLogInfoOther                = "other"
+)
+
+// UnmarshalJSON deserializes into a LinkedDeviceLogInfo instance
+func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
-		// LinkedApps : Linked applications.
-		LinkedApps []json.RawMessage `json:"linked_apps"`
-		// LinkedDevices : Linked devices.
-		LinkedDevices []*DeviceLogInfo `json:"linked_devices"`
-		// LinkedSharedFolders : Linked shared folders.
-		LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
+		dropbox.Tagged
+		// MobileDeviceSession : mobile device session's details.
+		MobileDeviceSession json.RawMessage `json:"mobile_device_session,omitempty"`
+		// DesktopDeviceSession : desktop device session's details.
+		DesktopDeviceSession json.RawMessage `json:"desktop_device_session,omitempty"`
+		// WebDeviceSession : web device session's details.
+		WebDeviceSession json.RawMessage `json:"web_device_session,omitempty"`
+		// LegacyDeviceSession : legacy device session's details.
+		LegacyDeviceSession json.RawMessage `json:"legacy_device_session,omitempty"`
 	}
 	var w wrap
-	if err := json.Unmarshal(b, &w); err != nil {
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
 		return err
 	}
-	u.LinkedApps = make([]IsAppLogInfo, len(w.LinkedApps))
-	for i, e := range w.LinkedApps {
-		v, err := IsAppLogInfoFromJSON(e)
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "mobile_device_session":
+		err = json.Unmarshal(body, &u.MobileDeviceSession)
+
 		if err != nil {
 			return err
 		}
-		u.LinkedApps[i] = v
+	case "desktop_device_session":
+		err = json.Unmarshal(body, &u.DesktopDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "web_device_session":
+		err = json.Unmarshal(body, &u.WebDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "legacy_device_session":
+		err = json.Unmarshal(body, &u.LegacyDeviceSession)
+
+		if err != nil {
+			return err
+		}
 	}
-	u.LinkedDevices = w.LinkedDevices
-	u.LinkedSharedFolders = w.LinkedSharedFolders
 	return nil
 }
-
-// LinkAudience : has no documentation (yet)
-type LinkAudience struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for LinkAudience
-const (
-	LinkAudiencePublic  = "public"
-	LinkAudienceTeam    = "team"
-	LinkAudienceMembers = "members"
-	LinkAudienceOther   = "other"
-)
 
 // LoginFailDetails : Failed to sign in.
 type LoginFailDetails struct {
@@ -10169,8 +10933,33 @@ func NewLogoutType(Description string) *LogoutType {
 	return s
 }
 
-// MemberChangeAdminRoleDetails : Change the admin role belonging to team
-// member.
+// MemberAddNameDetails : Added team member name.
+type MemberAddNameDetails struct {
+	// NewValue : New user's name.
+	NewValue *UserNameLogInfo `json:"new_value"`
+}
+
+// NewMemberAddNameDetails returns a new MemberAddNameDetails instance
+func NewMemberAddNameDetails(NewValue *UserNameLogInfo) *MemberAddNameDetails {
+	s := new(MemberAddNameDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// MemberAddNameType : has no documentation (yet)
+type MemberAddNameType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberAddNameType returns a new MemberAddNameType instance
+func NewMemberAddNameType(Description string) *MemberAddNameType {
+	s := new(MemberAddNameType)
+	s.Description = Description
+	return s
+}
+
+// MemberChangeAdminRoleDetails : Changed team member admin role.
 type MemberChangeAdminRoleDetails struct {
 	// NewValue : New admin role. This field is relevant when the admin role is
 	// changed or whenthe user role changes from no admin rights to with admin
@@ -10200,7 +10989,7 @@ func NewMemberChangeAdminRoleType(Description string) *MemberChangeAdminRoleType
 	return s
 }
 
-// MemberChangeEmailDetails : Changed team member email address.
+// MemberChangeEmailDetails : Changed team member email.
 type MemberChangeEmailDetails struct {
 	// NewValue : New email.
 	NewValue string `json:"new_value"`
@@ -10229,8 +11018,8 @@ func NewMemberChangeEmailType(Description string) *MemberChangeEmailType {
 	return s
 }
 
-// MemberChangeMembershipTypeDetails : Changed the membership type (limited vs
-// full) for team member.
+// MemberChangeMembershipTypeDetails : Changed membership type (limited/full) of
+// member.
 type MemberChangeMembershipTypeDetails struct {
 	// PrevValue : Previous membership type.
 	PrevValue *TeamMembershipType `json:"prev_value"`
@@ -10263,7 +11052,8 @@ func NewMemberChangeMembershipTypeType(Description string) *MemberChangeMembersh
 type MemberChangeNameDetails struct {
 	// NewValue : New user's name.
 	NewValue *UserNameLogInfo `json:"new_value"`
-	// PreviousValue : Previous user's name.
+	// PreviousValue : Previous user's name. Might be missing due to historical
+	// data gap.
 	PreviousValue *UserNameLogInfo `json:"previous_value,omitempty"`
 }
 
@@ -10287,16 +11077,16 @@ func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	return s
 }
 
-// MemberChangeStatusDetails : Changed the membership status of a team member.
+// MemberChangeStatusDetails : Changed membership status of team member.
 type MemberChangeStatusDetails struct {
 	// PreviousValue : Previous member status. Might be missing due to
 	// historical data gap.
 	PreviousValue *MemberStatus `json:"previous_value,omitempty"`
 	// NewValue : New member status.
 	NewValue *MemberStatus `json:"new_value"`
-	// TeamJoinDetails : Additional information relevant when a new member joins
-	// the team.
-	TeamJoinDetails *JoinTeamDetails `json:"team_join_details,omitempty"`
+	// Action : Additional information indicating the action taken that caused
+	// status change.
+	Action *ActionDetails `json:"action,omitempty"`
 }
 
 // NewMemberChangeStatusDetails returns a new MemberChangeStatusDetails instance
@@ -10320,7 +11110,7 @@ func NewMemberChangeStatusType(Description string) *MemberChangeStatusType {
 }
 
 // MemberPermanentlyDeleteAccountContentsDetails : Permanently deleted contents
-// of a removed team member account.
+// of deleted team member account.
 type MemberPermanentlyDeleteAccountContentsDetails struct {
 }
 
@@ -10343,8 +11133,21 @@ func NewMemberPermanentlyDeleteAccountContentsType(Description string) *MemberPe
 	return s
 }
 
-// MemberRequestsChangePolicyDetails : Changed whether users can find the team
-// when not invited.
+// MemberRemoveActionType : has no documentation (yet)
+type MemberRemoveActionType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MemberRemoveActionType
+const (
+	MemberRemoveActionTypeDelete   = "delete"
+	MemberRemoveActionTypeOffboard = "offboard"
+	MemberRemoveActionTypeLeave    = "leave"
+	MemberRemoveActionTypeOther    = "other"
+)
+
+// MemberRequestsChangePolicyDetails : Changed whether users can find team when
+// not invited.
 type MemberRequestsChangePolicyDetails struct {
 	// NewValue : New member change requests policy.
 	NewValue *MemberRequestsPolicy `json:"new_value"`
@@ -10386,8 +11189,34 @@ const (
 	MemberRequestsPolicyOther           = "other"
 )
 
-// MemberSpaceLimitsAddExceptionDetails : Added an exception for one or more
-// team members to bypass space limits imposed by policy.
+// MemberSpaceLimitsAddCustomQuotaDetails : Set custom member space limit.
+type MemberSpaceLimitsAddCustomQuotaDetails struct {
+	// NewValue : New custom quota value in bytes.
+	NewValue uint64 `json:"new_value"`
+}
+
+// NewMemberSpaceLimitsAddCustomQuotaDetails returns a new MemberSpaceLimitsAddCustomQuotaDetails instance
+func NewMemberSpaceLimitsAddCustomQuotaDetails(NewValue uint64) *MemberSpaceLimitsAddCustomQuotaDetails {
+	s := new(MemberSpaceLimitsAddCustomQuotaDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// MemberSpaceLimitsAddCustomQuotaType : has no documentation (yet)
+type MemberSpaceLimitsAddCustomQuotaType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSpaceLimitsAddCustomQuotaType returns a new MemberSpaceLimitsAddCustomQuotaType instance
+func NewMemberSpaceLimitsAddCustomQuotaType(Description string) *MemberSpaceLimitsAddCustomQuotaType {
+	s := new(MemberSpaceLimitsAddCustomQuotaType)
+	s.Description = Description
+	return s
+}
+
+// MemberSpaceLimitsAddExceptionDetails : Added members to member space limit
+// exception list.
 type MemberSpaceLimitsAddExceptionDetails struct {
 }
 
@@ -10410,7 +11239,68 @@ func NewMemberSpaceLimitsAddExceptionType(Description string) *MemberSpaceLimits
 	return s
 }
 
-// MemberSpaceLimitsChangePolicyDetails : Changed the team default limit level.
+// MemberSpaceLimitsChangeCapsTypePolicyDetails : Changed member space limit
+// type for team.
+type MemberSpaceLimitsChangeCapsTypePolicyDetails struct {
+	// PreviousValue : Previous space limit type.
+	PreviousValue *SpaceCapsType `json:"previous_value"`
+	// NewValue : New space limit type.
+	NewValue *SpaceCapsType `json:"new_value"`
+}
+
+// NewMemberSpaceLimitsChangeCapsTypePolicyDetails returns a new MemberSpaceLimitsChangeCapsTypePolicyDetails instance
+func NewMemberSpaceLimitsChangeCapsTypePolicyDetails(PreviousValue *SpaceCapsType, NewValue *SpaceCapsType) *MemberSpaceLimitsChangeCapsTypePolicyDetails {
+	s := new(MemberSpaceLimitsChangeCapsTypePolicyDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// MemberSpaceLimitsChangeCapsTypePolicyType : has no documentation (yet)
+type MemberSpaceLimitsChangeCapsTypePolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSpaceLimitsChangeCapsTypePolicyType returns a new MemberSpaceLimitsChangeCapsTypePolicyType instance
+func NewMemberSpaceLimitsChangeCapsTypePolicyType(Description string) *MemberSpaceLimitsChangeCapsTypePolicyType {
+	s := new(MemberSpaceLimitsChangeCapsTypePolicyType)
+	s.Description = Description
+	return s
+}
+
+// MemberSpaceLimitsChangeCustomQuotaDetails : Changed custom member space
+// limit.
+type MemberSpaceLimitsChangeCustomQuotaDetails struct {
+	// PreviousValue : Previous custom quota value in bytes.
+	PreviousValue uint64 `json:"previous_value"`
+	// NewValue : New custom quota value in bytes.
+	NewValue uint64 `json:"new_value"`
+}
+
+// NewMemberSpaceLimitsChangeCustomQuotaDetails returns a new MemberSpaceLimitsChangeCustomQuotaDetails instance
+func NewMemberSpaceLimitsChangeCustomQuotaDetails(PreviousValue uint64, NewValue uint64) *MemberSpaceLimitsChangeCustomQuotaDetails {
+	s := new(MemberSpaceLimitsChangeCustomQuotaDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// MemberSpaceLimitsChangeCustomQuotaType : has no documentation (yet)
+type MemberSpaceLimitsChangeCustomQuotaType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSpaceLimitsChangeCustomQuotaType returns a new MemberSpaceLimitsChangeCustomQuotaType instance
+func NewMemberSpaceLimitsChangeCustomQuotaType(Description string) *MemberSpaceLimitsChangeCustomQuotaType {
+	s := new(MemberSpaceLimitsChangeCustomQuotaType)
+	s.Description = Description
+	return s
+}
+
+// MemberSpaceLimitsChangePolicyDetails : Changed team default member space
+// limit.
 type MemberSpaceLimitsChangePolicyDetails struct {
 	// PreviousValue : Previous team default limit value in bytes. Might be
 	// missing due to historical data gap.
@@ -10439,8 +11329,7 @@ func NewMemberSpaceLimitsChangePolicyType(Description string) *MemberSpaceLimits
 	return s
 }
 
-// MemberSpaceLimitsChangeStatusDetails : Changed the status with respect to
-// whether the team member is under or over storage quota specified by policy.
+// MemberSpaceLimitsChangeStatusDetails : Changed space limit status.
 type MemberSpaceLimitsChangeStatusDetails struct {
 	// PreviousValue : Previous storage quota status.
 	PreviousValue *SpaceLimitsStatus `json:"previous_value"`
@@ -10469,8 +11358,32 @@ func NewMemberSpaceLimitsChangeStatusType(Description string) *MemberSpaceLimits
 	return s
 }
 
-// MemberSpaceLimitsRemoveExceptionDetails : Removed an exception for one or
-// more team members to bypass space limits imposed by policy.
+// MemberSpaceLimitsRemoveCustomQuotaDetails : Removed custom member space
+// limit.
+type MemberSpaceLimitsRemoveCustomQuotaDetails struct {
+}
+
+// NewMemberSpaceLimitsRemoveCustomQuotaDetails returns a new MemberSpaceLimitsRemoveCustomQuotaDetails instance
+func NewMemberSpaceLimitsRemoveCustomQuotaDetails() *MemberSpaceLimitsRemoveCustomQuotaDetails {
+	s := new(MemberSpaceLimitsRemoveCustomQuotaDetails)
+	return s
+}
+
+// MemberSpaceLimitsRemoveCustomQuotaType : has no documentation (yet)
+type MemberSpaceLimitsRemoveCustomQuotaType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSpaceLimitsRemoveCustomQuotaType returns a new MemberSpaceLimitsRemoveCustomQuotaType instance
+func NewMemberSpaceLimitsRemoveCustomQuotaType(Description string) *MemberSpaceLimitsRemoveCustomQuotaType {
+	s := new(MemberSpaceLimitsRemoveCustomQuotaType)
+	s.Description = Description
+	return s
+}
+
+// MemberSpaceLimitsRemoveExceptionDetails : Removed members from member space
+// limit exception list.
 type MemberSpaceLimitsRemoveExceptionDetails struct {
 }
 
@@ -10508,7 +11421,7 @@ const (
 	MemberStatusOther     = "other"
 )
 
-// MemberSuggestDetails : Suggested a new team member to be added to the team.
+// MemberSuggestDetails : Suggested person to add to team.
 type MemberSuggestDetails struct {
 	// SuggestedMembers : suggested users emails.
 	SuggestedMembers []string `json:"suggested_members"`
@@ -10534,8 +11447,8 @@ func NewMemberSuggestType(Description string) *MemberSuggestType {
 	return s
 }
 
-// MemberSuggestionsChangePolicyDetails : Enabled or disabled the option for
-// team members to suggest new members to add to the team.
+// MemberSuggestionsChangePolicyDetails : Enabled/disabled option for team
+// members to suggest people to add to team.
 type MemberSuggestionsChangePolicyDetails struct {
 	// NewValue : New team member suggestions policy.
 	NewValue *MemberSuggestionsPolicy `json:"new_value"`
@@ -10576,22 +11489,14 @@ const (
 	MemberSuggestionsPolicyOther    = "other"
 )
 
-// MemberTransferAccountContentsDetails : Transferred contents of a removed team
-// member account to another member.
+// MemberTransferAccountContentsDetails : Transferred contents of deleted member
+// account to another member.
 type MemberTransferAccountContentsDetails struct {
-	// SrcParticipantIndex : Source participant position in the Participants
-	// list.
-	SrcParticipantIndex uint64 `json:"src_participant_index"`
-	// DestParticipantIndex : Destination participant position in the
-	// Participants list.
-	DestParticipantIndex uint64 `json:"dest_participant_index"`
 }
 
 // NewMemberTransferAccountContentsDetails returns a new MemberTransferAccountContentsDetails instance
-func NewMemberTransferAccountContentsDetails(SrcParticipantIndex uint64, DestParticipantIndex uint64) *MemberTransferAccountContentsDetails {
+func NewMemberTransferAccountContentsDetails() *MemberTransferAccountContentsDetails {
 	s := new(MemberTransferAccountContentsDetails)
-	s.SrcParticipantIndex = SrcParticipantIndex
-	s.DestParticipantIndex = DestParticipantIndex
 	return s
 }
 
@@ -10608,9 +11513,8 @@ func NewMemberTransferAccountContentsType(Description string) *MemberTransferAcc
 	return s
 }
 
-// MicrosoftOfficeAddinChangePolicyDetails : Enabled or disabled the Microsoft
-// Office add-in, which lets team members save files to Dropbox directly from
-// Microsoft Office.
+// MicrosoftOfficeAddinChangePolicyDetails : Enabled/disabled Microsoft Office
+// add-in.
 type MicrosoftOfficeAddinChangePolicyDetails struct {
 	// NewValue : New Microsoft Office addin policy.
 	NewValue *MicrosoftOfficeAddinPolicy `json:"new_value"`
@@ -10651,14 +11555,44 @@ const (
 	MicrosoftOfficeAddinPolicyOther    = "other"
 )
 
-// MissingDetails : An indication that an event was returned with missing
-// details
+// MissingDetails : An indication that an error occurred while retrieving the
+// event. Some attributes of the event may be omitted as a result.
 type MissingDetails struct {
+	// SourceEventFields : All the data that could be retrieved and converted
+	// from the source event.
+	SourceEventFields string `json:"source_event_fields,omitempty"`
 }
 
 // NewMissingDetails returns a new MissingDetails instance
 func NewMissingDetails() *MissingDetails {
 	s := new(MissingDetails)
+	return s
+}
+
+// MobileDeviceSessionLogInfo : Information about linked Dropbox mobile client
+// sessions
+type MobileDeviceSessionLogInfo struct {
+	DeviceSessionLogInfo
+	// SessionInfo : Mobile session unique id. Might be missing due to
+	// historical data gap.
+	SessionInfo *MobileSessionLogInfo `json:"session_info,omitempty"`
+	// DeviceName : The device name.
+	DeviceName string `json:"device_name"`
+	// ClientType : The mobile application type.
+	ClientType *team.MobileClientPlatform `json:"client_type"`
+	// ClientVersion : The Dropbox client version.
+	ClientVersion string `json:"client_version,omitempty"`
+	// OsVersion : The hosting OS version.
+	OsVersion string `json:"os_version,omitempty"`
+	// LastCarrier : last carrier used by the device.
+	LastCarrier string `json:"last_carrier,omitempty"`
+}
+
+// NewMobileDeviceSessionLogInfo returns a new MobileDeviceSessionLogInfo instance
+func NewMobileDeviceSessionLogInfo(DeviceName string, ClientType *team.MobileClientPlatform) *MobileDeviceSessionLogInfo {
+	s := new(MobileDeviceSessionLogInfo)
+	s.DeviceName = DeviceName
+	s.ClientType = ClientType
 	return s
 }
 
@@ -10688,7 +11622,7 @@ func NewNamespaceRelativePathLogInfo() *NamespaceRelativePathLogInfo {
 	return s
 }
 
-// NetworkControlChangePolicyDetails : Enabled or disabled network control.
+// NetworkControlChangePolicyDetails : Enabled/disabled network control.
 type NetworkControlChangePolicyDetails struct {
 	// NewValue : New network control policy.
 	NewValue *NetworkControlPolicy `json:"new_value"`
@@ -10828,7 +11762,7 @@ func NewNonTeamMemberLogInfo() *NonTeamMemberLogInfo {
 	return s
 }
 
-// NoteAclInviteOnlyDetails : Changed a Paper document to be invite-only.
+// NoteAclInviteOnlyDetails : Changed Paper doc to invite-only.
 type NoteAclInviteOnlyDetails struct {
 }
 
@@ -10851,7 +11785,7 @@ func NewNoteAclInviteOnlyType(Description string) *NoteAclInviteOnlyType {
 	return s
 }
 
-// NoteAclLinkDetails : Changed a Paper document to be link accessible.
+// NoteAclLinkDetails : Changed Paper doc to link-accessible.
 type NoteAclLinkDetails struct {
 }
 
@@ -10874,8 +11808,7 @@ func NewNoteAclLinkType(Description string) *NoteAclLinkType {
 	return s
 }
 
-// NoteAclTeamLinkDetails : Changed a Paper document to be link accessible for
-// the team.
+// NoteAclTeamLinkDetails : Changed Paper doc to link-accessible for team.
 type NoteAclTeamLinkDetails struct {
 }
 
@@ -10898,7 +11831,7 @@ func NewNoteAclTeamLinkType(Description string) *NoteAclTeamLinkType {
 	return s
 }
 
-// NoteShareReceiveDetails : Shared Paper document received.
+// NoteShareReceiveDetails : Shared received Paper doc.
 type NoteShareReceiveDetails struct {
 }
 
@@ -10921,7 +11854,7 @@ func NewNoteShareReceiveType(Description string) *NoteShareReceiveType {
 	return s
 }
 
-// NoteSharedDetails : Shared a Paper doc.
+// NoteSharedDetails : Shared Paper doc.
 type NoteSharedDetails struct {
 }
 
@@ -10944,7 +11877,7 @@ func NewNoteSharedType(Description string) *NoteSharedType {
 	return s
 }
 
-// OpenNoteSharedDetails : Opened a shared Paper doc.
+// OpenNoteSharedDetails : Opened shared Paper doc.
 type OpenNoteSharedDetails struct {
 }
 
@@ -10995,7 +11928,7 @@ const (
 	PaperAccessTypeOther     = "other"
 )
 
-// PaperAdminExportStartDetails : Exported all Paper documents in the team.
+// PaperAdminExportStartDetails : Exported all team Paper docs.
 type PaperAdminExportStartDetails struct {
 }
 
@@ -11019,7 +11952,7 @@ func NewPaperAdminExportStartType(Description string) *PaperAdminExportStartType
 }
 
 // PaperChangeDeploymentPolicyDetails : Changed whether Dropbox Paper, when
-// enabled, is deployed to all teams or to specific members of the team.
+// enabled, is deployed to all members or to specific members.
 type PaperChangeDeploymentPolicyDetails struct {
 	// NewValue : New Dropbox Paper deployment policy.
 	NewValue *team_policies.PaperDeploymentPolicy `json:"new_value"`
@@ -11048,8 +11981,8 @@ func NewPaperChangeDeploymentPolicyType(Description string) *PaperChangeDeployme
 	return s
 }
 
-// PaperChangeMemberLinkPolicyDetails : Changed whether non team members can
-// view Paper documents using a link.
+// PaperChangeMemberLinkPolicyDetails : Changed whether non-members can view
+// Paper docs with link.
 type PaperChangeMemberLinkPolicyDetails struct {
 	// NewValue : New paper external link accessibility policy.
 	NewValue *PaperMemberPolicy `json:"new_value"`
@@ -11075,9 +12008,9 @@ func NewPaperChangeMemberLinkPolicyType(Description string) *PaperChangeMemberLi
 	return s
 }
 
-// PaperChangeMemberPolicyDetails : Changed whether team members can share Paper
-// documents externally (i.e. outside the team), and if so, whether they should
-// be accessible only by team members or anyone by default.
+// PaperChangeMemberPolicyDetails : Changed whether members can share Paper docs
+// outside team, and if docs are accessible only by team members or anyone by
+// default.
 type PaperChangeMemberPolicyDetails struct {
 	// NewValue : New paper external accessibility policy.
 	NewValue *PaperMemberPolicy `json:"new_value"`
@@ -11106,7 +12039,7 @@ func NewPaperChangeMemberPolicyType(Description string) *PaperChangeMemberPolicy
 	return s
 }
 
-// PaperChangePolicyDetails : Enabled or disabled Dropbox Paper for the team.
+// PaperChangePolicyDetails : Enabled/disabled Dropbox Paper for team.
 type PaperChangePolicyDetails struct {
 	// NewValue : New Dropbox Paper policy.
 	NewValue *team_policies.PaperEnabledPolicy `json:"new_value"`
@@ -11135,8 +12068,7 @@ func NewPaperChangePolicyType(Description string) *PaperChangePolicyType {
 	return s
 }
 
-// PaperContentAddMemberDetails : Added users to the membership of a Paper doc
-// or folder.
+// PaperContentAddMemberDetails : Added team member to Paper doc/folder.
 type PaperContentAddMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11162,7 +12094,7 @@ func NewPaperContentAddMemberType(Description string) *PaperContentAddMemberType
 	return s
 }
 
-// PaperContentAddToFolderDetails : Added Paper doc or folder to a folder.
+// PaperContentAddToFolderDetails : Added Paper doc/folder to folder.
 type PaperContentAddToFolderDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11194,7 +12126,7 @@ func NewPaperContentAddToFolderType(Description string) *PaperContentAddToFolder
 	return s
 }
 
-// PaperContentArchiveDetails : Archived Paper doc or folder.
+// PaperContentArchiveDetails : Archived Paper doc/folder.
 type PaperContentArchiveDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11220,7 +12152,7 @@ func NewPaperContentArchiveType(Description string) *PaperContentArchiveType {
 	return s
 }
 
-// PaperContentCreateDetails : Created a Paper doc or folder.
+// PaperContentCreateDetails : Created Paper doc/folder.
 type PaperContentCreateDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11246,8 +12178,7 @@ func NewPaperContentCreateType(Description string) *PaperContentCreateType {
 	return s
 }
 
-// PaperContentPermanentlyDeleteDetails : Permanently deleted a Paper doc or
-// folder.
+// PaperContentPermanentlyDeleteDetails : Permanently deleted Paper doc/folder.
 type PaperContentPermanentlyDeleteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11273,17 +12204,22 @@ func NewPaperContentPermanentlyDeleteType(Description string) *PaperContentPerma
 	return s
 }
 
-// PaperContentRemoveFromFolderDetails : Removed Paper doc or folder from a
-// folder.
+// PaperContentRemoveFromFolderDetails : Removed Paper doc/folder from folder.
 type PaperContentRemoveFromFolderDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
+	// TargetAssetIndex : Target asset position in the Assets list.
+	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// ParentAssetIndex : Parent asset position in the Assets list.
+	ParentAssetIndex uint64 `json:"parent_asset_index"`
 }
 
 // NewPaperContentRemoveFromFolderDetails returns a new PaperContentRemoveFromFolderDetails instance
-func NewPaperContentRemoveFromFolderDetails(EventUuid string) *PaperContentRemoveFromFolderDetails {
+func NewPaperContentRemoveFromFolderDetails(EventUuid string, TargetAssetIndex uint64, ParentAssetIndex uint64) *PaperContentRemoveFromFolderDetails {
 	s := new(PaperContentRemoveFromFolderDetails)
 	s.EventUuid = EventUuid
+	s.TargetAssetIndex = TargetAssetIndex
+	s.ParentAssetIndex = ParentAssetIndex
 	return s
 }
 
@@ -11300,8 +12236,7 @@ func NewPaperContentRemoveFromFolderType(Description string) *PaperContentRemove
 	return s
 }
 
-// PaperContentRemoveMemberDetails : Removed a user from the membership of a
-// Paper doc or folder.
+// PaperContentRemoveMemberDetails : Removed team member from Paper doc/folder.
 type PaperContentRemoveMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11327,7 +12262,7 @@ func NewPaperContentRemoveMemberType(Description string) *PaperContentRemoveMemb
 	return s
 }
 
-// PaperContentRenameDetails : Renamed Paper doc or folder.
+// PaperContentRenameDetails : Renamed Paper doc/folder.
 type PaperContentRenameDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11353,7 +12288,7 @@ func NewPaperContentRenameType(Description string) *PaperContentRenameType {
 	return s
 }
 
-// PaperContentRestoreDetails : Restored an archived Paper doc or folder.
+// PaperContentRestoreDetails : Restored archived Paper doc/folder.
 type PaperContentRestoreDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11379,7 +12314,7 @@ func NewPaperContentRestoreType(Description string) *PaperContentRestoreType {
 	return s
 }
 
-// PaperDocAddCommentDetails : Added a Paper doc comment.
+// PaperDocAddCommentDetails : Added Paper doc comment.
 type PaperDocAddCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11407,8 +12342,8 @@ func NewPaperDocAddCommentType(Description string) *PaperDocAddCommentType {
 	return s
 }
 
-// PaperDocChangeMemberRoleDetails : Changed the access type of a Paper doc
-// member.
+// PaperDocChangeMemberRoleDetails : Changed team member permissions for Paper
+// doc.
 type PaperDocChangeMemberRoleDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11437,8 +12372,7 @@ func NewPaperDocChangeMemberRoleType(Description string) *PaperDocChangeMemberRo
 	return s
 }
 
-// PaperDocChangeSharingPolicyDetails : Changed the sharing policy for Paper
-// doc.
+// PaperDocChangeSharingPolicyDetails : Changed sharing setting for Paper doc.
 type PaperDocChangeSharingPolicyDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11470,7 +12404,7 @@ func NewPaperDocChangeSharingPolicyType(Description string) *PaperDocChangeShari
 	return s
 }
 
-// PaperDocChangeSubscriptionDetails : Followed or unfollowed a Paper doc.
+// PaperDocChangeSubscriptionDetails : Followed/unfollowed Paper doc.
 type PaperDocChangeSubscriptionDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11502,7 +12436,7 @@ func NewPaperDocChangeSubscriptionType(Description string) *PaperDocChangeSubscr
 	return s
 }
 
-// PaperDocDeleteCommentDetails : Deleted a Paper doc comment.
+// PaperDocDeleteCommentDetails : Deleted Paper doc comment.
 type PaperDocDeleteCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11530,7 +12464,7 @@ func NewPaperDocDeleteCommentType(Description string) *PaperDocDeleteCommentType
 	return s
 }
 
-// PaperDocDeletedDetails : Paper doc archived.
+// PaperDocDeletedDetails : Archived Paper doc.
 type PaperDocDeletedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11556,8 +12490,7 @@ func NewPaperDocDeletedType(Description string) *PaperDocDeletedType {
 	return s
 }
 
-// PaperDocDownloadDetails : Downloaded a Paper doc in a particular output
-// format.
+// PaperDocDownloadDetails : Downloaded Paper doc in specific format.
 type PaperDocDownloadDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11586,7 +12519,7 @@ func NewPaperDocDownloadType(Description string) *PaperDocDownloadType {
 	return s
 }
 
-// PaperDocEditCommentDetails : Edited a Paper doc comment.
+// PaperDocEditCommentDetails : Edited Paper doc comment.
 type PaperDocEditCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11614,7 +12547,7 @@ func NewPaperDocEditCommentType(Description string) *PaperDocEditCommentType {
 	return s
 }
 
-// PaperDocEditDetails : Edited a Paper doc.
+// PaperDocEditDetails : Edited Paper doc.
 type PaperDocEditDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11640,7 +12573,7 @@ func NewPaperDocEditType(Description string) *PaperDocEditType {
 	return s
 }
 
-// PaperDocFollowedDetails : Followed a Paper doc.
+// PaperDocFollowedDetails : Followed Paper doc.
 type PaperDocFollowedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11666,7 +12599,7 @@ func NewPaperDocFollowedType(Description string) *PaperDocFollowedType {
 	return s
 }
 
-// PaperDocMentionDetails : Mentioned a member in a Paper doc.
+// PaperDocMentionDetails : Mentioned team member in Paper doc.
 type PaperDocMentionDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11692,7 +12625,7 @@ func NewPaperDocMentionType(Description string) *PaperDocMentionType {
 	return s
 }
 
-// PaperDocRequestAccessDetails : Requested to be a member on a Paper doc.
+// PaperDocRequestAccessDetails : Requested access to Paper doc.
 type PaperDocRequestAccessDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11718,7 +12651,7 @@ func NewPaperDocRequestAccessType(Description string) *PaperDocRequestAccessType
 	return s
 }
 
-// PaperDocResolveCommentDetails : Paper doc comment resolved.
+// PaperDocResolveCommentDetails : Resolved Paper doc comment.
 type PaperDocResolveCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11746,7 +12679,7 @@ func NewPaperDocResolveCommentType(Description string) *PaperDocResolveCommentTy
 	return s
 }
 
-// PaperDocRevertDetails : Restored a Paper doc to previous revision.
+// PaperDocRevertDetails : Restored Paper doc to previous version.
 type PaperDocRevertDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11772,7 +12705,7 @@ func NewPaperDocRevertType(Description string) *PaperDocRevertType {
 	return s
 }
 
-// PaperDocSlackShareDetails : Paper doc link shared via slack.
+// PaperDocSlackShareDetails : Shared Paper doc via Slack.
 type PaperDocSlackShareDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11798,7 +12731,7 @@ func NewPaperDocSlackShareType(Description string) *PaperDocSlackShareType {
 	return s
 }
 
-// PaperDocTeamInviteDetails : Paper doc shared with team member.
+// PaperDocTeamInviteDetails : Shared Paper doc with team member.
 type PaperDocTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11824,7 +12757,7 @@ func NewPaperDocTeamInviteType(Description string) *PaperDocTeamInviteType {
 	return s
 }
 
-// PaperDocTrashedDetails : Paper doc trashed.
+// PaperDocTrashedDetails : Deleted Paper doc.
 type PaperDocTrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11850,7 +12783,7 @@ func NewPaperDocTrashedType(Description string) *PaperDocTrashedType {
 	return s
 }
 
-// PaperDocUnresolveCommentDetails : Unresolved a Paper doc comment.
+// PaperDocUnresolveCommentDetails : Unresolved Paper doc comment.
 type PaperDocUnresolveCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11878,7 +12811,7 @@ func NewPaperDocUnresolveCommentType(Description string) *PaperDocUnresolveComme
 	return s
 }
 
-// PaperDocUntrashedDetails : Paper doc untrashed.
+// PaperDocUntrashedDetails : Restored Paper doc.
 type PaperDocUntrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -11959,7 +12892,7 @@ const (
 	PaperDownloadFormatOther    = "other"
 )
 
-// PaperEnabledUsersGroupAdditionDetails : Users added to Paper enabled users
+// PaperEnabledUsersGroupAdditionDetails : Added users to Paper-enabled users
 // list.
 type PaperEnabledUsersGroupAdditionDetails struct {
 }
@@ -11983,7 +12916,7 @@ func NewPaperEnabledUsersGroupAdditionType(Description string) *PaperEnabledUser
 	return s
 }
 
-// PaperEnabledUsersGroupRemovalDetails : Users removed from Paper enabled users
+// PaperEnabledUsersGroupRemovalDetails : Removed users from Paper-enabled users
 // list.
 type PaperEnabledUsersGroupRemovalDetails struct {
 }
@@ -12007,7 +12940,7 @@ func NewPaperEnabledUsersGroupRemovalType(Description string) *PaperEnabledUsers
 	return s
 }
 
-// PaperExternalViewAllowDetails : Paper external sharing policy changed:
+// PaperExternalViewAllowDetails : Changed Paper external sharing setting to
 // anyone.
 type PaperExternalViewAllowDetails struct {
 	// EventUuid : Event unique identifier.
@@ -12034,8 +12967,8 @@ func NewPaperExternalViewAllowType(Description string) *PaperExternalViewAllowTy
 	return s
 }
 
-// PaperExternalViewDefaultTeamDetails : Paper external sharing policy changed:
-// default team.
+// PaperExternalViewDefaultTeamDetails : Changed Paper external sharing setting
+// to default team.
 type PaperExternalViewDefaultTeamDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12061,7 +12994,7 @@ func NewPaperExternalViewDefaultTeamType(Description string) *PaperExternalViewD
 	return s
 }
 
-// PaperExternalViewForbidDetails : Paper external sharing policy changed:
+// PaperExternalViewForbidDetails : Changed Paper external sharing setting to
 // team-only.
 type PaperExternalViewForbidDetails struct {
 	// EventUuid : Event unique identifier.
@@ -12088,7 +13021,7 @@ func NewPaperExternalViewForbidType(Description string) *PaperExternalViewForbid
 	return s
 }
 
-// PaperFolderChangeSubscriptionDetails : Followed or unfollowed a Paper folder.
+// PaperFolderChangeSubscriptionDetails : Followed/unfollowed Paper folder.
 type PaperFolderChangeSubscriptionDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12120,7 +13053,7 @@ func NewPaperFolderChangeSubscriptionType(Description string) *PaperFolderChange
 	return s
 }
 
-// PaperFolderDeletedDetails : Paper folder archived.
+// PaperFolderDeletedDetails : Archived Paper folder.
 type PaperFolderDeletedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12146,7 +13079,7 @@ func NewPaperFolderDeletedType(Description string) *PaperFolderDeletedType {
 	return s
 }
 
-// PaperFolderFollowedDetails : Followed a Paper folder.
+// PaperFolderFollowedDetails : Followed Paper folder.
 type PaperFolderFollowedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12188,7 +13121,7 @@ func NewPaperFolderLogInfo(FolderId string, FolderName string) *PaperFolderLogIn
 	return s
 }
 
-// PaperFolderTeamInviteDetails : Paper folder shared with team member.
+// PaperFolderTeamInviteDetails : Shared Paper folder with member.
 type PaperFolderTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12362,8 +13295,8 @@ func NewPathLogInfo(NamespaceRelative *NamespaceRelativePathLogInfo) *PathLogInf
 	return s
 }
 
-// PermanentDeleteChangePolicyDetails : Enabled or disabled the ability of team
-// members to permanently delete content.
+// PermanentDeleteChangePolicyDetails : Enabled/disabled ability of team members
+// to permanently delete content.
 type PermanentDeleteChangePolicyDetails struct {
 	// NewValue : New permanent delete content policy.
 	NewValue *ContentPermanentDeletePolicy `json:"new_value"`
@@ -12483,7 +13416,7 @@ func NewResellerSupportSessionStartType(Description string) *ResellerSupportSess
 	return s
 }
 
-// SfAddGroupDetails : Added the team to a shared folder.
+// SfAddGroupDetails : Added team to shared folder.
 type SfAddGroupDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12518,8 +13451,8 @@ func NewSfAddGroupType(Description string) *SfAddGroupType {
 	return s
 }
 
-// SfAllowNonMembersToViewSharedLinksDetails : Allowed non collaborators to view
-// links to files in a shared folder.
+// SfAllowNonMembersToViewSharedLinksDetails : Allowed non-collaborators to view
+// links to files in shared folder.
 type SfAllowNonMembersToViewSharedLinksDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12551,8 +13484,8 @@ func NewSfAllowNonMembersToViewSharedLinksType(Description string) *SfAllowNonMe
 	return s
 }
 
-// SfExternalInviteWarnDetails : Admin settings: team members see a warning
-// before sharing folders outside the team (DEPRECATED FEATURE).
+// SfExternalInviteWarnDetails : Set team members to see warning before sharing
+// folders outside team.
 type SfExternalInviteWarnDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12587,7 +13520,103 @@ func NewSfExternalInviteWarnType(Description string) *SfExternalInviteWarnType {
 	return s
 }
 
-// SfInviteGroupDetails : Invited a group to a shared folder.
+// SfFbInviteChangeRoleDetails : Changed Facebook user's role in shared folder.
+type SfFbInviteChangeRoleDetails struct {
+	// TargetAssetIndex : Target asset position in the Assets list.
+	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// OriginalFolderName : Original shared folder name.
+	OriginalFolderName string `json:"original_folder_name"`
+	// PreviousSharingPermission : Previous sharing permission. Might be missing
+	// due to historical data gap.
+	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
+	// NewSharingPermission : New sharing permission. Might be missing due to
+	// historical data gap.
+	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
+}
+
+// NewSfFbInviteChangeRoleDetails returns a new SfFbInviteChangeRoleDetails instance
+func NewSfFbInviteChangeRoleDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbInviteChangeRoleDetails {
+	s := new(SfFbInviteChangeRoleDetails)
+	s.TargetAssetIndex = TargetAssetIndex
+	s.OriginalFolderName = OriginalFolderName
+	return s
+}
+
+// SfFbInviteChangeRoleType : has no documentation (yet)
+type SfFbInviteChangeRoleType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSfFbInviteChangeRoleType returns a new SfFbInviteChangeRoleType instance
+func NewSfFbInviteChangeRoleType(Description string) *SfFbInviteChangeRoleType {
+	s := new(SfFbInviteChangeRoleType)
+	s.Description = Description
+	return s
+}
+
+// SfFbInviteDetails : Invited Facebook users to shared folder.
+type SfFbInviteDetails struct {
+	// TargetAssetIndex : Target asset position in the Assets list.
+	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// OriginalFolderName : Original shared folder name.
+	OriginalFolderName string `json:"original_folder_name"`
+	// SharingPermission : Sharing permission. Might be missing due to
+	// historical data gap.
+	SharingPermission string `json:"sharing_permission,omitempty"`
+}
+
+// NewSfFbInviteDetails returns a new SfFbInviteDetails instance
+func NewSfFbInviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbInviteDetails {
+	s := new(SfFbInviteDetails)
+	s.TargetAssetIndex = TargetAssetIndex
+	s.OriginalFolderName = OriginalFolderName
+	return s
+}
+
+// SfFbInviteType : has no documentation (yet)
+type SfFbInviteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSfFbInviteType returns a new SfFbInviteType instance
+func NewSfFbInviteType(Description string) *SfFbInviteType {
+	s := new(SfFbInviteType)
+	s.Description = Description
+	return s
+}
+
+// SfFbUninviteDetails : Uninvited Facebook user from shared folder.
+type SfFbUninviteDetails struct {
+	// TargetAssetIndex : Target asset position in the Assets list.
+	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// OriginalFolderName : Original shared folder name.
+	OriginalFolderName string `json:"original_folder_name"`
+}
+
+// NewSfFbUninviteDetails returns a new SfFbUninviteDetails instance
+func NewSfFbUninviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbUninviteDetails {
+	s := new(SfFbUninviteDetails)
+	s.TargetAssetIndex = TargetAssetIndex
+	s.OriginalFolderName = OriginalFolderName
+	return s
+}
+
+// SfFbUninviteType : has no documentation (yet)
+type SfFbUninviteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSfFbUninviteType returns a new SfFbUninviteType instance
+func NewSfFbUninviteType(Description string) *SfFbUninviteType {
+	s := new(SfFbUninviteType)
+	s.Description = Description
+	return s
+}
+
+// SfInviteGroupDetails : Invited group to shared folder.
 type SfInviteGroupDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12613,7 +13642,7 @@ func NewSfInviteGroupType(Description string) *SfInviteGroupType {
 	return s
 }
 
-// SfTeamGrantAccessDetails : Granted access to a shared folder.
+// SfTeamGrantAccessDetails : Granted access to shared folder.
 type SfTeamGrantAccessDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12642,8 +13671,7 @@ func NewSfTeamGrantAccessType(Description string) *SfTeamGrantAccessType {
 	return s
 }
 
-// SfTeamInviteChangeRoleDetails : Changed a team member's role in a shared
-// folder.
+// SfTeamInviteChangeRoleDetails : Changed team member's role in shared folder.
 type SfTeamInviteChangeRoleDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12678,7 +13706,7 @@ func NewSfTeamInviteChangeRoleType(Description string) *SfTeamInviteChangeRoleTy
 	return s
 }
 
-// SfTeamInviteDetails : Invited team members to a shared folder.
+// SfTeamInviteDetails : Invited team members to shared folder.
 type SfTeamInviteDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12710,7 +13738,7 @@ func NewSfTeamInviteType(Description string) *SfTeamInviteType {
 	return s
 }
 
-// SfTeamJoinDetails : Joined a team member's shared folder.
+// SfTeamJoinDetails : Joined team member's shared folder.
 type SfTeamJoinDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12726,8 +13754,7 @@ func NewSfTeamJoinDetails(TargetAssetIndex uint64, OriginalFolderName string) *S
 	return s
 }
 
-// SfTeamJoinFromOobLinkDetails : Joined a team member's shared folder from a
-// link.
+// SfTeamJoinFromOobLinkDetails : Joined team member's shared folder from link.
 type SfTeamJoinFromOobLinkDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12774,7 +13801,7 @@ func NewSfTeamJoinType(Description string) *SfTeamJoinType {
 	return s
 }
 
-// SfTeamUninviteDetails : Unshared a folder with a team member.
+// SfTeamUninviteDetails : Unshared folder with team member.
 type SfTeamUninviteDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -12803,22 +13830,20 @@ func NewSfTeamUninviteType(Description string) *SfTeamUninviteType {
 	return s
 }
 
-// SharedContentAddInviteesDetails : Sent an email invitation to the membership
-// of a shared file or folder.
+// SharedContentAddInviteesDetails : Invited user to Dropbox and added them to
+// shared file/folder.
 type SharedContentAddInviteesDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// Invitees : A list of invitees.
+	Invitees []string `json:"invitees"`
 }
 
 // NewSharedContentAddInviteesDetails returns a new SharedContentAddInviteesDetails instance
-func NewSharedContentAddInviteesDetails(TargetAssetIndex uint64) *SharedContentAddInviteesDetails {
+func NewSharedContentAddInviteesDetails(SharedContentAccessLevel *sharing.AccessLevel, Invitees []string) *SharedContentAddInviteesDetails {
 	s := new(SharedContentAddInviteesDetails)
-	s.TargetAssetIndex = TargetAssetIndex
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	s.Invitees = Invitees
 	return s
 }
 
@@ -12835,29 +13860,17 @@ func NewSharedContentAddInviteesType(Description string) *SharedContentAddInvite
 	return s
 }
 
-// SharedContentAddLinkExpiryDetails : Added an expiry to the link for the
-// shared file or folder.
+// SharedContentAddLinkExpiryDetails : Added expiration date to link for shared
+// file/folder.
 type SharedContentAddLinkExpiryDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
-	// ExpirationStartDate : Expiration starting date.
-	ExpirationStartDate string `json:"expiration_start_date"`
-	// ExpirationDays : The number of days from the starting expiration date
-	// after which the link will expire.
-	ExpirationDays uint64 `json:"expiration_days"`
+	// NewValue : New shared content link expiration date. Might be missing due
+	// to historical data gap.
+	NewValue time.Time `json:"new_value,omitempty"`
 }
 
 // NewSharedContentAddLinkExpiryDetails returns a new SharedContentAddLinkExpiryDetails instance
-func NewSharedContentAddLinkExpiryDetails(TargetAssetIndex uint64, ExpirationStartDate string, ExpirationDays uint64) *SharedContentAddLinkExpiryDetails {
+func NewSharedContentAddLinkExpiryDetails() *SharedContentAddLinkExpiryDetails {
 	s := new(SharedContentAddLinkExpiryDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.ExpirationStartDate = ExpirationStartDate
-	s.ExpirationDays = ExpirationDays
 	return s
 }
 
@@ -12874,22 +13887,14 @@ func NewSharedContentAddLinkExpiryType(Description string) *SharedContentAddLink
 	return s
 }
 
-// SharedContentAddLinkPasswordDetails : Added a password to the link for the
-// shared file or folder.
+// SharedContentAddLinkPasswordDetails : Added password to link for shared
+// file/folder.
 type SharedContentAddLinkPasswordDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
 
 // NewSharedContentAddLinkPasswordDetails returns a new SharedContentAddLinkPasswordDetails instance
-func NewSharedContentAddLinkPasswordDetails(TargetAssetIndex uint64) *SharedContentAddLinkPasswordDetails {
+func NewSharedContentAddLinkPasswordDetails() *SharedContentAddLinkPasswordDetails {
 	s := new(SharedContentAddLinkPasswordDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -12906,25 +13911,17 @@ func NewSharedContentAddLinkPasswordType(Description string) *SharedContentAddLi
 	return s
 }
 
-// SharedContentAddMemberDetails : Added users and/or groups to the membership
-// of a shared file or folder.
+// SharedContentAddMemberDetails : Added users and/or groups to shared
+// file/folder.
 type SharedContentAddMemberDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
 
 // NewSharedContentAddMemberDetails returns a new SharedContentAddMemberDetails instance
-func NewSharedContentAddMemberDetails(TargetAssetIndex uint64) *SharedContentAddMemberDetails {
+func NewSharedContentAddMemberDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedContentAddMemberDetails {
 	s := new(SharedContentAddMemberDetails)
-	s.TargetAssetIndex = TargetAssetIndex
+	s.SharedContentAccessLevel = SharedContentAccessLevel
 	return s
 }
 
@@ -12942,26 +13939,18 @@ func NewSharedContentAddMemberType(Description string) *SharedContentAddMemberTy
 }
 
 // SharedContentChangeDownloadsPolicyDetails : Changed whether members can
-// download the shared file or folder.
+// download shared file/folder.
 type SharedContentChangeDownloadsPolicyDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
-	// NewValue : New downlaod policy.
-	NewValue *SharedContentDownloadsPolicy `json:"new_value"`
-	// PreviousValue : Previous downlaod policy. Might be missing due to
+	// NewValue : New downloads policy.
+	NewValue *DownloadPolicyType `json:"new_value"`
+	// PreviousValue : Previous downloads policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *SharedContentDownloadsPolicy `json:"previous_value,omitempty"`
+	PreviousValue *DownloadPolicyType `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeDownloadsPolicyDetails returns a new SharedContentChangeDownloadsPolicyDetails instance
-func NewSharedContentChangeDownloadsPolicyDetails(TargetAssetIndex uint64, NewValue *SharedContentDownloadsPolicy) *SharedContentChangeDownloadsPolicyDetails {
+func NewSharedContentChangeDownloadsPolicyDetails(NewValue *DownloadPolicyType) *SharedContentChangeDownloadsPolicyDetails {
 	s := new(SharedContentChangeDownloadsPolicyDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	s.NewValue = NewValue
 	return s
 }
@@ -12979,26 +13968,23 @@ func NewSharedContentChangeDownloadsPolicyType(Description string) *SharedConten
 	return s
 }
 
-// SharedContentChangeInviteeRoleDetails : Changed the access type of an invitee
-// to a shared file or folder before the invitation was claimed.
+// SharedContentChangeInviteeRoleDetails : Changed access type of invitee to
+// shared file/folder before invite accepted.
 type SharedContentChangeInviteeRoleDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
-	// NewSharingPermission : New sharing permission. Might be missing due to
+	// PreviousAccessLevel : Previous access level. Might be missing due to
 	// historical data gap.
-	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
-	// PreviousSharingPermission : Previous sharing permission. Might be missing
-	// due to historical data gap.
-	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
+	PreviousAccessLevel *sharing.AccessLevel `json:"previous_access_level,omitempty"`
+	// NewAccessLevel : New access level.
+	NewAccessLevel *sharing.AccessLevel `json:"new_access_level"`
+	// Invitee : The invitee whose role was changed.
+	Invitee string `json:"invitee"`
 }
 
 // NewSharedContentChangeInviteeRoleDetails returns a new SharedContentChangeInviteeRoleDetails instance
-func NewSharedContentChangeInviteeRoleDetails(TargetAssetIndex uint64, OriginalFolderName string) *SharedContentChangeInviteeRoleDetails {
+func NewSharedContentChangeInviteeRoleDetails(NewAccessLevel *sharing.AccessLevel, Invitee string) *SharedContentChangeInviteeRoleDetails {
 	s := new(SharedContentChangeInviteeRoleDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
+	s.NewAccessLevel = NewAccessLevel
+	s.Invitee = Invitee
 	return s
 }
 
@@ -13015,27 +14001,18 @@ func NewSharedContentChangeInviteeRoleType(Description string) *SharedContentCha
 	return s
 }
 
-// SharedContentChangeLinkAudienceDetails : Changed the audience of the link for
-// a shared file or folder.
+// SharedContentChangeLinkAudienceDetails : Changed link audience of shared
+// file/folder.
 type SharedContentChangeLinkAudienceDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New link audience value.
-	NewValue *LinkAudience `json:"new_value"`
-	// PreviousValue : Previous link audience value. Might be missing due to
-	// historical data gap.
-	PreviousValue *LinkAudience `json:"previous_value,omitempty"`
+	NewValue *sharing.LinkAudience `json:"new_value"`
+	// PreviousValue : Previous link audience value.
+	PreviousValue *sharing.LinkAudience `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeLinkAudienceDetails returns a new SharedContentChangeLinkAudienceDetails instance
-func NewSharedContentChangeLinkAudienceDetails(TargetAssetIndex uint64, NewValue *LinkAudience) *SharedContentChangeLinkAudienceDetails {
+func NewSharedContentChangeLinkAudienceDetails(NewValue *sharing.LinkAudience) *SharedContentChangeLinkAudienceDetails {
 	s := new(SharedContentChangeLinkAudienceDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	s.NewValue = NewValue
 	return s
 }
@@ -13053,29 +14030,20 @@ func NewSharedContentChangeLinkAudienceType(Description string) *SharedContentCh
 	return s
 }
 
-// SharedContentChangeLinkExpiryDetails : Changed the expiry of the link for the
-// shared file or folder.
+// SharedContentChangeLinkExpiryDetails : Changed link expiration of shared
+// file/folder.
 type SharedContentChangeLinkExpiryDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
-	// ExpirationStartDate : Expiration starting date.
-	ExpirationStartDate string `json:"expiration_start_date"`
-	// ExpirationDays : The number of days from the starting expiration date
-	// after which the link will expire.
-	ExpirationDays uint64 `json:"expiration_days"`
+	// NewValue : New shared content link expiration date. Might be missing due
+	// to historical data gap.
+	NewValue time.Time `json:"new_value,omitempty"`
+	// PreviousValue : Previous shared content link expiration date. Might be
+	// missing due to historical data gap.
+	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeLinkExpiryDetails returns a new SharedContentChangeLinkExpiryDetails instance
-func NewSharedContentChangeLinkExpiryDetails(TargetAssetIndex uint64, ExpirationStartDate string, ExpirationDays uint64) *SharedContentChangeLinkExpiryDetails {
+func NewSharedContentChangeLinkExpiryDetails() *SharedContentChangeLinkExpiryDetails {
 	s := new(SharedContentChangeLinkExpiryDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.ExpirationStartDate = ExpirationStartDate
-	s.ExpirationDays = ExpirationDays
 	return s
 }
 
@@ -13092,22 +14060,14 @@ func NewSharedContentChangeLinkExpiryType(Description string) *SharedContentChan
 	return s
 }
 
-// SharedContentChangeLinkPasswordDetails : Changed the password on the link for
-// the shared file or folder.
+// SharedContentChangeLinkPasswordDetails : Changed link password of shared
+// file/folder.
 type SharedContentChangeLinkPasswordDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
 
 // NewSharedContentChangeLinkPasswordDetails returns a new SharedContentChangeLinkPasswordDetails instance
-func NewSharedContentChangeLinkPasswordDetails(TargetAssetIndex uint64) *SharedContentChangeLinkPasswordDetails {
+func NewSharedContentChangeLinkPasswordDetails() *SharedContentChangeLinkPasswordDetails {
 	s := new(SharedContentChangeLinkPasswordDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13124,28 +14084,20 @@ func NewSharedContentChangeLinkPasswordType(Description string) *SharedContentCh
 	return s
 }
 
-// SharedContentChangeMemberRoleDetails : Changed the access type of a shared
-// file or folder member.
+// SharedContentChangeMemberRoleDetails : Changed access type of shared
+// file/folder member.
 type SharedContentChangeMemberRoleDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// NewSharingPermission : New sharing permission. Might be missing due to
+	// PreviousAccessLevel : Previous access level. Might be missing due to
 	// historical data gap.
-	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
-	// PreviousSharingPermission : Previous sharing permission. Might be missing
-	// due to historical data gap.
-	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+	PreviousAccessLevel *sharing.AccessLevel `json:"previous_access_level,omitempty"`
+	// NewAccessLevel : New access level.
+	NewAccessLevel *sharing.AccessLevel `json:"new_access_level"`
 }
 
 // NewSharedContentChangeMemberRoleDetails returns a new SharedContentChangeMemberRoleDetails instance
-func NewSharedContentChangeMemberRoleDetails(TargetAssetIndex uint64) *SharedContentChangeMemberRoleDetails {
+func NewSharedContentChangeMemberRoleDetails(NewAccessLevel *sharing.AccessLevel) *SharedContentChangeMemberRoleDetails {
 	s := new(SharedContentChangeMemberRoleDetails)
-	s.TargetAssetIndex = TargetAssetIndex
+	s.NewAccessLevel = NewAccessLevel
 	return s
 }
 
@@ -13163,26 +14115,18 @@ func NewSharedContentChangeMemberRoleType(Description string) *SharedContentChan
 }
 
 // SharedContentChangeViewerInfoPolicyDetails : Changed whether members can see
-// who viewed the shared file or folder.
+// who viewed shared file/folder.
 type SharedContentChangeViewerInfoPolicyDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New viewer info policy.
-	NewValue *SharedContentViewerInfoPolicy `json:"new_value"`
+	NewValue *sharing.ViewerInfoPolicy `json:"new_value"`
 	// PreviousValue : Previous view info policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *SharedContentViewerInfoPolicy `json:"previous_value,omitempty"`
+	PreviousValue *sharing.ViewerInfoPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeViewerInfoPolicyDetails returns a new SharedContentChangeViewerInfoPolicyDetails instance
-func NewSharedContentChangeViewerInfoPolicyDetails(TargetAssetIndex uint64, NewValue *SharedContentViewerInfoPolicy) *SharedContentChangeViewerInfoPolicyDetails {
+func NewSharedContentChangeViewerInfoPolicyDetails(NewValue *sharing.ViewerInfoPolicy) *SharedContentChangeViewerInfoPolicyDetails {
 	s := new(SharedContentChangeViewerInfoPolicyDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	s.NewValue = NewValue
 	return s
 }
@@ -13200,21 +14144,16 @@ func NewSharedContentChangeViewerInfoPolicyType(Description string) *SharedConte
 	return s
 }
 
-// SharedContentClaimInvitationDetails : Claimed membership to a team member's
-// shared folder.
+// SharedContentClaimInvitationDetails : Acquired membership of shared
+// file/folder by accepting invite.
 type SharedContentClaimInvitationDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 }
 
 // NewSharedContentClaimInvitationDetails returns a new SharedContentClaimInvitationDetails instance
-func NewSharedContentClaimInvitationDetails(TargetAssetIndex uint64) *SharedContentClaimInvitationDetails {
+func NewSharedContentClaimInvitationDetails() *SharedContentClaimInvitationDetails {
 	s := new(SharedContentClaimInvitationDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13231,26 +14170,24 @@ func NewSharedContentClaimInvitationType(Description string) *SharedContentClaim
 	return s
 }
 
-// SharedContentCopyDetails : Copied the shared file or folder to own Dropbox.
+// SharedContentCopyDetails : Copied shared file/folder to own Dropbox.
 type SharedContentCopyDetails struct {
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// RelocateActionDetails : Specifies the source and destination indices in
-	// the assets list.
-	RelocateActionDetails *RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
+	// SharedContentOwner : The shared content owner.
+	SharedContentOwner IsUserLogInfo `json:"shared_content_owner,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// DestinationPath : The path where the member saved the content.
+	DestinationPath string `json:"destination_path"`
 }
 
 // NewSharedContentCopyDetails returns a new SharedContentCopyDetails instance
-func NewSharedContentCopyDetails(SharedContentLink string, TargetAssetIndex uint64, RelocateActionDetails *RelocateAssetReferencesLogInfo) *SharedContentCopyDetails {
+func NewSharedContentCopyDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel, DestinationPath string) *SharedContentCopyDetails {
 	s := new(SharedContentCopyDetails)
 	s.SharedContentLink = SharedContentLink
-	s.TargetAssetIndex = TargetAssetIndex
-	s.RelocateActionDetails = RelocateActionDetails
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	s.DestinationPath = DestinationPath
 	return s
 }
 
@@ -13267,22 +14204,21 @@ func NewSharedContentCopyType(Description string) *SharedContentCopyType {
 	return s
 }
 
-// SharedContentDownloadDetails : Downloaded the shared file or folder.
+// SharedContentDownloadDetails : Downloaded shared file/folder.
 type SharedContentDownloadDetails struct {
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// SharedContentOwner : The shared content owner.
+	SharedContentOwner IsUserLogInfo `json:"shared_content_owner,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
 
 // NewSharedContentDownloadDetails returns a new SharedContentDownloadDetails instance
-func NewSharedContentDownloadDetails(SharedContentLink string, TargetAssetIndex uint64) *SharedContentDownloadDetails {
+func NewSharedContentDownloadDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel) *SharedContentDownloadDetails {
 	s := new(SharedContentDownloadDetails)
 	s.SharedContentLink = SharedContentLink
-	s.TargetAssetIndex = TargetAssetIndex
+	s.SharedContentAccessLevel = SharedContentAccessLevel
 	return s
 }
 
@@ -13299,32 +14235,13 @@ func NewSharedContentDownloadType(Description string) *SharedContentDownloadType
 	return s
 }
 
-// SharedContentDownloadsPolicy : Shared content downloads policy
-type SharedContentDownloadsPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SharedContentDownloadsPolicy
-const (
-	SharedContentDownloadsPolicyDisabled = "disabled"
-	SharedContentDownloadsPolicyEnabled  = "enabled"
-	SharedContentDownloadsPolicyOther    = "other"
-)
-
-// SharedContentRelinquishMembershipDetails : Left the membership of a shared
-// file or folder.
+// SharedContentRelinquishMembershipDetails : Left shared file/folder.
 type SharedContentRelinquishMembershipDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
 }
 
 // NewSharedContentRelinquishMembershipDetails returns a new SharedContentRelinquishMembershipDetails instance
-func NewSharedContentRelinquishMembershipDetails(TargetAssetIndex uint64, OriginalFolderName string) *SharedContentRelinquishMembershipDetails {
+func NewSharedContentRelinquishMembershipDetails() *SharedContentRelinquishMembershipDetails {
 	s := new(SharedContentRelinquishMembershipDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
 	return s
 }
 
@@ -13341,52 +14258,44 @@ func NewSharedContentRelinquishMembershipType(Description string) *SharedContent
 	return s
 }
 
-// SharedContentRemoveInviteeDetails : Removed an invitee from the membership of
-// a shared file or folder before it was claimed.
-type SharedContentRemoveInviteeDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
+// SharedContentRemoveInviteesDetails : Removed invitee from shared file/folder
+// before invite accepted.
+type SharedContentRemoveInviteesDetails struct {
+	// Invitees : A list of invitees.
+	Invitees []string `json:"invitees"`
 }
 
-// NewSharedContentRemoveInviteeDetails returns a new SharedContentRemoveInviteeDetails instance
-func NewSharedContentRemoveInviteeDetails(TargetAssetIndex uint64, OriginalFolderName string) *SharedContentRemoveInviteeDetails {
-	s := new(SharedContentRemoveInviteeDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
+// NewSharedContentRemoveInviteesDetails returns a new SharedContentRemoveInviteesDetails instance
+func NewSharedContentRemoveInviteesDetails(Invitees []string) *SharedContentRemoveInviteesDetails {
+	s := new(SharedContentRemoveInviteesDetails)
+	s.Invitees = Invitees
 	return s
 }
 
-// SharedContentRemoveInviteeType : has no documentation (yet)
-type SharedContentRemoveInviteeType struct {
+// SharedContentRemoveInviteesType : has no documentation (yet)
+type SharedContentRemoveInviteesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
 
-// NewSharedContentRemoveInviteeType returns a new SharedContentRemoveInviteeType instance
-func NewSharedContentRemoveInviteeType(Description string) *SharedContentRemoveInviteeType {
-	s := new(SharedContentRemoveInviteeType)
+// NewSharedContentRemoveInviteesType returns a new SharedContentRemoveInviteesType instance
+func NewSharedContentRemoveInviteesType(Description string) *SharedContentRemoveInviteesType {
+	s := new(SharedContentRemoveInviteesType)
 	s.Description = Description
 	return s
 }
 
-// SharedContentRemoveLinkExpiryDetails : Removed the expiry of the link for the
-// shared file or folder.
+// SharedContentRemoveLinkExpiryDetails : Removed link expiration date of shared
+// file/folder.
 type SharedContentRemoveLinkExpiryDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+	// PreviousValue : Previous shared content link expiration date. Might be
+	// missing due to historical data gap.
+	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentRemoveLinkExpiryDetails returns a new SharedContentRemoveLinkExpiryDetails instance
-func NewSharedContentRemoveLinkExpiryDetails(TargetAssetIndex uint64) *SharedContentRemoveLinkExpiryDetails {
+func NewSharedContentRemoveLinkExpiryDetails() *SharedContentRemoveLinkExpiryDetails {
 	s := new(SharedContentRemoveLinkExpiryDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13403,22 +14312,14 @@ func NewSharedContentRemoveLinkExpiryType(Description string) *SharedContentRemo
 	return s
 }
 
-// SharedContentRemoveLinkPasswordDetails : Removed the password on the link for
-// the shared file or folder.
+// SharedContentRemoveLinkPasswordDetails : Removed link password of shared
+// file/folder.
 type SharedContentRemoveLinkPasswordDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
 
 // NewSharedContentRemoveLinkPasswordDetails returns a new SharedContentRemoveLinkPasswordDetails instance
-func NewSharedContentRemoveLinkPasswordDetails(TargetAssetIndex uint64) *SharedContentRemoveLinkPasswordDetails {
+func NewSharedContentRemoveLinkPasswordDetails() *SharedContentRemoveLinkPasswordDetails {
 	s := new(SharedContentRemoveLinkPasswordDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13435,25 +14336,16 @@ func NewSharedContentRemoveLinkPasswordType(Description string) *SharedContentRe
 	return s
 }
 
-// SharedContentRemoveMemberDetails : Removed a user or a group from the
-// membership of a shared file or folder.
+// SharedContentRemoveMemberDetails : Removed user/group from shared
+// file/folder.
 type SharedContentRemoveMemberDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level,omitempty"`
 }
 
 // NewSharedContentRemoveMemberDetails returns a new SharedContentRemoveMemberDetails instance
-func NewSharedContentRemoveMemberDetails(TargetAssetIndex uint64) *SharedContentRemoveMemberDetails {
+func NewSharedContentRemoveMemberDetails() *SharedContentRemoveMemberDetails {
 	s := new(SharedContentRemoveMemberDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13470,21 +14362,15 @@ func NewSharedContentRemoveMemberType(Description string) *SharedContentRemoveMe
 	return s
 }
 
-// SharedContentRequestAccessDetails : Requested to be on the membership of a
-// shared file or folder.
+// SharedContentRequestAccessDetails : Requested access to shared file/folder.
 type SharedContentRequestAccessDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 }
 
 // NewSharedContentRequestAccessDetails returns a new SharedContentRequestAccessDetails instance
-func NewSharedContentRequestAccessDetails(TargetAssetIndex uint64) *SharedContentRequestAccessDetails {
+func NewSharedContentRequestAccessDetails() *SharedContentRequestAccessDetails {
 	s := new(SharedContentRequestAccessDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13501,19 +14387,14 @@ func NewSharedContentRequestAccessType(Description string) *SharedContentRequest
 	return s
 }
 
-// SharedContentUnshareDetails : Unshared a shared file or folder by clearing
-// its membership and turning off its link.
+// SharedContentUnshareDetails : Unshared file/folder by clearing membership and
+// turning off link.
 type SharedContentUnshareDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name,omitempty"`
 }
 
 // NewSharedContentUnshareDetails returns a new SharedContentUnshareDetails instance
-func NewSharedContentUnshareDetails(TargetAssetIndex uint64) *SharedContentUnshareDetails {
+func NewSharedContentUnshareDetails() *SharedContentUnshareDetails {
 	s := new(SharedContentUnshareDetails)
-	s.TargetAssetIndex = TargetAssetIndex
 	return s
 }
 
@@ -13530,22 +14411,21 @@ func NewSharedContentUnshareType(Description string) *SharedContentUnshareType {
 	return s
 }
 
-// SharedContentViewDetails : Previewed the shared file or folder.
+// SharedContentViewDetails : Previewed shared file/folder.
 type SharedContentViewDetails struct {
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
-	SharingPermission string `json:"sharing_permission,omitempty"`
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
+	// SharedContentOwner : The shared content owner.
+	SharedContentOwner IsUserLogInfo `json:"shared_content_owner,omitempty"`
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
 
 // NewSharedContentViewDetails returns a new SharedContentViewDetails instance
-func NewSharedContentViewDetails(SharedContentLink string, TargetAssetIndex uint64) *SharedContentViewDetails {
+func NewSharedContentViewDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel) *SharedContentViewDetails {
 	s := new(SharedContentViewDetails)
 	s.SharedContentLink = SharedContentLink
-	s.TargetAssetIndex = TargetAssetIndex
+	s.SharedContentAccessLevel = SharedContentAccessLevel
 	return s
 }
 
@@ -13562,70 +14442,19 @@ func NewSharedContentViewType(Description string) *SharedContentViewType {
 	return s
 }
 
-// SharedContentViewerInfoPolicy : Shared content viewer info policy
-type SharedContentViewerInfoPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SharedContentViewerInfoPolicy
-const (
-	SharedContentViewerInfoPolicyDisabled = "disabled"
-	SharedContentViewerInfoPolicyEnabled  = "enabled"
-	SharedContentViewerInfoPolicyOther    = "other"
-)
-
-// SharedFolderChangeConfidentialityDetails : Set or unset the confidential flag
-// on a shared folder.
-type SharedFolderChangeConfidentialityDetails struct {
-	// NewValue : New confidentiality value.
-	NewValue *Confidentiality `json:"new_value"`
-	// PreviousValue : Previous confidentiality value. Might be missing due to
-	// historical data gap.
-	PreviousValue *Confidentiality `json:"previous_value,omitempty"`
-}
-
-// NewSharedFolderChangeConfidentialityDetails returns a new SharedFolderChangeConfidentialityDetails instance
-func NewSharedFolderChangeConfidentialityDetails(NewValue *Confidentiality) *SharedFolderChangeConfidentialityDetails {
-	s := new(SharedFolderChangeConfidentialityDetails)
-	s.NewValue = NewValue
-	return s
-}
-
-// SharedFolderChangeConfidentialityType : has no documentation (yet)
-type SharedFolderChangeConfidentialityType struct {
-	// Description : has no documentation (yet)
-	Description string `json:"description"`
-}
-
-// NewSharedFolderChangeConfidentialityType returns a new SharedFolderChangeConfidentialityType instance
-func NewSharedFolderChangeConfidentialityType(Description string) *SharedFolderChangeConfidentialityType {
-	s := new(SharedFolderChangeConfidentialityType)
-	s.Description = Description
-	return s
-}
-
-// SharedFolderChangeLinkPolicyDetails : Changed who can access the shared
-// folder via a link.
+// SharedFolderChangeLinkPolicyDetails : Changed who can access shared folder
+// via link.
 type SharedFolderChangeLinkPolicyDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
 	// NewValue : New shared folder link policy.
-	NewValue *SharedFolderLinkPolicy `json:"new_value"`
+	NewValue *sharing.SharedLinkPolicy `json:"new_value"`
 	// PreviousValue : Previous shared folder link policy. Might be missing due
 	// to historical data gap.
-	PreviousValue *SharedFolderLinkPolicy `json:"previous_value,omitempty"`
+	PreviousValue *sharing.SharedLinkPolicy `json:"previous_value,omitempty"`
 }
 
 // NewSharedFolderChangeLinkPolicyDetails returns a new SharedFolderChangeLinkPolicyDetails instance
-func NewSharedFolderChangeLinkPolicyDetails(TargetAssetIndex uint64, OriginalFolderName string, NewValue *SharedFolderLinkPolicy) *SharedFolderChangeLinkPolicyDetails {
+func NewSharedFolderChangeLinkPolicyDetails(NewValue *sharing.SharedLinkPolicy) *SharedFolderChangeLinkPolicyDetails {
 	s := new(SharedFolderChangeLinkPolicyDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
 	s.NewValue = NewValue
 	return s
 }
@@ -13643,85 +14472,97 @@ func NewSharedFolderChangeLinkPolicyType(Description string) *SharedFolderChange
 	return s
 }
 
-// SharedFolderChangeMemberManagementPolicyDetails : Changed who can manage the
-// membership of a shared folder.
-type SharedFolderChangeMemberManagementPolicyDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
-	// NewValue : New membership management policy.
-	NewValue *SharedFolderMembershipManagementPolicy `json:"new_value"`
-	// PreviousValue : Previous membership management policy. Might be missing
-	// due to historical data gap.
-	PreviousValue *SharedFolderMembershipManagementPolicy `json:"previous_value,omitempty"`
+// SharedFolderChangeMembersInheritancePolicyDetails : Changed whether shared
+// folder inherits members from parent folder.
+type SharedFolderChangeMembersInheritancePolicyDetails struct {
+	// NewValue : New member inheritance policy.
+	NewValue *SharedFolderMembersInheritancePolicy `json:"new_value"`
+	// PreviousValue : Previous member inheritance policy. Might be missing due
+	// to historical data gap.
+	PreviousValue *SharedFolderMembersInheritancePolicy `json:"previous_value,omitempty"`
 }
 
-// NewSharedFolderChangeMemberManagementPolicyDetails returns a new SharedFolderChangeMemberManagementPolicyDetails instance
-func NewSharedFolderChangeMemberManagementPolicyDetails(TargetAssetIndex uint64, OriginalFolderName string, NewValue *SharedFolderMembershipManagementPolicy) *SharedFolderChangeMemberManagementPolicyDetails {
-	s := new(SharedFolderChangeMemberManagementPolicyDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
+// NewSharedFolderChangeMembersInheritancePolicyDetails returns a new SharedFolderChangeMembersInheritancePolicyDetails instance
+func NewSharedFolderChangeMembersInheritancePolicyDetails(NewValue *SharedFolderMembersInheritancePolicy) *SharedFolderChangeMembersInheritancePolicyDetails {
+	s := new(SharedFolderChangeMembersInheritancePolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
-// SharedFolderChangeMemberManagementPolicyType : has no documentation (yet)
-type SharedFolderChangeMemberManagementPolicyType struct {
+// SharedFolderChangeMembersInheritancePolicyType : has no documentation (yet)
+type SharedFolderChangeMembersInheritancePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
 
-// NewSharedFolderChangeMemberManagementPolicyType returns a new SharedFolderChangeMemberManagementPolicyType instance
-func NewSharedFolderChangeMemberManagementPolicyType(Description string) *SharedFolderChangeMemberManagementPolicyType {
-	s := new(SharedFolderChangeMemberManagementPolicyType)
+// NewSharedFolderChangeMembersInheritancePolicyType returns a new SharedFolderChangeMembersInheritancePolicyType instance
+func NewSharedFolderChangeMembersInheritancePolicyType(Description string) *SharedFolderChangeMembersInheritancePolicyType {
+	s := new(SharedFolderChangeMembersInheritancePolicyType)
 	s.Description = Description
 	return s
 }
 
-// SharedFolderChangeMemberPolicyDetails : Changed who can become a member of
-// the shared folder.
-type SharedFolderChangeMemberPolicyDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
-	SharedFolderType string `json:"shared_folder_type,omitempty"`
+// SharedFolderChangeMembersManagementPolicyDetails : Changed who can add/remove
+// members of shared folder.
+type SharedFolderChangeMembersManagementPolicyDetails struct {
+	// NewValue : New members management policy.
+	NewValue *sharing.AclUpdatePolicy `json:"new_value"`
+	// PreviousValue : Previous members management policy. Might be missing due
+	// to historical data gap.
+	PreviousValue *sharing.AclUpdatePolicy `json:"previous_value,omitempty"`
+}
+
+// NewSharedFolderChangeMembersManagementPolicyDetails returns a new SharedFolderChangeMembersManagementPolicyDetails instance
+func NewSharedFolderChangeMembersManagementPolicyDetails(NewValue *sharing.AclUpdatePolicy) *SharedFolderChangeMembersManagementPolicyDetails {
+	s := new(SharedFolderChangeMembersManagementPolicyDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// SharedFolderChangeMembersManagementPolicyType : has no documentation (yet)
+type SharedFolderChangeMembersManagementPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedFolderChangeMembersManagementPolicyType returns a new SharedFolderChangeMembersManagementPolicyType instance
+func NewSharedFolderChangeMembersManagementPolicyType(Description string) *SharedFolderChangeMembersManagementPolicyType {
+	s := new(SharedFolderChangeMembersManagementPolicyType)
+	s.Description = Description
+	return s
+}
+
+// SharedFolderChangeMembersPolicyDetails : Changed who can become member of
+// shared folder.
+type SharedFolderChangeMembersPolicyDetails struct {
 	// NewValue : New external invite policy.
-	NewValue *SharedFolderMemberPolicy `json:"new_value"`
+	NewValue *sharing.MemberPolicy `json:"new_value"`
 	// PreviousValue : Previous external invite policy. Might be missing due to
 	// historical data gap.
-	PreviousValue *SharedFolderMemberPolicy `json:"previous_value,omitempty"`
+	PreviousValue *sharing.MemberPolicy `json:"previous_value,omitempty"`
 }
 
-// NewSharedFolderChangeMemberPolicyDetails returns a new SharedFolderChangeMemberPolicyDetails instance
-func NewSharedFolderChangeMemberPolicyDetails(TargetAssetIndex uint64, OriginalFolderName string, NewValue *SharedFolderMemberPolicy) *SharedFolderChangeMemberPolicyDetails {
-	s := new(SharedFolderChangeMemberPolicyDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
+// NewSharedFolderChangeMembersPolicyDetails returns a new SharedFolderChangeMembersPolicyDetails instance
+func NewSharedFolderChangeMembersPolicyDetails(NewValue *sharing.MemberPolicy) *SharedFolderChangeMembersPolicyDetails {
+	s := new(SharedFolderChangeMembersPolicyDetails)
 	s.NewValue = NewValue
 	return s
 }
 
-// SharedFolderChangeMemberPolicyType : has no documentation (yet)
-type SharedFolderChangeMemberPolicyType struct {
+// SharedFolderChangeMembersPolicyType : has no documentation (yet)
+type SharedFolderChangeMembersPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
 
-// NewSharedFolderChangeMemberPolicyType returns a new SharedFolderChangeMemberPolicyType instance
-func NewSharedFolderChangeMemberPolicyType(Description string) *SharedFolderChangeMemberPolicyType {
-	s := new(SharedFolderChangeMemberPolicyType)
+// NewSharedFolderChangeMembersPolicyType returns a new SharedFolderChangeMembersPolicyType instance
+func NewSharedFolderChangeMembersPolicyType(Description string) *SharedFolderChangeMembersPolicyType {
+	s := new(SharedFolderChangeMembersPolicyType)
 	s.Description = Description
 	return s
 }
 
-// SharedFolderCreateDetails : Created a shared folder.
+// SharedFolderCreateDetails : Created shared folder.
 type SharedFolderCreateDetails struct {
 	// TargetNsId : Target namespace ID. Might be missing due to historical data
 	// gap.
@@ -13747,8 +14588,8 @@ func NewSharedFolderCreateType(Description string) *SharedFolderCreateType {
 	return s
 }
 
-// SharedFolderDeclineInvitationDetails : Declined a team member's invitation to
-// a shared folder.
+// SharedFolderDeclineInvitationDetails : Declined team member's invite to
+// shared folder.
 type SharedFolderDeclineInvitationDetails struct {
 }
 
@@ -13771,57 +14612,26 @@ func NewSharedFolderDeclineInvitationType(Description string) *SharedFolderDecli
 	return s
 }
 
-// SharedFolderLinkPolicy : has no documentation (yet)
-type SharedFolderLinkPolicy struct {
+// SharedFolderMembersInheritancePolicy : Specifies if a shared folder inherits
+// its members from the parent folder.
+type SharedFolderMembersInheritancePolicy struct {
 	dropbox.Tagged
 }
 
-// Valid tag values for SharedFolderLinkPolicy
+// Valid tag values for SharedFolderMembersInheritancePolicy
 const (
-	SharedFolderLinkPolicyMembersOnly    = "members_only"
-	SharedFolderLinkPolicyMembersAndTeam = "members_and_team"
-	SharedFolderLinkPolicyAnyone         = "anyone"
-	SharedFolderLinkPolicyOther          = "other"
+	SharedFolderMembersInheritancePolicyInheritMembers     = "inherit_members"
+	SharedFolderMembersInheritancePolicyDontInheritMembers = "dont_inherit_members"
+	SharedFolderMembersInheritancePolicyOther              = "other"
 )
 
-// SharedFolderMemberPolicy : Policy for controlling who can become a member of
-// a shared folder
-type SharedFolderMemberPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SharedFolderMemberPolicy
-const (
-	SharedFolderMemberPolicyTeamOnly = "team_only"
-	SharedFolderMemberPolicyAnyone   = "anyone"
-	SharedFolderMemberPolicyOther    = "other"
-)
-
-// SharedFolderMembershipManagementPolicy : has no documentation (yet)
-type SharedFolderMembershipManagementPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for SharedFolderMembershipManagementPolicy
-const (
-	SharedFolderMembershipManagementPolicyOwner   = "owner"
-	SharedFolderMembershipManagementPolicyEditors = "editors"
-	SharedFolderMembershipManagementPolicyOther   = "other"
-)
-
-// SharedFolderMountDetails : Added a shared folder to own Dropbox.
+// SharedFolderMountDetails : Added shared folder to own Dropbox.
 type SharedFolderMountDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
 }
 
 // NewSharedFolderMountDetails returns a new SharedFolderMountDetails instance
-func NewSharedFolderMountDetails(TargetAssetIndex uint64, OriginalFolderName string) *SharedFolderMountDetails {
+func NewSharedFolderMountDetails() *SharedFolderMountDetails {
 	s := new(SharedFolderMountDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
 	return s
 }
 
@@ -13838,7 +14648,7 @@ func NewSharedFolderMountType(Description string) *SharedFolderMountType {
 	return s
 }
 
-// SharedFolderNestDetails : Changed the parent of a shared folder.
+// SharedFolderNestDetails : Changed parent of shared folder.
 type SharedFolderNestDetails struct {
 	// PreviousParentNsId : Previous parent namespace ID. Might be missing due
 	// to historical data gap.
@@ -13867,8 +14677,8 @@ func NewSharedFolderNestType(Description string) *SharedFolderNestType {
 	return s
 }
 
-// SharedFolderTransferOwnershipDetails : Transferred the ownership of a shared
-// folder to another member.
+// SharedFolderTransferOwnershipDetails : Transferred ownership of shared folder
+// to another member.
 type SharedFolderTransferOwnershipDetails struct {
 	// PreviousOwnerEmail : The email address of the previous shared folder
 	// owner.
@@ -13897,19 +14707,13 @@ func NewSharedFolderTransferOwnershipType(Description string) *SharedFolderTrans
 	return s
 }
 
-// SharedFolderUnmountDetails : Deleted a shared folder from Dropbox.
+// SharedFolderUnmountDetails : Deleted shared folder from Dropbox.
 type SharedFolderUnmountDetails struct {
-	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
-	// OriginalFolderName : Original shared folder name.
-	OriginalFolderName string `json:"original_folder_name"`
 }
 
 // NewSharedFolderUnmountDetails returns a new SharedFolderUnmountDetails instance
-func NewSharedFolderUnmountDetails(TargetAssetIndex uint64, OriginalFolderName string) *SharedFolderUnmountDetails {
+func NewSharedFolderUnmountDetails() *SharedFolderUnmountDetails {
 	s := new(SharedFolderUnmountDetails)
-	s.TargetAssetIndex = TargetAssetIndex
-	s.OriginalFolderName = OriginalFolderName
 	return s
 }
 
@@ -13939,7 +14743,7 @@ const (
 	SharedLinkAccessLevelOther  = "other"
 )
 
-// SharedLinkAddExpiryDetails : Added a shared link expiration date.
+// SharedLinkAddExpiryDetails : Added shared link expiration date.
 type SharedLinkAddExpiryDetails struct {
 	// NewValue : New shared link expiration date.
 	NewValue time.Time `json:"new_value"`
@@ -13965,7 +14769,7 @@ func NewSharedLinkAddExpiryType(Description string) *SharedLinkAddExpiryType {
 	return s
 }
 
-// SharedLinkChangeExpiryDetails : Changed the shared link expiration date.
+// SharedLinkChangeExpiryDetails : Changed shared link expiration date.
 type SharedLinkChangeExpiryDetails struct {
 	// NewValue : New shared link expiration date. Might be missing due to
 	// historical data gap.
@@ -13994,7 +14798,7 @@ func NewSharedLinkChangeExpiryType(Description string) *SharedLinkChangeExpiryTy
 	return s
 }
 
-// SharedLinkChangeVisibilityDetails : Changed the visibility of a shared link.
+// SharedLinkChangeVisibilityDetails : Changed visibility of shared link.
 type SharedLinkChangeVisibilityDetails struct {
 	// NewValue : New shared link visibility.
 	NewValue *SharedLinkVisibility `json:"new_value"`
@@ -14023,8 +14827,7 @@ func NewSharedLinkChangeVisibilityType(Description string) *SharedLinkChangeVisi
 	return s
 }
 
-// SharedLinkCopyDetails : Added a file/folder to their Dropbox from a shared
-// link.
+// SharedLinkCopyDetails : Added file/folder to Dropbox from shared link.
 type SharedLinkCopyDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
@@ -14050,7 +14853,7 @@ func NewSharedLinkCopyType(Description string) *SharedLinkCopyType {
 	return s
 }
 
-// SharedLinkCreateDetails : Created a new shared link.
+// SharedLinkCreateDetails : Created shared link.
 type SharedLinkCreateDetails struct {
 	// SharedLinkAccessLevel : Defines who can access the shared link. Might be
 	// missing due to historical data gap.
@@ -14076,7 +14879,7 @@ func NewSharedLinkCreateType(Description string) *SharedLinkCreateType {
 	return s
 }
 
-// SharedLinkDisableDetails : Removed a shared link.
+// SharedLinkDisableDetails : Removed shared link.
 type SharedLinkDisableDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
@@ -14102,7 +14905,7 @@ func NewSharedLinkDisableType(Description string) *SharedLinkDisableType {
 	return s
 }
 
-// SharedLinkDownloadDetails : Downloaded a file/folder from a shared link.
+// SharedLinkDownloadDetails : Downloaded file/folder from shared link.
 type SharedLinkDownloadDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
@@ -14128,7 +14931,7 @@ func NewSharedLinkDownloadType(Description string) *SharedLinkDownloadType {
 	return s
 }
 
-// SharedLinkRemoveExpiryDetails : Removed a shared link expiration date.
+// SharedLinkRemoveExpiryDetails : Removed shared link expiration date.
 type SharedLinkRemoveExpiryDetails struct {
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
@@ -14154,7 +14957,7 @@ func NewSharedLinkRemoveExpiryType(Description string) *SharedLinkRemoveExpiryTy
 	return s
 }
 
-// SharedLinkShareDetails : Added new members as the audience of a shared link.
+// SharedLinkShareDetails : Added members as audience of shared link.
 type SharedLinkShareDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
@@ -14183,7 +14986,7 @@ func NewSharedLinkShareType(Description string) *SharedLinkShareType {
 	return s
 }
 
-// SharedLinkViewDetails : Opened a shared link.
+// SharedLinkViewDetails : Opened shared link.
 type SharedLinkViewDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
@@ -14222,7 +15025,7 @@ const (
 	SharedLinkVisibilityOther    = "other"
 )
 
-// SharedNoteOpenedDetails : Shared Paper document was opened.
+// SharedNoteOpenedDetails : Opened shared Paper doc.
 type SharedNoteOpenedDetails struct {
 }
 
@@ -14246,7 +15049,7 @@ func NewSharedNoteOpenedType(Description string) *SharedNoteOpenedType {
 }
 
 // SharingChangeFolderJoinPolicyDetails : Changed whether team members can join
-// shared folders owned externally (i.e. outside the team).
+// shared folders owned outside team.
 type SharingChangeFolderJoinPolicyDetails struct {
 	// NewValue : New external join policy.
 	NewValue *SharingFolderJoinPolicy `json:"new_value"`
@@ -14275,9 +15078,9 @@ func NewSharingChangeFolderJoinPolicyType(Description string) *SharingChangeFold
 	return s
 }
 
-// SharingChangeLinkPolicyDetails : Changed whether team members can share links
-// externally (i.e. outside the team), and if so, whether links should be
-// accessible only by team members or anyone by default.
+// SharingChangeLinkPolicyDetails : Changed whether members can share links
+// outside team, and if links are accessible only by team members or anyone by
+// default.
 type SharingChangeLinkPolicyDetails struct {
 	// NewValue : New external link accessibility policy.
 	NewValue *SharingLinkPolicy `json:"new_value"`
@@ -14306,8 +15109,8 @@ func NewSharingChangeLinkPolicyType(Description string) *SharingChangeLinkPolicy
 	return s
 }
 
-// SharingChangeMemberPolicyDetails : Changed whether team members can share
-// files and folders externally (i.e. outside the team).
+// SharingChangeMemberPolicyDetails : Changed whether members can share
+// files/folders outside team.
 type SharingChangeMemberPolicyDetails struct {
 	// NewValue : New external invite policy.
 	NewValue *SharingMemberPolicy `json:"new_value"`
@@ -14375,7 +15178,7 @@ const (
 	SharingMemberPolicyOther  = "other"
 )
 
-// ShmodelGroupShareDetails : Shared a link with a group.
+// ShmodelGroupShareDetails : Shared link with group.
 type ShmodelGroupShareDetails struct {
 }
 
@@ -14394,6 +15197,607 @@ type ShmodelGroupShareType struct {
 // NewShmodelGroupShareType returns a new ShmodelGroupShareType instance
 func NewShmodelGroupShareType(Description string) *ShmodelGroupShareType {
 	s := new(ShmodelGroupShareType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseAccessGrantedDetails : Granted access to showcase.
+type ShowcaseAccessGrantedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseAccessGrantedDetails returns a new ShowcaseAccessGrantedDetails instance
+func NewShowcaseAccessGrantedDetails(EventUuid string) *ShowcaseAccessGrantedDetails {
+	s := new(ShowcaseAccessGrantedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseAccessGrantedType : has no documentation (yet)
+type ShowcaseAccessGrantedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseAccessGrantedType returns a new ShowcaseAccessGrantedType instance
+func NewShowcaseAccessGrantedType(Description string) *ShowcaseAccessGrantedType {
+	s := new(ShowcaseAccessGrantedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseAddMemberDetails : Added member to showcase.
+type ShowcaseAddMemberDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseAddMemberDetails returns a new ShowcaseAddMemberDetails instance
+func NewShowcaseAddMemberDetails(EventUuid string) *ShowcaseAddMemberDetails {
+	s := new(ShowcaseAddMemberDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseAddMemberType : has no documentation (yet)
+type ShowcaseAddMemberType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseAddMemberType returns a new ShowcaseAddMemberType instance
+func NewShowcaseAddMemberType(Description string) *ShowcaseAddMemberType {
+	s := new(ShowcaseAddMemberType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseArchivedDetails : Archived showcase.
+type ShowcaseArchivedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseArchivedDetails returns a new ShowcaseArchivedDetails instance
+func NewShowcaseArchivedDetails(EventUuid string) *ShowcaseArchivedDetails {
+	s := new(ShowcaseArchivedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseArchivedType : has no documentation (yet)
+type ShowcaseArchivedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseArchivedType returns a new ShowcaseArchivedType instance
+func NewShowcaseArchivedType(Description string) *ShowcaseArchivedType {
+	s := new(ShowcaseArchivedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseCreatedDetails : Created showcase.
+type ShowcaseCreatedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseCreatedDetails returns a new ShowcaseCreatedDetails instance
+func NewShowcaseCreatedDetails(EventUuid string) *ShowcaseCreatedDetails {
+	s := new(ShowcaseCreatedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseCreatedType : has no documentation (yet)
+type ShowcaseCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseCreatedType returns a new ShowcaseCreatedType instance
+func NewShowcaseCreatedType(Description string) *ShowcaseCreatedType {
+	s := new(ShowcaseCreatedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseDeleteCommentDetails : Deleted showcase comment.
+type ShowcaseDeleteCommentDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// CommentText : Comment text.
+	CommentText string `json:"comment_text,omitempty"`
+}
+
+// NewShowcaseDeleteCommentDetails returns a new ShowcaseDeleteCommentDetails instance
+func NewShowcaseDeleteCommentDetails(EventUuid string) *ShowcaseDeleteCommentDetails {
+	s := new(ShowcaseDeleteCommentDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseDeleteCommentType : has no documentation (yet)
+type ShowcaseDeleteCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseDeleteCommentType returns a new ShowcaseDeleteCommentType instance
+func NewShowcaseDeleteCommentType(Description string) *ShowcaseDeleteCommentType {
+	s := new(ShowcaseDeleteCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseDocumentLogInfo : Showcase document's logged information.
+type ShowcaseDocumentLogInfo struct {
+	// ShowcaseId : Showcase document Id.
+	ShowcaseId string `json:"showcase_id"`
+	// ShowcaseTitle : Showcase document title.
+	ShowcaseTitle string `json:"showcase_title"`
+}
+
+// NewShowcaseDocumentLogInfo returns a new ShowcaseDocumentLogInfo instance
+func NewShowcaseDocumentLogInfo(ShowcaseId string, ShowcaseTitle string) *ShowcaseDocumentLogInfo {
+	s := new(ShowcaseDocumentLogInfo)
+	s.ShowcaseId = ShowcaseId
+	s.ShowcaseTitle = ShowcaseTitle
+	return s
+}
+
+// ShowcaseEditCommentDetails : Edited showcase comment.
+type ShowcaseEditCommentDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// CommentText : Comment text.
+	CommentText string `json:"comment_text,omitempty"`
+}
+
+// NewShowcaseEditCommentDetails returns a new ShowcaseEditCommentDetails instance
+func NewShowcaseEditCommentDetails(EventUuid string) *ShowcaseEditCommentDetails {
+	s := new(ShowcaseEditCommentDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseEditCommentType : has no documentation (yet)
+type ShowcaseEditCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseEditCommentType returns a new ShowcaseEditCommentType instance
+func NewShowcaseEditCommentType(Description string) *ShowcaseEditCommentType {
+	s := new(ShowcaseEditCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseEditedDetails : Edited showcase.
+type ShowcaseEditedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseEditedDetails returns a new ShowcaseEditedDetails instance
+func NewShowcaseEditedDetails(EventUuid string) *ShowcaseEditedDetails {
+	s := new(ShowcaseEditedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseEditedType : has no documentation (yet)
+type ShowcaseEditedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseEditedType returns a new ShowcaseEditedType instance
+func NewShowcaseEditedType(Description string) *ShowcaseEditedType {
+	s := new(ShowcaseEditedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseFileAddedDetails : Added file to showcase.
+type ShowcaseFileAddedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseFileAddedDetails returns a new ShowcaseFileAddedDetails instance
+func NewShowcaseFileAddedDetails(EventUuid string) *ShowcaseFileAddedDetails {
+	s := new(ShowcaseFileAddedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseFileAddedType : has no documentation (yet)
+type ShowcaseFileAddedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseFileAddedType returns a new ShowcaseFileAddedType instance
+func NewShowcaseFileAddedType(Description string) *ShowcaseFileAddedType {
+	s := new(ShowcaseFileAddedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseFileDownloadDetails : Downloaded file from showcase.
+type ShowcaseFileDownloadDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DownloadType : Showcase download type.
+	DownloadType string `json:"download_type"`
+}
+
+// NewShowcaseFileDownloadDetails returns a new ShowcaseFileDownloadDetails instance
+func NewShowcaseFileDownloadDetails(EventUuid string, DownloadType string) *ShowcaseFileDownloadDetails {
+	s := new(ShowcaseFileDownloadDetails)
+	s.EventUuid = EventUuid
+	s.DownloadType = DownloadType
+	return s
+}
+
+// ShowcaseFileDownloadType : has no documentation (yet)
+type ShowcaseFileDownloadType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseFileDownloadType returns a new ShowcaseFileDownloadType instance
+func NewShowcaseFileDownloadType(Description string) *ShowcaseFileDownloadType {
+	s := new(ShowcaseFileDownloadType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseFileRemovedDetails : Removed file from showcase.
+type ShowcaseFileRemovedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseFileRemovedDetails returns a new ShowcaseFileRemovedDetails instance
+func NewShowcaseFileRemovedDetails(EventUuid string) *ShowcaseFileRemovedDetails {
+	s := new(ShowcaseFileRemovedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseFileRemovedType : has no documentation (yet)
+type ShowcaseFileRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseFileRemovedType returns a new ShowcaseFileRemovedType instance
+func NewShowcaseFileRemovedType(Description string) *ShowcaseFileRemovedType {
+	s := new(ShowcaseFileRemovedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseFileViewDetails : Viewed file in showcase.
+type ShowcaseFileViewDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseFileViewDetails returns a new ShowcaseFileViewDetails instance
+func NewShowcaseFileViewDetails(EventUuid string) *ShowcaseFileViewDetails {
+	s := new(ShowcaseFileViewDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseFileViewType : has no documentation (yet)
+type ShowcaseFileViewType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseFileViewType returns a new ShowcaseFileViewType instance
+func NewShowcaseFileViewType(Description string) *ShowcaseFileViewType {
+	s := new(ShowcaseFileViewType)
+	s.Description = Description
+	return s
+}
+
+// ShowcasePermanentlyDeletedDetails : Permanently deleted showcase.
+type ShowcasePermanentlyDeletedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcasePermanentlyDeletedDetails returns a new ShowcasePermanentlyDeletedDetails instance
+func NewShowcasePermanentlyDeletedDetails(EventUuid string) *ShowcasePermanentlyDeletedDetails {
+	s := new(ShowcasePermanentlyDeletedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcasePermanentlyDeletedType : has no documentation (yet)
+type ShowcasePermanentlyDeletedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcasePermanentlyDeletedType returns a new ShowcasePermanentlyDeletedType instance
+func NewShowcasePermanentlyDeletedType(Description string) *ShowcasePermanentlyDeletedType {
+	s := new(ShowcasePermanentlyDeletedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcasePostCommentDetails : Added showcase comment.
+type ShowcasePostCommentDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// CommentText : Comment text.
+	CommentText string `json:"comment_text,omitempty"`
+}
+
+// NewShowcasePostCommentDetails returns a new ShowcasePostCommentDetails instance
+func NewShowcasePostCommentDetails(EventUuid string) *ShowcasePostCommentDetails {
+	s := new(ShowcasePostCommentDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcasePostCommentType : has no documentation (yet)
+type ShowcasePostCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcasePostCommentType returns a new ShowcasePostCommentType instance
+func NewShowcasePostCommentType(Description string) *ShowcasePostCommentType {
+	s := new(ShowcasePostCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseRemoveMemberDetails : Removed member from showcase.
+type ShowcaseRemoveMemberDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseRemoveMemberDetails returns a new ShowcaseRemoveMemberDetails instance
+func NewShowcaseRemoveMemberDetails(EventUuid string) *ShowcaseRemoveMemberDetails {
+	s := new(ShowcaseRemoveMemberDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseRemoveMemberType : has no documentation (yet)
+type ShowcaseRemoveMemberType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseRemoveMemberType returns a new ShowcaseRemoveMemberType instance
+func NewShowcaseRemoveMemberType(Description string) *ShowcaseRemoveMemberType {
+	s := new(ShowcaseRemoveMemberType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseRenamedDetails : Renamed showcase.
+type ShowcaseRenamedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseRenamedDetails returns a new ShowcaseRenamedDetails instance
+func NewShowcaseRenamedDetails(EventUuid string) *ShowcaseRenamedDetails {
+	s := new(ShowcaseRenamedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseRenamedType : has no documentation (yet)
+type ShowcaseRenamedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseRenamedType returns a new ShowcaseRenamedType instance
+func NewShowcaseRenamedType(Description string) *ShowcaseRenamedType {
+	s := new(ShowcaseRenamedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseRequestAccessDetails : Requested access to showcase.
+type ShowcaseRequestAccessDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseRequestAccessDetails returns a new ShowcaseRequestAccessDetails instance
+func NewShowcaseRequestAccessDetails(EventUuid string) *ShowcaseRequestAccessDetails {
+	s := new(ShowcaseRequestAccessDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseRequestAccessType : has no documentation (yet)
+type ShowcaseRequestAccessType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseRequestAccessType returns a new ShowcaseRequestAccessType instance
+func NewShowcaseRequestAccessType(Description string) *ShowcaseRequestAccessType {
+	s := new(ShowcaseRequestAccessType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseResolveCommentDetails : Resolved showcase comment.
+type ShowcaseResolveCommentDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// CommentText : Comment text.
+	CommentText string `json:"comment_text,omitempty"`
+}
+
+// NewShowcaseResolveCommentDetails returns a new ShowcaseResolveCommentDetails instance
+func NewShowcaseResolveCommentDetails(EventUuid string) *ShowcaseResolveCommentDetails {
+	s := new(ShowcaseResolveCommentDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseResolveCommentType : has no documentation (yet)
+type ShowcaseResolveCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseResolveCommentType returns a new ShowcaseResolveCommentType instance
+func NewShowcaseResolveCommentType(Description string) *ShowcaseResolveCommentType {
+	s := new(ShowcaseResolveCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseRestoredDetails : Unarchived showcase.
+type ShowcaseRestoredDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseRestoredDetails returns a new ShowcaseRestoredDetails instance
+func NewShowcaseRestoredDetails(EventUuid string) *ShowcaseRestoredDetails {
+	s := new(ShowcaseRestoredDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseRestoredType : has no documentation (yet)
+type ShowcaseRestoredType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseRestoredType returns a new ShowcaseRestoredType instance
+func NewShowcaseRestoredType(Description string) *ShowcaseRestoredType {
+	s := new(ShowcaseRestoredType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseTrashedDetails : Deleted showcase.
+type ShowcaseTrashedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseTrashedDetails returns a new ShowcaseTrashedDetails instance
+func NewShowcaseTrashedDetails(EventUuid string) *ShowcaseTrashedDetails {
+	s := new(ShowcaseTrashedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseTrashedType : has no documentation (yet)
+type ShowcaseTrashedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseTrashedType returns a new ShowcaseTrashedType instance
+func NewShowcaseTrashedType(Description string) *ShowcaseTrashedType {
+	s := new(ShowcaseTrashedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseUnresolveCommentDetails : Unresolved showcase comment.
+type ShowcaseUnresolveCommentDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// CommentText : Comment text.
+	CommentText string `json:"comment_text,omitempty"`
+}
+
+// NewShowcaseUnresolveCommentDetails returns a new ShowcaseUnresolveCommentDetails instance
+func NewShowcaseUnresolveCommentDetails(EventUuid string) *ShowcaseUnresolveCommentDetails {
+	s := new(ShowcaseUnresolveCommentDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseUnresolveCommentType : has no documentation (yet)
+type ShowcaseUnresolveCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseUnresolveCommentType returns a new ShowcaseUnresolveCommentType instance
+func NewShowcaseUnresolveCommentType(Description string) *ShowcaseUnresolveCommentType {
+	s := new(ShowcaseUnresolveCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseUntrashedDetails : Restored showcase.
+type ShowcaseUntrashedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseUntrashedDetails returns a new ShowcaseUntrashedDetails instance
+func NewShowcaseUntrashedDetails(EventUuid string) *ShowcaseUntrashedDetails {
+	s := new(ShowcaseUntrashedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseUntrashedType : has no documentation (yet)
+type ShowcaseUntrashedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseUntrashedType returns a new ShowcaseUntrashedType instance
+func NewShowcaseUntrashedType(Description string) *ShowcaseUntrashedType {
+	s := new(ShowcaseUntrashedType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseViewDetails : Viewed showcase.
+type ShowcaseViewDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseViewDetails returns a new ShowcaseViewDetails instance
+func NewShowcaseViewDetails(EventUuid string) *ShowcaseViewDetails {
+	s := new(ShowcaseViewDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseViewType : has no documentation (yet)
+type ShowcaseViewType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseViewType returns a new ShowcaseViewType instance
+func NewShowcaseViewType(Description string) *ShowcaseViewType {
+	s := new(ShowcaseViewType)
 	s.Description = Description
 	return s
 }
@@ -14444,7 +15848,7 @@ func NewSignInAsSessionStartType(Description string) *SignInAsSessionStartType {
 	return s
 }
 
-// SmartSyncChangePolicyDetails : Changed the default Smart Sync policy for team
+// SmartSyncChangePolicyDetails : Changed default Smart Sync setting for team
 // members.
 type SmartSyncChangePolicyDetails struct {
 	// NewValue : New smart sync policy.
@@ -14472,8 +15876,8 @@ func NewSmartSyncChangePolicyType(Description string) *SmartSyncChangePolicyType
 	return s
 }
 
-// SmartSyncCreateAdminPrivilegeReportDetails : Smart Sync non-admin devices
-// report created.
+// SmartSyncCreateAdminPrivilegeReportDetails : Created Smart Sync non-admin
+// devices report.
 type SmartSyncCreateAdminPrivilegeReportDetails struct {
 }
 
@@ -14566,6 +15970,19 @@ func NewSmartSyncOptOutType(Description string) *SmartSyncOptOutType {
 	return s
 }
 
+// SpaceCapsType : Space limit alert policy
+type SpaceCapsType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SpaceCapsType
+const (
+	SpaceCapsTypeHard  = "hard"
+	SpaceCapsTypeOff   = "off"
+	SpaceCapsTypeSoft  = "soft"
+	SpaceCapsTypeOther = "other"
+)
+
 // SpaceLimitsStatus : has no documentation (yet)
 type SpaceLimitsStatus struct {
 	dropbox.Tagged
@@ -14579,7 +15996,7 @@ const (
 	SpaceLimitsStatusOther       = "other"
 )
 
-// SsoAddCertDetails : Added the X.509 certificate for SSO.
+// SsoAddCertDetails : Added X.509 certificate for SSO.
 type SsoAddCertDetails struct {
 	// CertificateDetails : SSO certificate details.
 	CertificateDetails *Certificate `json:"certificate_details"`
@@ -14657,7 +16074,7 @@ func NewSsoAddLogoutUrlType(Description string) *SsoAddLogoutUrlType {
 	return s
 }
 
-// SsoChangeCertDetails : Changed the X.509 certificate for SSO.
+// SsoChangeCertDetails : Changed X.509 certificate for SSO.
 type SsoChangeCertDetails struct {
 	// PreviousCertificateDetails : Previous SSO certificate details. Might be
 	// missing due to historical data gap.
@@ -14686,7 +16103,7 @@ func NewSsoChangeCertType(Description string) *SsoChangeCertType {
 	return s
 }
 
-// SsoChangeLoginUrlDetails : Changed the sign-in URL for SSO.
+// SsoChangeLoginUrlDetails : Changed sign-in URL for SSO.
 type SsoChangeLoginUrlDetails struct {
 	// PreviousValue : Previous single sign-on login URL.
 	PreviousValue string `json:"previous_value"`
@@ -14715,7 +16132,7 @@ func NewSsoChangeLoginUrlType(Description string) *SsoChangeLoginUrlType {
 	return s
 }
 
-// SsoChangeLogoutUrlDetails : Changed the sign-out URL for SSO.
+// SsoChangeLogoutUrlDetails : Changed sign-out URL for SSO.
 type SsoChangeLogoutUrlDetails struct {
 	// PreviousValue : Previous single sign-on logout URL. Might be missing due
 	// to historical data gap.
@@ -14744,7 +16161,7 @@ func NewSsoChangeLogoutUrlType(Description string) *SsoChangeLogoutUrlType {
 	return s
 }
 
-// SsoChangePolicyDetails : Change the single sign-on policy for the team.
+// SsoChangePolicyDetails : Changed single sign-on setting for team.
 type SsoChangePolicyDetails struct {
 	// NewValue : New single sign-on policy.
 	NewValue *team_policies.SsoPolicy `json:"new_value"`
@@ -14773,7 +16190,7 @@ func NewSsoChangePolicyType(Description string) *SsoChangePolicyType {
 	return s
 }
 
-// SsoChangeSamlIdentityModeDetails : Changed the SAML identity mode for SSO.
+// SsoChangeSamlIdentityModeDetails : Changed SAML identity mode for SSO.
 type SsoChangeSamlIdentityModeDetails struct {
 	// PreviousValue : Previous single sign-on identity mode.
 	PreviousValue int64 `json:"previous_value"`
@@ -14828,7 +16245,7 @@ func NewSsoErrorType(Description string) *SsoErrorType {
 	return s
 }
 
-// SsoRemoveCertDetails : Removed the X.509 certificate for SSO.
+// SsoRemoveCertDetails : Removed X.509 certificate for SSO.
 type SsoRemoveCertDetails struct {
 }
 
@@ -14851,7 +16268,7 @@ func NewSsoRemoveCertType(Description string) *SsoRemoveCertType {
 	return s
 }
 
-// SsoRemoveLoginUrlDetails : Removed the sign-in URL for SSO.
+// SsoRemoveLoginUrlDetails : Removed sign-in URL for SSO.
 type SsoRemoveLoginUrlDetails struct {
 	// PreviousValue : Previous single sign-on login URL.
 	PreviousValue string `json:"previous_value"`
@@ -14877,7 +16294,7 @@ func NewSsoRemoveLoginUrlType(Description string) *SsoRemoveLoginUrlType {
 	return s
 }
 
-// SsoRemoveLogoutUrlDetails : Removed single sign-on logout URL.
+// SsoRemoveLogoutUrlDetails : Removed sign-out URL for SSO.
 type SsoRemoveLogoutUrlDetails struct {
 	// PreviousValue : Previous single sign-on logout URL.
 	PreviousValue string `json:"previous_value"`
@@ -14903,7 +16320,7 @@ func NewSsoRemoveLogoutUrlType(Description string) *SsoRemoveLogoutUrlType {
 	return s
 }
 
-// TeamActivityCreateReportDetails : Created a team activity report.
+// TeamActivityCreateReportDetails : Created team activity report.
 type TeamActivityCreateReportDetails struct {
 	// StartDate : Report start date.
 	StartDate time.Time `json:"start_date"`
@@ -14938,19 +16355,21 @@ type TeamEvent struct {
 	Timestamp time.Time `json:"timestamp"`
 	// EventCategory : The category that this type of action belongs to.
 	EventCategory *EventCategory `json:"event_category"`
-	// Actor : The entity who actually performed the action.
-	Actor *ActorLogInfo `json:"actor"`
+	// Actor : The entity who actually performed the action. Might be missing
+	// due to historical data gap.
+	Actor *ActorLogInfo `json:"actor,omitempty"`
 	// Origin : The origin from which the actor performed the action including
 	// information about host, ip address, location, session, etc. If the action
 	// was performed programmatically via the API the origin represents the API
 	// client.
 	Origin *OriginLogInfo `json:"origin,omitempty"`
 	// InvolveNonTeamMember : True if the action involved a non team member
-	// either as the actor or as one of the affected users.
-	InvolveNonTeamMember bool `json:"involve_non_team_member"`
+	// either as the actor or as one of the affected users. Might be missing due
+	// to historical data gap.
+	InvolveNonTeamMember bool `json:"involve_non_team_member,omitempty"`
 	// Context : The user or team on whose behalf the actor performed the
-	// action.
-	Context *ContextLogInfo `json:"context"`
+	// action. Might be missing due to historical data gap.
+	Context *ContextLogInfo `json:"context,omitempty"`
 	// Participants : Zero or more users and/or groups that are affected by the
 	// action. Note that this list doesn't include any actors or users in
 	// context.
@@ -14967,19 +16386,16 @@ type TeamEvent struct {
 }
 
 // NewTeamEvent returns a new TeamEvent instance
-func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, Actor *ActorLogInfo, InvolveNonTeamMember bool, Context *ContextLogInfo, EventType *EventType, Details *EventDetails) *TeamEvent {
+func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, EventType *EventType, Details *EventDetails) *TeamEvent {
 	s := new(TeamEvent)
 	s.Timestamp = Timestamp
 	s.EventCategory = EventCategory
-	s.Actor = Actor
-	s.InvolveNonTeamMember = InvolveNonTeamMember
-	s.Context = Context
 	s.EventType = EventType
 	s.Details = Details
 	return s
 }
 
-// TeamFolderChangeStatusDetails : Changed the archival status of a team folder.
+// TeamFolderChangeStatusDetails : Changed archival status of team folder.
 type TeamFolderChangeStatusDetails struct {
 	// NewValue : New team folder status.
 	NewValue *team.TeamFolderStatus `json:"new_value"`
@@ -15008,7 +16424,7 @@ func NewTeamFolderChangeStatusType(Description string) *TeamFolderChangeStatusTy
 	return s
 }
 
-// TeamFolderCreateDetails : Created a new team folder in active status.
+// TeamFolderCreateDetails : Created team folder in active status.
 type TeamFolderCreateDetails struct {
 }
 
@@ -15031,8 +16447,7 @@ func NewTeamFolderCreateType(Description string) *TeamFolderCreateType {
 	return s
 }
 
-// TeamFolderDowngradeDetails : Downgraded a team folder to a regular shared
-// folder.
+// TeamFolderDowngradeDetails : Downgraded team folder to regular shared folder.
 type TeamFolderDowngradeDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
@@ -15058,7 +16473,7 @@ func NewTeamFolderDowngradeType(Description string) *TeamFolderDowngradeType {
 	return s
 }
 
-// TeamFolderPermanentlyDeleteDetails : Permanently deleted an archived team
+// TeamFolderPermanentlyDeleteDetails : Permanently deleted archived team
 // folder.
 type TeamFolderPermanentlyDeleteDetails struct {
 }
@@ -15082,17 +16497,19 @@ func NewTeamFolderPermanentlyDeleteType(Description string) *TeamFolderPermanent
 	return s
 }
 
-// TeamFolderRenameDetails : Renamed an active or archived team folder.
+// TeamFolderRenameDetails : Renamed active/archived team folder.
 type TeamFolderRenameDetails struct {
-	// RelocateActionDetails : Specifies the source and destination indices in
-	// the assets list.
-	RelocateActionDetails *RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
+	// PreviousFolderName : Previous folder name.
+	PreviousFolderName string `json:"previous_folder_name"`
+	// NewFolderName : New folder name.
+	NewFolderName string `json:"new_folder_name"`
 }
 
 // NewTeamFolderRenameDetails returns a new TeamFolderRenameDetails instance
-func NewTeamFolderRenameDetails(RelocateActionDetails *RelocateAssetReferencesLogInfo) *TeamFolderRenameDetails {
+func NewTeamFolderRenameDetails(PreviousFolderName string, NewFolderName string) *TeamFolderRenameDetails {
 	s := new(TeamFolderRenameDetails)
-	s.RelocateActionDetails = RelocateActionDetails
+	s.PreviousFolderName = PreviousFolderName
+	s.NewFolderName = NewFolderName
 	return s
 }
 
@@ -15216,7 +16633,7 @@ func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
 	return s
 }
 
-// TeamProfileAddLogoDetails : Added a team logo to be displayed on shared link
+// TeamProfileAddLogoDetails : Added team logo to display on shared link
 // headers.
 type TeamProfileAddLogoDetails struct {
 }
@@ -15240,8 +16657,7 @@ func NewTeamProfileAddLogoType(Description string) *TeamProfileAddLogoType {
 	return s
 }
 
-// TeamProfileChangeDefaultLanguageDetails : Changed the default language for
-// the team.
+// TeamProfileChangeDefaultLanguageDetails : Changed default language for team.
 type TeamProfileChangeDefaultLanguageDetails struct {
 	// NewValue : New team's default language.
 	NewValue string `json:"new_value"`
@@ -15270,8 +16686,8 @@ func NewTeamProfileChangeDefaultLanguageType(Description string) *TeamProfileCha
 	return s
 }
 
-// TeamProfileChangeLogoDetails : Changed the team logo to be displayed on
-// shared link headers.
+// TeamProfileChangeLogoDetails : Changed team logo displayed on shared link
+// headers.
 type TeamProfileChangeLogoDetails struct {
 }
 
@@ -15294,7 +16710,7 @@ func NewTeamProfileChangeLogoType(Description string) *TeamProfileChangeLogoType
 	return s
 }
 
-// TeamProfileChangeNameDetails : Changed the team name.
+// TeamProfileChangeNameDetails : Changed team name.
 type TeamProfileChangeNameDetails struct {
 	// PreviousValue : Previous teams name. Might be missing due to historical
 	// data gap.
@@ -15323,8 +16739,8 @@ func NewTeamProfileChangeNameType(Description string) *TeamProfileChangeNameType
 	return s
 }
 
-// TeamProfileRemoveLogoDetails : Removed the team logo to be displayed on
-// shared link headers.
+// TeamProfileRemoveLogoDetails : Removed team logo displayed on shared link
+// headers.
 type TeamProfileRemoveLogoDetails struct {
 }
 
@@ -15347,7 +16763,36 @@ func NewTeamProfileRemoveLogoType(Description string) *TeamProfileRemoveLogoType
 	return s
 }
 
-// TfaAddBackupPhoneDetails : Added a backup phone for two-step verification.
+// TeamSelectiveSyncSettingsChangedDetails : Changed sync default.
+type TeamSelectiveSyncSettingsChangedDetails struct {
+	// PreviousValue : Previous value.
+	PreviousValue *files.SyncSetting `json:"previous_value"`
+	// NewValue : New value.
+	NewValue *files.SyncSetting `json:"new_value"`
+}
+
+// NewTeamSelectiveSyncSettingsChangedDetails returns a new TeamSelectiveSyncSettingsChangedDetails instance
+func NewTeamSelectiveSyncSettingsChangedDetails(PreviousValue *files.SyncSetting, NewValue *files.SyncSetting) *TeamSelectiveSyncSettingsChangedDetails {
+	s := new(TeamSelectiveSyncSettingsChangedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// TeamSelectiveSyncSettingsChangedType : has no documentation (yet)
+type TeamSelectiveSyncSettingsChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamSelectiveSyncSettingsChangedType returns a new TeamSelectiveSyncSettingsChangedType instance
+func NewTeamSelectiveSyncSettingsChangedType(Description string) *TeamSelectiveSyncSettingsChangedType {
+	s := new(TeamSelectiveSyncSettingsChangedType)
+	s.Description = Description
+	return s
+}
+
+// TfaAddBackupPhoneDetails : Added backup phone for two-step verification.
 type TfaAddBackupPhoneDetails struct {
 }
 
@@ -15370,7 +16815,7 @@ func NewTfaAddBackupPhoneType(Description string) *TfaAddBackupPhoneType {
 	return s
 }
 
-// TfaAddSecurityKeyDetails : Added a security key for two-step verification.
+// TfaAddSecurityKeyDetails : Added security key for two-step verification.
 type TfaAddSecurityKeyDetails struct {
 }
 
@@ -15393,8 +16838,7 @@ func NewTfaAddSecurityKeyType(Description string) *TfaAddSecurityKeyType {
 	return s
 }
 
-// TfaChangeBackupPhoneDetails : Changed the backup phone for two-step
-// verification.
+// TfaChangeBackupPhoneDetails : Changed backup phone for two-step verification.
 type TfaChangeBackupPhoneDetails struct {
 }
 
@@ -15417,7 +16861,7 @@ func NewTfaChangeBackupPhoneType(Description string) *TfaChangeBackupPhoneType {
 	return s
 }
 
-// TfaChangePolicyDetails : Change two-step verification policy for the team.
+// TfaChangePolicyDetails : Changed two-step verification setting for team.
 type TfaChangePolicyDetails struct {
 	// NewValue : New change policy.
 	NewValue *team_policies.TwoStepVerificationPolicy `json:"new_value"`
@@ -15446,8 +16890,8 @@ func NewTfaChangePolicyType(Description string) *TfaChangePolicyType {
 	return s
 }
 
-// TfaChangeStatusDetails : Enabled, disabled or changed the configuration for
-// two-step verification.
+// TfaChangeStatusDetails : Enabled/disabled/changed two-step verification
+// setting.
 type TfaChangeStatusDetails struct {
 	// NewValue : The new two factor authentication configuration.
 	NewValue *TfaConfiguration `json:"new_value"`
@@ -15494,8 +16938,7 @@ const (
 	TfaConfigurationOther         = "other"
 )
 
-// TfaRemoveBackupPhoneDetails : Removed the backup phone for two-step
-// verification.
+// TfaRemoveBackupPhoneDetails : Removed backup phone for two-step verification.
 type TfaRemoveBackupPhoneDetails struct {
 }
 
@@ -15518,8 +16961,7 @@ func NewTfaRemoveBackupPhoneType(Description string) *TfaRemoveBackupPhoneType {
 	return s
 }
 
-// TfaRemoveSecurityKeyDetails : Removed a security key for two-step
-// verification.
+// TfaRemoveSecurityKeyDetails : Removed security key for two-step verification.
 type TfaRemoveSecurityKeyDetails struct {
 }
 
@@ -15583,9 +17025,8 @@ const (
 	TimeUnitOther        = "other"
 )
 
-// TwoAccountChangePolicyDetails : Enabled or disabled the option for team
-// members to link a personal Dropbox account in addition to their work account
-// to the same computer.
+// TwoAccountChangePolicyDetails : Enabled/disabled option for members to link
+// personal Dropbox account and team account to same computer.
 type TwoAccountChangePolicyDetails struct {
 	// NewValue : New two account policy.
 	NewValue *TwoAccountPolicy `json:"new_value"`
@@ -15667,6 +17108,29 @@ func NewUserOrTeamLinkedAppLogInfo() *UserOrTeamLinkedAppLogInfo {
 	return s
 }
 
+// WebDeviceSessionLogInfo : Information on active web sessions
+type WebDeviceSessionLogInfo struct {
+	DeviceSessionLogInfo
+	// SessionInfo : Web session unique id. Might be missing due to historical
+	// data gap.
+	SessionInfo *WebSessionLogInfo `json:"session_info,omitempty"`
+	// UserAgent : Information on the hosting device.
+	UserAgent string `json:"user_agent"`
+	// Os : Information on the hosting operating system.
+	Os string `json:"os"`
+	// Browser : Information on the browser used for this web session.
+	Browser string `json:"browser"`
+}
+
+// NewWebDeviceSessionLogInfo returns a new WebDeviceSessionLogInfo instance
+func NewWebDeviceSessionLogInfo(UserAgent string, Os string, Browser string) *WebDeviceSessionLogInfo {
+	s := new(WebDeviceSessionLogInfo)
+	s.UserAgent = UserAgent
+	s.Os = Os
+	s.Browser = Browser
+	return s
+}
+
 // WebSessionLogInfo : Web session.
 type WebSessionLogInfo struct {
 	SessionLogInfo
@@ -15678,8 +17142,8 @@ func NewWebSessionLogInfo() *WebSessionLogInfo {
 	return s
 }
 
-// WebSessionsChangeFixedLengthPolicyDetails : Changed how long team members can
-// stay signed in to Dropbox on the web.
+// WebSessionsChangeFixedLengthPolicyDetails : Changed how long members can stay
+// signed in to Dropbox.com.
 type WebSessionsChangeFixedLengthPolicyDetails struct {
 	// NewValue : New session length policy. Might be missing due to historical
 	// data gap.
@@ -15709,7 +17173,7 @@ func NewWebSessionsChangeFixedLengthPolicyType(Description string) *WebSessionsC
 }
 
 // WebSessionsChangeIdleLengthPolicyDetails : Changed how long team members can
-// be idle while signed in to Dropbox on the web.
+// be idle while signed in to Dropbox.com.
 type WebSessionsChangeIdleLengthPolicyDetails struct {
 	// NewValue : New idle length policy. Might be missing due to historical
 	// data gap.

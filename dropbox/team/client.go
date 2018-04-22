@@ -272,6 +272,10 @@ type Client interface {
 	// TeamFolderRename : Changes an active team folder's name. Permission :
 	// Team member file access.
 	TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderMetadata, err error)
+	// TeamFolderUpdateSyncSettings : Updates the sync settings on a team folder
+	// or its contents.  Use of this endpoint requires that the team has team
+	// selective sync enabled.
+	TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettingsArg) (res *TeamFolderMetadata, err error)
 	// TokenGetAuthenticatedAdmin : Returns the member profile of the admin who
 	// generated the team access token used to make the call.
 	TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdminResult, err error)
@@ -4568,6 +4572,75 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError TeamFolderRenameAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//TeamFolderUpdateSyncSettingsAPIError is an error-wrapper for the team_folder/update_sync_settings route
+type TeamFolderUpdateSyncSettingsAPIError struct {
+	dropbox.APIError
+	EndpointError *TeamFolderUpdateSyncSettingsError `json:"error"`
+}
+
+func (dbx *apiImpl) TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettingsArg) (res *TeamFolderMetadata, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "team_folder/update_sync_settings", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError TeamFolderUpdateSyncSettingsAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

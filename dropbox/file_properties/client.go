@@ -44,7 +44,8 @@ type Client interface {
 	// PropertiesRemove : Permanently removes the specified property group from
 	// the file. To remove specific property field key value pairs, see
 	// `propertiesUpdate`. To update a template, see `templatesUpdateForUser` or
-	// `templatesUpdateForTeam`. Templates can't be removed once created.
+	// `templatesUpdateForTeam`. To remove a template, see
+	// `templatesRemoveForUser` or `templatesRemoveForTeam`.
 	PropertiesRemove(arg *RemovePropertiesArg) (err error)
 	// PropertiesSearch : Search across property templates for particular
 	// property field values.

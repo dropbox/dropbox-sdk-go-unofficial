@@ -31,7 +31,9 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// GetEvents : Retrieves team events. Permission : Team Auditing.
+	// GetEvents : Retrieves team events. Events have a lifespan of two years.
+	// Events older than two years will not be returned. Many attributes note
+	// 'may be missing due to historical data gap'. Permission : Team Auditing.
 	GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)
 	// GetEventsContinue : Once a cursor has been retrieved from `getEvents`,
 	// use this to paginate through all events. Permission : Team Auditing.
