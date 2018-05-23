@@ -3158,7 +3158,8 @@ type UploadError struct {
 	dropbox.Tagged
 	// Path : Unable to save the uploaded contents to a file.
 	Path *UploadWriteFailed `json:"path,omitempty"`
-	// PropertiesError : The supplied property group is invalid.
+	// PropertiesError : The supplied property group is invalid. The file has
+	// uploaded without property groups.
 	PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 }
 
@@ -3175,7 +3176,8 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : Unable to save the uploaded contents to a file.
 		Path json.RawMessage `json:"path,omitempty"`
-		// PropertiesError : The supplied property group is invalid.
+		// PropertiesError : The supplied property group is invalid. The file
+		// has uploaded without property groups.
 		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
 	}
 	var w wrap
@@ -3206,7 +3208,8 @@ type UploadErrorWithProperties struct {
 	dropbox.Tagged
 	// Path : Unable to save the uploaded contents to a file.
 	Path *UploadWriteFailed `json:"path,omitempty"`
-	// PropertiesError : The supplied property group is invalid.
+	// PropertiesError : The supplied property group is invalid. The file has
+	// uploaded without property groups.
 	PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 }
 
@@ -3223,7 +3226,8 @@ func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : Unable to save the uploaded contents to a file.
 		Path json.RawMessage `json:"path,omitempty"`
-		// PropertiesError : The supplied property group is invalid.
+		// PropertiesError : The supplied property group is invalid. The file
+		// has uploaded without property groups.
 		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
 	}
 	var w wrap
@@ -3467,14 +3471,20 @@ type UploadSessionFinishError struct {
 	// LookupFailed : The session arguments are incorrect; the value explains
 	// the reason.
 	LookupFailed *UploadSessionLookupError `json:"lookup_failed,omitempty"`
-	// Path : Unable to save the uploaded contents to a file.
+	// Path : Unable to save the uploaded contents to a file. Data has already
+	// been appended to the upload session. Please retry with empty data body
+	// and updated offset.
 	Path *WriteError `json:"path,omitempty"`
+	// PropertiesError : The supplied property group is invalid. The file has
+	// uploaded without property groups.
+	PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 }
 
 // Valid tag values for UploadSessionFinishError
 const (
 	UploadSessionFinishErrorLookupFailed               = "lookup_failed"
 	UploadSessionFinishErrorPath                       = "path"
+	UploadSessionFinishErrorPropertiesError            = "properties_error"
 	UploadSessionFinishErrorTooManySharedFolderTargets = "too_many_shared_folder_targets"
 	UploadSessionFinishErrorTooManyWriteOperations     = "too_many_write_operations"
 	UploadSessionFinishErrorOther                      = "other"
@@ -3487,8 +3497,13 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 		// LookupFailed : The session arguments are incorrect; the value
 		// explains the reason.
 		LookupFailed json.RawMessage `json:"lookup_failed,omitempty"`
-		// Path : Unable to save the uploaded contents to a file.
+		// Path : Unable to save the uploaded contents to a file. Data has
+		// already been appended to the upload session. Please retry with empty
+		// data body and updated offset.
 		Path json.RawMessage `json:"path,omitempty"`
+		// PropertiesError : The supplied property group is invalid. The file
+		// has uploaded without property groups.
+		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3505,6 +3520,12 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 		}
 	case "path":
 		err = json.Unmarshal(w.Path, &u.Path)
+
+		if err != nil {
+			return err
+		}
+	case "properties_error":
+		err = json.Unmarshal(w.PropertiesError, &u.PropertiesError)
 
 		if err != nil {
 			return err
@@ -3529,6 +3550,7 @@ const (
 	UploadSessionLookupErrorIncorrectOffset = "incorrect_offset"
 	UploadSessionLookupErrorClosed          = "closed"
 	UploadSessionLookupErrorNotClosed       = "not_closed"
+	UploadSessionLookupErrorTooLarge        = "too_large"
 	UploadSessionLookupErrorOther           = "other"
 )
 
@@ -3605,8 +3627,9 @@ func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 type UploadWriteFailed struct {
 	// Reason : The reason why the file couldn't be saved.
 	Reason *WriteError `json:"reason"`
-	// UploadSessionId : The upload session ID; this may be used to retry the
-	// commit.
+	// UploadSessionId : The upload session ID; data has already been uploaded
+	// to the corresponding upload session and this ID may be used to retry the
+	// commit with `uploadSessionFinish`.
 	UploadSessionId string `json:"upload_session_id"`
 }
 

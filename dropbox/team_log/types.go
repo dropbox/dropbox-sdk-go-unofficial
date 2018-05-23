@@ -1736,6 +1736,54 @@ func NewDeviceUnlinkType(Description string) *DeviceUnlinkType {
 	return s
 }
 
+// DirectoryRestrictionsAddMembersDetails : Added members to directory
+// restrictions list.
+type DirectoryRestrictionsAddMembersDetails struct {
+}
+
+// NewDirectoryRestrictionsAddMembersDetails returns a new DirectoryRestrictionsAddMembersDetails instance
+func NewDirectoryRestrictionsAddMembersDetails() *DirectoryRestrictionsAddMembersDetails {
+	s := new(DirectoryRestrictionsAddMembersDetails)
+	return s
+}
+
+// DirectoryRestrictionsAddMembersType : has no documentation (yet)
+type DirectoryRestrictionsAddMembersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDirectoryRestrictionsAddMembersType returns a new DirectoryRestrictionsAddMembersType instance
+func NewDirectoryRestrictionsAddMembersType(Description string) *DirectoryRestrictionsAddMembersType {
+	s := new(DirectoryRestrictionsAddMembersType)
+	s.Description = Description
+	return s
+}
+
+// DirectoryRestrictionsRemoveMembersDetails : Removed members from directory
+// restrictions list.
+type DirectoryRestrictionsRemoveMembersDetails struct {
+}
+
+// NewDirectoryRestrictionsRemoveMembersDetails returns a new DirectoryRestrictionsRemoveMembersDetails instance
+func NewDirectoryRestrictionsRemoveMembersDetails() *DirectoryRestrictionsRemoveMembersDetails {
+	s := new(DirectoryRestrictionsRemoveMembersDetails)
+	return s
+}
+
+// DirectoryRestrictionsRemoveMembersType : has no documentation (yet)
+type DirectoryRestrictionsRemoveMembersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDirectoryRestrictionsRemoveMembersType returns a new DirectoryRestrictionsRemoveMembersType instance
+func NewDirectoryRestrictionsRemoveMembersType(Description string) *DirectoryRestrictionsRemoveMembersType {
+	s := new(DirectoryRestrictionsRemoveMembersType)
+	s.Description = Description
+	return s
+}
+
 // DisabledDomainInvitesDetails : Disabled domain invites.
 type DisabledDomainInvitesDetails struct {
 }
@@ -2432,6 +2480,8 @@ type EventDetails struct {
 	MemberSuggestDetails *MemberSuggestDetails `json:"member_suggest_details,omitempty"`
 	// MemberTransferAccountContentsDetails : has no documentation (yet)
 	MemberTransferAccountContentsDetails *MemberTransferAccountContentsDetails `json:"member_transfer_account_contents_details,omitempty"`
+	// SecondaryMailsPolicyChangedDetails : has no documentation (yet)
+	SecondaryMailsPolicyChangedDetails *SecondaryMailsPolicyChangedDetails `json:"secondary_mails_policy_changed_details,omitempty"`
 	// PaperContentAddMemberDetails : has no documentation (yet)
 	PaperContentAddMemberDetails *PaperContentAddMemberDetails `json:"paper_content_add_member_details,omitempty"`
 	// PaperContentAddToFolderDetails : has no documentation (yet)
@@ -2690,10 +2740,14 @@ type EventDetails struct {
 	ShowcaseRestoredDetails *ShowcaseRestoredDetails `json:"showcase_restored_details,omitempty"`
 	// ShowcaseTrashedDetails : has no documentation (yet)
 	ShowcaseTrashedDetails *ShowcaseTrashedDetails `json:"showcase_trashed_details,omitempty"`
+	// ShowcaseTrashedDeprecatedDetails : has no documentation (yet)
+	ShowcaseTrashedDeprecatedDetails *ShowcaseTrashedDeprecatedDetails `json:"showcase_trashed_deprecated_details,omitempty"`
 	// ShowcaseUnresolveCommentDetails : has no documentation (yet)
 	ShowcaseUnresolveCommentDetails *ShowcaseUnresolveCommentDetails `json:"showcase_unresolve_comment_details,omitempty"`
 	// ShowcaseUntrashedDetails : has no documentation (yet)
 	ShowcaseUntrashedDetails *ShowcaseUntrashedDetails `json:"showcase_untrashed_details,omitempty"`
+	// ShowcaseUntrashedDeprecatedDetails : has no documentation (yet)
+	ShowcaseUntrashedDeprecatedDetails *ShowcaseUntrashedDeprecatedDetails `json:"showcase_untrashed_deprecated_details,omitempty"`
 	// ShowcaseViewDetails : has no documentation (yet)
 	ShowcaseViewDetails *ShowcaseViewDetails `json:"showcase_view_details,omitempty"`
 	// SsoAddCertDetails : has no documentation (yet)
@@ -2746,6 +2800,10 @@ type EventDetails struct {
 	DeviceApprovalsChangeOverageActionDetails *DeviceApprovalsChangeOverageActionDetails `json:"device_approvals_change_overage_action_details,omitempty"`
 	// DeviceApprovalsChangeUnlinkActionDetails : has no documentation (yet)
 	DeviceApprovalsChangeUnlinkActionDetails *DeviceApprovalsChangeUnlinkActionDetails `json:"device_approvals_change_unlink_action_details,omitempty"`
+	// DirectoryRestrictionsAddMembersDetails : has no documentation (yet)
+	DirectoryRestrictionsAddMembersDetails *DirectoryRestrictionsAddMembersDetails `json:"directory_restrictions_add_members_details,omitempty"`
+	// DirectoryRestrictionsRemoveMembersDetails : has no documentation (yet)
+	DirectoryRestrictionsRemoveMembersDetails *DirectoryRestrictionsRemoveMembersDetails `json:"directory_restrictions_remove_members_details,omitempty"`
 	// EmmAddExceptionDetails : has no documentation (yet)
 	EmmAddExceptionDetails *EmmAddExceptionDetails `json:"emm_add_exception_details,omitempty"`
 	// EmmChangePolicyDetails : has no documentation (yet)
@@ -2803,6 +2861,12 @@ type EventDetails struct {
 	SharingChangeLinkPolicyDetails *SharingChangeLinkPolicyDetails `json:"sharing_change_link_policy_details,omitempty"`
 	// SharingChangeMemberPolicyDetails : has no documentation (yet)
 	SharingChangeMemberPolicyDetails *SharingChangeMemberPolicyDetails `json:"sharing_change_member_policy_details,omitempty"`
+	// ShowcaseChangeDownloadPolicyDetails : has no documentation (yet)
+	ShowcaseChangeDownloadPolicyDetails *ShowcaseChangeDownloadPolicyDetails `json:"showcase_change_download_policy_details,omitempty"`
+	// ShowcaseChangeEnabledPolicyDetails : has no documentation (yet)
+	ShowcaseChangeEnabledPolicyDetails *ShowcaseChangeEnabledPolicyDetails `json:"showcase_change_enabled_policy_details,omitempty"`
+	// ShowcaseChangeExternalSharingPolicyDetails : has no documentation (yet)
+	ShowcaseChangeExternalSharingPolicyDetails *ShowcaseChangeExternalSharingPolicyDetails `json:"showcase_change_external_sharing_policy_details,omitempty"`
 	// SmartSyncChangePolicyDetails : has no documentation (yet)
 	SmartSyncChangePolicyDetails *SmartSyncChangePolicyDetails `json:"smart_sync_change_policy_details,omitempty"`
 	// SmartSyncNotOptOutDetails : has no documentation (yet)
@@ -2945,6 +3009,7 @@ const (
 	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails         = "member_space_limits_remove_custom_quota_details"
 	EventDetailsMemberSuggestDetails                              = "member_suggest_details"
 	EventDetailsMemberTransferAccountContentsDetails              = "member_transfer_account_contents_details"
+	EventDetailsSecondaryMailsPolicyChangedDetails                = "secondary_mails_policy_changed_details"
 	EventDetailsPaperContentAddMemberDetails                      = "paper_content_add_member_details"
 	EventDetailsPaperContentAddToFolderDetails                    = "paper_content_add_to_folder_details"
 	EventDetailsPaperContentArchiveDetails                        = "paper_content_archive_details"
@@ -3073,8 +3138,10 @@ const (
 	EventDetailsShowcaseResolveCommentDetails                     = "showcase_resolve_comment_details"
 	EventDetailsShowcaseRestoredDetails                           = "showcase_restored_details"
 	EventDetailsShowcaseTrashedDetails                            = "showcase_trashed_details"
+	EventDetailsShowcaseTrashedDeprecatedDetails                  = "showcase_trashed_deprecated_details"
 	EventDetailsShowcaseUnresolveCommentDetails                   = "showcase_unresolve_comment_details"
 	EventDetailsShowcaseUntrashedDetails                          = "showcase_untrashed_details"
+	EventDetailsShowcaseUntrashedDeprecatedDetails                = "showcase_untrashed_deprecated_details"
 	EventDetailsShowcaseViewDetails                               = "showcase_view_details"
 	EventDetailsSsoAddCertDetails                                 = "sso_add_cert_details"
 	EventDetailsSsoAddLoginUrlDetails                             = "sso_add_login_url_details"
@@ -3101,6 +3168,8 @@ const (
 	EventDetailsDeviceApprovalsChangeMobilePolicyDetails          = "device_approvals_change_mobile_policy_details"
 	EventDetailsDeviceApprovalsChangeOverageActionDetails         = "device_approvals_change_overage_action_details"
 	EventDetailsDeviceApprovalsChangeUnlinkActionDetails          = "device_approvals_change_unlink_action_details"
+	EventDetailsDirectoryRestrictionsAddMembersDetails            = "directory_restrictions_add_members_details"
+	EventDetailsDirectoryRestrictionsRemoveMembersDetails         = "directory_restrictions_remove_members_details"
 	EventDetailsEmmAddExceptionDetails                            = "emm_add_exception_details"
 	EventDetailsEmmChangePolicyDetails                            = "emm_change_policy_details"
 	EventDetailsEmmRemoveExceptionDetails                         = "emm_remove_exception_details"
@@ -3129,6 +3198,9 @@ const (
 	EventDetailsSharingChangeFolderJoinPolicyDetails              = "sharing_change_folder_join_policy_details"
 	EventDetailsSharingChangeLinkPolicyDetails                    = "sharing_change_link_policy_details"
 	EventDetailsSharingChangeMemberPolicyDetails                  = "sharing_change_member_policy_details"
+	EventDetailsShowcaseChangeDownloadPolicyDetails               = "showcase_change_download_policy_details"
+	EventDetailsShowcaseChangeEnabledPolicyDetails                = "showcase_change_enabled_policy_details"
+	EventDetailsShowcaseChangeExternalSharingPolicyDetails        = "showcase_change_external_sharing_policy_details"
 	EventDetailsSmartSyncChangePolicyDetails                      = "smart_sync_change_policy_details"
 	EventDetailsSmartSyncNotOptOutDetails                         = "smart_sync_not_opt_out_details"
 	EventDetailsSmartSyncOptOutDetails                            = "smart_sync_opt_out_details"
@@ -3350,6 +3422,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		MemberSuggestDetails json.RawMessage `json:"member_suggest_details,omitempty"`
 		// MemberTransferAccountContentsDetails : has no documentation (yet)
 		MemberTransferAccountContentsDetails json.RawMessage `json:"member_transfer_account_contents_details,omitempty"`
+		// SecondaryMailsPolicyChangedDetails : has no documentation (yet)
+		SecondaryMailsPolicyChangedDetails json.RawMessage `json:"secondary_mails_policy_changed_details,omitempty"`
 		// PaperContentAddMemberDetails : has no documentation (yet)
 		PaperContentAddMemberDetails json.RawMessage `json:"paper_content_add_member_details,omitempty"`
 		// PaperContentAddToFolderDetails : has no documentation (yet)
@@ -3612,10 +3686,14 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		ShowcaseRestoredDetails json.RawMessage `json:"showcase_restored_details,omitempty"`
 		// ShowcaseTrashedDetails : has no documentation (yet)
 		ShowcaseTrashedDetails json.RawMessage `json:"showcase_trashed_details,omitempty"`
+		// ShowcaseTrashedDeprecatedDetails : has no documentation (yet)
+		ShowcaseTrashedDeprecatedDetails json.RawMessage `json:"showcase_trashed_deprecated_details,omitempty"`
 		// ShowcaseUnresolveCommentDetails : has no documentation (yet)
 		ShowcaseUnresolveCommentDetails json.RawMessage `json:"showcase_unresolve_comment_details,omitempty"`
 		// ShowcaseUntrashedDetails : has no documentation (yet)
 		ShowcaseUntrashedDetails json.RawMessage `json:"showcase_untrashed_details,omitempty"`
+		// ShowcaseUntrashedDeprecatedDetails : has no documentation (yet)
+		ShowcaseUntrashedDeprecatedDetails json.RawMessage `json:"showcase_untrashed_deprecated_details,omitempty"`
 		// ShowcaseViewDetails : has no documentation (yet)
 		ShowcaseViewDetails json.RawMessage `json:"showcase_view_details,omitempty"`
 		// SsoAddCertDetails : has no documentation (yet)
@@ -3672,6 +3750,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		DeviceApprovalsChangeOverageActionDetails json.RawMessage `json:"device_approvals_change_overage_action_details,omitempty"`
 		// DeviceApprovalsChangeUnlinkActionDetails : has no documentation (yet)
 		DeviceApprovalsChangeUnlinkActionDetails json.RawMessage `json:"device_approvals_change_unlink_action_details,omitempty"`
+		// DirectoryRestrictionsAddMembersDetails : has no documentation (yet)
+		DirectoryRestrictionsAddMembersDetails json.RawMessage `json:"directory_restrictions_add_members_details,omitempty"`
+		// DirectoryRestrictionsRemoveMembersDetails : has no documentation
+		// (yet)
+		DirectoryRestrictionsRemoveMembersDetails json.RawMessage `json:"directory_restrictions_remove_members_details,omitempty"`
 		// EmmAddExceptionDetails : has no documentation (yet)
 		EmmAddExceptionDetails json.RawMessage `json:"emm_add_exception_details,omitempty"`
 		// EmmChangePolicyDetails : has no documentation (yet)
@@ -3731,6 +3814,13 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		SharingChangeLinkPolicyDetails json.RawMessage `json:"sharing_change_link_policy_details,omitempty"`
 		// SharingChangeMemberPolicyDetails : has no documentation (yet)
 		SharingChangeMemberPolicyDetails json.RawMessage `json:"sharing_change_member_policy_details,omitempty"`
+		// ShowcaseChangeDownloadPolicyDetails : has no documentation (yet)
+		ShowcaseChangeDownloadPolicyDetails json.RawMessage `json:"showcase_change_download_policy_details,omitempty"`
+		// ShowcaseChangeEnabledPolicyDetails : has no documentation (yet)
+		ShowcaseChangeEnabledPolicyDetails json.RawMessage `json:"showcase_change_enabled_policy_details,omitempty"`
+		// ShowcaseChangeExternalSharingPolicyDetails : has no documentation
+		// (yet)
+		ShowcaseChangeExternalSharingPolicyDetails json.RawMessage `json:"showcase_change_external_sharing_policy_details,omitempty"`
 		// SmartSyncChangePolicyDetails : has no documentation (yet)
 		SmartSyncChangePolicyDetails json.RawMessage `json:"smart_sync_change_policy_details,omitempty"`
 		// SmartSyncNotOptOutDetails : has no documentation (yet)
@@ -4329,6 +4419,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_transfer_account_contents_details":
 		err = json.Unmarshal(body, &u.MemberTransferAccountContentsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_mails_policy_changed_details":
+		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -5101,6 +5197,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "showcase_trashed_deprecated_details":
+		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecatedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "showcase_unresolve_comment_details":
 		err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails)
 
@@ -5109,6 +5211,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "showcase_untrashed_details":
 		err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_untrashed_deprecated_details":
+		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecatedDetails)
 
 		if err != nil {
 			return err
@@ -5265,6 +5373,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "device_approvals_change_unlink_action_details":
 		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "directory_restrictions_add_members_details":
+		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "directory_restrictions_remove_members_details":
+		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembersDetails)
 
 		if err != nil {
 			return err
@@ -5433,6 +5553,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "sharing_change_member_policy_details":
 		err = json.Unmarshal(body, &u.SharingChangeMemberPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_download_policy_details":
+		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_enabled_policy_details":
+		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_external_sharing_policy_details":
+		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicyDetails)
 
 		if err != nil {
 			return err
@@ -5659,7 +5797,7 @@ type EventType struct {
 	// to join team
 	DomainInvitesDeclineRequestToJoinTeam *DomainInvitesDeclineRequestToJoinTeamType `json:"domain_invites_decline_request_to_join_team,omitempty"`
 	// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-	// existing domain accounts
+	// existing domain accounts (deprecated, no longer logged)
 	DomainInvitesEmailExistingUsers *DomainInvitesEmailExistingUsersType `json:"domain_invites_email_existing_users,omitempty"`
 	// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
 	DomainInvitesRequestToJoinTeam *DomainInvitesRequestToJoinTeamType `json:"domain_invites_request_to_join_team,omitempty"`
@@ -5781,7 +5919,8 @@ type EventType struct {
 	MemberChangeMembershipType *MemberChangeMembershipTypeType `json:"member_change_membership_type,omitempty"`
 	// MemberChangeName : (members) Changed team member name
 	MemberChangeName *MemberChangeNameType `json:"member_change_name,omitempty"`
-	// MemberChangeStatus : (members) Changed membership status of team member
+	// MemberChangeStatus : (members) Changed member status (invited, joined,
+	// suspended, etc.)
 	MemberChangeStatus *MemberChangeStatusType `json:"member_change_status,omitempty"`
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
@@ -5801,6 +5940,8 @@ type EventType struct {
 	// MemberTransferAccountContents : (members) Transferred contents of deleted
 	// member account to another member
 	MemberTransferAccountContents *MemberTransferAccountContentsType `json:"member_transfer_account_contents,omitempty"`
+	// SecondaryMailsPolicyChanged : (members) Secondary mails policy changed
+	SecondaryMailsPolicyChanged *SecondaryMailsPolicyChangedType `json:"secondary_mails_policy_changed,omitempty"`
 	// PaperContentAddMember : (paper) Added team member to Paper doc/folder
 	PaperContentAddMember *PaperContentAddMemberType `json:"paper_content_add_member,omitempty"`
 	// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
@@ -5963,7 +6104,7 @@ type EventType struct {
 	// link (deprecated, no longer logged)
 	SfTeamJoinFromOobLink *SfTeamJoinFromOobLinkType `json:"sf_team_join_from_oob_link,omitempty"`
 	// SfTeamUninvite : (sharing) Unshared folder with team member (deprecated,
-	// replaced by 'Removed invitee from shared file/folder before invite
+	// replaced by 'Removed invitee from shared file/folder before invite was
 	// accepted')
 	SfTeamUninvite *SfTeamUninviteType `json:"sf_team_uninvite,omitempty"`
 	// SharedContentAddInvitees : (sharing) Invited user to Dropbox and added
@@ -5982,7 +6123,7 @@ type EventType struct {
 	// can download shared file/folder
 	SharedContentChangeDownloadsPolicy *SharedContentChangeDownloadsPolicyType `json:"shared_content_change_downloads_policy,omitempty"`
 	// SharedContentChangeInviteeRole : (sharing) Changed access type of invitee
-	// to shared file/folder before invite accepted
+	// to shared file/folder before invite was accepted
 	SharedContentChangeInviteeRole *SharedContentChangeInviteeRoleType `json:"shared_content_change_invitee_role,omitempty"`
 	// SharedContentChangeLinkAudience : (sharing) Changed link audience of
 	// shared file/folder
@@ -6009,7 +6150,7 @@ type EventType struct {
 	// SharedContentRelinquishMembership : (sharing) Left shared file/folder
 	SharedContentRelinquishMembership *SharedContentRelinquishMembershipType `json:"shared_content_relinquish_membership,omitempty"`
 	// SharedContentRemoveInvitees : (sharing) Removed invitee from shared
-	// file/folder before invite accepted
+	// file/folder before invite was accepted
 	SharedContentRemoveInvitees *SharedContentRemoveInviteesType `json:"shared_content_remove_invitees,omitempty"`
 	// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration date of
 	// shared file/folder
@@ -6118,10 +6259,16 @@ type EventType struct {
 	ShowcaseRestored *ShowcaseRestoredType `json:"showcase_restored,omitempty"`
 	// ShowcaseTrashed : (showcase) Deleted showcase
 	ShowcaseTrashed *ShowcaseTrashedType `json:"showcase_trashed,omitempty"`
+	// ShowcaseTrashedDeprecated : (showcase) Deleted showcase (old version)
+	// (deprecated, replaced by 'Deleted showcase')
+	ShowcaseTrashedDeprecated *ShowcaseTrashedDeprecatedType `json:"showcase_trashed_deprecated,omitempty"`
 	// ShowcaseUnresolveComment : (showcase) Unresolved showcase comment
 	ShowcaseUnresolveComment *ShowcaseUnresolveCommentType `json:"showcase_unresolve_comment,omitempty"`
 	// ShowcaseUntrashed : (showcase) Restored showcase
 	ShowcaseUntrashed *ShowcaseUntrashedType `json:"showcase_untrashed,omitempty"`
+	// ShowcaseUntrashedDeprecated : (showcase) Restored showcase (old version)
+	// (deprecated, replaced by 'Restored showcase')
+	ShowcaseUntrashedDeprecated *ShowcaseUntrashedDeprecatedType `json:"showcase_untrashed_deprecated,omitempty"`
 	// ShowcaseView : (showcase) Viewed showcase
 	ShowcaseView *ShowcaseViewType `json:"showcase_view,omitempty"`
 	// SsoAddCert : (sso) Added X.509 certificate for SSO
@@ -6186,6 +6333,12 @@ type EventType struct {
 	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
 	// approvals setting when member unlinks approved device
 	DeviceApprovalsChangeUnlinkAction *DeviceApprovalsChangeUnlinkActionType `json:"device_approvals_change_unlink_action,omitempty"`
+	// DirectoryRestrictionsAddMembers : (team_policies) Added members to
+	// directory restrictions list
+	DirectoryRestrictionsAddMembers *DirectoryRestrictionsAddMembersType `json:"directory_restrictions_add_members,omitempty"`
+	// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members from
+	// directory restrictions list
+	DirectoryRestrictionsRemoveMembers *DirectoryRestrictionsRemoveMembersType `json:"directory_restrictions_remove_members,omitempty"`
 	// EmmAddException : (team_policies) Added members to EMM exception list
 	EmmAddException *EmmAddExceptionType `json:"emm_add_exception,omitempty"`
 	// EmmChangePolicy : (team_policies) Enabled/disabled enterprise mobility
@@ -6270,6 +6423,15 @@ type EventType struct {
 	// SharingChangeMemberPolicy : (team_policies) Changed whether members can
 	// share files/folders outside team
 	SharingChangeMemberPolicy *SharingChangeMemberPolicyType `json:"sharing_change_member_policy,omitempty"`
+	// ShowcaseChangeDownloadPolicy : (team_policies) Enabled/disabled
+	// downloading files from Dropbox Showcase for team
+	ShowcaseChangeDownloadPolicy *ShowcaseChangeDownloadPolicyType `json:"showcase_change_download_policy,omitempty"`
+	// ShowcaseChangeEnabledPolicy : (team_policies) Enabled/disabled Dropbox
+	// Showcase for team
+	ShowcaseChangeEnabledPolicy *ShowcaseChangeEnabledPolicyType `json:"showcase_change_enabled_policy,omitempty"`
+	// ShowcaseChangeExternalSharingPolicy : (team_policies) Enabled/disabled
+	// sharing Dropbox Showcase externally for team
+	ShowcaseChangeExternalSharingPolicy *ShowcaseChangeExternalSharingPolicyType `json:"showcase_change_external_sharing_policy,omitempty"`
 	// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
 	// setting for team members
 	SmartSyncChangePolicy *SmartSyncChangePolicyType `json:"smart_sync_change_policy,omitempty"`
@@ -6423,6 +6585,7 @@ const (
 	EventTypeMemberSpaceLimitsRemoveCustomQuota         = "member_space_limits_remove_custom_quota"
 	EventTypeMemberSuggest                              = "member_suggest"
 	EventTypeMemberTransferAccountContents              = "member_transfer_account_contents"
+	EventTypeSecondaryMailsPolicyChanged                = "secondary_mails_policy_changed"
 	EventTypePaperContentAddMember                      = "paper_content_add_member"
 	EventTypePaperContentAddToFolder                    = "paper_content_add_to_folder"
 	EventTypePaperContentArchive                        = "paper_content_archive"
@@ -6551,8 +6714,10 @@ const (
 	EventTypeShowcaseResolveComment                     = "showcase_resolve_comment"
 	EventTypeShowcaseRestored                           = "showcase_restored"
 	EventTypeShowcaseTrashed                            = "showcase_trashed"
+	EventTypeShowcaseTrashedDeprecated                  = "showcase_trashed_deprecated"
 	EventTypeShowcaseUnresolveComment                   = "showcase_unresolve_comment"
 	EventTypeShowcaseUntrashed                          = "showcase_untrashed"
+	EventTypeShowcaseUntrashedDeprecated                = "showcase_untrashed_deprecated"
 	EventTypeShowcaseView                               = "showcase_view"
 	EventTypeSsoAddCert                                 = "sso_add_cert"
 	EventTypeSsoAddLoginUrl                             = "sso_add_login_url"
@@ -6579,6 +6744,8 @@ const (
 	EventTypeDeviceApprovalsChangeMobilePolicy          = "device_approvals_change_mobile_policy"
 	EventTypeDeviceApprovalsChangeOverageAction         = "device_approvals_change_overage_action"
 	EventTypeDeviceApprovalsChangeUnlinkAction          = "device_approvals_change_unlink_action"
+	EventTypeDirectoryRestrictionsAddMembers            = "directory_restrictions_add_members"
+	EventTypeDirectoryRestrictionsRemoveMembers         = "directory_restrictions_remove_members"
 	EventTypeEmmAddException                            = "emm_add_exception"
 	EventTypeEmmChangePolicy                            = "emm_change_policy"
 	EventTypeEmmRemoveException                         = "emm_remove_exception"
@@ -6607,6 +6774,9 @@ const (
 	EventTypeSharingChangeFolderJoinPolicy              = "sharing_change_folder_join_policy"
 	EventTypeSharingChangeLinkPolicy                    = "sharing_change_link_policy"
 	EventTypeSharingChangeMemberPolicy                  = "sharing_change_member_policy"
+	EventTypeShowcaseChangeDownloadPolicy               = "showcase_change_download_policy"
+	EventTypeShowcaseChangeEnabledPolicy                = "showcase_change_enabled_policy"
+	EventTypeShowcaseChangeExternalSharingPolicy        = "showcase_change_external_sharing_policy"
 	EventTypeSmartSyncChangePolicy                      = "smart_sync_change_policy"
 	EventTypeSmartSyncNotOptOut                         = "smart_sync_not_opt_out"
 	EventTypeSmartSyncOptOut                            = "smart_sync_opt_out"
@@ -6713,7 +6883,7 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// request to join team
 		DomainInvitesDeclineRequestToJoinTeam json.RawMessage `json:"domain_invites_decline_request_to_join_team,omitempty"`
 		// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-		// existing domain accounts
+		// existing domain accounts (deprecated, no longer logged)
 		DomainInvitesEmailExistingUsers json.RawMessage `json:"domain_invites_email_existing_users,omitempty"`
 		// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
 		DomainInvitesRequestToJoinTeam json.RawMessage `json:"domain_invites_request_to_join_team,omitempty"`
@@ -6838,8 +7008,8 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		MemberChangeMembershipType json.RawMessage `json:"member_change_membership_type,omitempty"`
 		// MemberChangeName : (members) Changed team member name
 		MemberChangeName json.RawMessage `json:"member_change_name,omitempty"`
-		// MemberChangeStatus : (members) Changed membership status of team
-		// member
+		// MemberChangeStatus : (members) Changed member status (invited,
+		// joined, suspended, etc.)
 		MemberChangeStatus json.RawMessage `json:"member_change_status,omitempty"`
 		// MemberPermanentlyDeleteAccountContents : (members) Permanently
 		// deleted contents of deleted team member account
@@ -6860,6 +7030,9 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// MemberTransferAccountContents : (members) Transferred contents of
 		// deleted member account to another member
 		MemberTransferAccountContents json.RawMessage `json:"member_transfer_account_contents,omitempty"`
+		// SecondaryMailsPolicyChanged : (members) Secondary mails policy
+		// changed
+		SecondaryMailsPolicyChanged json.RawMessage `json:"secondary_mails_policy_changed,omitempty"`
 		// PaperContentAddMember : (paper) Added team member to Paper doc/folder
 		PaperContentAddMember json.RawMessage `json:"paper_content_add_member,omitempty"`
 		// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
@@ -7027,7 +7200,7 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		SfTeamJoinFromOobLink json.RawMessage `json:"sf_team_join_from_oob_link,omitempty"`
 		// SfTeamUninvite : (sharing) Unshared folder with team member
 		// (deprecated, replaced by 'Removed invitee from shared file/folder
-		// before invite accepted')
+		// before invite was accepted')
 		SfTeamUninvite json.RawMessage `json:"sf_team_uninvite,omitempty"`
 		// SharedContentAddInvitees : (sharing) Invited user to Dropbox and
 		// added them to shared file/folder
@@ -7045,7 +7218,7 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// members can download shared file/folder
 		SharedContentChangeDownloadsPolicy json.RawMessage `json:"shared_content_change_downloads_policy,omitempty"`
 		// SharedContentChangeInviteeRole : (sharing) Changed access type of
-		// invitee to shared file/folder before invite accepted
+		// invitee to shared file/folder before invite was accepted
 		SharedContentChangeInviteeRole json.RawMessage `json:"shared_content_change_invitee_role,omitempty"`
 		// SharedContentChangeLinkAudience : (sharing) Changed link audience of
 		// shared file/folder
@@ -7073,7 +7246,7 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// SharedContentRelinquishMembership : (sharing) Left shared file/folder
 		SharedContentRelinquishMembership json.RawMessage `json:"shared_content_relinquish_membership,omitempty"`
 		// SharedContentRemoveInvitees : (sharing) Removed invitee from shared
-		// file/folder before invite accepted
+		// file/folder before invite was accepted
 		SharedContentRemoveInvitees json.RawMessage `json:"shared_content_remove_invitees,omitempty"`
 		// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration
 		// date of shared file/folder
@@ -7187,10 +7360,16 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		ShowcaseRestored json.RawMessage `json:"showcase_restored,omitempty"`
 		// ShowcaseTrashed : (showcase) Deleted showcase
 		ShowcaseTrashed json.RawMessage `json:"showcase_trashed,omitempty"`
+		// ShowcaseTrashedDeprecated : (showcase) Deleted showcase (old version)
+		// (deprecated, replaced by 'Deleted showcase')
+		ShowcaseTrashedDeprecated json.RawMessage `json:"showcase_trashed_deprecated,omitempty"`
 		// ShowcaseUnresolveComment : (showcase) Unresolved showcase comment
 		ShowcaseUnresolveComment json.RawMessage `json:"showcase_unresolve_comment,omitempty"`
 		// ShowcaseUntrashed : (showcase) Restored showcase
 		ShowcaseUntrashed json.RawMessage `json:"showcase_untrashed,omitempty"`
+		// ShowcaseUntrashedDeprecated : (showcase) Restored showcase (old
+		// version) (deprecated, replaced by 'Restored showcase')
+		ShowcaseUntrashedDeprecated json.RawMessage `json:"showcase_untrashed_deprecated,omitempty"`
 		// ShowcaseView : (showcase) Viewed showcase
 		ShowcaseView json.RawMessage `json:"showcase_view,omitempty"`
 		// SsoAddCert : (sso) Added X.509 certificate for SSO
@@ -7257,6 +7436,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
 		// approvals setting when member unlinks approved device
 		DeviceApprovalsChangeUnlinkAction json.RawMessage `json:"device_approvals_change_unlink_action,omitempty"`
+		// DirectoryRestrictionsAddMembers : (team_policies) Added members to
+		// directory restrictions list
+		DirectoryRestrictionsAddMembers json.RawMessage `json:"directory_restrictions_add_members,omitempty"`
+		// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members
+		// from directory restrictions list
+		DirectoryRestrictionsRemoveMembers json.RawMessage `json:"directory_restrictions_remove_members,omitempty"`
 		// EmmAddException : (team_policies) Added members to EMM exception list
 		EmmAddException json.RawMessage `json:"emm_add_exception,omitempty"`
 		// EmmChangePolicy : (team_policies) Enabled/disabled enterprise
@@ -7344,6 +7529,15 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// SharingChangeMemberPolicy : (team_policies) Changed whether members
 		// can share files/folders outside team
 		SharingChangeMemberPolicy json.RawMessage `json:"sharing_change_member_policy,omitempty"`
+		// ShowcaseChangeDownloadPolicy : (team_policies) Enabled/disabled
+		// downloading files from Dropbox Showcase for team
+		ShowcaseChangeDownloadPolicy json.RawMessage `json:"showcase_change_download_policy,omitempty"`
+		// ShowcaseChangeEnabledPolicy : (team_policies) Enabled/disabled
+		// Dropbox Showcase for team
+		ShowcaseChangeEnabledPolicy json.RawMessage `json:"showcase_change_enabled_policy,omitempty"`
+		// ShowcaseChangeExternalSharingPolicy : (team_policies)
+		// Enabled/disabled sharing Dropbox Showcase externally for team
+		ShowcaseChangeExternalSharingPolicy json.RawMessage `json:"showcase_change_external_sharing_policy,omitempty"`
 		// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
 		// setting for team members
 		SmartSyncChangePolicy json.RawMessage `json:"smart_sync_change_policy,omitempty"`
@@ -7955,6 +8149,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_transfer_account_contents":
 		err = json.Unmarshal(body, &u.MemberTransferAccountContents)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_mails_policy_changed":
+		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged)
 
 		if err != nil {
 			return err
@@ -8727,6 +8927,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "showcase_trashed_deprecated":
+		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecated)
+
+		if err != nil {
+			return err
+		}
 	case "showcase_unresolve_comment":
 		err = json.Unmarshal(body, &u.ShowcaseUnresolveComment)
 
@@ -8735,6 +8941,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "showcase_untrashed":
 		err = json.Unmarshal(body, &u.ShowcaseUntrashed)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_untrashed_deprecated":
+		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecated)
 
 		if err != nil {
 			return err
@@ -8891,6 +9103,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "device_approvals_change_unlink_action":
 		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction)
+
+		if err != nil {
+			return err
+		}
+	case "directory_restrictions_add_members":
+		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembers)
+
+		if err != nil {
+			return err
+		}
+	case "directory_restrictions_remove_members":
+		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembers)
 
 		if err != nil {
 			return err
@@ -9059,6 +9283,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "sharing_change_member_policy":
 		err = json.Unmarshal(body, &u.SharingChangeMemberPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_download_policy":
+		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_enabled_policy":
+		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "showcase_change_external_sharing_policy":
+		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicy)
 
 		if err != nil {
 			return err
@@ -11077,7 +11319,8 @@ func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	return s
 }
 
-// MemberChangeStatusDetails : Changed membership status of team member.
+// MemberChangeStatusDetails : Changed member status (invited, joined,
+// suspended, etc.).
 type MemberChangeStatusDetails struct {
 	// PreviousValue : Previous member status. Might be missing due to
 	// historical data gap.
@@ -13416,6 +13659,47 @@ func NewResellerSupportSessionStartType(Description string) *ResellerSupportSess
 	return s
 }
 
+// SecondaryMailsPolicy : has no documentation (yet)
+type SecondaryMailsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SecondaryMailsPolicy
+const (
+	SecondaryMailsPolicyDisabled = "disabled"
+	SecondaryMailsPolicyEnabled  = "enabled"
+	SecondaryMailsPolicyOther    = "other"
+)
+
+// SecondaryMailsPolicyChangedDetails : Secondary mails policy changed.
+type SecondaryMailsPolicyChangedDetails struct {
+	// PreviousValue : Previous secondary mails policy.
+	PreviousValue *SecondaryMailsPolicy `json:"previous_value"`
+	// NewValue : New secondary mails policy.
+	NewValue *SecondaryMailsPolicy `json:"new_value"`
+}
+
+// NewSecondaryMailsPolicyChangedDetails returns a new SecondaryMailsPolicyChangedDetails instance
+func NewSecondaryMailsPolicyChangedDetails(PreviousValue *SecondaryMailsPolicy, NewValue *SecondaryMailsPolicy) *SecondaryMailsPolicyChangedDetails {
+	s := new(SecondaryMailsPolicyChangedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// SecondaryMailsPolicyChangedType : has no documentation (yet)
+type SecondaryMailsPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSecondaryMailsPolicyChangedType returns a new SecondaryMailsPolicyChangedType instance
+func NewSecondaryMailsPolicyChangedType(Description string) *SecondaryMailsPolicyChangedType {
+	s := new(SecondaryMailsPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // SfAddGroupDetails : Added team to shared folder.
 type SfAddGroupDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
@@ -13969,7 +14253,7 @@ func NewSharedContentChangeDownloadsPolicyType(Description string) *SharedConten
 }
 
 // SharedContentChangeInviteeRoleDetails : Changed access type of invitee to
-// shared file/folder before invite accepted.
+// shared file/folder before invite was accepted.
 type SharedContentChangeInviteeRoleDetails struct {
 	// PreviousAccessLevel : Previous access level. Might be missing due to
 	// historical data gap.
@@ -14259,7 +14543,7 @@ func NewSharedContentRelinquishMembershipType(Description string) *SharedContent
 }
 
 // SharedContentRemoveInviteesDetails : Removed invitee from shared file/folder
-// before invite accepted.
+// before invite was accepted.
 type SharedContentRemoveInviteesDetails struct {
 	// Invitees : A list of invitees.
 	Invitees []string `json:"invitees"`
@@ -15279,6 +15563,96 @@ func NewShowcaseArchivedType(Description string) *ShowcaseArchivedType {
 	return s
 }
 
+// ShowcaseChangeDownloadPolicyDetails : Enabled/disabled downloading files from
+// Dropbox Showcase for team.
+type ShowcaseChangeDownloadPolicyDetails struct {
+	// NewValue : New Dropbox Showcase download policy.
+	NewValue *ShowcaseDownloadPolicy `json:"new_value"`
+	// PreviousValue : Previous Dropbox Showcase download policy.
+	PreviousValue *ShowcaseDownloadPolicy `json:"previous_value"`
+}
+
+// NewShowcaseChangeDownloadPolicyDetails returns a new ShowcaseChangeDownloadPolicyDetails instance
+func NewShowcaseChangeDownloadPolicyDetails(NewValue *ShowcaseDownloadPolicy, PreviousValue *ShowcaseDownloadPolicy) *ShowcaseChangeDownloadPolicyDetails {
+	s := new(ShowcaseChangeDownloadPolicyDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ShowcaseChangeDownloadPolicyType : has no documentation (yet)
+type ShowcaseChangeDownloadPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseChangeDownloadPolicyType returns a new ShowcaseChangeDownloadPolicyType instance
+func NewShowcaseChangeDownloadPolicyType(Description string) *ShowcaseChangeDownloadPolicyType {
+	s := new(ShowcaseChangeDownloadPolicyType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseChangeEnabledPolicyDetails : Enabled/disabled Dropbox Showcase for
+// team.
+type ShowcaseChangeEnabledPolicyDetails struct {
+	// NewValue : New Dropbox Showcase policy.
+	NewValue *ShowcaseEnabledPolicy `json:"new_value"`
+	// PreviousValue : Previous Dropbox Showcase policy.
+	PreviousValue *ShowcaseEnabledPolicy `json:"previous_value"`
+}
+
+// NewShowcaseChangeEnabledPolicyDetails returns a new ShowcaseChangeEnabledPolicyDetails instance
+func NewShowcaseChangeEnabledPolicyDetails(NewValue *ShowcaseEnabledPolicy, PreviousValue *ShowcaseEnabledPolicy) *ShowcaseChangeEnabledPolicyDetails {
+	s := new(ShowcaseChangeEnabledPolicyDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ShowcaseChangeEnabledPolicyType : has no documentation (yet)
+type ShowcaseChangeEnabledPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseChangeEnabledPolicyType returns a new ShowcaseChangeEnabledPolicyType instance
+func NewShowcaseChangeEnabledPolicyType(Description string) *ShowcaseChangeEnabledPolicyType {
+	s := new(ShowcaseChangeEnabledPolicyType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseChangeExternalSharingPolicyDetails : Enabled/disabled sharing Dropbox
+// Showcase externally for team.
+type ShowcaseChangeExternalSharingPolicyDetails struct {
+	// NewValue : New Dropbox Showcase external sharing policy.
+	NewValue *ShowcaseExternalSharingPolicy `json:"new_value"`
+	// PreviousValue : Previous Dropbox Showcase external sharing policy.
+	PreviousValue *ShowcaseExternalSharingPolicy `json:"previous_value"`
+}
+
+// NewShowcaseChangeExternalSharingPolicyDetails returns a new ShowcaseChangeExternalSharingPolicyDetails instance
+func NewShowcaseChangeExternalSharingPolicyDetails(NewValue *ShowcaseExternalSharingPolicy, PreviousValue *ShowcaseExternalSharingPolicy) *ShowcaseChangeExternalSharingPolicyDetails {
+	s := new(ShowcaseChangeExternalSharingPolicyDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ShowcaseChangeExternalSharingPolicyType : has no documentation (yet)
+type ShowcaseChangeExternalSharingPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseChangeExternalSharingPolicyType returns a new ShowcaseChangeExternalSharingPolicyType instance
+func NewShowcaseChangeExternalSharingPolicyType(Description string) *ShowcaseChangeExternalSharingPolicyType {
+	s := new(ShowcaseChangeExternalSharingPolicyType)
+	s.Description = Description
+	return s
+}
+
 // ShowcaseCreatedDetails : Created showcase.
 type ShowcaseCreatedDetails struct {
 	// EventUuid : Event unique identifier.
@@ -15349,6 +15723,19 @@ func NewShowcaseDocumentLogInfo(ShowcaseId string, ShowcaseTitle string) *Showca
 	return s
 }
 
+// ShowcaseDownloadPolicy : Policy for controlling if files can be downloaded
+// from Showcases by team members
+type ShowcaseDownloadPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ShowcaseDownloadPolicy
+const (
+	ShowcaseDownloadPolicyDisabled = "disabled"
+	ShowcaseDownloadPolicyEnabled  = "enabled"
+	ShowcaseDownloadPolicyOther    = "other"
+)
+
 // ShowcaseEditCommentDetails : Edited showcase comment.
 type ShowcaseEditCommentDetails struct {
 	// EventUuid : Event unique identifier.
@@ -15402,6 +15789,31 @@ func NewShowcaseEditedType(Description string) *ShowcaseEditedType {
 	s.Description = Description
 	return s
 }
+
+// ShowcaseEnabledPolicy : Policy for controlling whether Showcase is enabled.
+type ShowcaseEnabledPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ShowcaseEnabledPolicy
+const (
+	ShowcaseEnabledPolicyDisabled = "disabled"
+	ShowcaseEnabledPolicyEnabled  = "enabled"
+	ShowcaseEnabledPolicyOther    = "other"
+)
+
+// ShowcaseExternalSharingPolicy : Policy for controlling if team members can
+// share Showcases externally.
+type ShowcaseExternalSharingPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ShowcaseExternalSharingPolicy
+const (
+	ShowcaseExternalSharingPolicyDisabled = "disabled"
+	ShowcaseExternalSharingPolicyEnabled  = "enabled"
+	ShowcaseExternalSharingPolicyOther    = "other"
+)
 
 // ShowcaseFileAddedDetails : Added file to showcase.
 type ShowcaseFileAddedDetails struct {
@@ -15696,6 +16108,32 @@ func NewShowcaseRestoredType(Description string) *ShowcaseRestoredType {
 	return s
 }
 
+// ShowcaseTrashedDeprecatedDetails : Deleted showcase (old version).
+type ShowcaseTrashedDeprecatedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseTrashedDeprecatedDetails returns a new ShowcaseTrashedDeprecatedDetails instance
+func NewShowcaseTrashedDeprecatedDetails(EventUuid string) *ShowcaseTrashedDeprecatedDetails {
+	s := new(ShowcaseTrashedDeprecatedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseTrashedDeprecatedType : has no documentation (yet)
+type ShowcaseTrashedDeprecatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseTrashedDeprecatedType returns a new ShowcaseTrashedDeprecatedType instance
+func NewShowcaseTrashedDeprecatedType(Description string) *ShowcaseTrashedDeprecatedType {
+	s := new(ShowcaseTrashedDeprecatedType)
+	s.Description = Description
+	return s
+}
+
 // ShowcaseTrashedDetails : Deleted showcase.
 type ShowcaseTrashedDetails struct {
 	// EventUuid : Event unique identifier.
@@ -15746,6 +16184,32 @@ type ShowcaseUnresolveCommentType struct {
 // NewShowcaseUnresolveCommentType returns a new ShowcaseUnresolveCommentType instance
 func NewShowcaseUnresolveCommentType(Description string) *ShowcaseUnresolveCommentType {
 	s := new(ShowcaseUnresolveCommentType)
+	s.Description = Description
+	return s
+}
+
+// ShowcaseUntrashedDeprecatedDetails : Restored showcase (old version).
+type ShowcaseUntrashedDeprecatedDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewShowcaseUntrashedDeprecatedDetails returns a new ShowcaseUntrashedDeprecatedDetails instance
+func NewShowcaseUntrashedDeprecatedDetails(EventUuid string) *ShowcaseUntrashedDeprecatedDetails {
+	s := new(ShowcaseUntrashedDeprecatedDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// ShowcaseUntrashedDeprecatedType : has no documentation (yet)
+type ShowcaseUntrashedDeprecatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShowcaseUntrashedDeprecatedType returns a new ShowcaseUntrashedDeprecatedType instance
+func NewShowcaseUntrashedDeprecatedType(Description string) *ShowcaseUntrashedDeprecatedType {
+	s := new(ShowcaseUntrashedDeprecatedType)
 	s.Description = Description
 	return s
 }

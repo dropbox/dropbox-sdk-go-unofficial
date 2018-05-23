@@ -52,9 +52,9 @@ type Client interface {
 	// DocsGetFolderInfo : Retrieves folder information for the given Paper doc.
 	// This includes:   - folder sharing policy; permissions for subfolders are
 	// set by the top-level folder.   - full 'filepath', i.e. the list of
-	// folders (both folderId and folderName) from the root folder to the folder
-	// directly containing the Paper doc.  Note: If the Paper doc is not in any
-	// folder (aka unfiled) the response will be empty.
+	// folders (both folderId and folderName) from     the root folder to the
+	// folder directly containing the Paper doc.  Note: If the Paper doc is not
+	// in any folder (aka unfiled) the response will be empty.
 	DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error)
 	// DocsList : Return the list of all Paper docs according to the argument
 	// specifications. To iterate over through the full pagination, pass the

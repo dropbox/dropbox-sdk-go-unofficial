@@ -1947,6 +1947,8 @@ type MemberAddArg struct {
 	SendWelcomeEmail bool `json:"send_welcome_email"`
 	// Role : has no documentation (yet)
 	Role *AdminTier `json:"role"`
+	// IsDirectoryRestricted : Whether a user is directory restricted.
+	IsDirectoryRestricted bool `json:"is_directory_restricted,omitempty"`
 }
 
 // NewMemberAddArg returns a new MemberAddArg instance
@@ -2161,6 +2163,8 @@ type MemberProfile struct {
 	// PersistentId : Persistent ID that a team can attach to the user. The
 	// persistent ID is unique ID to be used for SAML authentication.
 	PersistentId string `json:"persistent_id,omitempty"`
+	// IsDirectoryRestricted : Whether the user is a directory restricted user.
+	IsDirectoryRestricted bool `json:"is_directory_restricted,omitempty"`
 }
 
 // NewMemberProfile returns a new MemberProfile instance
@@ -2640,6 +2644,9 @@ type MembersSetProfileArg struct {
 	// NewPersistentId : New persistent ID. This field only available to teams
 	// using persistent ID SAML configuration.
 	NewPersistentId string `json:"new_persistent_id,omitempty"`
+	// NewIsDirectoryRestricted : New value for whether the user is a directory
+	// restricted user.
+	NewIsDirectoryRestricted bool `json:"new_is_directory_restricted,omitempty"`
 }
 
 // NewMembersSetProfileArg returns a new MembersSetProfileArg instance
@@ -2666,6 +2673,7 @@ const (
 	MembersSetProfileErrorParamCannotBeEmpty               = "param_cannot_be_empty"
 	MembersSetProfileErrorPersistentIdDisabled             = "persistent_id_disabled"
 	MembersSetProfileErrorPersistentIdUsedByOtherUser      = "persistent_id_used_by_other_user"
+	MembersSetProfileErrorDirectoryRestrictedOff           = "directory_restricted_off"
 	MembersSetProfileErrorOther                            = "other"
 )
 

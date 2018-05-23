@@ -247,16 +247,19 @@ type Client interface {
 	// upload session with `uploadSessionStart`.
 	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
 	// UploadSessionAppend : Append more data to an upload session. A single
-	// request should not upload more than 150 MB.
+	// request should not upload more than 150 MB. The maximum size of a file
+	// one can upload to an upload session is 350 GB.
 	// Deprecated: Use `UploadSessionAppendV2` instead
 	UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error)
 	// UploadSessionAppendV2 : Append more data to an upload session. When the
 	// parameter close is set, this call will close the session. A single
-	// request should not upload more than 150 MB.
+	// request should not upload more than 150 MB. The maximum size of a file
+	// one can upload to an upload session is 350 GB.
 	UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error)
 	// UploadSessionFinish : Finish an upload session and save the uploaded data
 	// to the given file path. A single request should not upload more than 150
-	// MB.
+	// MB. The maximum size of a file one can upload to an upload session is 350
+	// GB.
 	UploadSessionFinish(arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error)
 	// UploadSessionFinishBatch : This route helps you commit many files at once
 	// into a user's Dropbox. Use `uploadSessionStart` and
@@ -266,11 +269,12 @@ type Client interface {
 	// route to finish all your upload sessions in a single request.
 	// `UploadSessionStartArg.close` or `UploadSessionAppendArg.close` needs to
 	// be true for the last `uploadSessionStart` or `uploadSessionAppendV2`
-	// call. This route will return a job_id immediately and do the async commit
-	// job in background. Use `uploadSessionFinishBatchCheck` to check the job
-	// status. For the same account, this route should be executed serially.
-	// That means you should not start the next job before current job finishes.
-	// We allow up to 1000 entries in a single request.
+	// call. The maximum size of a file one can upload to an upload session is
+	// 350 GB. This route will return a job_id immediately and do the async
+	// commit job in background. Use `uploadSessionFinishBatchCheck` to check
+	// the job status. For the same account, this route should be executed
+	// serially. That means you should not start the next job before current job
+	// finishes. We allow up to 1000 entries in a single request.
 	UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error)
 	// UploadSessionFinishBatchCheck : Returns the status of an asynchronous job
 	// for `uploadSessionFinishBatch`. If success, it returns list of result for
@@ -281,8 +285,9 @@ type Client interface {
 	// than 150 MB.  This call starts a new upload session with the given data.
 	// You can then use `uploadSessionAppendV2` to add more data and
 	// `uploadSessionFinish` to save all the data to a file in Dropbox. A single
-	// request should not upload more than 150 MB. An upload session can be used
-	// for a maximum of 48 hours. Attempting to use an
+	// request should not upload more than 150 MB. The maximum size of a file
+	// one can upload to an upload session is 350 GB. An upload session can be
+	// used for a maximum of 48 hours. Attempting to use an
 	// `UploadSessionStartResult.session_id` with `uploadSessionAppendV2` or
 	// `uploadSessionFinish` more than 48 hours after its creation will return a
 	// `UploadSessionLookupError.not_found`.
