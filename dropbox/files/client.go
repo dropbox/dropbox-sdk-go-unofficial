@@ -31,6 +31,7 @@ import (
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox/async"
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox/file_properties"
+	"strings"
 )
 
 // Client interface describes all routes in this namespace
@@ -3272,6 +3273,10 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	if err != nil {
 		return
 	}
+
+	bodyStr := string(body)
+	bodyStr = strings.Replace(bodyStr, ".tag", "tag", -1)
+	body = []byte(bodyStr)
 
 	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
