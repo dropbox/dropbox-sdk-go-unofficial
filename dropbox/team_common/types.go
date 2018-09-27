@@ -24,7 +24,7 @@ package team_common
 import (
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // GroupManagementType : The group type determines how a group is managed.

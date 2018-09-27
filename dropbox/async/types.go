@@ -24,7 +24,7 @@ package async
 import (
 	"encoding/json"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // LaunchResultBase : Result returned by methods that launch an asynchronous

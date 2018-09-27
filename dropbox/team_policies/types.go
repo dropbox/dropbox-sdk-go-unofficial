@@ -21,7 +21,7 @@
 // Package team_policies : has no documentation (yet)
 package team_policies
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import "github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 
 // EmmState : has no documentation (yet)
 type EmmState struct {

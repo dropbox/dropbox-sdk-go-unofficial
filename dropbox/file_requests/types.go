@@ -26,7 +26,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // CreateFileRequestArgs : Arguments for `create`.
