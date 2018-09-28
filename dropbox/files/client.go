@@ -31,7 +31,6 @@ import (
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox/async"
 	"github.com/hushed/dropbox-sdk-go-unofficial/dropbox/file_properties"
-	"strings"
 )
 
 // Client interface describes all routes in this namespace
@@ -3274,16 +3273,16 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 		return
 	}
 
-	bodyStr := string(body)
-	bodyStr = strings.Replace(bodyStr, ".tag", "tag", -1)
-	body = []byte(bodyStr)
-
 	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
+		// This is a dirty hack to get around the unmarshalling error for the .tag field of the response json
+		response := make(map[string]interface{})
+		err = json.Unmarshal(body, &response)
 		if err != nil {
 			return
 		}
+		res = &SaveUrlResult{}
+		res.AsyncJobId = response["async_job_id"].(string)
 
 		return
 	}
