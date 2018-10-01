@@ -50,7 +50,7 @@ type Client interface {
 	// Copy : Copy a file or folder to a different location in the user's
 	// Dropbox. If the source path is a folder all its contents will be copied.
 	// Deprecated: Use `CopyV2` instead
-	Copy(arg *RelocationArg) (res IsMetadata, err error)
+	Copy(arg *RelocationArg) (res IsMetadata, status *int, err error)
 	// CopyBatch : Copy multiple files or folders to different locations at once
 	// in the user's Dropbox. If `RelocationBatchArg.allow_shared_folder` is
 	// false, this route is atomic. If on entry failes, the whole transaction
@@ -245,7 +245,7 @@ type Client interface {
 	// Upload : Create a new file with the contents provided in the request. Do
 	// not use this to upload a file larger than 150 MB. Instead, create an
 	// upload session with `uploadSessionStart`.
-	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
+	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, status *int, err error)
 	// UploadSessionAppend : Append more data to an upload session. A single
 	// request should not upload more than 150 MB. The maximum size of a file
 	// one can upload to an upload session is 350 GB.
