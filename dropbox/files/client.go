@@ -464,7 +464,7 @@ type CopyAPIError struct {
 	EndpointError *RelocationError `json:"error"`
 }
 
-func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
+func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, status *int, err error) {
 	log.Printf("WARNING: API `Copy` is deprecated")
 	log.Printf("Use API `CopyV2` instead")
 
@@ -493,6 +493,7 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 	if err != nil {
 		return
 	}
+	status = &resp.StatusCode
 
 	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
@@ -3265,6 +3266,9 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	if err != nil {
 		return
 	}
+	res = &SaveUrlResult{
+		StatusCode: &resp.StatusCode,
+	}
 
 	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
@@ -3281,7 +3285,6 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 		if err != nil {
 			return
 		}
-		res = &SaveUrlResult{}
 		res.AsyncJobId = response["async_job_id"].(string)
 
 		return
@@ -3459,7 +3462,7 @@ type UploadAPIError struct {
 	EndpointError *UploadError `json:"error"`
 }
 
-func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, status *int, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3486,6 +3489,7 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 	if err != nil {
 		return
 	}
+	status = &resp.StatusCode
 
 	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()

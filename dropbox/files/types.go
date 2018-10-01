@@ -2770,6 +2770,7 @@ type SaveUrlResult struct {
 	AsyncJobId string `json:"async_job_id,omitempty"`
 	// Complete : Metadata of the file where the URL is saved to.
 	Complete *FileMetadata `json:"complete,omitempty"`
+	StatusCode *int  `json:"statuscode,omitempty"`
 }
 
 // Valid tag values for SaveUrlResult
