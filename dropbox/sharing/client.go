@@ -27,6 +27,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/async"
@@ -296,6 +297,23 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -360,6 +378,23 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -438,6 +473,23 @@ func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -507,6 +559,23 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -582,6 +651,23 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -651,6 +737,23 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -726,6 +829,23 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -809,6 +929,23 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -878,6 +1015,23 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -953,6 +1107,23 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1022,6 +1193,23 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1106,6 +1294,23 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1186,6 +1391,23 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1261,6 +1483,23 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1330,6 +1569,23 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1405,6 +1661,23 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1474,6 +1747,23 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1549,6 +1839,23 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1618,6 +1925,23 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1693,6 +2017,23 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1762,6 +2103,23 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1837,6 +2195,23 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1906,6 +2281,23 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1981,6 +2373,23 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2053,6 +2462,23 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2122,6 +2548,23 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2205,6 +2648,23 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2277,6 +2737,23 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2341,6 +2818,23 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2413,6 +2907,23 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2491,6 +3002,23 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2560,6 +3088,23 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2635,6 +3180,23 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2699,6 +3261,23 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2774,6 +3353,23 @@ func (dbx *apiImpl) SetAccessInheritance(arg *SetAccessInheritanceArg) (res *Sha
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2846,6 +3442,23 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -2910,6 +3523,23 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -2980,6 +3610,23 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -3044,6 +3691,23 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -3119,6 +3783,23 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -3188,6 +3869,23 @@ func (dbx *apiImpl) UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAcce
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -3263,6 +3961,23 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -3332,6 +4047,23 @@ func (dbx *apiImpl) UpdateFolderPolicy(arg *UpdateFolderPolicyArg) (res *SharedF
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}

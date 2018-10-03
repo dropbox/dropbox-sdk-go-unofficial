@@ -36,7 +36,7 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "5.1.0"
+	sdkVersion    = "5.0.0"
 	specVersion   = "eb85489"
 )
 
@@ -200,6 +200,7 @@ type Tagged struct {
 // APIError is the base type for endpoint-specific errors.
 type APIError struct {
 	ErrorSummary string `json:"error_summary"`
+	RetryAfter   int
 }
 
 func (e APIError) Error() string {

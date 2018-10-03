@@ -201,6 +201,19 @@ class GoClientBackend(CodeBackend):
             out('apiError.ErrorSummary = string(body)')
             out('err = apiError')
             out('return')
+        with self.block("if resp.StatusCode == http.StatusTooManyRequests"):
+            with self.block('err = json.Unmarshal(body, &apiError);'
+                            'if err != nil'):
+                out('return')
+            with self.block('delayString := resp.Header.Get("Retry-After");'
+                            'if delayString != ""'):
+                with self.block('delay := 0;'
+                                'delay, err = strconv.Atoi(delayString);'
+                                'if err != nil'):
+                    out('delay = 0')
+                out('apiError.RetryAfter = delay')
+            out('err = apiError')
+            out('return')
         with self.block('err = json.Unmarshal(body, &apiError);'
                         'if err != nil'):
             out('return')

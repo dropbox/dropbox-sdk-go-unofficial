@@ -26,6 +26,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
@@ -158,6 +159,23 @@ func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -228,6 +246,23 @@ func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res 
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -304,6 +339,23 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -373,6 +425,23 @@ func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUs
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -448,6 +517,23 @@ func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueAr
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -517,6 +603,23 @@ func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingP
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -592,6 +695,23 @@ func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -664,6 +784,23 @@ func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListP
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -728,6 +865,23 @@ func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -803,6 +957,23 @@ func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, 
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -867,6 +1038,23 @@ func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -943,6 +1131,23 @@ func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res 
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1012,6 +1217,23 @@ func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMe
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
@@ -1087,6 +1309,23 @@ func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersO
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1159,6 +1398,23 @@ func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) 
 		err = apiError
 		return
 	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
+		err = apiError
+		return
+	}
 	err = json.Unmarshal(body, &apiError)
 	if err != nil {
 		return
@@ -1223,6 +1479,23 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 	var apiError dropbox.APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	if resp.StatusCode == http.StatusTooManyRequests {
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		delayString := resp.Header.Get("Retry-After")
+		if delayString != "" {
+			delay := 0
+			delay, err = strconv.Atoi(delayString)
+			if err != nil {
+				delay = 0
+			}
+			apiError.RetryAfter = delay
+		}
 		err = apiError
 		return
 	}
