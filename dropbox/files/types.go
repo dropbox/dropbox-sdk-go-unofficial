@@ -183,6 +183,11 @@ type CommitInfo struct {
 	Mute bool `json:"mute"`
 	// PropertyGroups : List of custom properties to add to file.
 	PropertyGroups []*file_properties.PropertyGroup `json:"property_groups,omitempty"`
+	// StrictConflict : Be more strict about how each `WriteMode` detects
+	// conflict. For example, always return a conflict error when `mode` =
+	// `WriteMode.update` and the given "rev" doesn't match the existing file's
+	// "rev", even if the existing file has been deleted.
+	StrictConflict bool `json:"strict_conflict"`
 }
 
 // NewCommitInfo returns a new CommitInfo instance
@@ -192,6 +197,7 @@ func NewCommitInfo(Path string) *CommitInfo {
 	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
 	s.Autorename = false
 	s.Mute = false
+	s.StrictConflict = false
 	return s
 }
 
@@ -207,6 +213,7 @@ func NewCommitInfoWithProperties(Path string) *CommitInfoWithProperties {
 	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
 	s.Autorename = false
 	s.Mute = false
+	s.StrictConflict = false
 	return s
 }
 
@@ -1171,7 +1178,7 @@ type FileMetadata struct {
 	HasExplicitSharedMembers bool `json:"has_explicit_shared_members,omitempty"`
 	// ContentHash : A hash of the file content. This field can be used to
 	// verify data integrity. For more information see our `Content hash`
-	// </developers/reference/content-hash> page.
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
 
@@ -1436,6 +1443,39 @@ func NewGetTemporaryLinkResult(Metadata *FileMetadata, Link string) *GetTemporar
 	return s
 }
 
+// GetTemporaryUploadLinkArg : has no documentation (yet)
+type GetTemporaryUploadLinkArg struct {
+	// CommitInfo : Contains the path and other optional modifiers for the
+	// future upload commit. Equivalent to the parameters provided to `upload`.
+	CommitInfo *CommitInfo `json:"commit_info"`
+	// Duration : How long before this link expires, in seconds.  Attempting to
+	// start an upload with this link longer than this period  of time after
+	// link creation will result in an error.
+	Duration float64 `json:"duration"`
+}
+
+// NewGetTemporaryUploadLinkArg returns a new GetTemporaryUploadLinkArg instance
+func NewGetTemporaryUploadLinkArg(CommitInfo *CommitInfo) *GetTemporaryUploadLinkArg {
+	s := new(GetTemporaryUploadLinkArg)
+	s.CommitInfo = CommitInfo
+	s.Duration = 14400.0
+	return s
+}
+
+// GetTemporaryUploadLinkResult : has no documentation (yet)
+type GetTemporaryUploadLinkResult struct {
+	// Link : The temporary link which can be used to stream a file to a Dropbox
+	// location.
+	Link string `json:"link"`
+}
+
+// NewGetTemporaryUploadLinkResult returns a new GetTemporaryUploadLinkResult instance
+func NewGetTemporaryUploadLinkResult(Link string) *GetTemporaryUploadLinkResult {
+	s := new(GetTemporaryUploadLinkResult)
+	s.Link = Link
+	return s
+}
+
 // GetThumbnailBatchArg : Arguments for `getThumbnailBatch`.
 type GetThumbnailBatchArg struct {
 	// Entries : List of files to get thumbnails.
@@ -1477,7 +1517,8 @@ func NewGetThumbnailBatchResult(Entries []*GetThumbnailBatchResultEntry) *GetThu
 type GetThumbnailBatchResultData struct {
 	// Metadata : has no documentation (yet)
 	Metadata *FileMetadata `json:"metadata"`
-	// Thumbnail : has no documentation (yet)
+	// Thumbnail : A string containing the base64-encoded thumbnail data for
+	// this file.
 	Thumbnail string `json:"thumbnail"`
 }
 
@@ -1895,7 +1936,10 @@ func NewListRevisionsResult(IsDeleted bool, Entries []*FileMetadata) *ListRevisi
 // LookupError : has no documentation (yet)
 type LookupError struct {
 	dropbox.Tagged
-	// MalformedPath : has no documentation (yet)
+	// MalformedPath : The given path does not satisfy the required path format.
+	// Please refer to the `Path formats documentation`
+	// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
+	// for more information.
 	MalformedPath string `json:"malformed_path,omitempty"`
 }
 
@@ -1913,7 +1957,10 @@ const (
 func (u *LookupError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// MalformedPath : has no documentation (yet)
+		// MalformedPath : The given path does not satisfy the required path
+		// format. Please refer to the `Path formats documentation`
+		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
+		// for more information.
 		MalformedPath json.RawMessage `json:"malformed_path,omitempty"`
 	}
 	var w wrap
@@ -2503,9 +2550,9 @@ func (u *RelocationResult) UnmarshalJSON(b []byte) error {
 
 // RestoreArg : has no documentation (yet)
 type RestoreArg struct {
-	// Path : The path to the file you want to restore.
+	// Path : The path to save the restored file.
 	Path string `json:"path"`
-	// Rev : The revision to restore for the file.
+	// Rev : The revision to restore.
 	Rev string `json:"rev"`
 }
 
@@ -3258,7 +3305,7 @@ type UploadSessionAppendArg struct {
 	// Cursor : Contains the upload session ID and the offset.
 	Cursor *UploadSessionCursor `json:"cursor"`
 	// Close : If true, the current session will be closed, at which point you
-	// won't be able to call `uploadSessionAppendV2` anymore with the current
+	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
 }
@@ -3597,7 +3644,7 @@ func NewUploadSessionOffsetError(CorrectOffset uint64) *UploadSessionOffsetError
 // UploadSessionStartArg : has no documentation (yet)
 type UploadSessionStartArg struct {
 	// Close : If true, the current session will be closed, at which point you
-	// won't be able to call `uploadSessionAppendV2` anymore with the current
+	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
 }
@@ -3612,7 +3659,7 @@ func NewUploadSessionStartArg() *UploadSessionStartArg {
 // UploadSessionStartResult : has no documentation (yet)
 type UploadSessionStartResult struct {
 	// SessionId : A unique identifier for the upload session. Pass this to
-	// `uploadSessionAppendV2` and `uploadSessionFinish`.
+	// `uploadSessionAppend` and `uploadSessionFinish`.
 	SessionId string `json:"session_id"`
 }
 
@@ -3670,7 +3717,10 @@ const (
 // WriteError : has no documentation (yet)
 type WriteError struct {
 	dropbox.Tagged
-	// MalformedPath : has no documentation (yet)
+	// MalformedPath : The given path does not satisfy the required path format.
+	// Please refer to the `Path formats documentation`
+	// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
+	// for more information.
 	MalformedPath string `json:"malformed_path,omitempty"`
 	// Conflict : Couldn't write to the target path because there was something
 	// in the way.
@@ -3693,7 +3743,10 @@ const (
 func (u *WriteError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// MalformedPath : has no documentation (yet)
+		// MalformedPath : The given path does not satisfy the required path
+		// format. Please refer to the `Path formats documentation`
+		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
+		// for more information.
 		MalformedPath json.RawMessage `json:"malformed_path,omitempty"`
 		// Conflict : Couldn't write to the target path because there was
 		// something in the way.

@@ -128,7 +128,11 @@ def generate_doc(code_generator, t):
         if t.deprecated is not None:
             d = 'Deprecated: '
             if t.deprecated.by is not None:
-                d += 'Use `%s` instead' % fmt_var(t.deprecated.by.name)
+                deprecated_by = t.deprecated.by
+                fn = fmt_var(deprecated_by.name)
+                if deprecated_by.version != 1:
+                    fn += 'V%d' % deprecated_by.version
+                d += 'Use `%s` instead' % fn
             code_generator.emit_wrapped_text(d, prefix='// ')
 
 

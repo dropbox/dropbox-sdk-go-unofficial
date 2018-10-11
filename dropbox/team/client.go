@@ -168,6 +168,16 @@ type Client interface {
 	// `membersList`, use this to paginate through all team members. Permission
 	// : Team information.
 	MembersListContinue(arg *MembersListContinueArg) (res *MembersListResult, err error)
+	// MembersMoveFormerMemberFiles : Moves removed member's files to a
+	// different member. This endpoint initiates an asynchronous job. To obtain
+	// the final result of the job, the client should periodically poll
+	// `membersMoveFormerMemberFilesJobStatusCheck`. Permission : Team member
+	// management.
+	MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (res *async.LaunchEmptyResult, err error)
+	// MembersMoveFormerMemberFilesJobStatusCheck : Once an async_job_id is
+	// returned from `membersMoveFormerMemberFiles` , use this to poll the
+	// status of the asynchronous request. Permission : Team member management.
+	MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollArg) (res *async.PollEmptyResult, err error)
 	// MembersRecover : Recover a deleted member. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
 	// provided to identify the user account.
@@ -2734,6 +2744,144 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersListContinueAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MembersMoveFormerMemberFilesAPIError is an error-wrapper for the members/move_former_member_files route
+type MembersMoveFormerMemberFilesAPIError struct {
+	dropbox.APIError
+	EndpointError *MembersTransferFormerMembersFilesError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (res *async.LaunchEmptyResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/move_former_member_files", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersMoveFormerMemberFilesAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	var apiError dropbox.APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		err = apiError
+		return
+	}
+	err = json.Unmarshal(body, &apiError)
+	if err != nil {
+		return
+	}
+	err = apiError
+	return
+}
+
+//MembersMoveFormerMemberFilesJobStatusCheckAPIError is an error-wrapper for the members/move_former_member_files/job_status/check route
+type MembersMoveFormerMemberFilesJobStatusCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollArg) (res *async.PollEmptyResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/move_former_member_files/job_status/check", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %v", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersMoveFormerMemberFilesJobStatusCheckAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

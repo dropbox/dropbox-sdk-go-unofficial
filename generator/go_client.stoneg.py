@@ -48,6 +48,8 @@ class GoClientBackend(CodeBackend):
         req = fmt_type(route.arg_data_type, namespace)
         res = fmt_type(route.result_data_type, namespace, use_interface=True)
         fn = fmt_var(route.name)
+        if route.version != 1:
+            fn += 'V%d' % route.version
         style = route.attrs.get('style', 'rpc')
 
         arg = '' if is_void_type(route.arg_data_type) else 'arg {req}'
@@ -67,6 +69,8 @@ class GoClientBackend(CodeBackend):
     def _generate_route(self, namespace, route):
         out = self.emit
         fn = fmt_var(route.name)
+        if route.version != 1:
+            fn += 'V%d' % route.version
         err = fmt_type(route.error_data_type, namespace)
         out('//%sAPIError is an error-wrapper for the %s route' %
             (fn, route.name))
