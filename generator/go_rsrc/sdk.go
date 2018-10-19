@@ -205,9 +205,3 @@ type APIError struct {
 func (e APIError) Error() string {
 	return e.ErrorSummary
 }
-
-func init() {
-	// These are not registered in the oauth library by default
-	oauth2.RegisterBrokenAuthHeaderProvider("https://api.dropboxapi.com")
-	oauth2.RegisterBrokenAuthHeaderProvider("https://api-dbdev.dev.corp.dropbox.com")
-}

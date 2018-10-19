@@ -36,7 +36,7 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "5.0.0"
+	sdkVersion    = "5.1.0"
 	specVersion   = "eb85489"
 )
 
@@ -204,10 +204,4 @@ type APIError struct {
 
 func (e APIError) Error() string {
 	return e.ErrorSummary
-}
-
-func init() {
-	// These are not registered in the oauth library by default
-	oauth2.RegisterBrokenAuthHeaderProvider("https://api.dropboxapi.com")
-	oauth2.RegisterBrokenAuthHeaderProvider("https://api-dbdev.dev.corp.dropbox.com")
 }
