@@ -195,16 +195,7 @@ class GoClientBackend(CodeBackend):
                 out('return')
             out('err = apiError')
             out('return')
-        out('var apiError dropbox.APIError')
-        with self.block("if resp.StatusCode == http.StatusBadRequest || "
-                        "resp.StatusCode == http.StatusInternalServerError"):
-            out('apiError.ErrorSummary = string(body)')
-            out('err = apiError')
-            out('return')
-        with self.block('err = json.Unmarshal(body, &apiError);'
-                        'if err != nil'):
-            out('return')
-        out('err = apiError')
+        out('err = dropbox.HandleCommonAPIErrors(resp, body)')
         out('return')
 
     def _generate_result(self, route):

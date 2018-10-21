@@ -21,6 +21,7 @@
 package dropbox
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -204,4 +205,18 @@ type APIError struct {
 
 func (e APIError) Error() string {
 	return e.ErrorSummary
+}
+
+// HandleCommonAPIErrors handles common API errors
+func HandleCommonAPIErrors(resp *http.Response, body []byte) error {
+	var apiError APIError
+	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
+		apiError.ErrorSummary = string(body)
+		return apiError
+	}
+	e := json.Unmarshal(body, &apiError)
+	if e != nil {
+		return e
+	}
+	return apiError
 }

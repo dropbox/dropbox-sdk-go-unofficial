@@ -348,17 +348,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -417,17 +407,7 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -489,17 +469,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -553,17 +523,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -622,17 +582,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -691,17 +641,7 @@ func (dbx *apiImpl) FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *Feat
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -752,17 +692,7 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -821,17 +751,7 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -890,17 +810,7 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -959,17 +869,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1028,17 +928,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1097,17 +987,7 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1166,17 +1046,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1235,17 +1105,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1304,17 +1164,7 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1373,17 +1223,7 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1442,17 +1282,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1511,17 +1341,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1580,17 +1400,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1649,17 +1459,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1718,17 +1518,7 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1790,17 +1580,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1854,17 +1634,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1923,17 +1693,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -1992,17 +1752,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersAdd(arg *ExcludedUsersUpdateAr
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2061,17 +1811,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersList(arg *ExcludedUsersListArg
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2130,17 +1870,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersListContinue(arg *ExcludedUser
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2199,17 +1929,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersRemove(arg *ExcludedUsersUpdat
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2268,17 +1988,7 @@ func (dbx *apiImpl) MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (r
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2337,17 +2047,7 @@ func (dbx *apiImpl) MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg)
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2406,17 +2106,7 @@ func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2475,17 +2165,7 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2544,17 +2224,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2613,17 +2283,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2682,17 +2342,7 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2751,17 +2401,7 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2820,17 +2460,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (r
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2889,17 +2519,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollAr
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -2953,17 +2573,7 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3022,17 +2632,7 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3091,17 +2691,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3155,17 +2745,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3224,17 +2804,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3293,17 +2863,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3357,17 +2917,7 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3421,17 +2971,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3490,17 +3030,7 @@ func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespa
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3559,17 +3089,7 @@ func (dbx *apiImpl) NamespacesListContinue(arg *TeamNamespacesListContinueArg) (
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3630,17 +3150,7 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3701,17 +3211,7 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3764,17 +3264,7 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3835,17 +3325,7 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *file_properties.UpdateTemplate
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3904,17 +3384,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -3973,17 +3443,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4042,17 +3502,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4111,17 +3561,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4180,17 +3620,7 @@ func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMet
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4249,17 +3679,7 @@ func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolde
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4318,17 +3738,7 @@ func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderA
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4387,17 +3797,7 @@ func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderM
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4456,17 +3856,7 @@ func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFold
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4525,17 +3915,7 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4594,17 +3974,7 @@ func (dbx *apiImpl) TeamFolderListContinue(arg *TeamFolderListContinueArg) (res 
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4658,17 +4028,7 @@ func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4727,17 +4087,7 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4796,17 +4146,7 @@ func (dbx *apiImpl) TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettin
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
@@ -4857,17 +4197,7 @@ func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdmi
 		err = apiError
 		return
 	}
-	var apiError dropbox.APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		err = apiError
-		return
-	}
-	err = json.Unmarshal(body, &apiError)
-	if err != nil {
-		return
-	}
-	err = apiError
+	err = dropbox.HandleCommonAPIErrors(resp, body)
 	return
 }
 
