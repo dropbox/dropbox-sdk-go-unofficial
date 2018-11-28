@@ -834,6 +834,48 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// CameraUploadsPolicy : Policy for controlling if team members can activate
+// camera uploads
+type CameraUploadsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for CameraUploadsPolicy
+const (
+	CameraUploadsPolicyDisabled = "disabled"
+	CameraUploadsPolicyEnabled  = "enabled"
+	CameraUploadsPolicyOther    = "other"
+)
+
+// CameraUploadsPolicyChangedDetails : Changed camera uploads setting for team.
+type CameraUploadsPolicyChangedDetails struct {
+	// NewValue : New camera uploads setting.
+	NewValue *CameraUploadsPolicy `json:"new_value"`
+	// PreviousValue : Previous camera uploads setting.
+	PreviousValue *CameraUploadsPolicy `json:"previous_value"`
+}
+
+// NewCameraUploadsPolicyChangedDetails returns a new CameraUploadsPolicyChangedDetails instance
+func NewCameraUploadsPolicyChangedDetails(NewValue *CameraUploadsPolicy, PreviousValue *CameraUploadsPolicy) *CameraUploadsPolicyChangedDetails {
+	s := new(CameraUploadsPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// CameraUploadsPolicyChangedType : has no documentation (yet)
+type CameraUploadsPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewCameraUploadsPolicyChangedType returns a new CameraUploadsPolicyChangedType instance
+func NewCameraUploadsPolicyChangedType(Description string) *CameraUploadsPolicyChangedType {
+	s := new(CameraUploadsPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // Certificate : Certificate details.
 type Certificate struct {
 	// Subject : Certificate subject.
@@ -909,15 +951,19 @@ type ContextLogInfo struct {
 	TeamMember *TeamMemberLogInfo `json:"team_member,omitempty"`
 	// NonTeamMember : Action was done on behalf of a non team member.
 	NonTeamMember *NonTeamMemberLogInfo `json:"non_team_member,omitempty"`
+	// TrustedNonTeamMember : Action was done on behalf of a trusted non team
+	// member.
+	TrustedNonTeamMember *TrustedNonTeamMemberLogInfo `json:"trusted_non_team_member,omitempty"`
 }
 
 // Valid tag values for ContextLogInfo
 const (
-	ContextLogInfoTeamMember    = "team_member"
-	ContextLogInfoNonTeamMember = "non_team_member"
-	ContextLogInfoAnonymous     = "anonymous"
-	ContextLogInfoTeam          = "team"
-	ContextLogInfoOther         = "other"
+	ContextLogInfoTeamMember           = "team_member"
+	ContextLogInfoNonTeamMember        = "non_team_member"
+	ContextLogInfoAnonymous            = "anonymous"
+	ContextLogInfoTeam                 = "team"
+	ContextLogInfoTrustedNonTeamMember = "trusted_non_team_member"
+	ContextLogInfoOther                = "other"
 )
 
 // UnmarshalJSON deserializes into a ContextLogInfo instance
@@ -928,6 +974,9 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 		TeamMember json.RawMessage `json:"team_member,omitempty"`
 		// NonTeamMember : Action was done on behalf of a non team member.
 		NonTeamMember json.RawMessage `json:"non_team_member,omitempty"`
+		// TrustedNonTeamMember : Action was done on behalf of a trusted non
+		// team member.
+		TrustedNonTeamMember json.RawMessage `json:"trusted_non_team_member,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -944,6 +993,12 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 		}
 	case "non_team_member":
 		err = json.Unmarshal(body, &u.NonTeamMember)
+
+		if err != nil {
+			return err
+		}
+	case "trusted_non_team_member":
+		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
 
 		if err != nil {
 			return err
@@ -2310,6 +2365,8 @@ type EventDetails struct {
 	FileChangeCommentSubscriptionDetails *FileChangeCommentSubscriptionDetails `json:"file_change_comment_subscription_details,omitempty"`
 	// FileDeleteCommentDetails : has no documentation (yet)
 	FileDeleteCommentDetails *FileDeleteCommentDetails `json:"file_delete_comment_details,omitempty"`
+	// FileEditCommentDetails : has no documentation (yet)
+	FileEditCommentDetails *FileEditCommentDetails `json:"file_edit_comment_details,omitempty"`
 	// FileLikeCommentDetails : has no documentation (yet)
 	FileLikeCommentDetails *FileLikeCommentDetails `json:"file_like_comment_details,omitempty"`
 	// FileResolveCommentDetails : has no documentation (yet)
@@ -2792,6 +2849,8 @@ type EventDetails struct {
 	AllowDownloadDisabledDetails *AllowDownloadDisabledDetails `json:"allow_download_disabled_details,omitempty"`
 	// AllowDownloadEnabledDetails : has no documentation (yet)
 	AllowDownloadEnabledDetails *AllowDownloadEnabledDetails `json:"allow_download_enabled_details,omitempty"`
+	// CameraUploadsPolicyChangedDetails : has no documentation (yet)
+	CameraUploadsPolicyChangedDetails *CameraUploadsPolicyChangedDetails `json:"camera_uploads_policy_changed_details,omitempty"`
 	// DataPlacementRestrictionChangePolicyDetails : has no documentation (yet)
 	DataPlacementRestrictionChangePolicyDetails *DataPlacementRestrictionChangePolicyDetails `json:"data_placement_restriction_change_policy_details,omitempty"`
 	// DataPlacementRestrictionSatisfyPolicyDetails : has no documentation (yet)
@@ -2933,6 +2992,7 @@ const (
 	EventDetailsFileAddCommentDetails                             = "file_add_comment_details"
 	EventDetailsFileChangeCommentSubscriptionDetails              = "file_change_comment_subscription_details"
 	EventDetailsFileDeleteCommentDetails                          = "file_delete_comment_details"
+	EventDetailsFileEditCommentDetails                            = "file_edit_comment_details"
 	EventDetailsFileLikeCommentDetails                            = "file_like_comment_details"
 	EventDetailsFileResolveCommentDetails                         = "file_resolve_comment_details"
 	EventDetailsFileUnlikeCommentDetails                          = "file_unlike_comment_details"
@@ -3172,6 +3232,7 @@ const (
 	EventDetailsAccountCaptureChangePolicyDetails                 = "account_capture_change_policy_details"
 	EventDetailsAllowDownloadDisabledDetails                      = "allow_download_disabled_details"
 	EventDetailsAllowDownloadEnabledDetails                       = "allow_download_enabled_details"
+	EventDetailsCameraUploadsPolicyChangedDetails                 = "camera_uploads_policy_changed_details"
 	EventDetailsDataPlacementRestrictionChangePolicyDetails       = "data_placement_restriction_change_policy_details"
 	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails      = "data_placement_restriction_satisfy_policy_details"
 	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails         = "device_approvals_change_desktop_policy_details"
@@ -3257,6 +3318,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		FileChangeCommentSubscriptionDetails json.RawMessage `json:"file_change_comment_subscription_details,omitempty"`
 		// FileDeleteCommentDetails : has no documentation (yet)
 		FileDeleteCommentDetails json.RawMessage `json:"file_delete_comment_details,omitempty"`
+		// FileEditCommentDetails : has no documentation (yet)
+		FileEditCommentDetails json.RawMessage `json:"file_edit_comment_details,omitempty"`
 		// FileLikeCommentDetails : has no documentation (yet)
 		FileLikeCommentDetails json.RawMessage `json:"file_like_comment_details,omitempty"`
 		// FileResolveCommentDetails : has no documentation (yet)
@@ -3750,6 +3813,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		AllowDownloadDisabledDetails json.RawMessage `json:"allow_download_disabled_details,omitempty"`
 		// AllowDownloadEnabledDetails : has no documentation (yet)
 		AllowDownloadEnabledDetails json.RawMessage `json:"allow_download_enabled_details,omitempty"`
+		// CameraUploadsPolicyChangedDetails : has no documentation (yet)
+		CameraUploadsPolicyChangedDetails json.RawMessage `json:"camera_uploads_policy_changed_details,omitempty"`
 		// DataPlacementRestrictionChangePolicyDetails : has no documentation
 		// (yet)
 		DataPlacementRestrictionChangePolicyDetails json.RawMessage `json:"data_placement_restriction_change_policy_details,omitempty"`
@@ -3935,6 +4000,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "file_delete_comment_details":
 		err = json.Unmarshal(body, &u.FileDeleteCommentDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_edit_comment_details":
+		err = json.Unmarshal(body, &u.FileEditCommentDetails)
 
 		if err != nil {
 			return err
@@ -5373,6 +5444,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "camera_uploads_policy_changed_details":
+		err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "data_placement_restriction_change_policy_details":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails)
 
@@ -5779,6 +5856,8 @@ type EventType struct {
 	FileChangeCommentSubscription *FileChangeCommentSubscriptionType `json:"file_change_comment_subscription,omitempty"`
 	// FileDeleteComment : (comments) Deleted file comment
 	FileDeleteComment *FileDeleteCommentType `json:"file_delete_comment,omitempty"`
+	// FileEditComment : (comments) Edited file comment
+	FileEditComment *FileEditCommentType `json:"file_edit_comment,omitempty"`
 	// FileLikeComment : (comments) Liked file comment (deprecated, no longer
 	// logged)
 	FileLikeComment *FileLikeCommentType `json:"file_like_comment,omitempty"`
@@ -5966,7 +6045,7 @@ type EventType struct {
 	// MemberChangeStatus : (members) Changed member status (invited, joined,
 	// suspended, etc.)
 	MemberChangeStatus *MemberChangeStatusType `json:"member_change_status,omitempty"`
-	// MemberDeleteManualContacts : (members) Cleared saved contacts
+	// MemberDeleteManualContacts : (members) Cleared manually added contacts
 	MemberDeleteManualContacts *MemberDeleteManualContactsType `json:"member_delete_manual_contacts,omitempty"`
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
@@ -6363,6 +6442,9 @@ type EventType struct {
 	// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated, no
 	// longer logged)
 	AllowDownloadEnabled *AllowDownloadEnabledType `json:"allow_download_enabled,omitempty"`
+	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
+	// setting for team
+	CameraUploadsPolicyChanged *CameraUploadsPolicyChangedType `json:"camera_uploads_policy_changed,omitempty"`
 	// DataPlacementRestrictionChangePolicy : (team_policies) Set restrictions
 	// on data center locations where team data resides
 	DataPlacementRestrictionChangePolicy *DataPlacementRestrictionChangePolicyType `json:"data_placement_restriction_change_policy,omitempty"`
@@ -6555,6 +6637,7 @@ const (
 	EventTypeFileAddComment                             = "file_add_comment"
 	EventTypeFileChangeCommentSubscription              = "file_change_comment_subscription"
 	EventTypeFileDeleteComment                          = "file_delete_comment"
+	EventTypeFileEditComment                            = "file_edit_comment"
 	EventTypeFileLikeComment                            = "file_like_comment"
 	EventTypeFileResolveComment                         = "file_resolve_comment"
 	EventTypeFileUnlikeComment                          = "file_unlike_comment"
@@ -6794,6 +6877,7 @@ const (
 	EventTypeAccountCaptureChangePolicy                 = "account_capture_change_policy"
 	EventTypeAllowDownloadDisabled                      = "allow_download_disabled"
 	EventTypeAllowDownloadEnabled                       = "allow_download_enabled"
+	EventTypeCameraUploadsPolicyChanged                 = "camera_uploads_policy_changed"
 	EventTypeDataPlacementRestrictionChangePolicy       = "data_placement_restriction_change_policy"
 	EventTypeDataPlacementRestrictionSatisfyPolicy      = "data_placement_restriction_satisfy_policy"
 	EventTypeDeviceApprovalsChangeDesktopPolicy         = "device_approvals_change_desktop_policy"
@@ -6879,6 +6963,8 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		FileChangeCommentSubscription json.RawMessage `json:"file_change_comment_subscription,omitempty"`
 		// FileDeleteComment : (comments) Deleted file comment
 		FileDeleteComment json.RawMessage `json:"file_delete_comment,omitempty"`
+		// FileEditComment : (comments) Edited file comment
+		FileEditComment json.RawMessage `json:"file_edit_comment,omitempty"`
 		// FileLikeComment : (comments) Liked file comment (deprecated, no
 		// longer logged)
 		FileLikeComment json.RawMessage `json:"file_like_comment,omitempty"`
@@ -7069,7 +7155,8 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// MemberChangeStatus : (members) Changed member status (invited,
 		// joined, suspended, etc.)
 		MemberChangeStatus json.RawMessage `json:"member_change_status,omitempty"`
-		// MemberDeleteManualContacts : (members) Cleared saved contacts
+		// MemberDeleteManualContacts : (members) Cleared manually added
+		// contacts
 		MemberDeleteManualContacts json.RawMessage `json:"member_delete_manual_contacts,omitempty"`
 		// MemberPermanentlyDeleteAccountContents : (members) Permanently
 		// deleted contents of deleted team member account
@@ -7480,6 +7567,9 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated,
 		// no longer logged)
 		AllowDownloadEnabled json.RawMessage `json:"allow_download_enabled,omitempty"`
+		// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
+		// setting for team
+		CameraUploadsPolicyChanged json.RawMessage `json:"camera_uploads_policy_changed,omitempty"`
 		// DataPlacementRestrictionChangePolicy : (team_policies) Set
 		// restrictions on data center locations where team data resides
 		DataPlacementRestrictionChangePolicy json.RawMessage `json:"data_placement_restriction_change_policy,omitempty"`
@@ -7713,6 +7803,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "file_delete_comment":
 		err = json.Unmarshal(body, &u.FileDeleteComment)
+
+		if err != nil {
+			return err
+		}
+	case "file_edit_comment":
+		err = json.Unmarshal(body, &u.FileEditComment)
 
 		if err != nil {
 			return err
@@ -9151,6 +9247,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "camera_uploads_policy_changed":
+		err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "data_placement_restriction_change_policy":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy)
 
@@ -9856,6 +9958,34 @@ type FileDownloadType struct {
 // NewFileDownloadType returns a new FileDownloadType instance
 func NewFileDownloadType(Description string) *FileDownloadType {
 	s := new(FileDownloadType)
+	s.Description = Description
+	return s
+}
+
+// FileEditCommentDetails : Edited file comment.
+type FileEditCommentDetails struct {
+	// CommentText : Comment text. Might be missing due to historical data gap.
+	CommentText string `json:"comment_text,omitempty"`
+	// PreviousCommentText : Previous comment text.
+	PreviousCommentText string `json:"previous_comment_text"`
+}
+
+// NewFileEditCommentDetails returns a new FileEditCommentDetails instance
+func NewFileEditCommentDetails(PreviousCommentText string) *FileEditCommentDetails {
+	s := new(FileEditCommentDetails)
+	s.PreviousCommentText = PreviousCommentText
+	return s
+}
+
+// FileEditCommentType : has no documentation (yet)
+type FileEditCommentType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileEditCommentType returns a new FileEditCommentType instance
+func NewFileEditCommentType(Description string) *FileEditCommentType {
+	s := new(FileEditCommentType)
 	s.Description = Description
 	return s
 }
@@ -11483,7 +11613,7 @@ func NewMemberChangeStatusType(Description string) *MemberChangeStatusType {
 	return s
 }
 
-// MemberDeleteManualContactsDetails : Cleared saved contacts.
+// MemberDeleteManualContactsDetails : Cleared manually added contacts.
 type MemberDeleteManualContactsDetails struct {
 }
 
@@ -12089,14 +12219,17 @@ type userLogInfoUnion struct {
 	dropbox.Tagged
 	// TeamMember : has no documentation (yet)
 	TeamMember *TeamMemberLogInfo `json:"team_member,omitempty"`
+	// TrustedNonTeamMember : has no documentation (yet)
+	TrustedNonTeamMember *TrustedNonTeamMemberLogInfo `json:"trusted_non_team_member,omitempty"`
 	// NonTeamMember : has no documentation (yet)
 	NonTeamMember *NonTeamMemberLogInfo `json:"non_team_member,omitempty"`
 }
 
 // Valid tag values for UserLogInfo
 const (
-	UserLogInfoTeamMember    = "team_member"
-	UserLogInfoNonTeamMember = "non_team_member"
+	UserLogInfoTeamMember           = "team_member"
+	UserLogInfoTrustedNonTeamMember = "trusted_non_team_member"
+	UserLogInfoNonTeamMember        = "non_team_member"
 )
 
 // UnmarshalJSON deserializes into a userLogInfoUnion instance
@@ -12105,6 +12238,8 @@ func (u *userLogInfoUnion) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// TeamMember : has no documentation (yet)
 		TeamMember json.RawMessage `json:"team_member,omitempty"`
+		// TrustedNonTeamMember : has no documentation (yet)
+		TrustedNonTeamMember json.RawMessage `json:"trusted_non_team_member,omitempty"`
 		// NonTeamMember : has no documentation (yet)
 		NonTeamMember json.RawMessage `json:"non_team_member,omitempty"`
 	}
@@ -12117,6 +12252,12 @@ func (u *userLogInfoUnion) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "team_member":
 		err = json.Unmarshal(body, &u.TeamMember)
+
+		if err != nil {
+			return err
+		}
+	case "trusted_non_team_member":
+		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
 
 		if err != nil {
 			return err
@@ -12140,6 +12281,9 @@ func IsUserLogInfoFromJSON(data []byte) (IsUserLogInfo, error) {
 	switch t.Tag {
 	case "team_member":
 		return t.TeamMember, nil
+
+	case "trusted_non_team_member":
+		return t.TrustedNonTeamMember, nil
 
 	case "non_team_member":
 		return t.NonTeamMember, nil
@@ -13317,6 +13461,7 @@ const (
 	PaperDownloadFormatDocx     = "docx"
 	PaperDownloadFormatHtml     = "html"
 	PaperDownloadFormatMarkdown = "markdown"
+	PaperDownloadFormatPdf      = "pdf"
 	PaperDownloadFormatOther    = "other"
 )
 
@@ -15672,10 +15817,9 @@ type SharingMemberPolicy struct {
 
 // Valid tag values for SharingMemberPolicy
 const (
-	SharingMemberPolicyAllow                   = "allow"
-	SharingMemberPolicyForbid                  = "forbid"
-	SharingMemberPolicyTeamMembersAndWhitelist = "team_members_and_whitelist"
-	SharingMemberPolicyOther                   = "other"
+	SharingMemberPolicyAllow  = "allow"
+	SharingMemberPolicyForbid = "forbid"
+	SharingMemberPolicyOther  = "other"
 )
 
 // ShmodelGroupShareDetails : Shared link with group.
@@ -17746,6 +17890,33 @@ const (
 	TimeUnitMonths       = "months"
 	TimeUnitYears        = "years"
 	TimeUnitOther        = "other"
+)
+
+// TrustedNonTeamMemberLogInfo : User that is not a member of the team but
+// considered trusted.
+type TrustedNonTeamMemberLogInfo struct {
+	UserLogInfo
+	// TrustedNonTeamMemberType : Indicates the type of the trusted non team
+	// member user.
+	TrustedNonTeamMemberType *TrustedNonTeamMemberType `json:"trusted_non_team_member_type"`
+}
+
+// NewTrustedNonTeamMemberLogInfo returns a new TrustedNonTeamMemberLogInfo instance
+func NewTrustedNonTeamMemberLogInfo(TrustedNonTeamMemberType *TrustedNonTeamMemberType) *TrustedNonTeamMemberLogInfo {
+	s := new(TrustedNonTeamMemberLogInfo)
+	s.TrustedNonTeamMemberType = TrustedNonTeamMemberType
+	return s
+}
+
+// TrustedNonTeamMemberType : has no documentation (yet)
+type TrustedNonTeamMemberType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TrustedNonTeamMemberType
+const (
+	TrustedNonTeamMemberTypeMultiInstanceAdmin = "multi_instance_admin"
+	TrustedNonTeamMemberTypeOther              = "other"
 )
 
 // TwoAccountChangePolicyDetails : Enabled/disabled option for members to link

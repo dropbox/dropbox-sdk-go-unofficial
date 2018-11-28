@@ -2978,7 +2978,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 //NamespacesListAPIError is an error-wrapper for the namespaces/list route
 type NamespacesListAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *TeamNamespacesListError `json:"error"`
 }
 
 func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespacesListResult, err error) {

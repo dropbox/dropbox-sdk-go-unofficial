@@ -1757,6 +1757,7 @@ type LinkAudience struct {
 const (
 	LinkAudiencePublic  = "public"
 	LinkAudienceTeam    = "team"
+	LinkAudienceNoOne   = "no_one"
 	LinkAudienceMembers = "members"
 	LinkAudienceOther   = "other"
 )

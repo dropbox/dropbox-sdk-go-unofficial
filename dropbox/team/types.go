@@ -2927,12 +2927,16 @@ func (u *RemoveCustomQuotaResult) UnmarshalJSON(body []byte) error {
 type RemovedStatus struct {
 	// IsRecoverable : True if the removed team member is recoverable.
 	IsRecoverable bool `json:"is_recoverable"`
+	// IsDisconnected : True if the team member's account was converted to
+	// individual account.
+	IsDisconnected bool `json:"is_disconnected"`
 }
 
 // NewRemovedStatus returns a new RemovedStatus instance
-func NewRemovedStatus(IsRecoverable bool) *RemovedStatus {
+func NewRemovedStatus(IsRecoverable bool, IsDisconnected bool) *RemovedStatus {
 	s := new(RemovedStatus)
 	s.IsRecoverable = IsRecoverable
+	s.IsDisconnected = IsDisconnected
 	return s
 }
 
@@ -4081,6 +4085,17 @@ func NewTeamNamespacesListContinueArg(Cursor string) *TeamNamespacesListContinue
 	return s
 }
 
+// TeamNamespacesListError : has no documentation (yet)
+type TeamNamespacesListError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamNamespacesListError
+const (
+	TeamNamespacesListErrorInvalidArg = "invalid_arg"
+	TeamNamespacesListErrorOther      = "other"
+)
+
 // TeamNamespacesListContinueError : has no documentation (yet)
 type TeamNamespacesListContinueError struct {
 	dropbox.Tagged
@@ -4088,8 +4103,9 @@ type TeamNamespacesListContinueError struct {
 
 // Valid tag values for TeamNamespacesListContinueError
 const (
-	TeamNamespacesListContinueErrorInvalidCursor = "invalid_cursor"
+	TeamNamespacesListContinueErrorInvalidArg    = "invalid_arg"
 	TeamNamespacesListContinueErrorOther         = "other"
+	TeamNamespacesListContinueErrorInvalidCursor = "invalid_cursor"
 )
 
 // TeamNamespacesListResult : Result for `namespacesList`.
