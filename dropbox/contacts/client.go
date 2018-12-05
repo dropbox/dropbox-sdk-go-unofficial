@@ -27,6 +27,7 @@ import (
 	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
@@ -74,7 +75,7 @@ func (dbx *apiImpl) DeleteManualContacts() (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -87,7 +88,11 @@ func (dbx *apiImpl) DeleteManualContacts() (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -131,7 +136,7 @@ func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -144,7 +149,11 @@ func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 

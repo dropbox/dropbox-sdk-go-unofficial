@@ -99,7 +99,7 @@ class GoClientBackend(CodeBackend):
                 ok_check += ' || resp.StatusCode == http.StatusPartialContent'
             with self.block(ok_check):
                 self._generate_result(route)
-            self._generate_error_handling(route)
+            self._generate_error_handling(namespace, route)
 
         out()
 
@@ -176,9 +176,9 @@ class GoClientBackend(CodeBackend):
                 out('return')
             out()
 
-        out('dbx.Config.LogDebug("body: %v", body)')
+        out('dbx.Config.LogDebug("body: %s", body)')
 
-    def _generate_error_handling(self, route):
+    def _generate_error_handling(self, namespace, route):
         out = self.emit
         style = route.attrs.get('style', 'rpc')
         with self.block('if resp.StatusCode == http.StatusConflict'):
@@ -195,7 +195,11 @@ class GoClientBackend(CodeBackend):
                 out('return')
             out('err = apiError')
             out('return')
-        out('err = dropbox.HandleCommonAPIErrors(resp, body)')
+        auth_ns = "" if namespace.name == "auth" else "auth."
+        with self.block('err = %sHandleCommonAuthErrors(dbx.Config, resp, body);'
+                        'if err != nil' % auth_ns):
+            out('return')
+        out('err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)')
         out('return')
 
     def _generate_result(self, route):

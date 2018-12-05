@@ -28,6 +28,7 @@ import (
 	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
@@ -139,7 +140,7 @@ func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -152,7 +153,11 @@ func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -197,7 +202,7 @@ func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -215,7 +220,11 @@ func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -255,7 +264,7 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 	dbx.Config.LogInfo("resp: %v", resp)
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -278,7 +287,11 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -322,7 +335,7 @@ func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUs
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -340,7 +353,11 @@ func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUs
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -384,7 +401,7 @@ func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueAr
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -402,7 +419,11 @@ func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueAr
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -446,7 +467,7 @@ func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingP
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -464,7 +485,11 @@ func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingP
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -508,7 +533,7 @@ func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -526,7 +551,11 @@ func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -570,7 +599,7 @@ func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListP
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -588,7 +617,11 @@ func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListP
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -632,7 +665,7 @@ func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -645,7 +678,11 @@ func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -689,7 +726,7 @@ func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -707,7 +744,11 @@ func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -751,7 +792,7 @@ func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -764,7 +805,11 @@ func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -809,7 +854,7 @@ func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -827,7 +872,11 @@ func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -871,7 +920,7 @@ func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -889,7 +938,11 @@ func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -933,7 +986,7 @@ func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersO
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -951,7 +1004,11 @@ func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersO
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -995,7 +1052,7 @@ func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1013,7 +1070,11 @@ func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1057,7 +1118,7 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -1070,7 +1131,11 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 

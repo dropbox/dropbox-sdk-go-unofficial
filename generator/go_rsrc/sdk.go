@@ -208,7 +208,7 @@ func (e APIError) Error() string {
 }
 
 // HandleCommonAPIErrors handles common API errors
-func HandleCommonAPIErrors(resp *http.Response, body []byte) error {
+func HandleCommonAPIErrors(c Config, resp *http.Response, body []byte) error {
 	var apiError APIError
 	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
 		apiError.ErrorSummary = string(body)
@@ -216,6 +216,7 @@ func HandleCommonAPIErrors(resp *http.Response, body []byte) error {
 	}
 	e := json.Unmarshal(body, &apiError)
 	if e != nil {
+		c.LogDebug("%v", e)
 		return e
 	}
 	return apiError

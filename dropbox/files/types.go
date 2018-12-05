@@ -409,7 +409,8 @@ func NewFileOpsResult() *FileOpsResult {
 // CreateFolderBatchResult : has no documentation (yet)
 type CreateFolderBatchResult struct {
 	FileOpsResult
-	// Entries : has no documentation (yet)
+	// Entries : Each entry in `CreateFolderBatchArg.paths` will appear at the
+	// same position inside `CreateFolderBatchResult.entries`.
 	Entries []*CreateFolderBatchResultEntry `json:"entries"`
 }
 
@@ -708,7 +709,8 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 // DeleteBatchResult : has no documentation (yet)
 type DeleteBatchResult struct {
 	FileOpsResult
-	// Entries : has no documentation (yet)
+	// Entries : Each entry in `DeleteBatchArg.entries` will appear at the same
+	// position inside `DeleteBatchResult.entries`.
 	Entries []*DeleteBatchResultEntry `json:"entries"`
 }
 
@@ -2104,6 +2106,42 @@ func IsMediaMetadataFromJSON(data []byte) (IsMediaMetadata, error) {
 	return nil, nil
 }
 
+// RelocationBatchArgBase : has no documentation (yet)
+type RelocationBatchArgBase struct {
+	// Entries : List of entries to be moved or copied. Each entry is
+	// `RelocationPath`.
+	Entries []*RelocationPath `json:"entries"`
+	// Autorename : If there's a conflict with any file, have the Dropbox server
+	// try to autorename that file to avoid the conflict.
+	Autorename bool `json:"autorename"`
+}
+
+// NewRelocationBatchArgBase returns a new RelocationBatchArgBase instance
+func NewRelocationBatchArgBase(Entries []*RelocationPath) *RelocationBatchArgBase {
+	s := new(RelocationBatchArgBase)
+	s.Entries = Entries
+	s.Autorename = false
+	return s
+}
+
+// MoveBatchArg : has no documentation (yet)
+type MoveBatchArg struct {
+	RelocationBatchArgBase
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
+	// an ownership transfer for the content being moved. This does not apply to
+	// copies.
+	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
+}
+
+// NewMoveBatchArg returns a new MoveBatchArg instance
+func NewMoveBatchArg(Entries []*RelocationPath) *MoveBatchArg {
+	s := new(MoveBatchArg)
+	s.Entries = Entries
+	s.Autorename = false
+	s.AllowOwnershipTransfer = false
+	return s
+}
+
 // PhotoMetadata : Metadata for a photo.
 type PhotoMetadata struct {
 	MediaMetadata
@@ -2214,17 +2252,12 @@ func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 
 // RelocationBatchArg : has no documentation (yet)
 type RelocationBatchArg struct {
-	// Entries : List of entries to be moved or copied. Each entry is
-	// `RelocationPath`.
-	Entries []*RelocationPath `json:"entries"`
+	RelocationBatchArgBase
 	// AllowSharedFolder : If true, `copyBatch` will copy contents in shared
 	// folder, otherwise `RelocationError.cant_copy_shared_folder` will be
-	// returned if `RelocationPath.from_path` contains shared folder.  This
-	// field is always true for `moveBatch`.
+	// returned if `RelocationPath.from_path` contains shared folder. This field
+	// is always true for `moveBatch`.
 	AllowSharedFolder bool `json:"allow_shared_folder"`
-	// Autorename : If there's a conflict with any file, have the Dropbox server
-	// try to autorename that file to avoid the conflict.
-	Autorename bool `json:"autorename"`
 	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
 	// an ownership transfer for the content being moved. This does not apply to
 	// copies.
@@ -2235,8 +2268,8 @@ type RelocationBatchArg struct {
 func NewRelocationBatchArg(Entries []*RelocationPath) *RelocationBatchArg {
 	s := new(RelocationBatchArg)
 	s.Entries = Entries
-	s.AllowSharedFolder = false
 	s.Autorename = false
+	s.AllowSharedFolder = false
 	s.AllowOwnershipTransfer = false
 	return s
 }
@@ -2264,6 +2297,7 @@ const (
 	RelocationErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
 	RelocationErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationErrorInsufficientQuota        = "insufficient_quota"
+	RelocationErrorInternalError            = "internal_error"
 	RelocationErrorOther                    = "other"
 )
 
@@ -2330,6 +2364,7 @@ const (
 	RelocationBatchErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
 	RelocationBatchErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationBatchErrorInsufficientQuota        = "insufficient_quota"
+	RelocationBatchErrorInternalError            = "internal_error"
 	RelocationBatchErrorOther                    = "other"
 	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
 )
@@ -2366,6 +2401,45 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 		}
 	case "to":
 		err = json.Unmarshal(w.To, &u.To)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RelocationBatchErrorEntry : has no documentation (yet)
+type RelocationBatchErrorEntry struct {
+	dropbox.Tagged
+	// RelocationError : User errors that retry won't help.
+	RelocationError *RelocationError `json:"relocation_error,omitempty"`
+}
+
+// Valid tag values for RelocationBatchErrorEntry
+const (
+	RelocationBatchErrorEntryRelocationError        = "relocation_error"
+	RelocationBatchErrorEntryInternalError          = "internal_error"
+	RelocationBatchErrorEntryTooManyWriteOperations = "too_many_write_operations"
+	RelocationBatchErrorEntryOther                  = "other"
+)
+
+// UnmarshalJSON deserializes into a RelocationBatchErrorEntry instance
+func (u *RelocationBatchErrorEntry) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// RelocationError : User errors that retry won't help.
+		RelocationError json.RawMessage `json:"relocation_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "relocation_error":
+		err = json.Unmarshal(w.RelocationError, &u.RelocationError)
 
 		if err != nil {
 			return err
@@ -2514,6 +2588,156 @@ func (u *RelocationBatchResultData) UnmarshalJSON(b []byte) error {
 	}
 	u.Metadata = Metadata
 	return nil
+}
+
+// RelocationBatchResultEntry : has no documentation (yet)
+type RelocationBatchResultEntry struct {
+	dropbox.Tagged
+	// Success : has no documentation (yet)
+	Success IsMetadata `json:"success,omitempty"`
+	// Failure : has no documentation (yet)
+	Failure *RelocationBatchErrorEntry `json:"failure,omitempty"`
+}
+
+// Valid tag values for RelocationBatchResultEntry
+const (
+	RelocationBatchResultEntrySuccess = "success"
+	RelocationBatchResultEntryFailure = "failure"
+	RelocationBatchResultEntryOther   = "other"
+)
+
+// UnmarshalJSON deserializes into a RelocationBatchResultEntry instance
+func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Success : has no documentation (yet)
+		Success json.RawMessage `json:"success,omitempty"`
+		// Failure : has no documentation (yet)
+		Failure json.RawMessage `json:"failure,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		u.Success, err = IsMetadataFromJSON(body)
+
+		if err != nil {
+			return err
+		}
+	case "failure":
+		err = json.Unmarshal(w.Failure, &u.Failure)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RelocationBatchV2JobStatus : Result returned by `copyBatch` or `moveBatch`
+// that may either launch an asynchronous job or complete synchronously.
+type RelocationBatchV2JobStatus struct {
+	dropbox.Tagged
+	// Complete : The copy or move batch job has finished.
+	Complete *RelocationBatchV2Result `json:"complete,omitempty"`
+}
+
+// Valid tag values for RelocationBatchV2JobStatus
+const (
+	RelocationBatchV2JobStatusInProgress = "in_progress"
+	RelocationBatchV2JobStatusComplete   = "complete"
+)
+
+// UnmarshalJSON deserializes into a RelocationBatchV2JobStatus instance
+func (u *RelocationBatchV2JobStatus) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Complete : The copy or move batch job has finished.
+		Complete json.RawMessage `json:"complete,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		err = json.Unmarshal(body, &u.Complete)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RelocationBatchV2Launch : Result returned by `copyBatch` or `moveBatch` that
+// may either launch an asynchronous job or complete synchronously.
+type RelocationBatchV2Launch struct {
+	dropbox.Tagged
+	// AsyncJobId : This response indicates that the processing is asynchronous.
+	// The string is an id that can be used to obtain the status of the
+	// asynchronous job.
+	AsyncJobId string `json:"async_job_id,omitempty"`
+	// Complete : has no documentation (yet)
+	Complete *RelocationBatchV2Result `json:"complete,omitempty"`
+}
+
+// Valid tag values for RelocationBatchV2Launch
+const (
+	RelocationBatchV2LaunchAsyncJobId = "async_job_id"
+	RelocationBatchV2LaunchComplete   = "complete"
+)
+
+// UnmarshalJSON deserializes into a RelocationBatchV2Launch instance
+func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Complete : has no documentation (yet)
+		Complete json.RawMessage `json:"complete,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "async_job_id":
+		err = json.Unmarshal(body, &u.AsyncJobId)
+
+		if err != nil {
+			return err
+		}
+	case "complete":
+		err = json.Unmarshal(body, &u.Complete)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// RelocationBatchV2Result : has no documentation (yet)
+type RelocationBatchV2Result struct {
+	FileOpsResult
+	// Entries : Each entry in CopyBatchArg.entries or `MoveBatchArg.entries`
+	// will appear at the same position inside
+	// `RelocationBatchV2Result.entries`.
+	Entries []*RelocationBatchResultEntry `json:"entries"`
+}
+
+// NewRelocationBatchV2Result returns a new RelocationBatchV2Result instance
+func NewRelocationBatchV2Result(Entries []*RelocationBatchResultEntry) *RelocationBatchV2Result {
+	s := new(RelocationBatchV2Result)
+	s.Entries = Entries
+	return s
 }
 
 // RelocationResult : has no documentation (yet)
@@ -3454,7 +3678,8 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 
 // UploadSessionFinishBatchResult : has no documentation (yet)
 type UploadSessionFinishBatchResult struct {
-	// Entries : Commit result for each file in the batch.
+	// Entries : Each entry in `UploadSessionFinishBatchArg.entries` will appear
+	// at the same position inside `UploadSessionFinishBatchResult.entries`.
 	Entries []*UploadSessionFinishBatchResultEntry `json:"entries"`
 }
 

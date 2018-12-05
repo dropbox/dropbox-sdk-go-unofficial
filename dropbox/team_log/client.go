@@ -27,6 +27,7 @@ import (
 	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
@@ -84,7 +85,7 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -102,7 +103,11 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -143,7 +148,7 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -161,7 +166,11 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 

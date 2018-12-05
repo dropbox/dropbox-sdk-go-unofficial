@@ -29,6 +29,7 @@ import (
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/file_properties"
 )
 
@@ -37,8 +38,10 @@ type Client interface {
 	// DevicesListMemberDevices : List all device sessions of a team's member.
 	DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *ListMemberDevicesResult, err error)
 	// DevicesListMembersDevices : List all device sessions of a team.
+	// Permission : Team member file access.
 	DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *ListMembersDevicesResult, err error)
-	// DevicesListTeamDevices : List all device sessions of a team.
+	// DevicesListTeamDevices : List all device sessions of a team. Permission :
+	// Team member file access.
 	// Deprecated: Use `DevicesListMembersDevices` instead
 	DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTeamDevicesResult, err error)
 	// DevicesRevokeDeviceSession : Revoke a device session of a team's member.
@@ -229,16 +232,16 @@ type Client interface {
 	// `namespacesList`, use this to paginate through all team-accessible
 	// namespaces. Duplicates may occur in the list.
 	NamespacesListContinue(arg *TeamNamespacesListContinueArg) (res *TeamNamespacesListResult, err error)
-	// PropertiesTemplateAdd : has no documentation (yet)
+	// PropertiesTemplateAdd : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (res *file_properties.AddTemplateResult, err error)
-	// PropertiesTemplateGet : has no documentation (yet)
+	// PropertiesTemplateGet : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (res *file_properties.GetTemplateResult, err error)
-	// PropertiesTemplateList : has no documentation (yet)
+	// PropertiesTemplateList : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateList() (res *file_properties.ListTemplateResult, err error)
-	// PropertiesTemplateUpdate : has no documentation (yet)
+	// PropertiesTemplateUpdate : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateUpdate(arg *file_properties.UpdateTemplateArg) (res *file_properties.UpdateTemplateResult, err error)
 	// ReportsGetActivity : Retrieves reporting data about a team's user
@@ -330,7 +333,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -348,7 +351,11 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -389,7 +396,7 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -407,7 +414,11 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -451,7 +462,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -469,7 +480,11 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -510,7 +525,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -523,7 +538,11 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -564,7 +583,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -582,7 +601,11 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -623,7 +646,7 @@ func (dbx *apiImpl) FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *Feat
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -641,7 +664,11 @@ func (dbx *apiImpl) FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *Feat
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -674,7 +701,7 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -692,7 +719,11 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -733,7 +764,7 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -751,7 +782,11 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -792,7 +827,7 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -810,7 +845,11 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -851,7 +890,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -869,7 +908,11 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -910,7 +953,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -928,7 +971,11 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -969,7 +1016,7 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -987,7 +1034,11 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1028,7 +1079,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1046,7 +1097,11 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1087,7 +1142,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1105,7 +1160,11 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1146,7 +1205,7 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1164,7 +1223,11 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1205,7 +1268,7 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1223,7 +1286,11 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1264,7 +1331,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1282,7 +1349,11 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1323,7 +1394,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1341,7 +1412,11 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1382,7 +1457,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1400,7 +1475,11 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1441,7 +1520,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1459,7 +1538,11 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1500,7 +1583,7 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1518,7 +1601,11 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1562,7 +1649,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1580,7 +1667,11 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1621,7 +1712,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -1634,7 +1725,11 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1675,7 +1770,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1693,7 +1788,11 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1734,7 +1833,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersAdd(arg *ExcludedUsersUpdateAr
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1752,7 +1851,11 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersAdd(arg *ExcludedUsersUpdateAr
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1793,7 +1896,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersList(arg *ExcludedUsersListArg
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1811,7 +1914,11 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersList(arg *ExcludedUsersListArg
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1852,7 +1959,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersListContinue(arg *ExcludedUser
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1870,7 +1977,11 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersListContinue(arg *ExcludedUser
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1911,7 +2022,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersRemove(arg *ExcludedUsersUpdat
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1929,7 +2040,11 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersRemove(arg *ExcludedUsersUpdat
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1970,7 +2085,7 @@ func (dbx *apiImpl) MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (r
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1988,7 +2103,11 @@ func (dbx *apiImpl) MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (r
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2029,7 +2148,7 @@ func (dbx *apiImpl) MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg)
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2047,7 +2166,11 @@ func (dbx *apiImpl) MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg)
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2088,7 +2211,7 @@ func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2106,7 +2229,11 @@ func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2147,7 +2274,7 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2165,7 +2292,11 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2206,7 +2337,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2224,7 +2355,11 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2265,7 +2400,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2283,7 +2418,11 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2324,7 +2463,7 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2342,7 +2481,11 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2383,7 +2526,7 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2401,7 +2544,11 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2442,7 +2589,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (r
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2460,7 +2607,11 @@ func (dbx *apiImpl) MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (r
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2501,7 +2652,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollAr
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2519,7 +2670,11 @@ func (dbx *apiImpl) MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollAr
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2560,7 +2715,7 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2573,7 +2728,11 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2614,7 +2773,7 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2632,7 +2791,11 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2673,7 +2836,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2691,7 +2854,11 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2732,7 +2899,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2745,7 +2912,11 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2786,7 +2957,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2804,7 +2975,11 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2845,7 +3020,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2863,7 +3038,11 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2904,7 +3083,7 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2917,7 +3096,11 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2958,7 +3141,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2971,7 +3154,11 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3012,7 +3199,7 @@ func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespa
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3030,7 +3217,11 @@ func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespa
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3071,7 +3262,7 @@ func (dbx *apiImpl) NamespacesListContinue(arg *TeamNamespacesListContinueArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3089,7 +3280,11 @@ func (dbx *apiImpl) NamespacesListContinue(arg *TeamNamespacesListContinueArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3132,7 +3327,7 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3150,7 +3345,11 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3193,7 +3392,7 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3211,7 +3410,11 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3246,7 +3449,7 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3264,7 +3467,11 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3307,7 +3514,7 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *file_properties.UpdateTemplate
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3325,7 +3532,11 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *file_properties.UpdateTemplate
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3366,7 +3577,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3384,7 +3595,11 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3425,7 +3640,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3443,7 +3658,11 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3484,7 +3703,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3502,7 +3721,11 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3543,7 +3766,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3561,7 +3784,11 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3602,7 +3829,7 @@ func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMet
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3620,7 +3847,11 @@ func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMet
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3661,7 +3892,7 @@ func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolde
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3679,7 +3910,11 @@ func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolde
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3720,7 +3955,7 @@ func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderA
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3738,7 +3973,11 @@ func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderA
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3779,7 +4018,7 @@ func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderM
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3797,7 +4036,11 @@ func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderM
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3838,7 +4081,7 @@ func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFold
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3856,7 +4099,11 @@ func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFold
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3897,7 +4144,7 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3915,7 +4162,11 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3956,7 +4207,7 @@ func (dbx *apiImpl) TeamFolderListContinue(arg *TeamFolderListContinueArg) (res 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3974,7 +4225,11 @@ func (dbx *apiImpl) TeamFolderListContinue(arg *TeamFolderListContinueArg) (res 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -4015,7 +4270,7 @@ func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -4028,7 +4283,11 @@ func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -4069,7 +4328,7 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -4087,7 +4346,11 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -4128,7 +4391,7 @@ func (dbx *apiImpl) TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettin
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -4146,7 +4409,11 @@ func (dbx *apiImpl) TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettin
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -4179,7 +4446,7 @@ func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdmi
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -4197,7 +4464,11 @@ func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdmi
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 

@@ -30,6 +30,7 @@ import (
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/file_properties"
 )
 
@@ -55,6 +56,13 @@ type Client interface {
 	// Deprecated: Use `CopyV2` instead
 	Copy(arg *RelocationArg) (res IsMetadata, err error)
 	// CopyBatch : Copy multiple files or folders to different locations at once
+	// in the user's Dropbox. This route will replace `copyBatch`. The main
+	// difference is this route will return stutus for each entry, while
+	// `copyBatch` raises failure if any entry fails. This route will either
+	// finish synchronously, or return a job ID and do the async copy job in
+	// background. Please use `copyBatchCheck` to check the job status.
+	CopyBatchV2(arg *RelocationBatchArgBase) (res *RelocationBatchV2Launch, err error)
+	// CopyBatch : Copy multiple files or folders to different locations at once
 	// in the user's Dropbox. If `RelocationBatchArg.allow_shared_folder` is
 	// false, this route is atomic. If one entry fails, the whole transaction
 	// will abort. If `RelocationBatchArg.allow_shared_folder` is true,
@@ -62,9 +70,14 @@ type Client interface {
 	// shared folders to new locations. This route will return job ID
 	// immediately and do the async copy job in background. Please use
 	// `copyBatchCheck` to check the job status.
+	// Deprecated: Use `CopyBatchV2` instead
 	CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error)
 	// CopyBatchCheck : Returns the status of an asynchronous job for
+	// `copyBatch`. It returns list of results for each entry.
+	CopyBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2JobStatus, err error)
+	// CopyBatchCheck : Returns the status of an asynchronous job for
 	// `copyBatch`. If success, it returns list of results for each entry.
+	// Deprecated: Use `CopyBatchCheckV2` instead
 	CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error)
 	// CopyReferenceGet : Get a copy reference to a file or folder. This
 	// reference string can be used to save that file or folder to another
@@ -232,11 +245,21 @@ type Client interface {
 	// Deprecated: Use `MoveV2` instead
 	Move(arg *RelocationArg) (res IsMetadata, err error)
 	// MoveBatch : Move multiple files or folders to different locations at once
+	// in the user's Dropbox. This route will replace `moveBatch`. The main
+	// difference is this route will return stutus for each entry, while
+	// `moveBatch` raises failure if any entry fails. This route will either
+	// finish synchronously, or return a job ID and do the async move job in
+	// background. Please use `moveBatchCheck` to check the job status.
+	MoveBatchV2(arg *MoveBatchArg) (res *RelocationBatchV2Launch, err error)
+	// MoveBatch : Move multiple files or folders to different locations at once
 	// in the user's Dropbox. This route is 'all or nothing', which means if one
 	// entry fails, the whole transaction will abort. This route will return job
 	// ID immediately and do the async moving job in background. Please use
 	// `moveBatchCheck` to check the job status.
 	MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error)
+	// MoveBatchCheck : Returns the status of an asynchronous job for
+	// `moveBatch`. It returns list of results for each entry.
+	MoveBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2JobStatus, err error)
 	// MoveBatchCheck : Returns the status of an asynchronous job for
 	// `moveBatch`. If success, it returns list of results for each entry.
 	MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error)
@@ -264,7 +287,9 @@ type Client interface {
 	PropertiesUpdate(arg *file_properties.UpdatePropertiesArg) (err error)
 	// Restore : Restore a specific revision of a file to the given path.
 	Restore(arg *RestoreArg) (res *FileMetadata, err error)
-	// SaveUrl : Save a specified URL into a file in user's Dropbox. If the
+	// SaveUrl : Save the data from a specified URL into a file in user's
+	// Dropbox. Note that the transfer from the URL must complete within 5
+	// minutes, or the operation will time out and the job will fail. If the
 	// given path already exists, the file will be renamed to avoid the conflict
 	// (e.g. myfile (1).txt).
 	SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error)
@@ -395,7 +420,7 @@ func (dbx *apiImpl) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -424,7 +449,11 @@ func (dbx *apiImpl) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -472,7 +501,7 @@ func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -490,7 +519,11 @@ func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -534,7 +567,7 @@ func (dbx *apiImpl) CopyV2(arg *RelocationArg) (res *RelocationResult, err error
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -552,7 +585,11 @@ func (dbx *apiImpl) CopyV2(arg *RelocationArg) (res *RelocationResult, err error
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -599,7 +636,7 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -628,17 +665,21 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
-//CopyBatchAPIError is an error-wrapper for the copy_batch route
-type CopyBatchAPIError struct {
+//CopyBatchV2APIError is an error-wrapper for the copy_batch route
+type CopyBatchV2APIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
+func (dbx *apiImpl) CopyBatchV2(arg *RelocationBatchArgBase) (res *RelocationBatchV2Launch, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -672,7 +713,7 @@ func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -690,17 +731,90 @@ func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
-//CopyBatchCheckAPIError is an error-wrapper for the copy_batch/check route
-type CopyBatchCheckAPIError struct {
+//CopyBatchAPIError is an error-wrapper for the copy_batch route
+type CopyBatchAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
+	log.Printf("WARNING: API `CopyBatch` is deprecated")
+	log.Printf("Use API `CopyBatch` instead")
+
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "copy_batch", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CopyBatchAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//CopyBatchCheckV2APIError is an error-wrapper for the copy_batch/check route
+type CopyBatchCheckV2APIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
+func (dbx *apiImpl) CopyBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2JobStatus, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -734,7 +848,7 @@ func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -752,7 +866,80 @@ func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//CopyBatchCheckAPIError is an error-wrapper for the copy_batch/check route
+type CopyBatchCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
+	log.Printf("WARNING: API `CopyBatchCheck` is deprecated")
+	log.Printf("Use API `CopyBatchCheck` instead")
+
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "copy_batch/check", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError CopyBatchCheckAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -796,7 +983,7 @@ func (dbx *apiImpl) CopyReferenceGet(arg *GetCopyReferenceArg) (res *GetCopyRefe
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -814,7 +1001,11 @@ func (dbx *apiImpl) CopyReferenceGet(arg *GetCopyReferenceArg) (res *GetCopyRefe
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -858,7 +1049,7 @@ func (dbx *apiImpl) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyR
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -876,7 +1067,11 @@ func (dbx *apiImpl) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyR
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -920,7 +1115,7 @@ func (dbx *apiImpl) CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResul
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -938,7 +1133,11 @@ func (dbx *apiImpl) CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResul
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -985,7 +1184,7 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1003,7 +1202,11 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1047,7 +1250,7 @@ func (dbx *apiImpl) CreateFolderBatch(arg *CreateFolderBatchArg) (res *CreateFol
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1065,7 +1268,11 @@ func (dbx *apiImpl) CreateFolderBatch(arg *CreateFolderBatchArg) (res *CreateFol
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1109,7 +1316,7 @@ func (dbx *apiImpl) CreateFolderBatchCheck(arg *async.PollArg) (res *CreateFolde
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1127,7 +1334,11 @@ func (dbx *apiImpl) CreateFolderBatchCheck(arg *async.PollArg) (res *CreateFolde
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1171,7 +1382,7 @@ func (dbx *apiImpl) DeleteV2(arg *DeleteArg) (res *DeleteResult, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1189,7 +1400,11 @@ func (dbx *apiImpl) DeleteV2(arg *DeleteArg) (res *DeleteResult, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1236,7 +1451,7 @@ func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -1265,7 +1480,11 @@ func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1309,7 +1528,7 @@ func (dbx *apiImpl) DeleteBatch(arg *DeleteBatchArg) (res *DeleteBatchLaunch, er
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1327,7 +1546,11 @@ func (dbx *apiImpl) DeleteBatch(arg *DeleteBatchArg) (res *DeleteBatchLaunch, er
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1371,7 +1594,7 @@ func (dbx *apiImpl) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobSta
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1389,7 +1612,11 @@ func (dbx *apiImpl) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobSta
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1432,7 +1659,7 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 	dbx.Config.LogInfo("resp: %v", resp)
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1455,7 +1682,11 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1495,7 +1726,7 @@ func (dbx *apiImpl) DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, co
 	dbx.Config.LogInfo("resp: %v", resp)
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1518,7 +1749,11 @@ func (dbx *apiImpl) DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, co
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1562,7 +1797,7 @@ func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error)
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -1591,7 +1826,11 @@ func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error)
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1631,7 +1870,7 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 	dbx.Config.LogInfo("resp: %v", resp)
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1654,7 +1893,11 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1698,7 +1941,7 @@ func (dbx *apiImpl) GetTemporaryLink(arg *GetTemporaryLinkArg) (res *GetTemporar
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1716,7 +1959,11 @@ func (dbx *apiImpl) GetTemporaryLink(arg *GetTemporaryLinkArg) (res *GetTemporar
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1760,7 +2007,7 @@ func (dbx *apiImpl) GetTemporaryUploadLink(arg *GetTemporaryUploadLinkArg) (res 
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1778,7 +2025,11 @@ func (dbx *apiImpl) GetTemporaryUploadLink(arg *GetTemporaryUploadLinkArg) (res 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1818,7 +2069,7 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 	dbx.Config.LogInfo("resp: %v", resp)
 	body := []byte(resp.Header.Get("Dropbox-API-Result"))
 	content = resp.Body
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1841,7 +2092,11 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1885,7 +2140,7 @@ func (dbx *apiImpl) GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbn
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1903,7 +2158,11 @@ func (dbx *apiImpl) GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbn
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -1947,7 +2206,7 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -1965,7 +2224,11 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2009,7 +2272,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2027,7 +2290,11 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2071,7 +2338,7 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFold
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2089,7 +2356,11 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFold
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2130,7 +2401,7 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFol
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2148,7 +2419,11 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFol
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2192,7 +2467,7 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2210,7 +2485,11 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2254,7 +2533,7 @@ func (dbx *apiImpl) MoveV2(arg *RelocationArg) (res *RelocationResult, err error
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2272,7 +2551,11 @@ func (dbx *apiImpl) MoveV2(arg *RelocationArg) (res *RelocationResult, err error
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2319,7 +2602,7 @@ func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -2348,7 +2631,77 @@ func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MoveBatchV2APIError is an error-wrapper for the move_batch route
+type MoveBatchV2APIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MoveBatchV2(arg *MoveBatchArg) (res *RelocationBatchV2Launch, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "move_batch", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MoveBatchAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2392,7 +2745,7 @@ func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2410,7 +2763,77 @@ func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MoveBatchCheckV2APIError is an error-wrapper for the move_batch/check route
+type MoveBatchCheckV2APIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) MoveBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2JobStatus, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "move_batch/check", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MoveBatchCheckAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2454,7 +2877,7 @@ func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2472,7 +2895,11 @@ func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2516,7 +2943,7 @@ func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2529,7 +2956,11 @@ func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2575,7 +3006,7 @@ func (dbx *apiImpl) PropertiesAdd(arg *file_properties.AddPropertiesArg) (err er
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2588,7 +3019,11 @@ func (dbx *apiImpl) PropertiesAdd(arg *file_properties.AddPropertiesArg) (err er
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2634,7 +3069,7 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *file_properties.OverwritePropertyGr
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2647,7 +3082,11 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *file_properties.OverwritePropertyGr
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2693,7 +3132,7 @@ func (dbx *apiImpl) PropertiesRemove(arg *file_properties.RemovePropertiesArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2706,7 +3145,11 @@ func (dbx *apiImpl) PropertiesRemove(arg *file_properties.RemovePropertiesArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2752,7 +3195,7 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2770,7 +3213,11 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2808,7 +3255,7 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2826,7 +3273,11 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2872,7 +3323,7 @@ func (dbx *apiImpl) PropertiesUpdate(arg *file_properties.UpdatePropertiesArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -2885,7 +3336,11 @@ func (dbx *apiImpl) PropertiesUpdate(arg *file_properties.UpdatePropertiesArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2929,7 +3384,7 @@ func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -2947,7 +3402,11 @@ func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -2991,7 +3450,7 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3009,7 +3468,11 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3053,7 +3516,7 @@ func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobSt
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3071,7 +3534,11 @@ func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobSt
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3115,7 +3582,7 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3133,7 +3600,11 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3178,7 +3649,7 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3196,7 +3667,11 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3241,7 +3716,7 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -3254,7 +3729,11 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3302,7 +3781,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		return
 	}
@@ -3315,7 +3794,11 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3360,7 +3843,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3378,7 +3861,11 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3422,7 +3909,7 @@ func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3440,7 +3927,11 @@ func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3484,7 +3975,7 @@ func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *Uplo
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3502,7 +3993,11 @@ func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *Uplo
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
@@ -3547,7 +4042,7 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
+	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3565,7 +4060,11 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 		err = apiError
 		return
 	}
-	err = dropbox.HandleCommonAPIErrors(resp, body)
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
 	return
 }
 
