@@ -464,13 +464,10 @@ type CopyAPIError struct {
 	EndpointError *RelocationError `json:"error"`
 }
 
+// Deprecated: Use CopyV2 instead. 
 func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, status *int, err error) {
-	log.Printf("WARNING: API `Copy` is deprecated")
-	log.Printf("Use API `CopyV2` instead")
-
 	cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -487,7 +484,6 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, status *int, err e
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
@@ -495,14 +491,12 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, status *int, err e
 	}
 	status = &resp.StatusCode
 
-	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		var tmp metadataUnion
 		err = json.Unmarshal(body, &tmp)
@@ -3243,7 +3237,6 @@ type SaveUrlAPIError struct {
 func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3260,7 +3253,6 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
@@ -3270,14 +3262,12 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 		StatusCode: &resp.StatusCode,
 	}
 
-	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		// This is a dirty hack to get around the unmarshalling error for the .tag field of the response json
 		response := make(map[string]interface{})
@@ -3321,7 +3311,6 @@ type SaveUrlCheckJobStatusAPIError struct {
 func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobStatus, err error) {
 	cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3338,21 +3327,18 @@ func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobSt
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
@@ -3465,7 +3451,6 @@ type UploadAPIError struct {
 func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, status *int, err error) {
 	cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
 	if err != nil {
 		return
@@ -3483,7 +3468,6 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
 	resp, err := cli.Do(req)
 	if err != nil {
@@ -3491,14 +3475,12 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 	}
 	status = &resp.StatusCode
 
-	dbx.Config.LogInfo("resp: %v", resp)
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return
 	}
 
-	dbx.Config.LogDebug("body: %v", body)
 	if resp.StatusCode == http.StatusOK {
 		err = json.Unmarshal(body, &res)
 		if err != nil {
