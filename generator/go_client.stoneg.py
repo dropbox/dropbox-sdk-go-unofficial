@@ -142,9 +142,12 @@ class GoClientBackend(CodeBackend):
                 out('headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID')
         out()
 
+        fn = route.name
+        if route.version != 1:
+            fn += '_v%d' % route.version
         authed = 'false' if auth == 'noauth' else 'true'
         out('req, err := (*dropbox.Context)(dbx).NewRequest("{}", "{}", {}, "{}", "{}", headers, {})'.format(
-            host, style, authed, namespace.name, route.name, body))
+            host, style, authed, namespace.name, fn, body))
         with self.block('if err != nil'):
             out('return')
 
