@@ -143,8 +143,11 @@ class GoClientBackend(CodeBackend):
         out()
 
         authed = 'false' if auth == 'noauth' else 'true'
+        route_name = route.name
+        if route.version != 1:
+            route_name += "_v%d" % route.version
         out('req, err := (*dropbox.Context)(dbx).NewRequest("{}", "{}", {}, "{}", "{}", headers, {})'.format(
-            host, style, authed, namespace.name, route.name, body))
+            host, style, authed, namespace.name, route_name, body))
         with self.block('if err != nil'):
             out('return')
 
