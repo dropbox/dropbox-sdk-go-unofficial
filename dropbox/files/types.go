@@ -1040,9 +1040,8 @@ type DownloadError struct {
 
 // Valid tag values for DownloadError
 const (
-	DownloadErrorPath            = "path"
-	DownloadErrorUnsupportedFile = "unsupported_file"
-	DownloadErrorOther           = "other"
+	DownloadErrorPath  = "path"
+	DownloadErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DownloadError instance
@@ -1134,107 +1133,6 @@ func NewDownloadZipResult(Metadata *FolderMetadata) *DownloadZipResult {
 	return s
 }
 
-// ExportArg : has no documentation (yet)
-type ExportArg struct {
-	// Path : The path of the file to be exported.
-	Path string `json:"path"`
-}
-
-// NewExportArg returns a new ExportArg instance
-func NewExportArg(Path string) *ExportArg {
-	s := new(ExportArg)
-	s.Path = Path
-	return s
-}
-
-// ExportError : has no documentation (yet)
-type ExportError struct {
-	dropbox.Tagged
-	// Path : has no documentation (yet)
-	Path *LookupError `json:"path,omitempty"`
-}
-
-// Valid tag values for ExportError
-const (
-	ExportErrorPath          = "path"
-	ExportErrorNonExportable = "non_exportable"
-	ExportErrorOther         = "other"
-)
-
-// UnmarshalJSON deserializes into a ExportError instance
-func (u *ExportError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// ExportInfo : Export information for a file.
-type ExportInfo struct {
-	// ExportAs : Format to which the file can be exported to.
-	ExportAs string `json:"export_as,omitempty"`
-}
-
-// NewExportInfo returns a new ExportInfo instance
-func NewExportInfo() *ExportInfo {
-	s := new(ExportInfo)
-	return s
-}
-
-// ExportMetadata : has no documentation (yet)
-type ExportMetadata struct {
-	// Name : The last component of the path (including extension). This never
-	// contains a slash.
-	Name string `json:"name"`
-	// Size : The file size in bytes.
-	Size uint64 `json:"size"`
-	// ExportHash : A hash based on the exported file content. This field can be
-	// used to verify data integrity. Similar to content hash. For more
-	// information see our `Content hash`
-	// <https://www.dropbox.com/developers/reference/content-hash> page.
-	ExportHash string `json:"export_hash,omitempty"`
-}
-
-// NewExportMetadata returns a new ExportMetadata instance
-func NewExportMetadata(Name string, Size uint64) *ExportMetadata {
-	s := new(ExportMetadata)
-	s.Name = Name
-	s.Size = Size
-	return s
-}
-
-// ExportResult : has no documentation (yet)
-type ExportResult struct {
-	// ExportMetadata : Metadata for the exported version of the file.
-	ExportMetadata *ExportMetadata `json:"export_metadata"`
-	// FileMetadata : Metadata for the original file.
-	FileMetadata *FileMetadata `json:"file_metadata"`
-}
-
-// NewExportResult returns a new ExportResult instance
-func NewExportResult(ExportMetadata *ExportMetadata, FileMetadata *FileMetadata) *ExportResult {
-	s := new(ExportResult)
-	s.ExportMetadata = ExportMetadata
-	s.FileMetadata = FileMetadata
-	return s
-}
-
 // FileMetadata : has no documentation (yet)
 type FileMetadata struct {
 	Metadata
@@ -1254,20 +1152,12 @@ type FileMetadata struct {
 	Rev string `json:"rev"`
 	// Size : The file size in bytes.
 	Size uint64 `json:"size"`
-	// MediaInfo : Additional information if the file is a photo or video. This
-	// field will not be set on entries returned by `listFolder`,
-	// `listFolderContinue`, or `getThumbnailBatch`, starting December 2, 2019.
+	// MediaInfo : Additional information if the file is a photo or video.
 	MediaInfo *MediaInfo `json:"media_info,omitempty"`
 	// SymlinkInfo : Set if this file is a symlink.
 	SymlinkInfo *SymlinkInfo `json:"symlink_info,omitempty"`
 	// SharingInfo : Set if this file is contained in a shared folder.
 	SharingInfo *FileSharingInfo `json:"sharing_info,omitempty"`
-	// IsDownloadable : If true, file can be downloaded directly; else the file
-	// must be exported.
-	IsDownloadable bool `json:"is_downloadable"`
-	// ExportInfo : Information about format this file can be exported to. This
-	// filed must be set if `is_downloadable` is set to false.
-	ExportInfo *ExportInfo `json:"export_info,omitempty"`
 	// PropertyGroups : Additional information if the file has custom properties
 	// with the property template specified.
 	PropertyGroups []*file_properties.PropertyGroup `json:"property_groups,omitempty"`
@@ -1293,7 +1183,6 @@ func NewFileMetadata(Name string, Id string, ClientModified time.Time, ServerMod
 	s.ServerModified = ServerModified
 	s.Rev = Rev
 	s.Size = Size
-	s.IsDownloadable = true
 	return s
 }
 
@@ -1502,10 +1391,8 @@ type GetTemporaryLinkError struct {
 
 // Valid tag values for GetTemporaryLinkError
 const (
-	GetTemporaryLinkErrorPath             = "path"
-	GetTemporaryLinkErrorEmailNotVerified = "email_not_verified"
-	GetTemporaryLinkErrorUnsupportedFile  = "unsupported_file"
-	GetTemporaryLinkErrorOther            = "other"
+	GetTemporaryLinkErrorPath  = "path"
+	GetTemporaryLinkErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a GetTemporaryLinkError instance
@@ -1706,8 +1593,7 @@ type ListFolderArg struct {
 	// all subfolders.
 	Recursive bool `json:"recursive"`
 	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo
-	// and video. This parameter will no longer have an effect starting December
-	// 2, 2019.
+	// and video.
 	IncludeMediaInfo bool `json:"include_media_info"`
 	// IncludeDeleted : If true, the results will include entries for files and
 	// folders that used to exist but were deleted.
@@ -1732,9 +1618,6 @@ type ListFolderArg struct {
 	// `FileMetadata.property_groups` is set if there exists property data
 	// associated with the file and each of the listed templates.
 	IncludePropertyGroups *file_properties.TemplateFilterBase `json:"include_property_groups,omitempty"`
-	// IncludeNonDownloadableFiles : If true, include files that are not
-	// downloadable, i.e. Google Docs.
-	IncludeNonDownloadableFiles bool `json:"include_non_downloadable_files"`
 }
 
 // NewListFolderArg returns a new ListFolderArg instance
@@ -1746,7 +1629,6 @@ func NewListFolderArg(Path string) *ListFolderArg {
 	s.IncludeDeleted = false
 	s.IncludeHasExplicitSharedMembers = false
 	s.IncludeMountedFolders = true
-	s.IncludeNonDownloadableFiles = true
 	return s
 }
 
@@ -2053,13 +1935,12 @@ type LookupError struct {
 
 // Valid tag values for LookupError
 const (
-	LookupErrorMalformedPath          = "malformed_path"
-	LookupErrorNotFound               = "not_found"
-	LookupErrorNotFile                = "not_file"
-	LookupErrorNotFolder              = "not_folder"
-	LookupErrorRestrictedContent      = "restricted_content"
-	LookupErrorUnsupportedContentType = "unsupported_content_type"
-	LookupErrorOther                  = "other"
+	LookupErrorMalformedPath     = "malformed_path"
+	LookupErrorNotFound          = "not_found"
+	LookupErrorNotFile           = "not_file"
+	LookupErrorNotFolder         = "not_folder"
+	LookupErrorRestrictedContent = "restricted_content"
+	LookupErrorOther             = "other"
 )
 
 // UnmarshalJSON deserializes into a LookupError instance
@@ -2401,7 +2282,6 @@ const (
 	RelocationErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationErrorInsufficientQuota        = "insufficient_quota"
 	RelocationErrorInternalError            = "internal_error"
-	RelocationErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationErrorOther                    = "other"
 )
 
@@ -2469,7 +2349,6 @@ const (
 	RelocationBatchErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationBatchErrorInsufficientQuota        = "insufficient_quota"
 	RelocationBatchErrorInternalError            = "internal_error"
-	RelocationBatchErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationBatchErrorOther                    = "other"
 	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
 )
@@ -2743,9 +2622,8 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// RelocationBatchV2JobStatus : Result returned by `copyBatchCheck` or
-// `moveBatchCheck` that may either be in progress or completed with result for
-// each entry.
+// RelocationBatchV2JobStatus : Result returned by `copyBatch` or `moveBatch`
+// that may either launch an asynchronous job or complete synchronously.
 type RelocationBatchV2JobStatus struct {
 	dropbox.Tagged
 	// Complete : The copy or move batch job has finished.

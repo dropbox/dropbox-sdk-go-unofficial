@@ -71,18 +71,6 @@ const (
 	OfficeAddInPolicyOther    = "other"
 )
 
-// PaperDefaultFolderPolicy : has no documentation (yet)
-type PaperDefaultFolderPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for PaperDefaultFolderPolicy
-const (
-	PaperDefaultFolderPolicyEveryoneInTeam = "everyone_in_team"
-	PaperDefaultFolderPolicyInviteOnly     = "invite_only"
-	PaperDefaultFolderPolicyOther          = "other"
-)
-
 // PaperDeploymentPolicy : has no documentation (yet)
 type PaperDeploymentPolicy struct {
 	dropbox.Tagged
@@ -93,18 +81,6 @@ const (
 	PaperDeploymentPolicyFull    = "full"
 	PaperDeploymentPolicyPartial = "partial"
 	PaperDeploymentPolicyOther   = "other"
-)
-
-// PaperDesktopPolicy : has no documentation (yet)
-type PaperDesktopPolicy struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for PaperDesktopPolicy
-const (
-	PaperDesktopPolicyDisabled = "disabled"
-	PaperDesktopPolicyEnabled  = "enabled"
-	PaperDesktopPolicyOther    = "other"
 )
 
 // PaperEnabledPolicy : has no documentation (yet)
@@ -301,16 +277,4 @@ const (
 	TwoStepVerificationPolicyRequireTfaEnable  = "require_tfa_enable"
 	TwoStepVerificationPolicyRequireTfaDisable = "require_tfa_disable"
 	TwoStepVerificationPolicyOther             = "other"
-)
-
-// TwoStepVerificationState : has no documentation (yet)
-type TwoStepVerificationState struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for TwoStepVerificationState
-const (
-	TwoStepVerificationStateRequired = "required"
-	TwoStepVerificationStateOptional = "optional"
-	TwoStepVerificationStateOther    = "other"
 )

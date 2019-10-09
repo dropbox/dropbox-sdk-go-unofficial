@@ -79,9 +79,6 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 // AuthError : Errors occurred during authentication.
 type AuthError struct {
 	dropbox.Tagged
-	// MissingScope : The access token does not have the required scope to
-	// access the route.
-	MissingScope *TokenScopeError `json:"missing_scope,omitempty"`
 }
 
 // Valid tag values for AuthError
@@ -91,31 +88,8 @@ const (
 	AuthErrorInvalidSelectAdmin = "invalid_select_admin"
 	AuthErrorUserSuspended      = "user_suspended"
 	AuthErrorExpiredAccessToken = "expired_access_token"
-	AuthErrorMissingScope       = "missing_scope"
 	AuthErrorOther              = "other"
 )
-
-// UnmarshalJSON deserializes into a AuthError instance
-func (u *AuthError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "missing_scope":
-		err = json.Unmarshal(body, &u.MissingScope)
-
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
 
 // InvalidAccountTypeError : has no documentation (yet)
 type InvalidAccountTypeError struct {
@@ -210,18 +184,5 @@ type TokenFromOAuth1Result struct {
 func NewTokenFromOAuth1Result(Oauth2Token string) *TokenFromOAuth1Result {
 	s := new(TokenFromOAuth1Result)
 	s.Oauth2Token = Oauth2Token
-	return s
-}
-
-// TokenScopeError : has no documentation (yet)
-type TokenScopeError struct {
-	// RequiredScope : The required scope to access the route.
-	RequiredScope string `json:"required_scope"`
-}
-
-// NewTokenScopeError returns a new TokenScopeError instance
-func NewTokenScopeError(RequiredScope string) *TokenScopeError {
-	s := new(TokenScopeError)
-	s.RequiredScope = RequiredScope
 	return s
 }
