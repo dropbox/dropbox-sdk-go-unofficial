@@ -12,7 +12,6 @@ from stone.ir import (
     unwrap_nullable,
     is_composite_type,
     is_list_type,
-    is_primitive_type,
     is_struct_type,
     Void,
 )
