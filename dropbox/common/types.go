@@ -55,11 +55,11 @@ func (u *PathRoot) UnmarshalJSON(body []byte) error {
 		// Root : Paths are relative to the authenticating user's root namespace
 		// (This results in `PathRootError.invalid_root` if the user's root
 		// namespace has changed.).
-		Root json.RawMessage `json:"root,omitempty"`
+		Root string `json:"root,omitempty"`
 		// NamespaceId : Paths are relative to given namespace id (This results
 		// in `PathRootError.no_permission` if you don't have access to this
 		// namespace.).
-		NamespaceId json.RawMessage `json:"namespace_id,omitempty"`
+		NamespaceId string `json:"namespace_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -69,13 +69,13 @@ func (u *PathRoot) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "root":
-		err = json.Unmarshal(w.Root, &u.Root)
+		u.Root = w.Root
 
 		if err != nil {
 			return err
 		}
 	case "namespace_id":
-		err = json.Unmarshal(w.NamespaceId, &u.NamespaceId)
+		u.NamespaceId = w.NamespaceId
 
 		if err != nil {
 			return err

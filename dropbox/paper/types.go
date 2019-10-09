@@ -296,7 +296,7 @@ func (u *ListDocsCursorError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// CursorError : has no documentation (yet)
-		CursorError json.RawMessage `json:"cursor_error,omitempty"`
+		CursorError *PaperApiCursorError `json:"cursor_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -306,7 +306,7 @@ func (u *ListDocsCursorError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "cursor_error":
-		err = json.Unmarshal(w.CursorError, &u.CursorError)
+		u.CursorError = w.CursorError
 
 		if err != nil {
 			return err
@@ -436,7 +436,7 @@ func (u *ListUsersCursorError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// CursorError : has no documentation (yet)
-		CursorError json.RawMessage `json:"cursor_error,omitempty"`
+		CursorError *PaperApiCursorError `json:"cursor_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -446,7 +446,7 @@ func (u *ListUsersCursorError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "cursor_error":
-		err = json.Unmarshal(w.CursorError, &u.CursorError)
+		u.CursorError = w.CursorError
 
 		if err != nil {
 			return err

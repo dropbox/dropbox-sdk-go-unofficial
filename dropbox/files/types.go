@@ -95,7 +95,7 @@ func (u *GetMetadataError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -105,7 +105,7 @@ func (u *GetMetadataError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -134,9 +134,9 @@ func (u *AlphaGetMetadataError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 		// PropertiesError : has no documentation (yet)
-		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
+		PropertiesError *file_properties.LookUpPropertiesError `json:"properties_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -146,13 +146,13 @@ func (u *AlphaGetMetadataError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
 	case "properties_error":
-		err = json.Unmarshal(w.PropertiesError, &u.PropertiesError)
+		u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -320,7 +320,7 @@ func (u *CreateFolderBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failed : The batch create folder has failed.
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed *CreateFolderBatchError `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -336,7 +336,7 @@ func (u *CreateFolderBatchJobStatus) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -371,7 +371,7 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -381,7 +381,7 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -441,7 +441,7 @@ func (u *CreateFolderBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failure : has no documentation (yet)
-		Failure json.RawMessage `json:"failure,omitempty"`
+		Failure *CreateFolderEntryError `json:"failure,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -457,7 +457,7 @@ func (u *CreateFolderBatchResultEntry) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failure":
-		err = json.Unmarshal(w.Failure, &u.Failure)
+		u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -484,7 +484,7 @@ func (u *CreateFolderEntryError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *WriteError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -494,7 +494,7 @@ func (u *CreateFolderEntryError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -533,7 +533,7 @@ func (u *CreateFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *WriteError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -543,7 +543,7 @@ func (u *CreateFolderError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -628,7 +628,7 @@ func (u *DeleteBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failed : The batch delete has failed.
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed *DeleteBatchError `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -644,7 +644,7 @@ func (u *DeleteBatchJobStatus) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -679,7 +679,7 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -689,7 +689,7 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -770,7 +770,7 @@ func (u *DeleteBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failure : has no documentation (yet)
-		Failure json.RawMessage `json:"failure,omitempty"`
+		Failure *DeleteError `json:"failure,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -786,7 +786,7 @@ func (u *DeleteBatchResultEntry) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failure":
-		err = json.Unmarshal(w.Failure, &u.Failure)
+		u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -818,9 +818,9 @@ func (u *DeleteError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// PathLookup : has no documentation (yet)
-		PathLookup json.RawMessage `json:"path_lookup,omitempty"`
+		PathLookup *LookupError `json:"path_lookup,omitempty"`
 		// PathWrite : has no documentation (yet)
-		PathWrite json.RawMessage `json:"path_write,omitempty"`
+		PathWrite *WriteError `json:"path_write,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -830,13 +830,13 @@ func (u *DeleteError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path_lookup":
-		err = json.Unmarshal(w.PathLookup, &u.PathLookup)
+		u.PathLookup = w.PathLookup
 
 		if err != nil {
 			return err
 		}
 	case "path_write":
-		err = json.Unmarshal(w.PathWrite, &u.PathWrite)
+		u.PathWrite = w.PathWrite
 
 		if err != nil {
 			return err
@@ -1049,7 +1049,7 @@ func (u *DownloadError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1059,7 +1059,7 @@ func (u *DownloadError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1101,7 +1101,7 @@ func (u *DownloadZipError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1111,7 +1111,7 @@ func (u *DownloadZipError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1303,7 +1303,7 @@ func (u *GetCopyReferenceError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1313,7 +1313,7 @@ func (u *GetCopyReferenceError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1400,7 +1400,7 @@ func (u *GetTemporaryLinkError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1410,7 +1410,7 @@ func (u *GetTemporaryLinkError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1543,7 +1543,7 @@ func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failure : The result for this file if it was an error.
-		Failure json.RawMessage `json:"failure,omitempty"`
+		Failure *ThumbnailError `json:"failure,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1559,7 +1559,7 @@ func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failure":
-		err = json.Unmarshal(w.Failure, &u.Failure)
+		u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -1665,7 +1665,7 @@ func (u *ListFolderContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1675,7 +1675,7 @@ func (u *ListFolderContinueError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1702,7 +1702,7 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1712,7 +1712,7 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1872,7 +1872,7 @@ func (u *ListRevisionsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1882,7 +1882,7 @@ func (u *ListRevisionsError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1951,7 +1951,7 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 		// format. Please refer to the `Path formats documentation`
 		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
 		// for more information.
-		MalformedPath json.RawMessage `json:"malformed_path,omitempty"`
+		MalformedPath string `json:"malformed_path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1961,7 +1961,7 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "malformed_path":
-		err = json.Unmarshal(w.MalformedPath, &u.MalformedPath)
+		u.MalformedPath = w.MalformedPath
 
 		if err != nil {
 			return err
@@ -2172,7 +2172,7 @@ func (u *PreviewError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : An error occurs when downloading metadata for the file.
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2182,7 +2182,7 @@ func (u *PreviewError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -2290,11 +2290,11 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// FromLookup : has no documentation (yet)
-		FromLookup json.RawMessage `json:"from_lookup,omitempty"`
+		FromLookup *LookupError `json:"from_lookup,omitempty"`
 		// FromWrite : has no documentation (yet)
-		FromWrite json.RawMessage `json:"from_write,omitempty"`
+		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
-		To json.RawMessage `json:"to,omitempty"`
+		To *WriteError `json:"to,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2304,19 +2304,19 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "from_lookup":
-		err = json.Unmarshal(w.FromLookup, &u.FromLookup)
+		u.FromLookup = w.FromLookup
 
 		if err != nil {
 			return err
 		}
 	case "from_write":
-		err = json.Unmarshal(w.FromWrite, &u.FromWrite)
+		u.FromWrite = w.FromWrite
 
 		if err != nil {
 			return err
 		}
 	case "to":
-		err = json.Unmarshal(w.To, &u.To)
+		u.To = w.To
 
 		if err != nil {
 			return err
@@ -2358,11 +2358,11 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// FromLookup : has no documentation (yet)
-		FromLookup json.RawMessage `json:"from_lookup,omitempty"`
+		FromLookup *LookupError `json:"from_lookup,omitempty"`
 		// FromWrite : has no documentation (yet)
-		FromWrite json.RawMessage `json:"from_write,omitempty"`
+		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
-		To json.RawMessage `json:"to,omitempty"`
+		To *WriteError `json:"to,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2372,19 +2372,19 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "from_lookup":
-		err = json.Unmarshal(w.FromLookup, &u.FromLookup)
+		u.FromLookup = w.FromLookup
 
 		if err != nil {
 			return err
 		}
 	case "from_write":
-		err = json.Unmarshal(w.FromWrite, &u.FromWrite)
+		u.FromWrite = w.FromWrite
 
 		if err != nil {
 			return err
 		}
 	case "to":
-		err = json.Unmarshal(w.To, &u.To)
+		u.To = w.To
 
 		if err != nil {
 			return err
@@ -2413,7 +2413,7 @@ func (u *RelocationBatchErrorEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// RelocationError : User errors that retry won't help.
-		RelocationError json.RawMessage `json:"relocation_error,omitempty"`
+		RelocationError *RelocationError `json:"relocation_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2423,7 +2423,7 @@ func (u *RelocationBatchErrorEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "relocation_error":
-		err = json.Unmarshal(w.RelocationError, &u.RelocationError)
+		u.RelocationError = w.RelocationError
 
 		if err != nil {
 			return err
@@ -2453,7 +2453,7 @@ func (u *RelocationBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failed : The copy or move batch job has failed with exception.
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed *RelocationBatchError `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2469,7 +2469,7 @@ func (u *RelocationBatchJobStatus) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -2504,7 +2504,7 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2514,7 +2514,7 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -2597,7 +2597,7 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 		// Success : has no documentation (yet)
 		Success json.RawMessage `json:"success,omitempty"`
 		// Failure : has no documentation (yet)
-		Failure json.RawMessage `json:"failure,omitempty"`
+		Failure *RelocationBatchErrorEntry `json:"failure,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2613,7 +2613,7 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failure":
-		err = json.Unmarshal(w.Failure, &u.Failure)
+		u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -2683,7 +2683,7 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2693,7 +2693,7 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -2794,10 +2794,10 @@ func (u *RestoreError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// PathLookup : An error occurs when downloading metadata for the file.
-		PathLookup json.RawMessage `json:"path_lookup,omitempty"`
+		PathLookup *LookupError `json:"path_lookup,omitempty"`
 		// PathWrite : An error occurs when trying to restore the file to that
 		// path.
-		PathWrite json.RawMessage `json:"path_write,omitempty"`
+		PathWrite *WriteError `json:"path_write,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2807,13 +2807,13 @@ func (u *RestoreError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path_lookup":
-		err = json.Unmarshal(w.PathLookup, &u.PathLookup)
+		u.PathLookup = w.PathLookup
 
 		if err != nil {
 			return err
 		}
 	case "path_write":
-		err = json.Unmarshal(w.PathWrite, &u.PathWrite)
+		u.PathWrite = w.PathWrite
 
 		if err != nil {
 			return err
@@ -2860,7 +2860,7 @@ func (u *SaveCopyReferenceError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *WriteError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2870,7 +2870,7 @@ func (u *SaveCopyReferenceError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -2949,7 +2949,7 @@ func (u *SaveUrlError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *WriteError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2959,7 +2959,7 @@ func (u *SaveUrlError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -2989,7 +2989,7 @@ func (u *SaveUrlJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failed : has no documentation (yet)
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed *SaveUrlError `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3005,7 +3005,7 @@ func (u *SaveUrlJobStatus) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -3038,7 +3038,7 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3048,7 +3048,7 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -3111,7 +3111,7 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3121,7 +3121,7 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3285,7 +3285,7 @@ func (u *SyncSettingsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3295,7 +3295,7 @@ func (u *SyncSettingsError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3348,7 +3348,7 @@ func (u *ThumbnailError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Path : An error occurs when downloading metadata for the image.
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *LookupError `json:"path,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3358,7 +3358,7 @@ func (u *ThumbnailError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3431,7 +3431,7 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// PropertiesError : The supplied property group is invalid. The file
 		// has uploaded without property groups.
-		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
+		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3447,7 +3447,7 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "properties_error":
-		err = json.Unmarshal(w.PropertiesError, &u.PropertiesError)
+		u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3479,7 +3479,7 @@ func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// PropertiesError : The supplied property group is invalid. The file
 		// has uploaded without property groups.
-		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
+		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3495,7 +3495,7 @@ func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "properties_error":
-		err = json.Unmarshal(w.PropertiesError, &u.PropertiesError)
+		u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3631,7 +3631,7 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3641,7 +3641,7 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -3690,7 +3690,7 @@ func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Failure : has no documentation (yet)
-		Failure json.RawMessage `json:"failure,omitempty"`
+		Failure *UploadSessionFinishError `json:"failure,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3706,7 +3706,7 @@ func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failure":
-		err = json.Unmarshal(w.Failure, &u.Failure)
+		u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -3746,14 +3746,14 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// LookupFailed : The session arguments are incorrect; the value
 		// explains the reason.
-		LookupFailed json.RawMessage `json:"lookup_failed,omitempty"`
+		LookupFailed *UploadSessionLookupError `json:"lookup_failed,omitempty"`
 		// Path : Unable to save the uploaded contents to a file. Data has
 		// already been appended to the upload session. Please retry with empty
 		// data body and updated offset.
-		Path json.RawMessage `json:"path,omitempty"`
+		Path *WriteError `json:"path,omitempty"`
 		// PropertiesError : The supplied property group is invalid. The file
 		// has uploaded without property groups.
-		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
+		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3763,19 +3763,19 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "lookup_failed":
-		err = json.Unmarshal(w.LookupFailed, &u.LookupFailed)
+		u.LookupFailed = w.LookupFailed
 
 		if err != nil {
 			return err
 		}
 	case "path":
-		err = json.Unmarshal(w.Path, &u.Path)
+		u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
 	case "properties_error":
-		err = json.Unmarshal(w.PropertiesError, &u.PropertiesError)
+		u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3945,10 +3945,10 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 		// format. Please refer to the `Path formats documentation`
 		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
 		// for more information.
-		MalformedPath json.RawMessage `json:"malformed_path,omitempty"`
+		MalformedPath string `json:"malformed_path,omitempty"`
 		// Conflict : Couldn't write to the target path because there was
 		// something in the way.
-		Conflict json.RawMessage `json:"conflict,omitempty"`
+		Conflict *WriteConflictError `json:"conflict,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3958,13 +3958,13 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "malformed_path":
-		err = json.Unmarshal(w.MalformedPath, &u.MalformedPath)
+		u.MalformedPath = w.MalformedPath
 
 		if err != nil {
 			return err
 		}
 	case "conflict":
-		err = json.Unmarshal(w.Conflict, &u.Conflict)
+		u.Conflict = w.Conflict
 
 		if err != nil {
 			return err
@@ -4007,7 +4007,7 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 		// copy" to the file name. For example, "document.txt" might become
 		// "document (conflicted copy).txt" or "document (Panda's conflicted
 		// copy).txt".
-		Update json.RawMessage `json:"update,omitempty"`
+		Update string `json:"update,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -4017,7 +4017,7 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "update":
-		err = json.Unmarshal(w.Update, &u.Update)
+		u.Update = w.Update
 
 		if err != nil {
 			return err

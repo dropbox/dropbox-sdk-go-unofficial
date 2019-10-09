@@ -271,7 +271,7 @@ func (u *UpdateFileRequestDeadline) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Update : If nil, the file request's deadline is cleared.
-		Update json.RawMessage `json:"update,omitempty"`
+		Update *FileRequestDeadline `json:"update,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -281,7 +281,7 @@ func (u *UpdateFileRequestDeadline) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "update":
-		err = json.Unmarshal(w.Update, &u.Update)
+		u.Update = w.Update
 
 		if err != nil {
 			return err

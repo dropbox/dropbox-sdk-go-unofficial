@@ -280,7 +280,7 @@ func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// NoAccount : The value is an account ID specified in
 		// `GetAccountBatchArg.account_ids` that does not exist.
-		NoAccount json.RawMessage `json:"no_account,omitempty"`
+		NoAccount string `json:"no_account,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -290,7 +290,7 @@ func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "no_account":
-		err = json.Unmarshal(w.NoAccount, &u.NoAccount)
+		u.NoAccount = w.NoAccount
 
 		if err != nil {
 			return err

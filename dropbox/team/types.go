@@ -153,11 +153,11 @@ func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -167,19 +167,19 @@ func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
@@ -220,7 +220,7 @@ func (u *CustomQuotaResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// InvalidUser : Invalid user (not in team).
-		InvalidUser json.RawMessage `json:"invalid_user,omitempty"`
+		InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -236,7 +236,7 @@ func (u *CustomQuotaResult) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "invalid_user":
-		err = json.Unmarshal(w.InvalidUser, &u.InvalidUser)
+		u.InvalidUser = w.InvalidUser
 
 		if err != nil {
 			return err
@@ -538,13 +538,13 @@ func (u *FeatureValue) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// UploadApiRateLimit : has no documentation (yet)
-		UploadApiRateLimit json.RawMessage `json:"upload_api_rate_limit,omitempty"`
+		UploadApiRateLimit *UploadApiRateLimitValue `json:"upload_api_rate_limit,omitempty"`
 		// HasTeamSharedDropbox : has no documentation (yet)
-		HasTeamSharedDropbox json.RawMessage `json:"has_team_shared_dropbox,omitempty"`
+		HasTeamSharedDropbox *HasTeamSharedDropboxValue `json:"has_team_shared_dropbox,omitempty"`
 		// HasTeamFileEvents : has no documentation (yet)
-		HasTeamFileEvents json.RawMessage `json:"has_team_file_events,omitempty"`
+		HasTeamFileEvents *HasTeamFileEventsValue `json:"has_team_file_events,omitempty"`
 		// HasTeamSelectiveSync : has no documentation (yet)
-		HasTeamSelectiveSync json.RawMessage `json:"has_team_selective_sync,omitempty"`
+		HasTeamSelectiveSync *HasTeamSelectiveSyncValue `json:"has_team_selective_sync,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -554,25 +554,25 @@ func (u *FeatureValue) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "upload_api_rate_limit":
-		err = json.Unmarshal(w.UploadApiRateLimit, &u.UploadApiRateLimit)
+		u.UploadApiRateLimit = w.UploadApiRateLimit
 
 		if err != nil {
 			return err
 		}
 	case "has_team_shared_dropbox":
-		err = json.Unmarshal(w.HasTeamSharedDropbox, &u.HasTeamSharedDropbox)
+		u.HasTeamSharedDropbox = w.HasTeamSharedDropbox
 
 		if err != nil {
 			return err
 		}
 	case "has_team_file_events":
-		err = json.Unmarshal(w.HasTeamFileEvents, &u.HasTeamFileEvents)
+		u.HasTeamFileEvents = w.HasTeamFileEvents
 
 		if err != nil {
 			return err
 		}
 	case "has_team_selective_sync":
-		err = json.Unmarshal(w.HasTeamSelectiveSync, &u.HasTeamSelectiveSync)
+		u.HasTeamSelectiveSync = w.HasTeamSelectiveSync
 
 		if err != nil {
 			return err
@@ -1008,12 +1008,12 @@ func (u *GroupMembersAddError) UnmarshalJSON(body []byte) error {
 		// Currently, you cannot add members to a group if they are not part of
 		// your team, though this may change in a subsequent version. To add new
 		// members to your Dropbox Business team, use the `membersAdd` endpoint.
-		MembersNotInTeam json.RawMessage `json:"members_not_in_team,omitempty"`
+		MembersNotInTeam []string `json:"members_not_in_team,omitempty"`
 		// UsersNotFound : These users were not found in Dropbox.
-		UsersNotFound json.RawMessage `json:"users_not_found,omitempty"`
+		UsersNotFound []string `json:"users_not_found,omitempty"`
 		// UserCannotBeManagerOfCompanyManagedGroup : A company-managed group
 		// cannot be managed by a user.
-		UserCannotBeManagerOfCompanyManagedGroup json.RawMessage `json:"user_cannot_be_manager_of_company_managed_group,omitempty"`
+		UserCannotBeManagerOfCompanyManagedGroup []string `json:"user_cannot_be_manager_of_company_managed_group,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1023,19 +1023,19 @@ func (u *GroupMembersAddError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "members_not_in_team":
-		err = json.Unmarshal(w.MembersNotInTeam, &u.MembersNotInTeam)
+		u.MembersNotInTeam = w.MembersNotInTeam
 
 		if err != nil {
 			return err
 		}
 	case "users_not_found":
-		err = json.Unmarshal(w.UsersNotFound, &u.UsersNotFound)
+		u.UsersNotFound = w.UsersNotFound
 
 		if err != nil {
 			return err
 		}
 	case "user_cannot_be_manager_of_company_managed_group":
-		err = json.Unmarshal(w.UserCannotBeManagerOfCompanyManagedGroup, &u.UserCannotBeManagerOfCompanyManagedGroup)
+		u.UserCannotBeManagerOfCompanyManagedGroup = w.UserCannotBeManagerOfCompanyManagedGroup
 
 		if err != nil {
 			return err
@@ -1121,9 +1121,9 @@ func (u *GroupMembersRemoveError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// MembersNotInTeam : These members are not part of your team.
-		MembersNotInTeam json.RawMessage `json:"members_not_in_team,omitempty"`
+		MembersNotInTeam []string `json:"members_not_in_team,omitempty"`
 		// UsersNotFound : These users were not found in Dropbox.
-		UsersNotFound json.RawMessage `json:"users_not_found,omitempty"`
+		UsersNotFound []string `json:"users_not_found,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1133,13 +1133,13 @@ func (u *GroupMembersRemoveError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "members_not_in_team":
-		err = json.Unmarshal(w.MembersNotInTeam, &u.MembersNotInTeam)
+		u.MembersNotInTeam = w.MembersNotInTeam
 
 		if err != nil {
 			return err
 		}
 	case "users_not_found":
-		err = json.Unmarshal(w.UsersNotFound, &u.UsersNotFound)
+		u.UsersNotFound = w.UsersNotFound
 
 		if err != nil {
 			return err
@@ -1206,9 +1206,9 @@ func (u *GroupSelector) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// GroupId : Group ID.
-		GroupId json.RawMessage `json:"group_id,omitempty"`
+		GroupId string `json:"group_id,omitempty"`
 		// GroupExternalId : External ID of the group.
-		GroupExternalId json.RawMessage `json:"group_external_id,omitempty"`
+		GroupExternalId string `json:"group_external_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1218,13 +1218,13 @@ func (u *GroupSelector) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "group_id":
-		err = json.Unmarshal(w.GroupId, &u.GroupId)
+		u.GroupId = w.GroupId
 
 		if err != nil {
 			return err
 		}
 	case "group_external_id":
-		err = json.Unmarshal(w.GroupExternalId, &u.GroupExternalId)
+		u.GroupExternalId = w.GroupExternalId
 
 		if err != nil {
 			return err
@@ -1307,7 +1307,7 @@ func (u *GroupsGetInfoItem) UnmarshalJSON(body []byte) error {
 		// `groupsGetInfo`, and did not match a corresponding group. The ID can
 		// be a group ID, or an external ID, depending on how the method was
 		// called.
-		IdNotFound json.RawMessage `json:"id_not_found,omitempty"`
+		IdNotFound string `json:"id_not_found,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1317,7 +1317,7 @@ func (u *GroupsGetInfoItem) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "id_not_found":
-		err = json.Unmarshal(w.IdNotFound, &u.IdNotFound)
+		u.IdNotFound = w.IdNotFound
 
 		if err != nil {
 			return err
@@ -1487,9 +1487,9 @@ func (u *GroupsSelector) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// GroupIds : List of group IDs.
-		GroupIds json.RawMessage `json:"group_ids,omitempty"`
+		GroupIds []string `json:"group_ids,omitempty"`
 		// GroupExternalIds : List of external IDs of groups.
-		GroupExternalIds json.RawMessage `json:"group_external_ids,omitempty"`
+		GroupExternalIds []string `json:"group_external_ids,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1499,13 +1499,13 @@ func (u *GroupsSelector) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "group_ids":
-		err = json.Unmarshal(w.GroupIds, &u.GroupIds)
+		u.GroupIds = w.GroupIds
 
 		if err != nil {
 			return err
 		}
 	case "group_external_ids":
-		err = json.Unmarshal(w.GroupExternalIds, &u.GroupExternalIds)
+		u.GroupExternalIds = w.GroupExternalIds
 
 		if err != nil {
 			return err
@@ -1532,7 +1532,7 @@ func (u *HasTeamFileEventsValue) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Enabled : Does this team have file events.
-		Enabled json.RawMessage `json:"enabled,omitempty"`
+		Enabled bool `json:"enabled,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1542,7 +1542,7 @@ func (u *HasTeamFileEventsValue) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "enabled":
-		err = json.Unmarshal(w.Enabled, &u.Enabled)
+		u.Enabled = w.Enabled
 
 		if err != nil {
 			return err
@@ -1570,7 +1570,7 @@ func (u *HasTeamSelectiveSyncValue) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// HasTeamSelectiveSync : Does this team have team selective sync
 		// enabled.
-		HasTeamSelectiveSync json.RawMessage `json:"has_team_selective_sync,omitempty"`
+		HasTeamSelectiveSync bool `json:"has_team_selective_sync,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1580,7 +1580,7 @@ func (u *HasTeamSelectiveSyncValue) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "has_team_selective_sync":
-		err = json.Unmarshal(w.HasTeamSelectiveSync, &u.HasTeamSelectiveSync)
+		u.HasTeamSelectiveSync = w.HasTeamSelectiveSync
 
 		if err != nil {
 			return err
@@ -1607,7 +1607,7 @@ func (u *HasTeamSharedDropboxValue) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// HasTeamSharedDropbox : Does this team have a shared team root.
-		HasTeamSharedDropbox json.RawMessage `json:"has_team_shared_dropbox,omitempty"`
+		HasTeamSharedDropbox bool `json:"has_team_shared_dropbox,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1617,7 +1617,7 @@ func (u *HasTeamSharedDropboxValue) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "has_team_shared_dropbox":
-		err = json.Unmarshal(w.HasTeamSharedDropbox, &u.HasTeamSharedDropbox)
+		u.HasTeamSharedDropbox = w.HasTeamSharedDropbox
 
 		if err != nil {
 			return err
@@ -2033,34 +2033,34 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// TeamLicenseLimit : Team is already full. The organization has no
 		// available licenses.
-		TeamLicenseLimit json.RawMessage `json:"team_license_limit,omitempty"`
+		TeamLicenseLimit string `json:"team_license_limit,omitempty"`
 		// FreeTeamMemberLimitReached : Team is already full. The free team
 		// member limit has been reached.
-		FreeTeamMemberLimitReached json.RawMessage `json:"free_team_member_limit_reached,omitempty"`
+		FreeTeamMemberLimitReached string `json:"free_team_member_limit_reached,omitempty"`
 		// UserAlreadyOnTeam : User is already on this team. The provided email
 		// address is associated with a user who is already a member of
 		// (including in recoverable state) or invited to the team.
-		UserAlreadyOnTeam json.RawMessage `json:"user_already_on_team,omitempty"`
+		UserAlreadyOnTeam string `json:"user_already_on_team,omitempty"`
 		// UserOnAnotherTeam : User is already on another team. The provided
 		// email address is associated with a user that is already a member or
 		// invited to another team.
-		UserOnAnotherTeam json.RawMessage `json:"user_on_another_team,omitempty"`
+		UserOnAnotherTeam string `json:"user_on_another_team,omitempty"`
 		// UserAlreadyPaired : User is already paired.
-		UserAlreadyPaired json.RawMessage `json:"user_already_paired,omitempty"`
+		UserAlreadyPaired string `json:"user_already_paired,omitempty"`
 		// UserMigrationFailed : User migration has failed.
-		UserMigrationFailed json.RawMessage `json:"user_migration_failed,omitempty"`
+		UserMigrationFailed string `json:"user_migration_failed,omitempty"`
 		// DuplicateExternalMemberId : A user with the given external member ID
 		// already exists on the team (including in recoverable state).
-		DuplicateExternalMemberId json.RawMessage `json:"duplicate_external_member_id,omitempty"`
+		DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
 		// DuplicateMemberPersistentId : A user with the given persistent ID
 		// already exists on the team (including in recoverable state).
-		DuplicateMemberPersistentId json.RawMessage `json:"duplicate_member_persistent_id,omitempty"`
+		DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
 		// PersistentIdDisabled : Persistent ID is only available to teams with
 		// persistent ID SAML configuration. Please contact Dropbox for more
 		// information.
-		PersistentIdDisabled json.RawMessage `json:"persistent_id_disabled,omitempty"`
+		PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
 		// UserCreationFailed : User creation has failed.
-		UserCreationFailed json.RawMessage `json:"user_creation_failed,omitempty"`
+		UserCreationFailed string `json:"user_creation_failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2076,61 +2076,61 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "team_license_limit":
-		err = json.Unmarshal(w.TeamLicenseLimit, &u.TeamLicenseLimit)
+		u.TeamLicenseLimit = w.TeamLicenseLimit
 
 		if err != nil {
 			return err
 		}
 	case "free_team_member_limit_reached":
-		err = json.Unmarshal(w.FreeTeamMemberLimitReached, &u.FreeTeamMemberLimitReached)
+		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
 
 		if err != nil {
 			return err
 		}
 	case "user_already_on_team":
-		err = json.Unmarshal(w.UserAlreadyOnTeam, &u.UserAlreadyOnTeam)
+		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
 
 		if err != nil {
 			return err
 		}
 	case "user_on_another_team":
-		err = json.Unmarshal(w.UserOnAnotherTeam, &u.UserOnAnotherTeam)
+		u.UserOnAnotherTeam = w.UserOnAnotherTeam
 
 		if err != nil {
 			return err
 		}
 	case "user_already_paired":
-		err = json.Unmarshal(w.UserAlreadyPaired, &u.UserAlreadyPaired)
+		u.UserAlreadyPaired = w.UserAlreadyPaired
 
 		if err != nil {
 			return err
 		}
 	case "user_migration_failed":
-		err = json.Unmarshal(w.UserMigrationFailed, &u.UserMigrationFailed)
+		u.UserMigrationFailed = w.UserMigrationFailed
 
 		if err != nil {
 			return err
 		}
 	case "duplicate_external_member_id":
-		err = json.Unmarshal(w.DuplicateExternalMemberId, &u.DuplicateExternalMemberId)
+		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
 
 		if err != nil {
 			return err
 		}
 	case "duplicate_member_persistent_id":
-		err = json.Unmarshal(w.DuplicateMemberPersistentId, &u.DuplicateMemberPersistentId)
+		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
 
 		if err != nil {
 			return err
 		}
 	case "persistent_id_disabled":
-		err = json.Unmarshal(w.PersistentIdDisabled, &u.PersistentIdDisabled)
+		u.PersistentIdDisabled = w.PersistentIdDisabled
 
 		if err != nil {
 			return err
 		}
 	case "user_creation_failed":
-		err = json.Unmarshal(w.UserCreationFailed, &u.UserCreationFailed)
+		u.UserCreationFailed = w.UserCreationFailed
 
 		if err != nil {
 			return err
@@ -2283,10 +2283,10 @@ func (u *MembersAddJobStatus) UnmarshalJSON(body []byte) error {
 		// Complete : The asynchronous job has finished. For each member that
 		// was specified in the parameter `MembersAddArg` that was provided to
 		// `membersAdd`, a corresponding item is returned in this list.
-		Complete json.RawMessage `json:"complete,omitempty"`
+		Complete []*MemberAddResult `json:"complete,omitempty"`
 		// Failed : The asynchronous job returned an error. The string contains
 		// an error message.
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed string `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2296,13 +2296,13 @@ func (u *MembersAddJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(w.Complete, &u.Complete)
+		u.Complete = w.Complete
 
 		if err != nil {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -2335,9 +2335,9 @@ func (u *MembersAddLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		Complete []*MemberAddResult `json:"complete,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2347,13 +2347,13 @@ func (u *MembersAddLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
 	case "complete":
-		err = json.Unmarshal(w.Complete, &u.Complete)
+		u.Complete = w.Complete
 
 		if err != nil {
 			return err
@@ -2473,7 +2473,7 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 		// `membersGetInfo`, and did not match a corresponding user. This might
 		// be a team_member_id, an email, or an external ID, depending on how
 		// the method was called.
-		IdNotFound json.RawMessage `json:"id_not_found,omitempty"`
+		IdNotFound string `json:"id_not_found,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2483,7 +2483,7 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "id_not_found":
-		err = json.Unmarshal(w.IdNotFound, &u.IdNotFound)
+		u.IdNotFound = w.IdNotFound
 
 		if err != nil {
 			return err
@@ -2946,9 +2946,9 @@ func (u *RemoveCustomQuotaResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Success : Successfully removed user.
-		Success json.RawMessage `json:"success,omitempty"`
+		Success *UserSelectorArg `json:"success,omitempty"`
 		// InvalidUser : Invalid user (not in team).
-		InvalidUser json.RawMessage `json:"invalid_user,omitempty"`
+		InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2958,13 +2958,13 @@ func (u *RemoveCustomQuotaResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(w.Success, &u.Success)
+		u.Success = w.Success
 
 		if err != nil {
 			return err
 		}
 	case "invalid_user":
-		err = json.Unmarshal(w.InvalidUser, &u.InvalidUser)
+		u.InvalidUser = w.InvalidUser
 
 		if err != nil {
 			return err
@@ -3286,11 +3286,11 @@ func (u *TeamFolderActivateError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3300,19 +3300,19 @@ func (u *TeamFolderActivateError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
@@ -3373,11 +3373,11 @@ func (u *TeamFolderArchiveError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3387,19 +3387,19 @@ func (u *TeamFolderArchiveError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
@@ -3432,7 +3432,7 @@ func (u *TeamFolderArchiveJobStatus) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Failed : Error occurred while performing an asynchronous job from
 		// `teamFolderArchive`.
-		Failed json.RawMessage `json:"failed,omitempty"`
+		Failed *TeamFolderArchiveError `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3448,7 +3448,7 @@ func (u *TeamFolderArchiveJobStatus) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "failed":
-		err = json.Unmarshal(w.Failed, &u.Failed)
+		u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -3481,7 +3481,7 @@ func (u *TeamFolderArchiveLaunch) UnmarshalJSON(body []byte) error {
 		// AsyncJobId : This response indicates that the processing is
 		// asynchronous. The string is an id that can be used to obtain the
 		// status of the asynchronous job.
-		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
+		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3491,7 +3491,7 @@ func (u *TeamFolderArchiveLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
+		u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -3543,7 +3543,7 @@ func (u *TeamFolderCreateError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// SyncSettingsError : An error occurred setting the sync settings.
-		SyncSettingsError json.RawMessage `json:"sync_settings_error,omitempty"`
+		SyncSettingsError *files.SyncSettingsError `json:"sync_settings_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3553,7 +3553,7 @@ func (u *TeamFolderCreateError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "sync_settings_error":
-		err = json.Unmarshal(w.SyncSettingsError, &u.SyncSettingsError)
+		u.SyncSettingsError = w.SyncSettingsError
 
 		if err != nil {
 			return err
@@ -3584,7 +3584,7 @@ func (u *TeamFolderGetInfoItem) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// IdNotFound : An ID that was provided as a parameter to
 		// `teamFolderGetInfo` did not match any of the team's team folders.
-		IdNotFound json.RawMessage `json:"id_not_found,omitempty"`
+		IdNotFound string `json:"id_not_found,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3594,7 +3594,7 @@ func (u *TeamFolderGetInfoItem) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "id_not_found":
-		err = json.Unmarshal(w.IdNotFound, &u.IdNotFound)
+		u.IdNotFound = w.IdNotFound
 
 		if err != nil {
 			return err
@@ -3761,11 +3761,11 @@ func (u *TeamFolderPermanentlyDeleteError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3775,19 +3775,19 @@ func (u *TeamFolderPermanentlyDeleteError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
@@ -3838,11 +3838,11 @@ func (u *TeamFolderRenameError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3852,19 +3852,19 @@ func (u *TeamFolderRenameError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
@@ -3942,13 +3942,13 @@ func (u *TeamFolderUpdateSyncSettingsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
-		AccessError json.RawMessage `json:"access_error,omitempty"`
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
 		// StatusError : has no documentation (yet)
-		StatusError json.RawMessage `json:"status_error,omitempty"`
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
 		// TeamSharedDropboxError : has no documentation (yet)
-		TeamSharedDropboxError json.RawMessage `json:"team_shared_dropbox_error,omitempty"`
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
 		// SyncSettingsError : An error occurred setting the sync settings.
-		SyncSettingsError json.RawMessage `json:"sync_settings_error,omitempty"`
+		SyncSettingsError *files.SyncSettingsError `json:"sync_settings_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3958,25 +3958,25 @@ func (u *TeamFolderUpdateSyncSettingsError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "access_error":
-		err = json.Unmarshal(w.AccessError, &u.AccessError)
+		u.AccessError = w.AccessError
 
 		if err != nil {
 			return err
 		}
 	case "status_error":
-		err = json.Unmarshal(w.StatusError, &u.StatusError)
+		u.StatusError = w.StatusError
 
 		if err != nil {
 			return err
 		}
 	case "team_shared_dropbox_error":
-		err = json.Unmarshal(w.TeamSharedDropboxError, &u.TeamSharedDropboxError)
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
 		if err != nil {
 			return err
 		}
 	case "sync_settings_error":
-		err = json.Unmarshal(w.SyncSettingsError, &u.SyncSettingsError)
+		u.SyncSettingsError = w.SyncSettingsError
 
 		if err != nil {
 			return err
@@ -4215,7 +4215,7 @@ func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Limit : The number of upload API calls allowed per month.
-		Limit json.RawMessage `json:"limit,omitempty"`
+		Limit uint32 `json:"limit,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -4225,7 +4225,7 @@ func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "limit":
-		err = json.Unmarshal(w.Limit, &u.Limit)
+		u.Limit = w.Limit
 
 		if err != nil {
 			return err
@@ -4291,11 +4291,11 @@ func (u *UserSelectorArg) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// TeamMemberId : has no documentation (yet)
-		TeamMemberId json.RawMessage `json:"team_member_id,omitempty"`
+		TeamMemberId string `json:"team_member_id,omitempty"`
 		// ExternalId : has no documentation (yet)
-		ExternalId json.RawMessage `json:"external_id,omitempty"`
+		ExternalId string `json:"external_id,omitempty"`
 		// Email : has no documentation (yet)
-		Email json.RawMessage `json:"email,omitempty"`
+		Email string `json:"email,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -4305,19 +4305,19 @@ func (u *UserSelectorArg) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "team_member_id":
-		err = json.Unmarshal(w.TeamMemberId, &u.TeamMemberId)
+		u.TeamMemberId = w.TeamMemberId
 
 		if err != nil {
 			return err
 		}
 	case "external_id":
-		err = json.Unmarshal(w.ExternalId, &u.ExternalId)
+		u.ExternalId = w.ExternalId
 
 		if err != nil {
 			return err
 		}
 	case "email":
-		err = json.Unmarshal(w.Email, &u.Email)
+		u.Email = w.Email
 
 		if err != nil {
 			return err
@@ -4350,11 +4350,11 @@ func (u *UsersSelectorArg) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// TeamMemberIds : List of member IDs.
-		TeamMemberIds json.RawMessage `json:"team_member_ids,omitempty"`
+		TeamMemberIds []string `json:"team_member_ids,omitempty"`
 		// ExternalIds : List of external user IDs.
-		ExternalIds json.RawMessage `json:"external_ids,omitempty"`
+		ExternalIds []string `json:"external_ids,omitempty"`
 		// Emails : List of email addresses.
-		Emails json.RawMessage `json:"emails,omitempty"`
+		Emails []string `json:"emails,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -4364,19 +4364,19 @@ func (u *UsersSelectorArg) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "team_member_ids":
-		err = json.Unmarshal(w.TeamMemberIds, &u.TeamMemberIds)
+		u.TeamMemberIds = w.TeamMemberIds
 
 		if err != nil {
 			return err
 		}
 	case "external_ids":
-		err = json.Unmarshal(w.ExternalIds, &u.ExternalIds)
+		u.ExternalIds = w.ExternalIds
 
 		if err != nil {
 			return err
 		}
 	case "emails":
-		err = json.Unmarshal(w.Emails, &u.Emails)
+		u.Emails = w.Emails
 
 		if err != nil {
 			return err

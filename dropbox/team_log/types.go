@@ -295,7 +295,7 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// RemoveAction : Define how the user was removed from the team.
-		RemoveAction json.RawMessage `json:"remove_action,omitempty"`
+		RemoveAction *MemberRemoveActionType `json:"remove_action,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -311,7 +311,7 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "remove_action":
-		err = json.Unmarshal(w.RemoveAction, &u.RemoveAction)
+		u.RemoveAction = w.RemoveAction
 
 		if err != nil {
 			return err
@@ -9195,7 +9195,7 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 		// timestamp of the most recent event returned by the cursor. This
 		// should be used as a resumption point when calling `getEvents` to
 		// obtain a new cursor.
-		Reset json.RawMessage `json:"reset,omitempty"`
+		Reset time.Time `json:"reset,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -9205,7 +9205,7 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "reset":
-		err = json.Unmarshal(w.Reset, &u.Reset)
+		u.Reset = w.Reset
 
 		if err != nil {
 			return err

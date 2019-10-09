@@ -199,9 +199,11 @@ class GoTypesBackend(CodeBackend):
                 for field in fields:
                     if is_void_type(field.data_type) or (
                             is_struct_type(field.data_type) and not _needs_base_type(field.data_type)):
+                        # pure structures are flattened in the containing union json blob and thus are loaded from body
                         continue
+                    # sub-unions must be handled as RawMessage, which will be loaded into correct implementation later
                     self._generate_field(field, union_field=True,
-                                         namespace=namespace, raw=True)
+                                         namespace=namespace, raw=_needs_base_type(field.data_type))
             self.emit('var w wrap')
             self.emit('var err error')
             with self.block('if err = json.Unmarshal(body, &w); err != nil'):
@@ -220,8 +222,7 @@ class GoTypesBackend(CodeBackend):
                             self.emit('err = json.Unmarshal(body, &u.{0})'
                                   .format(field_name))
                         else:
-                            self.emit('err = json.Unmarshal(w.{0}, &u.{0})'
-                                            .format(field_name))
+                            self.emit('u.{0} = w.{0}'.format(field_name))
                     with self.block("if err != nil"):
                         self.emit("return err")
             self.emit('return nil')
