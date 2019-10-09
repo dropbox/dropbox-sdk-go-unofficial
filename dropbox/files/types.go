@@ -319,8 +319,6 @@ const (
 func (u *CreateFolderBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : The batch create folder has finished.
-		Complete json.RawMessage `json:"complete,omitempty"`
 		// Failed : The batch create folder has failed.
 		Failed json.RawMessage `json:"failed,omitempty"`
 	}
@@ -370,8 +368,10 @@ const (
 func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -381,7 +381,7 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -440,8 +440,6 @@ const (
 func (u *CreateFolderBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Success : has no documentation (yet)
-		Success json.RawMessage `json:"success,omitempty"`
 		// Failure : has no documentation (yet)
 		Failure json.RawMessage `json:"failure,omitempty"`
 	}
@@ -629,8 +627,6 @@ const (
 func (u *DeleteBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : The batch delete has finished.
-		Complete json.RawMessage `json:"complete,omitempty"`
 		// Failed : The batch delete has failed.
 		Failed json.RawMessage `json:"failed,omitempty"`
 	}
@@ -680,8 +676,10 @@ const (
 func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -691,7 +689,7 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -771,8 +769,6 @@ const (
 func (u *DeleteBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Success : has no documentation (yet)
-		Success json.RawMessage `json:"success,omitempty"`
 		// Failure : has no documentation (yet)
 		Failure json.RawMessage `json:"failure,omitempty"`
 	}
@@ -939,12 +935,6 @@ const (
 func (u *metadataUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// File : has no documentation (yet)
-		File json.RawMessage `json:"file,omitempty"`
-		// Folder : has no documentation (yet)
-		Folder json.RawMessage `json:"folder,omitempty"`
-		// Deleted : has no documentation (yet)
-		Deleted json.RawMessage `json:"deleted,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1050,8 +1040,9 @@ type DownloadError struct {
 
 // Valid tag values for DownloadError
 const (
-	DownloadErrorPath  = "path"
-	DownloadErrorOther = "other"
+	DownloadErrorPath            = "path"
+	DownloadErrorUnsupportedFile = "unsupported_file"
+	DownloadErrorOther           = "other"
 )
 
 // UnmarshalJSON deserializes into a DownloadError instance
@@ -1143,6 +1134,107 @@ func NewDownloadZipResult(Metadata *FolderMetadata) *DownloadZipResult {
 	return s
 }
 
+// ExportArg : has no documentation (yet)
+type ExportArg struct {
+	// Path : The path of the file to be exported.
+	Path string `json:"path"`
+}
+
+// NewExportArg returns a new ExportArg instance
+func NewExportArg(Path string) *ExportArg {
+	s := new(ExportArg)
+	s.Path = Path
+	return s
+}
+
+// ExportError : has no documentation (yet)
+type ExportError struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for ExportError
+const (
+	ExportErrorPath          = "path"
+	ExportErrorNonExportable = "non_exportable"
+	ExportErrorOther         = "other"
+)
+
+// UnmarshalJSON deserializes into a ExportError instance
+func (u *ExportError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path json.RawMessage `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		err = json.Unmarshal(w.Path, &u.Path)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ExportInfo : Export information for a file.
+type ExportInfo struct {
+	// ExportAs : Format to which the file can be exported to.
+	ExportAs string `json:"export_as,omitempty"`
+}
+
+// NewExportInfo returns a new ExportInfo instance
+func NewExportInfo() *ExportInfo {
+	s := new(ExportInfo)
+	return s
+}
+
+// ExportMetadata : has no documentation (yet)
+type ExportMetadata struct {
+	// Name : The last component of the path (including extension). This never
+	// contains a slash.
+	Name string `json:"name"`
+	// Size : The file size in bytes.
+	Size uint64 `json:"size"`
+	// ExportHash : A hash based on the exported file content. This field can be
+	// used to verify data integrity. Similar to content hash. For more
+	// information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ExportHash string `json:"export_hash,omitempty"`
+}
+
+// NewExportMetadata returns a new ExportMetadata instance
+func NewExportMetadata(Name string, Size uint64) *ExportMetadata {
+	s := new(ExportMetadata)
+	s.Name = Name
+	s.Size = Size
+	return s
+}
+
+// ExportResult : has no documentation (yet)
+type ExportResult struct {
+	// ExportMetadata : Metadata for the exported version of the file.
+	ExportMetadata *ExportMetadata `json:"export_metadata"`
+	// FileMetadata : Metadata for the original file.
+	FileMetadata *FileMetadata `json:"file_metadata"`
+}
+
+// NewExportResult returns a new ExportResult instance
+func NewExportResult(ExportMetadata *ExportMetadata, FileMetadata *FileMetadata) *ExportResult {
+	s := new(ExportResult)
+	s.ExportMetadata = ExportMetadata
+	s.FileMetadata = FileMetadata
+	return s
+}
+
 // FileMetadata : has no documentation (yet)
 type FileMetadata struct {
 	Metadata
@@ -1162,12 +1254,20 @@ type FileMetadata struct {
 	Rev string `json:"rev"`
 	// Size : The file size in bytes.
 	Size uint64 `json:"size"`
-	// MediaInfo : Additional information if the file is a photo or video.
+	// MediaInfo : Additional information if the file is a photo or video. This
+	// field will not be set on entries returned by `listFolder`,
+	// `listFolderContinue`, or `getThumbnailBatch`, starting December 2, 2019.
 	MediaInfo *MediaInfo `json:"media_info,omitempty"`
 	// SymlinkInfo : Set if this file is a symlink.
 	SymlinkInfo *SymlinkInfo `json:"symlink_info,omitempty"`
 	// SharingInfo : Set if this file is contained in a shared folder.
 	SharingInfo *FileSharingInfo `json:"sharing_info,omitempty"`
+	// IsDownloadable : If true, file can be downloaded directly; else the file
+	// must be exported.
+	IsDownloadable bool `json:"is_downloadable"`
+	// ExportInfo : Information about format this file can be exported to. This
+	// filed must be set if `is_downloadable` is set to false.
+	ExportInfo *ExportInfo `json:"export_info,omitempty"`
 	// PropertyGroups : Additional information if the file has custom properties
 	// with the property template specified.
 	PropertyGroups []*file_properties.PropertyGroup `json:"property_groups,omitempty"`
@@ -1193,6 +1293,7 @@ func NewFileMetadata(Name string, Id string, ClientModified time.Time, ServerMod
 	s.ServerModified = ServerModified
 	s.Rev = Rev
 	s.Size = Size
+	s.IsDownloadable = true
 	return s
 }
 
@@ -1401,8 +1502,10 @@ type GetTemporaryLinkError struct {
 
 // Valid tag values for GetTemporaryLinkError
 const (
-	GetTemporaryLinkErrorPath  = "path"
-	GetTemporaryLinkErrorOther = "other"
+	GetTemporaryLinkErrorPath             = "path"
+	GetTemporaryLinkErrorEmailNotVerified = "email_not_verified"
+	GetTemporaryLinkErrorUnsupportedFile  = "unsupported_file"
+	GetTemporaryLinkErrorOther            = "other"
 )
 
 // UnmarshalJSON deserializes into a GetTemporaryLinkError instance
@@ -1552,8 +1655,6 @@ const (
 func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Success : has no documentation (yet)
-		Success json.RawMessage `json:"success,omitempty"`
 		// Failure : The result for this file if it was an error.
 		Failure json.RawMessage `json:"failure,omitempty"`
 	}
@@ -1605,7 +1706,8 @@ type ListFolderArg struct {
 	// all subfolders.
 	Recursive bool `json:"recursive"`
 	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo
-	// and video.
+	// and video. This parameter will no longer have an effect starting December
+	// 2, 2019.
 	IncludeMediaInfo bool `json:"include_media_info"`
 	// IncludeDeleted : If true, the results will include entries for files and
 	// folders that used to exist but were deleted.
@@ -1630,6 +1732,9 @@ type ListFolderArg struct {
 	// `FileMetadata.property_groups` is set if there exists property data
 	// associated with the file and each of the listed templates.
 	IncludePropertyGroups *file_properties.TemplateFilterBase `json:"include_property_groups,omitempty"`
+	// IncludeNonDownloadableFiles : If true, include files that are not
+	// downloadable, i.e. Google Docs.
+	IncludeNonDownloadableFiles bool `json:"include_non_downloadable_files"`
 }
 
 // NewListFolderArg returns a new ListFolderArg instance
@@ -1641,6 +1746,7 @@ func NewListFolderArg(Path string) *ListFolderArg {
 	s.IncludeDeleted = false
 	s.IncludeHasExplicitSharedMembers = false
 	s.IncludeMountedFolders = true
+	s.IncludeNonDownloadableFiles = true
 	return s
 }
 
@@ -1947,12 +2053,13 @@ type LookupError struct {
 
 // Valid tag values for LookupError
 const (
-	LookupErrorMalformedPath     = "malformed_path"
-	LookupErrorNotFound          = "not_found"
-	LookupErrorNotFile           = "not_file"
-	LookupErrorNotFolder         = "not_folder"
-	LookupErrorRestrictedContent = "restricted_content"
-	LookupErrorOther             = "other"
+	LookupErrorMalformedPath          = "malformed_path"
+	LookupErrorNotFound               = "not_found"
+	LookupErrorNotFile                = "not_file"
+	LookupErrorNotFolder              = "not_folder"
+	LookupErrorRestrictedContent      = "restricted_content"
+	LookupErrorUnsupportedContentType = "unsupported_content_type"
+	LookupErrorOther                  = "other"
 )
 
 // UnmarshalJSON deserializes into a LookupError instance
@@ -1973,7 +2080,7 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "malformed_path":
-		err = json.Unmarshal(body, &u.MalformedPath)
+		err = json.Unmarshal(w.MalformedPath, &u.MalformedPath)
 
 		if err != nil {
 			return err
@@ -2010,7 +2117,7 @@ func (u *MediaInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "metadata":
-		u.Metadata, err = IsMediaMetadataFromJSON(body)
+		u.Metadata, err = IsMediaMetadataFromJSON(w.Metadata)
 
 		if err != nil {
 			return err
@@ -2061,10 +2168,6 @@ const (
 func (u *mediaMetadataUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Photo : has no documentation (yet)
-		Photo json.RawMessage `json:"photo,omitempty"`
-		// Video : has no documentation (yet)
-		Video json.RawMessage `json:"video,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2298,6 +2401,7 @@ const (
 	RelocationErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationErrorInsufficientQuota        = "insufficient_quota"
 	RelocationErrorInternalError            = "internal_error"
+	RelocationErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationErrorOther                    = "other"
 )
 
@@ -2365,6 +2469,7 @@ const (
 	RelocationBatchErrorCantTransferOwnership    = "cant_transfer_ownership"
 	RelocationBatchErrorInsufficientQuota        = "insufficient_quota"
 	RelocationBatchErrorInternalError            = "internal_error"
+	RelocationBatchErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationBatchErrorOther                    = "other"
 	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
 )
@@ -2468,8 +2573,6 @@ const (
 func (u *RelocationBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : The copy or move batch job has finished.
-		Complete json.RawMessage `json:"complete,omitempty"`
 		// Failed : The copy or move batch job has failed with exception.
 		Failed json.RawMessage `json:"failed,omitempty"`
 	}
@@ -2519,8 +2622,10 @@ const (
 func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2530,7 +2635,7 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -2623,7 +2728,7 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		u.Success, err = IsMetadataFromJSON(body)
+		u.Success, err = IsMetadataFromJSON(w.Success)
 
 		if err != nil {
 			return err
@@ -2638,8 +2743,9 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// RelocationBatchV2JobStatus : Result returned by `copyBatch` or `moveBatch`
-// that may either launch an asynchronous job or complete synchronously.
+// RelocationBatchV2JobStatus : Result returned by `copyBatchCheck` or
+// `moveBatchCheck` that may either be in progress or completed with result for
+// each entry.
 type RelocationBatchV2JobStatus struct {
 	dropbox.Tagged
 	// Complete : The copy or move batch job has finished.
@@ -2656,8 +2762,6 @@ const (
 func (u *RelocationBatchV2JobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : The copy or move batch job has finished.
-		Complete json.RawMessage `json:"complete,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2698,8 +2802,10 @@ const (
 func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2709,7 +2815,7 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -3004,8 +3110,6 @@ const (
 func (u *SaveUrlJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : Metadata of the file where the URL is saved to.
-		Complete json.RawMessage `json:"complete,omitempty"`
 		// Failed : has no documentation (yet)
 		Failed json.RawMessage `json:"failed,omitempty"`
 	}
@@ -3053,8 +3157,10 @@ const (
 func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : Metadata of the file where the URL is saved to.
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3064,7 +3170,7 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -3445,8 +3551,6 @@ const (
 func (u *UploadError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Path : Unable to save the uploaded contents to a file.
-		Path json.RawMessage `json:"path,omitempty"`
 		// PropertiesError : The supplied property group is invalid. The file
 		// has uploaded without property groups.
 		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
@@ -3495,8 +3599,6 @@ const (
 func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Path : Unable to save the uploaded contents to a file.
-		Path json.RawMessage `json:"path,omitempty"`
 		// PropertiesError : The supplied property group is invalid. The file
 		// has uploaded without property groups.
 		PropertiesError json.RawMessage `json:"properties_error,omitempty"`
@@ -3606,8 +3708,6 @@ const (
 func (u *UploadSessionFinishBatchJobStatus) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : The `uploadSessionFinishBatch` has finished.
-		Complete json.RawMessage `json:"complete,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3650,8 +3750,10 @@ const (
 func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Complete : has no documentation (yet)
-		Complete json.RawMessage `json:"complete,omitempty"`
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId json.RawMessage `json:"async_job_id,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3661,7 +3763,7 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "async_job_id":
-		err = json.Unmarshal(body, &u.AsyncJobId)
+		err = json.Unmarshal(w.AsyncJobId, &u.AsyncJobId)
 
 		if err != nil {
 			return err
@@ -3709,8 +3811,6 @@ const (
 func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Success : has no documentation (yet)
-		Success json.RawMessage `json:"success,omitempty"`
 		// Failure : has no documentation (yet)
 		Failure json.RawMessage `json:"failure,omitempty"`
 	}
@@ -3830,11 +3930,6 @@ const (
 func (u *UploadSessionLookupError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// IncorrectOffset : The specified offset was incorrect. See the value
-		// for the correct offset. This error may occur when a previous request
-		// was received and processed successfully but the client did not
-		// receive the response, e.g. due to a network error.
-		IncorrectOffset json.RawMessage `json:"incorrect_offset,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3985,7 +4080,7 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "malformed_path":
-		err = json.Unmarshal(body, &u.MalformedPath)
+		err = json.Unmarshal(w.MalformedPath, &u.MalformedPath)
 
 		if err != nil {
 			return err
@@ -4029,6 +4124,12 @@ const (
 func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// Update : Overwrite if the given "rev" matches the existing file's
+		// "rev". The autorename strategy is to append the string "conflicted
+		// copy" to the file name. For example, "document.txt" might become
+		// "document (conflicted copy).txt" or "document (Panda's conflicted
+		// copy).txt".
+		Update json.RawMessage `json:"update,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -4038,7 +4139,7 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "update":
-		err = json.Unmarshal(body, &u.Update)
+		err = json.Unmarshal(w.Update, &u.Update)
 
 		if err != nil {
 			return err
