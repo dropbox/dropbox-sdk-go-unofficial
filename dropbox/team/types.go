@@ -2200,11 +2200,17 @@ type MemberProfile struct {
 	// JoinedOn : The date and time the user joined as a member of a specific
 	// team.
 	JoinedOn time.Time `json:"joined_on,omitempty"`
+	// SuspendedOn : The date and time the user was suspended from the team
+	// (contains value only when the member's status matches
+	// `TeamMemberStatus.suspended`.
+	SuspendedOn time.Time `json:"suspended_on,omitempty"`
 	// PersistentId : Persistent ID that a team can attach to the user. The
 	// persistent ID is unique ID to be used for SAML authentication.
 	PersistentId string `json:"persistent_id,omitempty"`
 	// IsDirectoryRestricted : Whether the user is a directory restricted user.
 	IsDirectoryRestricted bool `json:"is_directory_restricted,omitempty"`
+	// ProfilePhotoUrl : URL for the photo representing the user, if one is set.
+	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
 }
 
 // NewMemberProfile returns a new MemberProfile instance
@@ -4169,6 +4175,19 @@ func NewTeamNamespacesListResult(Namespaces []*NamespaceMetadata, Cursor string,
 	s.HasMore = HasMore
 	return s
 }
+
+// TeamReportFailureReason : has no documentation (yet)
+type TeamReportFailureReason struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamReportFailureReason
+const (
+	TeamReportFailureReasonTemporaryError    = "temporary_error"
+	TeamReportFailureReasonManyReportsAtOnce = "many_reports_at_once"
+	TeamReportFailureReasonTooMuchData       = "too_much_data"
+	TeamReportFailureReasonOther             = "other"
+)
 
 // TokenGetAuthenticatedAdminError : Error returned by
 // `tokenGetAuthenticatedAdmin`.

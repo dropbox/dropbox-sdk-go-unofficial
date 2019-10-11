@@ -28,7 +28,6 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
 )
@@ -741,7 +740,7 @@ type AssetLogInfo struct {
 	File *FileLogInfo `json:"file,omitempty"`
 	// Folder : Folder's details.
 	Folder *FolderLogInfo `json:"folder,omitempty"`
-	// PaperDocument : Paper docuement's details.
+	// PaperDocument : Paper document's details.
 	PaperDocument *PaperDocumentLogInfo `json:"paper_document,omitempty"`
 	// PaperFolder : Paper folder's details.
 	PaperFolder *PaperFolderLogInfo `json:"paper_folder,omitempty"`
@@ -2199,8 +2198,7 @@ func NewEmmErrorType(Description string) *EmmErrorType {
 	return s
 }
 
-// EmmRefreshAuthTokenDetails : Refreshed auth token used for setting up
-// enterprise mobility management.
+// EmmRefreshAuthTokenDetails : Refreshed auth token used for setting up EMM.
 type EmmRefreshAuthTokenDetails struct {
 }
 
@@ -2295,6 +2293,7 @@ const (
 	EventCategoryTeamPolicies   = "team_policies"
 	EventCategoryTeamProfile    = "team_profile"
 	EventCategoryTfa            = "tfa"
+	EventCategoryTrustedTeams   = "trusted_teams"
 	EventCategoryOther          = "other"
 )
 
@@ -2309,6 +2308,10 @@ type EventDetails struct {
 	AppUnlinkTeamDetails *AppUnlinkTeamDetails `json:"app_unlink_team_details,omitempty"`
 	// AppUnlinkUserDetails : has no documentation (yet)
 	AppUnlinkUserDetails *AppUnlinkUserDetails `json:"app_unlink_user_details,omitempty"`
+	// IntegrationConnectedDetails : has no documentation (yet)
+	IntegrationConnectedDetails *IntegrationConnectedDetails `json:"integration_connected_details,omitempty"`
+	// IntegrationDisconnectedDetails : has no documentation (yet)
+	IntegrationDisconnectedDetails *IntegrationDisconnectedDetails `json:"integration_disconnected_details,omitempty"`
 	// FileAddCommentDetails : has no documentation (yet)
 	FileAddCommentDetails *FileAddCommentDetails `json:"file_add_comment_details,omitempty"`
 	// FileChangeCommentSubscriptionDetails : has no documentation (yet)
@@ -2414,6 +2417,8 @@ type EventDetails struct {
 	FileRequestCloseDetails *FileRequestCloseDetails `json:"file_request_close_details,omitempty"`
 	// FileRequestCreateDetails : has no documentation (yet)
 	FileRequestCreateDetails *FileRequestCreateDetails `json:"file_request_create_details,omitempty"`
+	// FileRequestDeleteDetails : has no documentation (yet)
+	FileRequestDeleteDetails *FileRequestDeleteDetails `json:"file_request_delete_details,omitempty"`
 	// FileRequestReceiveFileDetails : has no documentation (yet)
 	FileRequestReceiveFileDetails *FileRequestReceiveFileDetails `json:"file_request_receive_file_details,omitempty"`
 	// GroupAddExternalIdDetails : has no documentation (yet)
@@ -2444,6 +2449,10 @@ type EventDetails struct {
 	GroupRenameDetails *GroupRenameDetails `json:"group_rename_details,omitempty"`
 	// EmmErrorDetails : has no documentation (yet)
 	EmmErrorDetails *EmmErrorDetails `json:"emm_error_details,omitempty"`
+	// GuestAdminSignedInViaTrustedTeamsDetails : has no documentation (yet)
+	GuestAdminSignedInViaTrustedTeamsDetails *GuestAdminSignedInViaTrustedTeamsDetails `json:"guest_admin_signed_in_via_trusted_teams_details,omitempty"`
+	// GuestAdminSignedOutViaTrustedTeamsDetails : has no documentation (yet)
+	GuestAdminSignedOutViaTrustedTeamsDetails *GuestAdminSignedOutViaTrustedTeamsDetails `json:"guest_admin_signed_out_via_trusted_teams_details,omitempty"`
 	// LoginFailDetails : has no documentation (yet)
 	LoginFailDetails *LoginFailDetails `json:"login_fail_details,omitempty"`
 	// LoginSuccessDetails : has no documentation (yet)
@@ -2460,12 +2469,16 @@ type EventDetails struct {
 	SignInAsSessionStartDetails *SignInAsSessionStartDetails `json:"sign_in_as_session_start_details,omitempty"`
 	// SsoErrorDetails : has no documentation (yet)
 	SsoErrorDetails *SsoErrorDetails `json:"sso_error_details,omitempty"`
+	// MemberAddExternalIdDetails : has no documentation (yet)
+	MemberAddExternalIdDetails *MemberAddExternalIdDetails `json:"member_add_external_id_details,omitempty"`
 	// MemberAddNameDetails : has no documentation (yet)
 	MemberAddNameDetails *MemberAddNameDetails `json:"member_add_name_details,omitempty"`
 	// MemberChangeAdminRoleDetails : has no documentation (yet)
 	MemberChangeAdminRoleDetails *MemberChangeAdminRoleDetails `json:"member_change_admin_role_details,omitempty"`
 	// MemberChangeEmailDetails : has no documentation (yet)
 	MemberChangeEmailDetails *MemberChangeEmailDetails `json:"member_change_email_details,omitempty"`
+	// MemberChangeExternalIdDetails : has no documentation (yet)
+	MemberChangeExternalIdDetails *MemberChangeExternalIdDetails `json:"member_change_external_id_details,omitempty"`
 	// MemberChangeMembershipTypeDetails : has no documentation (yet)
 	MemberChangeMembershipTypeDetails *MemberChangeMembershipTypeDetails `json:"member_change_membership_type_details,omitempty"`
 	// MemberChangeNameDetails : has no documentation (yet)
@@ -2477,6 +2490,8 @@ type EventDetails struct {
 	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
 	// (yet)
 	MemberPermanentlyDeleteAccountContentsDetails *MemberPermanentlyDeleteAccountContentsDetails `json:"member_permanently_delete_account_contents_details,omitempty"`
+	// MemberRemoveExternalIdDetails : has no documentation (yet)
+	MemberRemoveExternalIdDetails *MemberRemoveExternalIdDetails `json:"member_remove_external_id_details,omitempty"`
 	// MemberSpaceLimitsAddCustomQuotaDetails : has no documentation (yet)
 	MemberSpaceLimitsAddCustomQuotaDetails *MemberSpaceLimitsAddCustomQuotaDetails `json:"member_space_limits_add_custom_quota_details,omitempty"`
 	// MemberSpaceLimitsChangeCustomQuotaDetails : has no documentation (yet)
@@ -2565,6 +2580,12 @@ type EventDetails struct {
 	PaperFolderFollowedDetails *PaperFolderFollowedDetails `json:"paper_folder_followed_details,omitempty"`
 	// PaperFolderTeamInviteDetails : has no documentation (yet)
 	PaperFolderTeamInviteDetails *PaperFolderTeamInviteDetails `json:"paper_folder_team_invite_details,omitempty"`
+	// PaperPublishedLinkCreateDetails : has no documentation (yet)
+	PaperPublishedLinkCreateDetails *PaperPublishedLinkCreateDetails `json:"paper_published_link_create_details,omitempty"`
+	// PaperPublishedLinkDisabledDetails : has no documentation (yet)
+	PaperPublishedLinkDisabledDetails *PaperPublishedLinkDisabledDetails `json:"paper_published_link_disabled_details,omitempty"`
+	// PaperPublishedLinkViewDetails : has no documentation (yet)
+	PaperPublishedLinkViewDetails *PaperPublishedLinkViewDetails `json:"paper_published_link_view_details,omitempty"`
 	// PasswordChangeDetails : has no documentation (yet)
 	PasswordChangeDetails *PasswordChangeDetails `json:"password_change_details,omitempty"`
 	// PasswordResetDetails : has no documentation (yet)
@@ -2583,6 +2604,8 @@ type EventDetails struct {
 	SmartSyncCreateAdminPrivilegeReportDetails *SmartSyncCreateAdminPrivilegeReportDetails `json:"smart_sync_create_admin_privilege_report_details,omitempty"`
 	// TeamActivityCreateReportDetails : has no documentation (yet)
 	TeamActivityCreateReportDetails *TeamActivityCreateReportDetails `json:"team_activity_create_report_details,omitempty"`
+	// TeamActivityCreateReportFailDetails : has no documentation (yet)
+	TeamActivityCreateReportFailDetails *TeamActivityCreateReportFailDetails `json:"team_activity_create_report_fail_details,omitempty"`
 	// CollectionShareDetails : has no documentation (yet)
 	CollectionShareDetails *CollectionShareDetails `json:"collection_share_details,omitempty"`
 	// NoteAclInviteOnlyDetails : has no documentation (yet)
@@ -2838,6 +2861,8 @@ type EventDetails struct {
 	GoogleSsoChangePolicyDetails *GoogleSsoChangePolicyDetails `json:"google_sso_change_policy_details,omitempty"`
 	// GroupUserManagementChangePolicyDetails : has no documentation (yet)
 	GroupUserManagementChangePolicyDetails *GroupUserManagementChangePolicyDetails `json:"group_user_management_change_policy_details,omitempty"`
+	// IntegrationPolicyChangedDetails : has no documentation (yet)
+	IntegrationPolicyChangedDetails *IntegrationPolicyChangedDetails `json:"integration_policy_changed_details,omitempty"`
 	// MemberRequestsChangePolicyDetails : has no documentation (yet)
 	MemberRequestsChangePolicyDetails *MemberRequestsChangePolicyDetails `json:"member_requests_change_policy_details,omitempty"`
 	// MemberSpaceLimitsAddExceptionDetails : has no documentation (yet)
@@ -2862,12 +2887,18 @@ type EventDetails struct {
 	PaperChangeMemberPolicyDetails *PaperChangeMemberPolicyDetails `json:"paper_change_member_policy_details,omitempty"`
 	// PaperChangePolicyDetails : has no documentation (yet)
 	PaperChangePolicyDetails *PaperChangePolicyDetails `json:"paper_change_policy_details,omitempty"`
+	// PaperDefaultFolderPolicyChangedDetails : has no documentation (yet)
+	PaperDefaultFolderPolicyChangedDetails *PaperDefaultFolderPolicyChangedDetails `json:"paper_default_folder_policy_changed_details,omitempty"`
+	// PaperDesktopPolicyChangedDetails : has no documentation (yet)
+	PaperDesktopPolicyChangedDetails *PaperDesktopPolicyChangedDetails `json:"paper_desktop_policy_changed_details,omitempty"`
 	// PaperEnabledUsersGroupAdditionDetails : has no documentation (yet)
 	PaperEnabledUsersGroupAdditionDetails *PaperEnabledUsersGroupAdditionDetails `json:"paper_enabled_users_group_addition_details,omitempty"`
 	// PaperEnabledUsersGroupRemovalDetails : has no documentation (yet)
 	PaperEnabledUsersGroupRemovalDetails *PaperEnabledUsersGroupRemovalDetails `json:"paper_enabled_users_group_removal_details,omitempty"`
 	// PermanentDeleteChangePolicyDetails : has no documentation (yet)
 	PermanentDeleteChangePolicyDetails *PermanentDeleteChangePolicyDetails `json:"permanent_delete_change_policy_details,omitempty"`
+	// ResellerSupportChangePolicyDetails : has no documentation (yet)
+	ResellerSupportChangePolicyDetails *ResellerSupportChangePolicyDetails `json:"reseller_support_change_policy_details,omitempty"`
 	// SharingChangeFolderJoinPolicyDetails : has no documentation (yet)
 	SharingChangeFolderJoinPolicyDetails *SharingChangeFolderJoinPolicyDetails `json:"sharing_change_folder_join_policy_details,omitempty"`
 	// SharingChangeLinkPolicyDetails : has no documentation (yet)
@@ -2888,6 +2919,8 @@ type EventDetails struct {
 	SmartSyncOptOutDetails *SmartSyncOptOutDetails `json:"smart_sync_opt_out_details,omitempty"`
 	// SsoChangePolicyDetails : has no documentation (yet)
 	SsoChangePolicyDetails *SsoChangePolicyDetails `json:"sso_change_policy_details,omitempty"`
+	// TeamExtensionsPolicyChangedDetails : has no documentation (yet)
+	TeamExtensionsPolicyChangedDetails *TeamExtensionsPolicyChangedDetails `json:"team_extensions_policy_changed_details,omitempty"`
 	// TeamSelectiveSyncPolicyChangedDetails : has no documentation (yet)
 	TeamSelectiveSyncPolicyChangedDetails *TeamSelectiveSyncPolicyChangedDetails `json:"team_selective_sync_policy_changed_details,omitempty"`
 	// TfaChangePolicyDetails : has no documentation (yet)
@@ -2928,6 +2961,56 @@ type EventDetails struct {
 	TfaRemoveSecurityKeyDetails *TfaRemoveSecurityKeyDetails `json:"tfa_remove_security_key_details,omitempty"`
 	// TfaResetDetails : has no documentation (yet)
 	TfaResetDetails *TfaResetDetails `json:"tfa_reset_details,omitempty"`
+	// GuestAdminChangeStatusDetails : has no documentation (yet)
+	GuestAdminChangeStatusDetails *GuestAdminChangeStatusDetails `json:"guest_admin_change_status_details,omitempty"`
+	// TeamMergeRequestAcceptedDetails : has no documentation (yet)
+	TeamMergeRequestAcceptedDetails *TeamMergeRequestAcceptedDetails `json:"team_merge_request_accepted_details,omitempty"`
+	// TeamMergeRequestAcceptedShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestAcceptedShownToPrimaryTeamDetails *TeamMergeRequestAcceptedShownToPrimaryTeamDetails `json:"team_merge_request_accepted_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestAcceptedShownToSecondaryTeamDetails : has no
+	// documentation (yet)
+	TeamMergeRequestAcceptedShownToSecondaryTeamDetails *TeamMergeRequestAcceptedShownToSecondaryTeamDetails `json:"team_merge_request_accepted_shown_to_secondary_team_details,omitempty"`
+	// TeamMergeRequestAutoCanceledDetails : has no documentation (yet)
+	TeamMergeRequestAutoCanceledDetails *TeamMergeRequestAutoCanceledDetails `json:"team_merge_request_auto_canceled_details,omitempty"`
+	// TeamMergeRequestCanceledDetails : has no documentation (yet)
+	TeamMergeRequestCanceledDetails *TeamMergeRequestCanceledDetails `json:"team_merge_request_canceled_details,omitempty"`
+	// TeamMergeRequestCanceledShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestCanceledShownToPrimaryTeamDetails *TeamMergeRequestCanceledShownToPrimaryTeamDetails `json:"team_merge_request_canceled_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestCanceledShownToSecondaryTeamDetails : has no
+	// documentation (yet)
+	TeamMergeRequestCanceledShownToSecondaryTeamDetails *TeamMergeRequestCanceledShownToSecondaryTeamDetails `json:"team_merge_request_canceled_shown_to_secondary_team_details,omitempty"`
+	// TeamMergeRequestExpiredDetails : has no documentation (yet)
+	TeamMergeRequestExpiredDetails *TeamMergeRequestExpiredDetails `json:"team_merge_request_expired_details,omitempty"`
+	// TeamMergeRequestExpiredShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestExpiredShownToPrimaryTeamDetails *TeamMergeRequestExpiredShownToPrimaryTeamDetails `json:"team_merge_request_expired_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestExpiredShownToSecondaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestExpiredShownToSecondaryTeamDetails *TeamMergeRequestExpiredShownToSecondaryTeamDetails `json:"team_merge_request_expired_shown_to_secondary_team_details,omitempty"`
+	// TeamMergeRequestRejectedShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestRejectedShownToPrimaryTeamDetails *TeamMergeRequestRejectedShownToPrimaryTeamDetails `json:"team_merge_request_rejected_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestRejectedShownToSecondaryTeamDetails : has no
+	// documentation (yet)
+	TeamMergeRequestRejectedShownToSecondaryTeamDetails *TeamMergeRequestRejectedShownToSecondaryTeamDetails `json:"team_merge_request_rejected_shown_to_secondary_team_details,omitempty"`
+	// TeamMergeRequestReminderDetails : has no documentation (yet)
+	TeamMergeRequestReminderDetails *TeamMergeRequestReminderDetails `json:"team_merge_request_reminder_details,omitempty"`
+	// TeamMergeRequestReminderShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestReminderShownToPrimaryTeamDetails *TeamMergeRequestReminderShownToPrimaryTeamDetails `json:"team_merge_request_reminder_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestReminderShownToSecondaryTeamDetails : has no
+	// documentation (yet)
+	TeamMergeRequestReminderShownToSecondaryTeamDetails *TeamMergeRequestReminderShownToSecondaryTeamDetails `json:"team_merge_request_reminder_shown_to_secondary_team_details,omitempty"`
+	// TeamMergeRequestRevokedDetails : has no documentation (yet)
+	TeamMergeRequestRevokedDetails *TeamMergeRequestRevokedDetails `json:"team_merge_request_revoked_details,omitempty"`
+	// TeamMergeRequestSentShownToPrimaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestSentShownToPrimaryTeamDetails *TeamMergeRequestSentShownToPrimaryTeamDetails `json:"team_merge_request_sent_shown_to_primary_team_details,omitempty"`
+	// TeamMergeRequestSentShownToSecondaryTeamDetails : has no documentation
+	// (yet)
+	TeamMergeRequestSentShownToSecondaryTeamDetails *TeamMergeRequestSentShownToSecondaryTeamDetails `json:"team_merge_request_sent_shown_to_secondary_team_details,omitempty"`
 	// MissingDetails : Hints that this event was returned with missing details
 	// due to an internal error.
 	MissingDetails *MissingDetails `json:"missing_details,omitempty"`
@@ -2935,319 +3018,355 @@ type EventDetails struct {
 
 // Valid tag values for EventDetails
 const (
-	EventDetailsAppLinkTeamDetails                                = "app_link_team_details"
-	EventDetailsAppLinkUserDetails                                = "app_link_user_details"
-	EventDetailsAppUnlinkTeamDetails                              = "app_unlink_team_details"
-	EventDetailsAppUnlinkUserDetails                              = "app_unlink_user_details"
-	EventDetailsFileAddCommentDetails                             = "file_add_comment_details"
-	EventDetailsFileChangeCommentSubscriptionDetails              = "file_change_comment_subscription_details"
-	EventDetailsFileDeleteCommentDetails                          = "file_delete_comment_details"
-	EventDetailsFileEditCommentDetails                            = "file_edit_comment_details"
-	EventDetailsFileLikeCommentDetails                            = "file_like_comment_details"
-	EventDetailsFileResolveCommentDetails                         = "file_resolve_comment_details"
-	EventDetailsFileUnlikeCommentDetails                          = "file_unlike_comment_details"
-	EventDetailsFileUnresolveCommentDetails                       = "file_unresolve_comment_details"
-	EventDetailsDeviceChangeIpDesktopDetails                      = "device_change_ip_desktop_details"
-	EventDetailsDeviceChangeIpMobileDetails                       = "device_change_ip_mobile_details"
-	EventDetailsDeviceChangeIpWebDetails                          = "device_change_ip_web_details"
-	EventDetailsDeviceDeleteOnUnlinkFailDetails                   = "device_delete_on_unlink_fail_details"
-	EventDetailsDeviceDeleteOnUnlinkSuccessDetails                = "device_delete_on_unlink_success_details"
-	EventDetailsDeviceLinkFailDetails                             = "device_link_fail_details"
-	EventDetailsDeviceLinkSuccessDetails                          = "device_link_success_details"
-	EventDetailsDeviceManagementDisabledDetails                   = "device_management_disabled_details"
-	EventDetailsDeviceManagementEnabledDetails                    = "device_management_enabled_details"
-	EventDetailsDeviceUnlinkDetails                               = "device_unlink_details"
-	EventDetailsEmmRefreshAuthTokenDetails                        = "emm_refresh_auth_token_details"
-	EventDetailsAccountCaptureChangeAvailabilityDetails           = "account_capture_change_availability_details"
-	EventDetailsAccountCaptureMigrateAccountDetails               = "account_capture_migrate_account_details"
-	EventDetailsAccountCaptureNotificationEmailsSentDetails       = "account_capture_notification_emails_sent_details"
-	EventDetailsAccountCaptureRelinquishAccountDetails            = "account_capture_relinquish_account_details"
-	EventDetailsDisabledDomainInvitesDetails                      = "disabled_domain_invites_details"
-	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails      = "domain_invites_approve_request_to_join_team_details"
-	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails      = "domain_invites_decline_request_to_join_team_details"
-	EventDetailsDomainInvitesEmailExistingUsersDetails            = "domain_invites_email_existing_users_details"
-	EventDetailsDomainInvitesRequestToJoinTeamDetails             = "domain_invites_request_to_join_team_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails      = "domain_invites_set_invite_new_user_pref_to_no_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails     = "domain_invites_set_invite_new_user_pref_to_yes_details"
-	EventDetailsDomainVerificationAddDomainFailDetails            = "domain_verification_add_domain_fail_details"
-	EventDetailsDomainVerificationAddDomainSuccessDetails         = "domain_verification_add_domain_success_details"
-	EventDetailsDomainVerificationRemoveDomainDetails             = "domain_verification_remove_domain_details"
-	EventDetailsEnabledDomainInvitesDetails                       = "enabled_domain_invites_details"
-	EventDetailsCreateFolderDetails                               = "create_folder_details"
-	EventDetailsFileAddDetails                                    = "file_add_details"
-	EventDetailsFileCopyDetails                                   = "file_copy_details"
-	EventDetailsFileDeleteDetails                                 = "file_delete_details"
-	EventDetailsFileDownloadDetails                               = "file_download_details"
-	EventDetailsFileEditDetails                                   = "file_edit_details"
-	EventDetailsFileGetCopyReferenceDetails                       = "file_get_copy_reference_details"
-	EventDetailsFileMoveDetails                                   = "file_move_details"
-	EventDetailsFilePermanentlyDeleteDetails                      = "file_permanently_delete_details"
-	EventDetailsFilePreviewDetails                                = "file_preview_details"
-	EventDetailsFileRenameDetails                                 = "file_rename_details"
-	EventDetailsFileRestoreDetails                                = "file_restore_details"
-	EventDetailsFileRevertDetails                                 = "file_revert_details"
-	EventDetailsFileRollbackChangesDetails                        = "file_rollback_changes_details"
-	EventDetailsFileSaveCopyReferenceDetails                      = "file_save_copy_reference_details"
-	EventDetailsFileRequestChangeDetails                          = "file_request_change_details"
-	EventDetailsFileRequestCloseDetails                           = "file_request_close_details"
-	EventDetailsFileRequestCreateDetails                          = "file_request_create_details"
-	EventDetailsFileRequestReceiveFileDetails                     = "file_request_receive_file_details"
-	EventDetailsGroupAddExternalIdDetails                         = "group_add_external_id_details"
-	EventDetailsGroupAddMemberDetails                             = "group_add_member_details"
-	EventDetailsGroupChangeExternalIdDetails                      = "group_change_external_id_details"
-	EventDetailsGroupChangeManagementTypeDetails                  = "group_change_management_type_details"
-	EventDetailsGroupChangeMemberRoleDetails                      = "group_change_member_role_details"
-	EventDetailsGroupCreateDetails                                = "group_create_details"
-	EventDetailsGroupDeleteDetails                                = "group_delete_details"
-	EventDetailsGroupDescriptionUpdatedDetails                    = "group_description_updated_details"
-	EventDetailsGroupJoinPolicyUpdatedDetails                     = "group_join_policy_updated_details"
-	EventDetailsGroupMovedDetails                                 = "group_moved_details"
-	EventDetailsGroupRemoveExternalIdDetails                      = "group_remove_external_id_details"
-	EventDetailsGroupRemoveMemberDetails                          = "group_remove_member_details"
-	EventDetailsGroupRenameDetails                                = "group_rename_details"
-	EventDetailsEmmErrorDetails                                   = "emm_error_details"
-	EventDetailsLoginFailDetails                                  = "login_fail_details"
-	EventDetailsLoginSuccessDetails                               = "login_success_details"
-	EventDetailsLogoutDetails                                     = "logout_details"
-	EventDetailsResellerSupportSessionEndDetails                  = "reseller_support_session_end_details"
-	EventDetailsResellerSupportSessionStartDetails                = "reseller_support_session_start_details"
-	EventDetailsSignInAsSessionEndDetails                         = "sign_in_as_session_end_details"
-	EventDetailsSignInAsSessionStartDetails                       = "sign_in_as_session_start_details"
-	EventDetailsSsoErrorDetails                                   = "sso_error_details"
-	EventDetailsMemberAddNameDetails                              = "member_add_name_details"
-	EventDetailsMemberChangeAdminRoleDetails                      = "member_change_admin_role_details"
-	EventDetailsMemberChangeEmailDetails                          = "member_change_email_details"
-	EventDetailsMemberChangeMembershipTypeDetails                 = "member_change_membership_type_details"
-	EventDetailsMemberChangeNameDetails                           = "member_change_name_details"
-	EventDetailsMemberChangeStatusDetails                         = "member_change_status_details"
-	EventDetailsMemberDeleteManualContactsDetails                 = "member_delete_manual_contacts_details"
-	EventDetailsMemberPermanentlyDeleteAccountContentsDetails     = "member_permanently_delete_account_contents_details"
-	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails            = "member_space_limits_add_custom_quota_details"
-	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails         = "member_space_limits_change_custom_quota_details"
-	EventDetailsMemberSpaceLimitsChangeStatusDetails              = "member_space_limits_change_status_details"
-	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails         = "member_space_limits_remove_custom_quota_details"
-	EventDetailsMemberSuggestDetails                              = "member_suggest_details"
-	EventDetailsMemberTransferAccountContentsDetails              = "member_transfer_account_contents_details"
-	EventDetailsSecondaryMailsPolicyChangedDetails                = "secondary_mails_policy_changed_details"
-	EventDetailsPaperContentAddMemberDetails                      = "paper_content_add_member_details"
-	EventDetailsPaperContentAddToFolderDetails                    = "paper_content_add_to_folder_details"
-	EventDetailsPaperContentArchiveDetails                        = "paper_content_archive_details"
-	EventDetailsPaperContentCreateDetails                         = "paper_content_create_details"
-	EventDetailsPaperContentPermanentlyDeleteDetails              = "paper_content_permanently_delete_details"
-	EventDetailsPaperContentRemoveFromFolderDetails               = "paper_content_remove_from_folder_details"
-	EventDetailsPaperContentRemoveMemberDetails                   = "paper_content_remove_member_details"
-	EventDetailsPaperContentRenameDetails                         = "paper_content_rename_details"
-	EventDetailsPaperContentRestoreDetails                        = "paper_content_restore_details"
-	EventDetailsPaperDocAddCommentDetails                         = "paper_doc_add_comment_details"
-	EventDetailsPaperDocChangeMemberRoleDetails                   = "paper_doc_change_member_role_details"
-	EventDetailsPaperDocChangeSharingPolicyDetails                = "paper_doc_change_sharing_policy_details"
-	EventDetailsPaperDocChangeSubscriptionDetails                 = "paper_doc_change_subscription_details"
-	EventDetailsPaperDocDeletedDetails                            = "paper_doc_deleted_details"
-	EventDetailsPaperDocDeleteCommentDetails                      = "paper_doc_delete_comment_details"
-	EventDetailsPaperDocDownloadDetails                           = "paper_doc_download_details"
-	EventDetailsPaperDocEditDetails                               = "paper_doc_edit_details"
-	EventDetailsPaperDocEditCommentDetails                        = "paper_doc_edit_comment_details"
-	EventDetailsPaperDocFollowedDetails                           = "paper_doc_followed_details"
-	EventDetailsPaperDocMentionDetails                            = "paper_doc_mention_details"
-	EventDetailsPaperDocOwnershipChangedDetails                   = "paper_doc_ownership_changed_details"
-	EventDetailsPaperDocRequestAccessDetails                      = "paper_doc_request_access_details"
-	EventDetailsPaperDocResolveCommentDetails                     = "paper_doc_resolve_comment_details"
-	EventDetailsPaperDocRevertDetails                             = "paper_doc_revert_details"
-	EventDetailsPaperDocSlackShareDetails                         = "paper_doc_slack_share_details"
-	EventDetailsPaperDocTeamInviteDetails                         = "paper_doc_team_invite_details"
-	EventDetailsPaperDocTrashedDetails                            = "paper_doc_trashed_details"
-	EventDetailsPaperDocUnresolveCommentDetails                   = "paper_doc_unresolve_comment_details"
-	EventDetailsPaperDocUntrashedDetails                          = "paper_doc_untrashed_details"
-	EventDetailsPaperDocViewDetails                               = "paper_doc_view_details"
-	EventDetailsPaperExternalViewAllowDetails                     = "paper_external_view_allow_details"
-	EventDetailsPaperExternalViewDefaultTeamDetails               = "paper_external_view_default_team_details"
-	EventDetailsPaperExternalViewForbidDetails                    = "paper_external_view_forbid_details"
-	EventDetailsPaperFolderChangeSubscriptionDetails              = "paper_folder_change_subscription_details"
-	EventDetailsPaperFolderDeletedDetails                         = "paper_folder_deleted_details"
-	EventDetailsPaperFolderFollowedDetails                        = "paper_folder_followed_details"
-	EventDetailsPaperFolderTeamInviteDetails                      = "paper_folder_team_invite_details"
-	EventDetailsPasswordChangeDetails                             = "password_change_details"
-	EventDetailsPasswordResetDetails                              = "password_reset_details"
-	EventDetailsPasswordResetAllDetails                           = "password_reset_all_details"
-	EventDetailsEmmCreateExceptionsReportDetails                  = "emm_create_exceptions_report_details"
-	EventDetailsEmmCreateUsageReportDetails                       = "emm_create_usage_report_details"
-	EventDetailsExportMembersReportDetails                        = "export_members_report_details"
-	EventDetailsPaperAdminExportStartDetails                      = "paper_admin_export_start_details"
-	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails        = "smart_sync_create_admin_privilege_report_details"
-	EventDetailsTeamActivityCreateReportDetails                   = "team_activity_create_report_details"
-	EventDetailsCollectionShareDetails                            = "collection_share_details"
-	EventDetailsNoteAclInviteOnlyDetails                          = "note_acl_invite_only_details"
-	EventDetailsNoteAclLinkDetails                                = "note_acl_link_details"
-	EventDetailsNoteAclTeamLinkDetails                            = "note_acl_team_link_details"
-	EventDetailsNoteSharedDetails                                 = "note_shared_details"
-	EventDetailsNoteShareReceiveDetails                           = "note_share_receive_details"
-	EventDetailsOpenNoteSharedDetails                             = "open_note_shared_details"
-	EventDetailsSfAddGroupDetails                                 = "sf_add_group_details"
-	EventDetailsSfAllowNonMembersToViewSharedLinksDetails         = "sf_allow_non_members_to_view_shared_links_details"
-	EventDetailsSfExternalInviteWarnDetails                       = "sf_external_invite_warn_details"
-	EventDetailsSfFbInviteDetails                                 = "sf_fb_invite_details"
-	EventDetailsSfFbInviteChangeRoleDetails                       = "sf_fb_invite_change_role_details"
-	EventDetailsSfFbUninviteDetails                               = "sf_fb_uninvite_details"
-	EventDetailsSfInviteGroupDetails                              = "sf_invite_group_details"
-	EventDetailsSfTeamGrantAccessDetails                          = "sf_team_grant_access_details"
-	EventDetailsSfTeamInviteDetails                               = "sf_team_invite_details"
-	EventDetailsSfTeamInviteChangeRoleDetails                     = "sf_team_invite_change_role_details"
-	EventDetailsSfTeamJoinDetails                                 = "sf_team_join_details"
-	EventDetailsSfTeamJoinFromOobLinkDetails                      = "sf_team_join_from_oob_link_details"
-	EventDetailsSfTeamUninviteDetails                             = "sf_team_uninvite_details"
-	EventDetailsSharedContentAddInviteesDetails                   = "shared_content_add_invitees_details"
-	EventDetailsSharedContentAddLinkExpiryDetails                 = "shared_content_add_link_expiry_details"
-	EventDetailsSharedContentAddLinkPasswordDetails               = "shared_content_add_link_password_details"
-	EventDetailsSharedContentAddMemberDetails                     = "shared_content_add_member_details"
-	EventDetailsSharedContentChangeDownloadsPolicyDetails         = "shared_content_change_downloads_policy_details"
-	EventDetailsSharedContentChangeInviteeRoleDetails             = "shared_content_change_invitee_role_details"
-	EventDetailsSharedContentChangeLinkAudienceDetails            = "shared_content_change_link_audience_details"
-	EventDetailsSharedContentChangeLinkExpiryDetails              = "shared_content_change_link_expiry_details"
-	EventDetailsSharedContentChangeLinkPasswordDetails            = "shared_content_change_link_password_details"
-	EventDetailsSharedContentChangeMemberRoleDetails              = "shared_content_change_member_role_details"
-	EventDetailsSharedContentChangeViewerInfoPolicyDetails        = "shared_content_change_viewer_info_policy_details"
-	EventDetailsSharedContentClaimInvitationDetails               = "shared_content_claim_invitation_details"
-	EventDetailsSharedContentCopyDetails                          = "shared_content_copy_details"
-	EventDetailsSharedContentDownloadDetails                      = "shared_content_download_details"
-	EventDetailsSharedContentRelinquishMembershipDetails          = "shared_content_relinquish_membership_details"
-	EventDetailsSharedContentRemoveInviteesDetails                = "shared_content_remove_invitees_details"
-	EventDetailsSharedContentRemoveLinkExpiryDetails              = "shared_content_remove_link_expiry_details"
-	EventDetailsSharedContentRemoveLinkPasswordDetails            = "shared_content_remove_link_password_details"
-	EventDetailsSharedContentRemoveMemberDetails                  = "shared_content_remove_member_details"
-	EventDetailsSharedContentRequestAccessDetails                 = "shared_content_request_access_details"
-	EventDetailsSharedContentUnshareDetails                       = "shared_content_unshare_details"
-	EventDetailsSharedContentViewDetails                          = "shared_content_view_details"
-	EventDetailsSharedFolderChangeLinkPolicyDetails               = "shared_folder_change_link_policy_details"
-	EventDetailsSharedFolderChangeMembersInheritancePolicyDetails = "shared_folder_change_members_inheritance_policy_details"
-	EventDetailsSharedFolderChangeMembersManagementPolicyDetails  = "shared_folder_change_members_management_policy_details"
-	EventDetailsSharedFolderChangeMembersPolicyDetails            = "shared_folder_change_members_policy_details"
-	EventDetailsSharedFolderCreateDetails                         = "shared_folder_create_details"
-	EventDetailsSharedFolderDeclineInvitationDetails              = "shared_folder_decline_invitation_details"
-	EventDetailsSharedFolderMountDetails                          = "shared_folder_mount_details"
-	EventDetailsSharedFolderNestDetails                           = "shared_folder_nest_details"
-	EventDetailsSharedFolderTransferOwnershipDetails              = "shared_folder_transfer_ownership_details"
-	EventDetailsSharedFolderUnmountDetails                        = "shared_folder_unmount_details"
-	EventDetailsSharedLinkAddExpiryDetails                        = "shared_link_add_expiry_details"
-	EventDetailsSharedLinkChangeExpiryDetails                     = "shared_link_change_expiry_details"
-	EventDetailsSharedLinkChangeVisibilityDetails                 = "shared_link_change_visibility_details"
-	EventDetailsSharedLinkCopyDetails                             = "shared_link_copy_details"
-	EventDetailsSharedLinkCreateDetails                           = "shared_link_create_details"
-	EventDetailsSharedLinkDisableDetails                          = "shared_link_disable_details"
-	EventDetailsSharedLinkDownloadDetails                         = "shared_link_download_details"
-	EventDetailsSharedLinkRemoveExpiryDetails                     = "shared_link_remove_expiry_details"
-	EventDetailsSharedLinkShareDetails                            = "shared_link_share_details"
-	EventDetailsSharedLinkViewDetails                             = "shared_link_view_details"
-	EventDetailsSharedNoteOpenedDetails                           = "shared_note_opened_details"
-	EventDetailsShmodelGroupShareDetails                          = "shmodel_group_share_details"
-	EventDetailsShowcaseAccessGrantedDetails                      = "showcase_access_granted_details"
-	EventDetailsShowcaseAddMemberDetails                          = "showcase_add_member_details"
-	EventDetailsShowcaseArchivedDetails                           = "showcase_archived_details"
-	EventDetailsShowcaseCreatedDetails                            = "showcase_created_details"
-	EventDetailsShowcaseDeleteCommentDetails                      = "showcase_delete_comment_details"
-	EventDetailsShowcaseEditedDetails                             = "showcase_edited_details"
-	EventDetailsShowcaseEditCommentDetails                        = "showcase_edit_comment_details"
-	EventDetailsShowcaseFileAddedDetails                          = "showcase_file_added_details"
-	EventDetailsShowcaseFileDownloadDetails                       = "showcase_file_download_details"
-	EventDetailsShowcaseFileRemovedDetails                        = "showcase_file_removed_details"
-	EventDetailsShowcaseFileViewDetails                           = "showcase_file_view_details"
-	EventDetailsShowcasePermanentlyDeletedDetails                 = "showcase_permanently_deleted_details"
-	EventDetailsShowcasePostCommentDetails                        = "showcase_post_comment_details"
-	EventDetailsShowcaseRemoveMemberDetails                       = "showcase_remove_member_details"
-	EventDetailsShowcaseRenamedDetails                            = "showcase_renamed_details"
-	EventDetailsShowcaseRequestAccessDetails                      = "showcase_request_access_details"
-	EventDetailsShowcaseResolveCommentDetails                     = "showcase_resolve_comment_details"
-	EventDetailsShowcaseRestoredDetails                           = "showcase_restored_details"
-	EventDetailsShowcaseTrashedDetails                            = "showcase_trashed_details"
-	EventDetailsShowcaseTrashedDeprecatedDetails                  = "showcase_trashed_deprecated_details"
-	EventDetailsShowcaseUnresolveCommentDetails                   = "showcase_unresolve_comment_details"
-	EventDetailsShowcaseUntrashedDetails                          = "showcase_untrashed_details"
-	EventDetailsShowcaseUntrashedDeprecatedDetails                = "showcase_untrashed_deprecated_details"
-	EventDetailsShowcaseViewDetails                               = "showcase_view_details"
-	EventDetailsSsoAddCertDetails                                 = "sso_add_cert_details"
-	EventDetailsSsoAddLoginUrlDetails                             = "sso_add_login_url_details"
-	EventDetailsSsoAddLogoutUrlDetails                            = "sso_add_logout_url_details"
-	EventDetailsSsoChangeCertDetails                              = "sso_change_cert_details"
-	EventDetailsSsoChangeLoginUrlDetails                          = "sso_change_login_url_details"
-	EventDetailsSsoChangeLogoutUrlDetails                         = "sso_change_logout_url_details"
-	EventDetailsSsoChangeSamlIdentityModeDetails                  = "sso_change_saml_identity_mode_details"
-	EventDetailsSsoRemoveCertDetails                              = "sso_remove_cert_details"
-	EventDetailsSsoRemoveLoginUrlDetails                          = "sso_remove_login_url_details"
-	EventDetailsSsoRemoveLogoutUrlDetails                         = "sso_remove_logout_url_details"
-	EventDetailsTeamFolderChangeStatusDetails                     = "team_folder_change_status_details"
-	EventDetailsTeamFolderCreateDetails                           = "team_folder_create_details"
-	EventDetailsTeamFolderDowngradeDetails                        = "team_folder_downgrade_details"
-	EventDetailsTeamFolderPermanentlyDeleteDetails                = "team_folder_permanently_delete_details"
-	EventDetailsTeamFolderRenameDetails                           = "team_folder_rename_details"
-	EventDetailsTeamSelectiveSyncSettingsChangedDetails           = "team_selective_sync_settings_changed_details"
-	EventDetailsAccountCaptureChangePolicyDetails                 = "account_capture_change_policy_details"
-	EventDetailsAllowDownloadDisabledDetails                      = "allow_download_disabled_details"
-	EventDetailsAllowDownloadEnabledDetails                       = "allow_download_enabled_details"
-	EventDetailsCameraUploadsPolicyChangedDetails                 = "camera_uploads_policy_changed_details"
-	EventDetailsDataPlacementRestrictionChangePolicyDetails       = "data_placement_restriction_change_policy_details"
-	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails      = "data_placement_restriction_satisfy_policy_details"
-	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails         = "device_approvals_change_desktop_policy_details"
-	EventDetailsDeviceApprovalsChangeMobilePolicyDetails          = "device_approvals_change_mobile_policy_details"
-	EventDetailsDeviceApprovalsChangeOverageActionDetails         = "device_approvals_change_overage_action_details"
-	EventDetailsDeviceApprovalsChangeUnlinkActionDetails          = "device_approvals_change_unlink_action_details"
-	EventDetailsDirectoryRestrictionsAddMembersDetails            = "directory_restrictions_add_members_details"
-	EventDetailsDirectoryRestrictionsRemoveMembersDetails         = "directory_restrictions_remove_members_details"
-	EventDetailsEmmAddExceptionDetails                            = "emm_add_exception_details"
-	EventDetailsEmmChangePolicyDetails                            = "emm_change_policy_details"
-	EventDetailsEmmRemoveExceptionDetails                         = "emm_remove_exception_details"
-	EventDetailsExtendedVersionHistoryChangePolicyDetails         = "extended_version_history_change_policy_details"
-	EventDetailsFileCommentsChangePolicyDetails                   = "file_comments_change_policy_details"
-	EventDetailsFileRequestsChangePolicyDetails                   = "file_requests_change_policy_details"
-	EventDetailsFileRequestsEmailsEnabledDetails                  = "file_requests_emails_enabled_details"
-	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails     = "file_requests_emails_restricted_to_team_only_details"
-	EventDetailsGoogleSsoChangePolicyDetails                      = "google_sso_change_policy_details"
-	EventDetailsGroupUserManagementChangePolicyDetails            = "group_user_management_change_policy_details"
-	EventDetailsMemberRequestsChangePolicyDetails                 = "member_requests_change_policy_details"
-	EventDetailsMemberSpaceLimitsAddExceptionDetails              = "member_space_limits_add_exception_details"
-	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails      = "member_space_limits_change_caps_type_policy_details"
-	EventDetailsMemberSpaceLimitsChangePolicyDetails              = "member_space_limits_change_policy_details"
-	EventDetailsMemberSpaceLimitsRemoveExceptionDetails           = "member_space_limits_remove_exception_details"
-	EventDetailsMemberSuggestionsChangePolicyDetails              = "member_suggestions_change_policy_details"
-	EventDetailsMicrosoftOfficeAddinChangePolicyDetails           = "microsoft_office_addin_change_policy_details"
-	EventDetailsNetworkControlChangePolicyDetails                 = "network_control_change_policy_details"
-	EventDetailsPaperChangeDeploymentPolicyDetails                = "paper_change_deployment_policy_details"
-	EventDetailsPaperChangeMemberLinkPolicyDetails                = "paper_change_member_link_policy_details"
-	EventDetailsPaperChangeMemberPolicyDetails                    = "paper_change_member_policy_details"
-	EventDetailsPaperChangePolicyDetails                          = "paper_change_policy_details"
-	EventDetailsPaperEnabledUsersGroupAdditionDetails             = "paper_enabled_users_group_addition_details"
-	EventDetailsPaperEnabledUsersGroupRemovalDetails              = "paper_enabled_users_group_removal_details"
-	EventDetailsPermanentDeleteChangePolicyDetails                = "permanent_delete_change_policy_details"
-	EventDetailsSharingChangeFolderJoinPolicyDetails              = "sharing_change_folder_join_policy_details"
-	EventDetailsSharingChangeLinkPolicyDetails                    = "sharing_change_link_policy_details"
-	EventDetailsSharingChangeMemberPolicyDetails                  = "sharing_change_member_policy_details"
-	EventDetailsShowcaseChangeDownloadPolicyDetails               = "showcase_change_download_policy_details"
-	EventDetailsShowcaseChangeEnabledPolicyDetails                = "showcase_change_enabled_policy_details"
-	EventDetailsShowcaseChangeExternalSharingPolicyDetails        = "showcase_change_external_sharing_policy_details"
-	EventDetailsSmartSyncChangePolicyDetails                      = "smart_sync_change_policy_details"
-	EventDetailsSmartSyncNotOptOutDetails                         = "smart_sync_not_opt_out_details"
-	EventDetailsSmartSyncOptOutDetails                            = "smart_sync_opt_out_details"
-	EventDetailsSsoChangePolicyDetails                            = "sso_change_policy_details"
-	EventDetailsTeamSelectiveSyncPolicyChangedDetails             = "team_selective_sync_policy_changed_details"
-	EventDetailsTfaChangePolicyDetails                            = "tfa_change_policy_details"
-	EventDetailsTwoAccountChangePolicyDetails                     = "two_account_change_policy_details"
-	EventDetailsViewerInfoPolicyChangedDetails                    = "viewer_info_policy_changed_details"
-	EventDetailsWebSessionsChangeFixedLengthPolicyDetails         = "web_sessions_change_fixed_length_policy_details"
-	EventDetailsWebSessionsChangeIdleLengthPolicyDetails          = "web_sessions_change_idle_length_policy_details"
-	EventDetailsTeamMergeFromDetails                              = "team_merge_from_details"
-	EventDetailsTeamMergeToDetails                                = "team_merge_to_details"
-	EventDetailsTeamProfileAddLogoDetails                         = "team_profile_add_logo_details"
-	EventDetailsTeamProfileChangeDefaultLanguageDetails           = "team_profile_change_default_language_details"
-	EventDetailsTeamProfileChangeLogoDetails                      = "team_profile_change_logo_details"
-	EventDetailsTeamProfileChangeNameDetails                      = "team_profile_change_name_details"
-	EventDetailsTeamProfileRemoveLogoDetails                      = "team_profile_remove_logo_details"
-	EventDetailsTfaAddBackupPhoneDetails                          = "tfa_add_backup_phone_details"
-	EventDetailsTfaAddSecurityKeyDetails                          = "tfa_add_security_key_details"
-	EventDetailsTfaChangeBackupPhoneDetails                       = "tfa_change_backup_phone_details"
-	EventDetailsTfaChangeStatusDetails                            = "tfa_change_status_details"
-	EventDetailsTfaRemoveBackupPhoneDetails                       = "tfa_remove_backup_phone_details"
-	EventDetailsTfaRemoveSecurityKeyDetails                       = "tfa_remove_security_key_details"
-	EventDetailsTfaResetDetails                                   = "tfa_reset_details"
-	EventDetailsMissingDetails                                    = "missing_details"
-	EventDetailsOther                                             = "other"
+	EventDetailsAppLinkTeamDetails                                  = "app_link_team_details"
+	EventDetailsAppLinkUserDetails                                  = "app_link_user_details"
+	EventDetailsAppUnlinkTeamDetails                                = "app_unlink_team_details"
+	EventDetailsAppUnlinkUserDetails                                = "app_unlink_user_details"
+	EventDetailsIntegrationConnectedDetails                         = "integration_connected_details"
+	EventDetailsIntegrationDisconnectedDetails                      = "integration_disconnected_details"
+	EventDetailsFileAddCommentDetails                               = "file_add_comment_details"
+	EventDetailsFileChangeCommentSubscriptionDetails                = "file_change_comment_subscription_details"
+	EventDetailsFileDeleteCommentDetails                            = "file_delete_comment_details"
+	EventDetailsFileEditCommentDetails                              = "file_edit_comment_details"
+	EventDetailsFileLikeCommentDetails                              = "file_like_comment_details"
+	EventDetailsFileResolveCommentDetails                           = "file_resolve_comment_details"
+	EventDetailsFileUnlikeCommentDetails                            = "file_unlike_comment_details"
+	EventDetailsFileUnresolveCommentDetails                         = "file_unresolve_comment_details"
+	EventDetailsDeviceChangeIpDesktopDetails                        = "device_change_ip_desktop_details"
+	EventDetailsDeviceChangeIpMobileDetails                         = "device_change_ip_mobile_details"
+	EventDetailsDeviceChangeIpWebDetails                            = "device_change_ip_web_details"
+	EventDetailsDeviceDeleteOnUnlinkFailDetails                     = "device_delete_on_unlink_fail_details"
+	EventDetailsDeviceDeleteOnUnlinkSuccessDetails                  = "device_delete_on_unlink_success_details"
+	EventDetailsDeviceLinkFailDetails                               = "device_link_fail_details"
+	EventDetailsDeviceLinkSuccessDetails                            = "device_link_success_details"
+	EventDetailsDeviceManagementDisabledDetails                     = "device_management_disabled_details"
+	EventDetailsDeviceManagementEnabledDetails                      = "device_management_enabled_details"
+	EventDetailsDeviceUnlinkDetails                                 = "device_unlink_details"
+	EventDetailsEmmRefreshAuthTokenDetails                          = "emm_refresh_auth_token_details"
+	EventDetailsAccountCaptureChangeAvailabilityDetails             = "account_capture_change_availability_details"
+	EventDetailsAccountCaptureMigrateAccountDetails                 = "account_capture_migrate_account_details"
+	EventDetailsAccountCaptureNotificationEmailsSentDetails         = "account_capture_notification_emails_sent_details"
+	EventDetailsAccountCaptureRelinquishAccountDetails              = "account_capture_relinquish_account_details"
+	EventDetailsDisabledDomainInvitesDetails                        = "disabled_domain_invites_details"
+	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails        = "domain_invites_approve_request_to_join_team_details"
+	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails        = "domain_invites_decline_request_to_join_team_details"
+	EventDetailsDomainInvitesEmailExistingUsersDetails              = "domain_invites_email_existing_users_details"
+	EventDetailsDomainInvitesRequestToJoinTeamDetails               = "domain_invites_request_to_join_team_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails        = "domain_invites_set_invite_new_user_pref_to_no_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails       = "domain_invites_set_invite_new_user_pref_to_yes_details"
+	EventDetailsDomainVerificationAddDomainFailDetails              = "domain_verification_add_domain_fail_details"
+	EventDetailsDomainVerificationAddDomainSuccessDetails           = "domain_verification_add_domain_success_details"
+	EventDetailsDomainVerificationRemoveDomainDetails               = "domain_verification_remove_domain_details"
+	EventDetailsEnabledDomainInvitesDetails                         = "enabled_domain_invites_details"
+	EventDetailsCreateFolderDetails                                 = "create_folder_details"
+	EventDetailsFileAddDetails                                      = "file_add_details"
+	EventDetailsFileCopyDetails                                     = "file_copy_details"
+	EventDetailsFileDeleteDetails                                   = "file_delete_details"
+	EventDetailsFileDownloadDetails                                 = "file_download_details"
+	EventDetailsFileEditDetails                                     = "file_edit_details"
+	EventDetailsFileGetCopyReferenceDetails                         = "file_get_copy_reference_details"
+	EventDetailsFileMoveDetails                                     = "file_move_details"
+	EventDetailsFilePermanentlyDeleteDetails                        = "file_permanently_delete_details"
+	EventDetailsFilePreviewDetails                                  = "file_preview_details"
+	EventDetailsFileRenameDetails                                   = "file_rename_details"
+	EventDetailsFileRestoreDetails                                  = "file_restore_details"
+	EventDetailsFileRevertDetails                                   = "file_revert_details"
+	EventDetailsFileRollbackChangesDetails                          = "file_rollback_changes_details"
+	EventDetailsFileSaveCopyReferenceDetails                        = "file_save_copy_reference_details"
+	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
+	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
+	EventDetailsFileRequestCreateDetails                            = "file_request_create_details"
+	EventDetailsFileRequestDeleteDetails                            = "file_request_delete_details"
+	EventDetailsFileRequestReceiveFileDetails                       = "file_request_receive_file_details"
+	EventDetailsGroupAddExternalIdDetails                           = "group_add_external_id_details"
+	EventDetailsGroupAddMemberDetails                               = "group_add_member_details"
+	EventDetailsGroupChangeExternalIdDetails                        = "group_change_external_id_details"
+	EventDetailsGroupChangeManagementTypeDetails                    = "group_change_management_type_details"
+	EventDetailsGroupChangeMemberRoleDetails                        = "group_change_member_role_details"
+	EventDetailsGroupCreateDetails                                  = "group_create_details"
+	EventDetailsGroupDeleteDetails                                  = "group_delete_details"
+	EventDetailsGroupDescriptionUpdatedDetails                      = "group_description_updated_details"
+	EventDetailsGroupJoinPolicyUpdatedDetails                       = "group_join_policy_updated_details"
+	EventDetailsGroupMovedDetails                                   = "group_moved_details"
+	EventDetailsGroupRemoveExternalIdDetails                        = "group_remove_external_id_details"
+	EventDetailsGroupRemoveMemberDetails                            = "group_remove_member_details"
+	EventDetailsGroupRenameDetails                                  = "group_rename_details"
+	EventDetailsEmmErrorDetails                                     = "emm_error_details"
+	EventDetailsGuestAdminSignedInViaTrustedTeamsDetails            = "guest_admin_signed_in_via_trusted_teams_details"
+	EventDetailsGuestAdminSignedOutViaTrustedTeamsDetails           = "guest_admin_signed_out_via_trusted_teams_details"
+	EventDetailsLoginFailDetails                                    = "login_fail_details"
+	EventDetailsLoginSuccessDetails                                 = "login_success_details"
+	EventDetailsLogoutDetails                                       = "logout_details"
+	EventDetailsResellerSupportSessionEndDetails                    = "reseller_support_session_end_details"
+	EventDetailsResellerSupportSessionStartDetails                  = "reseller_support_session_start_details"
+	EventDetailsSignInAsSessionEndDetails                           = "sign_in_as_session_end_details"
+	EventDetailsSignInAsSessionStartDetails                         = "sign_in_as_session_start_details"
+	EventDetailsSsoErrorDetails                                     = "sso_error_details"
+	EventDetailsMemberAddExternalIdDetails                          = "member_add_external_id_details"
+	EventDetailsMemberAddNameDetails                                = "member_add_name_details"
+	EventDetailsMemberChangeAdminRoleDetails                        = "member_change_admin_role_details"
+	EventDetailsMemberChangeEmailDetails                            = "member_change_email_details"
+	EventDetailsMemberChangeExternalIdDetails                       = "member_change_external_id_details"
+	EventDetailsMemberChangeMembershipTypeDetails                   = "member_change_membership_type_details"
+	EventDetailsMemberChangeNameDetails                             = "member_change_name_details"
+	EventDetailsMemberChangeStatusDetails                           = "member_change_status_details"
+	EventDetailsMemberDeleteManualContactsDetails                   = "member_delete_manual_contacts_details"
+	EventDetailsMemberPermanentlyDeleteAccountContentsDetails       = "member_permanently_delete_account_contents_details"
+	EventDetailsMemberRemoveExternalIdDetails                       = "member_remove_external_id_details"
+	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails              = "member_space_limits_add_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails           = "member_space_limits_change_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeStatusDetails                = "member_space_limits_change_status_details"
+	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails           = "member_space_limits_remove_custom_quota_details"
+	EventDetailsMemberSuggestDetails                                = "member_suggest_details"
+	EventDetailsMemberTransferAccountContentsDetails                = "member_transfer_account_contents_details"
+	EventDetailsSecondaryMailsPolicyChangedDetails                  = "secondary_mails_policy_changed_details"
+	EventDetailsPaperContentAddMemberDetails                        = "paper_content_add_member_details"
+	EventDetailsPaperContentAddToFolderDetails                      = "paper_content_add_to_folder_details"
+	EventDetailsPaperContentArchiveDetails                          = "paper_content_archive_details"
+	EventDetailsPaperContentCreateDetails                           = "paper_content_create_details"
+	EventDetailsPaperContentPermanentlyDeleteDetails                = "paper_content_permanently_delete_details"
+	EventDetailsPaperContentRemoveFromFolderDetails                 = "paper_content_remove_from_folder_details"
+	EventDetailsPaperContentRemoveMemberDetails                     = "paper_content_remove_member_details"
+	EventDetailsPaperContentRenameDetails                           = "paper_content_rename_details"
+	EventDetailsPaperContentRestoreDetails                          = "paper_content_restore_details"
+	EventDetailsPaperDocAddCommentDetails                           = "paper_doc_add_comment_details"
+	EventDetailsPaperDocChangeMemberRoleDetails                     = "paper_doc_change_member_role_details"
+	EventDetailsPaperDocChangeSharingPolicyDetails                  = "paper_doc_change_sharing_policy_details"
+	EventDetailsPaperDocChangeSubscriptionDetails                   = "paper_doc_change_subscription_details"
+	EventDetailsPaperDocDeletedDetails                              = "paper_doc_deleted_details"
+	EventDetailsPaperDocDeleteCommentDetails                        = "paper_doc_delete_comment_details"
+	EventDetailsPaperDocDownloadDetails                             = "paper_doc_download_details"
+	EventDetailsPaperDocEditDetails                                 = "paper_doc_edit_details"
+	EventDetailsPaperDocEditCommentDetails                          = "paper_doc_edit_comment_details"
+	EventDetailsPaperDocFollowedDetails                             = "paper_doc_followed_details"
+	EventDetailsPaperDocMentionDetails                              = "paper_doc_mention_details"
+	EventDetailsPaperDocOwnershipChangedDetails                     = "paper_doc_ownership_changed_details"
+	EventDetailsPaperDocRequestAccessDetails                        = "paper_doc_request_access_details"
+	EventDetailsPaperDocResolveCommentDetails                       = "paper_doc_resolve_comment_details"
+	EventDetailsPaperDocRevertDetails                               = "paper_doc_revert_details"
+	EventDetailsPaperDocSlackShareDetails                           = "paper_doc_slack_share_details"
+	EventDetailsPaperDocTeamInviteDetails                           = "paper_doc_team_invite_details"
+	EventDetailsPaperDocTrashedDetails                              = "paper_doc_trashed_details"
+	EventDetailsPaperDocUnresolveCommentDetails                     = "paper_doc_unresolve_comment_details"
+	EventDetailsPaperDocUntrashedDetails                            = "paper_doc_untrashed_details"
+	EventDetailsPaperDocViewDetails                                 = "paper_doc_view_details"
+	EventDetailsPaperExternalViewAllowDetails                       = "paper_external_view_allow_details"
+	EventDetailsPaperExternalViewDefaultTeamDetails                 = "paper_external_view_default_team_details"
+	EventDetailsPaperExternalViewForbidDetails                      = "paper_external_view_forbid_details"
+	EventDetailsPaperFolderChangeSubscriptionDetails                = "paper_folder_change_subscription_details"
+	EventDetailsPaperFolderDeletedDetails                           = "paper_folder_deleted_details"
+	EventDetailsPaperFolderFollowedDetails                          = "paper_folder_followed_details"
+	EventDetailsPaperFolderTeamInviteDetails                        = "paper_folder_team_invite_details"
+	EventDetailsPaperPublishedLinkCreateDetails                     = "paper_published_link_create_details"
+	EventDetailsPaperPublishedLinkDisabledDetails                   = "paper_published_link_disabled_details"
+	EventDetailsPaperPublishedLinkViewDetails                       = "paper_published_link_view_details"
+	EventDetailsPasswordChangeDetails                               = "password_change_details"
+	EventDetailsPasswordResetDetails                                = "password_reset_details"
+	EventDetailsPasswordResetAllDetails                             = "password_reset_all_details"
+	EventDetailsEmmCreateExceptionsReportDetails                    = "emm_create_exceptions_report_details"
+	EventDetailsEmmCreateUsageReportDetails                         = "emm_create_usage_report_details"
+	EventDetailsExportMembersReportDetails                          = "export_members_report_details"
+	EventDetailsPaperAdminExportStartDetails                        = "paper_admin_export_start_details"
+	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails          = "smart_sync_create_admin_privilege_report_details"
+	EventDetailsTeamActivityCreateReportDetails                     = "team_activity_create_report_details"
+	EventDetailsTeamActivityCreateReportFailDetails                 = "team_activity_create_report_fail_details"
+	EventDetailsCollectionShareDetails                              = "collection_share_details"
+	EventDetailsNoteAclInviteOnlyDetails                            = "note_acl_invite_only_details"
+	EventDetailsNoteAclLinkDetails                                  = "note_acl_link_details"
+	EventDetailsNoteAclTeamLinkDetails                              = "note_acl_team_link_details"
+	EventDetailsNoteSharedDetails                                   = "note_shared_details"
+	EventDetailsNoteShareReceiveDetails                             = "note_share_receive_details"
+	EventDetailsOpenNoteSharedDetails                               = "open_note_shared_details"
+	EventDetailsSfAddGroupDetails                                   = "sf_add_group_details"
+	EventDetailsSfAllowNonMembersToViewSharedLinksDetails           = "sf_allow_non_members_to_view_shared_links_details"
+	EventDetailsSfExternalInviteWarnDetails                         = "sf_external_invite_warn_details"
+	EventDetailsSfFbInviteDetails                                   = "sf_fb_invite_details"
+	EventDetailsSfFbInviteChangeRoleDetails                         = "sf_fb_invite_change_role_details"
+	EventDetailsSfFbUninviteDetails                                 = "sf_fb_uninvite_details"
+	EventDetailsSfInviteGroupDetails                                = "sf_invite_group_details"
+	EventDetailsSfTeamGrantAccessDetails                            = "sf_team_grant_access_details"
+	EventDetailsSfTeamInviteDetails                                 = "sf_team_invite_details"
+	EventDetailsSfTeamInviteChangeRoleDetails                       = "sf_team_invite_change_role_details"
+	EventDetailsSfTeamJoinDetails                                   = "sf_team_join_details"
+	EventDetailsSfTeamJoinFromOobLinkDetails                        = "sf_team_join_from_oob_link_details"
+	EventDetailsSfTeamUninviteDetails                               = "sf_team_uninvite_details"
+	EventDetailsSharedContentAddInviteesDetails                     = "shared_content_add_invitees_details"
+	EventDetailsSharedContentAddLinkExpiryDetails                   = "shared_content_add_link_expiry_details"
+	EventDetailsSharedContentAddLinkPasswordDetails                 = "shared_content_add_link_password_details"
+	EventDetailsSharedContentAddMemberDetails                       = "shared_content_add_member_details"
+	EventDetailsSharedContentChangeDownloadsPolicyDetails           = "shared_content_change_downloads_policy_details"
+	EventDetailsSharedContentChangeInviteeRoleDetails               = "shared_content_change_invitee_role_details"
+	EventDetailsSharedContentChangeLinkAudienceDetails              = "shared_content_change_link_audience_details"
+	EventDetailsSharedContentChangeLinkExpiryDetails                = "shared_content_change_link_expiry_details"
+	EventDetailsSharedContentChangeLinkPasswordDetails              = "shared_content_change_link_password_details"
+	EventDetailsSharedContentChangeMemberRoleDetails                = "shared_content_change_member_role_details"
+	EventDetailsSharedContentChangeViewerInfoPolicyDetails          = "shared_content_change_viewer_info_policy_details"
+	EventDetailsSharedContentClaimInvitationDetails                 = "shared_content_claim_invitation_details"
+	EventDetailsSharedContentCopyDetails                            = "shared_content_copy_details"
+	EventDetailsSharedContentDownloadDetails                        = "shared_content_download_details"
+	EventDetailsSharedContentRelinquishMembershipDetails            = "shared_content_relinquish_membership_details"
+	EventDetailsSharedContentRemoveInviteesDetails                  = "shared_content_remove_invitees_details"
+	EventDetailsSharedContentRemoveLinkExpiryDetails                = "shared_content_remove_link_expiry_details"
+	EventDetailsSharedContentRemoveLinkPasswordDetails              = "shared_content_remove_link_password_details"
+	EventDetailsSharedContentRemoveMemberDetails                    = "shared_content_remove_member_details"
+	EventDetailsSharedContentRequestAccessDetails                   = "shared_content_request_access_details"
+	EventDetailsSharedContentUnshareDetails                         = "shared_content_unshare_details"
+	EventDetailsSharedContentViewDetails                            = "shared_content_view_details"
+	EventDetailsSharedFolderChangeLinkPolicyDetails                 = "shared_folder_change_link_policy_details"
+	EventDetailsSharedFolderChangeMembersInheritancePolicyDetails   = "shared_folder_change_members_inheritance_policy_details"
+	EventDetailsSharedFolderChangeMembersManagementPolicyDetails    = "shared_folder_change_members_management_policy_details"
+	EventDetailsSharedFolderChangeMembersPolicyDetails              = "shared_folder_change_members_policy_details"
+	EventDetailsSharedFolderCreateDetails                           = "shared_folder_create_details"
+	EventDetailsSharedFolderDeclineInvitationDetails                = "shared_folder_decline_invitation_details"
+	EventDetailsSharedFolderMountDetails                            = "shared_folder_mount_details"
+	EventDetailsSharedFolderNestDetails                             = "shared_folder_nest_details"
+	EventDetailsSharedFolderTransferOwnershipDetails                = "shared_folder_transfer_ownership_details"
+	EventDetailsSharedFolderUnmountDetails                          = "shared_folder_unmount_details"
+	EventDetailsSharedLinkAddExpiryDetails                          = "shared_link_add_expiry_details"
+	EventDetailsSharedLinkChangeExpiryDetails                       = "shared_link_change_expiry_details"
+	EventDetailsSharedLinkChangeVisibilityDetails                   = "shared_link_change_visibility_details"
+	EventDetailsSharedLinkCopyDetails                               = "shared_link_copy_details"
+	EventDetailsSharedLinkCreateDetails                             = "shared_link_create_details"
+	EventDetailsSharedLinkDisableDetails                            = "shared_link_disable_details"
+	EventDetailsSharedLinkDownloadDetails                           = "shared_link_download_details"
+	EventDetailsSharedLinkRemoveExpiryDetails                       = "shared_link_remove_expiry_details"
+	EventDetailsSharedLinkShareDetails                              = "shared_link_share_details"
+	EventDetailsSharedLinkViewDetails                               = "shared_link_view_details"
+	EventDetailsSharedNoteOpenedDetails                             = "shared_note_opened_details"
+	EventDetailsShmodelGroupShareDetails                            = "shmodel_group_share_details"
+	EventDetailsShowcaseAccessGrantedDetails                        = "showcase_access_granted_details"
+	EventDetailsShowcaseAddMemberDetails                            = "showcase_add_member_details"
+	EventDetailsShowcaseArchivedDetails                             = "showcase_archived_details"
+	EventDetailsShowcaseCreatedDetails                              = "showcase_created_details"
+	EventDetailsShowcaseDeleteCommentDetails                        = "showcase_delete_comment_details"
+	EventDetailsShowcaseEditedDetails                               = "showcase_edited_details"
+	EventDetailsShowcaseEditCommentDetails                          = "showcase_edit_comment_details"
+	EventDetailsShowcaseFileAddedDetails                            = "showcase_file_added_details"
+	EventDetailsShowcaseFileDownloadDetails                         = "showcase_file_download_details"
+	EventDetailsShowcaseFileRemovedDetails                          = "showcase_file_removed_details"
+	EventDetailsShowcaseFileViewDetails                             = "showcase_file_view_details"
+	EventDetailsShowcasePermanentlyDeletedDetails                   = "showcase_permanently_deleted_details"
+	EventDetailsShowcasePostCommentDetails                          = "showcase_post_comment_details"
+	EventDetailsShowcaseRemoveMemberDetails                         = "showcase_remove_member_details"
+	EventDetailsShowcaseRenamedDetails                              = "showcase_renamed_details"
+	EventDetailsShowcaseRequestAccessDetails                        = "showcase_request_access_details"
+	EventDetailsShowcaseResolveCommentDetails                       = "showcase_resolve_comment_details"
+	EventDetailsShowcaseRestoredDetails                             = "showcase_restored_details"
+	EventDetailsShowcaseTrashedDetails                              = "showcase_trashed_details"
+	EventDetailsShowcaseTrashedDeprecatedDetails                    = "showcase_trashed_deprecated_details"
+	EventDetailsShowcaseUnresolveCommentDetails                     = "showcase_unresolve_comment_details"
+	EventDetailsShowcaseUntrashedDetails                            = "showcase_untrashed_details"
+	EventDetailsShowcaseUntrashedDeprecatedDetails                  = "showcase_untrashed_deprecated_details"
+	EventDetailsShowcaseViewDetails                                 = "showcase_view_details"
+	EventDetailsSsoAddCertDetails                                   = "sso_add_cert_details"
+	EventDetailsSsoAddLoginUrlDetails                               = "sso_add_login_url_details"
+	EventDetailsSsoAddLogoutUrlDetails                              = "sso_add_logout_url_details"
+	EventDetailsSsoChangeCertDetails                                = "sso_change_cert_details"
+	EventDetailsSsoChangeLoginUrlDetails                            = "sso_change_login_url_details"
+	EventDetailsSsoChangeLogoutUrlDetails                           = "sso_change_logout_url_details"
+	EventDetailsSsoChangeSamlIdentityModeDetails                    = "sso_change_saml_identity_mode_details"
+	EventDetailsSsoRemoveCertDetails                                = "sso_remove_cert_details"
+	EventDetailsSsoRemoveLoginUrlDetails                            = "sso_remove_login_url_details"
+	EventDetailsSsoRemoveLogoutUrlDetails                           = "sso_remove_logout_url_details"
+	EventDetailsTeamFolderChangeStatusDetails                       = "team_folder_change_status_details"
+	EventDetailsTeamFolderCreateDetails                             = "team_folder_create_details"
+	EventDetailsTeamFolderDowngradeDetails                          = "team_folder_downgrade_details"
+	EventDetailsTeamFolderPermanentlyDeleteDetails                  = "team_folder_permanently_delete_details"
+	EventDetailsTeamFolderRenameDetails                             = "team_folder_rename_details"
+	EventDetailsTeamSelectiveSyncSettingsChangedDetails             = "team_selective_sync_settings_changed_details"
+	EventDetailsAccountCaptureChangePolicyDetails                   = "account_capture_change_policy_details"
+	EventDetailsAllowDownloadDisabledDetails                        = "allow_download_disabled_details"
+	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
+	EventDetailsCameraUploadsPolicyChangedDetails                   = "camera_uploads_policy_changed_details"
+	EventDetailsDataPlacementRestrictionChangePolicyDetails         = "data_placement_restriction_change_policy_details"
+	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails        = "data_placement_restriction_satisfy_policy_details"
+	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails           = "device_approvals_change_desktop_policy_details"
+	EventDetailsDeviceApprovalsChangeMobilePolicyDetails            = "device_approvals_change_mobile_policy_details"
+	EventDetailsDeviceApprovalsChangeOverageActionDetails           = "device_approvals_change_overage_action_details"
+	EventDetailsDeviceApprovalsChangeUnlinkActionDetails            = "device_approvals_change_unlink_action_details"
+	EventDetailsDirectoryRestrictionsAddMembersDetails              = "directory_restrictions_add_members_details"
+	EventDetailsDirectoryRestrictionsRemoveMembersDetails           = "directory_restrictions_remove_members_details"
+	EventDetailsEmmAddExceptionDetails                              = "emm_add_exception_details"
+	EventDetailsEmmChangePolicyDetails                              = "emm_change_policy_details"
+	EventDetailsEmmRemoveExceptionDetails                           = "emm_remove_exception_details"
+	EventDetailsExtendedVersionHistoryChangePolicyDetails           = "extended_version_history_change_policy_details"
+	EventDetailsFileCommentsChangePolicyDetails                     = "file_comments_change_policy_details"
+	EventDetailsFileRequestsChangePolicyDetails                     = "file_requests_change_policy_details"
+	EventDetailsFileRequestsEmailsEnabledDetails                    = "file_requests_emails_enabled_details"
+	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails       = "file_requests_emails_restricted_to_team_only_details"
+	EventDetailsGoogleSsoChangePolicyDetails                        = "google_sso_change_policy_details"
+	EventDetailsGroupUserManagementChangePolicyDetails              = "group_user_management_change_policy_details"
+	EventDetailsIntegrationPolicyChangedDetails                     = "integration_policy_changed_details"
+	EventDetailsMemberRequestsChangePolicyDetails                   = "member_requests_change_policy_details"
+	EventDetailsMemberSpaceLimitsAddExceptionDetails                = "member_space_limits_add_exception_details"
+	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails        = "member_space_limits_change_caps_type_policy_details"
+	EventDetailsMemberSpaceLimitsChangePolicyDetails                = "member_space_limits_change_policy_details"
+	EventDetailsMemberSpaceLimitsRemoveExceptionDetails             = "member_space_limits_remove_exception_details"
+	EventDetailsMemberSuggestionsChangePolicyDetails                = "member_suggestions_change_policy_details"
+	EventDetailsMicrosoftOfficeAddinChangePolicyDetails             = "microsoft_office_addin_change_policy_details"
+	EventDetailsNetworkControlChangePolicyDetails                   = "network_control_change_policy_details"
+	EventDetailsPaperChangeDeploymentPolicyDetails                  = "paper_change_deployment_policy_details"
+	EventDetailsPaperChangeMemberLinkPolicyDetails                  = "paper_change_member_link_policy_details"
+	EventDetailsPaperChangeMemberPolicyDetails                      = "paper_change_member_policy_details"
+	EventDetailsPaperChangePolicyDetails                            = "paper_change_policy_details"
+	EventDetailsPaperDefaultFolderPolicyChangedDetails              = "paper_default_folder_policy_changed_details"
+	EventDetailsPaperDesktopPolicyChangedDetails                    = "paper_desktop_policy_changed_details"
+	EventDetailsPaperEnabledUsersGroupAdditionDetails               = "paper_enabled_users_group_addition_details"
+	EventDetailsPaperEnabledUsersGroupRemovalDetails                = "paper_enabled_users_group_removal_details"
+	EventDetailsPermanentDeleteChangePolicyDetails                  = "permanent_delete_change_policy_details"
+	EventDetailsResellerSupportChangePolicyDetails                  = "reseller_support_change_policy_details"
+	EventDetailsSharingChangeFolderJoinPolicyDetails                = "sharing_change_folder_join_policy_details"
+	EventDetailsSharingChangeLinkPolicyDetails                      = "sharing_change_link_policy_details"
+	EventDetailsSharingChangeMemberPolicyDetails                    = "sharing_change_member_policy_details"
+	EventDetailsShowcaseChangeDownloadPolicyDetails                 = "showcase_change_download_policy_details"
+	EventDetailsShowcaseChangeEnabledPolicyDetails                  = "showcase_change_enabled_policy_details"
+	EventDetailsShowcaseChangeExternalSharingPolicyDetails          = "showcase_change_external_sharing_policy_details"
+	EventDetailsSmartSyncChangePolicyDetails                        = "smart_sync_change_policy_details"
+	EventDetailsSmartSyncNotOptOutDetails                           = "smart_sync_not_opt_out_details"
+	EventDetailsSmartSyncOptOutDetails                              = "smart_sync_opt_out_details"
+	EventDetailsSsoChangePolicyDetails                              = "sso_change_policy_details"
+	EventDetailsTeamExtensionsPolicyChangedDetails                  = "team_extensions_policy_changed_details"
+	EventDetailsTeamSelectiveSyncPolicyChangedDetails               = "team_selective_sync_policy_changed_details"
+	EventDetailsTfaChangePolicyDetails                              = "tfa_change_policy_details"
+	EventDetailsTwoAccountChangePolicyDetails                       = "two_account_change_policy_details"
+	EventDetailsViewerInfoPolicyChangedDetails                      = "viewer_info_policy_changed_details"
+	EventDetailsWebSessionsChangeFixedLengthPolicyDetails           = "web_sessions_change_fixed_length_policy_details"
+	EventDetailsWebSessionsChangeIdleLengthPolicyDetails            = "web_sessions_change_idle_length_policy_details"
+	EventDetailsTeamMergeFromDetails                                = "team_merge_from_details"
+	EventDetailsTeamMergeToDetails                                  = "team_merge_to_details"
+	EventDetailsTeamProfileAddLogoDetails                           = "team_profile_add_logo_details"
+	EventDetailsTeamProfileChangeDefaultLanguageDetails             = "team_profile_change_default_language_details"
+	EventDetailsTeamProfileChangeLogoDetails                        = "team_profile_change_logo_details"
+	EventDetailsTeamProfileChangeNameDetails                        = "team_profile_change_name_details"
+	EventDetailsTeamProfileRemoveLogoDetails                        = "team_profile_remove_logo_details"
+	EventDetailsTfaAddBackupPhoneDetails                            = "tfa_add_backup_phone_details"
+	EventDetailsTfaAddSecurityKeyDetails                            = "tfa_add_security_key_details"
+	EventDetailsTfaChangeBackupPhoneDetails                         = "tfa_change_backup_phone_details"
+	EventDetailsTfaChangeStatusDetails                              = "tfa_change_status_details"
+	EventDetailsTfaRemoveBackupPhoneDetails                         = "tfa_remove_backup_phone_details"
+	EventDetailsTfaRemoveSecurityKeyDetails                         = "tfa_remove_security_key_details"
+	EventDetailsTfaResetDetails                                     = "tfa_reset_details"
+	EventDetailsGuestAdminChangeStatusDetails                       = "guest_admin_change_status_details"
+	EventDetailsTeamMergeRequestAcceptedDetails                     = "team_merge_request_accepted_details"
+	EventDetailsTeamMergeRequestAcceptedShownToPrimaryTeamDetails   = "team_merge_request_accepted_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestAcceptedShownToSecondaryTeamDetails = "team_merge_request_accepted_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestAutoCanceledDetails                 = "team_merge_request_auto_canceled_details"
+	EventDetailsTeamMergeRequestCanceledDetails                     = "team_merge_request_canceled_details"
+	EventDetailsTeamMergeRequestCanceledShownToPrimaryTeamDetails   = "team_merge_request_canceled_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestCanceledShownToSecondaryTeamDetails = "team_merge_request_canceled_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestExpiredDetails                      = "team_merge_request_expired_details"
+	EventDetailsTeamMergeRequestExpiredShownToPrimaryTeamDetails    = "team_merge_request_expired_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestExpiredShownToSecondaryTeamDetails  = "team_merge_request_expired_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestRejectedShownToPrimaryTeamDetails   = "team_merge_request_rejected_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestRejectedShownToSecondaryTeamDetails = "team_merge_request_rejected_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestReminderDetails                     = "team_merge_request_reminder_details"
+	EventDetailsTeamMergeRequestReminderShownToPrimaryTeamDetails   = "team_merge_request_reminder_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestReminderShownToSecondaryTeamDetails = "team_merge_request_reminder_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestRevokedDetails                      = "team_merge_request_revoked_details"
+	EventDetailsTeamMergeRequestSentShownToPrimaryTeamDetails       = "team_merge_request_sent_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestSentShownToSecondaryTeamDetails     = "team_merge_request_sent_shown_to_secondary_team_details"
+	EventDetailsMissingDetails                                      = "missing_details"
+	EventDetailsOther                                               = "other"
 )
 
 // UnmarshalJSON deserializes into a EventDetails instance
@@ -3282,6 +3401,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "app_unlink_user_details":
 		err = json.Unmarshal(body, &u.AppUnlinkUserDetails)
+
+		if err != nil {
+			return err
+		}
+	case "integration_connected_details":
+		err = json.Unmarshal(body, &u.IntegrationConnectedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "integration_disconnected_details":
+		err = json.Unmarshal(body, &u.IntegrationDisconnectedDetails)
 
 		if err != nil {
 			return err
@@ -3598,6 +3729,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_request_delete_details":
+		err = json.Unmarshal(body, &u.FileRequestDeleteDetails)
+
+		if err != nil {
+			return err
+		}
 	case "file_request_receive_file_details":
 		err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails)
 
@@ -3688,6 +3825,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "guest_admin_signed_in_via_trusted_teams_details":
+		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeamsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "guest_admin_signed_out_via_trusted_teams_details":
+		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeamsDetails)
+
+		if err != nil {
+			return err
+		}
 	case "login_fail_details":
 		err = json.Unmarshal(body, &u.LoginFailDetails)
 
@@ -3736,6 +3885,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_add_external_id_details":
+		err = json.Unmarshal(body, &u.MemberAddExternalIdDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_add_name_details":
 		err = json.Unmarshal(body, &u.MemberAddNameDetails)
 
@@ -3750,6 +3905,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_change_email_details":
 		err = json.Unmarshal(body, &u.MemberChangeEmailDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_change_external_id_details":
+		err = json.Unmarshal(body, &u.MemberChangeExternalIdDetails)
 
 		if err != nil {
 			return err
@@ -3780,6 +3941,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_permanently_delete_account_contents_details":
 		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_remove_external_id_details":
+		err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails)
 
 		if err != nil {
 			return err
@@ -4048,6 +4215,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_published_link_create_details":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails)
+
+		if err != nil {
+			return err
+		}
+	case "paper_published_link_disabled_details":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "paper_published_link_view_details":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkViewDetails)
+
+		if err != nil {
+			return err
+		}
 	case "password_change_details":
 		err = json.Unmarshal(body, &u.PasswordChangeDetails)
 
@@ -4098,6 +4283,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "team_activity_create_report_details":
 		err = json.Unmarshal(body, &u.TeamActivityCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_activity_create_report_fail_details":
+		err = json.Unmarshal(body, &u.TeamActivityCreateReportFailDetails)
 
 		if err != nil {
 			return err
@@ -4858,6 +5049,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "integration_policy_changed_details":
+		err = json.Unmarshal(body, &u.IntegrationPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_requests_change_policy_details":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
 
@@ -4930,6 +5127,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_default_folder_policy_changed_details":
+		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "paper_desktop_policy_changed_details":
+		err = json.Unmarshal(body, &u.PaperDesktopPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "paper_enabled_users_group_addition_details":
 		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAdditionDetails)
 
@@ -4944,6 +5153,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "permanent_delete_change_policy_details":
 		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "reseller_support_change_policy_details":
+		err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails)
 
 		if err != nil {
 			return err
@@ -5004,6 +5219,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "sso_change_policy_details":
 		err = json.Unmarshal(body, &u.SsoChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_extensions_policy_changed_details":
+		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -5128,6 +5349,120 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "guest_admin_change_status_details":
+		err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_auto_canceled_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_rejected_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_rejected_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminderDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_revoked_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRevokedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_sent_shown_to_primary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_sent_shown_to_secondary_team_details":
+		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeamDetails)
+
+		if err != nil {
+			return err
+		}
 	case "missing_details":
 		err = json.Unmarshal(body, &u.MissingDetails)
 
@@ -5149,6 +5484,10 @@ type EventType struct {
 	AppUnlinkTeam *AppUnlinkTeamType `json:"app_unlink_team,omitempty"`
 	// AppUnlinkUser : (apps) Unlinked app for member
 	AppUnlinkUser *AppUnlinkUserType `json:"app_unlink_user,omitempty"`
+	// IntegrationConnected : (apps) Connected integration for member
+	IntegrationConnected *IntegrationConnectedType `json:"integration_connected,omitempty"`
+	// IntegrationDisconnected : (apps) Disconnected integration for member
+	IntegrationDisconnected *IntegrationDisconnectedType `json:"integration_disconnected,omitempty"`
 	// FileAddComment : (comments) Added file comment
 	FileAddComment *FileAddCommentType `json:"file_add_comment,omitempty"`
 	// FileChangeCommentSubscription : (comments) Subscribed to or unsubscribed
@@ -5196,7 +5535,7 @@ type EventType struct {
 	// DeviceUnlink : (devices) Disconnected device
 	DeviceUnlink *DeviceUnlinkType `json:"device_unlink,omitempty"`
 	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up
-	// enterprise mobility management
+	// EMM
 	EmmRefreshAuthToken *EmmRefreshAuthTokenType `json:"emm_refresh_auth_token,omitempty"`
 	// AccountCaptureChangeAvailability : (domains) Granted/revoked option to
 	// enable account capture on team domains
@@ -5280,6 +5619,8 @@ type EventType struct {
 	FileRequestClose *FileRequestCloseType `json:"file_request_close,omitempty"`
 	// FileRequestCreate : (file_requests) Created file request
 	FileRequestCreate *FileRequestCreateType `json:"file_request_create,omitempty"`
+	// FileRequestDelete : (file_requests) Delete file request
+	FileRequestDelete *FileRequestDeleteType `json:"file_request_delete,omitempty"`
 	// FileRequestReceiveFile : (file_requests) Received files for file request
 	FileRequestReceiveFile *FileRequestReceiveFileType `json:"file_request_receive_file,omitempty"`
 	// GroupAddExternalId : (groups) Added external ID for group
@@ -5314,6 +5655,12 @@ type EventType struct {
 	// EmmError : (logins) Failed to sign in via EMM (deprecated, replaced by
 	// 'Failed to sign in')
 	EmmError *EmmErrorType `json:"emm_error,omitempty"`
+	// GuestAdminSignedInViaTrustedTeams : (logins) Started trusted team admin
+	// session
+	GuestAdminSignedInViaTrustedTeams *GuestAdminSignedInViaTrustedTeamsType `json:"guest_admin_signed_in_via_trusted_teams,omitempty"`
+	// GuestAdminSignedOutViaTrustedTeams : (logins) Ended trusted team admin
+	// session
+	GuestAdminSignedOutViaTrustedTeams *GuestAdminSignedOutViaTrustedTeamsType `json:"guest_admin_signed_out_via_trusted_teams,omitempty"`
 	// LoginFail : (logins) Failed to sign in
 	LoginFail *LoginFailType `json:"login_fail,omitempty"`
 	// LoginSuccess : (logins) Signed in
@@ -5331,12 +5678,17 @@ type EventType struct {
 	// SsoError : (logins) Failed to sign in via SSO (deprecated, replaced by
 	// 'Failed to sign in')
 	SsoError *SsoErrorType `json:"sso_error,omitempty"`
+	// MemberAddExternalId : (members) Added an external ID for team member
+	MemberAddExternalId *MemberAddExternalIdType `json:"member_add_external_id,omitempty"`
 	// MemberAddName : (members) Added team member name
 	MemberAddName *MemberAddNameType `json:"member_add_name,omitempty"`
 	// MemberChangeAdminRole : (members) Changed team member admin role
 	MemberChangeAdminRole *MemberChangeAdminRoleType `json:"member_change_admin_role,omitempty"`
 	// MemberChangeEmail : (members) Changed team member email
 	MemberChangeEmail *MemberChangeEmailType `json:"member_change_email,omitempty"`
+	// MemberChangeExternalId : (members) Changed the external ID for team
+	// member
+	MemberChangeExternalId *MemberChangeExternalIdType `json:"member_change_external_id,omitempty"`
 	// MemberChangeMembershipType : (members) Changed membership type
 	// (limited/full) of member (deprecated, no longer logged)
 	MemberChangeMembershipType *MemberChangeMembershipTypeType `json:"member_change_membership_type,omitempty"`
@@ -5350,6 +5702,9 @@ type EventType struct {
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
 	MemberPermanentlyDeleteAccountContents *MemberPermanentlyDeleteAccountContentsType `json:"member_permanently_delete_account_contents,omitempty"`
+	// MemberRemoveExternalId : (members) Removed the external ID for team
+	// member
+	MemberRemoveExternalId *MemberRemoveExternalIdType `json:"member_remove_external_id,omitempty"`
 	// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space limit
 	MemberSpaceLimitsAddCustomQuota *MemberSpaceLimitsAddCustomQuotaType `json:"member_space_limits_add_custom_quota,omitempty"`
 	// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
@@ -5455,6 +5810,12 @@ type EventType struct {
 	// PaperFolderTeamInvite : (paper) Shared Paper folder with member
 	// (deprecated, no longer logged)
 	PaperFolderTeamInvite *PaperFolderTeamInviteType `json:"paper_folder_team_invite,omitempty"`
+	// PaperPublishedLinkCreate : (paper) Published doc
+	PaperPublishedLinkCreate *PaperPublishedLinkCreateType `json:"paper_published_link_create,omitempty"`
+	// PaperPublishedLinkDisabled : (paper) Unpublished doc
+	PaperPublishedLinkDisabled *PaperPublishedLinkDisabledType `json:"paper_published_link_disabled,omitempty"`
+	// PaperPublishedLinkView : (paper) Viewed published doc
+	PaperPublishedLinkView *PaperPublishedLinkViewType `json:"paper_published_link_view,omitempty"`
 	// PasswordChange : (passwords) Changed password
 	PasswordChange *PasswordChangeType `json:"password_change,omitempty"`
 	// PasswordReset : (passwords) Reset password
@@ -5474,6 +5835,9 @@ type EventType struct {
 	SmartSyncCreateAdminPrivilegeReport *SmartSyncCreateAdminPrivilegeReportType `json:"smart_sync_create_admin_privilege_report,omitempty"`
 	// TeamActivityCreateReport : (reports) Created team activity report
 	TeamActivityCreateReport *TeamActivityCreateReportType `json:"team_activity_create_report,omitempty"`
+	// TeamActivityCreateReportFail : (reports) Couldn't generate team activity
+	// report
+	TeamActivityCreateReportFail *TeamActivityCreateReportFailType `json:"team_activity_create_report_fail,omitempty"`
 	// CollectionShare : (sharing) Shared album
 	CollectionShare *CollectionShareType `json:"collection_share,omitempty"`
 	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
@@ -5797,6 +6161,9 @@ type EventType struct {
 	// GroupUserManagementChangePolicy : (team_policies) Changed who can create
 	// groups
 	GroupUserManagementChangePolicy *GroupUserManagementChangePolicyType `json:"group_user_management_change_policy,omitempty"`
+	// IntegrationPolicyChanged : (team_policies) Changed integration policy for
+	// team
+	IntegrationPolicyChanged *IntegrationPolicyChangedType `json:"integration_policy_changed,omitempty"`
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
 	// find team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
@@ -5834,6 +6201,12 @@ type EventType struct {
 	// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper for
 	// team
 	PaperChangePolicy *PaperChangePolicyType `json:"paper_change_policy,omitempty"`
+	// PaperDefaultFolderPolicyChanged : (team_policies) Changed Paper Default
+	// Folder Policy setting for team
+	PaperDefaultFolderPolicyChanged *PaperDefaultFolderPolicyChangedType `json:"paper_default_folder_policy_changed,omitempty"`
+	// PaperDesktopPolicyChanged : (team_policies) Enabled/disabled Paper
+	// Desktop for team
+	PaperDesktopPolicyChanged *PaperDesktopPolicyChangedType `json:"paper_desktop_policy_changed,omitempty"`
 	// PaperEnabledUsersGroupAddition : (team_policies) Added users to
 	// Paper-enabled users list
 	PaperEnabledUsersGroupAddition *PaperEnabledUsersGroupAdditionType `json:"paper_enabled_users_group_addition,omitempty"`
@@ -5843,6 +6216,9 @@ type EventType struct {
 	// PermanentDeleteChangePolicy : (team_policies) Enabled/disabled ability of
 	// team members to permanently delete content
 	PermanentDeleteChangePolicy *PermanentDeleteChangePolicyType `json:"permanent_delete_change_policy,omitempty"`
+	// ResellerSupportChangePolicy : (team_policies) Enabled/disabled reseller
+	// support
+	ResellerSupportChangePolicy *ResellerSupportChangePolicyType `json:"reseller_support_change_policy,omitempty"`
 	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
 	// members can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
@@ -5871,6 +6247,9 @@ type EventType struct {
 	SmartSyncOptOut *SmartSyncOptOutType `json:"smart_sync_opt_out,omitempty"`
 	// SsoChangePolicy : (team_policies) Changed single sign-on setting for team
 	SsoChangePolicy *SsoChangePolicyType `json:"sso_change_policy,omitempty"`
+	// TeamExtensionsPolicyChanged : (team_policies) Changed App Integrations
+	// setting for team
+	TeamExtensionsPolicyChanged *TeamExtensionsPolicyChangedType `json:"team_extensions_policy_changed,omitempty"`
 	// TeamSelectiveSyncPolicyChanged : (team_policies) Enabled/disabled Team
 	// Selective Sync for team
 	TeamSelectiveSyncPolicyChanged *TeamSelectiveSyncPolicyChangedType `json:"team_selective_sync_policy_changed,omitempty"`
@@ -5926,322 +6305,416 @@ type EventType struct {
 	TfaRemoveSecurityKey *TfaRemoveSecurityKeyType `json:"tfa_remove_security_key,omitempty"`
 	// TfaReset : (tfa) Reset two-step verification for team member
 	TfaReset *TfaResetType `json:"tfa_reset,omitempty"`
+	// GuestAdminChangeStatus : (trusted_teams) Changed guest team admin status
+	GuestAdminChangeStatus *GuestAdminChangeStatusType `json:"guest_admin_change_status,omitempty"`
+	// TeamMergeRequestAccepted : (trusted_teams) Accepted a team merge request
+	TeamMergeRequestAccepted *TeamMergeRequestAcceptedType `json:"team_merge_request_accepted,omitempty"`
+	// TeamMergeRequestAcceptedShownToPrimaryTeam : (trusted_teams) Accepted a
+	// team merge request (deprecated, replaced by 'Accepted a team merge
+	// request')
+	TeamMergeRequestAcceptedShownToPrimaryTeam *TeamMergeRequestAcceptedShownToPrimaryTeamType `json:"team_merge_request_accepted_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestAcceptedShownToSecondaryTeam : (trusted_teams) Accepted a
+	// team merge request (deprecated, replaced by 'Accepted a team merge
+	// request')
+	TeamMergeRequestAcceptedShownToSecondaryTeam *TeamMergeRequestAcceptedShownToSecondaryTeamType `json:"team_merge_request_accepted_shown_to_secondary_team,omitempty"`
+	// TeamMergeRequestAutoCanceled : (trusted_teams) Automatically canceled
+	// team merge request
+	TeamMergeRequestAutoCanceled *TeamMergeRequestAutoCanceledType `json:"team_merge_request_auto_canceled,omitempty"`
+	// TeamMergeRequestCanceled : (trusted_teams) Canceled a team merge request
+	TeamMergeRequestCanceled *TeamMergeRequestCanceledType `json:"team_merge_request_canceled,omitempty"`
+	// TeamMergeRequestCanceledShownToPrimaryTeam : (trusted_teams) Canceled a
+	// team merge request (deprecated, replaced by 'Canceled a team merge
+	// request')
+	TeamMergeRequestCanceledShownToPrimaryTeam *TeamMergeRequestCanceledShownToPrimaryTeamType `json:"team_merge_request_canceled_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestCanceledShownToSecondaryTeam : (trusted_teams) Canceled a
+	// team merge request (deprecated, replaced by 'Canceled a team merge
+	// request')
+	TeamMergeRequestCanceledShownToSecondaryTeam *TeamMergeRequestCanceledShownToSecondaryTeamType `json:"team_merge_request_canceled_shown_to_secondary_team,omitempty"`
+	// TeamMergeRequestExpired : (trusted_teams) Team merge request expired
+	TeamMergeRequestExpired *TeamMergeRequestExpiredType `json:"team_merge_request_expired,omitempty"`
+	// TeamMergeRequestExpiredShownToPrimaryTeam : (trusted_teams) Team merge
+	// request expired (deprecated, replaced by 'Team merge request expired')
+	TeamMergeRequestExpiredShownToPrimaryTeam *TeamMergeRequestExpiredShownToPrimaryTeamType `json:"team_merge_request_expired_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestExpiredShownToSecondaryTeam : (trusted_teams) Team merge
+	// request expired (deprecated, replaced by 'Team merge request expired')
+	TeamMergeRequestExpiredShownToSecondaryTeam *TeamMergeRequestExpiredShownToSecondaryTeamType `json:"team_merge_request_expired_shown_to_secondary_team,omitempty"`
+	// TeamMergeRequestRejectedShownToPrimaryTeam : (trusted_teams) Rejected a
+	// team merge request (deprecated, no longer logged)
+	TeamMergeRequestRejectedShownToPrimaryTeam *TeamMergeRequestRejectedShownToPrimaryTeamType `json:"team_merge_request_rejected_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestRejectedShownToSecondaryTeam : (trusted_teams) Rejected a
+	// team merge request (deprecated, no longer logged)
+	TeamMergeRequestRejectedShownToSecondaryTeam *TeamMergeRequestRejectedShownToSecondaryTeamType `json:"team_merge_request_rejected_shown_to_secondary_team,omitempty"`
+	// TeamMergeRequestReminder : (trusted_teams) Sent a team merge request
+	// reminder
+	TeamMergeRequestReminder *TeamMergeRequestReminderType `json:"team_merge_request_reminder,omitempty"`
+	// TeamMergeRequestReminderShownToPrimaryTeam : (trusted_teams) Sent a team
+	// merge request reminder (deprecated, replaced by 'Sent a team merge
+	// request reminder')
+	TeamMergeRequestReminderShownToPrimaryTeam *TeamMergeRequestReminderShownToPrimaryTeamType `json:"team_merge_request_reminder_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestReminderShownToSecondaryTeam : (trusted_teams) Sent a
+	// team merge request reminder (deprecated, replaced by 'Sent a team merge
+	// request reminder')
+	TeamMergeRequestReminderShownToSecondaryTeam *TeamMergeRequestReminderShownToSecondaryTeamType `json:"team_merge_request_reminder_shown_to_secondary_team,omitempty"`
+	// TeamMergeRequestRevoked : (trusted_teams) Canceled the team merge
+	TeamMergeRequestRevoked *TeamMergeRequestRevokedType `json:"team_merge_request_revoked,omitempty"`
+	// TeamMergeRequestSentShownToPrimaryTeam : (trusted_teams) Requested to
+	// merge their Dropbox team into yours
+	TeamMergeRequestSentShownToPrimaryTeam *TeamMergeRequestSentShownToPrimaryTeamType `json:"team_merge_request_sent_shown_to_primary_team,omitempty"`
+	// TeamMergeRequestSentShownToSecondaryTeam : (trusted_teams) Requested to
+	// merge your team into another Dropbox team
+	TeamMergeRequestSentShownToSecondaryTeam *TeamMergeRequestSentShownToSecondaryTeamType `json:"team_merge_request_sent_shown_to_secondary_team,omitempty"`
 }
 
 // Valid tag values for EventType
 const (
-	EventTypeAppLinkTeam                                = "app_link_team"
-	EventTypeAppLinkUser                                = "app_link_user"
-	EventTypeAppUnlinkTeam                              = "app_unlink_team"
-	EventTypeAppUnlinkUser                              = "app_unlink_user"
-	EventTypeFileAddComment                             = "file_add_comment"
-	EventTypeFileChangeCommentSubscription              = "file_change_comment_subscription"
-	EventTypeFileDeleteComment                          = "file_delete_comment"
-	EventTypeFileEditComment                            = "file_edit_comment"
-	EventTypeFileLikeComment                            = "file_like_comment"
-	EventTypeFileResolveComment                         = "file_resolve_comment"
-	EventTypeFileUnlikeComment                          = "file_unlike_comment"
-	EventTypeFileUnresolveComment                       = "file_unresolve_comment"
-	EventTypeDeviceChangeIpDesktop                      = "device_change_ip_desktop"
-	EventTypeDeviceChangeIpMobile                       = "device_change_ip_mobile"
-	EventTypeDeviceChangeIpWeb                          = "device_change_ip_web"
-	EventTypeDeviceDeleteOnUnlinkFail                   = "device_delete_on_unlink_fail"
-	EventTypeDeviceDeleteOnUnlinkSuccess                = "device_delete_on_unlink_success"
-	EventTypeDeviceLinkFail                             = "device_link_fail"
-	EventTypeDeviceLinkSuccess                          = "device_link_success"
-	EventTypeDeviceManagementDisabled                   = "device_management_disabled"
-	EventTypeDeviceManagementEnabled                    = "device_management_enabled"
-	EventTypeDeviceUnlink                               = "device_unlink"
-	EventTypeEmmRefreshAuthToken                        = "emm_refresh_auth_token"
-	EventTypeAccountCaptureChangeAvailability           = "account_capture_change_availability"
-	EventTypeAccountCaptureMigrateAccount               = "account_capture_migrate_account"
-	EventTypeAccountCaptureNotificationEmailsSent       = "account_capture_notification_emails_sent"
-	EventTypeAccountCaptureRelinquishAccount            = "account_capture_relinquish_account"
-	EventTypeDisabledDomainInvites                      = "disabled_domain_invites"
-	EventTypeDomainInvitesApproveRequestToJoinTeam      = "domain_invites_approve_request_to_join_team"
-	EventTypeDomainInvitesDeclineRequestToJoinTeam      = "domain_invites_decline_request_to_join_team"
-	EventTypeDomainInvitesEmailExistingUsers            = "domain_invites_email_existing_users"
-	EventTypeDomainInvitesRequestToJoinTeam             = "domain_invites_request_to_join_team"
-	EventTypeDomainInvitesSetInviteNewUserPrefToNo      = "domain_invites_set_invite_new_user_pref_to_no"
-	EventTypeDomainInvitesSetInviteNewUserPrefToYes     = "domain_invites_set_invite_new_user_pref_to_yes"
-	EventTypeDomainVerificationAddDomainFail            = "domain_verification_add_domain_fail"
-	EventTypeDomainVerificationAddDomainSuccess         = "domain_verification_add_domain_success"
-	EventTypeDomainVerificationRemoveDomain             = "domain_verification_remove_domain"
-	EventTypeEnabledDomainInvites                       = "enabled_domain_invites"
-	EventTypeCreateFolder                               = "create_folder"
-	EventTypeFileAdd                                    = "file_add"
-	EventTypeFileCopy                                   = "file_copy"
-	EventTypeFileDelete                                 = "file_delete"
-	EventTypeFileDownload                               = "file_download"
-	EventTypeFileEdit                                   = "file_edit"
-	EventTypeFileGetCopyReference                       = "file_get_copy_reference"
-	EventTypeFileMove                                   = "file_move"
-	EventTypeFilePermanentlyDelete                      = "file_permanently_delete"
-	EventTypeFilePreview                                = "file_preview"
-	EventTypeFileRename                                 = "file_rename"
-	EventTypeFileRestore                                = "file_restore"
-	EventTypeFileRevert                                 = "file_revert"
-	EventTypeFileRollbackChanges                        = "file_rollback_changes"
-	EventTypeFileSaveCopyReference                      = "file_save_copy_reference"
-	EventTypeFileRequestChange                          = "file_request_change"
-	EventTypeFileRequestClose                           = "file_request_close"
-	EventTypeFileRequestCreate                          = "file_request_create"
-	EventTypeFileRequestReceiveFile                     = "file_request_receive_file"
-	EventTypeGroupAddExternalId                         = "group_add_external_id"
-	EventTypeGroupAddMember                             = "group_add_member"
-	EventTypeGroupChangeExternalId                      = "group_change_external_id"
-	EventTypeGroupChangeManagementType                  = "group_change_management_type"
-	EventTypeGroupChangeMemberRole                      = "group_change_member_role"
-	EventTypeGroupCreate                                = "group_create"
-	EventTypeGroupDelete                                = "group_delete"
-	EventTypeGroupDescriptionUpdated                    = "group_description_updated"
-	EventTypeGroupJoinPolicyUpdated                     = "group_join_policy_updated"
-	EventTypeGroupMoved                                 = "group_moved"
-	EventTypeGroupRemoveExternalId                      = "group_remove_external_id"
-	EventTypeGroupRemoveMember                          = "group_remove_member"
-	EventTypeGroupRename                                = "group_rename"
-	EventTypeEmmError                                   = "emm_error"
-	EventTypeLoginFail                                  = "login_fail"
-	EventTypeLoginSuccess                               = "login_success"
-	EventTypeLogout                                     = "logout"
-	EventTypeResellerSupportSessionEnd                  = "reseller_support_session_end"
-	EventTypeResellerSupportSessionStart                = "reseller_support_session_start"
-	EventTypeSignInAsSessionEnd                         = "sign_in_as_session_end"
-	EventTypeSignInAsSessionStart                       = "sign_in_as_session_start"
-	EventTypeSsoError                                   = "sso_error"
-	EventTypeMemberAddName                              = "member_add_name"
-	EventTypeMemberChangeAdminRole                      = "member_change_admin_role"
-	EventTypeMemberChangeEmail                          = "member_change_email"
-	EventTypeMemberChangeMembershipType                 = "member_change_membership_type"
-	EventTypeMemberChangeName                           = "member_change_name"
-	EventTypeMemberChangeStatus                         = "member_change_status"
-	EventTypeMemberDeleteManualContacts                 = "member_delete_manual_contacts"
-	EventTypeMemberPermanentlyDeleteAccountContents     = "member_permanently_delete_account_contents"
-	EventTypeMemberSpaceLimitsAddCustomQuota            = "member_space_limits_add_custom_quota"
-	EventTypeMemberSpaceLimitsChangeCustomQuota         = "member_space_limits_change_custom_quota"
-	EventTypeMemberSpaceLimitsChangeStatus              = "member_space_limits_change_status"
-	EventTypeMemberSpaceLimitsRemoveCustomQuota         = "member_space_limits_remove_custom_quota"
-	EventTypeMemberSuggest                              = "member_suggest"
-	EventTypeMemberTransferAccountContents              = "member_transfer_account_contents"
-	EventTypeSecondaryMailsPolicyChanged                = "secondary_mails_policy_changed"
-	EventTypePaperContentAddMember                      = "paper_content_add_member"
-	EventTypePaperContentAddToFolder                    = "paper_content_add_to_folder"
-	EventTypePaperContentArchive                        = "paper_content_archive"
-	EventTypePaperContentCreate                         = "paper_content_create"
-	EventTypePaperContentPermanentlyDelete              = "paper_content_permanently_delete"
-	EventTypePaperContentRemoveFromFolder               = "paper_content_remove_from_folder"
-	EventTypePaperContentRemoveMember                   = "paper_content_remove_member"
-	EventTypePaperContentRename                         = "paper_content_rename"
-	EventTypePaperContentRestore                        = "paper_content_restore"
-	EventTypePaperDocAddComment                         = "paper_doc_add_comment"
-	EventTypePaperDocChangeMemberRole                   = "paper_doc_change_member_role"
-	EventTypePaperDocChangeSharingPolicy                = "paper_doc_change_sharing_policy"
-	EventTypePaperDocChangeSubscription                 = "paper_doc_change_subscription"
-	EventTypePaperDocDeleted                            = "paper_doc_deleted"
-	EventTypePaperDocDeleteComment                      = "paper_doc_delete_comment"
-	EventTypePaperDocDownload                           = "paper_doc_download"
-	EventTypePaperDocEdit                               = "paper_doc_edit"
-	EventTypePaperDocEditComment                        = "paper_doc_edit_comment"
-	EventTypePaperDocFollowed                           = "paper_doc_followed"
-	EventTypePaperDocMention                            = "paper_doc_mention"
-	EventTypePaperDocOwnershipChanged                   = "paper_doc_ownership_changed"
-	EventTypePaperDocRequestAccess                      = "paper_doc_request_access"
-	EventTypePaperDocResolveComment                     = "paper_doc_resolve_comment"
-	EventTypePaperDocRevert                             = "paper_doc_revert"
-	EventTypePaperDocSlackShare                         = "paper_doc_slack_share"
-	EventTypePaperDocTeamInvite                         = "paper_doc_team_invite"
-	EventTypePaperDocTrashed                            = "paper_doc_trashed"
-	EventTypePaperDocUnresolveComment                   = "paper_doc_unresolve_comment"
-	EventTypePaperDocUntrashed                          = "paper_doc_untrashed"
-	EventTypePaperDocView                               = "paper_doc_view"
-	EventTypePaperExternalViewAllow                     = "paper_external_view_allow"
-	EventTypePaperExternalViewDefaultTeam               = "paper_external_view_default_team"
-	EventTypePaperExternalViewForbid                    = "paper_external_view_forbid"
-	EventTypePaperFolderChangeSubscription              = "paper_folder_change_subscription"
-	EventTypePaperFolderDeleted                         = "paper_folder_deleted"
-	EventTypePaperFolderFollowed                        = "paper_folder_followed"
-	EventTypePaperFolderTeamInvite                      = "paper_folder_team_invite"
-	EventTypePasswordChange                             = "password_change"
-	EventTypePasswordReset                              = "password_reset"
-	EventTypePasswordResetAll                           = "password_reset_all"
-	EventTypeEmmCreateExceptionsReport                  = "emm_create_exceptions_report"
-	EventTypeEmmCreateUsageReport                       = "emm_create_usage_report"
-	EventTypeExportMembersReport                        = "export_members_report"
-	EventTypePaperAdminExportStart                      = "paper_admin_export_start"
-	EventTypeSmartSyncCreateAdminPrivilegeReport        = "smart_sync_create_admin_privilege_report"
-	EventTypeTeamActivityCreateReport                   = "team_activity_create_report"
-	EventTypeCollectionShare                            = "collection_share"
-	EventTypeNoteAclInviteOnly                          = "note_acl_invite_only"
-	EventTypeNoteAclLink                                = "note_acl_link"
-	EventTypeNoteAclTeamLink                            = "note_acl_team_link"
-	EventTypeNoteShared                                 = "note_shared"
-	EventTypeNoteShareReceive                           = "note_share_receive"
-	EventTypeOpenNoteShared                             = "open_note_shared"
-	EventTypeSfAddGroup                                 = "sf_add_group"
-	EventTypeSfAllowNonMembersToViewSharedLinks         = "sf_allow_non_members_to_view_shared_links"
-	EventTypeSfExternalInviteWarn                       = "sf_external_invite_warn"
-	EventTypeSfFbInvite                                 = "sf_fb_invite"
-	EventTypeSfFbInviteChangeRole                       = "sf_fb_invite_change_role"
-	EventTypeSfFbUninvite                               = "sf_fb_uninvite"
-	EventTypeSfInviteGroup                              = "sf_invite_group"
-	EventTypeSfTeamGrantAccess                          = "sf_team_grant_access"
-	EventTypeSfTeamInvite                               = "sf_team_invite"
-	EventTypeSfTeamInviteChangeRole                     = "sf_team_invite_change_role"
-	EventTypeSfTeamJoin                                 = "sf_team_join"
-	EventTypeSfTeamJoinFromOobLink                      = "sf_team_join_from_oob_link"
-	EventTypeSfTeamUninvite                             = "sf_team_uninvite"
-	EventTypeSharedContentAddInvitees                   = "shared_content_add_invitees"
-	EventTypeSharedContentAddLinkExpiry                 = "shared_content_add_link_expiry"
-	EventTypeSharedContentAddLinkPassword               = "shared_content_add_link_password"
-	EventTypeSharedContentAddMember                     = "shared_content_add_member"
-	EventTypeSharedContentChangeDownloadsPolicy         = "shared_content_change_downloads_policy"
-	EventTypeSharedContentChangeInviteeRole             = "shared_content_change_invitee_role"
-	EventTypeSharedContentChangeLinkAudience            = "shared_content_change_link_audience"
-	EventTypeSharedContentChangeLinkExpiry              = "shared_content_change_link_expiry"
-	EventTypeSharedContentChangeLinkPassword            = "shared_content_change_link_password"
-	EventTypeSharedContentChangeMemberRole              = "shared_content_change_member_role"
-	EventTypeSharedContentChangeViewerInfoPolicy        = "shared_content_change_viewer_info_policy"
-	EventTypeSharedContentClaimInvitation               = "shared_content_claim_invitation"
-	EventTypeSharedContentCopy                          = "shared_content_copy"
-	EventTypeSharedContentDownload                      = "shared_content_download"
-	EventTypeSharedContentRelinquishMembership          = "shared_content_relinquish_membership"
-	EventTypeSharedContentRemoveInvitees                = "shared_content_remove_invitees"
-	EventTypeSharedContentRemoveLinkExpiry              = "shared_content_remove_link_expiry"
-	EventTypeSharedContentRemoveLinkPassword            = "shared_content_remove_link_password"
-	EventTypeSharedContentRemoveMember                  = "shared_content_remove_member"
-	EventTypeSharedContentRequestAccess                 = "shared_content_request_access"
-	EventTypeSharedContentUnshare                       = "shared_content_unshare"
-	EventTypeSharedContentView                          = "shared_content_view"
-	EventTypeSharedFolderChangeLinkPolicy               = "shared_folder_change_link_policy"
-	EventTypeSharedFolderChangeMembersInheritancePolicy = "shared_folder_change_members_inheritance_policy"
-	EventTypeSharedFolderChangeMembersManagementPolicy  = "shared_folder_change_members_management_policy"
-	EventTypeSharedFolderChangeMembersPolicy            = "shared_folder_change_members_policy"
-	EventTypeSharedFolderCreate                         = "shared_folder_create"
-	EventTypeSharedFolderDeclineInvitation              = "shared_folder_decline_invitation"
-	EventTypeSharedFolderMount                          = "shared_folder_mount"
-	EventTypeSharedFolderNest                           = "shared_folder_nest"
-	EventTypeSharedFolderTransferOwnership              = "shared_folder_transfer_ownership"
-	EventTypeSharedFolderUnmount                        = "shared_folder_unmount"
-	EventTypeSharedLinkAddExpiry                        = "shared_link_add_expiry"
-	EventTypeSharedLinkChangeExpiry                     = "shared_link_change_expiry"
-	EventTypeSharedLinkChangeVisibility                 = "shared_link_change_visibility"
-	EventTypeSharedLinkCopy                             = "shared_link_copy"
-	EventTypeSharedLinkCreate                           = "shared_link_create"
-	EventTypeSharedLinkDisable                          = "shared_link_disable"
-	EventTypeSharedLinkDownload                         = "shared_link_download"
-	EventTypeSharedLinkRemoveExpiry                     = "shared_link_remove_expiry"
-	EventTypeSharedLinkShare                            = "shared_link_share"
-	EventTypeSharedLinkView                             = "shared_link_view"
-	EventTypeSharedNoteOpened                           = "shared_note_opened"
-	EventTypeShmodelGroupShare                          = "shmodel_group_share"
-	EventTypeShowcaseAccessGranted                      = "showcase_access_granted"
-	EventTypeShowcaseAddMember                          = "showcase_add_member"
-	EventTypeShowcaseArchived                           = "showcase_archived"
-	EventTypeShowcaseCreated                            = "showcase_created"
-	EventTypeShowcaseDeleteComment                      = "showcase_delete_comment"
-	EventTypeShowcaseEdited                             = "showcase_edited"
-	EventTypeShowcaseEditComment                        = "showcase_edit_comment"
-	EventTypeShowcaseFileAdded                          = "showcase_file_added"
-	EventTypeShowcaseFileDownload                       = "showcase_file_download"
-	EventTypeShowcaseFileRemoved                        = "showcase_file_removed"
-	EventTypeShowcaseFileView                           = "showcase_file_view"
-	EventTypeShowcasePermanentlyDeleted                 = "showcase_permanently_deleted"
-	EventTypeShowcasePostComment                        = "showcase_post_comment"
-	EventTypeShowcaseRemoveMember                       = "showcase_remove_member"
-	EventTypeShowcaseRenamed                            = "showcase_renamed"
-	EventTypeShowcaseRequestAccess                      = "showcase_request_access"
-	EventTypeShowcaseResolveComment                     = "showcase_resolve_comment"
-	EventTypeShowcaseRestored                           = "showcase_restored"
-	EventTypeShowcaseTrashed                            = "showcase_trashed"
-	EventTypeShowcaseTrashedDeprecated                  = "showcase_trashed_deprecated"
-	EventTypeShowcaseUnresolveComment                   = "showcase_unresolve_comment"
-	EventTypeShowcaseUntrashed                          = "showcase_untrashed"
-	EventTypeShowcaseUntrashedDeprecated                = "showcase_untrashed_deprecated"
-	EventTypeShowcaseView                               = "showcase_view"
-	EventTypeSsoAddCert                                 = "sso_add_cert"
-	EventTypeSsoAddLoginUrl                             = "sso_add_login_url"
-	EventTypeSsoAddLogoutUrl                            = "sso_add_logout_url"
-	EventTypeSsoChangeCert                              = "sso_change_cert"
-	EventTypeSsoChangeLoginUrl                          = "sso_change_login_url"
-	EventTypeSsoChangeLogoutUrl                         = "sso_change_logout_url"
-	EventTypeSsoChangeSamlIdentityMode                  = "sso_change_saml_identity_mode"
-	EventTypeSsoRemoveCert                              = "sso_remove_cert"
-	EventTypeSsoRemoveLoginUrl                          = "sso_remove_login_url"
-	EventTypeSsoRemoveLogoutUrl                         = "sso_remove_logout_url"
-	EventTypeTeamFolderChangeStatus                     = "team_folder_change_status"
-	EventTypeTeamFolderCreate                           = "team_folder_create"
-	EventTypeTeamFolderDowngrade                        = "team_folder_downgrade"
-	EventTypeTeamFolderPermanentlyDelete                = "team_folder_permanently_delete"
-	EventTypeTeamFolderRename                           = "team_folder_rename"
-	EventTypeTeamSelectiveSyncSettingsChanged           = "team_selective_sync_settings_changed"
-	EventTypeAccountCaptureChangePolicy                 = "account_capture_change_policy"
-	EventTypeAllowDownloadDisabled                      = "allow_download_disabled"
-	EventTypeAllowDownloadEnabled                       = "allow_download_enabled"
-	EventTypeCameraUploadsPolicyChanged                 = "camera_uploads_policy_changed"
-	EventTypeDataPlacementRestrictionChangePolicy       = "data_placement_restriction_change_policy"
-	EventTypeDataPlacementRestrictionSatisfyPolicy      = "data_placement_restriction_satisfy_policy"
-	EventTypeDeviceApprovalsChangeDesktopPolicy         = "device_approvals_change_desktop_policy"
-	EventTypeDeviceApprovalsChangeMobilePolicy          = "device_approvals_change_mobile_policy"
-	EventTypeDeviceApprovalsChangeOverageAction         = "device_approvals_change_overage_action"
-	EventTypeDeviceApprovalsChangeUnlinkAction          = "device_approvals_change_unlink_action"
-	EventTypeDirectoryRestrictionsAddMembers            = "directory_restrictions_add_members"
-	EventTypeDirectoryRestrictionsRemoveMembers         = "directory_restrictions_remove_members"
-	EventTypeEmmAddException                            = "emm_add_exception"
-	EventTypeEmmChangePolicy                            = "emm_change_policy"
-	EventTypeEmmRemoveException                         = "emm_remove_exception"
-	EventTypeExtendedVersionHistoryChangePolicy         = "extended_version_history_change_policy"
-	EventTypeFileCommentsChangePolicy                   = "file_comments_change_policy"
-	EventTypeFileRequestsChangePolicy                   = "file_requests_change_policy"
-	EventTypeFileRequestsEmailsEnabled                  = "file_requests_emails_enabled"
-	EventTypeFileRequestsEmailsRestrictedToTeamOnly     = "file_requests_emails_restricted_to_team_only"
-	EventTypeGoogleSsoChangePolicy                      = "google_sso_change_policy"
-	EventTypeGroupUserManagementChangePolicy            = "group_user_management_change_policy"
-	EventTypeMemberRequestsChangePolicy                 = "member_requests_change_policy"
-	EventTypeMemberSpaceLimitsAddException              = "member_space_limits_add_exception"
-	EventTypeMemberSpaceLimitsChangeCapsTypePolicy      = "member_space_limits_change_caps_type_policy"
-	EventTypeMemberSpaceLimitsChangePolicy              = "member_space_limits_change_policy"
-	EventTypeMemberSpaceLimitsRemoveException           = "member_space_limits_remove_exception"
-	EventTypeMemberSuggestionsChangePolicy              = "member_suggestions_change_policy"
-	EventTypeMicrosoftOfficeAddinChangePolicy           = "microsoft_office_addin_change_policy"
-	EventTypeNetworkControlChangePolicy                 = "network_control_change_policy"
-	EventTypePaperChangeDeploymentPolicy                = "paper_change_deployment_policy"
-	EventTypePaperChangeMemberLinkPolicy                = "paper_change_member_link_policy"
-	EventTypePaperChangeMemberPolicy                    = "paper_change_member_policy"
-	EventTypePaperChangePolicy                          = "paper_change_policy"
-	EventTypePaperEnabledUsersGroupAddition             = "paper_enabled_users_group_addition"
-	EventTypePaperEnabledUsersGroupRemoval              = "paper_enabled_users_group_removal"
-	EventTypePermanentDeleteChangePolicy                = "permanent_delete_change_policy"
-	EventTypeSharingChangeFolderJoinPolicy              = "sharing_change_folder_join_policy"
-	EventTypeSharingChangeLinkPolicy                    = "sharing_change_link_policy"
-	EventTypeSharingChangeMemberPolicy                  = "sharing_change_member_policy"
-	EventTypeShowcaseChangeDownloadPolicy               = "showcase_change_download_policy"
-	EventTypeShowcaseChangeEnabledPolicy                = "showcase_change_enabled_policy"
-	EventTypeShowcaseChangeExternalSharingPolicy        = "showcase_change_external_sharing_policy"
-	EventTypeSmartSyncChangePolicy                      = "smart_sync_change_policy"
-	EventTypeSmartSyncNotOptOut                         = "smart_sync_not_opt_out"
-	EventTypeSmartSyncOptOut                            = "smart_sync_opt_out"
-	EventTypeSsoChangePolicy                            = "sso_change_policy"
-	EventTypeTeamSelectiveSyncPolicyChanged             = "team_selective_sync_policy_changed"
-	EventTypeTfaChangePolicy                            = "tfa_change_policy"
-	EventTypeTwoAccountChangePolicy                     = "two_account_change_policy"
-	EventTypeViewerInfoPolicyChanged                    = "viewer_info_policy_changed"
-	EventTypeWebSessionsChangeFixedLengthPolicy         = "web_sessions_change_fixed_length_policy"
-	EventTypeWebSessionsChangeIdleLengthPolicy          = "web_sessions_change_idle_length_policy"
-	EventTypeTeamMergeFrom                              = "team_merge_from"
-	EventTypeTeamMergeTo                                = "team_merge_to"
-	EventTypeTeamProfileAddLogo                         = "team_profile_add_logo"
-	EventTypeTeamProfileChangeDefaultLanguage           = "team_profile_change_default_language"
-	EventTypeTeamProfileChangeLogo                      = "team_profile_change_logo"
-	EventTypeTeamProfileChangeName                      = "team_profile_change_name"
-	EventTypeTeamProfileRemoveLogo                      = "team_profile_remove_logo"
-	EventTypeTfaAddBackupPhone                          = "tfa_add_backup_phone"
-	EventTypeTfaAddSecurityKey                          = "tfa_add_security_key"
-	EventTypeTfaChangeBackupPhone                       = "tfa_change_backup_phone"
-	EventTypeTfaChangeStatus                            = "tfa_change_status"
-	EventTypeTfaRemoveBackupPhone                       = "tfa_remove_backup_phone"
-	EventTypeTfaRemoveSecurityKey                       = "tfa_remove_security_key"
-	EventTypeTfaReset                                   = "tfa_reset"
-	EventTypeOther                                      = "other"
+	EventTypeAppLinkTeam                                  = "app_link_team"
+	EventTypeAppLinkUser                                  = "app_link_user"
+	EventTypeAppUnlinkTeam                                = "app_unlink_team"
+	EventTypeAppUnlinkUser                                = "app_unlink_user"
+	EventTypeIntegrationConnected                         = "integration_connected"
+	EventTypeIntegrationDisconnected                      = "integration_disconnected"
+	EventTypeFileAddComment                               = "file_add_comment"
+	EventTypeFileChangeCommentSubscription                = "file_change_comment_subscription"
+	EventTypeFileDeleteComment                            = "file_delete_comment"
+	EventTypeFileEditComment                              = "file_edit_comment"
+	EventTypeFileLikeComment                              = "file_like_comment"
+	EventTypeFileResolveComment                           = "file_resolve_comment"
+	EventTypeFileUnlikeComment                            = "file_unlike_comment"
+	EventTypeFileUnresolveComment                         = "file_unresolve_comment"
+	EventTypeDeviceChangeIpDesktop                        = "device_change_ip_desktop"
+	EventTypeDeviceChangeIpMobile                         = "device_change_ip_mobile"
+	EventTypeDeviceChangeIpWeb                            = "device_change_ip_web"
+	EventTypeDeviceDeleteOnUnlinkFail                     = "device_delete_on_unlink_fail"
+	EventTypeDeviceDeleteOnUnlinkSuccess                  = "device_delete_on_unlink_success"
+	EventTypeDeviceLinkFail                               = "device_link_fail"
+	EventTypeDeviceLinkSuccess                            = "device_link_success"
+	EventTypeDeviceManagementDisabled                     = "device_management_disabled"
+	EventTypeDeviceManagementEnabled                      = "device_management_enabled"
+	EventTypeDeviceUnlink                                 = "device_unlink"
+	EventTypeEmmRefreshAuthToken                          = "emm_refresh_auth_token"
+	EventTypeAccountCaptureChangeAvailability             = "account_capture_change_availability"
+	EventTypeAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
+	EventTypeAccountCaptureNotificationEmailsSent         = "account_capture_notification_emails_sent"
+	EventTypeAccountCaptureRelinquishAccount              = "account_capture_relinquish_account"
+	EventTypeDisabledDomainInvites                        = "disabled_domain_invites"
+	EventTypeDomainInvitesApproveRequestToJoinTeam        = "domain_invites_approve_request_to_join_team"
+	EventTypeDomainInvitesDeclineRequestToJoinTeam        = "domain_invites_decline_request_to_join_team"
+	EventTypeDomainInvitesEmailExistingUsers              = "domain_invites_email_existing_users"
+	EventTypeDomainInvitesRequestToJoinTeam               = "domain_invites_request_to_join_team"
+	EventTypeDomainInvitesSetInviteNewUserPrefToNo        = "domain_invites_set_invite_new_user_pref_to_no"
+	EventTypeDomainInvitesSetInviteNewUserPrefToYes       = "domain_invites_set_invite_new_user_pref_to_yes"
+	EventTypeDomainVerificationAddDomainFail              = "domain_verification_add_domain_fail"
+	EventTypeDomainVerificationAddDomainSuccess           = "domain_verification_add_domain_success"
+	EventTypeDomainVerificationRemoveDomain               = "domain_verification_remove_domain"
+	EventTypeEnabledDomainInvites                         = "enabled_domain_invites"
+	EventTypeCreateFolder                                 = "create_folder"
+	EventTypeFileAdd                                      = "file_add"
+	EventTypeFileCopy                                     = "file_copy"
+	EventTypeFileDelete                                   = "file_delete"
+	EventTypeFileDownload                                 = "file_download"
+	EventTypeFileEdit                                     = "file_edit"
+	EventTypeFileGetCopyReference                         = "file_get_copy_reference"
+	EventTypeFileMove                                     = "file_move"
+	EventTypeFilePermanentlyDelete                        = "file_permanently_delete"
+	EventTypeFilePreview                                  = "file_preview"
+	EventTypeFileRename                                   = "file_rename"
+	EventTypeFileRestore                                  = "file_restore"
+	EventTypeFileRevert                                   = "file_revert"
+	EventTypeFileRollbackChanges                          = "file_rollback_changes"
+	EventTypeFileSaveCopyReference                        = "file_save_copy_reference"
+	EventTypeFileRequestChange                            = "file_request_change"
+	EventTypeFileRequestClose                             = "file_request_close"
+	EventTypeFileRequestCreate                            = "file_request_create"
+	EventTypeFileRequestDelete                            = "file_request_delete"
+	EventTypeFileRequestReceiveFile                       = "file_request_receive_file"
+	EventTypeGroupAddExternalId                           = "group_add_external_id"
+	EventTypeGroupAddMember                               = "group_add_member"
+	EventTypeGroupChangeExternalId                        = "group_change_external_id"
+	EventTypeGroupChangeManagementType                    = "group_change_management_type"
+	EventTypeGroupChangeMemberRole                        = "group_change_member_role"
+	EventTypeGroupCreate                                  = "group_create"
+	EventTypeGroupDelete                                  = "group_delete"
+	EventTypeGroupDescriptionUpdated                      = "group_description_updated"
+	EventTypeGroupJoinPolicyUpdated                       = "group_join_policy_updated"
+	EventTypeGroupMoved                                   = "group_moved"
+	EventTypeGroupRemoveExternalId                        = "group_remove_external_id"
+	EventTypeGroupRemoveMember                            = "group_remove_member"
+	EventTypeGroupRename                                  = "group_rename"
+	EventTypeEmmError                                     = "emm_error"
+	EventTypeGuestAdminSignedInViaTrustedTeams            = "guest_admin_signed_in_via_trusted_teams"
+	EventTypeGuestAdminSignedOutViaTrustedTeams           = "guest_admin_signed_out_via_trusted_teams"
+	EventTypeLoginFail                                    = "login_fail"
+	EventTypeLoginSuccess                                 = "login_success"
+	EventTypeLogout                                       = "logout"
+	EventTypeResellerSupportSessionEnd                    = "reseller_support_session_end"
+	EventTypeResellerSupportSessionStart                  = "reseller_support_session_start"
+	EventTypeSignInAsSessionEnd                           = "sign_in_as_session_end"
+	EventTypeSignInAsSessionStart                         = "sign_in_as_session_start"
+	EventTypeSsoError                                     = "sso_error"
+	EventTypeMemberAddExternalId                          = "member_add_external_id"
+	EventTypeMemberAddName                                = "member_add_name"
+	EventTypeMemberChangeAdminRole                        = "member_change_admin_role"
+	EventTypeMemberChangeEmail                            = "member_change_email"
+	EventTypeMemberChangeExternalId                       = "member_change_external_id"
+	EventTypeMemberChangeMembershipType                   = "member_change_membership_type"
+	EventTypeMemberChangeName                             = "member_change_name"
+	EventTypeMemberChangeStatus                           = "member_change_status"
+	EventTypeMemberDeleteManualContacts                   = "member_delete_manual_contacts"
+	EventTypeMemberPermanentlyDeleteAccountContents       = "member_permanently_delete_account_contents"
+	EventTypeMemberRemoveExternalId                       = "member_remove_external_id"
+	EventTypeMemberSpaceLimitsAddCustomQuota              = "member_space_limits_add_custom_quota"
+	EventTypeMemberSpaceLimitsChangeCustomQuota           = "member_space_limits_change_custom_quota"
+	EventTypeMemberSpaceLimitsChangeStatus                = "member_space_limits_change_status"
+	EventTypeMemberSpaceLimitsRemoveCustomQuota           = "member_space_limits_remove_custom_quota"
+	EventTypeMemberSuggest                                = "member_suggest"
+	EventTypeMemberTransferAccountContents                = "member_transfer_account_contents"
+	EventTypeSecondaryMailsPolicyChanged                  = "secondary_mails_policy_changed"
+	EventTypePaperContentAddMember                        = "paper_content_add_member"
+	EventTypePaperContentAddToFolder                      = "paper_content_add_to_folder"
+	EventTypePaperContentArchive                          = "paper_content_archive"
+	EventTypePaperContentCreate                           = "paper_content_create"
+	EventTypePaperContentPermanentlyDelete                = "paper_content_permanently_delete"
+	EventTypePaperContentRemoveFromFolder                 = "paper_content_remove_from_folder"
+	EventTypePaperContentRemoveMember                     = "paper_content_remove_member"
+	EventTypePaperContentRename                           = "paper_content_rename"
+	EventTypePaperContentRestore                          = "paper_content_restore"
+	EventTypePaperDocAddComment                           = "paper_doc_add_comment"
+	EventTypePaperDocChangeMemberRole                     = "paper_doc_change_member_role"
+	EventTypePaperDocChangeSharingPolicy                  = "paper_doc_change_sharing_policy"
+	EventTypePaperDocChangeSubscription                   = "paper_doc_change_subscription"
+	EventTypePaperDocDeleted                              = "paper_doc_deleted"
+	EventTypePaperDocDeleteComment                        = "paper_doc_delete_comment"
+	EventTypePaperDocDownload                             = "paper_doc_download"
+	EventTypePaperDocEdit                                 = "paper_doc_edit"
+	EventTypePaperDocEditComment                          = "paper_doc_edit_comment"
+	EventTypePaperDocFollowed                             = "paper_doc_followed"
+	EventTypePaperDocMention                              = "paper_doc_mention"
+	EventTypePaperDocOwnershipChanged                     = "paper_doc_ownership_changed"
+	EventTypePaperDocRequestAccess                        = "paper_doc_request_access"
+	EventTypePaperDocResolveComment                       = "paper_doc_resolve_comment"
+	EventTypePaperDocRevert                               = "paper_doc_revert"
+	EventTypePaperDocSlackShare                           = "paper_doc_slack_share"
+	EventTypePaperDocTeamInvite                           = "paper_doc_team_invite"
+	EventTypePaperDocTrashed                              = "paper_doc_trashed"
+	EventTypePaperDocUnresolveComment                     = "paper_doc_unresolve_comment"
+	EventTypePaperDocUntrashed                            = "paper_doc_untrashed"
+	EventTypePaperDocView                                 = "paper_doc_view"
+	EventTypePaperExternalViewAllow                       = "paper_external_view_allow"
+	EventTypePaperExternalViewDefaultTeam                 = "paper_external_view_default_team"
+	EventTypePaperExternalViewForbid                      = "paper_external_view_forbid"
+	EventTypePaperFolderChangeSubscription                = "paper_folder_change_subscription"
+	EventTypePaperFolderDeleted                           = "paper_folder_deleted"
+	EventTypePaperFolderFollowed                          = "paper_folder_followed"
+	EventTypePaperFolderTeamInvite                        = "paper_folder_team_invite"
+	EventTypePaperPublishedLinkCreate                     = "paper_published_link_create"
+	EventTypePaperPublishedLinkDisabled                   = "paper_published_link_disabled"
+	EventTypePaperPublishedLinkView                       = "paper_published_link_view"
+	EventTypePasswordChange                               = "password_change"
+	EventTypePasswordReset                                = "password_reset"
+	EventTypePasswordResetAll                             = "password_reset_all"
+	EventTypeEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
+	EventTypeEmmCreateUsageReport                         = "emm_create_usage_report"
+	EventTypeExportMembersReport                          = "export_members_report"
+	EventTypePaperAdminExportStart                        = "paper_admin_export_start"
+	EventTypeSmartSyncCreateAdminPrivilegeReport          = "smart_sync_create_admin_privilege_report"
+	EventTypeTeamActivityCreateReport                     = "team_activity_create_report"
+	EventTypeTeamActivityCreateReportFail                 = "team_activity_create_report_fail"
+	EventTypeCollectionShare                              = "collection_share"
+	EventTypeNoteAclInviteOnly                            = "note_acl_invite_only"
+	EventTypeNoteAclLink                                  = "note_acl_link"
+	EventTypeNoteAclTeamLink                              = "note_acl_team_link"
+	EventTypeNoteShared                                   = "note_shared"
+	EventTypeNoteShareReceive                             = "note_share_receive"
+	EventTypeOpenNoteShared                               = "open_note_shared"
+	EventTypeSfAddGroup                                   = "sf_add_group"
+	EventTypeSfAllowNonMembersToViewSharedLinks           = "sf_allow_non_members_to_view_shared_links"
+	EventTypeSfExternalInviteWarn                         = "sf_external_invite_warn"
+	EventTypeSfFbInvite                                   = "sf_fb_invite"
+	EventTypeSfFbInviteChangeRole                         = "sf_fb_invite_change_role"
+	EventTypeSfFbUninvite                                 = "sf_fb_uninvite"
+	EventTypeSfInviteGroup                                = "sf_invite_group"
+	EventTypeSfTeamGrantAccess                            = "sf_team_grant_access"
+	EventTypeSfTeamInvite                                 = "sf_team_invite"
+	EventTypeSfTeamInviteChangeRole                       = "sf_team_invite_change_role"
+	EventTypeSfTeamJoin                                   = "sf_team_join"
+	EventTypeSfTeamJoinFromOobLink                        = "sf_team_join_from_oob_link"
+	EventTypeSfTeamUninvite                               = "sf_team_uninvite"
+	EventTypeSharedContentAddInvitees                     = "shared_content_add_invitees"
+	EventTypeSharedContentAddLinkExpiry                   = "shared_content_add_link_expiry"
+	EventTypeSharedContentAddLinkPassword                 = "shared_content_add_link_password"
+	EventTypeSharedContentAddMember                       = "shared_content_add_member"
+	EventTypeSharedContentChangeDownloadsPolicy           = "shared_content_change_downloads_policy"
+	EventTypeSharedContentChangeInviteeRole               = "shared_content_change_invitee_role"
+	EventTypeSharedContentChangeLinkAudience              = "shared_content_change_link_audience"
+	EventTypeSharedContentChangeLinkExpiry                = "shared_content_change_link_expiry"
+	EventTypeSharedContentChangeLinkPassword              = "shared_content_change_link_password"
+	EventTypeSharedContentChangeMemberRole                = "shared_content_change_member_role"
+	EventTypeSharedContentChangeViewerInfoPolicy          = "shared_content_change_viewer_info_policy"
+	EventTypeSharedContentClaimInvitation                 = "shared_content_claim_invitation"
+	EventTypeSharedContentCopy                            = "shared_content_copy"
+	EventTypeSharedContentDownload                        = "shared_content_download"
+	EventTypeSharedContentRelinquishMembership            = "shared_content_relinquish_membership"
+	EventTypeSharedContentRemoveInvitees                  = "shared_content_remove_invitees"
+	EventTypeSharedContentRemoveLinkExpiry                = "shared_content_remove_link_expiry"
+	EventTypeSharedContentRemoveLinkPassword              = "shared_content_remove_link_password"
+	EventTypeSharedContentRemoveMember                    = "shared_content_remove_member"
+	EventTypeSharedContentRequestAccess                   = "shared_content_request_access"
+	EventTypeSharedContentUnshare                         = "shared_content_unshare"
+	EventTypeSharedContentView                            = "shared_content_view"
+	EventTypeSharedFolderChangeLinkPolicy                 = "shared_folder_change_link_policy"
+	EventTypeSharedFolderChangeMembersInheritancePolicy   = "shared_folder_change_members_inheritance_policy"
+	EventTypeSharedFolderChangeMembersManagementPolicy    = "shared_folder_change_members_management_policy"
+	EventTypeSharedFolderChangeMembersPolicy              = "shared_folder_change_members_policy"
+	EventTypeSharedFolderCreate                           = "shared_folder_create"
+	EventTypeSharedFolderDeclineInvitation                = "shared_folder_decline_invitation"
+	EventTypeSharedFolderMount                            = "shared_folder_mount"
+	EventTypeSharedFolderNest                             = "shared_folder_nest"
+	EventTypeSharedFolderTransferOwnership                = "shared_folder_transfer_ownership"
+	EventTypeSharedFolderUnmount                          = "shared_folder_unmount"
+	EventTypeSharedLinkAddExpiry                          = "shared_link_add_expiry"
+	EventTypeSharedLinkChangeExpiry                       = "shared_link_change_expiry"
+	EventTypeSharedLinkChangeVisibility                   = "shared_link_change_visibility"
+	EventTypeSharedLinkCopy                               = "shared_link_copy"
+	EventTypeSharedLinkCreate                             = "shared_link_create"
+	EventTypeSharedLinkDisable                            = "shared_link_disable"
+	EventTypeSharedLinkDownload                           = "shared_link_download"
+	EventTypeSharedLinkRemoveExpiry                       = "shared_link_remove_expiry"
+	EventTypeSharedLinkShare                              = "shared_link_share"
+	EventTypeSharedLinkView                               = "shared_link_view"
+	EventTypeSharedNoteOpened                             = "shared_note_opened"
+	EventTypeShmodelGroupShare                            = "shmodel_group_share"
+	EventTypeShowcaseAccessGranted                        = "showcase_access_granted"
+	EventTypeShowcaseAddMember                            = "showcase_add_member"
+	EventTypeShowcaseArchived                             = "showcase_archived"
+	EventTypeShowcaseCreated                              = "showcase_created"
+	EventTypeShowcaseDeleteComment                        = "showcase_delete_comment"
+	EventTypeShowcaseEdited                               = "showcase_edited"
+	EventTypeShowcaseEditComment                          = "showcase_edit_comment"
+	EventTypeShowcaseFileAdded                            = "showcase_file_added"
+	EventTypeShowcaseFileDownload                         = "showcase_file_download"
+	EventTypeShowcaseFileRemoved                          = "showcase_file_removed"
+	EventTypeShowcaseFileView                             = "showcase_file_view"
+	EventTypeShowcasePermanentlyDeleted                   = "showcase_permanently_deleted"
+	EventTypeShowcasePostComment                          = "showcase_post_comment"
+	EventTypeShowcaseRemoveMember                         = "showcase_remove_member"
+	EventTypeShowcaseRenamed                              = "showcase_renamed"
+	EventTypeShowcaseRequestAccess                        = "showcase_request_access"
+	EventTypeShowcaseResolveComment                       = "showcase_resolve_comment"
+	EventTypeShowcaseRestored                             = "showcase_restored"
+	EventTypeShowcaseTrashed                              = "showcase_trashed"
+	EventTypeShowcaseTrashedDeprecated                    = "showcase_trashed_deprecated"
+	EventTypeShowcaseUnresolveComment                     = "showcase_unresolve_comment"
+	EventTypeShowcaseUntrashed                            = "showcase_untrashed"
+	EventTypeShowcaseUntrashedDeprecated                  = "showcase_untrashed_deprecated"
+	EventTypeShowcaseView                                 = "showcase_view"
+	EventTypeSsoAddCert                                   = "sso_add_cert"
+	EventTypeSsoAddLoginUrl                               = "sso_add_login_url"
+	EventTypeSsoAddLogoutUrl                              = "sso_add_logout_url"
+	EventTypeSsoChangeCert                                = "sso_change_cert"
+	EventTypeSsoChangeLoginUrl                            = "sso_change_login_url"
+	EventTypeSsoChangeLogoutUrl                           = "sso_change_logout_url"
+	EventTypeSsoChangeSamlIdentityMode                    = "sso_change_saml_identity_mode"
+	EventTypeSsoRemoveCert                                = "sso_remove_cert"
+	EventTypeSsoRemoveLoginUrl                            = "sso_remove_login_url"
+	EventTypeSsoRemoveLogoutUrl                           = "sso_remove_logout_url"
+	EventTypeTeamFolderChangeStatus                       = "team_folder_change_status"
+	EventTypeTeamFolderCreate                             = "team_folder_create"
+	EventTypeTeamFolderDowngrade                          = "team_folder_downgrade"
+	EventTypeTeamFolderPermanentlyDelete                  = "team_folder_permanently_delete"
+	EventTypeTeamFolderRename                             = "team_folder_rename"
+	EventTypeTeamSelectiveSyncSettingsChanged             = "team_selective_sync_settings_changed"
+	EventTypeAccountCaptureChangePolicy                   = "account_capture_change_policy"
+	EventTypeAllowDownloadDisabled                        = "allow_download_disabled"
+	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
+	EventTypeCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
+	EventTypeDataPlacementRestrictionChangePolicy         = "data_placement_restriction_change_policy"
+	EventTypeDataPlacementRestrictionSatisfyPolicy        = "data_placement_restriction_satisfy_policy"
+	EventTypeDeviceApprovalsChangeDesktopPolicy           = "device_approvals_change_desktop_policy"
+	EventTypeDeviceApprovalsChangeMobilePolicy            = "device_approvals_change_mobile_policy"
+	EventTypeDeviceApprovalsChangeOverageAction           = "device_approvals_change_overage_action"
+	EventTypeDeviceApprovalsChangeUnlinkAction            = "device_approvals_change_unlink_action"
+	EventTypeDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
+	EventTypeDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeEmmAddException                              = "emm_add_exception"
+	EventTypeEmmChangePolicy                              = "emm_change_policy"
+	EventTypeEmmRemoveException                           = "emm_remove_exception"
+	EventTypeExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
+	EventTypeFileCommentsChangePolicy                     = "file_comments_change_policy"
+	EventTypeFileRequestsChangePolicy                     = "file_requests_change_policy"
+	EventTypeFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
+	EventTypeFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
+	EventTypeGoogleSsoChangePolicy                        = "google_sso_change_policy"
+	EventTypeGroupUserManagementChangePolicy              = "group_user_management_change_policy"
+	EventTypeIntegrationPolicyChanged                     = "integration_policy_changed"
+	EventTypeMemberRequestsChangePolicy                   = "member_requests_change_policy"
+	EventTypeMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
+	EventTypeMemberSpaceLimitsChangeCapsTypePolicy        = "member_space_limits_change_caps_type_policy"
+	EventTypeMemberSpaceLimitsChangePolicy                = "member_space_limits_change_policy"
+	EventTypeMemberSpaceLimitsRemoveException             = "member_space_limits_remove_exception"
+	EventTypeMemberSuggestionsChangePolicy                = "member_suggestions_change_policy"
+	EventTypeMicrosoftOfficeAddinChangePolicy             = "microsoft_office_addin_change_policy"
+	EventTypeNetworkControlChangePolicy                   = "network_control_change_policy"
+	EventTypePaperChangeDeploymentPolicy                  = "paper_change_deployment_policy"
+	EventTypePaperChangeMemberLinkPolicy                  = "paper_change_member_link_policy"
+	EventTypePaperChangeMemberPolicy                      = "paper_change_member_policy"
+	EventTypePaperChangePolicy                            = "paper_change_policy"
+	EventTypePaperDefaultFolderPolicyChanged              = "paper_default_folder_policy_changed"
+	EventTypePaperDesktopPolicyChanged                    = "paper_desktop_policy_changed"
+	EventTypePaperEnabledUsersGroupAddition               = "paper_enabled_users_group_addition"
+	EventTypePaperEnabledUsersGroupRemoval                = "paper_enabled_users_group_removal"
+	EventTypePermanentDeleteChangePolicy                  = "permanent_delete_change_policy"
+	EventTypeResellerSupportChangePolicy                  = "reseller_support_change_policy"
+	EventTypeSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
+	EventTypeSharingChangeLinkPolicy                      = "sharing_change_link_policy"
+	EventTypeSharingChangeMemberPolicy                    = "sharing_change_member_policy"
+	EventTypeShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
+	EventTypeShowcaseChangeEnabledPolicy                  = "showcase_change_enabled_policy"
+	EventTypeShowcaseChangeExternalSharingPolicy          = "showcase_change_external_sharing_policy"
+	EventTypeSmartSyncChangePolicy                        = "smart_sync_change_policy"
+	EventTypeSmartSyncNotOptOut                           = "smart_sync_not_opt_out"
+	EventTypeSmartSyncOptOut                              = "smart_sync_opt_out"
+	EventTypeSsoChangePolicy                              = "sso_change_policy"
+	EventTypeTeamExtensionsPolicyChanged                  = "team_extensions_policy_changed"
+	EventTypeTeamSelectiveSyncPolicyChanged               = "team_selective_sync_policy_changed"
+	EventTypeTfaChangePolicy                              = "tfa_change_policy"
+	EventTypeTwoAccountChangePolicy                       = "two_account_change_policy"
+	EventTypeViewerInfoPolicyChanged                      = "viewer_info_policy_changed"
+	EventTypeWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
+	EventTypeWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
+	EventTypeTeamMergeFrom                                = "team_merge_from"
+	EventTypeTeamMergeTo                                  = "team_merge_to"
+	EventTypeTeamProfileAddLogo                           = "team_profile_add_logo"
+	EventTypeTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
+	EventTypeTeamProfileChangeLogo                        = "team_profile_change_logo"
+	EventTypeTeamProfileChangeName                        = "team_profile_change_name"
+	EventTypeTeamProfileRemoveLogo                        = "team_profile_remove_logo"
+	EventTypeTfaAddBackupPhone                            = "tfa_add_backup_phone"
+	EventTypeTfaAddSecurityKey                            = "tfa_add_security_key"
+	EventTypeTfaChangeBackupPhone                         = "tfa_change_backup_phone"
+	EventTypeTfaChangeStatus                              = "tfa_change_status"
+	EventTypeTfaRemoveBackupPhone                         = "tfa_remove_backup_phone"
+	EventTypeTfaRemoveSecurityKey                         = "tfa_remove_security_key"
+	EventTypeTfaReset                                     = "tfa_reset"
+	EventTypeGuestAdminChangeStatus                       = "guest_admin_change_status"
+	EventTypeTeamMergeRequestAccepted                     = "team_merge_request_accepted"
+	EventTypeTeamMergeRequestAcceptedShownToPrimaryTeam   = "team_merge_request_accepted_shown_to_primary_team"
+	EventTypeTeamMergeRequestAcceptedShownToSecondaryTeam = "team_merge_request_accepted_shown_to_secondary_team"
+	EventTypeTeamMergeRequestAutoCanceled                 = "team_merge_request_auto_canceled"
+	EventTypeTeamMergeRequestCanceled                     = "team_merge_request_canceled"
+	EventTypeTeamMergeRequestCanceledShownToPrimaryTeam   = "team_merge_request_canceled_shown_to_primary_team"
+	EventTypeTeamMergeRequestCanceledShownToSecondaryTeam = "team_merge_request_canceled_shown_to_secondary_team"
+	EventTypeTeamMergeRequestExpired                      = "team_merge_request_expired"
+	EventTypeTeamMergeRequestExpiredShownToPrimaryTeam    = "team_merge_request_expired_shown_to_primary_team"
+	EventTypeTeamMergeRequestExpiredShownToSecondaryTeam  = "team_merge_request_expired_shown_to_secondary_team"
+	EventTypeTeamMergeRequestRejectedShownToPrimaryTeam   = "team_merge_request_rejected_shown_to_primary_team"
+	EventTypeTeamMergeRequestRejectedShownToSecondaryTeam = "team_merge_request_rejected_shown_to_secondary_team"
+	EventTypeTeamMergeRequestReminder                     = "team_merge_request_reminder"
+	EventTypeTeamMergeRequestReminderShownToPrimaryTeam   = "team_merge_request_reminder_shown_to_primary_team"
+	EventTypeTeamMergeRequestReminderShownToSecondaryTeam = "team_merge_request_reminder_shown_to_secondary_team"
+	EventTypeTeamMergeRequestRevoked                      = "team_merge_request_revoked"
+	EventTypeTeamMergeRequestSentShownToPrimaryTeam       = "team_merge_request_sent_shown_to_primary_team"
+	EventTypeTeamMergeRequestSentShownToSecondaryTeam     = "team_merge_request_sent_shown_to_secondary_team"
+	EventTypeOther                                        = "other"
 )
 
 // UnmarshalJSON deserializes into a EventType instance
@@ -6276,6 +6749,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "app_unlink_user":
 		err = json.Unmarshal(body, &u.AppUnlinkUser)
+
+		if err != nil {
+			return err
+		}
+	case "integration_connected":
+		err = json.Unmarshal(body, &u.IntegrationConnected)
+
+		if err != nil {
+			return err
+		}
+	case "integration_disconnected":
+		err = json.Unmarshal(body, &u.IntegrationDisconnected)
 
 		if err != nil {
 			return err
@@ -6592,6 +7077,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_request_delete":
+		err = json.Unmarshal(body, &u.FileRequestDelete)
+
+		if err != nil {
+			return err
+		}
 	case "file_request_receive_file":
 		err = json.Unmarshal(body, &u.FileRequestReceiveFile)
 
@@ -6682,6 +7173,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "guest_admin_signed_in_via_trusted_teams":
+		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeams)
+
+		if err != nil {
+			return err
+		}
+	case "guest_admin_signed_out_via_trusted_teams":
+		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeams)
+
+		if err != nil {
+			return err
+		}
 	case "login_fail":
 		err = json.Unmarshal(body, &u.LoginFail)
 
@@ -6730,6 +7233,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_add_external_id":
+		err = json.Unmarshal(body, &u.MemberAddExternalId)
+
+		if err != nil {
+			return err
+		}
 	case "member_add_name":
 		err = json.Unmarshal(body, &u.MemberAddName)
 
@@ -6744,6 +7253,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_change_email":
 		err = json.Unmarshal(body, &u.MemberChangeEmail)
+
+		if err != nil {
+			return err
+		}
+	case "member_change_external_id":
+		err = json.Unmarshal(body, &u.MemberChangeExternalId)
 
 		if err != nil {
 			return err
@@ -6774,6 +7289,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_permanently_delete_account_contents":
 		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents)
+
+		if err != nil {
+			return err
+		}
+	case "member_remove_external_id":
+		err = json.Unmarshal(body, &u.MemberRemoveExternalId)
 
 		if err != nil {
 			return err
@@ -7042,6 +7563,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_published_link_create":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkCreate)
+
+		if err != nil {
+			return err
+		}
+	case "paper_published_link_disabled":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabled)
+
+		if err != nil {
+			return err
+		}
+	case "paper_published_link_view":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkView)
+
+		if err != nil {
+			return err
+		}
 	case "password_change":
 		err = json.Unmarshal(body, &u.PasswordChange)
 
@@ -7092,6 +7631,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "team_activity_create_report":
 		err = json.Unmarshal(body, &u.TeamActivityCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "team_activity_create_report_fail":
+		err = json.Unmarshal(body, &u.TeamActivityCreateReportFail)
 
 		if err != nil {
 			return err
@@ -7852,6 +8397,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "integration_policy_changed":
+		err = json.Unmarshal(body, &u.IntegrationPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "member_requests_change_policy":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
 
@@ -7924,6 +8475,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_default_folder_policy_changed":
+		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "paper_desktop_policy_changed":
+		err = json.Unmarshal(body, &u.PaperDesktopPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "paper_enabled_users_group_addition":
 		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAddition)
 
@@ -7938,6 +8501,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "permanent_delete_change_policy":
 		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "reseller_support_change_policy":
+		err = json.Unmarshal(body, &u.ResellerSupportChangePolicy)
 
 		if err != nil {
 			return err
@@ -7998,6 +8567,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "sso_change_policy":
 		err = json.Unmarshal(body, &u.SsoChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "team_extensions_policy_changed":
+		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged)
 
 		if err != nil {
 			return err
@@ -8118,6 +8693,120 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "tfa_reset":
 		err = json.Unmarshal(body, &u.TfaReset)
+
+		if err != nil {
+			return err
+		}
+	case "guest_admin_change_status":
+		err = json.Unmarshal(body, &u.GuestAdminChangeStatus)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAccepted)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_accepted_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_auto_canceled":
+		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceled)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceled)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_canceled_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpired)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_expired_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_rejected_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_rejected_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminder)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_reminder_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_revoked":
+		err = json.Unmarshal(body, &u.TeamMergeRequestRevoked)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_sent_shown_to_primary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_merge_request_sent_shown_to_secondary_team":
+		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeam)
 
 		if err != nil {
 			return err
@@ -8782,6 +9471,35 @@ type FileRequestDeadline struct {
 // NewFileRequestDeadline returns a new FileRequestDeadline instance
 func NewFileRequestDeadline() *FileRequestDeadline {
 	s := new(FileRequestDeadline)
+	return s
+}
+
+// FileRequestDeleteDetails : Delete file request.
+type FileRequestDeleteDetails struct {
+	// FileRequestId : File request id. Might be missing due to historical data
+	// gap.
+	FileRequestId string `json:"file_request_id,omitempty"`
+	// PreviousDetails : Previous file request details. Might be missing due to
+	// historical data gap.
+	PreviousDetails *FileRequestDetails `json:"previous_details,omitempty"`
+}
+
+// NewFileRequestDeleteDetails returns a new FileRequestDeleteDetails instance
+func NewFileRequestDeleteDetails() *FileRequestDeleteDetails {
+	s := new(FileRequestDeleteDetails)
+	return s
+}
+
+// FileRequestDeleteType : has no documentation (yet)
+type FileRequestDeleteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileRequestDeleteType returns a new FileRequestDeleteType instance
+func NewFileRequestDeleteType(Description string) *FileRequestDeleteType {
+	s := new(FileRequestDeleteType)
+	s.Description = Description
 	return s
 }
 
@@ -9698,6 +10416,100 @@ func NewGroupUserManagementChangePolicyType(Description string) *GroupUserManage
 	return s
 }
 
+// GuestAdminChangeStatusDetails : Changed guest team admin status.
+type GuestAdminChangeStatusDetails struct {
+	// IsGuest : True for guest, false for host.
+	IsGuest bool `json:"is_guest"`
+	// GuestTeamName : The name of the guest team.
+	GuestTeamName string `json:"guest_team_name,omitempty"`
+	// HostTeamName : The name of the host team.
+	HostTeamName string `json:"host_team_name,omitempty"`
+	// PreviousValue : Previous request state.
+	PreviousValue *TrustedTeamsRequestState `json:"previous_value"`
+	// NewValue : New request state.
+	NewValue *TrustedTeamsRequestState `json:"new_value"`
+	// ActionDetails : Action details.
+	ActionDetails *TrustedTeamsRequestAction `json:"action_details"`
+}
+
+// NewGuestAdminChangeStatusDetails returns a new GuestAdminChangeStatusDetails instance
+func NewGuestAdminChangeStatusDetails(IsGuest bool, PreviousValue *TrustedTeamsRequestState, NewValue *TrustedTeamsRequestState, ActionDetails *TrustedTeamsRequestAction) *GuestAdminChangeStatusDetails {
+	s := new(GuestAdminChangeStatusDetails)
+	s.IsGuest = IsGuest
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	s.ActionDetails = ActionDetails
+	return s
+}
+
+// GuestAdminChangeStatusType : has no documentation (yet)
+type GuestAdminChangeStatusType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGuestAdminChangeStatusType returns a new GuestAdminChangeStatusType instance
+func NewGuestAdminChangeStatusType(Description string) *GuestAdminChangeStatusType {
+	s := new(GuestAdminChangeStatusType)
+	s.Description = Description
+	return s
+}
+
+// GuestAdminSignedInViaTrustedTeamsDetails : Started trusted team admin
+// session.
+type GuestAdminSignedInViaTrustedTeamsDetails struct {
+	// TeamName : Host team name.
+	TeamName string `json:"team_name,omitempty"`
+	// TrustedTeamName : Trusted team name.
+	TrustedTeamName string `json:"trusted_team_name,omitempty"`
+}
+
+// NewGuestAdminSignedInViaTrustedTeamsDetails returns a new GuestAdminSignedInViaTrustedTeamsDetails instance
+func NewGuestAdminSignedInViaTrustedTeamsDetails() *GuestAdminSignedInViaTrustedTeamsDetails {
+	s := new(GuestAdminSignedInViaTrustedTeamsDetails)
+	return s
+}
+
+// GuestAdminSignedInViaTrustedTeamsType : has no documentation (yet)
+type GuestAdminSignedInViaTrustedTeamsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGuestAdminSignedInViaTrustedTeamsType returns a new GuestAdminSignedInViaTrustedTeamsType instance
+func NewGuestAdminSignedInViaTrustedTeamsType(Description string) *GuestAdminSignedInViaTrustedTeamsType {
+	s := new(GuestAdminSignedInViaTrustedTeamsType)
+	s.Description = Description
+	return s
+}
+
+// GuestAdminSignedOutViaTrustedTeamsDetails : Ended trusted team admin session.
+type GuestAdminSignedOutViaTrustedTeamsDetails struct {
+	// TeamName : Host team name.
+	TeamName string `json:"team_name,omitempty"`
+	// TrustedTeamName : Trusted team name.
+	TrustedTeamName string `json:"trusted_team_name,omitempty"`
+}
+
+// NewGuestAdminSignedOutViaTrustedTeamsDetails returns a new GuestAdminSignedOutViaTrustedTeamsDetails instance
+func NewGuestAdminSignedOutViaTrustedTeamsDetails() *GuestAdminSignedOutViaTrustedTeamsDetails {
+	s := new(GuestAdminSignedOutViaTrustedTeamsDetails)
+	return s
+}
+
+// GuestAdminSignedOutViaTrustedTeamsType : has no documentation (yet)
+type GuestAdminSignedOutViaTrustedTeamsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGuestAdminSignedOutViaTrustedTeamsType returns a new GuestAdminSignedOutViaTrustedTeamsType instance
+func NewGuestAdminSignedOutViaTrustedTeamsType(Description string) *GuestAdminSignedOutViaTrustedTeamsType {
+	s := new(GuestAdminSignedOutViaTrustedTeamsType)
+	s.Description = Description
+	return s
+}
+
 // IdentifierType : has no documentation (yet)
 type IdentifierType struct {
 	dropbox.Tagged
@@ -9709,6 +10521,103 @@ const (
 	IdentifierTypeFacebookProfileName = "facebook_profile_name"
 	IdentifierTypeOther               = "other"
 )
+
+// IntegrationConnectedDetails : Connected integration for member.
+type IntegrationConnectedDetails struct {
+	// IntegrationName : Name of the third-party integration.
+	IntegrationName string `json:"integration_name"`
+}
+
+// NewIntegrationConnectedDetails returns a new IntegrationConnectedDetails instance
+func NewIntegrationConnectedDetails(IntegrationName string) *IntegrationConnectedDetails {
+	s := new(IntegrationConnectedDetails)
+	s.IntegrationName = IntegrationName
+	return s
+}
+
+// IntegrationConnectedType : has no documentation (yet)
+type IntegrationConnectedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewIntegrationConnectedType returns a new IntegrationConnectedType instance
+func NewIntegrationConnectedType(Description string) *IntegrationConnectedType {
+	s := new(IntegrationConnectedType)
+	s.Description = Description
+	return s
+}
+
+// IntegrationDisconnectedDetails : Disconnected integration for member.
+type IntegrationDisconnectedDetails struct {
+	// IntegrationName : Name of the third-party integration.
+	IntegrationName string `json:"integration_name"`
+}
+
+// NewIntegrationDisconnectedDetails returns a new IntegrationDisconnectedDetails instance
+func NewIntegrationDisconnectedDetails(IntegrationName string) *IntegrationDisconnectedDetails {
+	s := new(IntegrationDisconnectedDetails)
+	s.IntegrationName = IntegrationName
+	return s
+}
+
+// IntegrationDisconnectedType : has no documentation (yet)
+type IntegrationDisconnectedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewIntegrationDisconnectedType returns a new IntegrationDisconnectedType instance
+func NewIntegrationDisconnectedType(Description string) *IntegrationDisconnectedType {
+	s := new(IntegrationDisconnectedType)
+	s.Description = Description
+	return s
+}
+
+// IntegrationPolicy : Policy for controlling whether a service integration is
+// enabled for the team.
+type IntegrationPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for IntegrationPolicy
+const (
+	IntegrationPolicyDisabled = "disabled"
+	IntegrationPolicyEnabled  = "enabled"
+	IntegrationPolicyOther    = "other"
+)
+
+// IntegrationPolicyChangedDetails : Changed integration policy for team.
+type IntegrationPolicyChangedDetails struct {
+	// IntegrationName : Name of the third-party integration.
+	IntegrationName string `json:"integration_name"`
+	// NewValue : New integration policy.
+	NewValue *IntegrationPolicy `json:"new_value"`
+	// PreviousValue : Previous integration policy.
+	PreviousValue *IntegrationPolicy `json:"previous_value"`
+}
+
+// NewIntegrationPolicyChangedDetails returns a new IntegrationPolicyChangedDetails instance
+func NewIntegrationPolicyChangedDetails(IntegrationName string, NewValue *IntegrationPolicy, PreviousValue *IntegrationPolicy) *IntegrationPolicyChangedDetails {
+	s := new(IntegrationPolicyChangedDetails)
+	s.IntegrationName = IntegrationName
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// IntegrationPolicyChangedType : has no documentation (yet)
+type IntegrationPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewIntegrationPolicyChangedType returns a new IntegrationPolicyChangedType instance
+func NewIntegrationPolicyChangedType(Description string) *IntegrationPolicyChangedType {
+	s := new(IntegrationPolicyChangedType)
+	s.Description = Description
+	return s
+}
 
 // JoinTeamDetails : Additional information relevant when a new member joins the
 // team.
@@ -9872,6 +10781,7 @@ const (
 	LoginMethodPassword                = "password"
 	LoginMethodTwoFactorAuthentication = "two_factor_authentication"
 	LoginMethodSaml                    = "saml"
+	LoginMethodGoogleOauth             = "google_oauth"
 	LoginMethodOther                   = "other"
 )
 
@@ -9923,6 +10833,32 @@ type LogoutType struct {
 // NewLogoutType returns a new LogoutType instance
 func NewLogoutType(Description string) *LogoutType {
 	s := new(LogoutType)
+	s.Description = Description
+	return s
+}
+
+// MemberAddExternalIdDetails : Added an external ID for team member.
+type MemberAddExternalIdDetails struct {
+	// NewValue : Current external id.
+	NewValue string `json:"new_value"`
+}
+
+// NewMemberAddExternalIdDetails returns a new MemberAddExternalIdDetails instance
+func NewMemberAddExternalIdDetails(NewValue string) *MemberAddExternalIdDetails {
+	s := new(MemberAddExternalIdDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// MemberAddExternalIdType : has no documentation (yet)
+type MemberAddExternalIdType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberAddExternalIdType returns a new MemberAddExternalIdType instance
+func NewMemberAddExternalIdType(Description string) *MemberAddExternalIdType {
+	s := new(MemberAddExternalIdType)
 	s.Description = Description
 	return s
 }
@@ -10008,6 +10944,35 @@ type MemberChangeEmailType struct {
 // NewMemberChangeEmailType returns a new MemberChangeEmailType instance
 func NewMemberChangeEmailType(Description string) *MemberChangeEmailType {
 	s := new(MemberChangeEmailType)
+	s.Description = Description
+	return s
+}
+
+// MemberChangeExternalIdDetails : Changed the external ID for team member.
+type MemberChangeExternalIdDetails struct {
+	// NewValue : Current external id.
+	NewValue string `json:"new_value"`
+	// PreviousValue : Old external id.
+	PreviousValue string `json:"previous_value"`
+}
+
+// NewMemberChangeExternalIdDetails returns a new MemberChangeExternalIdDetails instance
+func NewMemberChangeExternalIdDetails(NewValue string, PreviousValue string) *MemberChangeExternalIdDetails {
+	s := new(MemberChangeExternalIdDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MemberChangeExternalIdType : has no documentation (yet)
+type MemberChangeExternalIdType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberChangeExternalIdType returns a new MemberChangeExternalIdType instance
+func NewMemberChangeExternalIdType(Description string) *MemberChangeExternalIdType {
+	s := new(MemberChangeExternalIdType)
 	s.Description = Description
 	return s
 }
@@ -10158,11 +11123,38 @@ type MemberRemoveActionType struct {
 
 // Valid tag values for MemberRemoveActionType
 const (
-	MemberRemoveActionTypeDelete   = "delete"
-	MemberRemoveActionTypeOffboard = "offboard"
-	MemberRemoveActionTypeLeave    = "leave"
-	MemberRemoveActionTypeOther    = "other"
+	MemberRemoveActionTypeDelete                       = "delete"
+	MemberRemoveActionTypeOffboard                     = "offboard"
+	MemberRemoveActionTypeLeave                        = "leave"
+	MemberRemoveActionTypeOffboardAndRetainTeamFolders = "offboard_and_retain_team_folders"
+	MemberRemoveActionTypeOther                        = "other"
 )
+
+// MemberRemoveExternalIdDetails : Removed the external ID for team member.
+type MemberRemoveExternalIdDetails struct {
+	// PreviousValue : Old external id.
+	PreviousValue string `json:"previous_value"`
+}
+
+// NewMemberRemoveExternalIdDetails returns a new MemberRemoveExternalIdDetails instance
+func NewMemberRemoveExternalIdDetails(PreviousValue string) *MemberRemoveExternalIdDetails {
+	s := new(MemberRemoveExternalIdDetails)
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MemberRemoveExternalIdType : has no documentation (yet)
+type MemberRemoveExternalIdType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberRemoveExternalIdType returns a new MemberRemoveExternalIdType instance
+func NewMemberRemoveExternalIdType(Description string) *MemberRemoveExternalIdType {
+	s := new(MemberRemoveExternalIdType)
+	s.Description = Description
+	return s
+}
 
 // MemberRequestsChangePolicyDetails : Changed whether users can find team when
 // not invited.
@@ -11340,6 +12332,91 @@ func NewPaperContentRestoreType(Description string) *PaperContentRestoreType {
 	return s
 }
 
+// PaperDefaultFolderPolicy : Policy to set default access for newly created
+// Paper folders.
+type PaperDefaultFolderPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperDefaultFolderPolicy
+const (
+	PaperDefaultFolderPolicyEveryoneInTeam = "everyone_in_team"
+	PaperDefaultFolderPolicyInviteOnly     = "invite_only"
+	PaperDefaultFolderPolicyOther          = "other"
+)
+
+// PaperDefaultFolderPolicyChangedDetails : Changed Paper Default Folder Policy
+// setting for team.
+type PaperDefaultFolderPolicyChangedDetails struct {
+	// NewValue : New Paper Default Folder Policy.
+	NewValue *PaperDefaultFolderPolicy `json:"new_value"`
+	// PreviousValue : Previous Paper Default Folder Policy.
+	PreviousValue *PaperDefaultFolderPolicy `json:"previous_value"`
+}
+
+// NewPaperDefaultFolderPolicyChangedDetails returns a new PaperDefaultFolderPolicyChangedDetails instance
+func NewPaperDefaultFolderPolicyChangedDetails(NewValue *PaperDefaultFolderPolicy, PreviousValue *PaperDefaultFolderPolicy) *PaperDefaultFolderPolicyChangedDetails {
+	s := new(PaperDefaultFolderPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// PaperDefaultFolderPolicyChangedType : has no documentation (yet)
+type PaperDefaultFolderPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperDefaultFolderPolicyChangedType returns a new PaperDefaultFolderPolicyChangedType instance
+func NewPaperDefaultFolderPolicyChangedType(Description string) *PaperDefaultFolderPolicyChangedType {
+	s := new(PaperDefaultFolderPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// PaperDesktopPolicy : Policy for controlling if team members can use Paper
+// Desktop
+type PaperDesktopPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperDesktopPolicy
+const (
+	PaperDesktopPolicyDisabled = "disabled"
+	PaperDesktopPolicyEnabled  = "enabled"
+	PaperDesktopPolicyOther    = "other"
+)
+
+// PaperDesktopPolicyChangedDetails : Enabled/disabled Paper Desktop for team.
+type PaperDesktopPolicyChangedDetails struct {
+	// NewValue : New Paper Desktop policy.
+	NewValue *PaperDesktopPolicy `json:"new_value"`
+	// PreviousValue : Previous Paper Desktop policy.
+	PreviousValue *PaperDesktopPolicy `json:"previous_value"`
+}
+
+// NewPaperDesktopPolicyChangedDetails returns a new PaperDesktopPolicyChangedDetails instance
+func NewPaperDesktopPolicyChangedDetails(NewValue *PaperDesktopPolicy, PreviousValue *PaperDesktopPolicy) *PaperDesktopPolicyChangedDetails {
+	s := new(PaperDesktopPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// PaperDesktopPolicyChangedType : has no documentation (yet)
+type PaperDesktopPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperDesktopPolicyChangedType returns a new PaperDesktopPolicyChangedType instance
+func NewPaperDesktopPolicyChangedType(Description string) *PaperDesktopPolicyChangedType {
+	s := new(PaperDesktopPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // PaperDocAddCommentDetails : Added Paper doc comment.
 type PaperDocAddCommentDetails struct {
 	// EventUuid : Event unique identifier.
@@ -12219,6 +13296,84 @@ const (
 	PaperMemberPolicyOther                   = "other"
 )
 
+// PaperPublishedLinkCreateDetails : Published doc.
+type PaperPublishedLinkCreateDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewPaperPublishedLinkCreateDetails returns a new PaperPublishedLinkCreateDetails instance
+func NewPaperPublishedLinkCreateDetails(EventUuid string) *PaperPublishedLinkCreateDetails {
+	s := new(PaperPublishedLinkCreateDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// PaperPublishedLinkCreateType : has no documentation (yet)
+type PaperPublishedLinkCreateType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperPublishedLinkCreateType returns a new PaperPublishedLinkCreateType instance
+func NewPaperPublishedLinkCreateType(Description string) *PaperPublishedLinkCreateType {
+	s := new(PaperPublishedLinkCreateType)
+	s.Description = Description
+	return s
+}
+
+// PaperPublishedLinkDisabledDetails : Unpublished doc.
+type PaperPublishedLinkDisabledDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewPaperPublishedLinkDisabledDetails returns a new PaperPublishedLinkDisabledDetails instance
+func NewPaperPublishedLinkDisabledDetails(EventUuid string) *PaperPublishedLinkDisabledDetails {
+	s := new(PaperPublishedLinkDisabledDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// PaperPublishedLinkDisabledType : has no documentation (yet)
+type PaperPublishedLinkDisabledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperPublishedLinkDisabledType returns a new PaperPublishedLinkDisabledType instance
+func NewPaperPublishedLinkDisabledType(Description string) *PaperPublishedLinkDisabledType {
+	s := new(PaperPublishedLinkDisabledType)
+	s.Description = Description
+	return s
+}
+
+// PaperPublishedLinkViewDetails : Viewed published doc.
+type PaperPublishedLinkViewDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+}
+
+// NewPaperPublishedLinkViewDetails returns a new PaperPublishedLinkViewDetails instance
+func NewPaperPublishedLinkViewDetails(EventUuid string) *PaperPublishedLinkViewDetails {
+	s := new(PaperPublishedLinkViewDetails)
+	s.EventUuid = EventUuid
+	return s
+}
+
+// PaperPublishedLinkViewType : has no documentation (yet)
+type PaperPublishedLinkViewType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperPublishedLinkViewType returns a new PaperPublishedLinkViewType instance
+func NewPaperPublishedLinkViewType(Description string) *PaperPublishedLinkViewType {
+	s := new(PaperPublishedLinkViewType)
+	s.Description = Description
+	return s
+}
+
 // ParticipantLogInfo : A user or group
 type ParticipantLogInfo struct {
 	dropbox.Tagged
@@ -12401,10 +13556,83 @@ type PlacementRestriction struct {
 
 // Valid tag values for PlacementRestriction
 const (
-	PlacementRestrictionEuropeOnly = "europe_only"
-	PlacementRestrictionNone       = "none"
-	PlacementRestrictionOther      = "other"
+	PlacementRestrictionAustraliaOnly = "australia_only"
+	PlacementRestrictionEuropeOnly    = "europe_only"
+	PlacementRestrictionJapanOnly     = "japan_only"
+	PlacementRestrictionNone          = "none"
+	PlacementRestrictionOther         = "other"
 )
+
+// PrimaryTeamRequestAcceptedDetails : Team merge request acceptance details
+// shown to the primary team
+type PrimaryTeamRequestAcceptedDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewPrimaryTeamRequestAcceptedDetails returns a new PrimaryTeamRequestAcceptedDetails instance
+func NewPrimaryTeamRequestAcceptedDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestAcceptedDetails {
+	s := new(PrimaryTeamRequestAcceptedDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// PrimaryTeamRequestCanceledDetails : Team merge request cancellation details
+// shown to the primary team
+type PrimaryTeamRequestCanceledDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewPrimaryTeamRequestCanceledDetails returns a new PrimaryTeamRequestCanceledDetails instance
+func NewPrimaryTeamRequestCanceledDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestCanceledDetails {
+	s := new(PrimaryTeamRequestCanceledDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// PrimaryTeamRequestExpiredDetails : Team merge request expiration details
+// shown to the primary team
+type PrimaryTeamRequestExpiredDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewPrimaryTeamRequestExpiredDetails returns a new PrimaryTeamRequestExpiredDetails instance
+func NewPrimaryTeamRequestExpiredDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestExpiredDetails {
+	s := new(PrimaryTeamRequestExpiredDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// PrimaryTeamRequestReminderDetails : Team merge request reminder details shown
+// to the primary team
+type PrimaryTeamRequestReminderDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentTo : The name of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewPrimaryTeamRequestReminderDetails returns a new PrimaryTeamRequestReminderDetails instance
+func NewPrimaryTeamRequestReminderDetails(SecondaryTeam string, SentTo string) *PrimaryTeamRequestReminderDetails {
+	s := new(PrimaryTeamRequestReminderDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentTo = SentTo
+	return s
+}
 
 // QuickActionType : Quick action type.
 type QuickActionType struct {
@@ -12413,8 +13641,12 @@ type QuickActionType struct {
 
 // Valid tag values for QuickActionType
 const (
-	QuickActionTypeDeleteSharedLink = "delete_shared_link"
-	QuickActionTypeOther            = "other"
+	QuickActionTypeDeleteSharedLink    = "delete_shared_link"
+	QuickActionTypeResetPassword       = "reset_password"
+	QuickActionTypeRestoreFileOrFolder = "restore_file_or_folder"
+	QuickActionTypeUnlinkApp           = "unlink_app"
+	QuickActionTypeUnlinkSession       = "unlink_session"
+	QuickActionTypeOther               = "other"
 )
 
 // RelocateAssetReferencesLogInfo : Provides the indices of the source asset and
@@ -12449,6 +13681,48 @@ func NewResellerLogInfo(ResellerName string, ResellerEmail string) *ResellerLogI
 	s.ResellerEmail = ResellerEmail
 	return s
 }
+
+// ResellerSupportChangePolicyDetails : Enabled/disabled reseller support.
+type ResellerSupportChangePolicyDetails struct {
+	// NewValue : New Reseller support policy.
+	NewValue *ResellerSupportPolicy `json:"new_value"`
+	// PreviousValue : Previous Reseller support policy.
+	PreviousValue *ResellerSupportPolicy `json:"previous_value"`
+}
+
+// NewResellerSupportChangePolicyDetails returns a new ResellerSupportChangePolicyDetails instance
+func NewResellerSupportChangePolicyDetails(NewValue *ResellerSupportPolicy, PreviousValue *ResellerSupportPolicy) *ResellerSupportChangePolicyDetails {
+	s := new(ResellerSupportChangePolicyDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ResellerSupportChangePolicyType : has no documentation (yet)
+type ResellerSupportChangePolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewResellerSupportChangePolicyType returns a new ResellerSupportChangePolicyType instance
+func NewResellerSupportChangePolicyType(Description string) *ResellerSupportChangePolicyType {
+	s := new(ResellerSupportChangePolicyType)
+	s.Description = Description
+	return s
+}
+
+// ResellerSupportPolicy : Policy for controlling if reseller can access the
+// admin console as administrator
+type ResellerSupportPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ResellerSupportPolicy
+const (
+	ResellerSupportPolicyDisabled = "disabled"
+	ResellerSupportPolicyEnabled  = "enabled"
+	ResellerSupportPolicyOther    = "other"
+)
 
 // ResellerSupportSessionEndDetails : Ended reseller support session.
 type ResellerSupportSessionEndDetails struct {
@@ -12534,6 +13808,71 @@ type SecondaryMailsPolicyChangedType struct {
 func NewSecondaryMailsPolicyChangedType(Description string) *SecondaryMailsPolicyChangedType {
 	s := new(SecondaryMailsPolicyChangedType)
 	s.Description = Description
+	return s
+}
+
+// SecondaryTeamRequestAcceptedDetails : Team merge request acceptance details
+// shown to the secondary team
+type SecondaryTeamRequestAcceptedDetails struct {
+	// PrimaryTeam : The primary team name.
+	PrimaryTeam string `json:"primary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewSecondaryTeamRequestAcceptedDetails returns a new SecondaryTeamRequestAcceptedDetails instance
+func NewSecondaryTeamRequestAcceptedDetails(PrimaryTeam string, SentBy string) *SecondaryTeamRequestAcceptedDetails {
+	s := new(SecondaryTeamRequestAcceptedDetails)
+	s.PrimaryTeam = PrimaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// SecondaryTeamRequestCanceledDetails : Team merge request cancellation details
+// shown to the secondary team
+type SecondaryTeamRequestCanceledDetails struct {
+	// SentTo : The email of the primary team admin that the request was sent
+	// to.
+	SentTo string `json:"sent_to"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewSecondaryTeamRequestCanceledDetails returns a new SecondaryTeamRequestCanceledDetails instance
+func NewSecondaryTeamRequestCanceledDetails(SentTo string, SentBy string) *SecondaryTeamRequestCanceledDetails {
+	s := new(SecondaryTeamRequestCanceledDetails)
+	s.SentTo = SentTo
+	s.SentBy = SentBy
+	return s
+}
+
+// SecondaryTeamRequestExpiredDetails : Team merge request expiration details
+// shown to the secondary team
+type SecondaryTeamRequestExpiredDetails struct {
+	// SentTo : The email of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewSecondaryTeamRequestExpiredDetails returns a new SecondaryTeamRequestExpiredDetails instance
+func NewSecondaryTeamRequestExpiredDetails(SentTo string) *SecondaryTeamRequestExpiredDetails {
+	s := new(SecondaryTeamRequestExpiredDetails)
+	s.SentTo = SentTo
+	return s
+}
+
+// SecondaryTeamRequestReminderDetails : Team merge request reminder details
+// shown to the secondary team
+type SecondaryTeamRequestReminderDetails struct {
+	// SentTo : The email of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewSecondaryTeamRequestReminderDetails returns a new SecondaryTeamRequestReminderDetails instance
+func NewSecondaryTeamRequestReminderDetails(SentTo string) *SecondaryTeamRequestReminderDetails {
+	s := new(SecondaryTeamRequestReminderDetails)
+	s.SentTo = SentTo
 	return s
 }
 
@@ -15643,6 +16982,32 @@ func NewTeamActivityCreateReportDetails(StartDate time.Time, EndDate time.Time) 
 	return s
 }
 
+// TeamActivityCreateReportFailDetails : Couldn't generate team activity report.
+type TeamActivityCreateReportFailDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewTeamActivityCreateReportFailDetails returns a new TeamActivityCreateReportFailDetails instance
+func NewTeamActivityCreateReportFailDetails(FailureReason *team.TeamReportFailureReason) *TeamActivityCreateReportFailDetails {
+	s := new(TeamActivityCreateReportFailDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// TeamActivityCreateReportFailType : has no documentation (yet)
+type TeamActivityCreateReportFailType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamActivityCreateReportFailType returns a new TeamActivityCreateReportFailType instance
+func NewTeamActivityCreateReportFailType(Description string) *TeamActivityCreateReportFailType {
+	s := new(TeamActivityCreateReportFailType)
+	s.Description = Description
+	return s
+}
+
 // TeamActivityCreateReportType : has no documentation (yet)
 type TeamActivityCreateReportType struct {
 	// Description : has no documentation (yet)
@@ -15699,6 +17064,49 @@ func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, EventType *
 	s.EventCategory = EventCategory
 	s.EventType = EventType
 	s.Details = Details
+	return s
+}
+
+// TeamExtensionsPolicy : Policy for controlling whether App Integrations are
+// enabled for the team.
+type TeamExtensionsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamExtensionsPolicy
+const (
+	TeamExtensionsPolicyDisabled = "disabled"
+	TeamExtensionsPolicyEnabled  = "enabled"
+	TeamExtensionsPolicyOther    = "other"
+)
+
+// TeamExtensionsPolicyChangedDetails : Changed App Integrations setting for
+// team.
+type TeamExtensionsPolicyChangedDetails struct {
+	// NewValue : New Extensions policy.
+	NewValue *TeamExtensionsPolicy `json:"new_value"`
+	// PreviousValue : Previous Extensions policy.
+	PreviousValue *TeamExtensionsPolicy `json:"previous_value"`
+}
+
+// NewTeamExtensionsPolicyChangedDetails returns a new TeamExtensionsPolicyChangedDetails instance
+func NewTeamExtensionsPolicyChangedDetails(NewValue *TeamExtensionsPolicy, PreviousValue *TeamExtensionsPolicy) *TeamExtensionsPolicyChangedDetails {
+	s := new(TeamExtensionsPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// TeamExtensionsPolicyChangedType : has no documentation (yet)
+type TeamExtensionsPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamExtensionsPolicyChangedType returns a new TeamExtensionsPolicyChangedType instance
+func NewTeamExtensionsPolicyChangedType(Description string) *TeamExtensionsPolicyChangedType {
+	s := new(TeamExtensionsPolicyChangedType)
+	s.Description = Description
 	return s
 }
 
@@ -15894,6 +17302,703 @@ type TeamMergeFromType struct {
 // NewTeamMergeFromType returns a new TeamMergeFromType instance
 func NewTeamMergeFromType(Description string) *TeamMergeFromType {
 	s := new(TeamMergeFromType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestAcceptedDetails : Accepted a team merge request.
+type TeamMergeRequestAcceptedDetails struct {
+	// RequestAcceptedDetails : Team merge request acceptance details.
+	RequestAcceptedDetails *TeamMergeRequestAcceptedExtraDetails `json:"request_accepted_details"`
+}
+
+// NewTeamMergeRequestAcceptedDetails returns a new TeamMergeRequestAcceptedDetails instance
+func NewTeamMergeRequestAcceptedDetails(RequestAcceptedDetails *TeamMergeRequestAcceptedExtraDetails) *TeamMergeRequestAcceptedDetails {
+	s := new(TeamMergeRequestAcceptedDetails)
+	s.RequestAcceptedDetails = RequestAcceptedDetails
+	return s
+}
+
+// TeamMergeRequestAcceptedExtraDetails : Team merge request acceptance details
+type TeamMergeRequestAcceptedExtraDetails struct {
+	dropbox.Tagged
+	// PrimaryTeam : Team merge request accepted details shown to the primary
+	// team.
+	PrimaryTeam *PrimaryTeamRequestAcceptedDetails `json:"primary_team,omitempty"`
+	// SecondaryTeam : Team merge request accepted details shown to the
+	// secondary team.
+	SecondaryTeam *SecondaryTeamRequestAcceptedDetails `json:"secondary_team,omitempty"`
+}
+
+// Valid tag values for TeamMergeRequestAcceptedExtraDetails
+const (
+	TeamMergeRequestAcceptedExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestAcceptedExtraDetailsSecondaryTeam = "secondary_team"
+	TeamMergeRequestAcceptedExtraDetailsOther         = "other"
+)
+
+// UnmarshalJSON deserializes into a TeamMergeRequestAcceptedExtraDetails instance
+func (u *TeamMergeRequestAcceptedExtraDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "primary_team":
+		err = json.Unmarshal(body, &u.PrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_team":
+		err = json.Unmarshal(body, &u.SecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// TeamMergeRequestAcceptedShownToPrimaryTeamDetails : Accepted a team merge
+// request.
+type TeamMergeRequestAcceptedShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestAcceptedShownToPrimaryTeamDetails returns a new TeamMergeRequestAcceptedShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestAcceptedShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestAcceptedShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestAcceptedShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestAcceptedShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestAcceptedShownToPrimaryTeamType returns a new TeamMergeRequestAcceptedShownToPrimaryTeamType instance
+func NewTeamMergeRequestAcceptedShownToPrimaryTeamType(Description string) *TeamMergeRequestAcceptedShownToPrimaryTeamType {
+	s := new(TeamMergeRequestAcceptedShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestAcceptedShownToSecondaryTeamDetails : Accepted a team merge
+// request.
+type TeamMergeRequestAcceptedShownToSecondaryTeamDetails struct {
+	// PrimaryTeam : The primary team name.
+	PrimaryTeam string `json:"primary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestAcceptedShownToSecondaryTeamDetails returns a new TeamMergeRequestAcceptedShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestAcceptedShownToSecondaryTeamDetails(PrimaryTeam string, SentBy string) *TeamMergeRequestAcceptedShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
+	s.PrimaryTeam = PrimaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestAcceptedShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestAcceptedShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestAcceptedShownToSecondaryTeamType returns a new TeamMergeRequestAcceptedShownToSecondaryTeamType instance
+func NewTeamMergeRequestAcceptedShownToSecondaryTeamType(Description string) *TeamMergeRequestAcceptedShownToSecondaryTeamType {
+	s := new(TeamMergeRequestAcceptedShownToSecondaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestAcceptedType : has no documentation (yet)
+type TeamMergeRequestAcceptedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestAcceptedType returns a new TeamMergeRequestAcceptedType instance
+func NewTeamMergeRequestAcceptedType(Description string) *TeamMergeRequestAcceptedType {
+	s := new(TeamMergeRequestAcceptedType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestAutoCanceledDetails : Automatically canceled team merge
+// request.
+type TeamMergeRequestAutoCanceledDetails struct {
+	// Details : The cancellation reason.
+	Details string `json:"details,omitempty"`
+}
+
+// NewTeamMergeRequestAutoCanceledDetails returns a new TeamMergeRequestAutoCanceledDetails instance
+func NewTeamMergeRequestAutoCanceledDetails() *TeamMergeRequestAutoCanceledDetails {
+	s := new(TeamMergeRequestAutoCanceledDetails)
+	return s
+}
+
+// TeamMergeRequestAutoCanceledType : has no documentation (yet)
+type TeamMergeRequestAutoCanceledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestAutoCanceledType returns a new TeamMergeRequestAutoCanceledType instance
+func NewTeamMergeRequestAutoCanceledType(Description string) *TeamMergeRequestAutoCanceledType {
+	s := new(TeamMergeRequestAutoCanceledType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestCanceledDetails : Canceled a team merge request.
+type TeamMergeRequestCanceledDetails struct {
+	// RequestCanceledDetails : Team merge request cancellation details.
+	RequestCanceledDetails *TeamMergeRequestCanceledExtraDetails `json:"request_canceled_details"`
+}
+
+// NewTeamMergeRequestCanceledDetails returns a new TeamMergeRequestCanceledDetails instance
+func NewTeamMergeRequestCanceledDetails(RequestCanceledDetails *TeamMergeRequestCanceledExtraDetails) *TeamMergeRequestCanceledDetails {
+	s := new(TeamMergeRequestCanceledDetails)
+	s.RequestCanceledDetails = RequestCanceledDetails
+	return s
+}
+
+// TeamMergeRequestCanceledExtraDetails : Team merge request cancellation
+// details
+type TeamMergeRequestCanceledExtraDetails struct {
+	dropbox.Tagged
+	// PrimaryTeam : Team merge request cancellation details shown to the
+	// primary team.
+	PrimaryTeam *PrimaryTeamRequestCanceledDetails `json:"primary_team,omitempty"`
+	// SecondaryTeam : Team merge request cancellation details shown to the
+	// secondary team.
+	SecondaryTeam *SecondaryTeamRequestCanceledDetails `json:"secondary_team,omitempty"`
+}
+
+// Valid tag values for TeamMergeRequestCanceledExtraDetails
+const (
+	TeamMergeRequestCanceledExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestCanceledExtraDetailsSecondaryTeam = "secondary_team"
+	TeamMergeRequestCanceledExtraDetailsOther         = "other"
+)
+
+// UnmarshalJSON deserializes into a TeamMergeRequestCanceledExtraDetails instance
+func (u *TeamMergeRequestCanceledExtraDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "primary_team":
+		err = json.Unmarshal(body, &u.PrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_team":
+		err = json.Unmarshal(body, &u.SecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// TeamMergeRequestCanceledShownToPrimaryTeamDetails : Canceled a team merge
+// request.
+type TeamMergeRequestCanceledShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestCanceledShownToPrimaryTeamDetails returns a new TeamMergeRequestCanceledShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestCanceledShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestCanceledShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestCanceledShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestCanceledShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestCanceledShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestCanceledShownToPrimaryTeamType returns a new TeamMergeRequestCanceledShownToPrimaryTeamType instance
+func NewTeamMergeRequestCanceledShownToPrimaryTeamType(Description string) *TeamMergeRequestCanceledShownToPrimaryTeamType {
+	s := new(TeamMergeRequestCanceledShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestCanceledShownToSecondaryTeamDetails : Canceled a team merge
+// request.
+type TeamMergeRequestCanceledShownToSecondaryTeamDetails struct {
+	// SentTo : The email of the primary team admin that the request was sent
+	// to.
+	SentTo string `json:"sent_to"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestCanceledShownToSecondaryTeamDetails returns a new TeamMergeRequestCanceledShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestCanceledShownToSecondaryTeamDetails(SentTo string, SentBy string) *TeamMergeRequestCanceledShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestCanceledShownToSecondaryTeamDetails)
+	s.SentTo = SentTo
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestCanceledShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestCanceledShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestCanceledShownToSecondaryTeamType returns a new TeamMergeRequestCanceledShownToSecondaryTeamType instance
+func NewTeamMergeRequestCanceledShownToSecondaryTeamType(Description string) *TeamMergeRequestCanceledShownToSecondaryTeamType {
+	s := new(TeamMergeRequestCanceledShownToSecondaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestCanceledType : has no documentation (yet)
+type TeamMergeRequestCanceledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestCanceledType returns a new TeamMergeRequestCanceledType instance
+func NewTeamMergeRequestCanceledType(Description string) *TeamMergeRequestCanceledType {
+	s := new(TeamMergeRequestCanceledType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestExpiredDetails : Team merge request expired.
+type TeamMergeRequestExpiredDetails struct {
+	// RequestExpiredDetails : Team merge request expiration details.
+	RequestExpiredDetails *TeamMergeRequestExpiredExtraDetails `json:"request_expired_details"`
+}
+
+// NewTeamMergeRequestExpiredDetails returns a new TeamMergeRequestExpiredDetails instance
+func NewTeamMergeRequestExpiredDetails(RequestExpiredDetails *TeamMergeRequestExpiredExtraDetails) *TeamMergeRequestExpiredDetails {
+	s := new(TeamMergeRequestExpiredDetails)
+	s.RequestExpiredDetails = RequestExpiredDetails
+	return s
+}
+
+// TeamMergeRequestExpiredExtraDetails : Team merge request expiration details
+type TeamMergeRequestExpiredExtraDetails struct {
+	dropbox.Tagged
+	// PrimaryTeam : Team merge request canceled details shown to the primary
+	// team.
+	PrimaryTeam *PrimaryTeamRequestExpiredDetails `json:"primary_team,omitempty"`
+	// SecondaryTeam : Team merge request canceled details shown to the
+	// secondary team.
+	SecondaryTeam *SecondaryTeamRequestExpiredDetails `json:"secondary_team,omitempty"`
+}
+
+// Valid tag values for TeamMergeRequestExpiredExtraDetails
+const (
+	TeamMergeRequestExpiredExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestExpiredExtraDetailsSecondaryTeam = "secondary_team"
+	TeamMergeRequestExpiredExtraDetailsOther         = "other"
+)
+
+// UnmarshalJSON deserializes into a TeamMergeRequestExpiredExtraDetails instance
+func (u *TeamMergeRequestExpiredExtraDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "primary_team":
+		err = json.Unmarshal(body, &u.PrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_team":
+		err = json.Unmarshal(body, &u.SecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// TeamMergeRequestExpiredShownToPrimaryTeamDetails : Team merge request
+// expired.
+type TeamMergeRequestExpiredShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestExpiredShownToPrimaryTeamDetails returns a new TeamMergeRequestExpiredShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestExpiredShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestExpiredShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestExpiredShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestExpiredShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestExpiredShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestExpiredShownToPrimaryTeamType returns a new TeamMergeRequestExpiredShownToPrimaryTeamType instance
+func NewTeamMergeRequestExpiredShownToPrimaryTeamType(Description string) *TeamMergeRequestExpiredShownToPrimaryTeamType {
+	s := new(TeamMergeRequestExpiredShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestExpiredShownToSecondaryTeamDetails : Team merge request
+// expired.
+type TeamMergeRequestExpiredShownToSecondaryTeamDetails struct {
+	// SentTo : The email of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewTeamMergeRequestExpiredShownToSecondaryTeamDetails returns a new TeamMergeRequestExpiredShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestExpiredShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestExpiredShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestExpiredShownToSecondaryTeamDetails)
+	s.SentTo = SentTo
+	return s
+}
+
+// TeamMergeRequestExpiredShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestExpiredShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestExpiredShownToSecondaryTeamType returns a new TeamMergeRequestExpiredShownToSecondaryTeamType instance
+func NewTeamMergeRequestExpiredShownToSecondaryTeamType(Description string) *TeamMergeRequestExpiredShownToSecondaryTeamType {
+	s := new(TeamMergeRequestExpiredShownToSecondaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestExpiredType : has no documentation (yet)
+type TeamMergeRequestExpiredType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestExpiredType returns a new TeamMergeRequestExpiredType instance
+func NewTeamMergeRequestExpiredType(Description string) *TeamMergeRequestExpiredType {
+	s := new(TeamMergeRequestExpiredType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestRejectedShownToPrimaryTeamDetails : Rejected a team merge
+// request.
+type TeamMergeRequestRejectedShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestRejectedShownToPrimaryTeamDetails returns a new TeamMergeRequestRejectedShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestRejectedShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestRejectedShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestRejectedShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestRejectedShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestRejectedShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestRejectedShownToPrimaryTeamType returns a new TeamMergeRequestRejectedShownToPrimaryTeamType instance
+func NewTeamMergeRequestRejectedShownToPrimaryTeamType(Description string) *TeamMergeRequestRejectedShownToPrimaryTeamType {
+	s := new(TeamMergeRequestRejectedShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestRejectedShownToSecondaryTeamDetails : Rejected a team merge
+// request.
+type TeamMergeRequestRejectedShownToSecondaryTeamDetails struct {
+	// SentBy : The name of the secondary team admin who sent the request
+	// originally.
+	SentBy string `json:"sent_by"`
+}
+
+// NewTeamMergeRequestRejectedShownToSecondaryTeamDetails returns a new TeamMergeRequestRejectedShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestRejectedShownToSecondaryTeamDetails(SentBy string) *TeamMergeRequestRejectedShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestRejectedShownToSecondaryTeamDetails)
+	s.SentBy = SentBy
+	return s
+}
+
+// TeamMergeRequestRejectedShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestRejectedShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestRejectedShownToSecondaryTeamType returns a new TeamMergeRequestRejectedShownToSecondaryTeamType instance
+func NewTeamMergeRequestRejectedShownToSecondaryTeamType(Description string) *TeamMergeRequestRejectedShownToSecondaryTeamType {
+	s := new(TeamMergeRequestRejectedShownToSecondaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestReminderDetails : Sent a team merge request reminder.
+type TeamMergeRequestReminderDetails struct {
+	// RequestReminderDetails : Team merge request reminder details.
+	RequestReminderDetails *TeamMergeRequestReminderExtraDetails `json:"request_reminder_details"`
+}
+
+// NewTeamMergeRequestReminderDetails returns a new TeamMergeRequestReminderDetails instance
+func NewTeamMergeRequestReminderDetails(RequestReminderDetails *TeamMergeRequestReminderExtraDetails) *TeamMergeRequestReminderDetails {
+	s := new(TeamMergeRequestReminderDetails)
+	s.RequestReminderDetails = RequestReminderDetails
+	return s
+}
+
+// TeamMergeRequestReminderExtraDetails : Team merge request reminder details
+type TeamMergeRequestReminderExtraDetails struct {
+	dropbox.Tagged
+	// PrimaryTeam : Team merge request reminder details shown to the primary
+	// team.
+	PrimaryTeam *PrimaryTeamRequestReminderDetails `json:"primary_team,omitempty"`
+	// SecondaryTeam : Team merge request reminder details shown to the
+	// secondary team.
+	SecondaryTeam *SecondaryTeamRequestReminderDetails `json:"secondary_team,omitempty"`
+}
+
+// Valid tag values for TeamMergeRequestReminderExtraDetails
+const (
+	TeamMergeRequestReminderExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestReminderExtraDetailsSecondaryTeam = "secondary_team"
+	TeamMergeRequestReminderExtraDetailsOther         = "other"
+)
+
+// UnmarshalJSON deserializes into a TeamMergeRequestReminderExtraDetails instance
+func (u *TeamMergeRequestReminderExtraDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "primary_team":
+		err = json.Unmarshal(body, &u.PrimaryTeam)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_team":
+		err = json.Unmarshal(body, &u.SecondaryTeam)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// TeamMergeRequestReminderShownToPrimaryTeamDetails : Sent a team merge request
+// reminder.
+type TeamMergeRequestReminderShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentTo : The name of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewTeamMergeRequestReminderShownToPrimaryTeamDetails returns a new TeamMergeRequestReminderShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestReminderShownToPrimaryTeamDetails(SecondaryTeam string, SentTo string) *TeamMergeRequestReminderShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestReminderShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentTo = SentTo
+	return s
+}
+
+// TeamMergeRequestReminderShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestReminderShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestReminderShownToPrimaryTeamType returns a new TeamMergeRequestReminderShownToPrimaryTeamType instance
+func NewTeamMergeRequestReminderShownToPrimaryTeamType(Description string) *TeamMergeRequestReminderShownToPrimaryTeamType {
+	s := new(TeamMergeRequestReminderShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestReminderShownToSecondaryTeamDetails : Sent a team merge
+// request reminder.
+type TeamMergeRequestReminderShownToSecondaryTeamDetails struct {
+	// SentTo : The email of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewTeamMergeRequestReminderShownToSecondaryTeamDetails returns a new TeamMergeRequestReminderShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestReminderShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestReminderShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestReminderShownToSecondaryTeamDetails)
+	s.SentTo = SentTo
+	return s
+}
+
+// TeamMergeRequestReminderShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestReminderShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestReminderShownToSecondaryTeamType returns a new TeamMergeRequestReminderShownToSecondaryTeamType instance
+func NewTeamMergeRequestReminderShownToSecondaryTeamType(Description string) *TeamMergeRequestReminderShownToSecondaryTeamType {
+	s := new(TeamMergeRequestReminderShownToSecondaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestReminderType : has no documentation (yet)
+type TeamMergeRequestReminderType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestReminderType returns a new TeamMergeRequestReminderType instance
+func NewTeamMergeRequestReminderType(Description string) *TeamMergeRequestReminderType {
+	s := new(TeamMergeRequestReminderType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestRevokedDetails : Canceled the team merge.
+type TeamMergeRequestRevokedDetails struct {
+	// Team : The name of the other team.
+	Team string `json:"team"`
+}
+
+// NewTeamMergeRequestRevokedDetails returns a new TeamMergeRequestRevokedDetails instance
+func NewTeamMergeRequestRevokedDetails(Team string) *TeamMergeRequestRevokedDetails {
+	s := new(TeamMergeRequestRevokedDetails)
+	s.Team = Team
+	return s
+}
+
+// TeamMergeRequestRevokedType : has no documentation (yet)
+type TeamMergeRequestRevokedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestRevokedType returns a new TeamMergeRequestRevokedType instance
+func NewTeamMergeRequestRevokedType(Description string) *TeamMergeRequestRevokedType {
+	s := new(TeamMergeRequestRevokedType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestSentShownToPrimaryTeamDetails : Requested to merge their
+// Dropbox team into yours.
+type TeamMergeRequestSentShownToPrimaryTeamDetails struct {
+	// SecondaryTeam : The secondary team name.
+	SecondaryTeam string `json:"secondary_team"`
+	// SentTo : The name of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewTeamMergeRequestSentShownToPrimaryTeamDetails returns a new TeamMergeRequestSentShownToPrimaryTeamDetails instance
+func NewTeamMergeRequestSentShownToPrimaryTeamDetails(SecondaryTeam string, SentTo string) *TeamMergeRequestSentShownToPrimaryTeamDetails {
+	s := new(TeamMergeRequestSentShownToPrimaryTeamDetails)
+	s.SecondaryTeam = SecondaryTeam
+	s.SentTo = SentTo
+	return s
+}
+
+// TeamMergeRequestSentShownToPrimaryTeamType : has no documentation (yet)
+type TeamMergeRequestSentShownToPrimaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestSentShownToPrimaryTeamType returns a new TeamMergeRequestSentShownToPrimaryTeamType instance
+func NewTeamMergeRequestSentShownToPrimaryTeamType(Description string) *TeamMergeRequestSentShownToPrimaryTeamType {
+	s := new(TeamMergeRequestSentShownToPrimaryTeamType)
+	s.Description = Description
+	return s
+}
+
+// TeamMergeRequestSentShownToSecondaryTeamDetails : Requested to merge your
+// team into another Dropbox team.
+type TeamMergeRequestSentShownToSecondaryTeamDetails struct {
+	// SentTo : The email of the primary team admin the request was sent to.
+	SentTo string `json:"sent_to"`
+}
+
+// NewTeamMergeRequestSentShownToSecondaryTeamDetails returns a new TeamMergeRequestSentShownToSecondaryTeamDetails instance
+func NewTeamMergeRequestSentShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestSentShownToSecondaryTeamDetails {
+	s := new(TeamMergeRequestSentShownToSecondaryTeamDetails)
+	s.SentTo = SentTo
+	return s
+}
+
+// TeamMergeRequestSentShownToSecondaryTeamType : has no documentation (yet)
+type TeamMergeRequestSentShownToSecondaryTeamType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamMergeRequestSentShownToSecondaryTeamType returns a new TeamMergeRequestSentShownToSecondaryTeamType instance
+func NewTeamMergeRequestSentShownToSecondaryTeamType(Description string) *TeamMergeRequestSentShownToSecondaryTeamType {
+	s := new(TeamMergeRequestSentShownToSecondaryTeamType)
 	s.Description = Description
 	return s
 }
@@ -16400,6 +18505,34 @@ type TrustedNonTeamMemberType struct {
 const (
 	TrustedNonTeamMemberTypeMultiInstanceAdmin = "multi_instance_admin"
 	TrustedNonTeamMemberTypeOther              = "other"
+)
+
+// TrustedTeamsRequestAction : has no documentation (yet)
+type TrustedTeamsRequestAction struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TrustedTeamsRequestAction
+const (
+	TrustedTeamsRequestActionInvited  = "invited"
+	TrustedTeamsRequestActionExpired  = "expired"
+	TrustedTeamsRequestActionRevoked  = "revoked"
+	TrustedTeamsRequestActionAccepted = "accepted"
+	TrustedTeamsRequestActionDeclined = "declined"
+	TrustedTeamsRequestActionOther    = "other"
+)
+
+// TrustedTeamsRequestState : has no documentation (yet)
+type TrustedTeamsRequestState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TrustedTeamsRequestState
+const (
+	TrustedTeamsRequestStateInvited  = "invited"
+	TrustedTeamsRequestStateLinked   = "linked"
+	TrustedTeamsRequestStateUnlinked = "unlinked"
+	TrustedTeamsRequestStateOther    = "other"
 )
 
 // TwoAccountChangePolicyDetails : Enabled/disabled option for members to link

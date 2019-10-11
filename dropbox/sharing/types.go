@@ -198,6 +198,7 @@ type AddFolderMemberError struct {
 const (
 	AddFolderMemberErrorAccessError           = "access_error"
 	AddFolderMemberErrorEmailUnverified       = "email_unverified"
+	AddFolderMemberErrorBannedMember          = "banned_member"
 	AddFolderMemberErrorBadMember             = "bad_member"
 	AddFolderMemberErrorCantShareOutsideTeam  = "cant_share_outside_team"
 	AddFolderMemberErrorTooManyMembers        = "too_many_members"
@@ -593,6 +594,10 @@ type CreateSharedLinkWithSettingsError struct {
 	dropbox.Tagged
 	// Path : has no documentation (yet)
 	Path *files.LookupError `json:"path,omitempty"`
+	// SharedLinkAlreadyExists : The shared link already exists. You can call
+	// `listSharedLinks` to get the  existing link, or use the provided metadata
+	// if it is returned.
+	SharedLinkAlreadyExists *SharedLinkAlreadyExistsMetadata `json:"shared_link_already_exists,omitempty"`
 	// SettingsError : There is an error with the given settings.
 	SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 }
@@ -612,6 +617,10 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
 		Path *files.LookupError `json:"path,omitempty"`
+		// SharedLinkAlreadyExists : The shared link already exists. You can
+		// call `listSharedLinks` to get the  existing link, or use the provided
+		// metadata if it is returned.
+		SharedLinkAlreadyExists *SharedLinkAlreadyExistsMetadata `json:"shared_link_already_exists,omitempty"`
 		// SettingsError : There is an error with the given settings.
 		SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 	}
@@ -624,6 +633,12 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "path":
 		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_already_exists":
+		u.SharedLinkAlreadyExists = w.SharedLinkAlreadyExists
 
 		if err != nil {
 			return err
@@ -707,6 +722,8 @@ const (
 	FileActionRelinquishMembership  = "relinquish_membership"
 	FileActionShareLink             = "share_link"
 	FileActionCreateLink            = "create_link"
+	FileActionCreateViewLink        = "create_view_link"
+	FileActionCreateEditLink        = "create_edit_link"
 	FileActionOther                 = "other"
 )
 
@@ -1739,6 +1756,18 @@ func (u *JobStatus) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// LinkAccessLevel : has no documentation (yet)
+type LinkAccessLevel struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LinkAccessLevel
+const (
+	LinkAccessLevelViewer = "viewer"
+	LinkAccessLevelEditor = "editor"
+	LinkAccessLevelOther  = "other"
+)
+
 // LinkAction : Actions that can be performed on a link.
 type LinkAction struct {
 	dropbox.Tagged
@@ -1762,11 +1791,12 @@ type LinkAudience struct {
 
 // Valid tag values for LinkAudience
 const (
-	LinkAudiencePublic  = "public"
-	LinkAudienceTeam    = "team"
-	LinkAudienceNoOne   = "no_one"
-	LinkAudienceMembers = "members"
-	LinkAudienceOther   = "other"
+	LinkAudiencePublic   = "public"
+	LinkAudienceTeam     = "team"
+	LinkAudienceNoOne    = "no_one"
+	LinkAudiencePassword = "password"
+	LinkAudienceMembers  = "members"
+	LinkAudienceOther    = "other"
 )
 
 // LinkExpiry : has no documentation (yet)
@@ -1869,18 +1899,32 @@ type LinkPermissions struct {
 	// the shared links policies of the the team (in case the link's owner is
 	// part of a team) and the shared folder (in case the linked file is part of
 	// a shared folder). This field is shown only if the caller has access to
-	// this info (the link's owner always has access to this data).
+	// this info (the link's owner always has access to this data). For some
+	// links, an effective_audience value is returned instead.
 	ResolvedVisibility *ResolvedVisibility `json:"resolved_visibility,omitempty"`
 	// RequestedVisibility : The shared link's requested visibility. This can be
 	// overridden by the team and shared folder policies. The final visibility,
 	// after considering these policies, can be found in `resolved_visibility`.
-	// This is shown only if the caller is the link's owner.
+	// This is shown only if the caller is the link's owner and
+	// resolved_visibility is returned instead of effective_audience.
 	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
 	// CanRevoke : Whether the caller can revoke the shared link.
 	CanRevoke bool `json:"can_revoke"`
 	// RevokeFailureReason : The failure reason for revoking the link. This
 	// field will only be present if the `can_revoke` is false.
 	RevokeFailureReason *SharedLinkAccessFailureReason `json:"revoke_failure_reason,omitempty"`
+	// EffectiveAudience : The type of audience who can benefit from the access
+	// level specified by the `link_access_level` field.
+	EffectiveAudience *LinkAudience `json:"effective_audience,omitempty"`
+	// LinkAccessLevel : The access level that the link will grant to its users.
+	// A link can grant additional rights to a user beyond their current access
+	// level. For example, if a user was invited as a viewer to a file, and then
+	// opens a link with `link_access_level` set to `editor`, then they will
+	// gain editor privileges. The `link_access_level` is a property of the
+	// link, and does not depend on who is calling this API. In particular,
+	// `link_access_level` does not take into account the API caller's current
+	// permissions to the content.
+	LinkAccessLevel *LinkAccessLevel `json:"link_access_level,omitempty"`
 }
 
 // NewLinkPermissions returns a new LinkPermissions instance
@@ -3133,6 +3177,19 @@ func (u *RemoveMemberJobStatus) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// RequestedLinkAccessLevel : has no documentation (yet)
+type RequestedLinkAccessLevel struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for RequestedLinkAccessLevel
+const (
+	RequestedLinkAccessLevelViewer = "viewer"
+	RequestedLinkAccessLevelEditor = "editor"
+	RequestedLinkAccessLevelMax    = "max"
+	RequestedLinkAccessLevelOther  = "other"
+)
+
 // RequestedVisibility : The access permission that can be requested by the
 // caller for the shared link. Note that the final resolved visibility of the
 // shared link takes into account other aspects, such as team and shared folder
@@ -3800,6 +3857,43 @@ const (
 	SharedLinkAccessFailureReasonOther               = "other"
 )
 
+// SharedLinkAlreadyExistsMetadata : has no documentation (yet)
+type SharedLinkAlreadyExistsMetadata struct {
+	dropbox.Tagged
+	// Metadata : Metadata of the shared link that already exists.
+	Metadata IsSharedLinkMetadata `json:"metadata,omitempty"`
+}
+
+// Valid tag values for SharedLinkAlreadyExistsMetadata
+const (
+	SharedLinkAlreadyExistsMetadataMetadata = "metadata"
+	SharedLinkAlreadyExistsMetadataOther    = "other"
+)
+
+// UnmarshalJSON deserializes into a SharedLinkAlreadyExistsMetadata instance
+func (u *SharedLinkAlreadyExistsMetadata) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Metadata : Metadata of the shared link that already exists.
+		Metadata json.RawMessage `json:"metadata,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "metadata":
+		u.Metadata, err = IsSharedLinkMetadataFromJSON(w.Metadata)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // SharedLinkPolicy : Who can view shared links in this folder.
 type SharedLinkPolicy struct {
 	dropbox.Tagged
@@ -3824,6 +3918,15 @@ type SharedLinkSettings struct {
 	// Expires : Expiration time of the shared link. By default the link won't
 	// expire.
 	Expires time.Time `json:"expires,omitempty"`
+	// Audience : The new audience who can benefit from the access level
+	// specified by the link's access level specified in the `link_access_level`
+	// field of `LinkPermissions`. This is used in conjunction with team
+	// policies and shared folder policies to determine the final effective
+	// audience type in the `effective_audience` field of `LinkPermissions.
+	Audience *LinkAudience `json:"audience,omitempty"`
+	// Access : Requested access level you want the audience to gain from this
+	// link.
+	Access *RequestedLinkAccessLevel `json:"access,omitempty"`
 }
 
 // NewSharedLinkSettings returns a new SharedLinkSettings instance
