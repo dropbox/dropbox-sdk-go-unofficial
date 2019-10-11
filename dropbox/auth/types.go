@@ -49,9 +49,9 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// InvalidAccountType : Current account type cannot access the resource.
-		InvalidAccountType json.RawMessage `json:"invalid_account_type,omitempty"`
+		InvalidAccountType *InvalidAccountTypeError `json:"invalid_account_type,omitempty"`
 		// PaperAccessDenied : Current account cannot access Paper.
-		PaperAccessDenied json.RawMessage `json:"paper_access_denied,omitempty"`
+		PaperAccessDenied *PaperAccessError `json:"paper_access_denied,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -61,13 +61,13 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "invalid_account_type":
-		err = json.Unmarshal(w.InvalidAccountType, &u.InvalidAccountType)
+		u.InvalidAccountType = w.InvalidAccountType
 
 		if err != nil {
 			return err
 		}
 	case "paper_access_denied":
-		err = json.Unmarshal(w.PaperAccessDenied, &u.PaperAccessDenied)
+		u.PaperAccessDenied = w.PaperAccessDenied
 
 		if err != nil {
 			return err

@@ -197,11 +197,13 @@ class GoTypesBackend(CodeBackend):
             with self.block('type wrap struct'):
                 self.emit('dropbox.Tagged')
                 for field in fields:
-                    if is_void_type(field.data_type) or \
-                            is_primitive_type(field.data_type):
+                    if is_void_type(field.data_type) or (
+                            is_struct_type(field.data_type) and not _needs_base_type(field.data_type)):
+                        # pure structures are flattened in the containing union json blob and thus are loaded from body
                         continue
+                    # sub-unions must be handled as RawMessage, which will be loaded into correct implementation later
                     self._generate_field(field, union_field=True,
-                                         namespace=namespace, raw=True)
+                                         namespace=namespace, raw=_needs_base_type(field.data_type))
             self.emit('var w wrap')
             self.emit('var err error')
             with self.block('if err = json.Unmarshal(body, &w); err != nil'):
@@ -213,15 +215,14 @@ class GoTypesBackend(CodeBackend):
                         continue
                     field_name = fmt_var(field.name)
                     with self.block('case "%s":' % field.name, delim=(None, None)):
-                        if is_union_type(field.data_type):
-                            self.emit('err = json.Unmarshal(w.{0}, &u.{0})'
-                                            .format(field_name))
-                        elif _needs_base_type(field.data_type):
-                            self.emit("u.{0}, err = Is{1}FromJSON(body)"
+                        if _needs_base_type(field.data_type):
+                            self.emit("u.{0}, err = Is{1}FromJSON(w.{0})"
                                       .format(field_name, field.data_type.name))
-                        else:
+                        elif is_struct_type(field.data_type):
                             self.emit('err = json.Unmarshal(body, &u.{0})'
-                                            .format(field_name))
+                                  .format(field_name))
+                        else:
+                            self.emit('u.{0} = w.{0}'.format(field_name))
                     with self.block("if err != nil"):
                         self.emit("return err")
             self.emit('return nil')
