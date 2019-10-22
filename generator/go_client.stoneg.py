@@ -125,7 +125,7 @@ class GoClientBackend(CodeBackend):
         headers = {}
         if not is_void_type(route.arg_data_type):
             if host == 'content' or style in ['upload', 'download']:
-                headers["Dropbox-API-Arg"] = "string(b)"
+                headers["Dropbox-API-Arg"] = "dropbox.HTTPHeaderSafeJSON(b)"
             else:
                 headers["Content-Type"] = '"application/json"'
         if style == 'upload':
