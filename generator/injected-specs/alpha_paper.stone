@@ -1,0 +1,44 @@
+namespace paper
+
+# Spec handwritten to gain access to alpha paper endpoints.
+# Taken from https://www.dropbox.com/developers/paper-api-alpha#paper-docs-get_metadata
+
+import common
+
+struct PaperDocGetMetadataResult extends RefPaperDoc
+
+    owner String
+        "The Paper doc owner's email address."
+
+    title String
+        "The Paper doc title."
+
+    created_date common.DropboxTimestamp?
+        "The paper doc creation data."
+
+    revision Int64
+        "The Paper doc revision. Simply an ever increasing number."
+
+    last_updated_date common.DropboxTimestamp?
+        "The date when the paper doc was last edited"
+
+    last_editor String
+        "Email address of the last editor of the paper doc"
+
+    # TODO: Add status to get archive vs. deletd?
+
+    example default
+        doc_id = "zO1E7coc54sE8IuMdUoxz"
+        owner = "james@example.com"
+        title = "Week one retention"
+        created_date = "2016-01-20T00:00:00Z"
+        revision = 456736745
+        last_updated_date = "2016-01-20T00:00:00Z"
+        last_editor = "james@example.com"
+
+
+route docs/get_metadata (RefPaperDoc, PaperDocGetMetadataResult, DocLookupError)
+    "Returns Paper doc metadata."
+    attrs
+        owner="neeva-h4x0rs"
+

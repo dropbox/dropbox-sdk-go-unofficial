@@ -11,8 +11,8 @@ base_dir=$(dirname "$loc")
 spec_dir="$base_dir/dropbox-api-spec"
 gen_dir=$(dirname ${base_dir})/dropbox
 
-stone -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
-stone -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone
+stone -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone "$base_dir"/injected-specs/*.stone
+stone -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone "$base_dir"/injected-specs/*.stone
 
 # Update SDK and API spec versions
 sdk_version=${1:-"5.0.0"}

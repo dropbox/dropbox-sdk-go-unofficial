@@ -57,6 +57,8 @@ type Client interface {
 	// folder directly containing the Paper doc.  Note: If the Paper doc is not
 	// in any folder (aka unfiled) the response will be empty.
 	DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error)
+	// DocsGetMetadata : Returns Paper doc metadata.
+	DocsGetMetadata(arg *RefPaperDoc) (res *PaperDocGetMetadataResult, err error)
 	// DocsList : Return the list of all Paper docs according to the argument
 	// specifications. To iterate over through the full pagination, pass the
 	// cursor to `docsListContinue`.
@@ -478,6 +480,72 @@ func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingP
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError DocsGetFolderInfoAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//DocsGetMetadataAPIError is an error-wrapper for the docs/get_metadata route
+type DocsGetMetadataAPIError struct {
+	dropbox.APIError
+	EndpointError *DocLookupError `json:"error"`
+}
+
+func (dbx *apiImpl) DocsGetMetadata(arg *RefPaperDoc) (res *PaperDocGetMetadataResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/get_metadata", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError DocsGetMetadataAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

@@ -688,6 +688,34 @@ func NewPaperDocExportResult(Owner string, Title string, Revision int64, MimeTyp
 	return s
 }
 
+// PaperDocGetMetadataResult : has no documentation (yet)
+type PaperDocGetMetadataResult struct {
+	RefPaperDoc
+	// Owner : The Paper doc owner's email address.
+	Owner string `json:"owner"`
+	// Title : The Paper doc title.
+	Title string `json:"title"`
+	// CreatedDate : The paper doc creation data.
+	CreatedDate time.Time `json:"created_date,omitempty"`
+	// Revision : The Paper doc revision. Simply an ever increasing number.
+	Revision int64 `json:"revision"`
+	// LastUpdatedDate : The date when the paper doc was last edited
+	LastUpdatedDate time.Time `json:"last_updated_date,omitempty"`
+	// LastEditor : Email address of the last editor of the paper doc
+	LastEditor string `json:"last_editor"`
+}
+
+// NewPaperDocGetMetadataResult returns a new PaperDocGetMetadataResult instance
+func NewPaperDocGetMetadataResult(DocId string, Owner string, Title string, Revision int64, LastEditor string) *PaperDocGetMetadataResult {
+	s := new(PaperDocGetMetadataResult)
+	s.DocId = DocId
+	s.Owner = Owner
+	s.Title = Title
+	s.Revision = Revision
+	s.LastEditor = LastEditor
+	return s
+}
+
 // PaperDocPermissionLevel : has no documentation (yet)
 type PaperDocPermissionLevel struct {
 	dropbox.Tagged
