@@ -26,7 +26,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
 )
 
 // GeneralFileRequestsError : There is an error accessing the file requests

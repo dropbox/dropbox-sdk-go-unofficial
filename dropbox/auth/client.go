@@ -26,7 +26,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
 )
 
 // Client interface describes all routes in this namespace

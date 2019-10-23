@@ -22,7 +22,7 @@
 // the users namespace.
 package users_common
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import "github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
 
 // AccountType : What type of account this user has.
 type AccountType struct {

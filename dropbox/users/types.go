@@ -25,11 +25,11 @@ package users
 import (
 	"encoding/json"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users_common"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/common"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/team_common"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/team_policies"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/users_common"
 )
 
 // Account : The amount of detail revealed about an account depends on the user

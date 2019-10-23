@@ -25,11 +25,11 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/files"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/team_common"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/team_policies"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox/users"
 )
 
 // DeviceSession : has no documentation (yet)

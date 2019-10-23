@@ -24,7 +24,7 @@ package contacts
 import (
 	"encoding/json"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/neevaco/dropbox-sdk-go-unofficial/v6/dropbox"
 )
 
 // DeleteManualContactsArg : has no documentation (yet)
