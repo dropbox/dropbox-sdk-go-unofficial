@@ -64,14 +64,6 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// EndUser : End user session details.
 		EndUser json.RawMessage `json:"end_user,omitempty"`
-		// SignInAs : Sign in as session details.
-		SignInAs json.RawMessage `json:"sign_in_as,omitempty"`
-		// ContentManager : Content manager session details.
-		ContentManager json.RawMessage `json:"content_manager,omitempty"`
-		// AdminConsole : Admin console session details.
-		AdminConsole json.RawMessage `json:"admin_console,omitempty"`
-		// Api : Api session details.
-		Api json.RawMessage `json:"api,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -81,7 +73,7 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "end_user":
-		u.EndUser, err = IsSessionLogInfoFromJSON(body)
+		u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
 
 		if err != nil {
 			return err
@@ -302,11 +294,8 @@ const (
 func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// TeamJoinDetails : Additional information relevant when a new member
-		// joins the team.
-		TeamJoinDetails json.RawMessage `json:"team_join_details,omitempty"`
 		// RemoveAction : Define how the user was removed from the team.
-		RemoveAction json.RawMessage `json:"remove_action,omitempty"`
+		RemoveAction *MemberRemoveActionType `json:"remove_action,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -322,7 +311,7 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 	case "remove_action":
-		err = json.Unmarshal(w.RemoveAction, &u.RemoveAction)
+		u.RemoveAction = w.RemoveAction
 
 		if err != nil {
 			return err
@@ -365,8 +354,6 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 		Admin json.RawMessage `json:"admin,omitempty"`
 		// App : The application who did the action.
 		App json.RawMessage `json:"app,omitempty"`
-		// Reseller : Action done by reseller.
-		Reseller json.RawMessage `json:"reseller,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -376,19 +363,19 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "user":
-		u.User, err = IsUserLogInfoFromJSON(body)
+		u.User, err = IsUserLogInfoFromJSON(w.User)
 
 		if err != nil {
 			return err
 		}
 	case "admin":
-		u.Admin, err = IsUserLogInfoFromJSON(body)
+		u.Admin, err = IsUserLogInfoFromJSON(w.Admin)
 
 		if err != nil {
 			return err
 		}
 	case "app":
-		u.App, err = IsAppLogInfoFromJSON(body)
+		u.App, err = IsAppLogInfoFromJSON(w.App)
 
 		if err != nil {
 			return err
@@ -609,12 +596,6 @@ const (
 func (u *appLogInfoUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// UserOrTeamLinkedApp : has no documentation (yet)
-		UserOrTeamLinkedApp json.RawMessage `json:"user_or_team_linked_app,omitempty"`
-		// UserLinkedApp : has no documentation (yet)
-		UserLinkedApp json.RawMessage `json:"user_linked_app,omitempty"`
-		// TeamLinkedApp : has no documentation (yet)
-		TeamLinkedApp json.RawMessage `json:"team_linked_app,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -782,16 +763,6 @@ const (
 func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// File : File's details.
-		File json.RawMessage `json:"file,omitempty"`
-		// Folder : Folder's details.
-		Folder json.RawMessage `json:"folder,omitempty"`
-		// PaperDocument : Paper docuement's details.
-		PaperDocument json.RawMessage `json:"paper_document,omitempty"`
-		// PaperFolder : Paper folder's details.
-		PaperFolder json.RawMessage `json:"paper_folder,omitempty"`
-		// ShowcaseDocument : Showcase document's details.
-		ShowcaseDocument json.RawMessage `json:"showcase_document,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -970,13 +941,6 @@ const (
 func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// TeamMember : Action was done on behalf of a team member.
-		TeamMember json.RawMessage `json:"team_member,omitempty"`
-		// NonTeamMember : Action was done on behalf of a non team member.
-		NonTeamMember json.RawMessage `json:"non_team_member,omitempty"`
-		// TrustedNonTeamMember : Action was done on behalf of a trusted non
-		// team member.
-		TrustedNonTeamMember json.RawMessage `json:"trusted_non_team_member,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1138,14 +1102,6 @@ const (
 func (u *deviceSessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// DesktopDeviceSession : has no documentation (yet)
-		DesktopDeviceSession json.RawMessage `json:"desktop_device_session,omitempty"`
-		// MobileDeviceSession : has no documentation (yet)
-		MobileDeviceSession json.RawMessage `json:"mobile_device_session,omitempty"`
-		// WebDeviceSession : has no documentation (yet)
-		WebDeviceSession json.RawMessage `json:"web_device_session,omitempty"`
-		// LegacyDeviceSession : has no documentation (yet)
-		LegacyDeviceSession json.RawMessage `json:"legacy_device_session,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1276,12 +1232,6 @@ const (
 func (u *sessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Web : has no documentation (yet)
-		Web json.RawMessage `json:"web,omitempty"`
-		// Desktop : has no documentation (yet)
-		Desktop json.RawMessage `json:"desktop,omitempty"`
-		// Mobile : has no documentation (yet)
-		Mobile json.RawMessage `json:"mobile,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3304,656 +3254,6 @@ const (
 func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AppLinkTeamDetails : has no documentation (yet)
-		AppLinkTeamDetails json.RawMessage `json:"app_link_team_details,omitempty"`
-		// AppLinkUserDetails : has no documentation (yet)
-		AppLinkUserDetails json.RawMessage `json:"app_link_user_details,omitempty"`
-		// AppUnlinkTeamDetails : has no documentation (yet)
-		AppUnlinkTeamDetails json.RawMessage `json:"app_unlink_team_details,omitempty"`
-		// AppUnlinkUserDetails : has no documentation (yet)
-		AppUnlinkUserDetails json.RawMessage `json:"app_unlink_user_details,omitempty"`
-		// FileAddCommentDetails : has no documentation (yet)
-		FileAddCommentDetails json.RawMessage `json:"file_add_comment_details,omitempty"`
-		// FileChangeCommentSubscriptionDetails : has no documentation (yet)
-		FileChangeCommentSubscriptionDetails json.RawMessage `json:"file_change_comment_subscription_details,omitempty"`
-		// FileDeleteCommentDetails : has no documentation (yet)
-		FileDeleteCommentDetails json.RawMessage `json:"file_delete_comment_details,omitempty"`
-		// FileEditCommentDetails : has no documentation (yet)
-		FileEditCommentDetails json.RawMessage `json:"file_edit_comment_details,omitempty"`
-		// FileLikeCommentDetails : has no documentation (yet)
-		FileLikeCommentDetails json.RawMessage `json:"file_like_comment_details,omitempty"`
-		// FileResolveCommentDetails : has no documentation (yet)
-		FileResolveCommentDetails json.RawMessage `json:"file_resolve_comment_details,omitempty"`
-		// FileUnlikeCommentDetails : has no documentation (yet)
-		FileUnlikeCommentDetails json.RawMessage `json:"file_unlike_comment_details,omitempty"`
-		// FileUnresolveCommentDetails : has no documentation (yet)
-		FileUnresolveCommentDetails json.RawMessage `json:"file_unresolve_comment_details,omitempty"`
-		// DeviceChangeIpDesktopDetails : has no documentation (yet)
-		DeviceChangeIpDesktopDetails json.RawMessage `json:"device_change_ip_desktop_details,omitempty"`
-		// DeviceChangeIpMobileDetails : has no documentation (yet)
-		DeviceChangeIpMobileDetails json.RawMessage `json:"device_change_ip_mobile_details,omitempty"`
-		// DeviceChangeIpWebDetails : has no documentation (yet)
-		DeviceChangeIpWebDetails json.RawMessage `json:"device_change_ip_web_details,omitempty"`
-		// DeviceDeleteOnUnlinkFailDetails : has no documentation (yet)
-		DeviceDeleteOnUnlinkFailDetails json.RawMessage `json:"device_delete_on_unlink_fail_details,omitempty"`
-		// DeviceDeleteOnUnlinkSuccessDetails : has no documentation (yet)
-		DeviceDeleteOnUnlinkSuccessDetails json.RawMessage `json:"device_delete_on_unlink_success_details,omitempty"`
-		// DeviceLinkFailDetails : has no documentation (yet)
-		DeviceLinkFailDetails json.RawMessage `json:"device_link_fail_details,omitempty"`
-		// DeviceLinkSuccessDetails : has no documentation (yet)
-		DeviceLinkSuccessDetails json.RawMessage `json:"device_link_success_details,omitempty"`
-		// DeviceManagementDisabledDetails : has no documentation (yet)
-		DeviceManagementDisabledDetails json.RawMessage `json:"device_management_disabled_details,omitempty"`
-		// DeviceManagementEnabledDetails : has no documentation (yet)
-		DeviceManagementEnabledDetails json.RawMessage `json:"device_management_enabled_details,omitempty"`
-		// DeviceUnlinkDetails : has no documentation (yet)
-		DeviceUnlinkDetails json.RawMessage `json:"device_unlink_details,omitempty"`
-		// EmmRefreshAuthTokenDetails : has no documentation (yet)
-		EmmRefreshAuthTokenDetails json.RawMessage `json:"emm_refresh_auth_token_details,omitempty"`
-		// AccountCaptureChangeAvailabilityDetails : has no documentation (yet)
-		AccountCaptureChangeAvailabilityDetails json.RawMessage `json:"account_capture_change_availability_details,omitempty"`
-		// AccountCaptureMigrateAccountDetails : has no documentation (yet)
-		AccountCaptureMigrateAccountDetails json.RawMessage `json:"account_capture_migrate_account_details,omitempty"`
-		// AccountCaptureNotificationEmailsSentDetails : has no documentation
-		// (yet)
-		AccountCaptureNotificationEmailsSentDetails json.RawMessage `json:"account_capture_notification_emails_sent_details,omitempty"`
-		// AccountCaptureRelinquishAccountDetails : has no documentation (yet)
-		AccountCaptureRelinquishAccountDetails json.RawMessage `json:"account_capture_relinquish_account_details,omitempty"`
-		// DisabledDomainInvitesDetails : has no documentation (yet)
-		DisabledDomainInvitesDetails json.RawMessage `json:"disabled_domain_invites_details,omitempty"`
-		// DomainInvitesApproveRequestToJoinTeamDetails : has no documentation
-		// (yet)
-		DomainInvitesApproveRequestToJoinTeamDetails json.RawMessage `json:"domain_invites_approve_request_to_join_team_details,omitempty"`
-		// DomainInvitesDeclineRequestToJoinTeamDetails : has no documentation
-		// (yet)
-		DomainInvitesDeclineRequestToJoinTeamDetails json.RawMessage `json:"domain_invites_decline_request_to_join_team_details,omitempty"`
-		// DomainInvitesEmailExistingUsersDetails : has no documentation (yet)
-		DomainInvitesEmailExistingUsersDetails json.RawMessage `json:"domain_invites_email_existing_users_details,omitempty"`
-		// DomainInvitesRequestToJoinTeamDetails : has no documentation (yet)
-		DomainInvitesRequestToJoinTeamDetails json.RawMessage `json:"domain_invites_request_to_join_team_details,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToNoDetails : has no documentation
-		// (yet)
-		DomainInvitesSetInviteNewUserPrefToNoDetails json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_no_details,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToYesDetails : has no documentation
-		// (yet)
-		DomainInvitesSetInviteNewUserPrefToYesDetails json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_yes_details,omitempty"`
-		// DomainVerificationAddDomainFailDetails : has no documentation (yet)
-		DomainVerificationAddDomainFailDetails json.RawMessage `json:"domain_verification_add_domain_fail_details,omitempty"`
-		// DomainVerificationAddDomainSuccessDetails : has no documentation
-		// (yet)
-		DomainVerificationAddDomainSuccessDetails json.RawMessage `json:"domain_verification_add_domain_success_details,omitempty"`
-		// DomainVerificationRemoveDomainDetails : has no documentation (yet)
-		DomainVerificationRemoveDomainDetails json.RawMessage `json:"domain_verification_remove_domain_details,omitempty"`
-		// EnabledDomainInvitesDetails : has no documentation (yet)
-		EnabledDomainInvitesDetails json.RawMessage `json:"enabled_domain_invites_details,omitempty"`
-		// CreateFolderDetails : has no documentation (yet)
-		CreateFolderDetails json.RawMessage `json:"create_folder_details,omitempty"`
-		// FileAddDetails : has no documentation (yet)
-		FileAddDetails json.RawMessage `json:"file_add_details,omitempty"`
-		// FileCopyDetails : has no documentation (yet)
-		FileCopyDetails json.RawMessage `json:"file_copy_details,omitempty"`
-		// FileDeleteDetails : has no documentation (yet)
-		FileDeleteDetails json.RawMessage `json:"file_delete_details,omitempty"`
-		// FileDownloadDetails : has no documentation (yet)
-		FileDownloadDetails json.RawMessage `json:"file_download_details,omitempty"`
-		// FileEditDetails : has no documentation (yet)
-		FileEditDetails json.RawMessage `json:"file_edit_details,omitempty"`
-		// FileGetCopyReferenceDetails : has no documentation (yet)
-		FileGetCopyReferenceDetails json.RawMessage `json:"file_get_copy_reference_details,omitempty"`
-		// FileMoveDetails : has no documentation (yet)
-		FileMoveDetails json.RawMessage `json:"file_move_details,omitempty"`
-		// FilePermanentlyDeleteDetails : has no documentation (yet)
-		FilePermanentlyDeleteDetails json.RawMessage `json:"file_permanently_delete_details,omitempty"`
-		// FilePreviewDetails : has no documentation (yet)
-		FilePreviewDetails json.RawMessage `json:"file_preview_details,omitempty"`
-		// FileRenameDetails : has no documentation (yet)
-		FileRenameDetails json.RawMessage `json:"file_rename_details,omitempty"`
-		// FileRestoreDetails : has no documentation (yet)
-		FileRestoreDetails json.RawMessage `json:"file_restore_details,omitempty"`
-		// FileRevertDetails : has no documentation (yet)
-		FileRevertDetails json.RawMessage `json:"file_revert_details,omitempty"`
-		// FileRollbackChangesDetails : has no documentation (yet)
-		FileRollbackChangesDetails json.RawMessage `json:"file_rollback_changes_details,omitempty"`
-		// FileSaveCopyReferenceDetails : has no documentation (yet)
-		FileSaveCopyReferenceDetails json.RawMessage `json:"file_save_copy_reference_details,omitempty"`
-		// FileRequestChangeDetails : has no documentation (yet)
-		FileRequestChangeDetails json.RawMessage `json:"file_request_change_details,omitempty"`
-		// FileRequestCloseDetails : has no documentation (yet)
-		FileRequestCloseDetails json.RawMessage `json:"file_request_close_details,omitempty"`
-		// FileRequestCreateDetails : has no documentation (yet)
-		FileRequestCreateDetails json.RawMessage `json:"file_request_create_details,omitempty"`
-		// FileRequestReceiveFileDetails : has no documentation (yet)
-		FileRequestReceiveFileDetails json.RawMessage `json:"file_request_receive_file_details,omitempty"`
-		// GroupAddExternalIdDetails : has no documentation (yet)
-		GroupAddExternalIdDetails json.RawMessage `json:"group_add_external_id_details,omitempty"`
-		// GroupAddMemberDetails : has no documentation (yet)
-		GroupAddMemberDetails json.RawMessage `json:"group_add_member_details,omitempty"`
-		// GroupChangeExternalIdDetails : has no documentation (yet)
-		GroupChangeExternalIdDetails json.RawMessage `json:"group_change_external_id_details,omitempty"`
-		// GroupChangeManagementTypeDetails : has no documentation (yet)
-		GroupChangeManagementTypeDetails json.RawMessage `json:"group_change_management_type_details,omitempty"`
-		// GroupChangeMemberRoleDetails : has no documentation (yet)
-		GroupChangeMemberRoleDetails json.RawMessage `json:"group_change_member_role_details,omitempty"`
-		// GroupCreateDetails : has no documentation (yet)
-		GroupCreateDetails json.RawMessage `json:"group_create_details,omitempty"`
-		// GroupDeleteDetails : has no documentation (yet)
-		GroupDeleteDetails json.RawMessage `json:"group_delete_details,omitempty"`
-		// GroupDescriptionUpdatedDetails : has no documentation (yet)
-		GroupDescriptionUpdatedDetails json.RawMessage `json:"group_description_updated_details,omitempty"`
-		// GroupJoinPolicyUpdatedDetails : has no documentation (yet)
-		GroupJoinPolicyUpdatedDetails json.RawMessage `json:"group_join_policy_updated_details,omitempty"`
-		// GroupMovedDetails : has no documentation (yet)
-		GroupMovedDetails json.RawMessage `json:"group_moved_details,omitempty"`
-		// GroupRemoveExternalIdDetails : has no documentation (yet)
-		GroupRemoveExternalIdDetails json.RawMessage `json:"group_remove_external_id_details,omitempty"`
-		// GroupRemoveMemberDetails : has no documentation (yet)
-		GroupRemoveMemberDetails json.RawMessage `json:"group_remove_member_details,omitempty"`
-		// GroupRenameDetails : has no documentation (yet)
-		GroupRenameDetails json.RawMessage `json:"group_rename_details,omitempty"`
-		// EmmErrorDetails : has no documentation (yet)
-		EmmErrorDetails json.RawMessage `json:"emm_error_details,omitempty"`
-		// LoginFailDetails : has no documentation (yet)
-		LoginFailDetails json.RawMessage `json:"login_fail_details,omitempty"`
-		// LoginSuccessDetails : has no documentation (yet)
-		LoginSuccessDetails json.RawMessage `json:"login_success_details,omitempty"`
-		// LogoutDetails : has no documentation (yet)
-		LogoutDetails json.RawMessage `json:"logout_details,omitempty"`
-		// ResellerSupportSessionEndDetails : has no documentation (yet)
-		ResellerSupportSessionEndDetails json.RawMessage `json:"reseller_support_session_end_details,omitempty"`
-		// ResellerSupportSessionStartDetails : has no documentation (yet)
-		ResellerSupportSessionStartDetails json.RawMessage `json:"reseller_support_session_start_details,omitempty"`
-		// SignInAsSessionEndDetails : has no documentation (yet)
-		SignInAsSessionEndDetails json.RawMessage `json:"sign_in_as_session_end_details,omitempty"`
-		// SignInAsSessionStartDetails : has no documentation (yet)
-		SignInAsSessionStartDetails json.RawMessage `json:"sign_in_as_session_start_details,omitempty"`
-		// SsoErrorDetails : has no documentation (yet)
-		SsoErrorDetails json.RawMessage `json:"sso_error_details,omitempty"`
-		// MemberAddNameDetails : has no documentation (yet)
-		MemberAddNameDetails json.RawMessage `json:"member_add_name_details,omitempty"`
-		// MemberChangeAdminRoleDetails : has no documentation (yet)
-		MemberChangeAdminRoleDetails json.RawMessage `json:"member_change_admin_role_details,omitempty"`
-		// MemberChangeEmailDetails : has no documentation (yet)
-		MemberChangeEmailDetails json.RawMessage `json:"member_change_email_details,omitempty"`
-		// MemberChangeMembershipTypeDetails : has no documentation (yet)
-		MemberChangeMembershipTypeDetails json.RawMessage `json:"member_change_membership_type_details,omitempty"`
-		// MemberChangeNameDetails : has no documentation (yet)
-		MemberChangeNameDetails json.RawMessage `json:"member_change_name_details,omitempty"`
-		// MemberChangeStatusDetails : has no documentation (yet)
-		MemberChangeStatusDetails json.RawMessage `json:"member_change_status_details,omitempty"`
-		// MemberDeleteManualContactsDetails : has no documentation (yet)
-		MemberDeleteManualContactsDetails json.RawMessage `json:"member_delete_manual_contacts_details,omitempty"`
-		// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
-		// (yet)
-		MemberPermanentlyDeleteAccountContentsDetails json.RawMessage `json:"member_permanently_delete_account_contents_details,omitempty"`
-		// MemberSpaceLimitsAddCustomQuotaDetails : has no documentation (yet)
-		MemberSpaceLimitsAddCustomQuotaDetails json.RawMessage `json:"member_space_limits_add_custom_quota_details,omitempty"`
-		// MemberSpaceLimitsChangeCustomQuotaDetails : has no documentation
-		// (yet)
-		MemberSpaceLimitsChangeCustomQuotaDetails json.RawMessage `json:"member_space_limits_change_custom_quota_details,omitempty"`
-		// MemberSpaceLimitsChangeStatusDetails : has no documentation (yet)
-		MemberSpaceLimitsChangeStatusDetails json.RawMessage `json:"member_space_limits_change_status_details,omitempty"`
-		// MemberSpaceLimitsRemoveCustomQuotaDetails : has no documentation
-		// (yet)
-		MemberSpaceLimitsRemoveCustomQuotaDetails json.RawMessage `json:"member_space_limits_remove_custom_quota_details,omitempty"`
-		// MemberSuggestDetails : has no documentation (yet)
-		MemberSuggestDetails json.RawMessage `json:"member_suggest_details,omitempty"`
-		// MemberTransferAccountContentsDetails : has no documentation (yet)
-		MemberTransferAccountContentsDetails json.RawMessage `json:"member_transfer_account_contents_details,omitempty"`
-		// SecondaryMailsPolicyChangedDetails : has no documentation (yet)
-		SecondaryMailsPolicyChangedDetails json.RawMessage `json:"secondary_mails_policy_changed_details,omitempty"`
-		// PaperContentAddMemberDetails : has no documentation (yet)
-		PaperContentAddMemberDetails json.RawMessage `json:"paper_content_add_member_details,omitempty"`
-		// PaperContentAddToFolderDetails : has no documentation (yet)
-		PaperContentAddToFolderDetails json.RawMessage `json:"paper_content_add_to_folder_details,omitempty"`
-		// PaperContentArchiveDetails : has no documentation (yet)
-		PaperContentArchiveDetails json.RawMessage `json:"paper_content_archive_details,omitempty"`
-		// PaperContentCreateDetails : has no documentation (yet)
-		PaperContentCreateDetails json.RawMessage `json:"paper_content_create_details,omitempty"`
-		// PaperContentPermanentlyDeleteDetails : has no documentation (yet)
-		PaperContentPermanentlyDeleteDetails json.RawMessage `json:"paper_content_permanently_delete_details,omitempty"`
-		// PaperContentRemoveFromFolderDetails : has no documentation (yet)
-		PaperContentRemoveFromFolderDetails json.RawMessage `json:"paper_content_remove_from_folder_details,omitempty"`
-		// PaperContentRemoveMemberDetails : has no documentation (yet)
-		PaperContentRemoveMemberDetails json.RawMessage `json:"paper_content_remove_member_details,omitempty"`
-		// PaperContentRenameDetails : has no documentation (yet)
-		PaperContentRenameDetails json.RawMessage `json:"paper_content_rename_details,omitempty"`
-		// PaperContentRestoreDetails : has no documentation (yet)
-		PaperContentRestoreDetails json.RawMessage `json:"paper_content_restore_details,omitempty"`
-		// PaperDocAddCommentDetails : has no documentation (yet)
-		PaperDocAddCommentDetails json.RawMessage `json:"paper_doc_add_comment_details,omitempty"`
-		// PaperDocChangeMemberRoleDetails : has no documentation (yet)
-		PaperDocChangeMemberRoleDetails json.RawMessage `json:"paper_doc_change_member_role_details,omitempty"`
-		// PaperDocChangeSharingPolicyDetails : has no documentation (yet)
-		PaperDocChangeSharingPolicyDetails json.RawMessage `json:"paper_doc_change_sharing_policy_details,omitempty"`
-		// PaperDocChangeSubscriptionDetails : has no documentation (yet)
-		PaperDocChangeSubscriptionDetails json.RawMessage `json:"paper_doc_change_subscription_details,omitempty"`
-		// PaperDocDeletedDetails : has no documentation (yet)
-		PaperDocDeletedDetails json.RawMessage `json:"paper_doc_deleted_details,omitempty"`
-		// PaperDocDeleteCommentDetails : has no documentation (yet)
-		PaperDocDeleteCommentDetails json.RawMessage `json:"paper_doc_delete_comment_details,omitempty"`
-		// PaperDocDownloadDetails : has no documentation (yet)
-		PaperDocDownloadDetails json.RawMessage `json:"paper_doc_download_details,omitempty"`
-		// PaperDocEditDetails : has no documentation (yet)
-		PaperDocEditDetails json.RawMessage `json:"paper_doc_edit_details,omitempty"`
-		// PaperDocEditCommentDetails : has no documentation (yet)
-		PaperDocEditCommentDetails json.RawMessage `json:"paper_doc_edit_comment_details,omitempty"`
-		// PaperDocFollowedDetails : has no documentation (yet)
-		PaperDocFollowedDetails json.RawMessage `json:"paper_doc_followed_details,omitempty"`
-		// PaperDocMentionDetails : has no documentation (yet)
-		PaperDocMentionDetails json.RawMessage `json:"paper_doc_mention_details,omitempty"`
-		// PaperDocOwnershipChangedDetails : has no documentation (yet)
-		PaperDocOwnershipChangedDetails json.RawMessage `json:"paper_doc_ownership_changed_details,omitempty"`
-		// PaperDocRequestAccessDetails : has no documentation (yet)
-		PaperDocRequestAccessDetails json.RawMessage `json:"paper_doc_request_access_details,omitempty"`
-		// PaperDocResolveCommentDetails : has no documentation (yet)
-		PaperDocResolveCommentDetails json.RawMessage `json:"paper_doc_resolve_comment_details,omitempty"`
-		// PaperDocRevertDetails : has no documentation (yet)
-		PaperDocRevertDetails json.RawMessage `json:"paper_doc_revert_details,omitempty"`
-		// PaperDocSlackShareDetails : has no documentation (yet)
-		PaperDocSlackShareDetails json.RawMessage `json:"paper_doc_slack_share_details,omitempty"`
-		// PaperDocTeamInviteDetails : has no documentation (yet)
-		PaperDocTeamInviteDetails json.RawMessage `json:"paper_doc_team_invite_details,omitempty"`
-		// PaperDocTrashedDetails : has no documentation (yet)
-		PaperDocTrashedDetails json.RawMessage `json:"paper_doc_trashed_details,omitempty"`
-		// PaperDocUnresolveCommentDetails : has no documentation (yet)
-		PaperDocUnresolveCommentDetails json.RawMessage `json:"paper_doc_unresolve_comment_details,omitempty"`
-		// PaperDocUntrashedDetails : has no documentation (yet)
-		PaperDocUntrashedDetails json.RawMessage `json:"paper_doc_untrashed_details,omitempty"`
-		// PaperDocViewDetails : has no documentation (yet)
-		PaperDocViewDetails json.RawMessage `json:"paper_doc_view_details,omitempty"`
-		// PaperExternalViewAllowDetails : has no documentation (yet)
-		PaperExternalViewAllowDetails json.RawMessage `json:"paper_external_view_allow_details,omitempty"`
-		// PaperExternalViewDefaultTeamDetails : has no documentation (yet)
-		PaperExternalViewDefaultTeamDetails json.RawMessage `json:"paper_external_view_default_team_details,omitempty"`
-		// PaperExternalViewForbidDetails : has no documentation (yet)
-		PaperExternalViewForbidDetails json.RawMessage `json:"paper_external_view_forbid_details,omitempty"`
-		// PaperFolderChangeSubscriptionDetails : has no documentation (yet)
-		PaperFolderChangeSubscriptionDetails json.RawMessage `json:"paper_folder_change_subscription_details,omitempty"`
-		// PaperFolderDeletedDetails : has no documentation (yet)
-		PaperFolderDeletedDetails json.RawMessage `json:"paper_folder_deleted_details,omitempty"`
-		// PaperFolderFollowedDetails : has no documentation (yet)
-		PaperFolderFollowedDetails json.RawMessage `json:"paper_folder_followed_details,omitempty"`
-		// PaperFolderTeamInviteDetails : has no documentation (yet)
-		PaperFolderTeamInviteDetails json.RawMessage `json:"paper_folder_team_invite_details,omitempty"`
-		// PasswordChangeDetails : has no documentation (yet)
-		PasswordChangeDetails json.RawMessage `json:"password_change_details,omitempty"`
-		// PasswordResetDetails : has no documentation (yet)
-		PasswordResetDetails json.RawMessage `json:"password_reset_details,omitempty"`
-		// PasswordResetAllDetails : has no documentation (yet)
-		PasswordResetAllDetails json.RawMessage `json:"password_reset_all_details,omitempty"`
-		// EmmCreateExceptionsReportDetails : has no documentation (yet)
-		EmmCreateExceptionsReportDetails json.RawMessage `json:"emm_create_exceptions_report_details,omitempty"`
-		// EmmCreateUsageReportDetails : has no documentation (yet)
-		EmmCreateUsageReportDetails json.RawMessage `json:"emm_create_usage_report_details,omitempty"`
-		// ExportMembersReportDetails : has no documentation (yet)
-		ExportMembersReportDetails json.RawMessage `json:"export_members_report_details,omitempty"`
-		// PaperAdminExportStartDetails : has no documentation (yet)
-		PaperAdminExportStartDetails json.RawMessage `json:"paper_admin_export_start_details,omitempty"`
-		// SmartSyncCreateAdminPrivilegeReportDetails : has no documentation
-		// (yet)
-		SmartSyncCreateAdminPrivilegeReportDetails json.RawMessage `json:"smart_sync_create_admin_privilege_report_details,omitempty"`
-		// TeamActivityCreateReportDetails : has no documentation (yet)
-		TeamActivityCreateReportDetails json.RawMessage `json:"team_activity_create_report_details,omitempty"`
-		// CollectionShareDetails : has no documentation (yet)
-		CollectionShareDetails json.RawMessage `json:"collection_share_details,omitempty"`
-		// NoteAclInviteOnlyDetails : has no documentation (yet)
-		NoteAclInviteOnlyDetails json.RawMessage `json:"note_acl_invite_only_details,omitempty"`
-		// NoteAclLinkDetails : has no documentation (yet)
-		NoteAclLinkDetails json.RawMessage `json:"note_acl_link_details,omitempty"`
-		// NoteAclTeamLinkDetails : has no documentation (yet)
-		NoteAclTeamLinkDetails json.RawMessage `json:"note_acl_team_link_details,omitempty"`
-		// NoteSharedDetails : has no documentation (yet)
-		NoteSharedDetails json.RawMessage `json:"note_shared_details,omitempty"`
-		// NoteShareReceiveDetails : has no documentation (yet)
-		NoteShareReceiveDetails json.RawMessage `json:"note_share_receive_details,omitempty"`
-		// OpenNoteSharedDetails : has no documentation (yet)
-		OpenNoteSharedDetails json.RawMessage `json:"open_note_shared_details,omitempty"`
-		// SfAddGroupDetails : has no documentation (yet)
-		SfAddGroupDetails json.RawMessage `json:"sf_add_group_details,omitempty"`
-		// SfAllowNonMembersToViewSharedLinksDetails : has no documentation
-		// (yet)
-		SfAllowNonMembersToViewSharedLinksDetails json.RawMessage `json:"sf_allow_non_members_to_view_shared_links_details,omitempty"`
-		// SfExternalInviteWarnDetails : has no documentation (yet)
-		SfExternalInviteWarnDetails json.RawMessage `json:"sf_external_invite_warn_details,omitempty"`
-		// SfFbInviteDetails : has no documentation (yet)
-		SfFbInviteDetails json.RawMessage `json:"sf_fb_invite_details,omitempty"`
-		// SfFbInviteChangeRoleDetails : has no documentation (yet)
-		SfFbInviteChangeRoleDetails json.RawMessage `json:"sf_fb_invite_change_role_details,omitempty"`
-		// SfFbUninviteDetails : has no documentation (yet)
-		SfFbUninviteDetails json.RawMessage `json:"sf_fb_uninvite_details,omitempty"`
-		// SfInviteGroupDetails : has no documentation (yet)
-		SfInviteGroupDetails json.RawMessage `json:"sf_invite_group_details,omitempty"`
-		// SfTeamGrantAccessDetails : has no documentation (yet)
-		SfTeamGrantAccessDetails json.RawMessage `json:"sf_team_grant_access_details,omitempty"`
-		// SfTeamInviteDetails : has no documentation (yet)
-		SfTeamInviteDetails json.RawMessage `json:"sf_team_invite_details,omitempty"`
-		// SfTeamInviteChangeRoleDetails : has no documentation (yet)
-		SfTeamInviteChangeRoleDetails json.RawMessage `json:"sf_team_invite_change_role_details,omitempty"`
-		// SfTeamJoinDetails : has no documentation (yet)
-		SfTeamJoinDetails json.RawMessage `json:"sf_team_join_details,omitempty"`
-		// SfTeamJoinFromOobLinkDetails : has no documentation (yet)
-		SfTeamJoinFromOobLinkDetails json.RawMessage `json:"sf_team_join_from_oob_link_details,omitempty"`
-		// SfTeamUninviteDetails : has no documentation (yet)
-		SfTeamUninviteDetails json.RawMessage `json:"sf_team_uninvite_details,omitempty"`
-		// SharedContentAddInviteesDetails : has no documentation (yet)
-		SharedContentAddInviteesDetails json.RawMessage `json:"shared_content_add_invitees_details,omitempty"`
-		// SharedContentAddLinkExpiryDetails : has no documentation (yet)
-		SharedContentAddLinkExpiryDetails json.RawMessage `json:"shared_content_add_link_expiry_details,omitempty"`
-		// SharedContentAddLinkPasswordDetails : has no documentation (yet)
-		SharedContentAddLinkPasswordDetails json.RawMessage `json:"shared_content_add_link_password_details,omitempty"`
-		// SharedContentAddMemberDetails : has no documentation (yet)
-		SharedContentAddMemberDetails json.RawMessage `json:"shared_content_add_member_details,omitempty"`
-		// SharedContentChangeDownloadsPolicyDetails : has no documentation
-		// (yet)
-		SharedContentChangeDownloadsPolicyDetails json.RawMessage `json:"shared_content_change_downloads_policy_details,omitempty"`
-		// SharedContentChangeInviteeRoleDetails : has no documentation (yet)
-		SharedContentChangeInviteeRoleDetails json.RawMessage `json:"shared_content_change_invitee_role_details,omitempty"`
-		// SharedContentChangeLinkAudienceDetails : has no documentation (yet)
-		SharedContentChangeLinkAudienceDetails json.RawMessage `json:"shared_content_change_link_audience_details,omitempty"`
-		// SharedContentChangeLinkExpiryDetails : has no documentation (yet)
-		SharedContentChangeLinkExpiryDetails json.RawMessage `json:"shared_content_change_link_expiry_details,omitempty"`
-		// SharedContentChangeLinkPasswordDetails : has no documentation (yet)
-		SharedContentChangeLinkPasswordDetails json.RawMessage `json:"shared_content_change_link_password_details,omitempty"`
-		// SharedContentChangeMemberRoleDetails : has no documentation (yet)
-		SharedContentChangeMemberRoleDetails json.RawMessage `json:"shared_content_change_member_role_details,omitempty"`
-		// SharedContentChangeViewerInfoPolicyDetails : has no documentation
-		// (yet)
-		SharedContentChangeViewerInfoPolicyDetails json.RawMessage `json:"shared_content_change_viewer_info_policy_details,omitempty"`
-		// SharedContentClaimInvitationDetails : has no documentation (yet)
-		SharedContentClaimInvitationDetails json.RawMessage `json:"shared_content_claim_invitation_details,omitempty"`
-		// SharedContentCopyDetails : has no documentation (yet)
-		SharedContentCopyDetails json.RawMessage `json:"shared_content_copy_details,omitempty"`
-		// SharedContentDownloadDetails : has no documentation (yet)
-		SharedContentDownloadDetails json.RawMessage `json:"shared_content_download_details,omitempty"`
-		// SharedContentRelinquishMembershipDetails : has no documentation (yet)
-		SharedContentRelinquishMembershipDetails json.RawMessage `json:"shared_content_relinquish_membership_details,omitempty"`
-		// SharedContentRemoveInviteesDetails : has no documentation (yet)
-		SharedContentRemoveInviteesDetails json.RawMessage `json:"shared_content_remove_invitees_details,omitempty"`
-		// SharedContentRemoveLinkExpiryDetails : has no documentation (yet)
-		SharedContentRemoveLinkExpiryDetails json.RawMessage `json:"shared_content_remove_link_expiry_details,omitempty"`
-		// SharedContentRemoveLinkPasswordDetails : has no documentation (yet)
-		SharedContentRemoveLinkPasswordDetails json.RawMessage `json:"shared_content_remove_link_password_details,omitempty"`
-		// SharedContentRemoveMemberDetails : has no documentation (yet)
-		SharedContentRemoveMemberDetails json.RawMessage `json:"shared_content_remove_member_details,omitempty"`
-		// SharedContentRequestAccessDetails : has no documentation (yet)
-		SharedContentRequestAccessDetails json.RawMessage `json:"shared_content_request_access_details,omitempty"`
-		// SharedContentUnshareDetails : has no documentation (yet)
-		SharedContentUnshareDetails json.RawMessage `json:"shared_content_unshare_details,omitempty"`
-		// SharedContentViewDetails : has no documentation (yet)
-		SharedContentViewDetails json.RawMessage `json:"shared_content_view_details,omitempty"`
-		// SharedFolderChangeLinkPolicyDetails : has no documentation (yet)
-		SharedFolderChangeLinkPolicyDetails json.RawMessage `json:"shared_folder_change_link_policy_details,omitempty"`
-		// SharedFolderChangeMembersInheritancePolicyDetails : has no
-		// documentation (yet)
-		SharedFolderChangeMembersInheritancePolicyDetails json.RawMessage `json:"shared_folder_change_members_inheritance_policy_details,omitempty"`
-		// SharedFolderChangeMembersManagementPolicyDetails : has no
-		// documentation (yet)
-		SharedFolderChangeMembersManagementPolicyDetails json.RawMessage `json:"shared_folder_change_members_management_policy_details,omitempty"`
-		// SharedFolderChangeMembersPolicyDetails : has no documentation (yet)
-		SharedFolderChangeMembersPolicyDetails json.RawMessage `json:"shared_folder_change_members_policy_details,omitempty"`
-		// SharedFolderCreateDetails : has no documentation (yet)
-		SharedFolderCreateDetails json.RawMessage `json:"shared_folder_create_details,omitempty"`
-		// SharedFolderDeclineInvitationDetails : has no documentation (yet)
-		SharedFolderDeclineInvitationDetails json.RawMessage `json:"shared_folder_decline_invitation_details,omitempty"`
-		// SharedFolderMountDetails : has no documentation (yet)
-		SharedFolderMountDetails json.RawMessage `json:"shared_folder_mount_details,omitempty"`
-		// SharedFolderNestDetails : has no documentation (yet)
-		SharedFolderNestDetails json.RawMessage `json:"shared_folder_nest_details,omitempty"`
-		// SharedFolderTransferOwnershipDetails : has no documentation (yet)
-		SharedFolderTransferOwnershipDetails json.RawMessage `json:"shared_folder_transfer_ownership_details,omitempty"`
-		// SharedFolderUnmountDetails : has no documentation (yet)
-		SharedFolderUnmountDetails json.RawMessage `json:"shared_folder_unmount_details,omitempty"`
-		// SharedLinkAddExpiryDetails : has no documentation (yet)
-		SharedLinkAddExpiryDetails json.RawMessage `json:"shared_link_add_expiry_details,omitempty"`
-		// SharedLinkChangeExpiryDetails : has no documentation (yet)
-		SharedLinkChangeExpiryDetails json.RawMessage `json:"shared_link_change_expiry_details,omitempty"`
-		// SharedLinkChangeVisibilityDetails : has no documentation (yet)
-		SharedLinkChangeVisibilityDetails json.RawMessage `json:"shared_link_change_visibility_details,omitempty"`
-		// SharedLinkCopyDetails : has no documentation (yet)
-		SharedLinkCopyDetails json.RawMessage `json:"shared_link_copy_details,omitempty"`
-		// SharedLinkCreateDetails : has no documentation (yet)
-		SharedLinkCreateDetails json.RawMessage `json:"shared_link_create_details,omitempty"`
-		// SharedLinkDisableDetails : has no documentation (yet)
-		SharedLinkDisableDetails json.RawMessage `json:"shared_link_disable_details,omitempty"`
-		// SharedLinkDownloadDetails : has no documentation (yet)
-		SharedLinkDownloadDetails json.RawMessage `json:"shared_link_download_details,omitempty"`
-		// SharedLinkRemoveExpiryDetails : has no documentation (yet)
-		SharedLinkRemoveExpiryDetails json.RawMessage `json:"shared_link_remove_expiry_details,omitempty"`
-		// SharedLinkShareDetails : has no documentation (yet)
-		SharedLinkShareDetails json.RawMessage `json:"shared_link_share_details,omitempty"`
-		// SharedLinkViewDetails : has no documentation (yet)
-		SharedLinkViewDetails json.RawMessage `json:"shared_link_view_details,omitempty"`
-		// SharedNoteOpenedDetails : has no documentation (yet)
-		SharedNoteOpenedDetails json.RawMessage `json:"shared_note_opened_details,omitempty"`
-		// ShmodelGroupShareDetails : has no documentation (yet)
-		ShmodelGroupShareDetails json.RawMessage `json:"shmodel_group_share_details,omitempty"`
-		// ShowcaseAccessGrantedDetails : has no documentation (yet)
-		ShowcaseAccessGrantedDetails json.RawMessage `json:"showcase_access_granted_details,omitempty"`
-		// ShowcaseAddMemberDetails : has no documentation (yet)
-		ShowcaseAddMemberDetails json.RawMessage `json:"showcase_add_member_details,omitempty"`
-		// ShowcaseArchivedDetails : has no documentation (yet)
-		ShowcaseArchivedDetails json.RawMessage `json:"showcase_archived_details,omitempty"`
-		// ShowcaseCreatedDetails : has no documentation (yet)
-		ShowcaseCreatedDetails json.RawMessage `json:"showcase_created_details,omitempty"`
-		// ShowcaseDeleteCommentDetails : has no documentation (yet)
-		ShowcaseDeleteCommentDetails json.RawMessage `json:"showcase_delete_comment_details,omitempty"`
-		// ShowcaseEditedDetails : has no documentation (yet)
-		ShowcaseEditedDetails json.RawMessage `json:"showcase_edited_details,omitempty"`
-		// ShowcaseEditCommentDetails : has no documentation (yet)
-		ShowcaseEditCommentDetails json.RawMessage `json:"showcase_edit_comment_details,omitempty"`
-		// ShowcaseFileAddedDetails : has no documentation (yet)
-		ShowcaseFileAddedDetails json.RawMessage `json:"showcase_file_added_details,omitempty"`
-		// ShowcaseFileDownloadDetails : has no documentation (yet)
-		ShowcaseFileDownloadDetails json.RawMessage `json:"showcase_file_download_details,omitempty"`
-		// ShowcaseFileRemovedDetails : has no documentation (yet)
-		ShowcaseFileRemovedDetails json.RawMessage `json:"showcase_file_removed_details,omitempty"`
-		// ShowcaseFileViewDetails : has no documentation (yet)
-		ShowcaseFileViewDetails json.RawMessage `json:"showcase_file_view_details,omitempty"`
-		// ShowcasePermanentlyDeletedDetails : has no documentation (yet)
-		ShowcasePermanentlyDeletedDetails json.RawMessage `json:"showcase_permanently_deleted_details,omitempty"`
-		// ShowcasePostCommentDetails : has no documentation (yet)
-		ShowcasePostCommentDetails json.RawMessage `json:"showcase_post_comment_details,omitempty"`
-		// ShowcaseRemoveMemberDetails : has no documentation (yet)
-		ShowcaseRemoveMemberDetails json.RawMessage `json:"showcase_remove_member_details,omitempty"`
-		// ShowcaseRenamedDetails : has no documentation (yet)
-		ShowcaseRenamedDetails json.RawMessage `json:"showcase_renamed_details,omitempty"`
-		// ShowcaseRequestAccessDetails : has no documentation (yet)
-		ShowcaseRequestAccessDetails json.RawMessage `json:"showcase_request_access_details,omitempty"`
-		// ShowcaseResolveCommentDetails : has no documentation (yet)
-		ShowcaseResolveCommentDetails json.RawMessage `json:"showcase_resolve_comment_details,omitempty"`
-		// ShowcaseRestoredDetails : has no documentation (yet)
-		ShowcaseRestoredDetails json.RawMessage `json:"showcase_restored_details,omitempty"`
-		// ShowcaseTrashedDetails : has no documentation (yet)
-		ShowcaseTrashedDetails json.RawMessage `json:"showcase_trashed_details,omitempty"`
-		// ShowcaseTrashedDeprecatedDetails : has no documentation (yet)
-		ShowcaseTrashedDeprecatedDetails json.RawMessage `json:"showcase_trashed_deprecated_details,omitempty"`
-		// ShowcaseUnresolveCommentDetails : has no documentation (yet)
-		ShowcaseUnresolveCommentDetails json.RawMessage `json:"showcase_unresolve_comment_details,omitempty"`
-		// ShowcaseUntrashedDetails : has no documentation (yet)
-		ShowcaseUntrashedDetails json.RawMessage `json:"showcase_untrashed_details,omitempty"`
-		// ShowcaseUntrashedDeprecatedDetails : has no documentation (yet)
-		ShowcaseUntrashedDeprecatedDetails json.RawMessage `json:"showcase_untrashed_deprecated_details,omitempty"`
-		// ShowcaseViewDetails : has no documentation (yet)
-		ShowcaseViewDetails json.RawMessage `json:"showcase_view_details,omitempty"`
-		// SsoAddCertDetails : has no documentation (yet)
-		SsoAddCertDetails json.RawMessage `json:"sso_add_cert_details,omitempty"`
-		// SsoAddLoginUrlDetails : has no documentation (yet)
-		SsoAddLoginUrlDetails json.RawMessage `json:"sso_add_login_url_details,omitempty"`
-		// SsoAddLogoutUrlDetails : has no documentation (yet)
-		SsoAddLogoutUrlDetails json.RawMessage `json:"sso_add_logout_url_details,omitempty"`
-		// SsoChangeCertDetails : has no documentation (yet)
-		SsoChangeCertDetails json.RawMessage `json:"sso_change_cert_details,omitempty"`
-		// SsoChangeLoginUrlDetails : has no documentation (yet)
-		SsoChangeLoginUrlDetails json.RawMessage `json:"sso_change_login_url_details,omitempty"`
-		// SsoChangeLogoutUrlDetails : has no documentation (yet)
-		SsoChangeLogoutUrlDetails json.RawMessage `json:"sso_change_logout_url_details,omitempty"`
-		// SsoChangeSamlIdentityModeDetails : has no documentation (yet)
-		SsoChangeSamlIdentityModeDetails json.RawMessage `json:"sso_change_saml_identity_mode_details,omitempty"`
-		// SsoRemoveCertDetails : has no documentation (yet)
-		SsoRemoveCertDetails json.RawMessage `json:"sso_remove_cert_details,omitempty"`
-		// SsoRemoveLoginUrlDetails : has no documentation (yet)
-		SsoRemoveLoginUrlDetails json.RawMessage `json:"sso_remove_login_url_details,omitempty"`
-		// SsoRemoveLogoutUrlDetails : has no documentation (yet)
-		SsoRemoveLogoutUrlDetails json.RawMessage `json:"sso_remove_logout_url_details,omitempty"`
-		// TeamFolderChangeStatusDetails : has no documentation (yet)
-		TeamFolderChangeStatusDetails json.RawMessage `json:"team_folder_change_status_details,omitempty"`
-		// TeamFolderCreateDetails : has no documentation (yet)
-		TeamFolderCreateDetails json.RawMessage `json:"team_folder_create_details,omitempty"`
-		// TeamFolderDowngradeDetails : has no documentation (yet)
-		TeamFolderDowngradeDetails json.RawMessage `json:"team_folder_downgrade_details,omitempty"`
-		// TeamFolderPermanentlyDeleteDetails : has no documentation (yet)
-		TeamFolderPermanentlyDeleteDetails json.RawMessage `json:"team_folder_permanently_delete_details,omitempty"`
-		// TeamFolderRenameDetails : has no documentation (yet)
-		TeamFolderRenameDetails json.RawMessage `json:"team_folder_rename_details,omitempty"`
-		// TeamSelectiveSyncSettingsChangedDetails : has no documentation (yet)
-		TeamSelectiveSyncSettingsChangedDetails json.RawMessage `json:"team_selective_sync_settings_changed_details,omitempty"`
-		// AccountCaptureChangePolicyDetails : has no documentation (yet)
-		AccountCaptureChangePolicyDetails json.RawMessage `json:"account_capture_change_policy_details,omitempty"`
-		// AllowDownloadDisabledDetails : has no documentation (yet)
-		AllowDownloadDisabledDetails json.RawMessage `json:"allow_download_disabled_details,omitempty"`
-		// AllowDownloadEnabledDetails : has no documentation (yet)
-		AllowDownloadEnabledDetails json.RawMessage `json:"allow_download_enabled_details,omitempty"`
-		// CameraUploadsPolicyChangedDetails : has no documentation (yet)
-		CameraUploadsPolicyChangedDetails json.RawMessage `json:"camera_uploads_policy_changed_details,omitempty"`
-		// DataPlacementRestrictionChangePolicyDetails : has no documentation
-		// (yet)
-		DataPlacementRestrictionChangePolicyDetails json.RawMessage `json:"data_placement_restriction_change_policy_details,omitempty"`
-		// DataPlacementRestrictionSatisfyPolicyDetails : has no documentation
-		// (yet)
-		DataPlacementRestrictionSatisfyPolicyDetails json.RawMessage `json:"data_placement_restriction_satisfy_policy_details,omitempty"`
-		// DeviceApprovalsChangeDesktopPolicyDetails : has no documentation
-		// (yet)
-		DeviceApprovalsChangeDesktopPolicyDetails json.RawMessage `json:"device_approvals_change_desktop_policy_details,omitempty"`
-		// DeviceApprovalsChangeMobilePolicyDetails : has no documentation (yet)
-		DeviceApprovalsChangeMobilePolicyDetails json.RawMessage `json:"device_approvals_change_mobile_policy_details,omitempty"`
-		// DeviceApprovalsChangeOverageActionDetails : has no documentation
-		// (yet)
-		DeviceApprovalsChangeOverageActionDetails json.RawMessage `json:"device_approvals_change_overage_action_details,omitempty"`
-		// DeviceApprovalsChangeUnlinkActionDetails : has no documentation (yet)
-		DeviceApprovalsChangeUnlinkActionDetails json.RawMessage `json:"device_approvals_change_unlink_action_details,omitempty"`
-		// DirectoryRestrictionsAddMembersDetails : has no documentation (yet)
-		DirectoryRestrictionsAddMembersDetails json.RawMessage `json:"directory_restrictions_add_members_details,omitempty"`
-		// DirectoryRestrictionsRemoveMembersDetails : has no documentation
-		// (yet)
-		DirectoryRestrictionsRemoveMembersDetails json.RawMessage `json:"directory_restrictions_remove_members_details,omitempty"`
-		// EmmAddExceptionDetails : has no documentation (yet)
-		EmmAddExceptionDetails json.RawMessage `json:"emm_add_exception_details,omitempty"`
-		// EmmChangePolicyDetails : has no documentation (yet)
-		EmmChangePolicyDetails json.RawMessage `json:"emm_change_policy_details,omitempty"`
-		// EmmRemoveExceptionDetails : has no documentation (yet)
-		EmmRemoveExceptionDetails json.RawMessage `json:"emm_remove_exception_details,omitempty"`
-		// ExtendedVersionHistoryChangePolicyDetails : has no documentation
-		// (yet)
-		ExtendedVersionHistoryChangePolicyDetails json.RawMessage `json:"extended_version_history_change_policy_details,omitempty"`
-		// FileCommentsChangePolicyDetails : has no documentation (yet)
-		FileCommentsChangePolicyDetails json.RawMessage `json:"file_comments_change_policy_details,omitempty"`
-		// FileRequestsChangePolicyDetails : has no documentation (yet)
-		FileRequestsChangePolicyDetails json.RawMessage `json:"file_requests_change_policy_details,omitempty"`
-		// FileRequestsEmailsEnabledDetails : has no documentation (yet)
-		FileRequestsEmailsEnabledDetails json.RawMessage `json:"file_requests_emails_enabled_details,omitempty"`
-		// FileRequestsEmailsRestrictedToTeamOnlyDetails : has no documentation
-		// (yet)
-		FileRequestsEmailsRestrictedToTeamOnlyDetails json.RawMessage `json:"file_requests_emails_restricted_to_team_only_details,omitempty"`
-		// GoogleSsoChangePolicyDetails : has no documentation (yet)
-		GoogleSsoChangePolicyDetails json.RawMessage `json:"google_sso_change_policy_details,omitempty"`
-		// GroupUserManagementChangePolicyDetails : has no documentation (yet)
-		GroupUserManagementChangePolicyDetails json.RawMessage `json:"group_user_management_change_policy_details,omitempty"`
-		// MemberRequestsChangePolicyDetails : has no documentation (yet)
-		MemberRequestsChangePolicyDetails json.RawMessage `json:"member_requests_change_policy_details,omitempty"`
-		// MemberSpaceLimitsAddExceptionDetails : has no documentation (yet)
-		MemberSpaceLimitsAddExceptionDetails json.RawMessage `json:"member_space_limits_add_exception_details,omitempty"`
-		// MemberSpaceLimitsChangeCapsTypePolicyDetails : has no documentation
-		// (yet)
-		MemberSpaceLimitsChangeCapsTypePolicyDetails json.RawMessage `json:"member_space_limits_change_caps_type_policy_details,omitempty"`
-		// MemberSpaceLimitsChangePolicyDetails : has no documentation (yet)
-		MemberSpaceLimitsChangePolicyDetails json.RawMessage `json:"member_space_limits_change_policy_details,omitempty"`
-		// MemberSpaceLimitsRemoveExceptionDetails : has no documentation (yet)
-		MemberSpaceLimitsRemoveExceptionDetails json.RawMessage `json:"member_space_limits_remove_exception_details,omitempty"`
-		// MemberSuggestionsChangePolicyDetails : has no documentation (yet)
-		MemberSuggestionsChangePolicyDetails json.RawMessage `json:"member_suggestions_change_policy_details,omitempty"`
-		// MicrosoftOfficeAddinChangePolicyDetails : has no documentation (yet)
-		MicrosoftOfficeAddinChangePolicyDetails json.RawMessage `json:"microsoft_office_addin_change_policy_details,omitempty"`
-		// NetworkControlChangePolicyDetails : has no documentation (yet)
-		NetworkControlChangePolicyDetails json.RawMessage `json:"network_control_change_policy_details,omitempty"`
-		// PaperChangeDeploymentPolicyDetails : has no documentation (yet)
-		PaperChangeDeploymentPolicyDetails json.RawMessage `json:"paper_change_deployment_policy_details,omitempty"`
-		// PaperChangeMemberLinkPolicyDetails : has no documentation (yet)
-		PaperChangeMemberLinkPolicyDetails json.RawMessage `json:"paper_change_member_link_policy_details,omitempty"`
-		// PaperChangeMemberPolicyDetails : has no documentation (yet)
-		PaperChangeMemberPolicyDetails json.RawMessage `json:"paper_change_member_policy_details,omitempty"`
-		// PaperChangePolicyDetails : has no documentation (yet)
-		PaperChangePolicyDetails json.RawMessage `json:"paper_change_policy_details,omitempty"`
-		// PaperEnabledUsersGroupAdditionDetails : has no documentation (yet)
-		PaperEnabledUsersGroupAdditionDetails json.RawMessage `json:"paper_enabled_users_group_addition_details,omitempty"`
-		// PaperEnabledUsersGroupRemovalDetails : has no documentation (yet)
-		PaperEnabledUsersGroupRemovalDetails json.RawMessage `json:"paper_enabled_users_group_removal_details,omitempty"`
-		// PermanentDeleteChangePolicyDetails : has no documentation (yet)
-		PermanentDeleteChangePolicyDetails json.RawMessage `json:"permanent_delete_change_policy_details,omitempty"`
-		// SharingChangeFolderJoinPolicyDetails : has no documentation (yet)
-		SharingChangeFolderJoinPolicyDetails json.RawMessage `json:"sharing_change_folder_join_policy_details,omitempty"`
-		// SharingChangeLinkPolicyDetails : has no documentation (yet)
-		SharingChangeLinkPolicyDetails json.RawMessage `json:"sharing_change_link_policy_details,omitempty"`
-		// SharingChangeMemberPolicyDetails : has no documentation (yet)
-		SharingChangeMemberPolicyDetails json.RawMessage `json:"sharing_change_member_policy_details,omitempty"`
-		// ShowcaseChangeDownloadPolicyDetails : has no documentation (yet)
-		ShowcaseChangeDownloadPolicyDetails json.RawMessage `json:"showcase_change_download_policy_details,omitempty"`
-		// ShowcaseChangeEnabledPolicyDetails : has no documentation (yet)
-		ShowcaseChangeEnabledPolicyDetails json.RawMessage `json:"showcase_change_enabled_policy_details,omitempty"`
-		// ShowcaseChangeExternalSharingPolicyDetails : has no documentation
-		// (yet)
-		ShowcaseChangeExternalSharingPolicyDetails json.RawMessage `json:"showcase_change_external_sharing_policy_details,omitempty"`
-		// SmartSyncChangePolicyDetails : has no documentation (yet)
-		SmartSyncChangePolicyDetails json.RawMessage `json:"smart_sync_change_policy_details,omitempty"`
-		// SmartSyncNotOptOutDetails : has no documentation (yet)
-		SmartSyncNotOptOutDetails json.RawMessage `json:"smart_sync_not_opt_out_details,omitempty"`
-		// SmartSyncOptOutDetails : has no documentation (yet)
-		SmartSyncOptOutDetails json.RawMessage `json:"smart_sync_opt_out_details,omitempty"`
-		// SsoChangePolicyDetails : has no documentation (yet)
-		SsoChangePolicyDetails json.RawMessage `json:"sso_change_policy_details,omitempty"`
-		// TeamSelectiveSyncPolicyChangedDetails : has no documentation (yet)
-		TeamSelectiveSyncPolicyChangedDetails json.RawMessage `json:"team_selective_sync_policy_changed_details,omitempty"`
-		// TfaChangePolicyDetails : has no documentation (yet)
-		TfaChangePolicyDetails json.RawMessage `json:"tfa_change_policy_details,omitempty"`
-		// TwoAccountChangePolicyDetails : has no documentation (yet)
-		TwoAccountChangePolicyDetails json.RawMessage `json:"two_account_change_policy_details,omitempty"`
-		// ViewerInfoPolicyChangedDetails : has no documentation (yet)
-		ViewerInfoPolicyChangedDetails json.RawMessage `json:"viewer_info_policy_changed_details,omitempty"`
-		// WebSessionsChangeFixedLengthPolicyDetails : has no documentation
-		// (yet)
-		WebSessionsChangeFixedLengthPolicyDetails json.RawMessage `json:"web_sessions_change_fixed_length_policy_details,omitempty"`
-		// WebSessionsChangeIdleLengthPolicyDetails : has no documentation (yet)
-		WebSessionsChangeIdleLengthPolicyDetails json.RawMessage `json:"web_sessions_change_idle_length_policy_details,omitempty"`
-		// TeamMergeFromDetails : has no documentation (yet)
-		TeamMergeFromDetails json.RawMessage `json:"team_merge_from_details,omitempty"`
-		// TeamMergeToDetails : has no documentation (yet)
-		TeamMergeToDetails json.RawMessage `json:"team_merge_to_details,omitempty"`
-		// TeamProfileAddLogoDetails : has no documentation (yet)
-		TeamProfileAddLogoDetails json.RawMessage `json:"team_profile_add_logo_details,omitempty"`
-		// TeamProfileChangeDefaultLanguageDetails : has no documentation (yet)
-		TeamProfileChangeDefaultLanguageDetails json.RawMessage `json:"team_profile_change_default_language_details,omitempty"`
-		// TeamProfileChangeLogoDetails : has no documentation (yet)
-		TeamProfileChangeLogoDetails json.RawMessage `json:"team_profile_change_logo_details,omitempty"`
-		// TeamProfileChangeNameDetails : has no documentation (yet)
-		TeamProfileChangeNameDetails json.RawMessage `json:"team_profile_change_name_details,omitempty"`
-		// TeamProfileRemoveLogoDetails : has no documentation (yet)
-		TeamProfileRemoveLogoDetails json.RawMessage `json:"team_profile_remove_logo_details,omitempty"`
-		// TfaAddBackupPhoneDetails : has no documentation (yet)
-		TfaAddBackupPhoneDetails json.RawMessage `json:"tfa_add_backup_phone_details,omitempty"`
-		// TfaAddSecurityKeyDetails : has no documentation (yet)
-		TfaAddSecurityKeyDetails json.RawMessage `json:"tfa_add_security_key_details,omitempty"`
-		// TfaChangeBackupPhoneDetails : has no documentation (yet)
-		TfaChangeBackupPhoneDetails json.RawMessage `json:"tfa_change_backup_phone_details,omitempty"`
-		// TfaChangeStatusDetails : has no documentation (yet)
-		TfaChangeStatusDetails json.RawMessage `json:"tfa_change_status_details,omitempty"`
-		// TfaRemoveBackupPhoneDetails : has no documentation (yet)
-		TfaRemoveBackupPhoneDetails json.RawMessage `json:"tfa_remove_backup_phone_details,omitempty"`
-		// TfaRemoveSecurityKeyDetails : has no documentation (yet)
-		TfaRemoveSecurityKeyDetails json.RawMessage `json:"tfa_remove_security_key_details,omitempty"`
-		// TfaResetDetails : has no documentation (yet)
-		TfaResetDetails json.RawMessage `json:"tfa_reset_details,omitempty"`
-		// MissingDetails : Hints that this event was returned with missing
-		// details due to an internal error.
-		MissingDetails json.RawMessage `json:"missing_details,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -6948,815 +6248,6 @@ const (
 func (u *EventType) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AppLinkTeam : (apps) Linked app for team
-		AppLinkTeam json.RawMessage `json:"app_link_team,omitempty"`
-		// AppLinkUser : (apps) Linked app for member
-		AppLinkUser json.RawMessage `json:"app_link_user,omitempty"`
-		// AppUnlinkTeam : (apps) Unlinked app for team
-		AppUnlinkTeam json.RawMessage `json:"app_unlink_team,omitempty"`
-		// AppUnlinkUser : (apps) Unlinked app for member
-		AppUnlinkUser json.RawMessage `json:"app_unlink_user,omitempty"`
-		// FileAddComment : (comments) Added file comment
-		FileAddComment json.RawMessage `json:"file_add_comment,omitempty"`
-		// FileChangeCommentSubscription : (comments) Subscribed to or
-		// unsubscribed from comment notifications for file
-		FileChangeCommentSubscription json.RawMessage `json:"file_change_comment_subscription,omitempty"`
-		// FileDeleteComment : (comments) Deleted file comment
-		FileDeleteComment json.RawMessage `json:"file_delete_comment,omitempty"`
-		// FileEditComment : (comments) Edited file comment
-		FileEditComment json.RawMessage `json:"file_edit_comment,omitempty"`
-		// FileLikeComment : (comments) Liked file comment (deprecated, no
-		// longer logged)
-		FileLikeComment json.RawMessage `json:"file_like_comment,omitempty"`
-		// FileResolveComment : (comments) Resolved file comment
-		FileResolveComment json.RawMessage `json:"file_resolve_comment,omitempty"`
-		// FileUnlikeComment : (comments) Unliked file comment (deprecated, no
-		// longer logged)
-		FileUnlikeComment json.RawMessage `json:"file_unlike_comment,omitempty"`
-		// FileUnresolveComment : (comments) Unresolved file comment
-		FileUnresolveComment json.RawMessage `json:"file_unresolve_comment,omitempty"`
-		// DeviceChangeIpDesktop : (devices) Changed IP address associated with
-		// active desktop session
-		DeviceChangeIpDesktop json.RawMessage `json:"device_change_ip_desktop,omitempty"`
-		// DeviceChangeIpMobile : (devices) Changed IP address associated with
-		// active mobile session
-		DeviceChangeIpMobile json.RawMessage `json:"device_change_ip_mobile,omitempty"`
-		// DeviceChangeIpWeb : (devices) Changed IP address associated with
-		// active web session
-		DeviceChangeIpWeb json.RawMessage `json:"device_change_ip_web,omitempty"`
-		// DeviceDeleteOnUnlinkFail : (devices) Failed to delete all files from
-		// unlinked device
-		DeviceDeleteOnUnlinkFail json.RawMessage `json:"device_delete_on_unlink_fail,omitempty"`
-		// DeviceDeleteOnUnlinkSuccess : (devices) Deleted all files from
-		// unlinked device
-		DeviceDeleteOnUnlinkSuccess json.RawMessage `json:"device_delete_on_unlink_success,omitempty"`
-		// DeviceLinkFail : (devices) Failed to link device
-		DeviceLinkFail json.RawMessage `json:"device_link_fail,omitempty"`
-		// DeviceLinkSuccess : (devices) Linked device
-		DeviceLinkSuccess json.RawMessage `json:"device_link_success,omitempty"`
-		// DeviceManagementDisabled : (devices) Disabled device management
-		// (deprecated, no longer logged)
-		DeviceManagementDisabled json.RawMessage `json:"device_management_disabled,omitempty"`
-		// DeviceManagementEnabled : (devices) Enabled device management
-		// (deprecated, no longer logged)
-		DeviceManagementEnabled json.RawMessage `json:"device_management_enabled,omitempty"`
-		// DeviceUnlink : (devices) Disconnected device
-		DeviceUnlink json.RawMessage `json:"device_unlink,omitempty"`
-		// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting
-		// up enterprise mobility management
-		EmmRefreshAuthToken json.RawMessage `json:"emm_refresh_auth_token,omitempty"`
-		// AccountCaptureChangeAvailability : (domains) Granted/revoked option
-		// to enable account capture on team domains
-		AccountCaptureChangeAvailability json.RawMessage `json:"account_capture_change_availability,omitempty"`
-		// AccountCaptureMigrateAccount : (domains) Account-captured user
-		// migrated account to team
-		AccountCaptureMigrateAccount json.RawMessage `json:"account_capture_migrate_account,omitempty"`
-		// AccountCaptureNotificationEmailsSent : (domains) Sent proactive
-		// account capture email to all unmanaged members
-		AccountCaptureNotificationEmailsSent json.RawMessage `json:"account_capture_notification_emails_sent,omitempty"`
-		// AccountCaptureRelinquishAccount : (domains) Account-captured user
-		// changed account email to personal email
-		AccountCaptureRelinquishAccount json.RawMessage `json:"account_capture_relinquish_account,omitempty"`
-		// DisabledDomainInvites : (domains) Disabled domain invites
-		// (deprecated, no longer logged)
-		DisabledDomainInvites json.RawMessage `json:"disabled_domain_invites,omitempty"`
-		// DomainInvitesApproveRequestToJoinTeam : (domains) Approved user's
-		// request to join team
-		DomainInvitesApproveRequestToJoinTeam json.RawMessage `json:"domain_invites_approve_request_to_join_team,omitempty"`
-		// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined user's
-		// request to join team
-		DomainInvitesDeclineRequestToJoinTeam json.RawMessage `json:"domain_invites_decline_request_to_join_team,omitempty"`
-		// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-		// existing domain accounts (deprecated, no longer logged)
-		DomainInvitesEmailExistingUsers json.RawMessage `json:"domain_invites_email_existing_users,omitempty"`
-		// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
-		DomainInvitesRequestToJoinTeam json.RawMessage `json:"domain_invites_request_to_join_team,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToNo : (domains) Disabled
-		// "Automatically invite new users" (deprecated, no longer logged)
-		DomainInvitesSetInviteNewUserPrefToNo json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_no,omitempty"`
-		// DomainInvitesSetInviteNewUserPrefToYes : (domains) Enabled
-		// "Automatically invite new users" (deprecated, no longer logged)
-		DomainInvitesSetInviteNewUserPrefToYes json.RawMessage `json:"domain_invites_set_invite_new_user_pref_to_yes,omitempty"`
-		// DomainVerificationAddDomainFail : (domains) Failed to verify team
-		// domain
-		DomainVerificationAddDomainFail json.RawMessage `json:"domain_verification_add_domain_fail,omitempty"`
-		// DomainVerificationAddDomainSuccess : (domains) Verified team domain
-		DomainVerificationAddDomainSuccess json.RawMessage `json:"domain_verification_add_domain_success,omitempty"`
-		// DomainVerificationRemoveDomain : (domains) Removed domain from list
-		// of verified team domains
-		DomainVerificationRemoveDomain json.RawMessage `json:"domain_verification_remove_domain,omitempty"`
-		// EnabledDomainInvites : (domains) Enabled domain invites (deprecated,
-		// no longer logged)
-		EnabledDomainInvites json.RawMessage `json:"enabled_domain_invites,omitempty"`
-		// CreateFolder : (file_operations) Created folders (deprecated, no
-		// longer logged)
-		CreateFolder json.RawMessage `json:"create_folder,omitempty"`
-		// FileAdd : (file_operations) Added files and/or folders
-		FileAdd json.RawMessage `json:"file_add,omitempty"`
-		// FileCopy : (file_operations) Copied files and/or folders
-		FileCopy json.RawMessage `json:"file_copy,omitempty"`
-		// FileDelete : (file_operations) Deleted files and/or folders
-		FileDelete json.RawMessage `json:"file_delete,omitempty"`
-		// FileDownload : (file_operations) Downloaded files and/or folders
-		FileDownload json.RawMessage `json:"file_download,omitempty"`
-		// FileEdit : (file_operations) Edited files
-		FileEdit json.RawMessage `json:"file_edit,omitempty"`
-		// FileGetCopyReference : (file_operations) Created copy reference to
-		// file/folder
-		FileGetCopyReference json.RawMessage `json:"file_get_copy_reference,omitempty"`
-		// FileMove : (file_operations) Moved files and/or folders
-		FileMove json.RawMessage `json:"file_move,omitempty"`
-		// FilePermanentlyDelete : (file_operations) Permanently deleted files
-		// and/or folders
-		FilePermanentlyDelete json.RawMessage `json:"file_permanently_delete,omitempty"`
-		// FilePreview : (file_operations) Previewed files and/or folders
-		FilePreview json.RawMessage `json:"file_preview,omitempty"`
-		// FileRename : (file_operations) Renamed files and/or folders
-		FileRename json.RawMessage `json:"file_rename,omitempty"`
-		// FileRestore : (file_operations) Restored deleted files and/or folders
-		FileRestore json.RawMessage `json:"file_restore,omitempty"`
-		// FileRevert : (file_operations) Reverted files to previous version
-		FileRevert json.RawMessage `json:"file_revert,omitempty"`
-		// FileRollbackChanges : (file_operations) Rolled back file actions
-		FileRollbackChanges json.RawMessage `json:"file_rollback_changes,omitempty"`
-		// FileSaveCopyReference : (file_operations) Saved file/folder using
-		// copy reference
-		FileSaveCopyReference json.RawMessage `json:"file_save_copy_reference,omitempty"`
-		// FileRequestChange : (file_requests) Changed file request
-		FileRequestChange json.RawMessage `json:"file_request_change,omitempty"`
-		// FileRequestClose : (file_requests) Closed file request
-		FileRequestClose json.RawMessage `json:"file_request_close,omitempty"`
-		// FileRequestCreate : (file_requests) Created file request
-		FileRequestCreate json.RawMessage `json:"file_request_create,omitempty"`
-		// FileRequestReceiveFile : (file_requests) Received files for file
-		// request
-		FileRequestReceiveFile json.RawMessage `json:"file_request_receive_file,omitempty"`
-		// GroupAddExternalId : (groups) Added external ID for group
-		GroupAddExternalId json.RawMessage `json:"group_add_external_id,omitempty"`
-		// GroupAddMember : (groups) Added team members to group
-		GroupAddMember json.RawMessage `json:"group_add_member,omitempty"`
-		// GroupChangeExternalId : (groups) Changed external ID for group
-		GroupChangeExternalId json.RawMessage `json:"group_change_external_id,omitempty"`
-		// GroupChangeManagementType : (groups) Changed group management type
-		GroupChangeManagementType json.RawMessage `json:"group_change_management_type,omitempty"`
-		// GroupChangeMemberRole : (groups) Changed manager permissions of group
-		// member
-		GroupChangeMemberRole json.RawMessage `json:"group_change_member_role,omitempty"`
-		// GroupCreate : (groups) Created group
-		GroupCreate json.RawMessage `json:"group_create,omitempty"`
-		// GroupDelete : (groups) Deleted group
-		GroupDelete json.RawMessage `json:"group_delete,omitempty"`
-		// GroupDescriptionUpdated : (groups) Updated group (deprecated, no
-		// longer logged)
-		GroupDescriptionUpdated json.RawMessage `json:"group_description_updated,omitempty"`
-		// GroupJoinPolicyUpdated : (groups) Updated group join policy
-		// (deprecated, no longer logged)
-		GroupJoinPolicyUpdated json.RawMessage `json:"group_join_policy_updated,omitempty"`
-		// GroupMoved : (groups) Moved group (deprecated, no longer logged)
-		GroupMoved json.RawMessage `json:"group_moved,omitempty"`
-		// GroupRemoveExternalId : (groups) Removed external ID for group
-		GroupRemoveExternalId json.RawMessage `json:"group_remove_external_id,omitempty"`
-		// GroupRemoveMember : (groups) Removed team members from group
-		GroupRemoveMember json.RawMessage `json:"group_remove_member,omitempty"`
-		// GroupRename : (groups) Renamed group
-		GroupRename json.RawMessage `json:"group_rename,omitempty"`
-		// EmmError : (logins) Failed to sign in via EMM (deprecated, replaced
-		// by 'Failed to sign in')
-		EmmError json.RawMessage `json:"emm_error,omitempty"`
-		// LoginFail : (logins) Failed to sign in
-		LoginFail json.RawMessage `json:"login_fail,omitempty"`
-		// LoginSuccess : (logins) Signed in
-		LoginSuccess json.RawMessage `json:"login_success,omitempty"`
-		// Logout : (logins) Signed out
-		Logout json.RawMessage `json:"logout,omitempty"`
-		// ResellerSupportSessionEnd : (logins) Ended reseller support session
-		ResellerSupportSessionEnd json.RawMessage `json:"reseller_support_session_end,omitempty"`
-		// ResellerSupportSessionStart : (logins) Started reseller support
-		// session
-		ResellerSupportSessionStart json.RawMessage `json:"reseller_support_session_start,omitempty"`
-		// SignInAsSessionEnd : (logins) Ended admin sign-in-as session
-		SignInAsSessionEnd json.RawMessage `json:"sign_in_as_session_end,omitempty"`
-		// SignInAsSessionStart : (logins) Started admin sign-in-as session
-		SignInAsSessionStart json.RawMessage `json:"sign_in_as_session_start,omitempty"`
-		// SsoError : (logins) Failed to sign in via SSO (deprecated, replaced
-		// by 'Failed to sign in')
-		SsoError json.RawMessage `json:"sso_error,omitempty"`
-		// MemberAddName : (members) Added team member name
-		MemberAddName json.RawMessage `json:"member_add_name,omitempty"`
-		// MemberChangeAdminRole : (members) Changed team member admin role
-		MemberChangeAdminRole json.RawMessage `json:"member_change_admin_role,omitempty"`
-		// MemberChangeEmail : (members) Changed team member email
-		MemberChangeEmail json.RawMessage `json:"member_change_email,omitempty"`
-		// MemberChangeMembershipType : (members) Changed membership type
-		// (limited/full) of member (deprecated, no longer logged)
-		MemberChangeMembershipType json.RawMessage `json:"member_change_membership_type,omitempty"`
-		// MemberChangeName : (members) Changed team member name
-		MemberChangeName json.RawMessage `json:"member_change_name,omitempty"`
-		// MemberChangeStatus : (members) Changed member status (invited,
-		// joined, suspended, etc.)
-		MemberChangeStatus json.RawMessage `json:"member_change_status,omitempty"`
-		// MemberDeleteManualContacts : (members) Cleared manually added
-		// contacts
-		MemberDeleteManualContacts json.RawMessage `json:"member_delete_manual_contacts,omitempty"`
-		// MemberPermanentlyDeleteAccountContents : (members) Permanently
-		// deleted contents of deleted team member account
-		MemberPermanentlyDeleteAccountContents json.RawMessage `json:"member_permanently_delete_account_contents,omitempty"`
-		// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space
-		// limit
-		MemberSpaceLimitsAddCustomQuota json.RawMessage `json:"member_space_limits_add_custom_quota,omitempty"`
-		// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
-		// space limit
-		MemberSpaceLimitsChangeCustomQuota json.RawMessage `json:"member_space_limits_change_custom_quota,omitempty"`
-		// MemberSpaceLimitsChangeStatus : (members) Changed space limit status
-		MemberSpaceLimitsChangeStatus json.RawMessage `json:"member_space_limits_change_status,omitempty"`
-		// MemberSpaceLimitsRemoveCustomQuota : (members) Removed custom member
-		// space limit
-		MemberSpaceLimitsRemoveCustomQuota json.RawMessage `json:"member_space_limits_remove_custom_quota,omitempty"`
-		// MemberSuggest : (members) Suggested person to add to team
-		MemberSuggest json.RawMessage `json:"member_suggest,omitempty"`
-		// MemberTransferAccountContents : (members) Transferred contents of
-		// deleted member account to another member
-		MemberTransferAccountContents json.RawMessage `json:"member_transfer_account_contents,omitempty"`
-		// SecondaryMailsPolicyChanged : (members) Secondary mails policy
-		// changed
-		SecondaryMailsPolicyChanged json.RawMessage `json:"secondary_mails_policy_changed,omitempty"`
-		// PaperContentAddMember : (paper) Added team member to Paper doc/folder
-		PaperContentAddMember json.RawMessage `json:"paper_content_add_member,omitempty"`
-		// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
-		PaperContentAddToFolder json.RawMessage `json:"paper_content_add_to_folder,omitempty"`
-		// PaperContentArchive : (paper) Archived Paper doc/folder
-		PaperContentArchive json.RawMessage `json:"paper_content_archive,omitempty"`
-		// PaperContentCreate : (paper) Created Paper doc/folder
-		PaperContentCreate json.RawMessage `json:"paper_content_create,omitempty"`
-		// PaperContentPermanentlyDelete : (paper) Permanently deleted Paper
-		// doc/folder
-		PaperContentPermanentlyDelete json.RawMessage `json:"paper_content_permanently_delete,omitempty"`
-		// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from
-		// folder
-		PaperContentRemoveFromFolder json.RawMessage `json:"paper_content_remove_from_folder,omitempty"`
-		// PaperContentRemoveMember : (paper) Removed team member from Paper
-		// doc/folder
-		PaperContentRemoveMember json.RawMessage `json:"paper_content_remove_member,omitempty"`
-		// PaperContentRename : (paper) Renamed Paper doc/folder
-		PaperContentRename json.RawMessage `json:"paper_content_rename,omitempty"`
-		// PaperContentRestore : (paper) Restored archived Paper doc/folder
-		PaperContentRestore json.RawMessage `json:"paper_content_restore,omitempty"`
-		// PaperDocAddComment : (paper) Added Paper doc comment
-		PaperDocAddComment json.RawMessage `json:"paper_doc_add_comment,omitempty"`
-		// PaperDocChangeMemberRole : (paper) Changed team member permissions
-		// for Paper doc
-		PaperDocChangeMemberRole json.RawMessage `json:"paper_doc_change_member_role,omitempty"`
-		// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for
-		// Paper doc
-		PaperDocChangeSharingPolicy json.RawMessage `json:"paper_doc_change_sharing_policy,omitempty"`
-		// PaperDocChangeSubscription : (paper) Followed/unfollowed Paper doc
-		PaperDocChangeSubscription json.RawMessage `json:"paper_doc_change_subscription,omitempty"`
-		// PaperDocDeleted : (paper) Archived Paper doc (deprecated, no longer
-		// logged)
-		PaperDocDeleted json.RawMessage `json:"paper_doc_deleted,omitempty"`
-		// PaperDocDeleteComment : (paper) Deleted Paper doc comment
-		PaperDocDeleteComment json.RawMessage `json:"paper_doc_delete_comment,omitempty"`
-		// PaperDocDownload : (paper) Downloaded Paper doc in specific format
-		PaperDocDownload json.RawMessage `json:"paper_doc_download,omitempty"`
-		// PaperDocEdit : (paper) Edited Paper doc
-		PaperDocEdit json.RawMessage `json:"paper_doc_edit,omitempty"`
-		// PaperDocEditComment : (paper) Edited Paper doc comment
-		PaperDocEditComment json.RawMessage `json:"paper_doc_edit_comment,omitempty"`
-		// PaperDocFollowed : (paper) Followed Paper doc (deprecated, replaced
-		// by 'Followed/unfollowed Paper doc')
-		PaperDocFollowed json.RawMessage `json:"paper_doc_followed,omitempty"`
-		// PaperDocMention : (paper) Mentioned team member in Paper doc
-		PaperDocMention json.RawMessage `json:"paper_doc_mention,omitempty"`
-		// PaperDocOwnershipChanged : (paper) Transferred ownership of Paper doc
-		PaperDocOwnershipChanged json.RawMessage `json:"paper_doc_ownership_changed,omitempty"`
-		// PaperDocRequestAccess : (paper) Requested access to Paper doc
-		PaperDocRequestAccess json.RawMessage `json:"paper_doc_request_access,omitempty"`
-		// PaperDocResolveComment : (paper) Resolved Paper doc comment
-		PaperDocResolveComment json.RawMessage `json:"paper_doc_resolve_comment,omitempty"`
-		// PaperDocRevert : (paper) Restored Paper doc to previous version
-		PaperDocRevert json.RawMessage `json:"paper_doc_revert,omitempty"`
-		// PaperDocSlackShare : (paper) Shared Paper doc via Slack
-		PaperDocSlackShare json.RawMessage `json:"paper_doc_slack_share,omitempty"`
-		// PaperDocTeamInvite : (paper) Shared Paper doc with team member
-		// (deprecated, no longer logged)
-		PaperDocTeamInvite json.RawMessage `json:"paper_doc_team_invite,omitempty"`
-		// PaperDocTrashed : (paper) Deleted Paper doc
-		PaperDocTrashed json.RawMessage `json:"paper_doc_trashed,omitempty"`
-		// PaperDocUnresolveComment : (paper) Unresolved Paper doc comment
-		PaperDocUnresolveComment json.RawMessage `json:"paper_doc_unresolve_comment,omitempty"`
-		// PaperDocUntrashed : (paper) Restored Paper doc
-		PaperDocUntrashed json.RawMessage `json:"paper_doc_untrashed,omitempty"`
-		// PaperDocView : (paper) Viewed Paper doc
-		PaperDocView json.RawMessage `json:"paper_doc_view,omitempty"`
-		// PaperExternalViewAllow : (paper) Changed Paper external sharing
-		// setting to anyone (deprecated, no longer logged)
-		PaperExternalViewAllow json.RawMessage `json:"paper_external_view_allow,omitempty"`
-		// PaperExternalViewDefaultTeam : (paper) Changed Paper external sharing
-		// setting to default team (deprecated, no longer logged)
-		PaperExternalViewDefaultTeam json.RawMessage `json:"paper_external_view_default_team,omitempty"`
-		// PaperExternalViewForbid : (paper) Changed Paper external sharing
-		// setting to team-only (deprecated, no longer logged)
-		PaperExternalViewForbid json.RawMessage `json:"paper_external_view_forbid,omitempty"`
-		// PaperFolderChangeSubscription : (paper) Followed/unfollowed Paper
-		// folder
-		PaperFolderChangeSubscription json.RawMessage `json:"paper_folder_change_subscription,omitempty"`
-		// PaperFolderDeleted : (paper) Archived Paper folder (deprecated, no
-		// longer logged)
-		PaperFolderDeleted json.RawMessage `json:"paper_folder_deleted,omitempty"`
-		// PaperFolderFollowed : (paper) Followed Paper folder (deprecated,
-		// replaced by 'Followed/unfollowed Paper folder')
-		PaperFolderFollowed json.RawMessage `json:"paper_folder_followed,omitempty"`
-		// PaperFolderTeamInvite : (paper) Shared Paper folder with member
-		// (deprecated, no longer logged)
-		PaperFolderTeamInvite json.RawMessage `json:"paper_folder_team_invite,omitempty"`
-		// PasswordChange : (passwords) Changed password
-		PasswordChange json.RawMessage `json:"password_change,omitempty"`
-		// PasswordReset : (passwords) Reset password
-		PasswordReset json.RawMessage `json:"password_reset,omitempty"`
-		// PasswordResetAll : (passwords) Reset all team member passwords
-		PasswordResetAll json.RawMessage `json:"password_reset_all,omitempty"`
-		// EmmCreateExceptionsReport : (reports) Created EMM-excluded users
-		// report
-		EmmCreateExceptionsReport json.RawMessage `json:"emm_create_exceptions_report,omitempty"`
-		// EmmCreateUsageReport : (reports) Created EMM mobile app usage report
-		EmmCreateUsageReport json.RawMessage `json:"emm_create_usage_report,omitempty"`
-		// ExportMembersReport : (reports) Created member data report
-		ExportMembersReport json.RawMessage `json:"export_members_report,omitempty"`
-		// PaperAdminExportStart : (reports) Exported all team Paper docs
-		PaperAdminExportStart json.RawMessage `json:"paper_admin_export_start,omitempty"`
-		// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync
-		// non-admin devices report
-		SmartSyncCreateAdminPrivilegeReport json.RawMessage `json:"smart_sync_create_admin_privilege_report,omitempty"`
-		// TeamActivityCreateReport : (reports) Created team activity report
-		TeamActivityCreateReport json.RawMessage `json:"team_activity_create_report,omitempty"`
-		// CollectionShare : (sharing) Shared album
-		CollectionShare json.RawMessage `json:"collection_share,omitempty"`
-		// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
-		// (deprecated, no longer logged)
-		NoteAclInviteOnly json.RawMessage `json:"note_acl_invite_only,omitempty"`
-		// NoteAclLink : (sharing) Changed Paper doc to link-accessible
-		// (deprecated, no longer logged)
-		NoteAclLink json.RawMessage `json:"note_acl_link,omitempty"`
-		// NoteAclTeamLink : (sharing) Changed Paper doc to link-accessible for
-		// team (deprecated, no longer logged)
-		NoteAclTeamLink json.RawMessage `json:"note_acl_team_link,omitempty"`
-		// NoteShared : (sharing) Shared Paper doc (deprecated, no longer
-		// logged)
-		NoteShared json.RawMessage `json:"note_shared,omitempty"`
-		// NoteShareReceive : (sharing) Shared received Paper doc (deprecated,
-		// no longer logged)
-		NoteShareReceive json.RawMessage `json:"note_share_receive,omitempty"`
-		// OpenNoteShared : (sharing) Opened shared Paper doc (deprecated, no
-		// longer logged)
-		OpenNoteShared json.RawMessage `json:"open_note_shared,omitempty"`
-		// SfAddGroup : (sharing) Added team to shared folder (deprecated, no
-		// longer logged)
-		SfAddGroup json.RawMessage `json:"sf_add_group,omitempty"`
-		// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed
-		// non-collaborators to view links to files in shared folder
-		// (deprecated, no longer logged)
-		SfAllowNonMembersToViewSharedLinks json.RawMessage `json:"sf_allow_non_members_to_view_shared_links,omitempty"`
-		// SfExternalInviteWarn : (sharing) Set team members to see warning
-		// before sharing folders outside team (deprecated, no longer logged)
-		SfExternalInviteWarn json.RawMessage `json:"sf_external_invite_warn,omitempty"`
-		// SfFbInvite : (sharing) Invited Facebook users to shared folder
-		// (deprecated, no longer logged)
-		SfFbInvite json.RawMessage `json:"sf_fb_invite,omitempty"`
-		// SfFbInviteChangeRole : (sharing) Changed Facebook user's role in
-		// shared folder (deprecated, no longer logged)
-		SfFbInviteChangeRole json.RawMessage `json:"sf_fb_invite_change_role,omitempty"`
-		// SfFbUninvite : (sharing) Uninvited Facebook user from shared folder
-		// (deprecated, no longer logged)
-		SfFbUninvite json.RawMessage `json:"sf_fb_uninvite,omitempty"`
-		// SfInviteGroup : (sharing) Invited group to shared folder (deprecated,
-		// no longer logged)
-		SfInviteGroup json.RawMessage `json:"sf_invite_group,omitempty"`
-		// SfTeamGrantAccess : (sharing) Granted access to shared folder
-		// (deprecated, no longer logged)
-		SfTeamGrantAccess json.RawMessage `json:"sf_team_grant_access,omitempty"`
-		// SfTeamInvite : (sharing) Invited team members to shared folder
-		// (deprecated, replaced by 'Invited user to Dropbox and added them to
-		// shared file/folder')
-		SfTeamInvite json.RawMessage `json:"sf_team_invite,omitempty"`
-		// SfTeamInviteChangeRole : (sharing) Changed team member's role in
-		// shared folder (deprecated, no longer logged)
-		SfTeamInviteChangeRole json.RawMessage `json:"sf_team_invite_change_role,omitempty"`
-		// SfTeamJoin : (sharing) Joined team member's shared folder
-		// (deprecated, no longer logged)
-		SfTeamJoin json.RawMessage `json:"sf_team_join,omitempty"`
-		// SfTeamJoinFromOobLink : (sharing) Joined team member's shared folder
-		// from link (deprecated, no longer logged)
-		SfTeamJoinFromOobLink json.RawMessage `json:"sf_team_join_from_oob_link,omitempty"`
-		// SfTeamUninvite : (sharing) Unshared folder with team member
-		// (deprecated, replaced by 'Removed invitee from shared file/folder
-		// before invite was accepted')
-		SfTeamUninvite json.RawMessage `json:"sf_team_uninvite,omitempty"`
-		// SharedContentAddInvitees : (sharing) Invited user to Dropbox and
-		// added them to shared file/folder
-		SharedContentAddInvitees json.RawMessage `json:"shared_content_add_invitees,omitempty"`
-		// SharedContentAddLinkExpiry : (sharing) Added expiration date to link
-		// for shared file/folder
-		SharedContentAddLinkExpiry json.RawMessage `json:"shared_content_add_link_expiry,omitempty"`
-		// SharedContentAddLinkPassword : (sharing) Added password to link for
-		// shared file/folder
-		SharedContentAddLinkPassword json.RawMessage `json:"shared_content_add_link_password,omitempty"`
-		// SharedContentAddMember : (sharing) Added users and/or groups to
-		// shared file/folder
-		SharedContentAddMember json.RawMessage `json:"shared_content_add_member,omitempty"`
-		// SharedContentChangeDownloadsPolicy : (sharing) Changed whether
-		// members can download shared file/folder
-		SharedContentChangeDownloadsPolicy json.RawMessage `json:"shared_content_change_downloads_policy,omitempty"`
-		// SharedContentChangeInviteeRole : (sharing) Changed access type of
-		// invitee to shared file/folder before invite was accepted
-		SharedContentChangeInviteeRole json.RawMessage `json:"shared_content_change_invitee_role,omitempty"`
-		// SharedContentChangeLinkAudience : (sharing) Changed link audience of
-		// shared file/folder
-		SharedContentChangeLinkAudience json.RawMessage `json:"shared_content_change_link_audience,omitempty"`
-		// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of
-		// shared file/folder
-		SharedContentChangeLinkExpiry json.RawMessage `json:"shared_content_change_link_expiry,omitempty"`
-		// SharedContentChangeLinkPassword : (sharing) Changed link password of
-		// shared file/folder
-		SharedContentChangeLinkPassword json.RawMessage `json:"shared_content_change_link_password,omitempty"`
-		// SharedContentChangeMemberRole : (sharing) Changed access type of
-		// shared file/folder member
-		SharedContentChangeMemberRole json.RawMessage `json:"shared_content_change_member_role,omitempty"`
-		// SharedContentChangeViewerInfoPolicy : (sharing) Changed whether
-		// members can see who viewed shared file/folder
-		SharedContentChangeViewerInfoPolicy json.RawMessage `json:"shared_content_change_viewer_info_policy,omitempty"`
-		// SharedContentClaimInvitation : (sharing) Acquired membership of
-		// shared file/folder by accepting invite
-		SharedContentClaimInvitation json.RawMessage `json:"shared_content_claim_invitation,omitempty"`
-		// SharedContentCopy : (sharing) Copied shared file/folder to own
-		// Dropbox
-		SharedContentCopy json.RawMessage `json:"shared_content_copy,omitempty"`
-		// SharedContentDownload : (sharing) Downloaded shared file/folder
-		SharedContentDownload json.RawMessage `json:"shared_content_download,omitempty"`
-		// SharedContentRelinquishMembership : (sharing) Left shared file/folder
-		SharedContentRelinquishMembership json.RawMessage `json:"shared_content_relinquish_membership,omitempty"`
-		// SharedContentRemoveInvitees : (sharing) Removed invitee from shared
-		// file/folder before invite was accepted
-		SharedContentRemoveInvitees json.RawMessage `json:"shared_content_remove_invitees,omitempty"`
-		// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration
-		// date of shared file/folder
-		SharedContentRemoveLinkExpiry json.RawMessage `json:"shared_content_remove_link_expiry,omitempty"`
-		// SharedContentRemoveLinkPassword : (sharing) Removed link password of
-		// shared file/folder
-		SharedContentRemoveLinkPassword json.RawMessage `json:"shared_content_remove_link_password,omitempty"`
-		// SharedContentRemoveMember : (sharing) Removed user/group from shared
-		// file/folder
-		SharedContentRemoveMember json.RawMessage `json:"shared_content_remove_member,omitempty"`
-		// SharedContentRequestAccess : (sharing) Requested access to shared
-		// file/folder
-		SharedContentRequestAccess json.RawMessage `json:"shared_content_request_access,omitempty"`
-		// SharedContentUnshare : (sharing) Unshared file/folder by clearing
-		// membership and turning off link
-		SharedContentUnshare json.RawMessage `json:"shared_content_unshare,omitempty"`
-		// SharedContentView : (sharing) Previewed shared file/folder
-		SharedContentView json.RawMessage `json:"shared_content_view,omitempty"`
-		// SharedFolderChangeLinkPolicy : (sharing) Changed who can access
-		// shared folder via link
-		SharedFolderChangeLinkPolicy json.RawMessage `json:"shared_folder_change_link_policy,omitempty"`
-		// SharedFolderChangeMembersInheritancePolicy : (sharing) Changed
-		// whether shared folder inherits members from parent folder
-		SharedFolderChangeMembersInheritancePolicy json.RawMessage `json:"shared_folder_change_members_inheritance_policy,omitempty"`
-		// SharedFolderChangeMembersManagementPolicy : (sharing) Changed who can
-		// add/remove members of shared folder
-		SharedFolderChangeMembersManagementPolicy json.RawMessage `json:"shared_folder_change_members_management_policy,omitempty"`
-		// SharedFolderChangeMembersPolicy : (sharing) Changed who can become
-		// member of shared folder
-		SharedFolderChangeMembersPolicy json.RawMessage `json:"shared_folder_change_members_policy,omitempty"`
-		// SharedFolderCreate : (sharing) Created shared folder
-		SharedFolderCreate json.RawMessage `json:"shared_folder_create,omitempty"`
-		// SharedFolderDeclineInvitation : (sharing) Declined team member's
-		// invite to shared folder
-		SharedFolderDeclineInvitation json.RawMessage `json:"shared_folder_decline_invitation,omitempty"`
-		// SharedFolderMount : (sharing) Added shared folder to own Dropbox
-		SharedFolderMount json.RawMessage `json:"shared_folder_mount,omitempty"`
-		// SharedFolderNest : (sharing) Changed parent of shared folder
-		SharedFolderNest json.RawMessage `json:"shared_folder_nest,omitempty"`
-		// SharedFolderTransferOwnership : (sharing) Transferred ownership of
-		// shared folder to another member
-		SharedFolderTransferOwnership json.RawMessage `json:"shared_folder_transfer_ownership,omitempty"`
-		// SharedFolderUnmount : (sharing) Deleted shared folder from Dropbox
-		SharedFolderUnmount json.RawMessage `json:"shared_folder_unmount,omitempty"`
-		// SharedLinkAddExpiry : (sharing) Added shared link expiration date
-		SharedLinkAddExpiry json.RawMessage `json:"shared_link_add_expiry,omitempty"`
-		// SharedLinkChangeExpiry : (sharing) Changed shared link expiration
-		// date
-		SharedLinkChangeExpiry json.RawMessage `json:"shared_link_change_expiry,omitempty"`
-		// SharedLinkChangeVisibility : (sharing) Changed visibility of shared
-		// link
-		SharedLinkChangeVisibility json.RawMessage `json:"shared_link_change_visibility,omitempty"`
-		// SharedLinkCopy : (sharing) Added file/folder to Dropbox from shared
-		// link
-		SharedLinkCopy json.RawMessage `json:"shared_link_copy,omitempty"`
-		// SharedLinkCreate : (sharing) Created shared link
-		SharedLinkCreate json.RawMessage `json:"shared_link_create,omitempty"`
-		// SharedLinkDisable : (sharing) Removed shared link
-		SharedLinkDisable json.RawMessage `json:"shared_link_disable,omitempty"`
-		// SharedLinkDownload : (sharing) Downloaded file/folder from shared
-		// link
-		SharedLinkDownload json.RawMessage `json:"shared_link_download,omitempty"`
-		// SharedLinkRemoveExpiry : (sharing) Removed shared link expiration
-		// date
-		SharedLinkRemoveExpiry json.RawMessage `json:"shared_link_remove_expiry,omitempty"`
-		// SharedLinkShare : (sharing) Added members as audience of shared link
-		SharedLinkShare json.RawMessage `json:"shared_link_share,omitempty"`
-		// SharedLinkView : (sharing) Opened shared link
-		SharedLinkView json.RawMessage `json:"shared_link_view,omitempty"`
-		// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no
-		// longer logged)
-		SharedNoteOpened json.RawMessage `json:"shared_note_opened,omitempty"`
-		// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no
-		// longer logged)
-		ShmodelGroupShare json.RawMessage `json:"shmodel_group_share,omitempty"`
-		// ShowcaseAccessGranted : (showcase) Granted access to showcase
-		ShowcaseAccessGranted json.RawMessage `json:"showcase_access_granted,omitempty"`
-		// ShowcaseAddMember : (showcase) Added member to showcase
-		ShowcaseAddMember json.RawMessage `json:"showcase_add_member,omitempty"`
-		// ShowcaseArchived : (showcase) Archived showcase
-		ShowcaseArchived json.RawMessage `json:"showcase_archived,omitempty"`
-		// ShowcaseCreated : (showcase) Created showcase
-		ShowcaseCreated json.RawMessage `json:"showcase_created,omitempty"`
-		// ShowcaseDeleteComment : (showcase) Deleted showcase comment
-		ShowcaseDeleteComment json.RawMessage `json:"showcase_delete_comment,omitempty"`
-		// ShowcaseEdited : (showcase) Edited showcase
-		ShowcaseEdited json.RawMessage `json:"showcase_edited,omitempty"`
-		// ShowcaseEditComment : (showcase) Edited showcase comment
-		ShowcaseEditComment json.RawMessage `json:"showcase_edit_comment,omitempty"`
-		// ShowcaseFileAdded : (showcase) Added file to showcase
-		ShowcaseFileAdded json.RawMessage `json:"showcase_file_added,omitempty"`
-		// ShowcaseFileDownload : (showcase) Downloaded file from showcase
-		ShowcaseFileDownload json.RawMessage `json:"showcase_file_download,omitempty"`
-		// ShowcaseFileRemoved : (showcase) Removed file from showcase
-		ShowcaseFileRemoved json.RawMessage `json:"showcase_file_removed,omitempty"`
-		// ShowcaseFileView : (showcase) Viewed file in showcase
-		ShowcaseFileView json.RawMessage `json:"showcase_file_view,omitempty"`
-		// ShowcasePermanentlyDeleted : (showcase) Permanently deleted showcase
-		ShowcasePermanentlyDeleted json.RawMessage `json:"showcase_permanently_deleted,omitempty"`
-		// ShowcasePostComment : (showcase) Added showcase comment
-		ShowcasePostComment json.RawMessage `json:"showcase_post_comment,omitempty"`
-		// ShowcaseRemoveMember : (showcase) Removed member from showcase
-		ShowcaseRemoveMember json.RawMessage `json:"showcase_remove_member,omitempty"`
-		// ShowcaseRenamed : (showcase) Renamed showcase
-		ShowcaseRenamed json.RawMessage `json:"showcase_renamed,omitempty"`
-		// ShowcaseRequestAccess : (showcase) Requested access to showcase
-		ShowcaseRequestAccess json.RawMessage `json:"showcase_request_access,omitempty"`
-		// ShowcaseResolveComment : (showcase) Resolved showcase comment
-		ShowcaseResolveComment json.RawMessage `json:"showcase_resolve_comment,omitempty"`
-		// ShowcaseRestored : (showcase) Unarchived showcase
-		ShowcaseRestored json.RawMessage `json:"showcase_restored,omitempty"`
-		// ShowcaseTrashed : (showcase) Deleted showcase
-		ShowcaseTrashed json.RawMessage `json:"showcase_trashed,omitempty"`
-		// ShowcaseTrashedDeprecated : (showcase) Deleted showcase (old version)
-		// (deprecated, replaced by 'Deleted showcase')
-		ShowcaseTrashedDeprecated json.RawMessage `json:"showcase_trashed_deprecated,omitempty"`
-		// ShowcaseUnresolveComment : (showcase) Unresolved showcase comment
-		ShowcaseUnresolveComment json.RawMessage `json:"showcase_unresolve_comment,omitempty"`
-		// ShowcaseUntrashed : (showcase) Restored showcase
-		ShowcaseUntrashed json.RawMessage `json:"showcase_untrashed,omitempty"`
-		// ShowcaseUntrashedDeprecated : (showcase) Restored showcase (old
-		// version) (deprecated, replaced by 'Restored showcase')
-		ShowcaseUntrashedDeprecated json.RawMessage `json:"showcase_untrashed_deprecated,omitempty"`
-		// ShowcaseView : (showcase) Viewed showcase
-		ShowcaseView json.RawMessage `json:"showcase_view,omitempty"`
-		// SsoAddCert : (sso) Added X.509 certificate for SSO
-		SsoAddCert json.RawMessage `json:"sso_add_cert,omitempty"`
-		// SsoAddLoginUrl : (sso) Added sign-in URL for SSO
-		SsoAddLoginUrl json.RawMessage `json:"sso_add_login_url,omitempty"`
-		// SsoAddLogoutUrl : (sso) Added sign-out URL for SSO
-		SsoAddLogoutUrl json.RawMessage `json:"sso_add_logout_url,omitempty"`
-		// SsoChangeCert : (sso) Changed X.509 certificate for SSO
-		SsoChangeCert json.RawMessage `json:"sso_change_cert,omitempty"`
-		// SsoChangeLoginUrl : (sso) Changed sign-in URL for SSO
-		SsoChangeLoginUrl json.RawMessage `json:"sso_change_login_url,omitempty"`
-		// SsoChangeLogoutUrl : (sso) Changed sign-out URL for SSO
-		SsoChangeLogoutUrl json.RawMessage `json:"sso_change_logout_url,omitempty"`
-		// SsoChangeSamlIdentityMode : (sso) Changed SAML identity mode for SSO
-		SsoChangeSamlIdentityMode json.RawMessage `json:"sso_change_saml_identity_mode,omitempty"`
-		// SsoRemoveCert : (sso) Removed X.509 certificate for SSO
-		SsoRemoveCert json.RawMessage `json:"sso_remove_cert,omitempty"`
-		// SsoRemoveLoginUrl : (sso) Removed sign-in URL for SSO
-		SsoRemoveLoginUrl json.RawMessage `json:"sso_remove_login_url,omitempty"`
-		// SsoRemoveLogoutUrl : (sso) Removed sign-out URL for SSO
-		SsoRemoveLogoutUrl json.RawMessage `json:"sso_remove_logout_url,omitempty"`
-		// TeamFolderChangeStatus : (team_folders) Changed archival status of
-		// team folder
-		TeamFolderChangeStatus json.RawMessage `json:"team_folder_change_status,omitempty"`
-		// TeamFolderCreate : (team_folders) Created team folder in active
-		// status
-		TeamFolderCreate json.RawMessage `json:"team_folder_create,omitempty"`
-		// TeamFolderDowngrade : (team_folders) Downgraded team folder to
-		// regular shared folder
-		TeamFolderDowngrade json.RawMessage `json:"team_folder_downgrade,omitempty"`
-		// TeamFolderPermanentlyDelete : (team_folders) Permanently deleted
-		// archived team folder
-		TeamFolderPermanentlyDelete json.RawMessage `json:"team_folder_permanently_delete,omitempty"`
-		// TeamFolderRename : (team_folders) Renamed active/archived team folder
-		TeamFolderRename json.RawMessage `json:"team_folder_rename,omitempty"`
-		// TeamSelectiveSyncSettingsChanged : (team_folders) Changed sync
-		// default
-		TeamSelectiveSyncSettingsChanged json.RawMessage `json:"team_selective_sync_settings_changed,omitempty"`
-		// AccountCaptureChangePolicy : (team_policies) Changed account capture
-		// setting on team domain
-		AccountCaptureChangePolicy json.RawMessage `json:"account_capture_change_policy,omitempty"`
-		// AllowDownloadDisabled : (team_policies) Disabled downloads
-		// (deprecated, no longer logged)
-		AllowDownloadDisabled json.RawMessage `json:"allow_download_disabled,omitempty"`
-		// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated,
-		// no longer logged)
-		AllowDownloadEnabled json.RawMessage `json:"allow_download_enabled,omitempty"`
-		// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
-		// setting for team
-		CameraUploadsPolicyChanged json.RawMessage `json:"camera_uploads_policy_changed,omitempty"`
-		// DataPlacementRestrictionChangePolicy : (team_policies) Set
-		// restrictions on data center locations where team data resides
-		DataPlacementRestrictionChangePolicy json.RawMessage `json:"data_placement_restriction_change_policy,omitempty"`
-		// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
-		// restrictions on data center locations where team data resides
-		DataPlacementRestrictionSatisfyPolicy json.RawMessage `json:"data_placement_restriction_satisfy_policy,omitempty"`
-		// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set/removed
-		// limit on number of computers member can link to team Dropbox account
-		DeviceApprovalsChangeDesktopPolicy json.RawMessage `json:"device_approvals_change_desktop_policy,omitempty"`
-		// DeviceApprovalsChangeMobilePolicy : (team_policies) Set/removed limit
-		// on number of mobile devices member can link to team Dropbox account
-		DeviceApprovalsChangeMobilePolicy json.RawMessage `json:"device_approvals_change_mobile_policy,omitempty"`
-		// DeviceApprovalsChangeOverageAction : (team_policies) Changed device
-		// approvals setting when member is over limit
-		DeviceApprovalsChangeOverageAction json.RawMessage `json:"device_approvals_change_overage_action,omitempty"`
-		// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
-		// approvals setting when member unlinks approved device
-		DeviceApprovalsChangeUnlinkAction json.RawMessage `json:"device_approvals_change_unlink_action,omitempty"`
-		// DirectoryRestrictionsAddMembers : (team_policies) Added members to
-		// directory restrictions list
-		DirectoryRestrictionsAddMembers json.RawMessage `json:"directory_restrictions_add_members,omitempty"`
-		// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members
-		// from directory restrictions list
-		DirectoryRestrictionsRemoveMembers json.RawMessage `json:"directory_restrictions_remove_members,omitempty"`
-		// EmmAddException : (team_policies) Added members to EMM exception list
-		EmmAddException json.RawMessage `json:"emm_add_exception,omitempty"`
-		// EmmChangePolicy : (team_policies) Enabled/disabled enterprise
-		// mobility management for members
-		EmmChangePolicy json.RawMessage `json:"emm_change_policy,omitempty"`
-		// EmmRemoveException : (team_policies) Removed members from EMM
-		// exception list
-		EmmRemoveException json.RawMessage `json:"emm_remove_exception,omitempty"`
-		// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted
-		// out of extended version history
-		ExtendedVersionHistoryChangePolicy json.RawMessage `json:"extended_version_history_change_policy,omitempty"`
-		// FileCommentsChangePolicy : (team_policies) Enabled/disabled
-		// commenting on team files
-		FileCommentsChangePolicy json.RawMessage `json:"file_comments_change_policy,omitempty"`
-		// FileRequestsChangePolicy : (team_policies) Enabled/disabled file
-		// requests
-		FileRequestsChangePolicy json.RawMessage `json:"file_requests_change_policy,omitempty"`
-		// FileRequestsEmailsEnabled : (team_policies) Enabled file request
-		// emails for everyone (deprecated, no longer logged)
-		FileRequestsEmailsEnabled json.RawMessage `json:"file_requests_emails_enabled,omitempty"`
-		// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Enabled file
-		// request emails for team (deprecated, no longer logged)
-		FileRequestsEmailsRestrictedToTeamOnly json.RawMessage `json:"file_requests_emails_restricted_to_team_only,omitempty"`
-		// GoogleSsoChangePolicy : (team_policies) Enabled/disabled Google
-		// single sign-on for team
-		GoogleSsoChangePolicy json.RawMessage `json:"google_sso_change_policy,omitempty"`
-		// GroupUserManagementChangePolicy : (team_policies) Changed who can
-		// create groups
-		GroupUserManagementChangePolicy json.RawMessage `json:"group_user_management_change_policy,omitempty"`
-		// MemberRequestsChangePolicy : (team_policies) Changed whether users
-		// can find team when not invited
-		MemberRequestsChangePolicy json.RawMessage `json:"member_requests_change_policy,omitempty"`
-		// MemberSpaceLimitsAddException : (team_policies) Added members to
-		// member space limit exception list
-		MemberSpaceLimitsAddException json.RawMessage `json:"member_space_limits_add_exception,omitempty"`
-		// MemberSpaceLimitsChangeCapsTypePolicy : (team_policies) Changed
-		// member space limit type for team
-		MemberSpaceLimitsChangeCapsTypePolicy json.RawMessage `json:"member_space_limits_change_caps_type_policy,omitempty"`
-		// MemberSpaceLimitsChangePolicy : (team_policies) Changed team default
-		// member space limit
-		MemberSpaceLimitsChangePolicy json.RawMessage `json:"member_space_limits_change_policy,omitempty"`
-		// MemberSpaceLimitsRemoveException : (team_policies) Removed members
-		// from member space limit exception list
-		MemberSpaceLimitsRemoveException json.RawMessage `json:"member_space_limits_remove_exception,omitempty"`
-		// MemberSuggestionsChangePolicy : (team_policies) Enabled/disabled
-		// option for team members to suggest people to add to team
-		MemberSuggestionsChangePolicy json.RawMessage `json:"member_suggestions_change_policy,omitempty"`
-		// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled/disabled
-		// Microsoft Office add-in
-		MicrosoftOfficeAddinChangePolicy json.RawMessage `json:"microsoft_office_addin_change_policy,omitempty"`
-		// NetworkControlChangePolicy : (team_policies) Enabled/disabled network
-		// control
-		NetworkControlChangePolicy json.RawMessage `json:"network_control_change_policy,omitempty"`
-		// PaperChangeDeploymentPolicy : (team_policies) Changed whether Dropbox
-		// Paper, when enabled, is deployed to all members or to specific
-		// members
-		PaperChangeDeploymentPolicy json.RawMessage `json:"paper_change_deployment_policy,omitempty"`
-		// PaperChangeMemberLinkPolicy : (team_policies) Changed whether
-		// non-members can view Paper docs with link (deprecated, no longer
-		// logged)
-		PaperChangeMemberLinkPolicy json.RawMessage `json:"paper_change_member_link_policy,omitempty"`
-		// PaperChangeMemberPolicy : (team_policies) Changed whether members can
-		// share Paper docs outside team, and if docs are accessible only by
-		// team members or anyone by default
-		PaperChangeMemberPolicy json.RawMessage `json:"paper_change_member_policy,omitempty"`
-		// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper
-		// for team
-		PaperChangePolicy json.RawMessage `json:"paper_change_policy,omitempty"`
-		// PaperEnabledUsersGroupAddition : (team_policies) Added users to
-		// Paper-enabled users list
-		PaperEnabledUsersGroupAddition json.RawMessage `json:"paper_enabled_users_group_addition,omitempty"`
-		// PaperEnabledUsersGroupRemoval : (team_policies) Removed users from
-		// Paper-enabled users list
-		PaperEnabledUsersGroupRemoval json.RawMessage `json:"paper_enabled_users_group_removal,omitempty"`
-		// PermanentDeleteChangePolicy : (team_policies) Enabled/disabled
-		// ability of team members to permanently delete content
-		PermanentDeleteChangePolicy json.RawMessage `json:"permanent_delete_change_policy,omitempty"`
-		// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
-		// members can join shared folders owned outside team
-		SharingChangeFolderJoinPolicy json.RawMessage `json:"sharing_change_folder_join_policy,omitempty"`
-		// SharingChangeLinkPolicy : (team_policies) Changed whether members can
-		// share links outside team, and if links are accessible only by team
-		// members or anyone by default
-		SharingChangeLinkPolicy json.RawMessage `json:"sharing_change_link_policy,omitempty"`
-		// SharingChangeMemberPolicy : (team_policies) Changed whether members
-		// can share files/folders outside team
-		SharingChangeMemberPolicy json.RawMessage `json:"sharing_change_member_policy,omitempty"`
-		// ShowcaseChangeDownloadPolicy : (team_policies) Enabled/disabled
-		// downloading files from Dropbox Showcase for team
-		ShowcaseChangeDownloadPolicy json.RawMessage `json:"showcase_change_download_policy,omitempty"`
-		// ShowcaseChangeEnabledPolicy : (team_policies) Enabled/disabled
-		// Dropbox Showcase for team
-		ShowcaseChangeEnabledPolicy json.RawMessage `json:"showcase_change_enabled_policy,omitempty"`
-		// ShowcaseChangeExternalSharingPolicy : (team_policies)
-		// Enabled/disabled sharing Dropbox Showcase externally for team
-		ShowcaseChangeExternalSharingPolicy json.RawMessage `json:"showcase_change_external_sharing_policy,omitempty"`
-		// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
-		// setting for team members
-		SmartSyncChangePolicy json.RawMessage `json:"smart_sync_change_policy,omitempty"`
-		// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync
-		SmartSyncNotOptOut json.RawMessage `json:"smart_sync_not_opt_out,omitempty"`
-		// SmartSyncOptOut : (team_policies) Opted team out of Smart Sync
-		SmartSyncOptOut json.RawMessage `json:"smart_sync_opt_out,omitempty"`
-		// SsoChangePolicy : (team_policies) Changed single sign-on setting for
-		// team
-		SsoChangePolicy json.RawMessage `json:"sso_change_policy,omitempty"`
-		// TeamSelectiveSyncPolicyChanged : (team_policies) Enabled/disabled
-		// Team Selective Sync for team
-		TeamSelectiveSyncPolicyChanged json.RawMessage `json:"team_selective_sync_policy_changed,omitempty"`
-		// TfaChangePolicy : (team_policies) Changed two-step verification
-		// setting for team
-		TfaChangePolicy json.RawMessage `json:"tfa_change_policy,omitempty"`
-		// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for
-		// members to link personal Dropbox account and team account to same
-		// computer
-		TwoAccountChangePolicy json.RawMessage `json:"two_account_change_policy,omitempty"`
-		// ViewerInfoPolicyChanged : (team_policies) Changed team policy for
-		// viewer info
-		ViewerInfoPolicyChanged json.RawMessage `json:"viewer_info_policy_changed,omitempty"`
-		// WebSessionsChangeFixedLengthPolicy : (team_policies) Changed how long
-		// members can stay signed in to Dropbox.com
-		WebSessionsChangeFixedLengthPolicy json.RawMessage `json:"web_sessions_change_fixed_length_policy,omitempty"`
-		// WebSessionsChangeIdleLengthPolicy : (team_policies) Changed how long
-		// team members can be idle while signed in to Dropbox.com
-		WebSessionsChangeIdleLengthPolicy json.RawMessage `json:"web_sessions_change_idle_length_policy,omitempty"`
-		// TeamMergeFrom : (team_profile) Merged another team into this team
-		TeamMergeFrom json.RawMessage `json:"team_merge_from,omitempty"`
-		// TeamMergeTo : (team_profile) Merged this team into another team
-		TeamMergeTo json.RawMessage `json:"team_merge_to,omitempty"`
-		// TeamProfileAddLogo : (team_profile) Added team logo to display on
-		// shared link headers
-		TeamProfileAddLogo json.RawMessage `json:"team_profile_add_logo,omitempty"`
-		// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
-		// language for team
-		TeamProfileChangeDefaultLanguage json.RawMessage `json:"team_profile_change_default_language,omitempty"`
-		// TeamProfileChangeLogo : (team_profile) Changed team logo displayed on
-		// shared link headers
-		TeamProfileChangeLogo json.RawMessage `json:"team_profile_change_logo,omitempty"`
-		// TeamProfileChangeName : (team_profile) Changed team name
-		TeamProfileChangeName json.RawMessage `json:"team_profile_change_name,omitempty"`
-		// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
-		// shared link headers
-		TeamProfileRemoveLogo json.RawMessage `json:"team_profile_remove_logo,omitempty"`
-		// TfaAddBackupPhone : (tfa) Added backup phone for two-step
-		// verification
-		TfaAddBackupPhone json.RawMessage `json:"tfa_add_backup_phone,omitempty"`
-		// TfaAddSecurityKey : (tfa) Added security key for two-step
-		// verification
-		TfaAddSecurityKey json.RawMessage `json:"tfa_add_security_key,omitempty"`
-		// TfaChangeBackupPhone : (tfa) Changed backup phone for two-step
-		// verification
-		TfaChangeBackupPhone json.RawMessage `json:"tfa_change_backup_phone,omitempty"`
-		// TfaChangeStatus : (tfa) Enabled/disabled/changed two-step
-		// verification setting
-		TfaChangeStatus json.RawMessage `json:"tfa_change_status,omitempty"`
-		// TfaRemoveBackupPhone : (tfa) Removed backup phone for two-step
-		// verification
-		TfaRemoveBackupPhone json.RawMessage `json:"tfa_remove_backup_phone,omitempty"`
-		// TfaRemoveSecurityKey : (tfa) Removed security key for two-step
-		// verification
-		TfaRemoveSecurityKey json.RawMessage `json:"tfa_remove_security_key,omitempty"`
-		// TfaReset : (tfa) Reset two-step verification for team member
-		TfaReset json.RawMessage `json:"tfa_reset,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -10697,6 +9188,14 @@ const (
 func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// Reset : Cursors are intended to be used quickly. Individual cursor
+		// values are normally valid for days, but in rare cases may be reset
+		// sooner. Cursor reset errors should be handled by fetching a new
+		// cursor from `getEvents`. The associated value is the approximate
+		// timestamp of the most recent event returned by the cursor. This
+		// should be used as a resumption point when calling `getEvents` to
+		// obtain a new cursor.
+		Reset time.Time `json:"reset,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -10706,7 +9205,7 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "reset":
-		err = json.Unmarshal(body, &u.Reset)
+		u.Reset = w.Reset
 
 		if err != nil {
 			return err
@@ -11295,14 +9794,6 @@ const (
 func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// MobileDeviceSession : mobile device session's details.
-		MobileDeviceSession json.RawMessage `json:"mobile_device_session,omitempty"`
-		// DesktopDeviceSession : desktop device session's details.
-		DesktopDeviceSession json.RawMessage `json:"desktop_device_session,omitempty"`
-		// WebDeviceSession : web device session's details.
-		WebDeviceSession json.RawMessage `json:"web_device_session,omitempty"`
-		// LegacyDeviceSession : legacy device session's details.
-		LegacyDeviceSession json.RawMessage `json:"legacy_device_session,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -12236,12 +10727,6 @@ const (
 func (u *userLogInfoUnion) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// TeamMember : has no documentation (yet)
-		TeamMember json.RawMessage `json:"team_member,omitempty"`
-		// TrustedNonTeamMember : has no documentation (yet)
-		TrustedNonTeamMember json.RawMessage `json:"trusted_non_team_member,omitempty"`
-		// NonTeamMember : has no documentation (yet)
-		NonTeamMember json.RawMessage `json:"non_team_member,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -13756,8 +12241,6 @@ func (u *ParticipantLogInfo) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// User : A user with a Dropbox account.
 		User json.RawMessage `json:"user,omitempty"`
-		// Group : Group details.
-		Group json.RawMessage `json:"group,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -13767,7 +12250,7 @@ func (u *ParticipantLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "user":
-		u.User, err = IsUserLogInfoFromJSON(body)
+		u.User, err = IsUserLogInfoFromJSON(w.User)
 
 		if err != nil {
 			return err
@@ -18143,8 +16626,6 @@ const (
 func (u *WebSessionsFixedLengthPolicy) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Defined : Defined fixed session length.
-		Defined json.RawMessage `json:"defined,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -18181,8 +16662,6 @@ const (
 func (u *WebSessionsIdleLengthPolicy) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Defined : Defined idle session length.
-		Defined json.RawMessage `json:"defined,omitempty"`
 	}
 	var w wrap
 	var err error

@@ -61,7 +61,7 @@ func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 		// ContactsNotFound : Can't delete contacts from this list. Make sure
 		// the list only has manually added contacts. The deletion was
 		// cancelled.
-		ContactsNotFound json.RawMessage `json:"contacts_not_found,omitempty"`
+		ContactsNotFound []string `json:"contacts_not_found,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -71,7 +71,7 @@ func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "contacts_not_found":
-		err = json.Unmarshal(body, &u.ContactsNotFound)
+		u.ContactsNotFound = w.ContactsNotFound
 
 		if err != nil {
 			return err

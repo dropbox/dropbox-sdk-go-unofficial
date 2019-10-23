@@ -12,7 +12,6 @@ from stone.ir import (
     unwrap_nullable,
     is_composite_type,
     is_list_type,
-    is_primitive_type,
     is_struct_type,
     Void,
 )
@@ -72,7 +71,7 @@ def _rename_if_reserved(s):
 def fmt_type(data_type, namespace=None, use_interface=False, raw=False):
     data_type, nullable = unwrap_nullable(data_type)
     if is_list_type(data_type):
-        if raw and is_primitive_type(data_type.data_type):
+        if raw and not _needs_base_type(data_type.data_type):
             return "json.RawMessage"
         return '[]%s' % fmt_type(data_type.data_type, namespace, use_interface, raw)
     if raw:

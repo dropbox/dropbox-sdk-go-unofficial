@@ -2,7 +2,7 @@
 set -euo pipefail
 
 if [[ $# -gt 1 ]]; then
-    echo "$0: Not expecting any command-line arguments, got $#." 1>&2
+    echo "$0: Not expecting more than one command-line argument, got $#." 1>&2
     exit 1
 fi
 
