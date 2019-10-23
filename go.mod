@@ -1,3 +1,3 @@
-module dropbox-sdk-go-unofficial/m/v6
+module  github.com/neevaco/dropbox-sdk-go-unofficial/v6
 
 go 1.13
