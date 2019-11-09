@@ -617,10 +617,13 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
 		Path *files.LookupError `json:"path,omitempty"`
+<<<<<<< HEAD
 		// SharedLinkAlreadyExists : The shared link already exists. You can
 		// call `listSharedLinks` to get the  existing link, or use the provided
 		// metadata if it is returned.
 		SharedLinkAlreadyExists *SharedLinkAlreadyExistsMetadata `json:"shared_link_already_exists,omitempty"`
+=======
+>>>>>>> 302f2cc0d1d332f98b00600a242c290b20cbbb87
 		// SettingsError : There is an error with the given settings.
 		SettingsError *SharedLinkSettingsError `json:"settings_error,omitempty"`
 	}
@@ -633,12 +636,15 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "path":
 		u.Path = w.Path
+<<<<<<< HEAD
 
 		if err != nil {
 			return err
 		}
 	case "shared_link_already_exists":
 		u.SharedLinkAlreadyExists = w.SharedLinkAlreadyExists
+=======
+>>>>>>> 302f2cc0d1d332f98b00600a242c290b20cbbb87
 
 		if err != nil {
 			return err
