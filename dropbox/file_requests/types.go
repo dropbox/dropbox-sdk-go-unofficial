@@ -29,6 +29,42 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
+// GeneralFileRequestsError : There is an error accessing the file requests
+// functionality.
+type GeneralFileRequestsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for GeneralFileRequestsError
+const (
+	GeneralFileRequestsErrorDisabledForTeam = "disabled_for_team"
+	GeneralFileRequestsErrorOther           = "other"
+)
+
+// CountFileRequestsError : There was an error counting the file requests.
+type CountFileRequestsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for CountFileRequestsError
+const (
+	CountFileRequestsErrorDisabledForTeam = "disabled_for_team"
+	CountFileRequestsErrorOther           = "other"
+)
+
+// CountFileRequestsResult : Result for `count`.
+type CountFileRequestsResult struct {
+	// FileRequestCount : The number file requests owner by this user.
+	FileRequestCount uint64 `json:"file_request_count"`
+}
+
+// NewCountFileRequestsResult returns a new CountFileRequestsResult instance
+func NewCountFileRequestsResult(FileRequestCount uint64) *CountFileRequestsResult {
+	s := new(CountFileRequestsResult)
+	s.FileRequestCount = FileRequestCount
+	return s
+}
+
 // CreateFileRequestArgs : Arguments for `create`.
 type CreateFileRequestArgs struct {
 	// Title : The title of the file request. Must not be empty.
@@ -54,18 +90,6 @@ func NewCreateFileRequestArgs(Title string, Destination string) *CreateFileReque
 	s.Open = true
 	return s
 }
-
-// GeneralFileRequestsError : There is an error accessing the file requests
-// functionality.
-type GeneralFileRequestsError struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for GeneralFileRequestsError
-const (
-	GeneralFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	GeneralFileRequestsErrorOther           = "other"
-)
 
 // FileRequestError : There is an error with the file request.
 type FileRequestError struct {
@@ -102,6 +126,81 @@ const (
 	CreateFileRequestErrorInvalidLocation = "invalid_location"
 	CreateFileRequestErrorRateLimit       = "rate_limit"
 )
+
+// DeleteAllClosedFileRequestsError : There was an error deleting all closed
+// file requests.
+type DeleteAllClosedFileRequestsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DeleteAllClosedFileRequestsError
+const (
+	DeleteAllClosedFileRequestsErrorDisabledForTeam = "disabled_for_team"
+	DeleteAllClosedFileRequestsErrorOther           = "other"
+	DeleteAllClosedFileRequestsErrorNotFound        = "not_found"
+	DeleteAllClosedFileRequestsErrorNotAFolder      = "not_a_folder"
+	DeleteAllClosedFileRequestsErrorAppLacksAccess  = "app_lacks_access"
+	DeleteAllClosedFileRequestsErrorNoPermission    = "no_permission"
+	DeleteAllClosedFileRequestsErrorEmailUnverified = "email_unverified"
+	DeleteAllClosedFileRequestsErrorValidationError = "validation_error"
+)
+
+// DeleteAllClosedFileRequestsResult : Result for `deleteAllClosed`.
+type DeleteAllClosedFileRequestsResult struct {
+	// FileRequests : The file requests deleted for this user.
+	FileRequests []*FileRequest `json:"file_requests"`
+}
+
+// NewDeleteAllClosedFileRequestsResult returns a new DeleteAllClosedFileRequestsResult instance
+func NewDeleteAllClosedFileRequestsResult(FileRequests []*FileRequest) *DeleteAllClosedFileRequestsResult {
+	s := new(DeleteAllClosedFileRequestsResult)
+	s.FileRequests = FileRequests
+	return s
+}
+
+// DeleteFileRequestArgs : Arguments for `delete`.
+type DeleteFileRequestArgs struct {
+	// Ids : List IDs of the file requests to delete.
+	Ids []string `json:"ids"`
+}
+
+// NewDeleteFileRequestArgs returns a new DeleteFileRequestArgs instance
+func NewDeleteFileRequestArgs(Ids []string) *DeleteFileRequestArgs {
+	s := new(DeleteFileRequestArgs)
+	s.Ids = Ids
+	return s
+}
+
+// DeleteFileRequestError : There was an error deleting these file requests.
+type DeleteFileRequestError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DeleteFileRequestError
+const (
+	DeleteFileRequestErrorDisabledForTeam = "disabled_for_team"
+	DeleteFileRequestErrorOther           = "other"
+	DeleteFileRequestErrorNotFound        = "not_found"
+	DeleteFileRequestErrorNotAFolder      = "not_a_folder"
+	DeleteFileRequestErrorAppLacksAccess  = "app_lacks_access"
+	DeleteFileRequestErrorNoPermission    = "no_permission"
+	DeleteFileRequestErrorEmailUnverified = "email_unverified"
+	DeleteFileRequestErrorValidationError = "validation_error"
+	DeleteFileRequestErrorFileRequestOpen = "file_request_open"
+)
+
+// DeleteFileRequestsResult : Result for `delete`.
+type DeleteFileRequestsResult struct {
+	// FileRequests : The file requests deleted by the request.
+	FileRequests []*FileRequest `json:"file_requests"`
+}
+
+// NewDeleteFileRequestsResult returns a new DeleteFileRequestsResult instance
+func NewDeleteFileRequestsResult(FileRequests []*FileRequest) *DeleteFileRequestsResult {
+	s := new(DeleteFileRequestsResult)
+	s.FileRequests = FileRequests
+	return s
+}
 
 // FileRequest : A `file request` <https://www.dropbox.com/help/9090> for
 // receiving files into the user's Dropbox account.
@@ -202,6 +301,47 @@ const (
 	GracePeriodOther      = "other"
 )
 
+// ListFileRequestsArg : Arguments for `list`.
+type ListFileRequestsArg struct {
+	// Limit : The maximum number of file requests that should be returned per
+	// request.
+	Limit uint64 `json:"limit"`
+}
+
+// NewListFileRequestsArg returns a new ListFileRequestsArg instance
+func NewListFileRequestsArg() *ListFileRequestsArg {
+	s := new(ListFileRequestsArg)
+	s.Limit = 1000
+	return s
+}
+
+// ListFileRequestsContinueArg : has no documentation (yet)
+type ListFileRequestsContinueArg struct {
+	// Cursor : The cursor returned by the previous API call specified in the
+	// endpoint description.
+	Cursor string `json:"cursor"`
+}
+
+// NewListFileRequestsContinueArg returns a new ListFileRequestsContinueArg instance
+func NewListFileRequestsContinueArg(Cursor string) *ListFileRequestsContinueArg {
+	s := new(ListFileRequestsContinueArg)
+	s.Cursor = Cursor
+	return s
+}
+
+// ListFileRequestsContinueError : There was an error retrieving the file
+// requests.
+type ListFileRequestsContinueError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ListFileRequestsContinueError
+const (
+	ListFileRequestsContinueErrorDisabledForTeam = "disabled_for_team"
+	ListFileRequestsContinueErrorOther           = "other"
+	ListFileRequestsContinueErrorInvalidCursor   = "invalid_cursor"
+)
+
 // ListFileRequestsError : There was an error retrieving the file requests.
 type ListFileRequestsError struct {
 	dropbox.Tagged
@@ -224,6 +364,29 @@ type ListFileRequestsResult struct {
 func NewListFileRequestsResult(FileRequests []*FileRequest) *ListFileRequestsResult {
 	s := new(ListFileRequestsResult)
 	s.FileRequests = FileRequests
+	return s
+}
+
+// ListFileRequestsV2Result : Result for `list` and `listContinue`.
+type ListFileRequestsV2Result struct {
+	// FileRequests : The file requests owned by this user. Apps with the app
+	// folder permission will only see file requests in their app folder.
+	FileRequests []*FileRequest `json:"file_requests"`
+	// Cursor : Pass the cursor into `listContinue` to obtain additional file
+	// requests.
+	Cursor string `json:"cursor"`
+	// HasMore : Is true if there are additional file requests that have not
+	// been returned yet. An additional call to :route:list/continue` can
+	// retrieve them.
+	HasMore bool `json:"has_more"`
+}
+
+// NewListFileRequestsV2Result returns a new ListFileRequestsV2Result instance
+func NewListFileRequestsV2Result(FileRequests []*FileRequest, Cursor string, HasMore bool) *ListFileRequestsV2Result {
+	s := new(ListFileRequestsV2Result)
+	s.FileRequests = FileRequests
+	s.Cursor = Cursor
+	s.HasMore = HasMore
 	return s
 }
 

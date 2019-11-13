@@ -37,8 +37,8 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "5.5.0"
-	specVersion   = "097e9ba"
+	sdkVersion    = "5.6.0"
+	specVersion   = "0e697d7"
 )
 
 // Version returns the current SDK version and API Spec version
