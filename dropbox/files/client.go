@@ -481,7 +481,7 @@ func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -1640,7 +1640,7 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	for k, v := range arg.ExtraHeaders {
 		headers[k] = v
@@ -1710,7 +1710,7 @@ func (dbx *apiImpl) DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, co
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -1777,7 +1777,7 @@ func (dbx *apiImpl) Export(arg *ExportArg) (res *ExportResult, content io.ReadCl
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -1921,7 +1921,7 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -2120,7 +2120,7 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -2187,7 +2187,7 @@ func (dbx *apiImpl) GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbn
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3696,7 +3696,7 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3763,7 +3763,7 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3828,7 +3828,7 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -3890,7 +3890,7 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -4089,7 +4089,7 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID

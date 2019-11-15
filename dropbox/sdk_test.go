@@ -21,6 +21,7 @@
 package dropbox_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -167,5 +168,59 @@ func TestAccessError(t *testing.T) {
 	}
 	if re.AccessError.PaperAccessDenied.Tag != auth.PaperAccessErrorNotPaperUser {
 		t.Errorf("Unexpected tag: %s\n", re.AccessError.PaperAccessDenied.Tag)
+	}
+}
+
+func TestHTTPHeaderSafeJSON(t *testing.T) {
+	for _, test := range []struct {
+		name string
+		in   interface{}
+		want string
+	}{
+		{
+			name: "empty string",
+			in:   ``,
+			want: `""`,
+		},
+		{
+			name: "integer",
+			in:   123,
+			want: `123`,
+		},
+		{
+			name: "normal string",
+			in:   `Normal string!`,
+			want: `"Normal string!"`,
+		},
+		{
+			name: "unicode",
+			in:   `üñîcødé`,
+			want: `"\u00fc\u00f1\u00eec\u00f8d\u00e9"`,
+		},
+		{
+			name: "7f",
+			in:   "\x7f",
+			want: `"\u007f"`,
+		},
+		{
+			name: "example from the docs",
+			in: struct {
+				Field string `json:"field"`
+			}{
+				Field: "some_üñîcødé_and_\x7F",
+			},
+			want: `{"field":"some_\u00fc\u00f1\u00eec\u00f8d\u00e9_and_\u007f"}`,
+		},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			b, err := json.Marshal(test.in)
+			if err != nil {
+				t.Fatal(err)
+			}
+			got := dropbox.HTTPHeaderSafeJSON(b)
+			if got != test.want {
+				t.Errorf("Want %q got %q", test.want, got)
+			}
+		})
 	}
 }

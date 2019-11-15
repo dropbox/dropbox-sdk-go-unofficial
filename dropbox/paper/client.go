@@ -178,7 +178,7 @@ func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res 
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -244,7 +244,7 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 	}
 
 	headers := map[string]string{
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
@@ -830,7 +830,7 @@ func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res 
 
 	headers := map[string]string{
 		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": string(b),
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
 	}
 	if dbx.Config.AsMemberID != "" {
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
