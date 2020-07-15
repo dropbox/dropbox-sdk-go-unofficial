@@ -23,7 +23,7 @@ from go_helpers import (
     generate_doc,
     needs_base_type,
     _needs_base_type,
-    GoImportHelper)
+    GoImportHelper, GENERATED_HEADER)
 
 
 class GoTypesBackend(CodeBackend):
@@ -48,6 +48,8 @@ class GoTypesBackend(CodeBackend):
             self.import_helper.reset()
 
             self.emit_raw(HEADER)
+            self.emit()
+            self.emit_raw(GENERATED_HEADER)
             self.emit()
             generate_doc(self, namespace)
 

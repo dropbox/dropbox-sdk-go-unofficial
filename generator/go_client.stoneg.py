@@ -15,11 +15,10 @@ from go_helpers import (
     fmt_type,
     fmt_var,
     generate_doc,
-    GoImportHelper)
+    GoImportHelper, GENERATED_HEADER)
 
 
 class GoClientBackend(CodeBackend):
-
 
     def __init__(self, target_folder_path, args):
         # type: (str, typing.Optional[typing.Sequence[str]]) -> None
@@ -37,6 +36,9 @@ class GoClientBackend(CodeBackend):
         with self.output_to_relative_path(file_name):
             self.import_helper.reset()
             self.emit_raw(HEADER)
+
+            self.emit()
+            self.emit_raw(GENERATED_HEADER)
             self.emit()
             self.emit('package %s' % namespace.name)
             self.emit()
