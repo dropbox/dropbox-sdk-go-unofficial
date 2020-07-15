@@ -46,9 +46,8 @@
 package file_properties
 
 import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // AddPropertiesArg : has no documentation (yet)
@@ -59,7 +58,6 @@ type AddPropertiesArg struct {
 	// file.
 	PropertyGroups []*PropertyGroup `json:"property_groups"`
 }
-
 // NewAddPropertiesArg returns a new AddPropertiesArg instance
 func NewAddPropertiesArg(Path string, PropertyGroups []*PropertyGroup) *AddPropertiesArg {
 	s := new(AddPropertiesArg)
@@ -67,6 +65,7 @@ func NewAddPropertiesArg(Path string, PropertyGroups []*PropertyGroup) *AddPrope
 	s.PropertyGroups = PropertyGroups
 	return s
 }
+
 
 // TemplateError : has no documentation (yet)
 type TemplateError struct {
@@ -77,9 +76,9 @@ type TemplateError struct {
 
 // Valid tag values for TemplateError
 const (
-	TemplateErrorTemplateNotFound  = "template_not_found"
+	TemplateErrorTemplateNotFound = "template_not_found"
 	TemplateErrorRestrictedContent = "restricted_content"
-	TemplateErrorOther             = "other"
+	TemplateErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TemplateError instance
@@ -96,8 +95,8 @@ func (u *TemplateError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
@@ -117,10 +116,10 @@ type PropertiesError struct {
 
 // Valid tag values for PropertiesError
 const (
-	PropertiesErrorTemplateNotFound  = "template_not_found"
+	PropertiesErrorTemplateNotFound = "template_not_found"
 	PropertiesErrorRestrictedContent = "restricted_content"
-	PropertiesErrorOther             = "other"
-	PropertiesErrorPath              = "path"
+	PropertiesErrorOther = "other"
+	PropertiesErrorPath = "path"
 	PropertiesErrorUnsupportedFolder = "unsupported_folder"
 )
 
@@ -140,14 +139,14 @@ func (u *PropertiesError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -167,13 +166,13 @@ type InvalidPropertyGroupError struct {
 
 // Valid tag values for InvalidPropertyGroupError
 const (
-	InvalidPropertyGroupErrorTemplateNotFound      = "template_not_found"
-	InvalidPropertyGroupErrorRestrictedContent     = "restricted_content"
-	InvalidPropertyGroupErrorOther                 = "other"
-	InvalidPropertyGroupErrorPath                  = "path"
-	InvalidPropertyGroupErrorUnsupportedFolder     = "unsupported_folder"
+	InvalidPropertyGroupErrorTemplateNotFound = "template_not_found"
+	InvalidPropertyGroupErrorRestrictedContent = "restricted_content"
+	InvalidPropertyGroupErrorOther = "other"
+	InvalidPropertyGroupErrorPath = "path"
+	InvalidPropertyGroupErrorUnsupportedFolder = "unsupported_folder"
 	InvalidPropertyGroupErrorPropertyFieldTooLarge = "property_field_too_large"
-	InvalidPropertyGroupErrorDoesNotFitTemplate    = "does_not_fit_template"
+	InvalidPropertyGroupErrorDoesNotFitTemplate = "does_not_fit_template"
 )
 
 // UnmarshalJSON deserializes into a InvalidPropertyGroupError instance
@@ -192,14 +191,14 @@ func (u *InvalidPropertyGroupError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -219,13 +218,13 @@ type AddPropertiesError struct {
 
 // Valid tag values for AddPropertiesError
 const (
-	AddPropertiesErrorTemplateNotFound           = "template_not_found"
-	AddPropertiesErrorRestrictedContent          = "restricted_content"
-	AddPropertiesErrorOther                      = "other"
-	AddPropertiesErrorPath                       = "path"
-	AddPropertiesErrorUnsupportedFolder          = "unsupported_folder"
-	AddPropertiesErrorPropertyFieldTooLarge      = "property_field_too_large"
-	AddPropertiesErrorDoesNotFitTemplate         = "does_not_fit_template"
+	AddPropertiesErrorTemplateNotFound = "template_not_found"
+	AddPropertiesErrorRestrictedContent = "restricted_content"
+	AddPropertiesErrorOther = "other"
+	AddPropertiesErrorPath = "path"
+	AddPropertiesErrorUnsupportedFolder = "unsupported_folder"
+	AddPropertiesErrorPropertyFieldTooLarge = "property_field_too_large"
+	AddPropertiesErrorDoesNotFitTemplate = "does_not_fit_template"
 	AddPropertiesErrorPropertyGroupAlreadyExists = "property_group_already_exists"
 )
 
@@ -245,14 +244,14 @@ func (u *AddPropertiesError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -263,17 +262,15 @@ func (u *AddPropertiesError) UnmarshalJSON(body []byte) error {
 
 // PropertyGroupTemplate : Defines how a property group may be structured.
 type PropertyGroupTemplate struct {
-	// Name : Display name for the template. Template names can be up to 256
-	// bytes.
+	// Name : Display name for the template. Template names can be up to 256 bytes.
 	Name string `json:"name"`
-	// Description : Description for the template. Template descriptions can be
-	// up to 1024 bytes.
+	// Description : Description for the template. Template descriptions can be up
+	// to 1024 bytes.
 	Description string `json:"description"`
-	// Fields : Definitions of the property fields associated with this
-	// template. There can be up to 32 properties in a single template.
+	// Fields : Definitions of the property fields associated with this template.
+	// There can be up to 32 properties in a single template.
 	Fields []*PropertyFieldTemplate `json:"fields"`
 }
-
 // NewPropertyGroupTemplate returns a new PropertyGroupTemplate instance
 func NewPropertyGroupTemplate(Name string, Description string, Fields []*PropertyFieldTemplate) *PropertyGroupTemplate {
 	s := new(PropertyGroupTemplate)
@@ -283,11 +280,11 @@ func NewPropertyGroupTemplate(Name string, Description string, Fields []*Propert
 	return s
 }
 
+
 // AddTemplateArg : has no documentation (yet)
 type AddTemplateArg struct {
 	PropertyGroupTemplate
 }
-
 // NewAddTemplateArg returns a new AddTemplateArg instance
 func NewAddTemplateArg(Name string, Description string, Fields []*PropertyFieldTemplate) *AddTemplateArg {
 	s := new(AddTemplateArg)
@@ -297,13 +294,13 @@ func NewAddTemplateArg(Name string, Description string, Fields []*PropertyFieldT
 	return s
 }
 
+
 // AddTemplateResult : has no documentation (yet)
 type AddTemplateResult struct {
-	// TemplateId : An identifier for template added by  See
-	// `templatesAddForUser` or `templatesAddForTeam`.
+	// TemplateId : An identifier for template added by  See `templatesAddForUser`
+	// or `templatesAddForTeam`.
 	TemplateId string `json:"template_id"`
 }
-
 // NewAddTemplateResult returns a new AddTemplateResult instance
 func NewAddTemplateResult(TemplateId string) *AddTemplateResult {
 	s := new(AddTemplateResult)
@@ -311,13 +308,13 @@ func NewAddTemplateResult(TemplateId string) *AddTemplateResult {
 	return s
 }
 
+
 // GetTemplateArg : has no documentation (yet)
 type GetTemplateArg struct {
 	// TemplateId : An identifier for template added by route  See
 	// `templatesAddForUser` or `templatesAddForTeam`.
 	TemplateId string `json:"template_id"`
 }
-
 // NewGetTemplateArg returns a new GetTemplateArg instance
 func NewGetTemplateArg(TemplateId string) *GetTemplateArg {
 	s := new(GetTemplateArg)
@@ -325,11 +322,11 @@ func NewGetTemplateArg(TemplateId string) *GetTemplateArg {
 	return s
 }
 
+
 // GetTemplateResult : has no documentation (yet)
 type GetTemplateResult struct {
 	PropertyGroupTemplate
 }
-
 // NewGetTemplateResult returns a new GetTemplateResult instance
 func NewGetTemplateResult(Name string, Description string, Fields []*PropertyFieldTemplate) *GetTemplateResult {
 	s := new(GetTemplateResult)
@@ -339,19 +336,20 @@ func NewGetTemplateResult(Name string, Description string, Fields []*PropertyFie
 	return s
 }
 
+
 // ListTemplateResult : has no documentation (yet)
 type ListTemplateResult struct {
 	// TemplateIds : List of identifiers for templates added by  See
 	// `templatesAddForUser` or `templatesAddForTeam`.
 	TemplateIds []string `json:"template_ids"`
 }
-
 // NewListTemplateResult returns a new ListTemplateResult instance
 func NewListTemplateResult(TemplateIds []string) *ListTemplateResult {
 	s := new(ListTemplateResult)
 	s.TemplateIds = TemplateIds
 	return s
 }
+
 
 // LogicalOperator : Logical operator to join search queries together.
 type LogicalOperator struct {
@@ -361,7 +359,7 @@ type LogicalOperator struct {
 // Valid tag values for LogicalOperator
 const (
 	LogicalOperatorOrOperator = "or_operator"
-	LogicalOperatorOther      = "other"
+	LogicalOperatorOther = "other"
 )
 
 // LookUpPropertiesError : has no documentation (yet)
@@ -372,7 +370,7 @@ type LookUpPropertiesError struct {
 // Valid tag values for LookUpPropertiesError
 const (
 	LookUpPropertiesErrorPropertyGroupNotFound = "property_group_not_found"
-	LookUpPropertiesErrorOther                 = "other"
+	LookUpPropertiesErrorOther = "other"
 )
 
 // LookupError : has no documentation (yet)
@@ -384,12 +382,12 @@ type LookupError struct {
 
 // Valid tag values for LookupError
 const (
-	LookupErrorMalformedPath     = "malformed_path"
-	LookupErrorNotFound          = "not_found"
-	LookupErrorNotFile           = "not_file"
-	LookupErrorNotFolder         = "not_folder"
+	LookupErrorMalformedPath = "malformed_path"
+	LookupErrorNotFound = "not_found"
+	LookupErrorNotFile = "not_file"
+	LookupErrorNotFolder = "not_folder"
 	LookupErrorRestrictedContent = "restricted_content"
-	LookupErrorOther             = "other"
+	LookupErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a LookupError instance
@@ -406,8 +404,8 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "malformed_path":
-		u.MalformedPath = w.MalformedPath
+		case "malformed_path":
+			u.MalformedPath = w.MalformedPath
 
 		if err != nil {
 			return err
@@ -425,12 +423,12 @@ type ModifyTemplateError struct {
 
 // Valid tag values for ModifyTemplateError
 const (
-	ModifyTemplateErrorTemplateNotFound          = "template_not_found"
-	ModifyTemplateErrorRestrictedContent         = "restricted_content"
-	ModifyTemplateErrorOther                     = "other"
-	ModifyTemplateErrorConflictingPropertyNames  = "conflicting_property_names"
-	ModifyTemplateErrorTooManyProperties         = "too_many_properties"
-	ModifyTemplateErrorTooManyTemplates          = "too_many_templates"
+	ModifyTemplateErrorTemplateNotFound = "template_not_found"
+	ModifyTemplateErrorRestrictedContent = "restricted_content"
+	ModifyTemplateErrorOther = "other"
+	ModifyTemplateErrorConflictingPropertyNames = "conflicting_property_names"
+	ModifyTemplateErrorTooManyProperties = "too_many_properties"
+	ModifyTemplateErrorTooManyTemplates = "too_many_templates"
 	ModifyTemplateErrorTemplateAttributeTooLarge = "template_attribute_too_large"
 )
 
@@ -448,8 +446,8 @@ func (u *ModifyTemplateError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
@@ -465,7 +463,6 @@ type OverwritePropertyGroupArg struct {
 	// PropertyGroups : The property groups "snapshot" updates to force apply.
 	PropertyGroups []*PropertyGroup `json:"property_groups"`
 }
-
 // NewOverwritePropertyGroupArg returns a new OverwritePropertyGroupArg instance
 func NewOverwritePropertyGroupArg(Path string, PropertyGroups []*PropertyGroup) *OverwritePropertyGroupArg {
 	s := new(OverwritePropertyGroupArg)
@@ -474,22 +471,23 @@ func NewOverwritePropertyGroupArg(Path string, PropertyGroups []*PropertyGroup) 
 	return s
 }
 
+
 // PropertiesSearchArg : has no documentation (yet)
 type PropertiesSearchArg struct {
 	// Queries : Queries to search.
 	Queries []*PropertiesSearchQuery `json:"queries"`
-	// TemplateFilter : Filter results to contain only properties associated
-	// with these template IDs.
+	// TemplateFilter : Filter results to contain only properties associated with
+	// these template IDs.
 	TemplateFilter *TemplateFilter `json:"template_filter"`
 }
-
 // NewPropertiesSearchArg returns a new PropertiesSearchArg instance
 func NewPropertiesSearchArg(Queries []*PropertiesSearchQuery) *PropertiesSearchArg {
 	s := new(PropertiesSearchArg)
 	s.Queries = Queries
-	s.TemplateFilter = &TemplateFilter{Tagged: dropbox.Tagged{"filter_none"}}
+	s.TemplateFilter = &TemplateFilter{Tagged:dropbox.Tagged{"filter_none"}}
 	return s
 }
+
 
 // PropertiesSearchContinueArg : has no documentation (yet)
 type PropertiesSearchContinueArg struct {
@@ -497,13 +495,13 @@ type PropertiesSearchContinueArg struct {
 	// `propertiesSearchContinue`.
 	Cursor string `json:"cursor"`
 }
-
 // NewPropertiesSearchContinueArg returns a new PropertiesSearchContinueArg instance
 func NewPropertiesSearchContinueArg(Cursor string) *PropertiesSearchContinueArg {
 	s := new(PropertiesSearchContinueArg)
 	s.Cursor = Cursor
 	return s
 }
+
 
 // PropertiesSearchContinueError : has no documentation (yet)
 type PropertiesSearchContinueError struct {
@@ -526,7 +524,7 @@ type PropertiesSearchError struct {
 // Valid tag values for PropertiesSearchError
 const (
 	PropertiesSearchErrorPropertyGroupLookup = "property_group_lookup"
-	PropertiesSearchErrorOther               = "other"
+	PropertiesSearchErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a PropertiesSearchError instance
@@ -543,8 +541,8 @@ func (u *PropertiesSearchError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "property_group_lookup":
-		u.PropertyGroupLookup = w.PropertyGroupLookup
+		case "property_group_lookup":
+			u.PropertyGroupLookup = w.PropertyGroupLookup
 
 		if err != nil {
 			return err
@@ -564,7 +562,6 @@ type PropertiesSearchMatch struct {
 	// PropertyGroups : List of custom property groups associated with the file.
 	PropertyGroups []*PropertyGroup `json:"property_groups"`
 }
-
 // NewPropertiesSearchMatch returns a new PropertiesSearchMatch instance
 func NewPropertiesSearchMatch(Id string, Path string, IsDeleted bool, PropertyGroups []*PropertyGroup) *PropertiesSearchMatch {
 	s := new(PropertiesSearchMatch)
@@ -574,6 +571,7 @@ func NewPropertiesSearchMatch(Id string, Path string, IsDeleted bool, PropertyGr
 	s.PropertyGroups = PropertyGroups
 	return s
 }
+
 
 // PropertiesSearchMode : has no documentation (yet)
 type PropertiesSearchMode struct {
@@ -585,7 +583,7 @@ type PropertiesSearchMode struct {
 // Valid tag values for PropertiesSearchMode
 const (
 	PropertiesSearchModeFieldName = "field_name"
-	PropertiesSearchModeOther     = "other"
+	PropertiesSearchModeOther = "other"
 )
 
 // UnmarshalJSON deserializes into a PropertiesSearchMode instance
@@ -602,8 +600,8 @@ func (u *PropertiesSearchMode) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "field_name":
-		u.FieldName = w.FieldName
+		case "field_name":
+			u.FieldName = w.FieldName
 
 		if err != nil {
 			return err
@@ -621,26 +619,24 @@ type PropertiesSearchQuery struct {
 	// LogicalOperator : The logical operator with which to append the query.
 	LogicalOperator *LogicalOperator `json:"logical_operator"`
 }
-
 // NewPropertiesSearchQuery returns a new PropertiesSearchQuery instance
 func NewPropertiesSearchQuery(Query string, Mode *PropertiesSearchMode) *PropertiesSearchQuery {
 	s := new(PropertiesSearchQuery)
 	s.Query = Query
 	s.Mode = Mode
-	s.LogicalOperator = &LogicalOperator{Tagged: dropbox.Tagged{"or_operator"}}
+	s.LogicalOperator = &LogicalOperator{Tagged:dropbox.Tagged{"or_operator"}}
 	return s
 }
+
 
 // PropertiesSearchResult : has no documentation (yet)
 type PropertiesSearchResult struct {
 	// Matches : A list (possibly empty) of matches for the query.
 	Matches []*PropertiesSearchMatch `json:"matches"`
 	// Cursor : Pass the cursor into `propertiesSearchContinue` to continue to
-	// receive search results. Cursor will be null when there are no more
-	// results.
+	// receive search results. Cursor will be null when there are no more results.
 	Cursor string `json:"cursor,omitempty"`
 }
-
 // NewPropertiesSearchResult returns a new PropertiesSearchResult instance
 func NewPropertiesSearchResult(Matches []*PropertiesSearchMatch) *PropertiesSearchResult {
 	s := new(PropertiesSearchResult)
@@ -648,17 +644,17 @@ func NewPropertiesSearchResult(Matches []*PropertiesSearchMatch) *PropertiesSear
 	return s
 }
 
+
 // PropertyField : Raw key/value data to be associated with a Dropbox file.
 // Property fields are added to Dropbox files as a `PropertyGroup`.
 type PropertyField struct {
-	// Name : Key of the property field associated with a file and template.
-	// Keys can be up to 256 bytes.
+	// Name : Key of the property field associated with a file and template. Keys
+	// can be up to 256 bytes.
 	Name string `json:"name"`
 	// Value : Value of the property field associated with a file and template.
 	// Values can be up to 1024 bytes.
 	Value string `json:"value"`
 }
-
 // NewPropertyField returns a new PropertyField instance
 func NewPropertyField(Name string, Value string) *PropertyField {
 	s := new(PropertyField)
@@ -667,20 +663,20 @@ func NewPropertyField(Name string, Value string) *PropertyField {
 	return s
 }
 
+
 // PropertyFieldTemplate : Defines how a single property field may be
 // structured. Used exclusively by `PropertyGroupTemplate`.
 type PropertyFieldTemplate struct {
-	// Name : Key of the property field being described. Property field keys can
-	// be up to 256 bytes.
+	// Name : Key of the property field being described. Property field keys can be
+	// up to 256 bytes.
 	Name string `json:"name"`
-	// Description : Description of the property field. Property field
-	// descriptions can be up to 1024 bytes.
+	// Description : Description of the property field. Property field descriptions
+	// can be up to 1024 bytes.
 	Description string `json:"description"`
 	// Type : Data type of the value of this property field. This type will be
 	// enforced upon property creation and modifications.
 	Type *PropertyType `json:"type"`
 }
-
 // NewPropertyFieldTemplate returns a new PropertyFieldTemplate instance
 func NewPropertyFieldTemplate(Name string, Description string, Type *PropertyType) *PropertyFieldTemplate {
 	s := new(PropertyFieldTemplate)
@@ -690,6 +686,7 @@ func NewPropertyFieldTemplate(Name string, Description string, Type *PropertyTyp
 	return s
 }
 
+
 // PropertyGroup : A subset of the property fields described by the
 // corresponding `PropertyGroupTemplate`. Properties are always added to a
 // Dropbox file as a `PropertyGroup`. The possible key names and value types in
@@ -697,11 +694,10 @@ func NewPropertyFieldTemplate(Name string, Description string, Type *PropertyTyp
 type PropertyGroup struct {
 	// TemplateId : A unique identifier for the associated template.
 	TemplateId string `json:"template_id"`
-	// Fields : The actual properties associated with the template. There can be
-	// up to 32 property types per template.
+	// Fields : The actual properties associated with the template. There can be up
+	// to 32 property types per template.
 	Fields []*PropertyField `json:"fields"`
 }
-
 // NewPropertyGroup returns a new PropertyGroup instance
 func NewPropertyGroup(TemplateId string, Fields []*PropertyField) *PropertyGroup {
 	s := new(PropertyGroup)
@@ -710,24 +706,25 @@ func NewPropertyGroup(TemplateId string, Fields []*PropertyField) *PropertyGroup
 	return s
 }
 
+
 // PropertyGroupUpdate : has no documentation (yet)
 type PropertyGroupUpdate struct {
 	// TemplateId : A unique identifier for a property template.
 	TemplateId string `json:"template_id"`
-	// AddOrUpdateFields : Property fields to update. If the property field
-	// already exists, it is updated. If the property field doesn't exist, the
-	// property group is added.
+	// AddOrUpdateFields : Property fields to update. If the property field already
+	// exists, it is updated. If the property field doesn't exist, the property
+	// group is added.
 	AddOrUpdateFields []*PropertyField `json:"add_or_update_fields,omitempty"`
 	// RemoveFields : Property fields to remove (by name), provided they exist.
 	RemoveFields []string `json:"remove_fields,omitempty"`
 }
-
 // NewPropertyGroupUpdate returns a new PropertyGroupUpdate instance
 func NewPropertyGroupUpdate(TemplateId string) *PropertyGroupUpdate {
 	s := new(PropertyGroupUpdate)
 	s.TemplateId = TemplateId
 	return s
 }
+
 
 // PropertyType : Data type of the given property field added.
 type PropertyType struct {
@@ -737,7 +734,7 @@ type PropertyType struct {
 // Valid tag values for PropertyType
 const (
 	PropertyTypeString = "string"
-	PropertyTypeOther  = "other"
+	PropertyTypeOther = "other"
 )
 
 // RemovePropertiesArg : has no documentation (yet)
@@ -748,7 +745,6 @@ type RemovePropertiesArg struct {
 	// `templatesAddForUser` or `templatesAddForTeam`.
 	PropertyTemplateIds []string `json:"property_template_ids"`
 }
-
 // NewRemovePropertiesArg returns a new RemovePropertiesArg instance
 func NewRemovePropertiesArg(Path string, PropertyTemplateIds []string) *RemovePropertiesArg {
 	s := new(RemovePropertiesArg)
@@ -756,6 +752,7 @@ func NewRemovePropertiesArg(Path string, PropertyTemplateIds []string) *RemovePr
 	s.PropertyTemplateIds = PropertyTemplateIds
 	return s
 }
+
 
 // RemovePropertiesError : has no documentation (yet)
 type RemovePropertiesError struct {
@@ -770,11 +767,11 @@ type RemovePropertiesError struct {
 
 // Valid tag values for RemovePropertiesError
 const (
-	RemovePropertiesErrorTemplateNotFound    = "template_not_found"
-	RemovePropertiesErrorRestrictedContent   = "restricted_content"
-	RemovePropertiesErrorOther               = "other"
-	RemovePropertiesErrorPath                = "path"
-	RemovePropertiesErrorUnsupportedFolder   = "unsupported_folder"
+	RemovePropertiesErrorTemplateNotFound = "template_not_found"
+	RemovePropertiesErrorRestrictedContent = "restricted_content"
+	RemovePropertiesErrorOther = "other"
+	RemovePropertiesErrorPath = "path"
+	RemovePropertiesErrorUnsupportedFolder = "unsupported_folder"
 	RemovePropertiesErrorPropertyGroupLookup = "property_group_lookup"
 )
 
@@ -796,20 +793,20 @@ func (u *RemovePropertiesError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
-	case "property_group_lookup":
-		u.PropertyGroupLookup = w.PropertyGroupLookup
+		case "property_group_lookup":
+			u.PropertyGroupLookup = w.PropertyGroupLookup
 
 		if err != nil {
 			return err
@@ -820,11 +817,10 @@ func (u *RemovePropertiesError) UnmarshalJSON(body []byte) error {
 
 // RemoveTemplateArg : has no documentation (yet)
 type RemoveTemplateArg struct {
-	// TemplateId : An identifier for a template created by
-	// `templatesAddForUser` or `templatesAddForTeam`.
+	// TemplateId : An identifier for a template created by `templatesAddForUser`
+	// or `templatesAddForTeam`.
 	TemplateId string `json:"template_id"`
 }
-
 // NewRemoveTemplateArg returns a new RemoveTemplateArg instance
 func NewRemoveTemplateArg(TemplateId string) *RemoveTemplateArg {
 	s := new(RemoveTemplateArg)
@@ -832,18 +828,19 @@ func NewRemoveTemplateArg(TemplateId string) *RemoveTemplateArg {
 	return s
 }
 
+
 // TemplateFilterBase : has no documentation (yet)
 type TemplateFilterBase struct {
 	dropbox.Tagged
-	// FilterSome : Only templates with an ID in the supplied list will be
-	// returned (a subset of templates will be returned).
+	// FilterSome : Only templates with an ID in the supplied list will be returned
+	// (a subset of templates will be returned).
 	FilterSome []string `json:"filter_some,omitempty"`
 }
 
 // Valid tag values for TemplateFilterBase
 const (
 	TemplateFilterBaseFilterSome = "filter_some"
-	TemplateFilterBaseOther      = "other"
+	TemplateFilterBaseOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TemplateFilterBase instance
@@ -861,8 +858,8 @@ func (u *TemplateFilterBase) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "filter_some":
-		u.FilterSome = w.FilterSome
+		case "filter_some":
+			u.FilterSome = w.FilterSome
 
 		if err != nil {
 			return err
@@ -874,15 +871,15 @@ func (u *TemplateFilterBase) UnmarshalJSON(body []byte) error {
 // TemplateFilter : has no documentation (yet)
 type TemplateFilter struct {
 	dropbox.Tagged
-	// FilterSome : Only templates with an ID in the supplied list will be
-	// returned (a subset of templates will be returned).
+	// FilterSome : Only templates with an ID in the supplied list will be returned
+	// (a subset of templates will be returned).
 	FilterSome []string `json:"filter_some,omitempty"`
 }
 
 // Valid tag values for TemplateFilter
 const (
 	TemplateFilterFilterSome = "filter_some"
-	TemplateFilterOther      = "other"
+	TemplateFilterOther = "other"
 	TemplateFilterFilterNone = "filter_none"
 )
 
@@ -901,8 +898,8 @@ func (u *TemplateFilter) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "filter_some":
-		u.FilterSome = w.FilterSome
+		case "filter_some":
+			u.FilterSome = w.FilterSome
 
 		if err != nil {
 			return err
@@ -918,8 +915,8 @@ type TemplateOwnerType struct {
 
 // Valid tag values for TemplateOwnerType
 const (
-	TemplateOwnerTypeUser  = "user"
-	TemplateOwnerTypeTeam  = "team"
+	TemplateOwnerTypeUser = "user"
+	TemplateOwnerTypeTeam = "team"
 	TemplateOwnerTypeOther = "other"
 )
 
@@ -930,7 +927,6 @@ type UpdatePropertiesArg struct {
 	// UpdatePropertyGroups : The property groups "delta" updates to apply.
 	UpdatePropertyGroups []*PropertyGroupUpdate `json:"update_property_groups"`
 }
-
 // NewUpdatePropertiesArg returns a new UpdatePropertiesArg instance
 func NewUpdatePropertiesArg(Path string, UpdatePropertyGroups []*PropertyGroupUpdate) *UpdatePropertiesArg {
 	s := new(UpdatePropertiesArg)
@@ -938,6 +934,7 @@ func NewUpdatePropertiesArg(Path string, UpdatePropertyGroups []*PropertyGroupUp
 	s.UpdatePropertyGroups = UpdatePropertyGroups
 	return s
 }
+
 
 // UpdatePropertiesError : has no documentation (yet)
 type UpdatePropertiesError struct {
@@ -952,14 +949,14 @@ type UpdatePropertiesError struct {
 
 // Valid tag values for UpdatePropertiesError
 const (
-	UpdatePropertiesErrorTemplateNotFound      = "template_not_found"
-	UpdatePropertiesErrorRestrictedContent     = "restricted_content"
-	UpdatePropertiesErrorOther                 = "other"
-	UpdatePropertiesErrorPath                  = "path"
-	UpdatePropertiesErrorUnsupportedFolder     = "unsupported_folder"
+	UpdatePropertiesErrorTemplateNotFound = "template_not_found"
+	UpdatePropertiesErrorRestrictedContent = "restricted_content"
+	UpdatePropertiesErrorOther = "other"
+	UpdatePropertiesErrorPath = "path"
+	UpdatePropertiesErrorUnsupportedFolder = "unsupported_folder"
 	UpdatePropertiesErrorPropertyFieldTooLarge = "property_field_too_large"
-	UpdatePropertiesErrorDoesNotFitTemplate    = "does_not_fit_template"
-	UpdatePropertiesErrorPropertyGroupLookup   = "property_group_lookup"
+	UpdatePropertiesErrorDoesNotFitTemplate = "does_not_fit_template"
+	UpdatePropertiesErrorPropertyGroupLookup = "property_group_lookup"
 )
 
 // UnmarshalJSON deserializes into a UpdatePropertiesError instance
@@ -980,20 +977,20 @@ func (u *UpdatePropertiesError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "template_not_found":
-		u.TemplateNotFound = w.TemplateNotFound
+		case "template_not_found":
+			u.TemplateNotFound = w.TemplateNotFound
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
-	case "property_group_lookup":
-		u.PropertyGroupLookup = w.PropertyGroupLookup
+		case "property_group_lookup":
+			u.PropertyGroupLookup = w.PropertyGroupLookup
 
 		if err != nil {
 			return err
@@ -1004,20 +1001,19 @@ func (u *UpdatePropertiesError) UnmarshalJSON(body []byte) error {
 
 // UpdateTemplateArg : has no documentation (yet)
 type UpdateTemplateArg struct {
-	// TemplateId : An identifier for template added by  See
-	// `templatesAddForUser` or `templatesAddForTeam`.
+	// TemplateId : An identifier for template added by  See `templatesAddForUser`
+	// or `templatesAddForTeam`.
 	TemplateId string `json:"template_id"`
 	// Name : A display name for the template. template names can be up to 256
 	// bytes.
 	Name string `json:"name,omitempty"`
-	// Description : Description for the new template. Template descriptions can
-	// be up to 1024 bytes.
+	// Description : Description for the new template. Template descriptions can be
+	// up to 1024 bytes.
 	Description string `json:"description,omitempty"`
 	// AddFields : Property field templates to be added to the group template.
 	// There can be up to 32 properties in a single template.
 	AddFields []*PropertyFieldTemplate `json:"add_fields,omitempty"`
 }
-
 // NewUpdateTemplateArg returns a new UpdateTemplateArg instance
 func NewUpdateTemplateArg(TemplateId string) *UpdateTemplateArg {
 	s := new(UpdateTemplateArg)
@@ -1025,16 +1021,18 @@ func NewUpdateTemplateArg(TemplateId string) *UpdateTemplateArg {
 	return s
 }
 
+
 // UpdateTemplateResult : has no documentation (yet)
 type UpdateTemplateResult struct {
 	// TemplateId : An identifier for template added by route  See
 	// `templatesAddForUser` or `templatesAddForTeam`.
 	TemplateId string `json:"template_id"`
 }
-
 // NewUpdateTemplateResult returns a new UpdateTemplateResult instance
 func NewUpdateTemplateResult(TemplateId string) *UpdateTemplateResult {
 	s := new(UpdateTemplateResult)
 	s.TemplateId = TemplateId
 	return s
 }
+
+

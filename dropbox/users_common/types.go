@@ -22,7 +22,9 @@
 // the users namespace.
 package users_common
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import (
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
 
 // AccountType : What type of account this user has.
 type AccountType struct {
@@ -31,7 +33,8 @@ type AccountType struct {
 
 // Valid tag values for AccountType
 const (
-	AccountTypeBasic    = "basic"
-	AccountTypePro      = "pro"
+	AccountTypeBasic = "basic"
+	AccountTypePro = "pro"
 	AccountTypeBusiness = "business"
 )
+

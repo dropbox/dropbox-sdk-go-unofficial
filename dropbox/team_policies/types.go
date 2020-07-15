@@ -21,7 +21,9 @@
 // Package team_policies : has no documentation (yet)
 package team_policies
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import (
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
 
 // CameraUploadsPolicyState : has no documentation (yet)
 type CameraUploadsPolicyState struct {
@@ -31,8 +33,8 @@ type CameraUploadsPolicyState struct {
 // Valid tag values for CameraUploadsPolicyState
 const (
 	CameraUploadsPolicyStateDisabled = "disabled"
-	CameraUploadsPolicyStateEnabled  = "enabled"
-	CameraUploadsPolicyStateOther    = "other"
+	CameraUploadsPolicyStateEnabled = "enabled"
+	CameraUploadsPolicyStateOther = "other"
 )
 
 // EmmState : has no documentation (yet)
@@ -45,7 +47,7 @@ const (
 	EmmStateDisabled = "disabled"
 	EmmStateOptional = "optional"
 	EmmStateRequired = "required"
-	EmmStateOther    = "other"
+	EmmStateOther = "other"
 )
 
 // GroupCreation : has no documentation (yet)
@@ -56,7 +58,7 @@ type GroupCreation struct {
 // Valid tag values for GroupCreation
 const (
 	GroupCreationAdminsAndMembers = "admins_and_members"
-	GroupCreationAdminsOnly       = "admins_only"
+	GroupCreationAdminsOnly = "admins_only"
 )
 
 // OfficeAddInPolicy : has no documentation (yet)
@@ -67,8 +69,8 @@ type OfficeAddInPolicy struct {
 // Valid tag values for OfficeAddInPolicy
 const (
 	OfficeAddInPolicyDisabled = "disabled"
-	OfficeAddInPolicyEnabled  = "enabled"
-	OfficeAddInPolicyOther    = "other"
+	OfficeAddInPolicyEnabled = "enabled"
+	OfficeAddInPolicyOther = "other"
 )
 
 // PaperDefaultFolderPolicy : has no documentation (yet)
@@ -79,8 +81,8 @@ type PaperDefaultFolderPolicy struct {
 // Valid tag values for PaperDefaultFolderPolicy
 const (
 	PaperDefaultFolderPolicyEveryoneInTeam = "everyone_in_team"
-	PaperDefaultFolderPolicyInviteOnly     = "invite_only"
-	PaperDefaultFolderPolicyOther          = "other"
+	PaperDefaultFolderPolicyInviteOnly = "invite_only"
+	PaperDefaultFolderPolicyOther = "other"
 )
 
 // PaperDeploymentPolicy : has no documentation (yet)
@@ -90,9 +92,9 @@ type PaperDeploymentPolicy struct {
 
 // Valid tag values for PaperDeploymentPolicy
 const (
-	PaperDeploymentPolicyFull    = "full"
+	PaperDeploymentPolicyFull = "full"
 	PaperDeploymentPolicyPartial = "partial"
-	PaperDeploymentPolicyOther   = "other"
+	PaperDeploymentPolicyOther = "other"
 )
 
 // PaperDesktopPolicy : has no documentation (yet)
@@ -103,8 +105,8 @@ type PaperDesktopPolicy struct {
 // Valid tag values for PaperDesktopPolicy
 const (
 	PaperDesktopPolicyDisabled = "disabled"
-	PaperDesktopPolicyEnabled  = "enabled"
-	PaperDesktopPolicyOther    = "other"
+	PaperDesktopPolicyEnabled = "enabled"
+	PaperDesktopPolicyOther = "other"
 )
 
 // PaperEnabledPolicy : has no documentation (yet)
@@ -114,10 +116,10 @@ type PaperEnabledPolicy struct {
 
 // Valid tag values for PaperEnabledPolicy
 const (
-	PaperEnabledPolicyDisabled    = "disabled"
-	PaperEnabledPolicyEnabled     = "enabled"
+	PaperEnabledPolicyDisabled = "disabled"
+	PaperEnabledPolicyEnabled = "enabled"
 	PaperEnabledPolicyUnspecified = "unspecified"
-	PaperEnabledPolicyOther       = "other"
+	PaperEnabledPolicyOther = "other"
 )
 
 // PasswordStrengthPolicy : has no documentation (yet)
@@ -128,9 +130,9 @@ type PasswordStrengthPolicy struct {
 // Valid tag values for PasswordStrengthPolicy
 const (
 	PasswordStrengthPolicyMinimalRequirements = "minimal_requirements"
-	PasswordStrengthPolicyModeratePassword    = "moderate_password"
-	PasswordStrengthPolicyStrongPassword      = "strong_password"
-	PasswordStrengthPolicyOther               = "other"
+	PasswordStrengthPolicyModeratePassword = "moderate_password"
+	PasswordStrengthPolicyStrongPassword = "strong_password"
+	PasswordStrengthPolicyOther = "other"
 )
 
 // RolloutMethod : has no documentation (yet)
@@ -140,8 +142,8 @@ type RolloutMethod struct {
 
 // Valid tag values for RolloutMethod
 const (
-	RolloutMethodUnlinkAll             = "unlink_all"
-	RolloutMethodUnlinkMostInactive    = "unlink_most_inactive"
+	RolloutMethodUnlinkAll = "unlink_all"
+	RolloutMethodUnlinkMostInactive = "unlink_most_inactive"
 	RolloutMethodAddMemberToExceptions = "add_member_to_exceptions"
 )
 
@@ -154,8 +156,8 @@ type SharedFolderJoinPolicy struct {
 // Valid tag values for SharedFolderJoinPolicy
 const (
 	SharedFolderJoinPolicyFromTeamOnly = "from_team_only"
-	SharedFolderJoinPolicyFromAnyone   = "from_anyone"
-	SharedFolderJoinPolicyOther        = "other"
+	SharedFolderJoinPolicyFromAnyone = "from_anyone"
+	SharedFolderJoinPolicyOther = "other"
 )
 
 // SharedFolderMemberPolicy : Policy governing who can be a member of a folder
@@ -166,9 +168,9 @@ type SharedFolderMemberPolicy struct {
 
 // Valid tag values for SharedFolderMemberPolicy
 const (
-	SharedFolderMemberPolicyTeam   = "team"
+	SharedFolderMemberPolicyTeam = "team"
 	SharedFolderMemberPolicyAnyone = "anyone"
-	SharedFolderMemberPolicyOther  = "other"
+	SharedFolderMemberPolicyOther = "other"
 )
 
 // SharedLinkCreatePolicy : Policy governing the visibility of shared links.
@@ -179,10 +181,10 @@ type SharedLinkCreatePolicy struct {
 
 // Valid tag values for SharedLinkCreatePolicy
 const (
-	SharedLinkCreatePolicyDefaultPublic   = "default_public"
+	SharedLinkCreatePolicyDefaultPublic = "default_public"
 	SharedLinkCreatePolicyDefaultTeamOnly = "default_team_only"
-	SharedLinkCreatePolicyTeamOnly        = "team_only"
-	SharedLinkCreatePolicyOther           = "other"
+	SharedLinkCreatePolicyTeamOnly = "team_only"
+	SharedLinkCreatePolicyOther = "other"
 )
 
 // ShowcaseDownloadPolicy : has no documentation (yet)
@@ -193,8 +195,8 @@ type ShowcaseDownloadPolicy struct {
 // Valid tag values for ShowcaseDownloadPolicy
 const (
 	ShowcaseDownloadPolicyDisabled = "disabled"
-	ShowcaseDownloadPolicyEnabled  = "enabled"
-	ShowcaseDownloadPolicyOther    = "other"
+	ShowcaseDownloadPolicyEnabled = "enabled"
+	ShowcaseDownloadPolicyOther = "other"
 )
 
 // ShowcaseEnabledPolicy : has no documentation (yet)
@@ -205,8 +207,8 @@ type ShowcaseEnabledPolicy struct {
 // Valid tag values for ShowcaseEnabledPolicy
 const (
 	ShowcaseEnabledPolicyDisabled = "disabled"
-	ShowcaseEnabledPolicyEnabled  = "enabled"
-	ShowcaseEnabledPolicyOther    = "other"
+	ShowcaseEnabledPolicyEnabled = "enabled"
+	ShowcaseEnabledPolicyOther = "other"
 )
 
 // ShowcaseExternalSharingPolicy : has no documentation (yet)
@@ -217,8 +219,8 @@ type ShowcaseExternalSharingPolicy struct {
 // Valid tag values for ShowcaseExternalSharingPolicy
 const (
 	ShowcaseExternalSharingPolicyDisabled = "disabled"
-	ShowcaseExternalSharingPolicyEnabled  = "enabled"
-	ShowcaseExternalSharingPolicyOther    = "other"
+	ShowcaseExternalSharingPolicyEnabled = "enabled"
+	ShowcaseExternalSharingPolicyOther = "other"
 )
 
 // SmartSyncPolicy : has no documentation (yet)
@@ -228,9 +230,9 @@ type SmartSyncPolicy struct {
 
 // Valid tag values for SmartSyncPolicy
 const (
-	SmartSyncPolicyLocal    = "local"
+	SmartSyncPolicyLocal = "local"
 	SmartSyncPolicyOnDemand = "on_demand"
-	SmartSyncPolicyOther    = "other"
+	SmartSyncPolicyOther = "other"
 )
 
 // SsoPolicy : has no documentation (yet)
@@ -243,25 +245,24 @@ const (
 	SsoPolicyDisabled = "disabled"
 	SsoPolicyOptional = "optional"
 	SsoPolicyRequired = "required"
-	SsoPolicyOther    = "other"
+	SsoPolicyOther = "other"
 )
 
 // TeamMemberPolicies : Policies governing team members.
 type TeamMemberPolicies struct {
 	// Sharing : Policies governing sharing.
 	Sharing *TeamSharingPolicies `json:"sharing"`
-	// EmmState : This describes the Enterprise Mobility Management (EMM) state
-	// for this team. This information can be used to understand if an
-	// organization is integrating with a third-party EMM vendor to further
-	// manage and apply restrictions upon the team's Dropbox usage on mobile
-	// devices. This is a new feature and in the future we'll be adding more new
-	// fields and additional documentation.
+	// EmmState : This describes the Enterprise Mobility Management (EMM) state for
+	// this team. This information can be used to understand if an organization is
+	// integrating with a third-party EMM vendor to further manage and apply
+	// restrictions upon the team's Dropbox usage on mobile devices. This is a new
+	// feature and in the future we'll be adding more new fields and additional
+	// documentation.
 	EmmState *EmmState `json:"emm_state"`
 	// OfficeAddin : The admin policy around the Dropbox Office Add-In for this
 	// team.
 	OfficeAddin *OfficeAddInPolicy `json:"office_addin"`
 }
-
 // NewTeamMemberPolicies returns a new TeamMemberPolicies instance
 func NewTeamMemberPolicies(Sharing *TeamSharingPolicies, EmmState *EmmState, OfficeAddin *OfficeAddInPolicy) *TeamMemberPolicies {
 	s := new(TeamMemberPolicies)
@@ -270,6 +271,7 @@ func NewTeamMemberPolicies(Sharing *TeamSharingPolicies, EmmState *EmmState, Off
 	s.OfficeAddin = OfficeAddin
 	return s
 }
+
 
 // TeamSharingPolicies : Policies governing sharing within and outside of the
 // team.
@@ -281,7 +283,6 @@ type TeamSharingPolicies struct {
 	// SharedLinkCreatePolicy : Who can view shared links owned by team members.
 	SharedLinkCreatePolicy *SharedLinkCreatePolicy `json:"shared_link_create_policy"`
 }
-
 // NewTeamSharingPolicies returns a new TeamSharingPolicies instance
 func NewTeamSharingPolicies(SharedFolderMemberPolicy *SharedFolderMemberPolicy, SharedFolderJoinPolicy *SharedFolderJoinPolicy, SharedLinkCreatePolicy *SharedLinkCreatePolicy) *TeamSharingPolicies {
 	s := new(TeamSharingPolicies)
@@ -291,6 +292,7 @@ func NewTeamSharingPolicies(SharedFolderMemberPolicy *SharedFolderMemberPolicy, 
 	return s
 }
 
+
 // TwoStepVerificationPolicy : has no documentation (yet)
 type TwoStepVerificationPolicy struct {
 	dropbox.Tagged
@@ -298,9 +300,9 @@ type TwoStepVerificationPolicy struct {
 
 // Valid tag values for TwoStepVerificationPolicy
 const (
-	TwoStepVerificationPolicyRequireTfaEnable  = "require_tfa_enable"
+	TwoStepVerificationPolicyRequireTfaEnable = "require_tfa_enable"
 	TwoStepVerificationPolicyRequireTfaDisable = "require_tfa_disable"
-	TwoStepVerificationPolicyOther             = "other"
+	TwoStepVerificationPolicyOther = "other"
 )
 
 // TwoStepVerificationState : has no documentation (yet)
@@ -312,5 +314,6 @@ type TwoStepVerificationState struct {
 const (
 	TwoStepVerificationStateRequired = "required"
 	TwoStepVerificationStateOptional = "optional"
-	TwoStepVerificationStateOther    = "other"
+	TwoStepVerificationStateOther = "other"
 )
+

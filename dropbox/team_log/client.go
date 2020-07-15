@@ -21,161 +21,150 @@
 package team_log
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
+    bytes "bytes"
+    json "encoding/json"
+    dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+    auth "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
+    ioutil "io/ioutil"
+    http "net/http"
 )
-
 // Client interface describes all routes in this namespace
 type Client interface {
-	// GetEvents : Retrieves team events. Events have a lifespan of two years.
-	// Events older than two years will not be returned. Many attributes note
-	// 'may be missing due to historical data gap'. Note that the
-	// file_operations category and & analogous paper events are not available
-	// on all Dropbox Business `plans` </business/plans-comparison>. Use
-	// `features/get_values`
-	// </developers/documentation/http/teams#team-features-get_values> to check
-	// for this feature. Permission : Team Auditing.
-	GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)
-	// GetEventsContinue : Once a cursor has been retrieved from `getEvents`,
-	// use this to paginate through all events. Permission : Team Auditing.
-	GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error)
+    // GetEvents : Retrieves team events. Events have a lifespan of two years.
+    // Events older than two years will not be returned. Many attributes note
+    // 'may be missing due to historical data gap'. Note that the
+    // file_operations category and & analogous paper events are not available
+    // on all Dropbox Business `plans` </business/plans-comparison>. Use
+    // `features/get_values`
+    // </developers/documentation/http/teams#team-features-get_values> to check
+    // for this feature. Permission : Team Auditing.
+    GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)
+    // GetEventsContinue : Once a cursor has been retrieved from `getEvents`,
+    // use this to paginate through all events. Permission : Team Auditing.
+    GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error)
 }
 
 type apiImpl dropbox.Context
-
 //GetEventsAPIError is an error-wrapper for the get_events route
 type GetEventsAPIError struct {
-	dropbox.APIError
-	EndpointError *GetTeamEventsError `json:"error"`
+    dropbox.APIError
+    EndpointError *GetTeamEventsError `json:"error"`
 }
 
 func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error) {
-	cli := dbx.Client
+    cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
+    dbx.Config.LogDebug("arg: %v", arg)
+    b, err := json.Marshal(arg)
+    if err != nil {
+        return
+    }
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
+    headers := map[string]string{
+    	"Content-Type": "application/json",
+    }
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
+    req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events", headers, bytes.NewReader(b))
+    if err != nil {
+        return
+    }
+    dbx.Config.LogInfo("req: %v", req)
 
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
+    resp, err := cli.Do(req)
+    if err != nil {
+        return
+    }
 
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
+    dbx.Config.LogInfo("resp: %v", resp)
+    defer resp.Body.Close()
+    body, err := ioutil.ReadAll(resp.Body);if err != nil {
+        return
+    }
 
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
+    dbx.Config.LogDebug("body: %s", body)
+    if resp.StatusCode == http.StatusOK {
+        err = json.Unmarshal(body, &res);if err != nil {
+            return
+        }
 
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError GetEventsAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
+        return
+    }
+    if resp.StatusCode == http.StatusConflict {
+        var apiError GetEventsAPIError
+        err = json.Unmarshal(body, &apiError);if err != nil {
+            return
+        }
+        err = apiError
+        return
+    }
+    err = auth.HandleCommonAuthErrors(dbx.Config, resp, body);if err != nil {
+        return
+    }
+    err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+    return
 }
 
 //GetEventsContinueAPIError is an error-wrapper for the get_events/continue route
 type GetEventsContinueAPIError struct {
-	dropbox.APIError
-	EndpointError *GetTeamEventsContinueError `json:"error"`
+    dropbox.APIError
+    EndpointError *GetTeamEventsContinueError `json:"error"`
 }
 
 func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error) {
-	cli := dbx.Client
+    cli := dbx.Client
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
+    dbx.Config.LogDebug("arg: %v", arg)
+    b, err := json.Marshal(arg)
+    if err != nil {
+        return
+    }
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
+    headers := map[string]string{
+    	"Content-Type": "application/json",
+    }
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events/continue", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
+    req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events/continue", headers, bytes.NewReader(b))
+    if err != nil {
+        return
+    }
+    dbx.Config.LogInfo("req: %v", req)
 
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
+    resp, err := cli.Do(req)
+    if err != nil {
+        return
+    }
 
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
+    dbx.Config.LogInfo("resp: %v", resp)
+    defer resp.Body.Close()
+    body, err := ioutil.ReadAll(resp.Body);if err != nil {
+        return
+    }
 
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
+    dbx.Config.LogDebug("body: %s", body)
+    if resp.StatusCode == http.StatusOK {
+        err = json.Unmarshal(body, &res);if err != nil {
+            return
+        }
 
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError GetEventsContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
+        return
+    }
+    if resp.StatusCode == http.StatusConflict {
+        var apiError GetEventsContinueAPIError
+        err = json.Unmarshal(body, &apiError);if err != nil {
+            return
+        }
+        err = apiError
+        return
+    }
+    err = auth.HandleCommonAuthErrors(dbx.Config, resp, body);if err != nil {
+        return
+    }
+    err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+    return
 }
 
 // New returns a Client implementation for this namespace
 func New(c dropbox.Config) Client {
-	ctx := apiImpl(dropbox.NewContext(c))
-	return &ctx
+    ctx := apiImpl(dropbox.NewContext(c))
+    return &ctx
 }

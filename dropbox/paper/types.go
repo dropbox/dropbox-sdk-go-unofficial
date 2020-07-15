@@ -23,11 +23,10 @@
 package paper
 
 import (
-	"encoding/json"
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	sharing "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
+	time "time"
 )
 
 // AddMember : has no documentation (yet)
@@ -38,21 +37,20 @@ type AddMember struct {
 	// address or Dropbox account ID.
 	Member *sharing.MemberSelector `json:"member"`
 }
-
 // NewAddMember returns a new AddMember instance
 func NewAddMember(Member *sharing.MemberSelector) *AddMember {
 	s := new(AddMember)
 	s.Member = Member
-	s.PermissionLevel = &PaperDocPermissionLevel{Tagged: dropbox.Tagged{"edit"}}
+	s.PermissionLevel = &PaperDocPermissionLevel{Tagged:dropbox.Tagged{"edit"}}
 	return s
 }
+
 
 // RefPaperDoc : has no documentation (yet)
 type RefPaperDoc struct {
 	// DocId : The Paper doc ID.
 	DocId string `json:"doc_id"`
 }
-
 // NewRefPaperDoc returns a new RefPaperDoc instance
 func NewRefPaperDoc(DocId string) *RefPaperDoc {
 	s := new(RefPaperDoc)
@@ -60,20 +58,20 @@ func NewRefPaperDoc(DocId string) *RefPaperDoc {
 	return s
 }
 
+
 // AddPaperDocUser : has no documentation (yet)
 type AddPaperDocUser struct {
 	RefPaperDoc
 	// Members : User which should be added to the Paper doc. Specify only email
 	// address or Dropbox account ID.
 	Members []*AddMember `json:"members"`
-	// CustomMessage : A personal message that will be emailed to each
-	// successfully added member.
+	// CustomMessage : A personal message that will be emailed to each successfully
+	// added member.
 	CustomMessage string `json:"custom_message,omitempty"`
-	// Quiet : Clients should set this to true if no email message shall be sent
-	// to added users.
+	// Quiet : Clients should set this to true if no email message shall be sent to
+	// added users.
 	Quiet bool `json:"quiet"`
 }
-
 // NewAddPaperDocUser returns a new AddPaperDocUser instance
 func NewAddPaperDocUser(DocId string, Members []*AddMember) *AddPaperDocUser {
 	s := new(AddPaperDocUser)
@@ -83,6 +81,7 @@ func NewAddPaperDocUser(DocId string, Members []*AddMember) *AddPaperDocUser {
 	return s
 }
 
+
 // AddPaperDocUserMemberResult : Per-member result for `docsUsersAdd`.
 type AddPaperDocUserMemberResult struct {
 	// Member : One of specified input members.
@@ -90,7 +89,6 @@ type AddPaperDocUserMemberResult struct {
 	// Result : The outcome of the action on this member.
 	Result *AddPaperDocUserResult `json:"result"`
 }
-
 // NewAddPaperDocUserMemberResult returns a new AddPaperDocUserMemberResult instance
 func NewAddPaperDocUserMemberResult(Member *sharing.MemberSelector, Result *AddPaperDocUserResult) *AddPaperDocUserMemberResult {
 	s := new(AddPaperDocUserMemberResult)
@@ -99,6 +97,7 @@ func NewAddPaperDocUserMemberResult(Member *sharing.MemberSelector, Result *AddP
 	return s
 }
 
+
 // AddPaperDocUserResult : has no documentation (yet)
 type AddPaperDocUserResult struct {
 	dropbox.Tagged
@@ -106,42 +105,41 @@ type AddPaperDocUserResult struct {
 
 // Valid tag values for AddPaperDocUserResult
 const (
-	AddPaperDocUserResultSuccess                    = "success"
-	AddPaperDocUserResultUnknownError               = "unknown_error"
+	AddPaperDocUserResultSuccess = "success"
+	AddPaperDocUserResultUnknownError = "unknown_error"
 	AddPaperDocUserResultSharingOutsideTeamDisabled = "sharing_outside_team_disabled"
-	AddPaperDocUserResultDailyLimitReached          = "daily_limit_reached"
-	AddPaperDocUserResultUserIsOwner                = "user_is_owner"
-	AddPaperDocUserResultFailedUserDataRetrieval    = "failed_user_data_retrieval"
-	AddPaperDocUserResultPermissionAlreadyGranted   = "permission_already_granted"
-	AddPaperDocUserResultOther                      = "other"
+	AddPaperDocUserResultDailyLimitReached = "daily_limit_reached"
+	AddPaperDocUserResultUserIsOwner = "user_is_owner"
+	AddPaperDocUserResultFailedUserDataRetrieval = "failed_user_data_retrieval"
+	AddPaperDocUserResultPermissionAlreadyGranted = "permission_already_granted"
+	AddPaperDocUserResultOther = "other"
 )
 
 // Cursor : has no documentation (yet)
 type Cursor struct {
 	// Value : The actual cursor value.
 	Value string `json:"value"`
-	// Expiration : Expiration time of `value`. Some cursors might have
-	// expiration time assigned. This is a UTC value after which the cursor is
-	// no longer valid and the API starts returning an error. If cursor expires
-	// a new one needs to be obtained and pagination needs to be restarted. Some
-	// cursors might be short-lived some cursors might be long-lived. This
-	// really depends on the sorting type and order, e.g.: 1. on one hand,
-	// listing docs created by the user, sorted by the created time ascending
-	// will have undefinite expiration because the results cannot change while
-	// the iteration is happening. This cursor would be suitable for long term
-	// polling. 2. on the other hand, listing docs sorted by the last modified
-	// time will have a very short expiration as docs do get modified very often
-	// and the modified time can be changed while the iteration is happening
-	// thus altering the results.
+	// Expiration : Expiration time of `value`. Some cursors might have expiration
+	// time assigned. This is a UTC value after which the cursor is no longer valid
+	// and the API starts returning an error. If cursor expires a new one needs to
+	// be obtained and pagination needs to be restarted. Some cursors might be
+	// short-lived some cursors might be long-lived. This really depends on the
+	// sorting type and order, e.g.: 1. on one hand, listing docs created by the
+	// user, sorted by the created time ascending will have undefinite expiration
+	// because the results cannot change while the iteration is happening. This
+	// cursor would be suitable for long term polling. 2. on the other hand,
+	// listing docs sorted by the last modified time will have a very short
+	// expiration as docs do get modified very often and the modified time can be
+	// changed while the iteration is happening thus altering the results.
 	Expiration time.Time `json:"expiration,omitempty"`
 }
-
 // NewCursor returns a new Cursor instance
 func NewCursor(Value string) *Cursor {
 	s := new(Cursor)
 	s.Value = Value
 	return s
 }
+
 
 // PaperApiBaseError : has no documentation (yet)
 type PaperApiBaseError struct {
@@ -151,7 +149,7 @@ type PaperApiBaseError struct {
 // Valid tag values for PaperApiBaseError
 const (
 	PaperApiBaseErrorInsufficientPermissions = "insufficient_permissions"
-	PaperApiBaseErrorOther                   = "other"
+	PaperApiBaseErrorOther = "other"
 )
 
 // DocLookupError : has no documentation (yet)
@@ -162,8 +160,8 @@ type DocLookupError struct {
 // Valid tag values for DocLookupError
 const (
 	DocLookupErrorInsufficientPermissions = "insufficient_permissions"
-	DocLookupErrorOther                   = "other"
-	DocLookupErrorDocNotFound             = "doc_not_found"
+	DocLookupErrorOther = "other"
+	DocLookupErrorDocNotFound = "doc_not_found"
 )
 
 // DocSubscriptionLevel : The subscription level of a Paper doc.
@@ -174,8 +172,8 @@ type DocSubscriptionLevel struct {
 // Valid tag values for DocSubscriptionLevel
 const (
 	DocSubscriptionLevelDefault = "default"
-	DocSubscriptionLevelIgnore  = "ignore"
-	DocSubscriptionLevelEvery   = "every"
+	DocSubscriptionLevelIgnore = "ignore"
+	DocSubscriptionLevelEvery = "every"
 	DocSubscriptionLevelNoEmail = "no_email"
 )
 
@@ -186,9 +184,9 @@ type ExportFormat struct {
 
 // Valid tag values for ExportFormat
 const (
-	ExportFormatHtml     = "html"
+	ExportFormatHtml = "html"
 	ExportFormatMarkdown = "markdown"
-	ExportFormatOther    = "other"
+	ExportFormatOther = "other"
 )
 
 // Folder : Data structure representing a Paper folder.
@@ -198,7 +196,6 @@ type Folder struct {
 	// Name : Paper folder name.
 	Name string `json:"name"`
 }
-
 // NewFolder returns a new Folder instance
 func NewFolder(Id string, Name string) *Folder {
 	s := new(Folder)
@@ -206,6 +203,7 @@ func NewFolder(Id string, Name string) *Folder {
 	s.Name = Name
 	return s
 }
+
 
 // FolderSharingPolicyType : The sharing policy of a Paper folder.  Note: The
 // sharing policy of subfolders is inherited from the root folder.
@@ -215,7 +213,7 @@ type FolderSharingPolicyType struct {
 
 // Valid tag values for FolderSharingPolicyType
 const (
-	FolderSharingPolicyTypeTeam       = "team"
+	FolderSharingPolicyTypeTeam = "team"
 	FolderSharingPolicyTypeInviteOnly = "invite_only"
 )
 
@@ -226,9 +224,9 @@ type FolderSubscriptionLevel struct {
 
 // Valid tag values for FolderSubscriptionLevel
 const (
-	FolderSubscriptionLevelNone         = "none"
+	FolderSubscriptionLevelNone = "none"
 	FolderSubscriptionLevelActivityOnly = "activity_only"
-	FolderSubscriptionLevelDailyEmails  = "daily_emails"
+	FolderSubscriptionLevelDailyEmails = "daily_emails"
 	FolderSubscriptionLevelWeeklyEmails = "weekly_emails"
 )
 
@@ -238,16 +236,15 @@ type FoldersContainingPaperDoc struct {
 	// FolderSharingPolicyType : The sharing policy of the folder containing the
 	// Paper doc.
 	FolderSharingPolicyType *FolderSharingPolicyType `json:"folder_sharing_policy_type,omitempty"`
-	// Folders : The folder path. If present the first folder is the root
-	// folder.
+	// Folders : The folder path. If present the first folder is the root folder.
 	Folders []*Folder `json:"folders,omitempty"`
 }
-
 // NewFoldersContainingPaperDoc returns a new FoldersContainingPaperDoc instance
 func NewFoldersContainingPaperDoc() *FoldersContainingPaperDoc {
 	s := new(FoldersContainingPaperDoc)
 	return s
 }
+
 
 // ImportFormat : The import format of the incoming data.
 type ImportFormat struct {
@@ -256,10 +253,10 @@ type ImportFormat struct {
 
 // Valid tag values for ImportFormat
 const (
-	ImportFormatHtml      = "html"
-	ImportFormatMarkdown  = "markdown"
+	ImportFormatHtml = "html"
+	ImportFormatMarkdown = "markdown"
 	ImportFormatPlainText = "plain_text"
-	ImportFormatOther     = "other"
+	ImportFormatOther = "other"
 )
 
 // InviteeInfoWithPermissionLevel : has no documentation (yet)
@@ -269,7 +266,6 @@ type InviteeInfoWithPermissionLevel struct {
 	// PermissionLevel : Permission level for the invitee.
 	PermissionLevel *PaperDocPermissionLevel `json:"permission_level"`
 }
-
 // NewInviteeInfoWithPermissionLevel returns a new InviteeInfoWithPermissionLevel instance
 func NewInviteeInfoWithPermissionLevel(Invitee *sharing.InviteeInfo, PermissionLevel *PaperDocPermissionLevel) *InviteeInfoWithPermissionLevel {
 	s := new(InviteeInfoWithPermissionLevel)
@@ -277,6 +273,7 @@ func NewInviteeInfoWithPermissionLevel(Invitee *sharing.InviteeInfo, PermissionL
 	s.PermissionLevel = PermissionLevel
 	return s
 }
+
 
 // ListDocsCursorError : has no documentation (yet)
 type ListDocsCursorError struct {
@@ -288,7 +285,7 @@ type ListDocsCursorError struct {
 // Valid tag values for ListDocsCursorError
 const (
 	ListDocsCursorErrorCursorError = "cursor_error"
-	ListDocsCursorErrorOther       = "other"
+	ListDocsCursorErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a ListDocsCursorError instance
@@ -305,8 +302,8 @@ func (u *ListDocsCursorError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "cursor_error":
-		u.CursorError = w.CursorError
+		case "cursor_error":
+			u.CursorError = w.CursorError
 
 		if err != nil {
 			return err
@@ -328,30 +325,30 @@ type ListPaperDocsArgs struct {
 	// error.
 	Limit int32 `json:"limit"`
 }
-
 // NewListPaperDocsArgs returns a new ListPaperDocsArgs instance
 func NewListPaperDocsArgs() *ListPaperDocsArgs {
 	s := new(ListPaperDocsArgs)
-	s.FilterBy = &ListPaperDocsFilterBy{Tagged: dropbox.Tagged{"docs_accessed"}}
-	s.SortBy = &ListPaperDocsSortBy{Tagged: dropbox.Tagged{"accessed"}}
-	s.SortOrder = &ListPaperDocsSortOrder{Tagged: dropbox.Tagged{"ascending"}}
+	s.FilterBy = &ListPaperDocsFilterBy{Tagged:dropbox.Tagged{"docs_accessed"}}
+	s.SortBy = &ListPaperDocsSortBy{Tagged:dropbox.Tagged{"accessed"}}
+	s.SortOrder = &ListPaperDocsSortOrder{Tagged:dropbox.Tagged{"ascending"}}
 	s.Limit = 1000
 	return s
 }
 
+
 // ListPaperDocsContinueArgs : has no documentation (yet)
 type ListPaperDocsContinueArgs struct {
-	// Cursor : The cursor obtained from `docsList` or `docsListContinue`.
-	// Allows for pagination.
+	// Cursor : The cursor obtained from `docsList` or `docsListContinue`. Allows
+	// for pagination.
 	Cursor string `json:"cursor"`
 }
-
 // NewListPaperDocsContinueArgs returns a new ListPaperDocsContinueArgs instance
 func NewListPaperDocsContinueArgs(Cursor string) *ListPaperDocsContinueArgs {
 	s := new(ListPaperDocsContinueArgs)
 	s.Cursor = Cursor
 	return s
 }
+
 
 // ListPaperDocsFilterBy : has no documentation (yet)
 type ListPaperDocsFilterBy struct {
@@ -361,27 +358,25 @@ type ListPaperDocsFilterBy struct {
 // Valid tag values for ListPaperDocsFilterBy
 const (
 	ListPaperDocsFilterByDocsAccessed = "docs_accessed"
-	ListPaperDocsFilterByDocsCreated  = "docs_created"
-	ListPaperDocsFilterByOther        = "other"
+	ListPaperDocsFilterByDocsCreated = "docs_created"
+	ListPaperDocsFilterByOther = "other"
 )
 
 // ListPaperDocsResponse : has no documentation (yet)
 type ListPaperDocsResponse struct {
 	// DocIds : The list of Paper doc IDs that can be used to access the given
-	// Paper docs or supplied to other API methods. The list is sorted in the
-	// order specified by the initial call to `docsList`.
+	// Paper docs or supplied to other API methods. The list is sorted in the order
+	// specified by the initial call to `docsList`.
 	DocIds []string `json:"doc_ids"`
 	// Cursor : Pass the cursor into `docsListContinue` to paginate through all
-	// files. The cursor preserves all properties as specified in the original
-	// call to `docsList`.
+	// files. The cursor preserves all properties as specified in the original call
+	// to `docsList`.
 	Cursor *Cursor `json:"cursor"`
-	// HasMore : Will be set to True if a subsequent call with the provided
-	// cursor to `docsListContinue` returns immediately with some results. If
-	// set to False please allow some delay before making another call to
-	// `docsListContinue`.
+	// HasMore : Will be set to True if a subsequent call with the provided cursor
+	// to `docsListContinue` returns immediately with some results. If set to False
+	// please allow some delay before making another call to `docsListContinue`.
 	HasMore bool `json:"has_more"`
 }
-
 // NewListPaperDocsResponse returns a new ListPaperDocsResponse instance
 func NewListPaperDocsResponse(DocIds []string, Cursor *Cursor, HasMore bool) *ListPaperDocsResponse {
 	s := new(ListPaperDocsResponse)
@@ -390,6 +385,7 @@ func NewListPaperDocsResponse(DocIds []string, Cursor *Cursor, HasMore bool) *Li
 	s.HasMore = HasMore
 	return s
 }
+
 
 // ListPaperDocsSortBy : has no documentation (yet)
 type ListPaperDocsSortBy struct {
@@ -400,8 +396,8 @@ type ListPaperDocsSortBy struct {
 const (
 	ListPaperDocsSortByAccessed = "accessed"
 	ListPaperDocsSortByModified = "modified"
-	ListPaperDocsSortByCreated  = "created"
-	ListPaperDocsSortByOther    = "other"
+	ListPaperDocsSortByCreated = "created"
+	ListPaperDocsSortByOther = "other"
 )
 
 // ListPaperDocsSortOrder : has no documentation (yet)
@@ -411,9 +407,9 @@ type ListPaperDocsSortOrder struct {
 
 // Valid tag values for ListPaperDocsSortOrder
 const (
-	ListPaperDocsSortOrderAscending  = "ascending"
+	ListPaperDocsSortOrderAscending = "ascending"
 	ListPaperDocsSortOrderDescending = "descending"
-	ListPaperDocsSortOrderOther      = "other"
+	ListPaperDocsSortOrderOther = "other"
 )
 
 // ListUsersCursorError : has no documentation (yet)
@@ -426,9 +422,9 @@ type ListUsersCursorError struct {
 // Valid tag values for ListUsersCursorError
 const (
 	ListUsersCursorErrorInsufficientPermissions = "insufficient_permissions"
-	ListUsersCursorErrorOther                   = "other"
-	ListUsersCursorErrorDocNotFound             = "doc_not_found"
-	ListUsersCursorErrorCursorError             = "cursor_error"
+	ListUsersCursorErrorOther = "other"
+	ListUsersCursorErrorDocNotFound = "doc_not_found"
+	ListUsersCursorErrorCursorError = "cursor_error"
 )
 
 // UnmarshalJSON deserializes into a ListUsersCursorError instance
@@ -445,8 +441,8 @@ func (u *ListUsersCursorError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "cursor_error":
-		u.CursorError = w.CursorError
+		case "cursor_error":
+			u.CursorError = w.CursorError
 
 		if err != nil {
 			return err
@@ -463,7 +459,6 @@ type ListUsersOnFolderArgs struct {
 	// error.
 	Limit int32 `json:"limit"`
 }
-
 // NewListUsersOnFolderArgs returns a new ListUsersOnFolderArgs instance
 func NewListUsersOnFolderArgs(DocId string) *ListUsersOnFolderArgs {
 	s := new(ListUsersOnFolderArgs)
@@ -472,6 +467,7 @@ func NewListUsersOnFolderArgs(DocId string) *ListUsersOnFolderArgs {
 	return s
 }
 
+
 // ListUsersOnFolderContinueArgs : has no documentation (yet)
 type ListUsersOnFolderContinueArgs struct {
 	RefPaperDoc
@@ -479,7 +475,6 @@ type ListUsersOnFolderContinueArgs struct {
 	// `docsFolderUsersListContinue`. Allows for pagination.
 	Cursor string `json:"cursor"`
 }
-
 // NewListUsersOnFolderContinueArgs returns a new ListUsersOnFolderContinueArgs instance
 func NewListUsersOnFolderContinueArgs(DocId string, Cursor string) *ListUsersOnFolderContinueArgs {
 	s := new(ListUsersOnFolderContinueArgs)
@@ -488,6 +483,7 @@ func NewListUsersOnFolderContinueArgs(DocId string, Cursor string) *ListUsersOnF
 	return s
 }
 
+
 // ListUsersOnFolderResponse : has no documentation (yet)
 type ListUsersOnFolderResponse struct {
 	// Invitees : List of email addresses that are invited on the Paper folder.
@@ -495,16 +491,15 @@ type ListUsersOnFolderResponse struct {
 	// Users : List of users that are invited on the Paper folder.
 	Users []*sharing.UserInfo `json:"users"`
 	// Cursor : Pass the cursor into `docsFolderUsersListContinue` to paginate
-	// through all users. The cursor preserves all properties as specified in
-	// the original call to `docsFolderUsersList`.
+	// through all users. The cursor preserves all properties as specified in the
+	// original call to `docsFolderUsersList`.
 	Cursor *Cursor `json:"cursor"`
-	// HasMore : Will be set to True if a subsequent call with the provided
-	// cursor to `docsFolderUsersListContinue` returns immediately with some
-	// results. If set to False please allow some delay before making another
-	// call to `docsFolderUsersListContinue`.
+	// HasMore : Will be set to True if a subsequent call with the provided cursor
+	// to `docsFolderUsersListContinue` returns immediately with some results. If
+	// set to False please allow some delay before making another call to
+	// `docsFolderUsersListContinue`.
 	HasMore bool `json:"has_more"`
 }
-
 // NewListUsersOnFolderResponse returns a new ListUsersOnFolderResponse instance
 func NewListUsersOnFolderResponse(Invitees []*sharing.InviteeInfo, Users []*sharing.UserInfo, Cursor *Cursor, HasMore bool) *ListUsersOnFolderResponse {
 	s := new(ListUsersOnFolderResponse)
@@ -514,6 +509,7 @@ func NewListUsersOnFolderResponse(Invitees []*sharing.InviteeInfo, Users []*shar
 	s.HasMore = HasMore
 	return s
 }
+
 
 // ListUsersOnPaperDocArgs : has no documentation (yet)
 type ListUsersOnPaperDocArgs struct {
@@ -526,15 +522,15 @@ type ListUsersOnPaperDocArgs struct {
 	// already accessed the Paper doc.
 	FilterBy *UserOnPaperDocFilter `json:"filter_by"`
 }
-
 // NewListUsersOnPaperDocArgs returns a new ListUsersOnPaperDocArgs instance
 func NewListUsersOnPaperDocArgs(DocId string) *ListUsersOnPaperDocArgs {
 	s := new(ListUsersOnPaperDocArgs)
 	s.DocId = DocId
 	s.Limit = 1000
-	s.FilterBy = &UserOnPaperDocFilter{Tagged: dropbox.Tagged{"shared"}}
+	s.FilterBy = &UserOnPaperDocFilter{Tagged:dropbox.Tagged{"shared"}}
 	return s
 }
+
 
 // ListUsersOnPaperDocContinueArgs : has no documentation (yet)
 type ListUsersOnPaperDocContinueArgs struct {
@@ -543,7 +539,6 @@ type ListUsersOnPaperDocContinueArgs struct {
 	// `docsUsersListContinue`. Allows for pagination.
 	Cursor string `json:"cursor"`
 }
-
 // NewListUsersOnPaperDocContinueArgs returns a new ListUsersOnPaperDocContinueArgs instance
 func NewListUsersOnPaperDocContinueArgs(DocId string, Cursor string) *ListUsersOnPaperDocContinueArgs {
 	s := new(ListUsersOnPaperDocContinueArgs)
@@ -552,10 +547,11 @@ func NewListUsersOnPaperDocContinueArgs(DocId string, Cursor string) *ListUsersO
 	return s
 }
 
+
 // ListUsersOnPaperDocResponse : has no documentation (yet)
 type ListUsersOnPaperDocResponse struct {
-	// Invitees : List of email addresses with their respective permission
-	// levels that are invited on the Paper doc.
+	// Invitees : List of email addresses with their respective permission levels
+	// that are invited on the Paper doc.
 	Invitees []*InviteeInfoWithPermissionLevel `json:"invitees"`
 	// Users : List of users with their respective permission levels that are
 	// invited on the Paper folder.
@@ -564,16 +560,15 @@ type ListUsersOnPaperDocResponse struct {
 	// response.
 	DocOwner *sharing.UserInfo `json:"doc_owner"`
 	// Cursor : Pass the cursor into `docsUsersListContinue` to paginate through
-	// all users. The cursor preserves all properties as specified in the
-	// original call to `docsUsersList`.
+	// all users. The cursor preserves all properties as specified in the original
+	// call to `docsUsersList`.
 	Cursor *Cursor `json:"cursor"`
-	// HasMore : Will be set to True if a subsequent call with the provided
-	// cursor to `docsUsersListContinue` returns immediately with some results.
-	// If set to False please allow some delay before making another call to
+	// HasMore : Will be set to True if a subsequent call with the provided cursor
+	// to `docsUsersListContinue` returns immediately with some results. If set to
+	// False please allow some delay before making another call to
 	// `docsUsersListContinue`.
 	HasMore bool `json:"has_more"`
 }
-
 // NewListUsersOnPaperDocResponse returns a new ListUsersOnPaperDocResponse instance
 func NewListUsersOnPaperDocResponse(Invitees []*InviteeInfoWithPermissionLevel, Users []*UserInfoWithPermissionLevel, DocOwner *sharing.UserInfo, Cursor *Cursor, HasMore bool) *ListUsersOnPaperDocResponse {
 	s := new(ListUsersOnPaperDocResponse)
@@ -585,6 +580,7 @@ func NewListUsersOnPaperDocResponse(Invitees []*InviteeInfoWithPermissionLevel, 
 	return s
 }
 
+
 // PaperApiCursorError : has no documentation (yet)
 type PaperApiCursorError struct {
 	dropbox.Tagged
@@ -592,11 +588,11 @@ type PaperApiCursorError struct {
 
 // Valid tag values for PaperApiCursorError
 const (
-	PaperApiCursorErrorExpiredCursor     = "expired_cursor"
-	PaperApiCursorErrorInvalidCursor     = "invalid_cursor"
+	PaperApiCursorErrorExpiredCursor = "expired_cursor"
+	PaperApiCursorErrorInvalidCursor = "invalid_cursor"
 	PaperApiCursorErrorWrongUserInCursor = "wrong_user_in_cursor"
-	PaperApiCursorErrorReset             = "reset"
-	PaperApiCursorErrorOther             = "other"
+	PaperApiCursorErrorReset = "reset"
+	PaperApiCursorErrorOther = "other"
 )
 
 // PaperDocCreateArgs : has no documentation (yet)
@@ -608,13 +604,13 @@ type PaperDocCreateArgs struct {
 	// ImportFormat : The format of provided data.
 	ImportFormat *ImportFormat `json:"import_format"`
 }
-
 // NewPaperDocCreateArgs returns a new PaperDocCreateArgs instance
 func NewPaperDocCreateArgs(ImportFormat *ImportFormat) *PaperDocCreateArgs {
 	s := new(PaperDocCreateArgs)
 	s.ImportFormat = ImportFormat
 	return s
 }
+
 
 // PaperDocCreateError : has no documentation (yet)
 type PaperDocCreateError struct {
@@ -624,11 +620,11 @@ type PaperDocCreateError struct {
 // Valid tag values for PaperDocCreateError
 const (
 	PaperDocCreateErrorInsufficientPermissions = "insufficient_permissions"
-	PaperDocCreateErrorOther                   = "other"
-	PaperDocCreateErrorContentMalformed        = "content_malformed"
-	PaperDocCreateErrorFolderNotFound          = "folder_not_found"
-	PaperDocCreateErrorDocLengthExceeded       = "doc_length_exceeded"
-	PaperDocCreateErrorImageSizeExceeded       = "image_size_exceeded"
+	PaperDocCreateErrorOther = "other"
+	PaperDocCreateErrorContentMalformed = "content_malformed"
+	PaperDocCreateErrorFolderNotFound = "folder_not_found"
+	PaperDocCreateErrorDocLengthExceeded = "doc_length_exceeded"
+	PaperDocCreateErrorImageSizeExceeded = "image_size_exceeded"
 )
 
 // PaperDocCreateUpdateResult : has no documentation (yet)
@@ -640,7 +636,6 @@ type PaperDocCreateUpdateResult struct {
 	// Title : The Paper doc title.
 	Title string `json:"title"`
 }
-
 // NewPaperDocCreateUpdateResult returns a new PaperDocCreateUpdateResult instance
 func NewPaperDocCreateUpdateResult(DocId string, Revision int64, Title string) *PaperDocCreateUpdateResult {
 	s := new(PaperDocCreateUpdateResult)
@@ -650,13 +645,13 @@ func NewPaperDocCreateUpdateResult(DocId string, Revision int64, Title string) *
 	return s
 }
 
+
 // PaperDocExport : has no documentation (yet)
 type PaperDocExport struct {
 	RefPaperDoc
 	// ExportFormat : has no documentation (yet)
 	ExportFormat *ExportFormat `json:"export_format"`
 }
-
 // NewPaperDocExport returns a new PaperDocExport instance
 func NewPaperDocExport(DocId string, ExportFormat *ExportFormat) *PaperDocExport {
 	s := new(PaperDocExport)
@@ -664,6 +659,7 @@ func NewPaperDocExport(DocId string, ExportFormat *ExportFormat) *PaperDocExport
 	s.ExportFormat = ExportFormat
 	return s
 }
+
 
 // PaperDocExportResult : has no documentation (yet)
 type PaperDocExportResult struct {
@@ -677,7 +673,6 @@ type PaperDocExportResult struct {
 	// specified in the request.
 	MimeType string `json:"mime_type"`
 }
-
 // NewPaperDocExportResult returns a new PaperDocExportResult instance
 func NewPaperDocExportResult(Owner string, Title string, Revision int64, MimeType string) *PaperDocExportResult {
 	s := new(PaperDocExportResult)
@@ -688,6 +683,7 @@ func NewPaperDocExportResult(Owner string, Title string, Revision int64, MimeTyp
 	return s
 }
 
+
 // PaperDocPermissionLevel : has no documentation (yet)
 type PaperDocPermissionLevel struct {
 	dropbox.Tagged
@@ -695,9 +691,9 @@ type PaperDocPermissionLevel struct {
 
 // Valid tag values for PaperDocPermissionLevel
 const (
-	PaperDocPermissionLevelEdit           = "edit"
+	PaperDocPermissionLevelEdit = "edit"
 	PaperDocPermissionLevelViewAndComment = "view_and_comment"
-	PaperDocPermissionLevelOther          = "other"
+	PaperDocPermissionLevelOther = "other"
 )
 
 // PaperDocSharingPolicy : has no documentation (yet)
@@ -706,7 +702,6 @@ type PaperDocSharingPolicy struct {
 	// SharingPolicy : The default sharing policy to be set for the Paper doc.
 	SharingPolicy *SharingPolicy `json:"sharing_policy"`
 }
-
 // NewPaperDocSharingPolicy returns a new PaperDocSharingPolicy instance
 func NewPaperDocSharingPolicy(DocId string, SharingPolicy *SharingPolicy) *PaperDocSharingPolicy {
 	s := new(PaperDocSharingPolicy)
@@ -715,19 +710,18 @@ func NewPaperDocSharingPolicy(DocId string, SharingPolicy *SharingPolicy) *Paper
 	return s
 }
 
+
 // PaperDocUpdateArgs : has no documentation (yet)
 type PaperDocUpdateArgs struct {
 	RefPaperDoc
 	// DocUpdatePolicy : The policy used for the current update call.
 	DocUpdatePolicy *PaperDocUpdatePolicy `json:"doc_update_policy"`
-	// Revision : The latest doc revision. This value must match the head
-	// revision or an error code will be returned. This is to prevent colliding
-	// writes.
+	// Revision : The latest doc revision. This value must match the head revision
+	// or an error code will be returned. This is to prevent colliding writes.
 	Revision int64 `json:"revision"`
 	// ImportFormat : The format of provided data.
 	ImportFormat *ImportFormat `json:"import_format"`
 }
-
 // NewPaperDocUpdateArgs returns a new PaperDocUpdateArgs instance
 func NewPaperDocUpdateArgs(DocId string, DocUpdatePolicy *PaperDocUpdatePolicy, Revision int64, ImportFormat *ImportFormat) *PaperDocUpdateArgs {
 	s := new(PaperDocUpdateArgs)
@@ -738,6 +732,7 @@ func NewPaperDocUpdateArgs(DocId string, DocUpdatePolicy *PaperDocUpdatePolicy, 
 	return s
 }
 
+
 // PaperDocUpdateError : has no documentation (yet)
 type PaperDocUpdateError struct {
 	dropbox.Tagged
@@ -746,14 +741,14 @@ type PaperDocUpdateError struct {
 // Valid tag values for PaperDocUpdateError
 const (
 	PaperDocUpdateErrorInsufficientPermissions = "insufficient_permissions"
-	PaperDocUpdateErrorOther                   = "other"
-	PaperDocUpdateErrorDocNotFound             = "doc_not_found"
-	PaperDocUpdateErrorContentMalformed        = "content_malformed"
-	PaperDocUpdateErrorRevisionMismatch        = "revision_mismatch"
-	PaperDocUpdateErrorDocLengthExceeded       = "doc_length_exceeded"
-	PaperDocUpdateErrorImageSizeExceeded       = "image_size_exceeded"
-	PaperDocUpdateErrorDocArchived             = "doc_archived"
-	PaperDocUpdateErrorDocDeleted              = "doc_deleted"
+	PaperDocUpdateErrorOther = "other"
+	PaperDocUpdateErrorDocNotFound = "doc_not_found"
+	PaperDocUpdateErrorContentMalformed = "content_malformed"
+	PaperDocUpdateErrorRevisionMismatch = "revision_mismatch"
+	PaperDocUpdateErrorDocLengthExceeded = "doc_length_exceeded"
+	PaperDocUpdateErrorImageSizeExceeded = "image_size_exceeded"
+	PaperDocUpdateErrorDocArchived = "doc_archived"
+	PaperDocUpdateErrorDocDeleted = "doc_deleted"
 )
 
 // PaperDocUpdatePolicy : has no documentation (yet)
@@ -763,20 +758,19 @@ type PaperDocUpdatePolicy struct {
 
 // Valid tag values for PaperDocUpdatePolicy
 const (
-	PaperDocUpdatePolicyAppend       = "append"
-	PaperDocUpdatePolicyPrepend      = "prepend"
+	PaperDocUpdatePolicyAppend = "append"
+	PaperDocUpdatePolicyPrepend = "prepend"
 	PaperDocUpdatePolicyOverwriteAll = "overwrite_all"
-	PaperDocUpdatePolicyOther        = "other"
+	PaperDocUpdatePolicyOther = "other"
 )
 
 // RemovePaperDocUser : has no documentation (yet)
 type RemovePaperDocUser struct {
 	RefPaperDoc
-	// Member : User which should be removed from the Paper doc. Specify only
-	// email address or Dropbox account ID.
+	// Member : User which should be removed from the Paper doc. Specify only email
+	// address or Dropbox account ID.
 	Member *sharing.MemberSelector `json:"member"`
 }
-
 // NewRemovePaperDocUser returns a new RemovePaperDocUser instance
 func NewRemovePaperDocUser(DocId string, Member *sharing.MemberSelector) *RemovePaperDocUser {
 	s := new(RemovePaperDocUser)
@@ -785,20 +779,21 @@ func NewRemovePaperDocUser(DocId string, Member *sharing.MemberSelector) *Remove
 	return s
 }
 
+
 // SharingPolicy : Sharing policy of Paper doc.
 type SharingPolicy struct {
 	// PublicSharingPolicy : This value applies to the non-team members.
 	PublicSharingPolicy *SharingPublicPolicyType `json:"public_sharing_policy,omitempty"`
-	// TeamSharingPolicy : This value applies to the team members only. The
-	// value is null for all personal accounts.
+	// TeamSharingPolicy : This value applies to the team members only. The value
+	// is null for all personal accounts.
 	TeamSharingPolicy *SharingTeamPolicyType `json:"team_sharing_policy,omitempty"`
 }
-
 // NewSharingPolicy returns a new SharingPolicy instance
 func NewSharingPolicy() *SharingPolicy {
 	s := new(SharingPolicy)
 	return s
 }
+
 
 // SharingTeamPolicyType : The sharing policy type of the Paper doc.
 type SharingTeamPolicyType struct {
@@ -807,9 +802,9 @@ type SharingTeamPolicyType struct {
 
 // Valid tag values for SharingTeamPolicyType
 const (
-	SharingTeamPolicyTypePeopleWithLinkCanEdit           = "people_with_link_can_edit"
+	SharingTeamPolicyTypePeopleWithLinkCanEdit = "people_with_link_can_edit"
 	SharingTeamPolicyTypePeopleWithLinkCanViewAndComment = "people_with_link_can_view_and_comment"
-	SharingTeamPolicyTypeInviteOnly                      = "invite_only"
+	SharingTeamPolicyTypeInviteOnly = "invite_only"
 )
 
 // SharingPublicPolicyType : has no documentation (yet)
@@ -819,10 +814,10 @@ type SharingPublicPolicyType struct {
 
 // Valid tag values for SharingPublicPolicyType
 const (
-	SharingPublicPolicyTypePeopleWithLinkCanEdit           = "people_with_link_can_edit"
+	SharingPublicPolicyTypePeopleWithLinkCanEdit = "people_with_link_can_edit"
 	SharingPublicPolicyTypePeopleWithLinkCanViewAndComment = "people_with_link_can_view_and_comment"
-	SharingPublicPolicyTypeInviteOnly                      = "invite_only"
-	SharingPublicPolicyTypeDisabled                        = "disabled"
+	SharingPublicPolicyTypeInviteOnly = "invite_only"
+	SharingPublicPolicyTypeDisabled = "disabled"
 )
 
 // UserInfoWithPermissionLevel : has no documentation (yet)
@@ -832,7 +827,6 @@ type UserInfoWithPermissionLevel struct {
 	// PermissionLevel : Permission level for the user.
 	PermissionLevel *PaperDocPermissionLevel `json:"permission_level"`
 }
-
 // NewUserInfoWithPermissionLevel returns a new UserInfoWithPermissionLevel instance
 func NewUserInfoWithPermissionLevel(User *sharing.UserInfo, PermissionLevel *PaperDocPermissionLevel) *UserInfoWithPermissionLevel {
 	s := new(UserInfoWithPermissionLevel)
@@ -840,6 +834,7 @@ func NewUserInfoWithPermissionLevel(User *sharing.UserInfo, PermissionLevel *Pap
 	s.PermissionLevel = PermissionLevel
 	return s
 }
+
 
 // UserOnPaperDocFilter : has no documentation (yet)
 type UserOnPaperDocFilter struct {
@@ -849,6 +844,7 @@ type UserOnPaperDocFilter struct {
 // Valid tag values for UserOnPaperDocFilter
 const (
 	UserOnPaperDocFilterVisited = "visited"
-	UserOnPaperDocFilterShared  = "shared"
-	UserOnPaperDocFilterOther   = "other"
+	UserOnPaperDocFilterShared = "shared"
+	UserOnPaperDocFilterOther = "other"
 )
+

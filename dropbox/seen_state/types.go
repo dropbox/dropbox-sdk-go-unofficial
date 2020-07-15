@@ -21,7 +21,9 @@
 // Package seen_state : has no documentation (yet)
 package seen_state
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+import (
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
 
 // PlatformType : Possible platforms on which a user may view content.
 type PlatformType struct {
@@ -30,12 +32,13 @@ type PlatformType struct {
 
 // Valid tag values for PlatformType
 const (
-	PlatformTypeWeb           = "web"
-	PlatformTypeDesktop       = "desktop"
-	PlatformTypeMobileIos     = "mobile_ios"
+	PlatformTypeWeb = "web"
+	PlatformTypeDesktop = "desktop"
+	PlatformTypeMobileIos = "mobile_ios"
 	PlatformTypeMobileAndroid = "mobile_android"
-	PlatformTypeApi           = "api"
-	PlatformTypeUnknown       = "unknown"
-	PlatformTypeMobile        = "mobile"
-	PlatformTypeOther         = "other"
+	PlatformTypeApi = "api"
+	PlatformTypeUnknown = "unknown"
+	PlatformTypeMobile = "mobile"
+	PlatformTypeOther = "other"
 )
+

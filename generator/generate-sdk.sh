@@ -6,13 +6,14 @@ if [[ $# -gt 1 ]]; then
     exit 1
 fi
 
-loc=$(realpath -e $0)
-base_dir=$(dirname "$loc")
+base_dir="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
 spec_dir="$base_dir/dropbox-api-spec"
 gen_dir=$(dirname ${base_dir})/dropbox
 
-stone -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
-stone -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone
+echo "$gen_dir"
+python -m stone.cli -v -a :all go_types.stoneg.py "$gen_dir" "$spec_dir"/*.stone
+python -m stone.cli -v -a :all go_client.stoneg.py "$gen_dir" "$spec_dir"/*.stone
 
 # Update SDK and API spec versions
 sdk_version=${1:-"5.0.0"}
@@ -23,4 +24,4 @@ popd
 sed -i.bak -e "s/UNKNOWN SDK VERSION/${sdk_version}/" \
     -e "s/UNKNOWN SPEC VERSION/${spec_version}/" ${gen_dir}/sdk.go
 rm ${gen_dir}/sdk.go.bak
-goimports -l -w ${gen_dir}
+#goimports -l -w ${gen_dir}

@@ -22,9 +22,8 @@
 package auth
 
 import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // AccessError : Error occurred because the account doesn't have permission to
@@ -40,8 +39,8 @@ type AccessError struct {
 // Valid tag values for AccessError
 const (
 	AccessErrorInvalidAccountType = "invalid_account_type"
-	AccessErrorPaperAccessDenied  = "paper_access_denied"
-	AccessErrorOther              = "other"
+	AccessErrorPaperAccessDenied = "paper_access_denied"
+	AccessErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a AccessError instance
@@ -60,14 +59,14 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "invalid_account_type":
-		u.InvalidAccountType = w.InvalidAccountType
+		case "invalid_account_type":
+			u.InvalidAccountType = w.InvalidAccountType
 
 		if err != nil {
 			return err
 		}
-	case "paper_access_denied":
-		u.PaperAccessDenied = w.PaperAccessDenied
+		case "paper_access_denied":
+			u.PaperAccessDenied = w.PaperAccessDenied
 
 		if err != nil {
 			return err
@@ -79,20 +78,20 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 // AuthError : Errors occurred during authentication.
 type AuthError struct {
 	dropbox.Tagged
-	// MissingScope : The access token does not have the required scope to
-	// access the route.
+	// MissingScope : The access token does not have the required scope to access
+	// the route.
 	MissingScope *TokenScopeError `json:"missing_scope,omitempty"`
 }
 
 // Valid tag values for AuthError
 const (
 	AuthErrorInvalidAccessToken = "invalid_access_token"
-	AuthErrorInvalidSelectUser  = "invalid_select_user"
+	AuthErrorInvalidSelectUser = "invalid_select_user"
 	AuthErrorInvalidSelectAdmin = "invalid_select_admin"
-	AuthErrorUserSuspended      = "user_suspended"
+	AuthErrorUserSuspended = "user_suspended"
 	AuthErrorExpiredAccessToken = "expired_access_token"
-	AuthErrorMissingScope       = "missing_scope"
-	AuthErrorOther              = "other"
+	AuthErrorMissingScope = "missing_scope"
+	AuthErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a AuthError instance
@@ -107,8 +106,8 @@ func (u *AuthError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "missing_scope":
-		err = json.Unmarshal(body, &u.MissingScope)
+		case "missing_scope":
+			err = json.Unmarshal(body, &u.MissingScope)
 
 		if err != nil {
 			return err
@@ -125,8 +124,8 @@ type InvalidAccountTypeError struct {
 // Valid tag values for InvalidAccountTypeError
 const (
 	InvalidAccountTypeErrorEndpoint = "endpoint"
-	InvalidAccountTypeErrorFeature  = "feature"
-	InvalidAccountTypeErrorOther    = "other"
+	InvalidAccountTypeErrorFeature = "feature"
+	InvalidAccountTypeErrorOther = "other"
 )
 
 // PaperAccessError : has no documentation (yet)
@@ -137,8 +136,8 @@ type PaperAccessError struct {
 // Valid tag values for PaperAccessError
 const (
 	PaperAccessErrorPaperDisabled = "paper_disabled"
-	PaperAccessErrorNotPaperUser  = "not_paper_user"
-	PaperAccessErrorOther         = "other"
+	PaperAccessErrorNotPaperUser = "not_paper_user"
+	PaperAccessErrorOther = "other"
 )
 
 // RateLimitError : Error occurred because the app is being rate limited.
@@ -149,7 +148,6 @@ type RateLimitError struct {
 	// another request.
 	RetryAfter uint64 `json:"retry_after"`
 }
-
 // NewRateLimitError returns a new RateLimitError instance
 func NewRateLimitError(Reason *RateLimitReason) *RateLimitError {
 	s := new(RateLimitError)
@@ -158,6 +156,7 @@ func NewRateLimitError(Reason *RateLimitReason) *RateLimitError {
 	return s
 }
 
+
 // RateLimitReason : has no documentation (yet)
 type RateLimitReason struct {
 	dropbox.Tagged
@@ -165,9 +164,9 @@ type RateLimitReason struct {
 
 // Valid tag values for RateLimitReason
 const (
-	RateLimitReasonTooManyRequests        = "too_many_requests"
+	RateLimitReasonTooManyRequests = "too_many_requests"
 	RateLimitReasonTooManyWriteOperations = "too_many_write_operations"
-	RateLimitReasonOther                  = "other"
+	RateLimitReasonOther = "other"
 )
 
 // TokenFromOAuth1Arg : has no documentation (yet)
@@ -178,7 +177,6 @@ type TokenFromOAuth1Arg struct {
 	// token.
 	Oauth1TokenSecret string `json:"oauth1_token_secret"`
 }
-
 // NewTokenFromOAuth1Arg returns a new TokenFromOAuth1Arg instance
 func NewTokenFromOAuth1Arg(Oauth1Token string, Oauth1TokenSecret string) *TokenFromOAuth1Arg {
 	s := new(TokenFromOAuth1Arg)
@@ -186,6 +184,7 @@ func NewTokenFromOAuth1Arg(Oauth1Token string, Oauth1TokenSecret string) *TokenF
 	s.Oauth1TokenSecret = Oauth1TokenSecret
 	return s
 }
+
 
 // TokenFromOAuth1Error : has no documentation (yet)
 type TokenFromOAuth1Error struct {
@@ -195,8 +194,8 @@ type TokenFromOAuth1Error struct {
 // Valid tag values for TokenFromOAuth1Error
 const (
 	TokenFromOAuth1ErrorInvalidOauth1TokenInfo = "invalid_oauth1_token_info"
-	TokenFromOAuth1ErrorAppIdMismatch          = "app_id_mismatch"
-	TokenFromOAuth1ErrorOther                  = "other"
+	TokenFromOAuth1ErrorAppIdMismatch = "app_id_mismatch"
+	TokenFromOAuth1ErrorOther = "other"
 )
 
 // TokenFromOAuth1Result : has no documentation (yet)
@@ -205,7 +204,6 @@ type TokenFromOAuth1Result struct {
 	// token.
 	Oauth2Token string `json:"oauth2_token"`
 }
-
 // NewTokenFromOAuth1Result returns a new TokenFromOAuth1Result instance
 func NewTokenFromOAuth1Result(Oauth2Token string) *TokenFromOAuth1Result {
 	s := new(TokenFromOAuth1Result)
@@ -213,15 +211,17 @@ func NewTokenFromOAuth1Result(Oauth2Token string) *TokenFromOAuth1Result {
 	return s
 }
 
+
 // TokenScopeError : has no documentation (yet)
 type TokenScopeError struct {
 	// RequiredScope : The required scope to access the route.
 	RequiredScope string `json:"required_scope"`
 }
-
 // NewTokenScopeError returns a new TokenScopeError instance
 func NewTokenScopeError(RequiredScope string) *TokenScopeError {
 	s := new(TokenScopeError)
 	s.RequiredScope = RequiredScope
 	return s
 }
+
+

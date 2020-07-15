@@ -22,9 +22,8 @@
 package contacts
 
 import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // DeleteManualContactsArg : has no documentation (yet)
@@ -32,7 +31,6 @@ type DeleteManualContactsArg struct {
 	// EmailAddresses : List of manually added contacts to be deleted.
 	EmailAddresses []string `json:"email_addresses"`
 }
-
 // NewDeleteManualContactsArg returns a new DeleteManualContactsArg instance
 func NewDeleteManualContactsArg(EmailAddresses []string) *DeleteManualContactsArg {
 	s := new(DeleteManualContactsArg)
@@ -40,27 +38,27 @@ func NewDeleteManualContactsArg(EmailAddresses []string) *DeleteManualContactsAr
 	return s
 }
 
+
 // DeleteManualContactsError : has no documentation (yet)
 type DeleteManualContactsError struct {
 	dropbox.Tagged
-	// ContactsNotFound : Can't delete contacts from this list. Make sure the
-	// list only has manually added contacts. The deletion was cancelled.
+	// ContactsNotFound : Can't delete contacts from this list. Make sure the list
+	// only has manually added contacts. The deletion was cancelled.
 	ContactsNotFound []string `json:"contacts_not_found,omitempty"`
 }
 
 // Valid tag values for DeleteManualContactsError
 const (
 	DeleteManualContactsErrorContactsNotFound = "contacts_not_found"
-	DeleteManualContactsErrorOther            = "other"
+	DeleteManualContactsErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DeleteManualContactsError instance
 func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// ContactsNotFound : Can't delete contacts from this list. Make sure
-		// the list only has manually added contacts. The deletion was
-		// cancelled.
+		// ContactsNotFound : Can't delete contacts from this list. Make sure the list
+		// only has manually added contacts. The deletion was cancelled.
 		ContactsNotFound []string `json:"contacts_not_found,omitempty"`
 	}
 	var w wrap
@@ -70,8 +68,8 @@ func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "contacts_not_found":
-		u.ContactsNotFound = w.ContactsNotFound
+		case "contacts_not_found":
+			u.ContactsNotFound = w.ContactsNotFound
 
 		if err != nil {
 			return err
@@ -79,3 +77,4 @@ func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 	}
 	return nil
 }
+

@@ -22,15 +22,14 @@
 package team_log
 
 import (
-	"encoding/json"
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	files "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
+	sharing "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing"
+	team "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team"
+	team_common "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
+	team_policies "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
+	time "time"
 )
 
 // AccessMethodLogInfo : Indicates the method in which the action was performed.
@@ -50,12 +49,12 @@ type AccessMethodLogInfo struct {
 
 // Valid tag values for AccessMethodLogInfo
 const (
-	AccessMethodLogInfoEndUser        = "end_user"
-	AccessMethodLogInfoSignInAs       = "sign_in_as"
+	AccessMethodLogInfoEndUser = "end_user"
+	AccessMethodLogInfoSignInAs = "sign_in_as"
 	AccessMethodLogInfoContentManager = "content_manager"
-	AccessMethodLogInfoAdminConsole   = "admin_console"
-	AccessMethodLogInfoApi            = "api"
-	AccessMethodLogInfoOther          = "other"
+	AccessMethodLogInfoAdminConsole = "admin_console"
+	AccessMethodLogInfoApi = "api"
+	AccessMethodLogInfoOther = "other"
 )
 
 // UnmarshalJSON deserializes into a AccessMethodLogInfo instance
@@ -72,32 +71,32 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "end_user":
-		u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
+		case "end_user":
+			u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as":
-		err = json.Unmarshal(body, &u.SignInAs)
+		case "sign_in_as":
+			err = json.Unmarshal(body, &u.SignInAs)
 
 		if err != nil {
 			return err
 		}
-	case "content_manager":
-		err = json.Unmarshal(body, &u.ContentManager)
+		case "content_manager":
+			err = json.Unmarshal(body, &u.ContentManager)
 
 		if err != nil {
 			return err
 		}
-	case "admin_console":
-		err = json.Unmarshal(body, &u.AdminConsole)
+		case "admin_console":
+			err = json.Unmarshal(body, &u.AdminConsole)
 
 		if err != nil {
 			return err
 		}
-	case "api":
-		err = json.Unmarshal(body, &u.Api)
+		case "api":
+			err = json.Unmarshal(body, &u.Api)
 
 		if err != nil {
 			return err
@@ -114,8 +113,8 @@ type AccountCaptureAvailability struct {
 // Valid tag values for AccountCaptureAvailability
 const (
 	AccountCaptureAvailabilityUnavailable = "unavailable"
-	AccountCaptureAvailabilityAvailable   = "available"
-	AccountCaptureAvailabilityOther       = "other"
+	AccountCaptureAvailabilityAvailable = "available"
+	AccountCaptureAvailabilityOther = "other"
 )
 
 // AccountCaptureChangeAvailabilityDetails : Granted/revoked option to enable
@@ -123,11 +122,10 @@ const (
 type AccountCaptureChangeAvailabilityDetails struct {
 	// NewValue : New account capture availabilty value.
 	NewValue *AccountCaptureAvailability `json:"new_value"`
-	// PreviousValue : Previous account capture availabilty value. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous account capture availabilty value. Might be missing
+	// due to historical data gap.
 	PreviousValue *AccountCaptureAvailability `json:"previous_value,omitempty"`
 }
-
 // NewAccountCaptureChangeAvailabilityDetails returns a new AccountCaptureChangeAvailabilityDetails instance
 func NewAccountCaptureChangeAvailabilityDetails(NewValue *AccountCaptureAvailability) *AccountCaptureChangeAvailabilityDetails {
 	s := new(AccountCaptureChangeAvailabilityDetails)
@@ -135,18 +133,19 @@ func NewAccountCaptureChangeAvailabilityDetails(NewValue *AccountCaptureAvailabi
 	return s
 }
 
+
 // AccountCaptureChangeAvailabilityType : has no documentation (yet)
 type AccountCaptureChangeAvailabilityType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAccountCaptureChangeAvailabilityType returns a new AccountCaptureChangeAvailabilityType instance
 func NewAccountCaptureChangeAvailabilityType(Description string) *AccountCaptureChangeAvailabilityType {
 	s := new(AccountCaptureChangeAvailabilityType)
 	s.Description = Description
 	return s
 }
+
 
 // AccountCaptureChangePolicyDetails : Changed account capture setting on team
 // domain.
@@ -157,7 +156,6 @@ type AccountCaptureChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *AccountCapturePolicy `json:"previous_value,omitempty"`
 }
-
 // NewAccountCaptureChangePolicyDetails returns a new AccountCaptureChangePolicyDetails instance
 func NewAccountCaptureChangePolicyDetails(NewValue *AccountCapturePolicy) *AccountCaptureChangePolicyDetails {
 	s := new(AccountCaptureChangePolicyDetails)
@@ -165,12 +163,12 @@ func NewAccountCaptureChangePolicyDetails(NewValue *AccountCapturePolicy) *Accou
 	return s
 }
 
+
 // AccountCaptureChangePolicyType : has no documentation (yet)
 type AccountCaptureChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAccountCaptureChangePolicyType returns a new AccountCaptureChangePolicyType instance
 func NewAccountCaptureChangePolicyType(Description string) *AccountCaptureChangePolicyType {
 	s := new(AccountCaptureChangePolicyType)
@@ -178,13 +176,13 @@ func NewAccountCaptureChangePolicyType(Description string) *AccountCaptureChange
 	return s
 }
 
+
 // AccountCaptureMigrateAccountDetails : Account-captured user migrated account
 // to team.
 type AccountCaptureMigrateAccountDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
 }
-
 // NewAccountCaptureMigrateAccountDetails returns a new AccountCaptureMigrateAccountDetails instance
 func NewAccountCaptureMigrateAccountDetails(DomainName string) *AccountCaptureMigrateAccountDetails {
 	s := new(AccountCaptureMigrateAccountDetails)
@@ -192,12 +190,12 @@ func NewAccountCaptureMigrateAccountDetails(DomainName string) *AccountCaptureMi
 	return s
 }
 
+
 // AccountCaptureMigrateAccountType : has no documentation (yet)
 type AccountCaptureMigrateAccountType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAccountCaptureMigrateAccountType returns a new AccountCaptureMigrateAccountType instance
 func NewAccountCaptureMigrateAccountType(Description string) *AccountCaptureMigrateAccountType {
 	s := new(AccountCaptureMigrateAccountType)
@@ -205,13 +203,13 @@ func NewAccountCaptureMigrateAccountType(Description string) *AccountCaptureMigr
 	return s
 }
 
+
 // AccountCaptureNotificationEmailsSentDetails : Sent proactive account capture
 // email to all unmanaged members.
 type AccountCaptureNotificationEmailsSentDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
 }
-
 // NewAccountCaptureNotificationEmailsSentDetails returns a new AccountCaptureNotificationEmailsSentDetails instance
 func NewAccountCaptureNotificationEmailsSentDetails(DomainName string) *AccountCaptureNotificationEmailsSentDetails {
 	s := new(AccountCaptureNotificationEmailsSentDetails)
@@ -219,18 +217,19 @@ func NewAccountCaptureNotificationEmailsSentDetails(DomainName string) *AccountC
 	return s
 }
 
+
 // AccountCaptureNotificationEmailsSentType : has no documentation (yet)
 type AccountCaptureNotificationEmailsSentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAccountCaptureNotificationEmailsSentType returns a new AccountCaptureNotificationEmailsSentType instance
 func NewAccountCaptureNotificationEmailsSentType(Description string) *AccountCaptureNotificationEmailsSentType {
 	s := new(AccountCaptureNotificationEmailsSentType)
 	s.Description = Description
 	return s
 }
+
 
 // AccountCapturePolicy : has no documentation (yet)
 type AccountCapturePolicy struct {
@@ -239,10 +238,10 @@ type AccountCapturePolicy struct {
 
 // Valid tag values for AccountCapturePolicy
 const (
-	AccountCapturePolicyDisabled     = "disabled"
+	AccountCapturePolicyDisabled = "disabled"
 	AccountCapturePolicyInvitedUsers = "invited_users"
-	AccountCapturePolicyAllUsers     = "all_users"
-	AccountCapturePolicyOther        = "other"
+	AccountCapturePolicyAllUsers = "all_users"
+	AccountCapturePolicyOther = "other"
 )
 
 // AccountCaptureRelinquishAccountDetails : Account-captured user changed
@@ -251,7 +250,6 @@ type AccountCaptureRelinquishAccountDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
 }
-
 // NewAccountCaptureRelinquishAccountDetails returns a new AccountCaptureRelinquishAccountDetails instance
 func NewAccountCaptureRelinquishAccountDetails(DomainName string) *AccountCaptureRelinquishAccountDetails {
 	s := new(AccountCaptureRelinquishAccountDetails)
@@ -259,18 +257,19 @@ func NewAccountCaptureRelinquishAccountDetails(DomainName string) *AccountCaptur
 	return s
 }
 
+
 // AccountCaptureRelinquishAccountType : has no documentation (yet)
 type AccountCaptureRelinquishAccountType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAccountCaptureRelinquishAccountType returns a new AccountCaptureRelinquishAccountType instance
 func NewAccountCaptureRelinquishAccountType(Description string) *AccountCaptureRelinquishAccountType {
 	s := new(AccountCaptureRelinquishAccountType)
 	s.Description = Description
 	return s
 }
+
 
 // ActionDetails : Additional information indicating the action taken that
 // caused status change.
@@ -286,8 +285,8 @@ type ActionDetails struct {
 // Valid tag values for ActionDetails
 const (
 	ActionDetailsTeamJoinDetails = "team_join_details"
-	ActionDetailsRemoveAction    = "remove_action"
-	ActionDetailsOther           = "other"
+	ActionDetailsRemoveAction = "remove_action"
+	ActionDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a ActionDetails instance
@@ -304,14 +303,14 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "team_join_details":
-		err = json.Unmarshal(body, &u.TeamJoinDetails)
+		case "team_join_details":
+			err = json.Unmarshal(body, &u.TeamJoinDetails)
 
 		if err != nil {
 			return err
 		}
-	case "remove_action":
-		u.RemoveAction = w.RemoveAction
+		case "remove_action":
+			u.RemoveAction = w.RemoveAction
 
 		if err != nil {
 			return err
@@ -335,13 +334,13 @@ type ActorLogInfo struct {
 
 // Valid tag values for ActorLogInfo
 const (
-	ActorLogInfoUser      = "user"
-	ActorLogInfoAdmin     = "admin"
-	ActorLogInfoApp       = "app"
-	ActorLogInfoReseller  = "reseller"
-	ActorLogInfoDropbox   = "dropbox"
+	ActorLogInfoUser = "user"
+	ActorLogInfoAdmin = "admin"
+	ActorLogInfoApp = "app"
+	ActorLogInfoReseller = "reseller"
+	ActorLogInfoDropbox = "dropbox"
 	ActorLogInfoAnonymous = "anonymous"
-	ActorLogInfoOther     = "other"
+	ActorLogInfoOther = "other"
 )
 
 // UnmarshalJSON deserializes into a ActorLogInfo instance
@@ -362,26 +361,26 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
+		case "user":
+			u.User, err = IsUserLogInfoFromJSON(w.User)
 
 		if err != nil {
 			return err
 		}
-	case "admin":
-		u.Admin, err = IsUserLogInfoFromJSON(w.Admin)
+		case "admin":
+			u.Admin, err = IsUserLogInfoFromJSON(w.Admin)
 
 		if err != nil {
 			return err
 		}
-	case "app":
-		u.App, err = IsAppLogInfoFromJSON(w.App)
+		case "app":
+			u.App, err = IsAppLogInfoFromJSON(w.App)
 
 		if err != nil {
 			return err
 		}
-	case "reseller":
-		err = json.Unmarshal(body, &u.Reseller)
+		case "reseller":
+			err = json.Unmarshal(body, &u.Reseller)
 
 		if err != nil {
 			return err
@@ -397,30 +396,29 @@ type AdminRole struct {
 
 // Valid tag values for AdminRole
 const (
-	AdminRoleTeamAdmin           = "team_admin"
+	AdminRoleTeamAdmin = "team_admin"
 	AdminRoleUserManagementAdmin = "user_management_admin"
-	AdminRoleSupportAdmin        = "support_admin"
-	AdminRoleLimitedAdmin        = "limited_admin"
-	AdminRoleMemberOnly          = "member_only"
-	AdminRoleOther               = "other"
+	AdminRoleSupportAdmin = "support_admin"
+	AdminRoleLimitedAdmin = "limited_admin"
+	AdminRoleMemberOnly = "member_only"
+	AdminRoleOther = "other"
 )
 
 // AllowDownloadDisabledDetails : Disabled downloads.
 type AllowDownloadDisabledDetails struct {
 }
-
 // NewAllowDownloadDisabledDetails returns a new AllowDownloadDisabledDetails instance
 func NewAllowDownloadDisabledDetails() *AllowDownloadDisabledDetails {
 	s := new(AllowDownloadDisabledDetails)
 	return s
 }
 
+
 // AllowDownloadDisabledType : has no documentation (yet)
 type AllowDownloadDisabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAllowDownloadDisabledType returns a new AllowDownloadDisabledType instance
 func NewAllowDownloadDisabledType(Description string) *AllowDownloadDisabledType {
 	s := new(AllowDownloadDisabledType)
@@ -428,22 +426,22 @@ func NewAllowDownloadDisabledType(Description string) *AllowDownloadDisabledType
 	return s
 }
 
+
 // AllowDownloadEnabledDetails : Enabled downloads.
 type AllowDownloadEnabledDetails struct {
 }
-
 // NewAllowDownloadEnabledDetails returns a new AllowDownloadEnabledDetails instance
 func NewAllowDownloadEnabledDetails() *AllowDownloadEnabledDetails {
 	s := new(AllowDownloadEnabledDetails)
 	return s
 }
 
+
 // AllowDownloadEnabledType : has no documentation (yet)
 type AllowDownloadEnabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAllowDownloadEnabledType returns a new AllowDownloadEnabledType instance
 func NewAllowDownloadEnabledType(Description string) *AllowDownloadEnabledType {
 	s := new(AllowDownloadEnabledType)
@@ -451,12 +449,12 @@ func NewAllowDownloadEnabledType(Description string) *AllowDownloadEnabledType {
 	return s
 }
 
+
 // ApiSessionLogInfo : Api session.
 type ApiSessionLogInfo struct {
 	// RequestId : Api request ID.
 	RequestId string `json:"request_id"`
 }
-
 // NewApiSessionLogInfo returns a new ApiSessionLogInfo instance
 func NewApiSessionLogInfo(RequestId string) *ApiSessionLogInfo {
 	s := new(ApiSessionLogInfo)
@@ -464,18 +462,19 @@ func NewApiSessionLogInfo(RequestId string) *ApiSessionLogInfo {
 	return s
 }
 
+
 // AppLinkTeamDetails : Linked app for team.
 type AppLinkTeamDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
 }
-
 // NewAppLinkTeamDetails returns a new AppLinkTeamDetails instance
 func NewAppLinkTeamDetails(AppInfo IsAppLogInfo) *AppLinkTeamDetails {
 	s := new(AppLinkTeamDetails)
 	s.AppInfo = AppInfo
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a AppLinkTeamDetails instance
 func (u *AppLinkTeamDetails) UnmarshalJSON(b []byte) error {
@@ -494,13 +493,11 @@ func (u *AppLinkTeamDetails) UnmarshalJSON(b []byte) error {
 	u.AppInfo = AppInfo
 	return nil
 }
-
 // AppLinkTeamType : has no documentation (yet)
 type AppLinkTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAppLinkTeamType returns a new AppLinkTeamType instance
 func NewAppLinkTeamType(Description string) *AppLinkTeamType {
 	s := new(AppLinkTeamType)
@@ -508,18 +505,19 @@ func NewAppLinkTeamType(Description string) *AppLinkTeamType {
 	return s
 }
 
+
 // AppLinkUserDetails : Linked app for member.
 type AppLinkUserDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
 }
-
 // NewAppLinkUserDetails returns a new AppLinkUserDetails instance
 func NewAppLinkUserDetails(AppInfo IsAppLogInfo) *AppLinkUserDetails {
 	s := new(AppLinkUserDetails)
 	s.AppInfo = AppInfo
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a AppLinkUserDetails instance
 func (u *AppLinkUserDetails) UnmarshalJSON(b []byte) error {
@@ -538,13 +536,11 @@ func (u *AppLinkUserDetails) UnmarshalJSON(b []byte) error {
 	u.AppInfo = AppInfo
 	return nil
 }
-
 // AppLinkUserType : has no documentation (yet)
 type AppLinkUserType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAppLinkUserType returns a new AppLinkUserType instance
 func NewAppLinkUserType(Description string) *AppLinkUserType {
 	s := new(AppLinkUserType)
@@ -552,20 +548,20 @@ func NewAppLinkUserType(Description string) *AppLinkUserType {
 	return s
 }
 
+
 // AppLogInfo : App's logged information.
 type AppLogInfo struct {
 	// AppId : App unique ID. Might be missing due to historical data gap.
 	AppId string `json:"app_id,omitempty"`
-	// DisplayName : App display name. Might be missing due to historical data
-	// gap.
+	// DisplayName : App display name. Might be missing due to historical data gap.
 	DisplayName string `json:"display_name,omitempty"`
 }
-
 // NewAppLogInfo returns a new AppLogInfo instance
 func NewAppLogInfo() *AppLogInfo {
 	s := new(AppLogInfo)
 	return s
 }
+
 
 // IsAppLogInfo is the interface type for AppLogInfo and its subtypes
 type IsAppLogInfo interface {
@@ -588,8 +584,8 @@ type appLogInfoUnion struct {
 // Valid tag values for AppLogInfo
 const (
 	AppLogInfoUserOrTeamLinkedApp = "user_or_team_linked_app"
-	AppLogInfoUserLinkedApp       = "user_linked_app"
-	AppLogInfoTeamLinkedApp       = "team_linked_app"
+	AppLogInfoUserLinkedApp = "user_linked_app"
+	AppLogInfoTeamLinkedApp = "team_linked_app"
 )
 
 // UnmarshalJSON deserializes into a appLogInfoUnion instance
@@ -604,20 +600,20 @@ func (u *appLogInfoUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "user_or_team_linked_app":
-		err = json.Unmarshal(body, &u.UserOrTeamLinkedApp)
+		case "user_or_team_linked_app":
+			err = json.Unmarshal(body, &u.UserOrTeamLinkedApp)
 
 		if err != nil {
 			return err
 		}
-	case "user_linked_app":
-		err = json.Unmarshal(body, &u.UserLinkedApp)
+		case "user_linked_app":
+			err = json.Unmarshal(body, &u.UserLinkedApp)
 
 		if err != nil {
 			return err
 		}
-	case "team_linked_app":
-		err = json.Unmarshal(body, &u.TeamLinkedApp)
+		case "team_linked_app":
+			err = json.Unmarshal(body, &u.TeamLinkedApp)
 
 		if err != nil {
 			return err
@@ -633,31 +629,30 @@ func IsAppLogInfoFromJSON(data []byte) (IsAppLogInfo, error) {
 		return nil, err
 	}
 	switch t.Tag {
-	case "user_or_team_linked_app":
-		return t.UserOrTeamLinkedApp, nil
+		case "user_or_team_linked_app":
+			return t.UserOrTeamLinkedApp, nil
 
-	case "user_linked_app":
-		return t.UserLinkedApp, nil
+		case "user_linked_app":
+			return t.UserLinkedApp, nil
 
-	case "team_linked_app":
-		return t.TeamLinkedApp, nil
+		case "team_linked_app":
+			return t.TeamLinkedApp, nil
 
 	}
 	return nil, nil
 }
-
 // AppUnlinkTeamDetails : Unlinked app for team.
 type AppUnlinkTeamDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
 }
-
 // NewAppUnlinkTeamDetails returns a new AppUnlinkTeamDetails instance
 func NewAppUnlinkTeamDetails(AppInfo IsAppLogInfo) *AppUnlinkTeamDetails {
 	s := new(AppUnlinkTeamDetails)
 	s.AppInfo = AppInfo
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a AppUnlinkTeamDetails instance
 func (u *AppUnlinkTeamDetails) UnmarshalJSON(b []byte) error {
@@ -676,13 +671,11 @@ func (u *AppUnlinkTeamDetails) UnmarshalJSON(b []byte) error {
 	u.AppInfo = AppInfo
 	return nil
 }
-
 // AppUnlinkTeamType : has no documentation (yet)
 type AppUnlinkTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAppUnlinkTeamType returns a new AppUnlinkTeamType instance
 func NewAppUnlinkTeamType(Description string) *AppUnlinkTeamType {
 	s := new(AppUnlinkTeamType)
@@ -690,18 +683,19 @@ func NewAppUnlinkTeamType(Description string) *AppUnlinkTeamType {
 	return s
 }
 
+
 // AppUnlinkUserDetails : Unlinked app for member.
 type AppUnlinkUserDetails struct {
 	// AppInfo : Relevant application details.
 	AppInfo IsAppLogInfo `json:"app_info"`
 }
-
 // NewAppUnlinkUserDetails returns a new AppUnlinkUserDetails instance
 func NewAppUnlinkUserDetails(AppInfo IsAppLogInfo) *AppUnlinkUserDetails {
 	s := new(AppUnlinkUserDetails)
 	s.AppInfo = AppInfo
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a AppUnlinkUserDetails instance
 func (u *AppUnlinkUserDetails) UnmarshalJSON(b []byte) error {
@@ -720,19 +714,18 @@ func (u *AppUnlinkUserDetails) UnmarshalJSON(b []byte) error {
 	u.AppInfo = AppInfo
 	return nil
 }
-
 // AppUnlinkUserType : has no documentation (yet)
 type AppUnlinkUserType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewAppUnlinkUserType returns a new AppUnlinkUserType instance
 func NewAppUnlinkUserType(Description string) *AppUnlinkUserType {
 	s := new(AppUnlinkUserType)
 	s.Description = Description
 	return s
 }
+
 
 // AssetLogInfo : Asset details.
 type AssetLogInfo struct {
@@ -751,12 +744,12 @@ type AssetLogInfo struct {
 
 // Valid tag values for AssetLogInfo
 const (
-	AssetLogInfoFile             = "file"
-	AssetLogInfoFolder           = "folder"
-	AssetLogInfoPaperDocument    = "paper_document"
-	AssetLogInfoPaperFolder      = "paper_folder"
+	AssetLogInfoFile = "file"
+	AssetLogInfoFolder = "folder"
+	AssetLogInfoPaperDocument = "paper_document"
+	AssetLogInfoPaperFolder = "paper_folder"
 	AssetLogInfoShowcaseDocument = "showcase_document"
-	AssetLogInfoOther            = "other"
+	AssetLogInfoOther = "other"
 )
 
 // UnmarshalJSON deserializes into a AssetLogInfo instance
@@ -771,32 +764,32 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "file":
-		err = json.Unmarshal(body, &u.File)
+		case "file":
+			err = json.Unmarshal(body, &u.File)
 
 		if err != nil {
 			return err
 		}
-	case "folder":
-		err = json.Unmarshal(body, &u.Folder)
+		case "folder":
+			err = json.Unmarshal(body, &u.Folder)
 
 		if err != nil {
 			return err
 		}
-	case "paper_document":
-		err = json.Unmarshal(body, &u.PaperDocument)
+		case "paper_document":
+			err = json.Unmarshal(body, &u.PaperDocument)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder":
-		err = json.Unmarshal(body, &u.PaperFolder)
+		case "paper_folder":
+			err = json.Unmarshal(body, &u.PaperFolder)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_document":
-		err = json.Unmarshal(body, &u.ShowcaseDocument)
+		case "showcase_document":
+			err = json.Unmarshal(body, &u.ShowcaseDocument)
 
 		if err != nil {
 			return err
@@ -814,8 +807,8 @@ type CameraUploadsPolicy struct {
 // Valid tag values for CameraUploadsPolicy
 const (
 	CameraUploadsPolicyDisabled = "disabled"
-	CameraUploadsPolicyEnabled  = "enabled"
-	CameraUploadsPolicyOther    = "other"
+	CameraUploadsPolicyEnabled = "enabled"
+	CameraUploadsPolicyOther = "other"
 )
 
 // CameraUploadsPolicyChangedDetails : Changed camera uploads setting for team.
@@ -825,7 +818,6 @@ type CameraUploadsPolicyChangedDetails struct {
 	// PreviousValue : Previous camera uploads setting.
 	PreviousValue *CameraUploadsPolicy `json:"previous_value"`
 }
-
 // NewCameraUploadsPolicyChangedDetails returns a new CameraUploadsPolicyChangedDetails instance
 func NewCameraUploadsPolicyChangedDetails(NewValue *CameraUploadsPolicy, PreviousValue *CameraUploadsPolicy) *CameraUploadsPolicyChangedDetails {
 	s := new(CameraUploadsPolicyChangedDetails)
@@ -834,18 +826,19 @@ func NewCameraUploadsPolicyChangedDetails(NewValue *CameraUploadsPolicy, Previou
 	return s
 }
 
+
 // CameraUploadsPolicyChangedType : has no documentation (yet)
 type CameraUploadsPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewCameraUploadsPolicyChangedType returns a new CameraUploadsPolicyChangedType instance
 func NewCameraUploadsPolicyChangedType(Description string) *CameraUploadsPolicyChangedType {
 	s := new(CameraUploadsPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // Certificate : Certificate details.
 type Certificate struct {
@@ -864,7 +857,6 @@ type Certificate struct {
 	// CommonName : Certificate common name.
 	CommonName string `json:"common_name,omitempty"`
 }
-
 // NewCertificate returns a new Certificate instance
 func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationDate string, SerialNumber string, Sha1Fingerprint string) *Certificate {
 	s := new(Certificate)
@@ -877,12 +869,12 @@ func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationD
 	return s
 }
 
+
 // CollectionShareDetails : Shared album.
 type CollectionShareDetails struct {
 	// AlbumName : Album name.
 	AlbumName string `json:"album_name"`
 }
-
 // NewCollectionShareDetails returns a new CollectionShareDetails instance
 func NewCollectionShareDetails(AlbumName string) *CollectionShareDetails {
 	s := new(CollectionShareDetails)
@@ -890,18 +882,19 @@ func NewCollectionShareDetails(AlbumName string) *CollectionShareDetails {
 	return s
 }
 
+
 // CollectionShareType : has no documentation (yet)
 type CollectionShareType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewCollectionShareType returns a new CollectionShareType instance
 func NewCollectionShareType(Description string) *CollectionShareType {
 	s := new(CollectionShareType)
 	s.Description = Description
 	return s
 }
+
 
 // ContentPermanentDeletePolicy : Policy for pemanent content deletion
 type ContentPermanentDeletePolicy struct {
@@ -911,8 +904,8 @@ type ContentPermanentDeletePolicy struct {
 // Valid tag values for ContentPermanentDeletePolicy
 const (
 	ContentPermanentDeletePolicyDisabled = "disabled"
-	ContentPermanentDeletePolicyEnabled  = "enabled"
-	ContentPermanentDeletePolicyOther    = "other"
+	ContentPermanentDeletePolicyEnabled = "enabled"
+	ContentPermanentDeletePolicyOther = "other"
 )
 
 // ContextLogInfo : The primary entity on which the action was done.
@@ -929,12 +922,12 @@ type ContextLogInfo struct {
 
 // Valid tag values for ContextLogInfo
 const (
-	ContextLogInfoTeamMember           = "team_member"
-	ContextLogInfoNonTeamMember        = "non_team_member"
-	ContextLogInfoAnonymous            = "anonymous"
-	ContextLogInfoTeam                 = "team"
+	ContextLogInfoTeamMember = "team_member"
+	ContextLogInfoNonTeamMember = "non_team_member"
+	ContextLogInfoAnonymous = "anonymous"
+	ContextLogInfoTeam = "team"
 	ContextLogInfoTrustedNonTeamMember = "trusted_non_team_member"
-	ContextLogInfoOther                = "other"
+	ContextLogInfoOther = "other"
 )
 
 // UnmarshalJSON deserializes into a ContextLogInfo instance
@@ -949,20 +942,20 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "team_member":
-		err = json.Unmarshal(body, &u.TeamMember)
+		case "team_member":
+			err = json.Unmarshal(body, &u.TeamMember)
 
 		if err != nil {
 			return err
 		}
-	case "non_team_member":
-		err = json.Unmarshal(body, &u.NonTeamMember)
+		case "non_team_member":
+			err = json.Unmarshal(body, &u.NonTeamMember)
 
 		if err != nil {
 			return err
 		}
-	case "trusted_non_team_member":
-		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
+		case "trusted_non_team_member":
+			err = json.Unmarshal(body, &u.TrustedNonTeamMember)
 
 		if err != nil {
 			return err
@@ -974,25 +967,25 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 // CreateFolderDetails : Created folders.
 type CreateFolderDetails struct {
 }
-
 // NewCreateFolderDetails returns a new CreateFolderDetails instance
 func NewCreateFolderDetails() *CreateFolderDetails {
 	s := new(CreateFolderDetails)
 	return s
 }
 
+
 // CreateFolderType : has no documentation (yet)
 type CreateFolderType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewCreateFolderType returns a new CreateFolderType instance
 func NewCreateFolderType(Description string) *CreateFolderType {
 	s := new(CreateFolderType)
 	s.Description = Description
 	return s
 }
+
 
 // DataPlacementRestrictionChangePolicyDetails : Set restrictions on data center
 // locations where team data resides.
@@ -1002,7 +995,6 @@ type DataPlacementRestrictionChangePolicyDetails struct {
 	// NewValue : New placement restriction.
 	NewValue *PlacementRestriction `json:"new_value"`
 }
-
 // NewDataPlacementRestrictionChangePolicyDetails returns a new DataPlacementRestrictionChangePolicyDetails instance
 func NewDataPlacementRestrictionChangePolicyDetails(PreviousValue *PlacementRestriction, NewValue *PlacementRestriction) *DataPlacementRestrictionChangePolicyDetails {
 	s := new(DataPlacementRestrictionChangePolicyDetails)
@@ -1011,12 +1003,12 @@ func NewDataPlacementRestrictionChangePolicyDetails(PreviousValue *PlacementRest
 	return s
 }
 
+
 // DataPlacementRestrictionChangePolicyType : has no documentation (yet)
 type DataPlacementRestrictionChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDataPlacementRestrictionChangePolicyType returns a new DataPlacementRestrictionChangePolicyType instance
 func NewDataPlacementRestrictionChangePolicyType(Description string) *DataPlacementRestrictionChangePolicyType {
 	s := new(DataPlacementRestrictionChangePolicyType)
@@ -1024,13 +1016,13 @@ func NewDataPlacementRestrictionChangePolicyType(Description string) *DataPlacem
 	return s
 }
 
+
 // DataPlacementRestrictionSatisfyPolicyDetails : Completed restrictions on data
 // center locations where team data resides.
 type DataPlacementRestrictionSatisfyPolicyDetails struct {
 	// PlacementRestriction : Placement restriction.
 	PlacementRestriction *PlacementRestriction `json:"placement_restriction"`
 }
-
 // NewDataPlacementRestrictionSatisfyPolicyDetails returns a new DataPlacementRestrictionSatisfyPolicyDetails instance
 func NewDataPlacementRestrictionSatisfyPolicyDetails(PlacementRestriction *PlacementRestriction) *DataPlacementRestrictionSatisfyPolicyDetails {
 	s := new(DataPlacementRestrictionSatisfyPolicyDetails)
@@ -1038,12 +1030,12 @@ func NewDataPlacementRestrictionSatisfyPolicyDetails(PlacementRestriction *Place
 	return s
 }
 
+
 // DataPlacementRestrictionSatisfyPolicyType : has no documentation (yet)
 type DataPlacementRestrictionSatisfyPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDataPlacementRestrictionSatisfyPolicyType returns a new DataPlacementRestrictionSatisfyPolicyType instance
 func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlacementRestrictionSatisfyPolicyType {
 	s := new(DataPlacementRestrictionSatisfyPolicyType)
@@ -1051,24 +1043,25 @@ func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlace
 	return s
 }
 
+
 // DeviceSessionLogInfo : Device's session logged information.
 type DeviceSessionLogInfo struct {
-	// IpAddress : The IP address of the last activity from this session. Might
-	// be missing due to historical data gap.
+	// IpAddress : The IP address of the last activity from this session. Might be
+	// missing due to historical data gap.
 	IpAddress string `json:"ip_address,omitempty"`
 	// Created : The time this session was created. Might be missing due to
 	// historical data gap.
 	Created time.Time `json:"created,omitempty"`
-	// Updated : The time of the last activity from this session. Might be
-	// missing due to historical data gap.
+	// Updated : The time of the last activity from this session. Might be missing
+	// due to historical data gap.
 	Updated time.Time `json:"updated,omitempty"`
 }
-
 // NewDeviceSessionLogInfo returns a new DeviceSessionLogInfo instance
 func NewDeviceSessionLogInfo() *DeviceSessionLogInfo {
 	s := new(DeviceSessionLogInfo)
 	return s
 }
+
 
 // IsDeviceSessionLogInfo is the interface type for DeviceSessionLogInfo and its subtypes
 type IsDeviceSessionLogInfo interface {
@@ -1093,9 +1086,9 @@ type deviceSessionLogInfoUnion struct {
 // Valid tag values for DeviceSessionLogInfo
 const (
 	DeviceSessionLogInfoDesktopDeviceSession = "desktop_device_session"
-	DeviceSessionLogInfoMobileDeviceSession  = "mobile_device_session"
-	DeviceSessionLogInfoWebDeviceSession     = "web_device_session"
-	DeviceSessionLogInfoLegacyDeviceSession  = "legacy_device_session"
+	DeviceSessionLogInfoMobileDeviceSession = "mobile_device_session"
+	DeviceSessionLogInfoWebDeviceSession = "web_device_session"
+	DeviceSessionLogInfoLegacyDeviceSession = "legacy_device_session"
 )
 
 // UnmarshalJSON deserializes into a deviceSessionLogInfoUnion instance
@@ -1110,26 +1103,26 @@ func (u *deviceSessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "desktop_device_session":
-		err = json.Unmarshal(body, &u.DesktopDeviceSession)
+		case "desktop_device_session":
+			err = json.Unmarshal(body, &u.DesktopDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "mobile_device_session":
-		err = json.Unmarshal(body, &u.MobileDeviceSession)
+		case "mobile_device_session":
+			err = json.Unmarshal(body, &u.MobileDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "web_device_session":
-		err = json.Unmarshal(body, &u.WebDeviceSession)
+		case "web_device_session":
+			err = json.Unmarshal(body, &u.WebDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "legacy_device_session":
-		err = json.Unmarshal(body, &u.LegacyDeviceSession)
+		case "legacy_device_session":
+			err = json.Unmarshal(body, &u.LegacyDeviceSession)
 
 		if err != nil {
 			return err
@@ -1145,28 +1138,27 @@ func IsDeviceSessionLogInfoFromJSON(data []byte) (IsDeviceSessionLogInfo, error)
 		return nil, err
 	}
 	switch t.Tag {
-	case "desktop_device_session":
-		return t.DesktopDeviceSession, nil
+		case "desktop_device_session":
+			return t.DesktopDeviceSession, nil
 
-	case "mobile_device_session":
-		return t.MobileDeviceSession, nil
+		case "mobile_device_session":
+			return t.MobileDeviceSession, nil
 
-	case "web_device_session":
-		return t.WebDeviceSession, nil
+		case "web_device_session":
+			return t.WebDeviceSession, nil
 
-	case "legacy_device_session":
-		return t.LegacyDeviceSession, nil
+		case "legacy_device_session":
+			return t.LegacyDeviceSession, nil
 
 	}
 	return nil, nil
 }
-
 // DesktopDeviceSessionLogInfo : Information about linked Dropbox desktop client
 // sessions
 type DesktopDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Desktop session unique id. Might be missing due to
-	// historical data gap.
+	// SessionInfo : Desktop session unique id. Might be missing due to historical
+	// data gap.
 	SessionInfo *DesktopSessionLogInfo `json:"session_info,omitempty"`
 	// HostName : Name of the hosting desktop.
 	HostName string `json:"host_name"`
@@ -1176,11 +1168,10 @@ type DesktopDeviceSessionLogInfo struct {
 	ClientVersion string `json:"client_version,omitempty"`
 	// Platform : Information on the hosting platform.
 	Platform string `json:"platform"`
-	// IsDeleteOnUnlinkSupported : Whether itu2019s possible to delete all of
-	// the account files upon unlinking.
+	// IsDeleteOnUnlinkSupported : Whether itu2019s possible to delete all of the
+	// account files upon unlinking.
 	IsDeleteOnUnlinkSupported bool `json:"is_delete_on_unlink_supported"`
 }
-
 // NewDesktopDeviceSessionLogInfo returns a new DesktopDeviceSessionLogInfo instance
 func NewDesktopDeviceSessionLogInfo(HostName string, ClientType *team.DesktopPlatform, Platform string, IsDeleteOnUnlinkSupported bool) *DesktopDeviceSessionLogInfo {
 	s := new(DesktopDeviceSessionLogInfo)
@@ -1191,17 +1182,18 @@ func NewDesktopDeviceSessionLogInfo(HostName string, ClientType *team.DesktopPla
 	return s
 }
 
+
 // SessionLogInfo : Session's logged information.
 type SessionLogInfo struct {
 	// SessionId : Session ID. Might be missing due to historical data gap.
 	SessionId string `json:"session_id,omitempty"`
 }
-
 // NewSessionLogInfo returns a new SessionLogInfo instance
 func NewSessionLogInfo() *SessionLogInfo {
 	s := new(SessionLogInfo)
 	return s
 }
+
 
 // IsSessionLogInfo is the interface type for SessionLogInfo and its subtypes
 type IsSessionLogInfo interface {
@@ -1223,9 +1215,9 @@ type sessionLogInfoUnion struct {
 
 // Valid tag values for SessionLogInfo
 const (
-	SessionLogInfoWeb     = "web"
+	SessionLogInfoWeb = "web"
 	SessionLogInfoDesktop = "desktop"
-	SessionLogInfoMobile  = "mobile"
+	SessionLogInfoMobile = "mobile"
 )
 
 // UnmarshalJSON deserializes into a sessionLogInfoUnion instance
@@ -1240,20 +1232,20 @@ func (u *sessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "web":
-		err = json.Unmarshal(body, &u.Web)
+		case "web":
+			err = json.Unmarshal(body, &u.Web)
 
 		if err != nil {
 			return err
 		}
-	case "desktop":
-		err = json.Unmarshal(body, &u.Desktop)
+		case "desktop":
+			err = json.Unmarshal(body, &u.Desktop)
 
 		if err != nil {
 			return err
 		}
-	case "mobile":
-		err = json.Unmarshal(body, &u.Mobile)
+		case "mobile":
+			err = json.Unmarshal(body, &u.Mobile)
 
 		if err != nil {
 			return err
@@ -1269,29 +1261,28 @@ func IsSessionLogInfoFromJSON(data []byte) (IsSessionLogInfo, error) {
 		return nil, err
 	}
 	switch t.Tag {
-	case "web":
-		return t.Web, nil
+		case "web":
+			return t.Web, nil
 
-	case "desktop":
-		return t.Desktop, nil
+		case "desktop":
+			return t.Desktop, nil
 
-	case "mobile":
-		return t.Mobile, nil
+		case "mobile":
+			return t.Mobile, nil
 
 	}
 	return nil, nil
 }
-
 // DesktopSessionLogInfo : Desktop session.
 type DesktopSessionLogInfo struct {
 	SessionLogInfo
 }
-
 // NewDesktopSessionLogInfo returns a new DesktopSessionLogInfo instance
 func NewDesktopSessionLogInfo() *DesktopSessionLogInfo {
 	s := new(DesktopSessionLogInfo)
 	return s
 }
+
 
 // DeviceApprovalsChangeDesktopPolicyDetails : Set/removed limit on number of
 // computers member can link to team Dropbox account.
@@ -1299,29 +1290,29 @@ type DeviceApprovalsChangeDesktopPolicyDetails struct {
 	// NewValue : New desktop device approvals policy. Might be missing due to
 	// historical data gap.
 	NewValue *DeviceApprovalsPolicy `json:"new_value,omitempty"`
-	// PreviousValue : Previous desktop device approvals policy. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous desktop device approvals policy. Might be missing
+	// due to historical data gap.
 	PreviousValue *DeviceApprovalsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewDeviceApprovalsChangeDesktopPolicyDetails returns a new DeviceApprovalsChangeDesktopPolicyDetails instance
 func NewDeviceApprovalsChangeDesktopPolicyDetails() *DeviceApprovalsChangeDesktopPolicyDetails {
 	s := new(DeviceApprovalsChangeDesktopPolicyDetails)
 	return s
 }
 
+
 // DeviceApprovalsChangeDesktopPolicyType : has no documentation (yet)
 type DeviceApprovalsChangeDesktopPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceApprovalsChangeDesktopPolicyType returns a new DeviceApprovalsChangeDesktopPolicyType instance
 func NewDeviceApprovalsChangeDesktopPolicyType(Description string) *DeviceApprovalsChangeDesktopPolicyType {
 	s := new(DeviceApprovalsChangeDesktopPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // DeviceApprovalsChangeMobilePolicyDetails : Set/removed limit on number of
 // mobile devices member can link to team Dropbox account.
@@ -1333,25 +1324,25 @@ type DeviceApprovalsChangeMobilePolicyDetails struct {
 	// due to historical data gap.
 	PreviousValue *DeviceApprovalsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewDeviceApprovalsChangeMobilePolicyDetails returns a new DeviceApprovalsChangeMobilePolicyDetails instance
 func NewDeviceApprovalsChangeMobilePolicyDetails() *DeviceApprovalsChangeMobilePolicyDetails {
 	s := new(DeviceApprovalsChangeMobilePolicyDetails)
 	return s
 }
 
+
 // DeviceApprovalsChangeMobilePolicyType : has no documentation (yet)
 type DeviceApprovalsChangeMobilePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceApprovalsChangeMobilePolicyType returns a new DeviceApprovalsChangeMobilePolicyType instance
 func NewDeviceApprovalsChangeMobilePolicyType(Description string) *DeviceApprovalsChangeMobilePolicyType {
 	s := new(DeviceApprovalsChangeMobilePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // DeviceApprovalsChangeOverageActionDetails : Changed device approvals setting
 // when member is over limit.
@@ -1363,19 +1354,18 @@ type DeviceApprovalsChangeOverageActionDetails struct {
 	// historical data gap.
 	PreviousValue *team_policies.RolloutMethod `json:"previous_value,omitempty"`
 }
-
 // NewDeviceApprovalsChangeOverageActionDetails returns a new DeviceApprovalsChangeOverageActionDetails instance
 func NewDeviceApprovalsChangeOverageActionDetails() *DeviceApprovalsChangeOverageActionDetails {
 	s := new(DeviceApprovalsChangeOverageActionDetails)
 	return s
 }
 
+
 // DeviceApprovalsChangeOverageActionType : has no documentation (yet)
 type DeviceApprovalsChangeOverageActionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceApprovalsChangeOverageActionType returns a new DeviceApprovalsChangeOverageActionType instance
 func NewDeviceApprovalsChangeOverageActionType(Description string) *DeviceApprovalsChangeOverageActionType {
 	s := new(DeviceApprovalsChangeOverageActionType)
@@ -1383,35 +1373,36 @@ func NewDeviceApprovalsChangeOverageActionType(Description string) *DeviceApprov
 	return s
 }
 
+
 // DeviceApprovalsChangeUnlinkActionDetails : Changed device approvals setting
 // when member unlinks approved device.
 type DeviceApprovalsChangeUnlinkActionDetails struct {
-	// NewValue : New device unlink policy. Might be missing due to historical
-	// data gap.
+	// NewValue : New device unlink policy. Might be missing due to historical data
+	// gap.
 	NewValue *DeviceUnlinkPolicy `json:"new_value,omitempty"`
 	// PreviousValue : Previous device unlink policy. Might be missing due to
 	// historical data gap.
 	PreviousValue *DeviceUnlinkPolicy `json:"previous_value,omitempty"`
 }
-
 // NewDeviceApprovalsChangeUnlinkActionDetails returns a new DeviceApprovalsChangeUnlinkActionDetails instance
 func NewDeviceApprovalsChangeUnlinkActionDetails() *DeviceApprovalsChangeUnlinkActionDetails {
 	s := new(DeviceApprovalsChangeUnlinkActionDetails)
 	return s
 }
 
+
 // DeviceApprovalsChangeUnlinkActionType : has no documentation (yet)
 type DeviceApprovalsChangeUnlinkActionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceApprovalsChangeUnlinkActionType returns a new DeviceApprovalsChangeUnlinkActionType instance
 func NewDeviceApprovalsChangeUnlinkActionType(Description string) *DeviceApprovalsChangeUnlinkActionType {
 	s := new(DeviceApprovalsChangeUnlinkActionType)
 	s.Description = Description
 	return s
 }
+
 
 // DeviceApprovalsPolicy : has no documentation (yet)
 type DeviceApprovalsPolicy struct {
@@ -1421,8 +1412,8 @@ type DeviceApprovalsPolicy struct {
 // Valid tag values for DeviceApprovalsPolicy
 const (
 	DeviceApprovalsPolicyUnlimited = "unlimited"
-	DeviceApprovalsPolicyLimited   = "limited"
-	DeviceApprovalsPolicyOther     = "other"
+	DeviceApprovalsPolicyLimited = "limited"
+	DeviceApprovalsPolicyOther = "other"
 )
 
 // DeviceChangeIpDesktopDetails : Changed IP address associated with active
@@ -1431,13 +1422,13 @@ type DeviceChangeIpDesktopDetails struct {
 	// DeviceSessionInfo : Device's session logged information.
 	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info"`
 }
-
 // NewDeviceChangeIpDesktopDetails returns a new DeviceChangeIpDesktopDetails instance
 func NewDeviceChangeIpDesktopDetails(DeviceSessionInfo IsDeviceSessionLogInfo) *DeviceChangeIpDesktopDetails {
 	s := new(DeviceChangeIpDesktopDetails)
 	s.DeviceSessionInfo = DeviceSessionInfo
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a DeviceChangeIpDesktopDetails instance
 func (u *DeviceChangeIpDesktopDetails) UnmarshalJSON(b []byte) error {
@@ -1456,13 +1447,11 @@ func (u *DeviceChangeIpDesktopDetails) UnmarshalJSON(b []byte) error {
 	u.DeviceSessionInfo = DeviceSessionInfo
 	return nil
 }
-
 // DeviceChangeIpDesktopType : has no documentation (yet)
 type DeviceChangeIpDesktopType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceChangeIpDesktopType returns a new DeviceChangeIpDesktopType instance
 func NewDeviceChangeIpDesktopType(Description string) *DeviceChangeIpDesktopType {
 	s := new(DeviceChangeIpDesktopType)
@@ -1470,25 +1459,42 @@ func NewDeviceChangeIpDesktopType(Description string) *DeviceChangeIpDesktopType
 	return s
 }
 
+
 // DeviceChangeIpMobileDetails : Changed IP address associated with active
 // mobile session.
 type DeviceChangeIpMobileDetails struct {
 	// DeviceSessionInfo : Device's session logged information.
 	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info,omitempty"`
 }
-
 // NewDeviceChangeIpMobileDetails returns a new DeviceChangeIpMobileDetails instance
 func NewDeviceChangeIpMobileDetails() *DeviceChangeIpMobileDetails {
 	s := new(DeviceChangeIpMobileDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a DeviceChangeIpMobileDetails instance
+func (u *DeviceChangeIpMobileDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeviceSessionInfo : Device's session logged information.
+		DeviceSessionInfo json.RawMessage `json:"device_session_info,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	DeviceSessionInfo, err := IsDeviceSessionLogInfoFromJSON(w.DeviceSessionInfo)
+	if err != nil {
+		return err
+	}
+	u.DeviceSessionInfo = DeviceSessionInfo
+	return nil
+}
 // DeviceChangeIpMobileType : has no documentation (yet)
 type DeviceChangeIpMobileType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceChangeIpMobileType returns a new DeviceChangeIpMobileType instance
 func NewDeviceChangeIpMobileType(Description string) *DeviceChangeIpMobileType {
 	s := new(DeviceChangeIpMobileType)
@@ -1496,13 +1502,13 @@ func NewDeviceChangeIpMobileType(Description string) *DeviceChangeIpMobileType {
 	return s
 }
 
+
 // DeviceChangeIpWebDetails : Changed IP address associated with active web
 // session.
 type DeviceChangeIpWebDetails struct {
 	// UserAgent : Web browser name.
 	UserAgent string `json:"user_agent"`
 }
-
 // NewDeviceChangeIpWebDetails returns a new DeviceChangeIpWebDetails instance
 func NewDeviceChangeIpWebDetails(UserAgent string) *DeviceChangeIpWebDetails {
 	s := new(DeviceChangeIpWebDetails)
@@ -1510,12 +1516,12 @@ func NewDeviceChangeIpWebDetails(UserAgent string) *DeviceChangeIpWebDetails {
 	return s
 }
 
+
 // DeviceChangeIpWebType : has no documentation (yet)
 type DeviceChangeIpWebType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceChangeIpWebType returns a new DeviceChangeIpWebType instance
 func NewDeviceChangeIpWebType(Description string) *DeviceChangeIpWebType {
 	s := new(DeviceChangeIpWebType)
@@ -1523,19 +1529,18 @@ func NewDeviceChangeIpWebType(Description string) *DeviceChangeIpWebType {
 	return s
 }
 
+
 // DeviceDeleteOnUnlinkFailDetails : Failed to delete all files from unlinked
 // device.
 type DeviceDeleteOnUnlinkFailDetails struct {
 	// SessionInfo : Session unique id. Might be missing due to historical data
 	// gap.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
-	// DisplayName : The device name. Might be missing due to historical data
-	// gap.
+	// DisplayName : The device name. Might be missing due to historical data gap.
 	DisplayName string `json:"display_name,omitempty"`
 	// NumFailures : The number of times that remote file deletion failed.
 	NumFailures int64 `json:"num_failures"`
 }
-
 // NewDeviceDeleteOnUnlinkFailDetails returns a new DeviceDeleteOnUnlinkFailDetails instance
 func NewDeviceDeleteOnUnlinkFailDetails(NumFailures int64) *DeviceDeleteOnUnlinkFailDetails {
 	s := new(DeviceDeleteOnUnlinkFailDetails)
@@ -1543,12 +1548,36 @@ func NewDeviceDeleteOnUnlinkFailDetails(NumFailures int64) *DeviceDeleteOnUnlink
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a DeviceDeleteOnUnlinkFailDetails instance
+func (u *DeviceDeleteOnUnlinkFailDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// NumFailures : The number of times that remote file deletion failed.
+		NumFailures int64 `json:"num_failures"`
+		// SessionInfo : Session unique id. Might be missing due to historical data
+		// gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.NumFailures = w.NumFailures
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
+}
 // DeviceDeleteOnUnlinkFailType : has no documentation (yet)
 type DeviceDeleteOnUnlinkFailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceDeleteOnUnlinkFailType returns a new DeviceDeleteOnUnlinkFailType instance
 func NewDeviceDeleteOnUnlinkFailType(Description string) *DeviceDeleteOnUnlinkFailType {
 	s := new(DeviceDeleteOnUnlinkFailType)
@@ -1556,28 +1585,48 @@ func NewDeviceDeleteOnUnlinkFailType(Description string) *DeviceDeleteOnUnlinkFa
 	return s
 }
 
+
 // DeviceDeleteOnUnlinkSuccessDetails : Deleted all files from unlinked device.
 type DeviceDeleteOnUnlinkSuccessDetails struct {
 	// SessionInfo : Session unique id. Might be missing due to historical data
 	// gap.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
-	// DisplayName : The device name. Might be missing due to historical data
-	// gap.
+	// DisplayName : The device name. Might be missing due to historical data gap.
 	DisplayName string `json:"display_name,omitempty"`
 }
-
 // NewDeviceDeleteOnUnlinkSuccessDetails returns a new DeviceDeleteOnUnlinkSuccessDetails instance
 func NewDeviceDeleteOnUnlinkSuccessDetails() *DeviceDeleteOnUnlinkSuccessDetails {
 	s := new(DeviceDeleteOnUnlinkSuccessDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a DeviceDeleteOnUnlinkSuccessDetails instance
+func (u *DeviceDeleteOnUnlinkSuccessDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SessionInfo : Session unique id. Might be missing due to historical data
+		// gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
+}
 // DeviceDeleteOnUnlinkSuccessType : has no documentation (yet)
 type DeviceDeleteOnUnlinkSuccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceDeleteOnUnlinkSuccessType returns a new DeviceDeleteOnUnlinkSuccessType instance
 func NewDeviceDeleteOnUnlinkSuccessType(Description string) *DeviceDeleteOnUnlinkSuccessType {
 	s := new(DeviceDeleteOnUnlinkSuccessType)
@@ -1585,15 +1634,14 @@ func NewDeviceDeleteOnUnlinkSuccessType(Description string) *DeviceDeleteOnUnlin
 	return s
 }
 
+
 // DeviceLinkFailDetails : Failed to link device.
 type DeviceLinkFailDetails struct {
 	// IpAddress : IP address. Might be missing due to historical data gap.
 	IpAddress string `json:"ip_address,omitempty"`
-	// DeviceType : A description of the device used while user approval
-	// blocked.
+	// DeviceType : A description of the device used while user approval blocked.
 	DeviceType *DeviceType `json:"device_type"`
 }
-
 // NewDeviceLinkFailDetails returns a new DeviceLinkFailDetails instance
 func NewDeviceLinkFailDetails(DeviceType *DeviceType) *DeviceLinkFailDetails {
 	s := new(DeviceLinkFailDetails)
@@ -1601,12 +1649,12 @@ func NewDeviceLinkFailDetails(DeviceType *DeviceType) *DeviceLinkFailDetails {
 	return s
 }
 
+
 // DeviceLinkFailType : has no documentation (yet)
 type DeviceLinkFailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceLinkFailType returns a new DeviceLinkFailType instance
 func NewDeviceLinkFailType(Description string) *DeviceLinkFailType {
 	s := new(DeviceLinkFailType)
@@ -1614,24 +1662,41 @@ func NewDeviceLinkFailType(Description string) *DeviceLinkFailType {
 	return s
 }
 
+
 // DeviceLinkSuccessDetails : Linked device.
 type DeviceLinkSuccessDetails struct {
 	// DeviceSessionInfo : Device's session logged information.
 	DeviceSessionInfo IsDeviceSessionLogInfo `json:"device_session_info,omitempty"`
 }
-
 // NewDeviceLinkSuccessDetails returns a new DeviceLinkSuccessDetails instance
 func NewDeviceLinkSuccessDetails() *DeviceLinkSuccessDetails {
 	s := new(DeviceLinkSuccessDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a DeviceLinkSuccessDetails instance
+func (u *DeviceLinkSuccessDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeviceSessionInfo : Device's session logged information.
+		DeviceSessionInfo json.RawMessage `json:"device_session_info,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	DeviceSessionInfo, err := IsDeviceSessionLogInfoFromJSON(w.DeviceSessionInfo)
+	if err != nil {
+		return err
+	}
+	u.DeviceSessionInfo = DeviceSessionInfo
+	return nil
+}
 // DeviceLinkSuccessType : has no documentation (yet)
 type DeviceLinkSuccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceLinkSuccessType returns a new DeviceLinkSuccessType instance
 func NewDeviceLinkSuccessType(Description string) *DeviceLinkSuccessType {
 	s := new(DeviceLinkSuccessType)
@@ -1639,22 +1704,22 @@ func NewDeviceLinkSuccessType(Description string) *DeviceLinkSuccessType {
 	return s
 }
 
+
 // DeviceManagementDisabledDetails : Disabled device management.
 type DeviceManagementDisabledDetails struct {
 }
-
 // NewDeviceManagementDisabledDetails returns a new DeviceManagementDisabledDetails instance
 func NewDeviceManagementDisabledDetails() *DeviceManagementDisabledDetails {
 	s := new(DeviceManagementDisabledDetails)
 	return s
 }
 
+
 // DeviceManagementDisabledType : has no documentation (yet)
 type DeviceManagementDisabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceManagementDisabledType returns a new DeviceManagementDisabledType instance
 func NewDeviceManagementDisabledType(Description string) *DeviceManagementDisabledType {
 	s := new(DeviceManagementDisabledType)
@@ -1662,28 +1727,29 @@ func NewDeviceManagementDisabledType(Description string) *DeviceManagementDisabl
 	return s
 }
 
+
 // DeviceManagementEnabledDetails : Enabled device management.
 type DeviceManagementEnabledDetails struct {
 }
-
 // NewDeviceManagementEnabledDetails returns a new DeviceManagementEnabledDetails instance
 func NewDeviceManagementEnabledDetails() *DeviceManagementEnabledDetails {
 	s := new(DeviceManagementEnabledDetails)
 	return s
 }
 
+
 // DeviceManagementEnabledType : has no documentation (yet)
 type DeviceManagementEnabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceManagementEnabledType returns a new DeviceManagementEnabledType instance
 func NewDeviceManagementEnabledType(Description string) *DeviceManagementEnabledType {
 	s := new(DeviceManagementEnabledType)
 	s.Description = Description
 	return s
 }
+
 
 // DeviceType : has no documentation (yet)
 type DeviceType struct {
@@ -1693,22 +1759,20 @@ type DeviceType struct {
 // Valid tag values for DeviceType
 const (
 	DeviceTypeDesktop = "desktop"
-	DeviceTypeMobile  = "mobile"
-	DeviceTypeOther   = "other"
+	DeviceTypeMobile = "mobile"
+	DeviceTypeOther = "other"
 )
 
 // DeviceUnlinkDetails : Disconnected device.
 type DeviceUnlinkDetails struct {
 	// SessionInfo : Session unique id.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
-	// DisplayName : The device name. Might be missing due to historical data
-	// gap.
+	// DisplayName : The device name. Might be missing due to historical data gap.
 	DisplayName string `json:"display_name,omitempty"`
-	// DeleteData : True if the user requested to delete data after device
-	// unlink, false otherwise.
+	// DeleteData : True if the user requested to delete data after device unlink,
+	// false otherwise.
 	DeleteData bool `json:"delete_data"`
 }
-
 // NewDeviceUnlinkDetails returns a new DeviceUnlinkDetails instance
 func NewDeviceUnlinkDetails(DeleteData bool) *DeviceUnlinkDetails {
 	s := new(DeviceUnlinkDetails)
@@ -1716,6 +1780,31 @@ func NewDeviceUnlinkDetails(DeleteData bool) *DeviceUnlinkDetails {
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a DeviceUnlinkDetails instance
+func (u *DeviceUnlinkDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeleteData : True if the user requested to delete data after device unlink,
+		// false otherwise.
+		DeleteData bool `json:"delete_data"`
+		// SessionInfo : Session unique id.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.DeleteData = w.DeleteData
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
+}
 // DeviceUnlinkPolicy : has no documentation (yet)
 type DeviceUnlinkPolicy struct {
 	dropbox.Tagged
@@ -1724,8 +1813,8 @@ type DeviceUnlinkPolicy struct {
 // Valid tag values for DeviceUnlinkPolicy
 const (
 	DeviceUnlinkPolicyRemove = "remove"
-	DeviceUnlinkPolicyKeep   = "keep"
-	DeviceUnlinkPolicyOther  = "other"
+	DeviceUnlinkPolicyKeep = "keep"
+	DeviceUnlinkPolicyOther = "other"
 )
 
 // DeviceUnlinkType : has no documentation (yet)
@@ -1733,7 +1822,6 @@ type DeviceUnlinkType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDeviceUnlinkType returns a new DeviceUnlinkType instance
 func NewDeviceUnlinkType(Description string) *DeviceUnlinkType {
 	s := new(DeviceUnlinkType)
@@ -1741,23 +1829,23 @@ func NewDeviceUnlinkType(Description string) *DeviceUnlinkType {
 	return s
 }
 
+
 // DirectoryRestrictionsAddMembersDetails : Added members to directory
 // restrictions list.
 type DirectoryRestrictionsAddMembersDetails struct {
 }
-
 // NewDirectoryRestrictionsAddMembersDetails returns a new DirectoryRestrictionsAddMembersDetails instance
 func NewDirectoryRestrictionsAddMembersDetails() *DirectoryRestrictionsAddMembersDetails {
 	s := new(DirectoryRestrictionsAddMembersDetails)
 	return s
 }
 
+
 // DirectoryRestrictionsAddMembersType : has no documentation (yet)
 type DirectoryRestrictionsAddMembersType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDirectoryRestrictionsAddMembersType returns a new DirectoryRestrictionsAddMembersType instance
 func NewDirectoryRestrictionsAddMembersType(Description string) *DirectoryRestrictionsAddMembersType {
 	s := new(DirectoryRestrictionsAddMembersType)
@@ -1765,23 +1853,23 @@ func NewDirectoryRestrictionsAddMembersType(Description string) *DirectoryRestri
 	return s
 }
 
+
 // DirectoryRestrictionsRemoveMembersDetails : Removed members from directory
 // restrictions list.
 type DirectoryRestrictionsRemoveMembersDetails struct {
 }
-
 // NewDirectoryRestrictionsRemoveMembersDetails returns a new DirectoryRestrictionsRemoveMembersDetails instance
 func NewDirectoryRestrictionsRemoveMembersDetails() *DirectoryRestrictionsRemoveMembersDetails {
 	s := new(DirectoryRestrictionsRemoveMembersDetails)
 	return s
 }
 
+
 // DirectoryRestrictionsRemoveMembersType : has no documentation (yet)
 type DirectoryRestrictionsRemoveMembersType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDirectoryRestrictionsRemoveMembersType returns a new DirectoryRestrictionsRemoveMembersType instance
 func NewDirectoryRestrictionsRemoveMembersType(Description string) *DirectoryRestrictionsRemoveMembersType {
 	s := new(DirectoryRestrictionsRemoveMembersType)
@@ -1789,22 +1877,22 @@ func NewDirectoryRestrictionsRemoveMembersType(Description string) *DirectoryRes
 	return s
 }
 
+
 // DisabledDomainInvitesDetails : Disabled domain invites.
 type DisabledDomainInvitesDetails struct {
 }
-
 // NewDisabledDomainInvitesDetails returns a new DisabledDomainInvitesDetails instance
 func NewDisabledDomainInvitesDetails() *DisabledDomainInvitesDetails {
 	s := new(DisabledDomainInvitesDetails)
 	return s
 }
 
+
 // DisabledDomainInvitesType : has no documentation (yet)
 type DisabledDomainInvitesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDisabledDomainInvitesType returns a new DisabledDomainInvitesType instance
 func NewDisabledDomainInvitesType(Description string) *DisabledDomainInvitesType {
 	s := new(DisabledDomainInvitesType)
@@ -1812,23 +1900,23 @@ func NewDisabledDomainInvitesType(Description string) *DisabledDomainInvitesType
 	return s
 }
 
+
 // DomainInvitesApproveRequestToJoinTeamDetails : Approved user's request to
 // join team.
 type DomainInvitesApproveRequestToJoinTeamDetails struct {
 }
-
 // NewDomainInvitesApproveRequestToJoinTeamDetails returns a new DomainInvitesApproveRequestToJoinTeamDetails instance
 func NewDomainInvitesApproveRequestToJoinTeamDetails() *DomainInvitesApproveRequestToJoinTeamDetails {
 	s := new(DomainInvitesApproveRequestToJoinTeamDetails)
 	return s
 }
 
+
 // DomainInvitesApproveRequestToJoinTeamType : has no documentation (yet)
 type DomainInvitesApproveRequestToJoinTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesApproveRequestToJoinTeamType returns a new DomainInvitesApproveRequestToJoinTeamType instance
 func NewDomainInvitesApproveRequestToJoinTeamType(Description string) *DomainInvitesApproveRequestToJoinTeamType {
 	s := new(DomainInvitesApproveRequestToJoinTeamType)
@@ -1836,29 +1924,30 @@ func NewDomainInvitesApproveRequestToJoinTeamType(Description string) *DomainInv
 	return s
 }
 
+
 // DomainInvitesDeclineRequestToJoinTeamDetails : Declined user's request to
 // join team.
 type DomainInvitesDeclineRequestToJoinTeamDetails struct {
 }
-
 // NewDomainInvitesDeclineRequestToJoinTeamDetails returns a new DomainInvitesDeclineRequestToJoinTeamDetails instance
 func NewDomainInvitesDeclineRequestToJoinTeamDetails() *DomainInvitesDeclineRequestToJoinTeamDetails {
 	s := new(DomainInvitesDeclineRequestToJoinTeamDetails)
 	return s
 }
 
+
 // DomainInvitesDeclineRequestToJoinTeamType : has no documentation (yet)
 type DomainInvitesDeclineRequestToJoinTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesDeclineRequestToJoinTeamType returns a new DomainInvitesDeclineRequestToJoinTeamType instance
 func NewDomainInvitesDeclineRequestToJoinTeamType(Description string) *DomainInvitesDeclineRequestToJoinTeamType {
 	s := new(DomainInvitesDeclineRequestToJoinTeamType)
 	s.Description = Description
 	return s
 }
+
 
 // DomainInvitesEmailExistingUsersDetails : Sent domain invites to existing
 // domain accounts.
@@ -1868,7 +1957,6 @@ type DomainInvitesEmailExistingUsersDetails struct {
 	// NumRecipients : Number of recipients.
 	NumRecipients uint64 `json:"num_recipients"`
 }
-
 // NewDomainInvitesEmailExistingUsersDetails returns a new DomainInvitesEmailExistingUsersDetails instance
 func NewDomainInvitesEmailExistingUsersDetails(DomainName string, NumRecipients uint64) *DomainInvitesEmailExistingUsersDetails {
 	s := new(DomainInvitesEmailExistingUsersDetails)
@@ -1877,12 +1965,12 @@ func NewDomainInvitesEmailExistingUsersDetails(DomainName string, NumRecipients 
 	return s
 }
 
+
 // DomainInvitesEmailExistingUsersType : has no documentation (yet)
 type DomainInvitesEmailExistingUsersType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesEmailExistingUsersType returns a new DomainInvitesEmailExistingUsersType instance
 func NewDomainInvitesEmailExistingUsersType(Description string) *DomainInvitesEmailExistingUsersType {
 	s := new(DomainInvitesEmailExistingUsersType)
@@ -1890,22 +1978,22 @@ func NewDomainInvitesEmailExistingUsersType(Description string) *DomainInvitesEm
 	return s
 }
 
+
 // DomainInvitesRequestToJoinTeamDetails : Requested to join team.
 type DomainInvitesRequestToJoinTeamDetails struct {
 }
-
 // NewDomainInvitesRequestToJoinTeamDetails returns a new DomainInvitesRequestToJoinTeamDetails instance
 func NewDomainInvitesRequestToJoinTeamDetails() *DomainInvitesRequestToJoinTeamDetails {
 	s := new(DomainInvitesRequestToJoinTeamDetails)
 	return s
 }
 
+
 // DomainInvitesRequestToJoinTeamType : has no documentation (yet)
 type DomainInvitesRequestToJoinTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesRequestToJoinTeamType returns a new DomainInvitesRequestToJoinTeamType instance
 func NewDomainInvitesRequestToJoinTeamType(Description string) *DomainInvitesRequestToJoinTeamType {
 	s := new(DomainInvitesRequestToJoinTeamType)
@@ -1913,23 +2001,23 @@ func NewDomainInvitesRequestToJoinTeamType(Description string) *DomainInvitesReq
 	return s
 }
 
+
 // DomainInvitesSetInviteNewUserPrefToNoDetails : Disabled "Automatically invite
 // new users".
 type DomainInvitesSetInviteNewUserPrefToNoDetails struct {
 }
-
 // NewDomainInvitesSetInviteNewUserPrefToNoDetails returns a new DomainInvitesSetInviteNewUserPrefToNoDetails instance
 func NewDomainInvitesSetInviteNewUserPrefToNoDetails() *DomainInvitesSetInviteNewUserPrefToNoDetails {
 	s := new(DomainInvitesSetInviteNewUserPrefToNoDetails)
 	return s
 }
 
+
 // DomainInvitesSetInviteNewUserPrefToNoType : has no documentation (yet)
 type DomainInvitesSetInviteNewUserPrefToNoType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesSetInviteNewUserPrefToNoType returns a new DomainInvitesSetInviteNewUserPrefToNoType instance
 func NewDomainInvitesSetInviteNewUserPrefToNoType(Description string) *DomainInvitesSetInviteNewUserPrefToNoType {
 	s := new(DomainInvitesSetInviteNewUserPrefToNoType)
@@ -1937,23 +2025,23 @@ func NewDomainInvitesSetInviteNewUserPrefToNoType(Description string) *DomainInv
 	return s
 }
 
+
 // DomainInvitesSetInviteNewUserPrefToYesDetails : Enabled "Automatically invite
 // new users".
 type DomainInvitesSetInviteNewUserPrefToYesDetails struct {
 }
-
 // NewDomainInvitesSetInviteNewUserPrefToYesDetails returns a new DomainInvitesSetInviteNewUserPrefToYesDetails instance
 func NewDomainInvitesSetInviteNewUserPrefToYesDetails() *DomainInvitesSetInviteNewUserPrefToYesDetails {
 	s := new(DomainInvitesSetInviteNewUserPrefToYesDetails)
 	return s
 }
 
+
 // DomainInvitesSetInviteNewUserPrefToYesType : has no documentation (yet)
 type DomainInvitesSetInviteNewUserPrefToYesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainInvitesSetInviteNewUserPrefToYesType returns a new DomainInvitesSetInviteNewUserPrefToYesType instance
 func NewDomainInvitesSetInviteNewUserPrefToYesType(Description string) *DomainInvitesSetInviteNewUserPrefToYesType {
 	s := new(DomainInvitesSetInviteNewUserPrefToYesType)
@@ -1961,15 +2049,15 @@ func NewDomainInvitesSetInviteNewUserPrefToYesType(Description string) *DomainIn
 	return s
 }
 
+
 // DomainVerificationAddDomainFailDetails : Failed to verify team domain.
 type DomainVerificationAddDomainFailDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
-	// VerificationMethod : Domain name verification method. Might be missing
-	// due to historical data gap.
+	// VerificationMethod : Domain name verification method. Might be missing due
+	// to historical data gap.
 	VerificationMethod string `json:"verification_method,omitempty"`
 }
-
 // NewDomainVerificationAddDomainFailDetails returns a new DomainVerificationAddDomainFailDetails instance
 func NewDomainVerificationAddDomainFailDetails(DomainName string) *DomainVerificationAddDomainFailDetails {
 	s := new(DomainVerificationAddDomainFailDetails)
@@ -1977,12 +2065,12 @@ func NewDomainVerificationAddDomainFailDetails(DomainName string) *DomainVerific
 	return s
 }
 
+
 // DomainVerificationAddDomainFailType : has no documentation (yet)
 type DomainVerificationAddDomainFailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainVerificationAddDomainFailType returns a new DomainVerificationAddDomainFailType instance
 func NewDomainVerificationAddDomainFailType(Description string) *DomainVerificationAddDomainFailType {
 	s := new(DomainVerificationAddDomainFailType)
@@ -1990,15 +2078,15 @@ func NewDomainVerificationAddDomainFailType(Description string) *DomainVerificat
 	return s
 }
 
+
 // DomainVerificationAddDomainSuccessDetails : Verified team domain.
 type DomainVerificationAddDomainSuccessDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
-	// VerificationMethod : Domain name verification method. Might be missing
-	// due to historical data gap.
+	// VerificationMethod : Domain name verification method. Might be missing due
+	// to historical data gap.
 	VerificationMethod string `json:"verification_method,omitempty"`
 }
-
 // NewDomainVerificationAddDomainSuccessDetails returns a new DomainVerificationAddDomainSuccessDetails instance
 func NewDomainVerificationAddDomainSuccessDetails(DomainNames []string) *DomainVerificationAddDomainSuccessDetails {
 	s := new(DomainVerificationAddDomainSuccessDetails)
@@ -2006,12 +2094,12 @@ func NewDomainVerificationAddDomainSuccessDetails(DomainNames []string) *DomainV
 	return s
 }
 
+
 // DomainVerificationAddDomainSuccessType : has no documentation (yet)
 type DomainVerificationAddDomainSuccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainVerificationAddDomainSuccessType returns a new DomainVerificationAddDomainSuccessType instance
 func NewDomainVerificationAddDomainSuccessType(Description string) *DomainVerificationAddDomainSuccessType {
 	s := new(DomainVerificationAddDomainSuccessType)
@@ -2019,13 +2107,13 @@ func NewDomainVerificationAddDomainSuccessType(Description string) *DomainVerifi
 	return s
 }
 
+
 // DomainVerificationRemoveDomainDetails : Removed domain from list of verified
 // team domains.
 type DomainVerificationRemoveDomainDetails struct {
 	// DomainNames : Domain names.
 	DomainNames []string `json:"domain_names"`
 }
-
 // NewDomainVerificationRemoveDomainDetails returns a new DomainVerificationRemoveDomainDetails instance
 func NewDomainVerificationRemoveDomainDetails(DomainNames []string) *DomainVerificationRemoveDomainDetails {
 	s := new(DomainVerificationRemoveDomainDetails)
@@ -2033,18 +2121,19 @@ func NewDomainVerificationRemoveDomainDetails(DomainNames []string) *DomainVerif
 	return s
 }
 
+
 // DomainVerificationRemoveDomainType : has no documentation (yet)
 type DomainVerificationRemoveDomainType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewDomainVerificationRemoveDomainType returns a new DomainVerificationRemoveDomainType instance
 func NewDomainVerificationRemoveDomainType(Description string) *DomainVerificationRemoveDomainType {
 	s := new(DomainVerificationRemoveDomainType)
 	s.Description = Description
 	return s
 }
+
 
 // DownloadPolicyType : Shared content downloads policy
 type DownloadPolicyType struct {
@@ -2053,9 +2142,9 @@ type DownloadPolicyType struct {
 
 // Valid tag values for DownloadPolicyType
 const (
-	DownloadPolicyTypeAllow    = "allow"
+	DownloadPolicyTypeAllow = "allow"
 	DownloadPolicyTypeDisallow = "disallow"
-	DownloadPolicyTypeOther    = "other"
+	DownloadPolicyTypeOther = "other"
 )
 
 // DurationLogInfo : Represents a time duration: unit and amount
@@ -2065,7 +2154,6 @@ type DurationLogInfo struct {
 	// Amount : Amount of time.
 	Amount uint64 `json:"amount"`
 }
-
 // NewDurationLogInfo returns a new DurationLogInfo instance
 func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
 	s := new(DurationLogInfo)
@@ -2074,28 +2162,29 @@ func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
 	return s
 }
 
+
 // EmmAddExceptionDetails : Added members to EMM exception list.
 type EmmAddExceptionDetails struct {
 }
-
 // NewEmmAddExceptionDetails returns a new EmmAddExceptionDetails instance
 func NewEmmAddExceptionDetails() *EmmAddExceptionDetails {
 	s := new(EmmAddExceptionDetails)
 	return s
 }
 
+
 // EmmAddExceptionType : has no documentation (yet)
 type EmmAddExceptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmAddExceptionType returns a new EmmAddExceptionType instance
 func NewEmmAddExceptionType(Description string) *EmmAddExceptionType {
 	s := new(EmmAddExceptionType)
 	s.Description = Description
 	return s
 }
+
 
 // EmmChangePolicyDetails : Enabled/disabled enterprise mobility management for
 // members.
@@ -2106,7 +2195,6 @@ type EmmChangePolicyDetails struct {
 	// missing due to historical data gap.
 	PreviousValue *team_policies.EmmState `json:"previous_value,omitempty"`
 }
-
 // NewEmmChangePolicyDetails returns a new EmmChangePolicyDetails instance
 func NewEmmChangePolicyDetails(NewValue *team_policies.EmmState) *EmmChangePolicyDetails {
 	s := new(EmmChangePolicyDetails)
@@ -2114,12 +2202,12 @@ func NewEmmChangePolicyDetails(NewValue *team_policies.EmmState) *EmmChangePolic
 	return s
 }
 
+
 // EmmChangePolicyType : has no documentation (yet)
 type EmmChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmChangePolicyType returns a new EmmChangePolicyType instance
 func NewEmmChangePolicyType(Description string) *EmmChangePolicyType {
 	s := new(EmmChangePolicyType)
@@ -2127,22 +2215,22 @@ func NewEmmChangePolicyType(Description string) *EmmChangePolicyType {
 	return s
 }
 
+
 // EmmCreateExceptionsReportDetails : Created EMM-excluded users report.
 type EmmCreateExceptionsReportDetails struct {
 }
-
 // NewEmmCreateExceptionsReportDetails returns a new EmmCreateExceptionsReportDetails instance
 func NewEmmCreateExceptionsReportDetails() *EmmCreateExceptionsReportDetails {
 	s := new(EmmCreateExceptionsReportDetails)
 	return s
 }
 
+
 // EmmCreateExceptionsReportType : has no documentation (yet)
 type EmmCreateExceptionsReportType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmCreateExceptionsReportType returns a new EmmCreateExceptionsReportType instance
 func NewEmmCreateExceptionsReportType(Description string) *EmmCreateExceptionsReportType {
 	s := new(EmmCreateExceptionsReportType)
@@ -2150,22 +2238,22 @@ func NewEmmCreateExceptionsReportType(Description string) *EmmCreateExceptionsRe
 	return s
 }
 
+
 // EmmCreateUsageReportDetails : Created EMM mobile app usage report.
 type EmmCreateUsageReportDetails struct {
 }
-
 // NewEmmCreateUsageReportDetails returns a new EmmCreateUsageReportDetails instance
 func NewEmmCreateUsageReportDetails() *EmmCreateUsageReportDetails {
 	s := new(EmmCreateUsageReportDetails)
 	return s
 }
 
+
 // EmmCreateUsageReportType : has no documentation (yet)
 type EmmCreateUsageReportType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmCreateUsageReportType returns a new EmmCreateUsageReportType instance
 func NewEmmCreateUsageReportType(Description string) *EmmCreateUsageReportType {
 	s := new(EmmCreateUsageReportType)
@@ -2173,12 +2261,12 @@ func NewEmmCreateUsageReportType(Description string) *EmmCreateUsageReportType {
 	return s
 }
 
+
 // EmmErrorDetails : Failed to sign in via EMM.
 type EmmErrorDetails struct {
 	// ErrorDetails : Error details.
 	ErrorDetails *FailureDetailsLogInfo `json:"error_details"`
 }
-
 // NewEmmErrorDetails returns a new EmmErrorDetails instance
 func NewEmmErrorDetails(ErrorDetails *FailureDetailsLogInfo) *EmmErrorDetails {
 	s := new(EmmErrorDetails)
@@ -2186,12 +2274,12 @@ func NewEmmErrorDetails(ErrorDetails *FailureDetailsLogInfo) *EmmErrorDetails {
 	return s
 }
 
+
 // EmmErrorType : has no documentation (yet)
 type EmmErrorType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmErrorType returns a new EmmErrorType instance
 func NewEmmErrorType(Description string) *EmmErrorType {
 	s := new(EmmErrorType)
@@ -2199,22 +2287,22 @@ func NewEmmErrorType(Description string) *EmmErrorType {
 	return s
 }
 
+
 // EmmRefreshAuthTokenDetails : Refreshed auth token used for setting up EMM.
 type EmmRefreshAuthTokenDetails struct {
 }
-
 // NewEmmRefreshAuthTokenDetails returns a new EmmRefreshAuthTokenDetails instance
 func NewEmmRefreshAuthTokenDetails() *EmmRefreshAuthTokenDetails {
 	s := new(EmmRefreshAuthTokenDetails)
 	return s
 }
 
+
 // EmmRefreshAuthTokenType : has no documentation (yet)
 type EmmRefreshAuthTokenType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmRefreshAuthTokenType returns a new EmmRefreshAuthTokenType instance
 func NewEmmRefreshAuthTokenType(Description string) *EmmRefreshAuthTokenType {
 	s := new(EmmRefreshAuthTokenType)
@@ -2222,22 +2310,22 @@ func NewEmmRefreshAuthTokenType(Description string) *EmmRefreshAuthTokenType {
 	return s
 }
 
+
 // EmmRemoveExceptionDetails : Removed members from EMM exception list.
 type EmmRemoveExceptionDetails struct {
 }
-
 // NewEmmRemoveExceptionDetails returns a new EmmRemoveExceptionDetails instance
 func NewEmmRemoveExceptionDetails() *EmmRemoveExceptionDetails {
 	s := new(EmmRemoveExceptionDetails)
 	return s
 }
 
+
 // EmmRemoveExceptionType : has no documentation (yet)
 type EmmRemoveExceptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEmmRemoveExceptionType returns a new EmmRemoveExceptionType instance
 func NewEmmRemoveExceptionType(Description string) *EmmRemoveExceptionType {
 	s := new(EmmRemoveExceptionType)
@@ -2245,28 +2333,29 @@ func NewEmmRemoveExceptionType(Description string) *EmmRemoveExceptionType {
 	return s
 }
 
+
 // EnabledDomainInvitesDetails : Enabled domain invites.
 type EnabledDomainInvitesDetails struct {
 }
-
 // NewEnabledDomainInvitesDetails returns a new EnabledDomainInvitesDetails instance
 func NewEnabledDomainInvitesDetails() *EnabledDomainInvitesDetails {
 	s := new(EnabledDomainInvitesDetails)
 	return s
 }
 
+
 // EnabledDomainInvitesType : has no documentation (yet)
 type EnabledDomainInvitesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewEnabledDomainInvitesType returns a new EnabledDomainInvitesType instance
 func NewEnabledDomainInvitesType(Description string) *EnabledDomainInvitesType {
 	s := new(EnabledDomainInvitesType)
 	s.Description = Description
 	return s
 }
+
 
 // EventCategory : Category of events in event audit log.
 type EventCategory struct {
@@ -2275,27 +2364,27 @@ type EventCategory struct {
 
 // Valid tag values for EventCategory
 const (
-	EventCategoryApps           = "apps"
-	EventCategoryComments       = "comments"
-	EventCategoryDevices        = "devices"
-	EventCategoryDomains        = "domains"
+	EventCategoryApps = "apps"
+	EventCategoryComments = "comments"
+	EventCategoryDevices = "devices"
+	EventCategoryDomains = "domains"
 	EventCategoryFileOperations = "file_operations"
-	EventCategoryFileRequests   = "file_requests"
-	EventCategoryGroups         = "groups"
-	EventCategoryLogins         = "logins"
-	EventCategoryMembers        = "members"
-	EventCategoryPaper          = "paper"
-	EventCategoryPasswords      = "passwords"
-	EventCategoryReports        = "reports"
-	EventCategorySharing        = "sharing"
-	EventCategoryShowcase       = "showcase"
-	EventCategorySso            = "sso"
-	EventCategoryTeamFolders    = "team_folders"
-	EventCategoryTeamPolicies   = "team_policies"
-	EventCategoryTeamProfile    = "team_profile"
-	EventCategoryTfa            = "tfa"
-	EventCategoryTrustedTeams   = "trusted_teams"
-	EventCategoryOther          = "other"
+	EventCategoryFileRequests = "file_requests"
+	EventCategoryGroups = "groups"
+	EventCategoryLogins = "logins"
+	EventCategoryMembers = "members"
+	EventCategoryPaper = "paper"
+	EventCategoryPasswords = "passwords"
+	EventCategoryReports = "reports"
+	EventCategorySharing = "sharing"
+	EventCategoryShowcase = "showcase"
+	EventCategorySso = "sso"
+	EventCategoryTeamFolders = "team_folders"
+	EventCategoryTeamPolicies = "team_policies"
+	EventCategoryTeamProfile = "team_profile"
+	EventCategoryTfa = "tfa"
+	EventCategoryTrustedTeams = "trusted_teams"
+	EventCategoryOther = "other"
 )
 
 // EventDetails : Additional fields depending on the event type.
@@ -2371,8 +2460,7 @@ type EventDetails struct {
 	DomainInvitesRequestToJoinTeamDetails *DomainInvitesRequestToJoinTeamDetails `json:"domain_invites_request_to_join_team_details,omitempty"`
 	// DomainInvitesSetInviteNewUserPrefToNoDetails : has no documentation (yet)
 	DomainInvitesSetInviteNewUserPrefToNoDetails *DomainInvitesSetInviteNewUserPrefToNoDetails `json:"domain_invites_set_invite_new_user_pref_to_no_details,omitempty"`
-	// DomainInvitesSetInviteNewUserPrefToYesDetails : has no documentation
-	// (yet)
+	// DomainInvitesSetInviteNewUserPrefToYesDetails : has no documentation (yet)
 	DomainInvitesSetInviteNewUserPrefToYesDetails *DomainInvitesSetInviteNewUserPrefToYesDetails `json:"domain_invites_set_invite_new_user_pref_to_yes_details,omitempty"`
 	// DomainVerificationAddDomainFailDetails : has no documentation (yet)
 	DomainVerificationAddDomainFailDetails *DomainVerificationAddDomainFailDetails `json:"domain_verification_add_domain_fail_details,omitempty"`
@@ -2488,8 +2576,7 @@ type EventDetails struct {
 	MemberChangeStatusDetails *MemberChangeStatusDetails `json:"member_change_status_details,omitempty"`
 	// MemberDeleteManualContactsDetails : has no documentation (yet)
 	MemberDeleteManualContactsDetails *MemberDeleteManualContactsDetails `json:"member_delete_manual_contacts_details,omitempty"`
-	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
-	// (yet)
+	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation (yet)
 	MemberPermanentlyDeleteAccountContentsDetails *MemberPermanentlyDeleteAccountContentsDetails `json:"member_permanently_delete_account_contents_details,omitempty"`
 	// MemberRemoveExternalIdDetails : has no documentation (yet)
 	MemberRemoveExternalIdDetails *MemberRemoveExternalIdDetails `json:"member_remove_external_id_details,omitempty"`
@@ -2855,8 +2942,7 @@ type EventDetails struct {
 	FileRequestsChangePolicyDetails *FileRequestsChangePolicyDetails `json:"file_requests_change_policy_details,omitempty"`
 	// FileRequestsEmailsEnabledDetails : has no documentation (yet)
 	FileRequestsEmailsEnabledDetails *FileRequestsEmailsEnabledDetails `json:"file_requests_emails_enabled_details,omitempty"`
-	// FileRequestsEmailsRestrictedToTeamOnlyDetails : has no documentation
-	// (yet)
+	// FileRequestsEmailsRestrictedToTeamOnlyDetails : has no documentation (yet)
 	FileRequestsEmailsRestrictedToTeamOnlyDetails *FileRequestsEmailsRestrictedToTeamOnlyDetails `json:"file_requests_emails_restricted_to_team_only_details,omitempty"`
 	// GoogleSsoChangePolicyDetails : has no documentation (yet)
 	GoogleSsoChangePolicyDetails *GoogleSsoChangePolicyDetails `json:"google_sso_change_policy_details,omitempty"`
@@ -2969,8 +3055,8 @@ type EventDetails struct {
 	// TeamMergeRequestAcceptedShownToPrimaryTeamDetails : has no documentation
 	// (yet)
 	TeamMergeRequestAcceptedShownToPrimaryTeamDetails *TeamMergeRequestAcceptedShownToPrimaryTeamDetails `json:"team_merge_request_accepted_shown_to_primary_team_details,omitempty"`
-	// TeamMergeRequestAcceptedShownToSecondaryTeamDetails : has no
-	// documentation (yet)
+	// TeamMergeRequestAcceptedShownToSecondaryTeamDetails : has no documentation
+	// (yet)
 	TeamMergeRequestAcceptedShownToSecondaryTeamDetails *TeamMergeRequestAcceptedShownToSecondaryTeamDetails `json:"team_merge_request_accepted_shown_to_secondary_team_details,omitempty"`
 	// TeamMergeRequestAutoCanceledDetails : has no documentation (yet)
 	TeamMergeRequestAutoCanceledDetails *TeamMergeRequestAutoCanceledDetails `json:"team_merge_request_auto_canceled_details,omitempty"`
@@ -2979,8 +3065,8 @@ type EventDetails struct {
 	// TeamMergeRequestCanceledShownToPrimaryTeamDetails : has no documentation
 	// (yet)
 	TeamMergeRequestCanceledShownToPrimaryTeamDetails *TeamMergeRequestCanceledShownToPrimaryTeamDetails `json:"team_merge_request_canceled_shown_to_primary_team_details,omitempty"`
-	// TeamMergeRequestCanceledShownToSecondaryTeamDetails : has no
-	// documentation (yet)
+	// TeamMergeRequestCanceledShownToSecondaryTeamDetails : has no documentation
+	// (yet)
 	TeamMergeRequestCanceledShownToSecondaryTeamDetails *TeamMergeRequestCanceledShownToSecondaryTeamDetails `json:"team_merge_request_canceled_shown_to_secondary_team_details,omitempty"`
 	// TeamMergeRequestExpiredDetails : has no documentation (yet)
 	TeamMergeRequestExpiredDetails *TeamMergeRequestExpiredDetails `json:"team_merge_request_expired_details,omitempty"`
@@ -2993,381 +3079,379 @@ type EventDetails struct {
 	// TeamMergeRequestRejectedShownToPrimaryTeamDetails : has no documentation
 	// (yet)
 	TeamMergeRequestRejectedShownToPrimaryTeamDetails *TeamMergeRequestRejectedShownToPrimaryTeamDetails `json:"team_merge_request_rejected_shown_to_primary_team_details,omitempty"`
-	// TeamMergeRequestRejectedShownToSecondaryTeamDetails : has no
-	// documentation (yet)
+	// TeamMergeRequestRejectedShownToSecondaryTeamDetails : has no documentation
+	// (yet)
 	TeamMergeRequestRejectedShownToSecondaryTeamDetails *TeamMergeRequestRejectedShownToSecondaryTeamDetails `json:"team_merge_request_rejected_shown_to_secondary_team_details,omitempty"`
 	// TeamMergeRequestReminderDetails : has no documentation (yet)
 	TeamMergeRequestReminderDetails *TeamMergeRequestReminderDetails `json:"team_merge_request_reminder_details,omitempty"`
 	// TeamMergeRequestReminderShownToPrimaryTeamDetails : has no documentation
 	// (yet)
 	TeamMergeRequestReminderShownToPrimaryTeamDetails *TeamMergeRequestReminderShownToPrimaryTeamDetails `json:"team_merge_request_reminder_shown_to_primary_team_details,omitempty"`
-	// TeamMergeRequestReminderShownToSecondaryTeamDetails : has no
-	// documentation (yet)
+	// TeamMergeRequestReminderShownToSecondaryTeamDetails : has no documentation
+	// (yet)
 	TeamMergeRequestReminderShownToSecondaryTeamDetails *TeamMergeRequestReminderShownToSecondaryTeamDetails `json:"team_merge_request_reminder_shown_to_secondary_team_details,omitempty"`
 	// TeamMergeRequestRevokedDetails : has no documentation (yet)
 	TeamMergeRequestRevokedDetails *TeamMergeRequestRevokedDetails `json:"team_merge_request_revoked_details,omitempty"`
-	// TeamMergeRequestSentShownToPrimaryTeamDetails : has no documentation
-	// (yet)
+	// TeamMergeRequestSentShownToPrimaryTeamDetails : has no documentation (yet)
 	TeamMergeRequestSentShownToPrimaryTeamDetails *TeamMergeRequestSentShownToPrimaryTeamDetails `json:"team_merge_request_sent_shown_to_primary_team_details,omitempty"`
-	// TeamMergeRequestSentShownToSecondaryTeamDetails : has no documentation
-	// (yet)
+	// TeamMergeRequestSentShownToSecondaryTeamDetails : has no documentation (yet)
 	TeamMergeRequestSentShownToSecondaryTeamDetails *TeamMergeRequestSentShownToSecondaryTeamDetails `json:"team_merge_request_sent_shown_to_secondary_team_details,omitempty"`
-	// MissingDetails : Hints that this event was returned with missing details
-	// due to an internal error.
+	// MissingDetails : Hints that this event was returned with missing details due
+	// to an internal error.
 	MissingDetails *MissingDetails `json:"missing_details,omitempty"`
 }
 
 // Valid tag values for EventDetails
 const (
-	EventDetailsAppLinkTeamDetails                                  = "app_link_team_details"
-	EventDetailsAppLinkUserDetails                                  = "app_link_user_details"
-	EventDetailsAppUnlinkTeamDetails                                = "app_unlink_team_details"
-	EventDetailsAppUnlinkUserDetails                                = "app_unlink_user_details"
-	EventDetailsIntegrationConnectedDetails                         = "integration_connected_details"
-	EventDetailsIntegrationDisconnectedDetails                      = "integration_disconnected_details"
-	EventDetailsFileAddCommentDetails                               = "file_add_comment_details"
-	EventDetailsFileChangeCommentSubscriptionDetails                = "file_change_comment_subscription_details"
-	EventDetailsFileDeleteCommentDetails                            = "file_delete_comment_details"
-	EventDetailsFileEditCommentDetails                              = "file_edit_comment_details"
-	EventDetailsFileLikeCommentDetails                              = "file_like_comment_details"
-	EventDetailsFileResolveCommentDetails                           = "file_resolve_comment_details"
-	EventDetailsFileUnlikeCommentDetails                            = "file_unlike_comment_details"
-	EventDetailsFileUnresolveCommentDetails                         = "file_unresolve_comment_details"
-	EventDetailsDeviceChangeIpDesktopDetails                        = "device_change_ip_desktop_details"
-	EventDetailsDeviceChangeIpMobileDetails                         = "device_change_ip_mobile_details"
-	EventDetailsDeviceChangeIpWebDetails                            = "device_change_ip_web_details"
-	EventDetailsDeviceDeleteOnUnlinkFailDetails                     = "device_delete_on_unlink_fail_details"
-	EventDetailsDeviceDeleteOnUnlinkSuccessDetails                  = "device_delete_on_unlink_success_details"
-	EventDetailsDeviceLinkFailDetails                               = "device_link_fail_details"
-	EventDetailsDeviceLinkSuccessDetails                            = "device_link_success_details"
-	EventDetailsDeviceManagementDisabledDetails                     = "device_management_disabled_details"
-	EventDetailsDeviceManagementEnabledDetails                      = "device_management_enabled_details"
-	EventDetailsDeviceUnlinkDetails                                 = "device_unlink_details"
-	EventDetailsEmmRefreshAuthTokenDetails                          = "emm_refresh_auth_token_details"
-	EventDetailsAccountCaptureChangeAvailabilityDetails             = "account_capture_change_availability_details"
-	EventDetailsAccountCaptureMigrateAccountDetails                 = "account_capture_migrate_account_details"
-	EventDetailsAccountCaptureNotificationEmailsSentDetails         = "account_capture_notification_emails_sent_details"
-	EventDetailsAccountCaptureRelinquishAccountDetails              = "account_capture_relinquish_account_details"
-	EventDetailsDisabledDomainInvitesDetails                        = "disabled_domain_invites_details"
-	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails        = "domain_invites_approve_request_to_join_team_details"
-	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails        = "domain_invites_decline_request_to_join_team_details"
-	EventDetailsDomainInvitesEmailExistingUsersDetails              = "domain_invites_email_existing_users_details"
-	EventDetailsDomainInvitesRequestToJoinTeamDetails               = "domain_invites_request_to_join_team_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails        = "domain_invites_set_invite_new_user_pref_to_no_details"
-	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails       = "domain_invites_set_invite_new_user_pref_to_yes_details"
-	EventDetailsDomainVerificationAddDomainFailDetails              = "domain_verification_add_domain_fail_details"
-	EventDetailsDomainVerificationAddDomainSuccessDetails           = "domain_verification_add_domain_success_details"
-	EventDetailsDomainVerificationRemoveDomainDetails               = "domain_verification_remove_domain_details"
-	EventDetailsEnabledDomainInvitesDetails                         = "enabled_domain_invites_details"
-	EventDetailsCreateFolderDetails                                 = "create_folder_details"
-	EventDetailsFileAddDetails                                      = "file_add_details"
-	EventDetailsFileCopyDetails                                     = "file_copy_details"
-	EventDetailsFileDeleteDetails                                   = "file_delete_details"
-	EventDetailsFileDownloadDetails                                 = "file_download_details"
-	EventDetailsFileEditDetails                                     = "file_edit_details"
-	EventDetailsFileGetCopyReferenceDetails                         = "file_get_copy_reference_details"
-	EventDetailsFileMoveDetails                                     = "file_move_details"
-	EventDetailsFilePermanentlyDeleteDetails                        = "file_permanently_delete_details"
-	EventDetailsFilePreviewDetails                                  = "file_preview_details"
-	EventDetailsFileRenameDetails                                   = "file_rename_details"
-	EventDetailsFileRestoreDetails                                  = "file_restore_details"
-	EventDetailsFileRevertDetails                                   = "file_revert_details"
-	EventDetailsFileRollbackChangesDetails                          = "file_rollback_changes_details"
-	EventDetailsFileSaveCopyReferenceDetails                        = "file_save_copy_reference_details"
-	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
-	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
-	EventDetailsFileRequestCreateDetails                            = "file_request_create_details"
-	EventDetailsFileRequestDeleteDetails                            = "file_request_delete_details"
-	EventDetailsFileRequestReceiveFileDetails                       = "file_request_receive_file_details"
-	EventDetailsGroupAddExternalIdDetails                           = "group_add_external_id_details"
-	EventDetailsGroupAddMemberDetails                               = "group_add_member_details"
-	EventDetailsGroupChangeExternalIdDetails                        = "group_change_external_id_details"
-	EventDetailsGroupChangeManagementTypeDetails                    = "group_change_management_type_details"
-	EventDetailsGroupChangeMemberRoleDetails                        = "group_change_member_role_details"
-	EventDetailsGroupCreateDetails                                  = "group_create_details"
-	EventDetailsGroupDeleteDetails                                  = "group_delete_details"
-	EventDetailsGroupDescriptionUpdatedDetails                      = "group_description_updated_details"
-	EventDetailsGroupJoinPolicyUpdatedDetails                       = "group_join_policy_updated_details"
-	EventDetailsGroupMovedDetails                                   = "group_moved_details"
-	EventDetailsGroupRemoveExternalIdDetails                        = "group_remove_external_id_details"
-	EventDetailsGroupRemoveMemberDetails                            = "group_remove_member_details"
-	EventDetailsGroupRenameDetails                                  = "group_rename_details"
-	EventDetailsEmmErrorDetails                                     = "emm_error_details"
-	EventDetailsGuestAdminSignedInViaTrustedTeamsDetails            = "guest_admin_signed_in_via_trusted_teams_details"
-	EventDetailsGuestAdminSignedOutViaTrustedTeamsDetails           = "guest_admin_signed_out_via_trusted_teams_details"
-	EventDetailsLoginFailDetails                                    = "login_fail_details"
-	EventDetailsLoginSuccessDetails                                 = "login_success_details"
-	EventDetailsLogoutDetails                                       = "logout_details"
-	EventDetailsResellerSupportSessionEndDetails                    = "reseller_support_session_end_details"
-	EventDetailsResellerSupportSessionStartDetails                  = "reseller_support_session_start_details"
-	EventDetailsSignInAsSessionEndDetails                           = "sign_in_as_session_end_details"
-	EventDetailsSignInAsSessionStartDetails                         = "sign_in_as_session_start_details"
-	EventDetailsSsoErrorDetails                                     = "sso_error_details"
-	EventDetailsMemberAddExternalIdDetails                          = "member_add_external_id_details"
-	EventDetailsMemberAddNameDetails                                = "member_add_name_details"
-	EventDetailsMemberChangeAdminRoleDetails                        = "member_change_admin_role_details"
-	EventDetailsMemberChangeEmailDetails                            = "member_change_email_details"
-	EventDetailsMemberChangeExternalIdDetails                       = "member_change_external_id_details"
-	EventDetailsMemberChangeMembershipTypeDetails                   = "member_change_membership_type_details"
-	EventDetailsMemberChangeNameDetails                             = "member_change_name_details"
-	EventDetailsMemberChangeStatusDetails                           = "member_change_status_details"
-	EventDetailsMemberDeleteManualContactsDetails                   = "member_delete_manual_contacts_details"
-	EventDetailsMemberPermanentlyDeleteAccountContentsDetails       = "member_permanently_delete_account_contents_details"
-	EventDetailsMemberRemoveExternalIdDetails                       = "member_remove_external_id_details"
-	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails              = "member_space_limits_add_custom_quota_details"
-	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails           = "member_space_limits_change_custom_quota_details"
-	EventDetailsMemberSpaceLimitsChangeStatusDetails                = "member_space_limits_change_status_details"
-	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails           = "member_space_limits_remove_custom_quota_details"
-	EventDetailsMemberSuggestDetails                                = "member_suggest_details"
-	EventDetailsMemberTransferAccountContentsDetails                = "member_transfer_account_contents_details"
-	EventDetailsSecondaryMailsPolicyChangedDetails                  = "secondary_mails_policy_changed_details"
-	EventDetailsPaperContentAddMemberDetails                        = "paper_content_add_member_details"
-	EventDetailsPaperContentAddToFolderDetails                      = "paper_content_add_to_folder_details"
-	EventDetailsPaperContentArchiveDetails                          = "paper_content_archive_details"
-	EventDetailsPaperContentCreateDetails                           = "paper_content_create_details"
-	EventDetailsPaperContentPermanentlyDeleteDetails                = "paper_content_permanently_delete_details"
-	EventDetailsPaperContentRemoveFromFolderDetails                 = "paper_content_remove_from_folder_details"
-	EventDetailsPaperContentRemoveMemberDetails                     = "paper_content_remove_member_details"
-	EventDetailsPaperContentRenameDetails                           = "paper_content_rename_details"
-	EventDetailsPaperContentRestoreDetails                          = "paper_content_restore_details"
-	EventDetailsPaperDocAddCommentDetails                           = "paper_doc_add_comment_details"
-	EventDetailsPaperDocChangeMemberRoleDetails                     = "paper_doc_change_member_role_details"
-	EventDetailsPaperDocChangeSharingPolicyDetails                  = "paper_doc_change_sharing_policy_details"
-	EventDetailsPaperDocChangeSubscriptionDetails                   = "paper_doc_change_subscription_details"
-	EventDetailsPaperDocDeletedDetails                              = "paper_doc_deleted_details"
-	EventDetailsPaperDocDeleteCommentDetails                        = "paper_doc_delete_comment_details"
-	EventDetailsPaperDocDownloadDetails                             = "paper_doc_download_details"
-	EventDetailsPaperDocEditDetails                                 = "paper_doc_edit_details"
-	EventDetailsPaperDocEditCommentDetails                          = "paper_doc_edit_comment_details"
-	EventDetailsPaperDocFollowedDetails                             = "paper_doc_followed_details"
-	EventDetailsPaperDocMentionDetails                              = "paper_doc_mention_details"
-	EventDetailsPaperDocOwnershipChangedDetails                     = "paper_doc_ownership_changed_details"
-	EventDetailsPaperDocRequestAccessDetails                        = "paper_doc_request_access_details"
-	EventDetailsPaperDocResolveCommentDetails                       = "paper_doc_resolve_comment_details"
-	EventDetailsPaperDocRevertDetails                               = "paper_doc_revert_details"
-	EventDetailsPaperDocSlackShareDetails                           = "paper_doc_slack_share_details"
-	EventDetailsPaperDocTeamInviteDetails                           = "paper_doc_team_invite_details"
-	EventDetailsPaperDocTrashedDetails                              = "paper_doc_trashed_details"
-	EventDetailsPaperDocUnresolveCommentDetails                     = "paper_doc_unresolve_comment_details"
-	EventDetailsPaperDocUntrashedDetails                            = "paper_doc_untrashed_details"
-	EventDetailsPaperDocViewDetails                                 = "paper_doc_view_details"
-	EventDetailsPaperExternalViewAllowDetails                       = "paper_external_view_allow_details"
-	EventDetailsPaperExternalViewDefaultTeamDetails                 = "paper_external_view_default_team_details"
-	EventDetailsPaperExternalViewForbidDetails                      = "paper_external_view_forbid_details"
-	EventDetailsPaperFolderChangeSubscriptionDetails                = "paper_folder_change_subscription_details"
-	EventDetailsPaperFolderDeletedDetails                           = "paper_folder_deleted_details"
-	EventDetailsPaperFolderFollowedDetails                          = "paper_folder_followed_details"
-	EventDetailsPaperFolderTeamInviteDetails                        = "paper_folder_team_invite_details"
-	EventDetailsPaperPublishedLinkCreateDetails                     = "paper_published_link_create_details"
-	EventDetailsPaperPublishedLinkDisabledDetails                   = "paper_published_link_disabled_details"
-	EventDetailsPaperPublishedLinkViewDetails                       = "paper_published_link_view_details"
-	EventDetailsPasswordChangeDetails                               = "password_change_details"
-	EventDetailsPasswordResetDetails                                = "password_reset_details"
-	EventDetailsPasswordResetAllDetails                             = "password_reset_all_details"
-	EventDetailsEmmCreateExceptionsReportDetails                    = "emm_create_exceptions_report_details"
-	EventDetailsEmmCreateUsageReportDetails                         = "emm_create_usage_report_details"
-	EventDetailsExportMembersReportDetails                          = "export_members_report_details"
-	EventDetailsPaperAdminExportStartDetails                        = "paper_admin_export_start_details"
-	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails          = "smart_sync_create_admin_privilege_report_details"
-	EventDetailsTeamActivityCreateReportDetails                     = "team_activity_create_report_details"
-	EventDetailsTeamActivityCreateReportFailDetails                 = "team_activity_create_report_fail_details"
-	EventDetailsCollectionShareDetails                              = "collection_share_details"
-	EventDetailsNoteAclInviteOnlyDetails                            = "note_acl_invite_only_details"
-	EventDetailsNoteAclLinkDetails                                  = "note_acl_link_details"
-	EventDetailsNoteAclTeamLinkDetails                              = "note_acl_team_link_details"
-	EventDetailsNoteSharedDetails                                   = "note_shared_details"
-	EventDetailsNoteShareReceiveDetails                             = "note_share_receive_details"
-	EventDetailsOpenNoteSharedDetails                               = "open_note_shared_details"
-	EventDetailsSfAddGroupDetails                                   = "sf_add_group_details"
-	EventDetailsSfAllowNonMembersToViewSharedLinksDetails           = "sf_allow_non_members_to_view_shared_links_details"
-	EventDetailsSfExternalInviteWarnDetails                         = "sf_external_invite_warn_details"
-	EventDetailsSfFbInviteDetails                                   = "sf_fb_invite_details"
-	EventDetailsSfFbInviteChangeRoleDetails                         = "sf_fb_invite_change_role_details"
-	EventDetailsSfFbUninviteDetails                                 = "sf_fb_uninvite_details"
-	EventDetailsSfInviteGroupDetails                                = "sf_invite_group_details"
-	EventDetailsSfTeamGrantAccessDetails                            = "sf_team_grant_access_details"
-	EventDetailsSfTeamInviteDetails                                 = "sf_team_invite_details"
-	EventDetailsSfTeamInviteChangeRoleDetails                       = "sf_team_invite_change_role_details"
-	EventDetailsSfTeamJoinDetails                                   = "sf_team_join_details"
-	EventDetailsSfTeamJoinFromOobLinkDetails                        = "sf_team_join_from_oob_link_details"
-	EventDetailsSfTeamUninviteDetails                               = "sf_team_uninvite_details"
-	EventDetailsSharedContentAddInviteesDetails                     = "shared_content_add_invitees_details"
-	EventDetailsSharedContentAddLinkExpiryDetails                   = "shared_content_add_link_expiry_details"
-	EventDetailsSharedContentAddLinkPasswordDetails                 = "shared_content_add_link_password_details"
-	EventDetailsSharedContentAddMemberDetails                       = "shared_content_add_member_details"
-	EventDetailsSharedContentChangeDownloadsPolicyDetails           = "shared_content_change_downloads_policy_details"
-	EventDetailsSharedContentChangeInviteeRoleDetails               = "shared_content_change_invitee_role_details"
-	EventDetailsSharedContentChangeLinkAudienceDetails              = "shared_content_change_link_audience_details"
-	EventDetailsSharedContentChangeLinkExpiryDetails                = "shared_content_change_link_expiry_details"
-	EventDetailsSharedContentChangeLinkPasswordDetails              = "shared_content_change_link_password_details"
-	EventDetailsSharedContentChangeMemberRoleDetails                = "shared_content_change_member_role_details"
-	EventDetailsSharedContentChangeViewerInfoPolicyDetails          = "shared_content_change_viewer_info_policy_details"
-	EventDetailsSharedContentClaimInvitationDetails                 = "shared_content_claim_invitation_details"
-	EventDetailsSharedContentCopyDetails                            = "shared_content_copy_details"
-	EventDetailsSharedContentDownloadDetails                        = "shared_content_download_details"
-	EventDetailsSharedContentRelinquishMembershipDetails            = "shared_content_relinquish_membership_details"
-	EventDetailsSharedContentRemoveInviteesDetails                  = "shared_content_remove_invitees_details"
-	EventDetailsSharedContentRemoveLinkExpiryDetails                = "shared_content_remove_link_expiry_details"
-	EventDetailsSharedContentRemoveLinkPasswordDetails              = "shared_content_remove_link_password_details"
-	EventDetailsSharedContentRemoveMemberDetails                    = "shared_content_remove_member_details"
-	EventDetailsSharedContentRequestAccessDetails                   = "shared_content_request_access_details"
-	EventDetailsSharedContentUnshareDetails                         = "shared_content_unshare_details"
-	EventDetailsSharedContentViewDetails                            = "shared_content_view_details"
-	EventDetailsSharedFolderChangeLinkPolicyDetails                 = "shared_folder_change_link_policy_details"
-	EventDetailsSharedFolderChangeMembersInheritancePolicyDetails   = "shared_folder_change_members_inheritance_policy_details"
-	EventDetailsSharedFolderChangeMembersManagementPolicyDetails    = "shared_folder_change_members_management_policy_details"
-	EventDetailsSharedFolderChangeMembersPolicyDetails              = "shared_folder_change_members_policy_details"
-	EventDetailsSharedFolderCreateDetails                           = "shared_folder_create_details"
-	EventDetailsSharedFolderDeclineInvitationDetails                = "shared_folder_decline_invitation_details"
-	EventDetailsSharedFolderMountDetails                            = "shared_folder_mount_details"
-	EventDetailsSharedFolderNestDetails                             = "shared_folder_nest_details"
-	EventDetailsSharedFolderTransferOwnershipDetails                = "shared_folder_transfer_ownership_details"
-	EventDetailsSharedFolderUnmountDetails                          = "shared_folder_unmount_details"
-	EventDetailsSharedLinkAddExpiryDetails                          = "shared_link_add_expiry_details"
-	EventDetailsSharedLinkChangeExpiryDetails                       = "shared_link_change_expiry_details"
-	EventDetailsSharedLinkChangeVisibilityDetails                   = "shared_link_change_visibility_details"
-	EventDetailsSharedLinkCopyDetails                               = "shared_link_copy_details"
-	EventDetailsSharedLinkCreateDetails                             = "shared_link_create_details"
-	EventDetailsSharedLinkDisableDetails                            = "shared_link_disable_details"
-	EventDetailsSharedLinkDownloadDetails                           = "shared_link_download_details"
-	EventDetailsSharedLinkRemoveExpiryDetails                       = "shared_link_remove_expiry_details"
-	EventDetailsSharedLinkShareDetails                              = "shared_link_share_details"
-	EventDetailsSharedLinkViewDetails                               = "shared_link_view_details"
-	EventDetailsSharedNoteOpenedDetails                             = "shared_note_opened_details"
-	EventDetailsShmodelGroupShareDetails                            = "shmodel_group_share_details"
-	EventDetailsShowcaseAccessGrantedDetails                        = "showcase_access_granted_details"
-	EventDetailsShowcaseAddMemberDetails                            = "showcase_add_member_details"
-	EventDetailsShowcaseArchivedDetails                             = "showcase_archived_details"
-	EventDetailsShowcaseCreatedDetails                              = "showcase_created_details"
-	EventDetailsShowcaseDeleteCommentDetails                        = "showcase_delete_comment_details"
-	EventDetailsShowcaseEditedDetails                               = "showcase_edited_details"
-	EventDetailsShowcaseEditCommentDetails                          = "showcase_edit_comment_details"
-	EventDetailsShowcaseFileAddedDetails                            = "showcase_file_added_details"
-	EventDetailsShowcaseFileDownloadDetails                         = "showcase_file_download_details"
-	EventDetailsShowcaseFileRemovedDetails                          = "showcase_file_removed_details"
-	EventDetailsShowcaseFileViewDetails                             = "showcase_file_view_details"
-	EventDetailsShowcasePermanentlyDeletedDetails                   = "showcase_permanently_deleted_details"
-	EventDetailsShowcasePostCommentDetails                          = "showcase_post_comment_details"
-	EventDetailsShowcaseRemoveMemberDetails                         = "showcase_remove_member_details"
-	EventDetailsShowcaseRenamedDetails                              = "showcase_renamed_details"
-	EventDetailsShowcaseRequestAccessDetails                        = "showcase_request_access_details"
-	EventDetailsShowcaseResolveCommentDetails                       = "showcase_resolve_comment_details"
-	EventDetailsShowcaseRestoredDetails                             = "showcase_restored_details"
-	EventDetailsShowcaseTrashedDetails                              = "showcase_trashed_details"
-	EventDetailsShowcaseTrashedDeprecatedDetails                    = "showcase_trashed_deprecated_details"
-	EventDetailsShowcaseUnresolveCommentDetails                     = "showcase_unresolve_comment_details"
-	EventDetailsShowcaseUntrashedDetails                            = "showcase_untrashed_details"
-	EventDetailsShowcaseUntrashedDeprecatedDetails                  = "showcase_untrashed_deprecated_details"
-	EventDetailsShowcaseViewDetails                                 = "showcase_view_details"
-	EventDetailsSsoAddCertDetails                                   = "sso_add_cert_details"
-	EventDetailsSsoAddLoginUrlDetails                               = "sso_add_login_url_details"
-	EventDetailsSsoAddLogoutUrlDetails                              = "sso_add_logout_url_details"
-	EventDetailsSsoChangeCertDetails                                = "sso_change_cert_details"
-	EventDetailsSsoChangeLoginUrlDetails                            = "sso_change_login_url_details"
-	EventDetailsSsoChangeLogoutUrlDetails                           = "sso_change_logout_url_details"
-	EventDetailsSsoChangeSamlIdentityModeDetails                    = "sso_change_saml_identity_mode_details"
-	EventDetailsSsoRemoveCertDetails                                = "sso_remove_cert_details"
-	EventDetailsSsoRemoveLoginUrlDetails                            = "sso_remove_login_url_details"
-	EventDetailsSsoRemoveLogoutUrlDetails                           = "sso_remove_logout_url_details"
-	EventDetailsTeamFolderChangeStatusDetails                       = "team_folder_change_status_details"
-	EventDetailsTeamFolderCreateDetails                             = "team_folder_create_details"
-	EventDetailsTeamFolderDowngradeDetails                          = "team_folder_downgrade_details"
-	EventDetailsTeamFolderPermanentlyDeleteDetails                  = "team_folder_permanently_delete_details"
-	EventDetailsTeamFolderRenameDetails                             = "team_folder_rename_details"
-	EventDetailsTeamSelectiveSyncSettingsChangedDetails             = "team_selective_sync_settings_changed_details"
-	EventDetailsAccountCaptureChangePolicyDetails                   = "account_capture_change_policy_details"
-	EventDetailsAllowDownloadDisabledDetails                        = "allow_download_disabled_details"
-	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
-	EventDetailsCameraUploadsPolicyChangedDetails                   = "camera_uploads_policy_changed_details"
-	EventDetailsDataPlacementRestrictionChangePolicyDetails         = "data_placement_restriction_change_policy_details"
-	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails        = "data_placement_restriction_satisfy_policy_details"
-	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails           = "device_approvals_change_desktop_policy_details"
-	EventDetailsDeviceApprovalsChangeMobilePolicyDetails            = "device_approvals_change_mobile_policy_details"
-	EventDetailsDeviceApprovalsChangeOverageActionDetails           = "device_approvals_change_overage_action_details"
-	EventDetailsDeviceApprovalsChangeUnlinkActionDetails            = "device_approvals_change_unlink_action_details"
-	EventDetailsDirectoryRestrictionsAddMembersDetails              = "directory_restrictions_add_members_details"
-	EventDetailsDirectoryRestrictionsRemoveMembersDetails           = "directory_restrictions_remove_members_details"
-	EventDetailsEmmAddExceptionDetails                              = "emm_add_exception_details"
-	EventDetailsEmmChangePolicyDetails                              = "emm_change_policy_details"
-	EventDetailsEmmRemoveExceptionDetails                           = "emm_remove_exception_details"
-	EventDetailsExtendedVersionHistoryChangePolicyDetails           = "extended_version_history_change_policy_details"
-	EventDetailsFileCommentsChangePolicyDetails                     = "file_comments_change_policy_details"
-	EventDetailsFileRequestsChangePolicyDetails                     = "file_requests_change_policy_details"
-	EventDetailsFileRequestsEmailsEnabledDetails                    = "file_requests_emails_enabled_details"
-	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails       = "file_requests_emails_restricted_to_team_only_details"
-	EventDetailsGoogleSsoChangePolicyDetails                        = "google_sso_change_policy_details"
-	EventDetailsGroupUserManagementChangePolicyDetails              = "group_user_management_change_policy_details"
-	EventDetailsIntegrationPolicyChangedDetails                     = "integration_policy_changed_details"
-	EventDetailsMemberRequestsChangePolicyDetails                   = "member_requests_change_policy_details"
-	EventDetailsMemberSpaceLimitsAddExceptionDetails                = "member_space_limits_add_exception_details"
-	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails        = "member_space_limits_change_caps_type_policy_details"
-	EventDetailsMemberSpaceLimitsChangePolicyDetails                = "member_space_limits_change_policy_details"
-	EventDetailsMemberSpaceLimitsRemoveExceptionDetails             = "member_space_limits_remove_exception_details"
-	EventDetailsMemberSuggestionsChangePolicyDetails                = "member_suggestions_change_policy_details"
-	EventDetailsMicrosoftOfficeAddinChangePolicyDetails             = "microsoft_office_addin_change_policy_details"
-	EventDetailsNetworkControlChangePolicyDetails                   = "network_control_change_policy_details"
-	EventDetailsPaperChangeDeploymentPolicyDetails                  = "paper_change_deployment_policy_details"
-	EventDetailsPaperChangeMemberLinkPolicyDetails                  = "paper_change_member_link_policy_details"
-	EventDetailsPaperChangeMemberPolicyDetails                      = "paper_change_member_policy_details"
-	EventDetailsPaperChangePolicyDetails                            = "paper_change_policy_details"
-	EventDetailsPaperDefaultFolderPolicyChangedDetails              = "paper_default_folder_policy_changed_details"
-	EventDetailsPaperDesktopPolicyChangedDetails                    = "paper_desktop_policy_changed_details"
-	EventDetailsPaperEnabledUsersGroupAdditionDetails               = "paper_enabled_users_group_addition_details"
-	EventDetailsPaperEnabledUsersGroupRemovalDetails                = "paper_enabled_users_group_removal_details"
-	EventDetailsPermanentDeleteChangePolicyDetails                  = "permanent_delete_change_policy_details"
-	EventDetailsResellerSupportChangePolicyDetails                  = "reseller_support_change_policy_details"
-	EventDetailsSharingChangeFolderJoinPolicyDetails                = "sharing_change_folder_join_policy_details"
-	EventDetailsSharingChangeLinkPolicyDetails                      = "sharing_change_link_policy_details"
-	EventDetailsSharingChangeMemberPolicyDetails                    = "sharing_change_member_policy_details"
-	EventDetailsShowcaseChangeDownloadPolicyDetails                 = "showcase_change_download_policy_details"
-	EventDetailsShowcaseChangeEnabledPolicyDetails                  = "showcase_change_enabled_policy_details"
-	EventDetailsShowcaseChangeExternalSharingPolicyDetails          = "showcase_change_external_sharing_policy_details"
-	EventDetailsSmartSyncChangePolicyDetails                        = "smart_sync_change_policy_details"
-	EventDetailsSmartSyncNotOptOutDetails                           = "smart_sync_not_opt_out_details"
-	EventDetailsSmartSyncOptOutDetails                              = "smart_sync_opt_out_details"
-	EventDetailsSsoChangePolicyDetails                              = "sso_change_policy_details"
-	EventDetailsTeamExtensionsPolicyChangedDetails                  = "team_extensions_policy_changed_details"
-	EventDetailsTeamSelectiveSyncPolicyChangedDetails               = "team_selective_sync_policy_changed_details"
-	EventDetailsTfaChangePolicyDetails                              = "tfa_change_policy_details"
-	EventDetailsTwoAccountChangePolicyDetails                       = "two_account_change_policy_details"
-	EventDetailsViewerInfoPolicyChangedDetails                      = "viewer_info_policy_changed_details"
-	EventDetailsWebSessionsChangeFixedLengthPolicyDetails           = "web_sessions_change_fixed_length_policy_details"
-	EventDetailsWebSessionsChangeIdleLengthPolicyDetails            = "web_sessions_change_idle_length_policy_details"
-	EventDetailsTeamMergeFromDetails                                = "team_merge_from_details"
-	EventDetailsTeamMergeToDetails                                  = "team_merge_to_details"
-	EventDetailsTeamProfileAddLogoDetails                           = "team_profile_add_logo_details"
-	EventDetailsTeamProfileChangeDefaultLanguageDetails             = "team_profile_change_default_language_details"
-	EventDetailsTeamProfileChangeLogoDetails                        = "team_profile_change_logo_details"
-	EventDetailsTeamProfileChangeNameDetails                        = "team_profile_change_name_details"
-	EventDetailsTeamProfileRemoveLogoDetails                        = "team_profile_remove_logo_details"
-	EventDetailsTfaAddBackupPhoneDetails                            = "tfa_add_backup_phone_details"
-	EventDetailsTfaAddSecurityKeyDetails                            = "tfa_add_security_key_details"
-	EventDetailsTfaChangeBackupPhoneDetails                         = "tfa_change_backup_phone_details"
-	EventDetailsTfaChangeStatusDetails                              = "tfa_change_status_details"
-	EventDetailsTfaRemoveBackupPhoneDetails                         = "tfa_remove_backup_phone_details"
-	EventDetailsTfaRemoveSecurityKeyDetails                         = "tfa_remove_security_key_details"
-	EventDetailsTfaResetDetails                                     = "tfa_reset_details"
-	EventDetailsGuestAdminChangeStatusDetails                       = "guest_admin_change_status_details"
-	EventDetailsTeamMergeRequestAcceptedDetails                     = "team_merge_request_accepted_details"
-	EventDetailsTeamMergeRequestAcceptedShownToPrimaryTeamDetails   = "team_merge_request_accepted_shown_to_primary_team_details"
+	EventDetailsAppLinkTeamDetails = "app_link_team_details"
+	EventDetailsAppLinkUserDetails = "app_link_user_details"
+	EventDetailsAppUnlinkTeamDetails = "app_unlink_team_details"
+	EventDetailsAppUnlinkUserDetails = "app_unlink_user_details"
+	EventDetailsIntegrationConnectedDetails = "integration_connected_details"
+	EventDetailsIntegrationDisconnectedDetails = "integration_disconnected_details"
+	EventDetailsFileAddCommentDetails = "file_add_comment_details"
+	EventDetailsFileChangeCommentSubscriptionDetails = "file_change_comment_subscription_details"
+	EventDetailsFileDeleteCommentDetails = "file_delete_comment_details"
+	EventDetailsFileEditCommentDetails = "file_edit_comment_details"
+	EventDetailsFileLikeCommentDetails = "file_like_comment_details"
+	EventDetailsFileResolveCommentDetails = "file_resolve_comment_details"
+	EventDetailsFileUnlikeCommentDetails = "file_unlike_comment_details"
+	EventDetailsFileUnresolveCommentDetails = "file_unresolve_comment_details"
+	EventDetailsDeviceChangeIpDesktopDetails = "device_change_ip_desktop_details"
+	EventDetailsDeviceChangeIpMobileDetails = "device_change_ip_mobile_details"
+	EventDetailsDeviceChangeIpWebDetails = "device_change_ip_web_details"
+	EventDetailsDeviceDeleteOnUnlinkFailDetails = "device_delete_on_unlink_fail_details"
+	EventDetailsDeviceDeleteOnUnlinkSuccessDetails = "device_delete_on_unlink_success_details"
+	EventDetailsDeviceLinkFailDetails = "device_link_fail_details"
+	EventDetailsDeviceLinkSuccessDetails = "device_link_success_details"
+	EventDetailsDeviceManagementDisabledDetails = "device_management_disabled_details"
+	EventDetailsDeviceManagementEnabledDetails = "device_management_enabled_details"
+	EventDetailsDeviceUnlinkDetails = "device_unlink_details"
+	EventDetailsEmmRefreshAuthTokenDetails = "emm_refresh_auth_token_details"
+	EventDetailsAccountCaptureChangeAvailabilityDetails = "account_capture_change_availability_details"
+	EventDetailsAccountCaptureMigrateAccountDetails = "account_capture_migrate_account_details"
+	EventDetailsAccountCaptureNotificationEmailsSentDetails = "account_capture_notification_emails_sent_details"
+	EventDetailsAccountCaptureRelinquishAccountDetails = "account_capture_relinquish_account_details"
+	EventDetailsDisabledDomainInvitesDetails = "disabled_domain_invites_details"
+	EventDetailsDomainInvitesApproveRequestToJoinTeamDetails = "domain_invites_approve_request_to_join_team_details"
+	EventDetailsDomainInvitesDeclineRequestToJoinTeamDetails = "domain_invites_decline_request_to_join_team_details"
+	EventDetailsDomainInvitesEmailExistingUsersDetails = "domain_invites_email_existing_users_details"
+	EventDetailsDomainInvitesRequestToJoinTeamDetails = "domain_invites_request_to_join_team_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToNoDetails = "domain_invites_set_invite_new_user_pref_to_no_details"
+	EventDetailsDomainInvitesSetInviteNewUserPrefToYesDetails = "domain_invites_set_invite_new_user_pref_to_yes_details"
+	EventDetailsDomainVerificationAddDomainFailDetails = "domain_verification_add_domain_fail_details"
+	EventDetailsDomainVerificationAddDomainSuccessDetails = "domain_verification_add_domain_success_details"
+	EventDetailsDomainVerificationRemoveDomainDetails = "domain_verification_remove_domain_details"
+	EventDetailsEnabledDomainInvitesDetails = "enabled_domain_invites_details"
+	EventDetailsCreateFolderDetails = "create_folder_details"
+	EventDetailsFileAddDetails = "file_add_details"
+	EventDetailsFileCopyDetails = "file_copy_details"
+	EventDetailsFileDeleteDetails = "file_delete_details"
+	EventDetailsFileDownloadDetails = "file_download_details"
+	EventDetailsFileEditDetails = "file_edit_details"
+	EventDetailsFileGetCopyReferenceDetails = "file_get_copy_reference_details"
+	EventDetailsFileMoveDetails = "file_move_details"
+	EventDetailsFilePermanentlyDeleteDetails = "file_permanently_delete_details"
+	EventDetailsFilePreviewDetails = "file_preview_details"
+	EventDetailsFileRenameDetails = "file_rename_details"
+	EventDetailsFileRestoreDetails = "file_restore_details"
+	EventDetailsFileRevertDetails = "file_revert_details"
+	EventDetailsFileRollbackChangesDetails = "file_rollback_changes_details"
+	EventDetailsFileSaveCopyReferenceDetails = "file_save_copy_reference_details"
+	EventDetailsFileRequestChangeDetails = "file_request_change_details"
+	EventDetailsFileRequestCloseDetails = "file_request_close_details"
+	EventDetailsFileRequestCreateDetails = "file_request_create_details"
+	EventDetailsFileRequestDeleteDetails = "file_request_delete_details"
+	EventDetailsFileRequestReceiveFileDetails = "file_request_receive_file_details"
+	EventDetailsGroupAddExternalIdDetails = "group_add_external_id_details"
+	EventDetailsGroupAddMemberDetails = "group_add_member_details"
+	EventDetailsGroupChangeExternalIdDetails = "group_change_external_id_details"
+	EventDetailsGroupChangeManagementTypeDetails = "group_change_management_type_details"
+	EventDetailsGroupChangeMemberRoleDetails = "group_change_member_role_details"
+	EventDetailsGroupCreateDetails = "group_create_details"
+	EventDetailsGroupDeleteDetails = "group_delete_details"
+	EventDetailsGroupDescriptionUpdatedDetails = "group_description_updated_details"
+	EventDetailsGroupJoinPolicyUpdatedDetails = "group_join_policy_updated_details"
+	EventDetailsGroupMovedDetails = "group_moved_details"
+	EventDetailsGroupRemoveExternalIdDetails = "group_remove_external_id_details"
+	EventDetailsGroupRemoveMemberDetails = "group_remove_member_details"
+	EventDetailsGroupRenameDetails = "group_rename_details"
+	EventDetailsEmmErrorDetails = "emm_error_details"
+	EventDetailsGuestAdminSignedInViaTrustedTeamsDetails = "guest_admin_signed_in_via_trusted_teams_details"
+	EventDetailsGuestAdminSignedOutViaTrustedTeamsDetails = "guest_admin_signed_out_via_trusted_teams_details"
+	EventDetailsLoginFailDetails = "login_fail_details"
+	EventDetailsLoginSuccessDetails = "login_success_details"
+	EventDetailsLogoutDetails = "logout_details"
+	EventDetailsResellerSupportSessionEndDetails = "reseller_support_session_end_details"
+	EventDetailsResellerSupportSessionStartDetails = "reseller_support_session_start_details"
+	EventDetailsSignInAsSessionEndDetails = "sign_in_as_session_end_details"
+	EventDetailsSignInAsSessionStartDetails = "sign_in_as_session_start_details"
+	EventDetailsSsoErrorDetails = "sso_error_details"
+	EventDetailsMemberAddExternalIdDetails = "member_add_external_id_details"
+	EventDetailsMemberAddNameDetails = "member_add_name_details"
+	EventDetailsMemberChangeAdminRoleDetails = "member_change_admin_role_details"
+	EventDetailsMemberChangeEmailDetails = "member_change_email_details"
+	EventDetailsMemberChangeExternalIdDetails = "member_change_external_id_details"
+	EventDetailsMemberChangeMembershipTypeDetails = "member_change_membership_type_details"
+	EventDetailsMemberChangeNameDetails = "member_change_name_details"
+	EventDetailsMemberChangeStatusDetails = "member_change_status_details"
+	EventDetailsMemberDeleteManualContactsDetails = "member_delete_manual_contacts_details"
+	EventDetailsMemberPermanentlyDeleteAccountContentsDetails = "member_permanently_delete_account_contents_details"
+	EventDetailsMemberRemoveExternalIdDetails = "member_remove_external_id_details"
+	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails = "member_space_limits_add_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails = "member_space_limits_change_custom_quota_details"
+	EventDetailsMemberSpaceLimitsChangeStatusDetails = "member_space_limits_change_status_details"
+	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails = "member_space_limits_remove_custom_quota_details"
+	EventDetailsMemberSuggestDetails = "member_suggest_details"
+	EventDetailsMemberTransferAccountContentsDetails = "member_transfer_account_contents_details"
+	EventDetailsSecondaryMailsPolicyChangedDetails = "secondary_mails_policy_changed_details"
+	EventDetailsPaperContentAddMemberDetails = "paper_content_add_member_details"
+	EventDetailsPaperContentAddToFolderDetails = "paper_content_add_to_folder_details"
+	EventDetailsPaperContentArchiveDetails = "paper_content_archive_details"
+	EventDetailsPaperContentCreateDetails = "paper_content_create_details"
+	EventDetailsPaperContentPermanentlyDeleteDetails = "paper_content_permanently_delete_details"
+	EventDetailsPaperContentRemoveFromFolderDetails = "paper_content_remove_from_folder_details"
+	EventDetailsPaperContentRemoveMemberDetails = "paper_content_remove_member_details"
+	EventDetailsPaperContentRenameDetails = "paper_content_rename_details"
+	EventDetailsPaperContentRestoreDetails = "paper_content_restore_details"
+	EventDetailsPaperDocAddCommentDetails = "paper_doc_add_comment_details"
+	EventDetailsPaperDocChangeMemberRoleDetails = "paper_doc_change_member_role_details"
+	EventDetailsPaperDocChangeSharingPolicyDetails = "paper_doc_change_sharing_policy_details"
+	EventDetailsPaperDocChangeSubscriptionDetails = "paper_doc_change_subscription_details"
+	EventDetailsPaperDocDeletedDetails = "paper_doc_deleted_details"
+	EventDetailsPaperDocDeleteCommentDetails = "paper_doc_delete_comment_details"
+	EventDetailsPaperDocDownloadDetails = "paper_doc_download_details"
+	EventDetailsPaperDocEditDetails = "paper_doc_edit_details"
+	EventDetailsPaperDocEditCommentDetails = "paper_doc_edit_comment_details"
+	EventDetailsPaperDocFollowedDetails = "paper_doc_followed_details"
+	EventDetailsPaperDocMentionDetails = "paper_doc_mention_details"
+	EventDetailsPaperDocOwnershipChangedDetails = "paper_doc_ownership_changed_details"
+	EventDetailsPaperDocRequestAccessDetails = "paper_doc_request_access_details"
+	EventDetailsPaperDocResolveCommentDetails = "paper_doc_resolve_comment_details"
+	EventDetailsPaperDocRevertDetails = "paper_doc_revert_details"
+	EventDetailsPaperDocSlackShareDetails = "paper_doc_slack_share_details"
+	EventDetailsPaperDocTeamInviteDetails = "paper_doc_team_invite_details"
+	EventDetailsPaperDocTrashedDetails = "paper_doc_trashed_details"
+	EventDetailsPaperDocUnresolveCommentDetails = "paper_doc_unresolve_comment_details"
+	EventDetailsPaperDocUntrashedDetails = "paper_doc_untrashed_details"
+	EventDetailsPaperDocViewDetails = "paper_doc_view_details"
+	EventDetailsPaperExternalViewAllowDetails = "paper_external_view_allow_details"
+	EventDetailsPaperExternalViewDefaultTeamDetails = "paper_external_view_default_team_details"
+	EventDetailsPaperExternalViewForbidDetails = "paper_external_view_forbid_details"
+	EventDetailsPaperFolderChangeSubscriptionDetails = "paper_folder_change_subscription_details"
+	EventDetailsPaperFolderDeletedDetails = "paper_folder_deleted_details"
+	EventDetailsPaperFolderFollowedDetails = "paper_folder_followed_details"
+	EventDetailsPaperFolderTeamInviteDetails = "paper_folder_team_invite_details"
+	EventDetailsPaperPublishedLinkCreateDetails = "paper_published_link_create_details"
+	EventDetailsPaperPublishedLinkDisabledDetails = "paper_published_link_disabled_details"
+	EventDetailsPaperPublishedLinkViewDetails = "paper_published_link_view_details"
+	EventDetailsPasswordChangeDetails = "password_change_details"
+	EventDetailsPasswordResetDetails = "password_reset_details"
+	EventDetailsPasswordResetAllDetails = "password_reset_all_details"
+	EventDetailsEmmCreateExceptionsReportDetails = "emm_create_exceptions_report_details"
+	EventDetailsEmmCreateUsageReportDetails = "emm_create_usage_report_details"
+	EventDetailsExportMembersReportDetails = "export_members_report_details"
+	EventDetailsPaperAdminExportStartDetails = "paper_admin_export_start_details"
+	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails = "smart_sync_create_admin_privilege_report_details"
+	EventDetailsTeamActivityCreateReportDetails = "team_activity_create_report_details"
+	EventDetailsTeamActivityCreateReportFailDetails = "team_activity_create_report_fail_details"
+	EventDetailsCollectionShareDetails = "collection_share_details"
+	EventDetailsNoteAclInviteOnlyDetails = "note_acl_invite_only_details"
+	EventDetailsNoteAclLinkDetails = "note_acl_link_details"
+	EventDetailsNoteAclTeamLinkDetails = "note_acl_team_link_details"
+	EventDetailsNoteSharedDetails = "note_shared_details"
+	EventDetailsNoteShareReceiveDetails = "note_share_receive_details"
+	EventDetailsOpenNoteSharedDetails = "open_note_shared_details"
+	EventDetailsSfAddGroupDetails = "sf_add_group_details"
+	EventDetailsSfAllowNonMembersToViewSharedLinksDetails = "sf_allow_non_members_to_view_shared_links_details"
+	EventDetailsSfExternalInviteWarnDetails = "sf_external_invite_warn_details"
+	EventDetailsSfFbInviteDetails = "sf_fb_invite_details"
+	EventDetailsSfFbInviteChangeRoleDetails = "sf_fb_invite_change_role_details"
+	EventDetailsSfFbUninviteDetails = "sf_fb_uninvite_details"
+	EventDetailsSfInviteGroupDetails = "sf_invite_group_details"
+	EventDetailsSfTeamGrantAccessDetails = "sf_team_grant_access_details"
+	EventDetailsSfTeamInviteDetails = "sf_team_invite_details"
+	EventDetailsSfTeamInviteChangeRoleDetails = "sf_team_invite_change_role_details"
+	EventDetailsSfTeamJoinDetails = "sf_team_join_details"
+	EventDetailsSfTeamJoinFromOobLinkDetails = "sf_team_join_from_oob_link_details"
+	EventDetailsSfTeamUninviteDetails = "sf_team_uninvite_details"
+	EventDetailsSharedContentAddInviteesDetails = "shared_content_add_invitees_details"
+	EventDetailsSharedContentAddLinkExpiryDetails = "shared_content_add_link_expiry_details"
+	EventDetailsSharedContentAddLinkPasswordDetails = "shared_content_add_link_password_details"
+	EventDetailsSharedContentAddMemberDetails = "shared_content_add_member_details"
+	EventDetailsSharedContentChangeDownloadsPolicyDetails = "shared_content_change_downloads_policy_details"
+	EventDetailsSharedContentChangeInviteeRoleDetails = "shared_content_change_invitee_role_details"
+	EventDetailsSharedContentChangeLinkAudienceDetails = "shared_content_change_link_audience_details"
+	EventDetailsSharedContentChangeLinkExpiryDetails = "shared_content_change_link_expiry_details"
+	EventDetailsSharedContentChangeLinkPasswordDetails = "shared_content_change_link_password_details"
+	EventDetailsSharedContentChangeMemberRoleDetails = "shared_content_change_member_role_details"
+	EventDetailsSharedContentChangeViewerInfoPolicyDetails = "shared_content_change_viewer_info_policy_details"
+	EventDetailsSharedContentClaimInvitationDetails = "shared_content_claim_invitation_details"
+	EventDetailsSharedContentCopyDetails = "shared_content_copy_details"
+	EventDetailsSharedContentDownloadDetails = "shared_content_download_details"
+	EventDetailsSharedContentRelinquishMembershipDetails = "shared_content_relinquish_membership_details"
+	EventDetailsSharedContentRemoveInviteesDetails = "shared_content_remove_invitees_details"
+	EventDetailsSharedContentRemoveLinkExpiryDetails = "shared_content_remove_link_expiry_details"
+	EventDetailsSharedContentRemoveLinkPasswordDetails = "shared_content_remove_link_password_details"
+	EventDetailsSharedContentRemoveMemberDetails = "shared_content_remove_member_details"
+	EventDetailsSharedContentRequestAccessDetails = "shared_content_request_access_details"
+	EventDetailsSharedContentUnshareDetails = "shared_content_unshare_details"
+	EventDetailsSharedContentViewDetails = "shared_content_view_details"
+	EventDetailsSharedFolderChangeLinkPolicyDetails = "shared_folder_change_link_policy_details"
+	EventDetailsSharedFolderChangeMembersInheritancePolicyDetails = "shared_folder_change_members_inheritance_policy_details"
+	EventDetailsSharedFolderChangeMembersManagementPolicyDetails = "shared_folder_change_members_management_policy_details"
+	EventDetailsSharedFolderChangeMembersPolicyDetails = "shared_folder_change_members_policy_details"
+	EventDetailsSharedFolderCreateDetails = "shared_folder_create_details"
+	EventDetailsSharedFolderDeclineInvitationDetails = "shared_folder_decline_invitation_details"
+	EventDetailsSharedFolderMountDetails = "shared_folder_mount_details"
+	EventDetailsSharedFolderNestDetails = "shared_folder_nest_details"
+	EventDetailsSharedFolderTransferOwnershipDetails = "shared_folder_transfer_ownership_details"
+	EventDetailsSharedFolderUnmountDetails = "shared_folder_unmount_details"
+	EventDetailsSharedLinkAddExpiryDetails = "shared_link_add_expiry_details"
+	EventDetailsSharedLinkChangeExpiryDetails = "shared_link_change_expiry_details"
+	EventDetailsSharedLinkChangeVisibilityDetails = "shared_link_change_visibility_details"
+	EventDetailsSharedLinkCopyDetails = "shared_link_copy_details"
+	EventDetailsSharedLinkCreateDetails = "shared_link_create_details"
+	EventDetailsSharedLinkDisableDetails = "shared_link_disable_details"
+	EventDetailsSharedLinkDownloadDetails = "shared_link_download_details"
+	EventDetailsSharedLinkRemoveExpiryDetails = "shared_link_remove_expiry_details"
+	EventDetailsSharedLinkShareDetails = "shared_link_share_details"
+	EventDetailsSharedLinkViewDetails = "shared_link_view_details"
+	EventDetailsSharedNoteOpenedDetails = "shared_note_opened_details"
+	EventDetailsShmodelGroupShareDetails = "shmodel_group_share_details"
+	EventDetailsShowcaseAccessGrantedDetails = "showcase_access_granted_details"
+	EventDetailsShowcaseAddMemberDetails = "showcase_add_member_details"
+	EventDetailsShowcaseArchivedDetails = "showcase_archived_details"
+	EventDetailsShowcaseCreatedDetails = "showcase_created_details"
+	EventDetailsShowcaseDeleteCommentDetails = "showcase_delete_comment_details"
+	EventDetailsShowcaseEditedDetails = "showcase_edited_details"
+	EventDetailsShowcaseEditCommentDetails = "showcase_edit_comment_details"
+	EventDetailsShowcaseFileAddedDetails = "showcase_file_added_details"
+	EventDetailsShowcaseFileDownloadDetails = "showcase_file_download_details"
+	EventDetailsShowcaseFileRemovedDetails = "showcase_file_removed_details"
+	EventDetailsShowcaseFileViewDetails = "showcase_file_view_details"
+	EventDetailsShowcasePermanentlyDeletedDetails = "showcase_permanently_deleted_details"
+	EventDetailsShowcasePostCommentDetails = "showcase_post_comment_details"
+	EventDetailsShowcaseRemoveMemberDetails = "showcase_remove_member_details"
+	EventDetailsShowcaseRenamedDetails = "showcase_renamed_details"
+	EventDetailsShowcaseRequestAccessDetails = "showcase_request_access_details"
+	EventDetailsShowcaseResolveCommentDetails = "showcase_resolve_comment_details"
+	EventDetailsShowcaseRestoredDetails = "showcase_restored_details"
+	EventDetailsShowcaseTrashedDetails = "showcase_trashed_details"
+	EventDetailsShowcaseTrashedDeprecatedDetails = "showcase_trashed_deprecated_details"
+	EventDetailsShowcaseUnresolveCommentDetails = "showcase_unresolve_comment_details"
+	EventDetailsShowcaseUntrashedDetails = "showcase_untrashed_details"
+	EventDetailsShowcaseUntrashedDeprecatedDetails = "showcase_untrashed_deprecated_details"
+	EventDetailsShowcaseViewDetails = "showcase_view_details"
+	EventDetailsSsoAddCertDetails = "sso_add_cert_details"
+	EventDetailsSsoAddLoginUrlDetails = "sso_add_login_url_details"
+	EventDetailsSsoAddLogoutUrlDetails = "sso_add_logout_url_details"
+	EventDetailsSsoChangeCertDetails = "sso_change_cert_details"
+	EventDetailsSsoChangeLoginUrlDetails = "sso_change_login_url_details"
+	EventDetailsSsoChangeLogoutUrlDetails = "sso_change_logout_url_details"
+	EventDetailsSsoChangeSamlIdentityModeDetails = "sso_change_saml_identity_mode_details"
+	EventDetailsSsoRemoveCertDetails = "sso_remove_cert_details"
+	EventDetailsSsoRemoveLoginUrlDetails = "sso_remove_login_url_details"
+	EventDetailsSsoRemoveLogoutUrlDetails = "sso_remove_logout_url_details"
+	EventDetailsTeamFolderChangeStatusDetails = "team_folder_change_status_details"
+	EventDetailsTeamFolderCreateDetails = "team_folder_create_details"
+	EventDetailsTeamFolderDowngradeDetails = "team_folder_downgrade_details"
+	EventDetailsTeamFolderPermanentlyDeleteDetails = "team_folder_permanently_delete_details"
+	EventDetailsTeamFolderRenameDetails = "team_folder_rename_details"
+	EventDetailsTeamSelectiveSyncSettingsChangedDetails = "team_selective_sync_settings_changed_details"
+	EventDetailsAccountCaptureChangePolicyDetails = "account_capture_change_policy_details"
+	EventDetailsAllowDownloadDisabledDetails = "allow_download_disabled_details"
+	EventDetailsAllowDownloadEnabledDetails = "allow_download_enabled_details"
+	EventDetailsCameraUploadsPolicyChangedDetails = "camera_uploads_policy_changed_details"
+	EventDetailsDataPlacementRestrictionChangePolicyDetails = "data_placement_restriction_change_policy_details"
+	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails = "data_placement_restriction_satisfy_policy_details"
+	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails = "device_approvals_change_desktop_policy_details"
+	EventDetailsDeviceApprovalsChangeMobilePolicyDetails = "device_approvals_change_mobile_policy_details"
+	EventDetailsDeviceApprovalsChangeOverageActionDetails = "device_approvals_change_overage_action_details"
+	EventDetailsDeviceApprovalsChangeUnlinkActionDetails = "device_approvals_change_unlink_action_details"
+	EventDetailsDirectoryRestrictionsAddMembersDetails = "directory_restrictions_add_members_details"
+	EventDetailsDirectoryRestrictionsRemoveMembersDetails = "directory_restrictions_remove_members_details"
+	EventDetailsEmmAddExceptionDetails = "emm_add_exception_details"
+	EventDetailsEmmChangePolicyDetails = "emm_change_policy_details"
+	EventDetailsEmmRemoveExceptionDetails = "emm_remove_exception_details"
+	EventDetailsExtendedVersionHistoryChangePolicyDetails = "extended_version_history_change_policy_details"
+	EventDetailsFileCommentsChangePolicyDetails = "file_comments_change_policy_details"
+	EventDetailsFileRequestsChangePolicyDetails = "file_requests_change_policy_details"
+	EventDetailsFileRequestsEmailsEnabledDetails = "file_requests_emails_enabled_details"
+	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails = "file_requests_emails_restricted_to_team_only_details"
+	EventDetailsGoogleSsoChangePolicyDetails = "google_sso_change_policy_details"
+	EventDetailsGroupUserManagementChangePolicyDetails = "group_user_management_change_policy_details"
+	EventDetailsIntegrationPolicyChangedDetails = "integration_policy_changed_details"
+	EventDetailsMemberRequestsChangePolicyDetails = "member_requests_change_policy_details"
+	EventDetailsMemberSpaceLimitsAddExceptionDetails = "member_space_limits_add_exception_details"
+	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails = "member_space_limits_change_caps_type_policy_details"
+	EventDetailsMemberSpaceLimitsChangePolicyDetails = "member_space_limits_change_policy_details"
+	EventDetailsMemberSpaceLimitsRemoveExceptionDetails = "member_space_limits_remove_exception_details"
+	EventDetailsMemberSuggestionsChangePolicyDetails = "member_suggestions_change_policy_details"
+	EventDetailsMicrosoftOfficeAddinChangePolicyDetails = "microsoft_office_addin_change_policy_details"
+	EventDetailsNetworkControlChangePolicyDetails = "network_control_change_policy_details"
+	EventDetailsPaperChangeDeploymentPolicyDetails = "paper_change_deployment_policy_details"
+	EventDetailsPaperChangeMemberLinkPolicyDetails = "paper_change_member_link_policy_details"
+	EventDetailsPaperChangeMemberPolicyDetails = "paper_change_member_policy_details"
+	EventDetailsPaperChangePolicyDetails = "paper_change_policy_details"
+	EventDetailsPaperDefaultFolderPolicyChangedDetails = "paper_default_folder_policy_changed_details"
+	EventDetailsPaperDesktopPolicyChangedDetails = "paper_desktop_policy_changed_details"
+	EventDetailsPaperEnabledUsersGroupAdditionDetails = "paper_enabled_users_group_addition_details"
+	EventDetailsPaperEnabledUsersGroupRemovalDetails = "paper_enabled_users_group_removal_details"
+	EventDetailsPermanentDeleteChangePolicyDetails = "permanent_delete_change_policy_details"
+	EventDetailsResellerSupportChangePolicyDetails = "reseller_support_change_policy_details"
+	EventDetailsSharingChangeFolderJoinPolicyDetails = "sharing_change_folder_join_policy_details"
+	EventDetailsSharingChangeLinkPolicyDetails = "sharing_change_link_policy_details"
+	EventDetailsSharingChangeMemberPolicyDetails = "sharing_change_member_policy_details"
+	EventDetailsShowcaseChangeDownloadPolicyDetails = "showcase_change_download_policy_details"
+	EventDetailsShowcaseChangeEnabledPolicyDetails = "showcase_change_enabled_policy_details"
+	EventDetailsShowcaseChangeExternalSharingPolicyDetails = "showcase_change_external_sharing_policy_details"
+	EventDetailsSmartSyncChangePolicyDetails = "smart_sync_change_policy_details"
+	EventDetailsSmartSyncNotOptOutDetails = "smart_sync_not_opt_out_details"
+	EventDetailsSmartSyncOptOutDetails = "smart_sync_opt_out_details"
+	EventDetailsSsoChangePolicyDetails = "sso_change_policy_details"
+	EventDetailsTeamExtensionsPolicyChangedDetails = "team_extensions_policy_changed_details"
+	EventDetailsTeamSelectiveSyncPolicyChangedDetails = "team_selective_sync_policy_changed_details"
+	EventDetailsTfaChangePolicyDetails = "tfa_change_policy_details"
+	EventDetailsTwoAccountChangePolicyDetails = "two_account_change_policy_details"
+	EventDetailsViewerInfoPolicyChangedDetails = "viewer_info_policy_changed_details"
+	EventDetailsWebSessionsChangeFixedLengthPolicyDetails = "web_sessions_change_fixed_length_policy_details"
+	EventDetailsWebSessionsChangeIdleLengthPolicyDetails = "web_sessions_change_idle_length_policy_details"
+	EventDetailsTeamMergeFromDetails = "team_merge_from_details"
+	EventDetailsTeamMergeToDetails = "team_merge_to_details"
+	EventDetailsTeamProfileAddLogoDetails = "team_profile_add_logo_details"
+	EventDetailsTeamProfileChangeDefaultLanguageDetails = "team_profile_change_default_language_details"
+	EventDetailsTeamProfileChangeLogoDetails = "team_profile_change_logo_details"
+	EventDetailsTeamProfileChangeNameDetails = "team_profile_change_name_details"
+	EventDetailsTeamProfileRemoveLogoDetails = "team_profile_remove_logo_details"
+	EventDetailsTfaAddBackupPhoneDetails = "tfa_add_backup_phone_details"
+	EventDetailsTfaAddSecurityKeyDetails = "tfa_add_security_key_details"
+	EventDetailsTfaChangeBackupPhoneDetails = "tfa_change_backup_phone_details"
+	EventDetailsTfaChangeStatusDetails = "tfa_change_status_details"
+	EventDetailsTfaRemoveBackupPhoneDetails = "tfa_remove_backup_phone_details"
+	EventDetailsTfaRemoveSecurityKeyDetails = "tfa_remove_security_key_details"
+	EventDetailsTfaResetDetails = "tfa_reset_details"
+	EventDetailsGuestAdminChangeStatusDetails = "guest_admin_change_status_details"
+	EventDetailsTeamMergeRequestAcceptedDetails = "team_merge_request_accepted_details"
+	EventDetailsTeamMergeRequestAcceptedShownToPrimaryTeamDetails = "team_merge_request_accepted_shown_to_primary_team_details"
 	EventDetailsTeamMergeRequestAcceptedShownToSecondaryTeamDetails = "team_merge_request_accepted_shown_to_secondary_team_details"
-	EventDetailsTeamMergeRequestAutoCanceledDetails                 = "team_merge_request_auto_canceled_details"
-	EventDetailsTeamMergeRequestCanceledDetails                     = "team_merge_request_canceled_details"
-	EventDetailsTeamMergeRequestCanceledShownToPrimaryTeamDetails   = "team_merge_request_canceled_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestAutoCanceledDetails = "team_merge_request_auto_canceled_details"
+	EventDetailsTeamMergeRequestCanceledDetails = "team_merge_request_canceled_details"
+	EventDetailsTeamMergeRequestCanceledShownToPrimaryTeamDetails = "team_merge_request_canceled_shown_to_primary_team_details"
 	EventDetailsTeamMergeRequestCanceledShownToSecondaryTeamDetails = "team_merge_request_canceled_shown_to_secondary_team_details"
-	EventDetailsTeamMergeRequestExpiredDetails                      = "team_merge_request_expired_details"
-	EventDetailsTeamMergeRequestExpiredShownToPrimaryTeamDetails    = "team_merge_request_expired_shown_to_primary_team_details"
-	EventDetailsTeamMergeRequestExpiredShownToSecondaryTeamDetails  = "team_merge_request_expired_shown_to_secondary_team_details"
-	EventDetailsTeamMergeRequestRejectedShownToPrimaryTeamDetails   = "team_merge_request_rejected_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestExpiredDetails = "team_merge_request_expired_details"
+	EventDetailsTeamMergeRequestExpiredShownToPrimaryTeamDetails = "team_merge_request_expired_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestExpiredShownToSecondaryTeamDetails = "team_merge_request_expired_shown_to_secondary_team_details"
+	EventDetailsTeamMergeRequestRejectedShownToPrimaryTeamDetails = "team_merge_request_rejected_shown_to_primary_team_details"
 	EventDetailsTeamMergeRequestRejectedShownToSecondaryTeamDetails = "team_merge_request_rejected_shown_to_secondary_team_details"
-	EventDetailsTeamMergeRequestReminderDetails                     = "team_merge_request_reminder_details"
-	EventDetailsTeamMergeRequestReminderShownToPrimaryTeamDetails   = "team_merge_request_reminder_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestReminderDetails = "team_merge_request_reminder_details"
+	EventDetailsTeamMergeRequestReminderShownToPrimaryTeamDetails = "team_merge_request_reminder_shown_to_primary_team_details"
 	EventDetailsTeamMergeRequestReminderShownToSecondaryTeamDetails = "team_merge_request_reminder_shown_to_secondary_team_details"
-	EventDetailsTeamMergeRequestRevokedDetails                      = "team_merge_request_revoked_details"
-	EventDetailsTeamMergeRequestSentShownToPrimaryTeamDetails       = "team_merge_request_sent_shown_to_primary_team_details"
-	EventDetailsTeamMergeRequestSentShownToSecondaryTeamDetails     = "team_merge_request_sent_shown_to_secondary_team_details"
-	EventDetailsMissingDetails                                      = "missing_details"
-	EventDetailsOther                                               = "other"
+	EventDetailsTeamMergeRequestRevokedDetails = "team_merge_request_revoked_details"
+	EventDetailsTeamMergeRequestSentShownToPrimaryTeamDetails = "team_merge_request_sent_shown_to_primary_team_details"
+	EventDetailsTeamMergeRequestSentShownToSecondaryTeamDetails = "team_merge_request_sent_shown_to_secondary_team_details"
+	EventDetailsMissingDetails = "missing_details"
+	EventDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a EventDetails instance
@@ -3382,2090 +3466,2090 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "app_link_team_details":
-		err = json.Unmarshal(body, &u.AppLinkTeamDetails)
+		case "app_link_team_details":
+			err = json.Unmarshal(body, &u.AppLinkTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "app_link_user_details":
-		err = json.Unmarshal(body, &u.AppLinkUserDetails)
+		case "app_link_user_details":
+			err = json.Unmarshal(body, &u.AppLinkUserDetails)
 
 		if err != nil {
 			return err
 		}
-	case "app_unlink_team_details":
-		err = json.Unmarshal(body, &u.AppUnlinkTeamDetails)
+		case "app_unlink_team_details":
+			err = json.Unmarshal(body, &u.AppUnlinkTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "app_unlink_user_details":
-		err = json.Unmarshal(body, &u.AppUnlinkUserDetails)
+		case "app_unlink_user_details":
+			err = json.Unmarshal(body, &u.AppUnlinkUserDetails)
 
 		if err != nil {
 			return err
 		}
-	case "integration_connected_details":
-		err = json.Unmarshal(body, &u.IntegrationConnectedDetails)
+		case "integration_connected_details":
+			err = json.Unmarshal(body, &u.IntegrationConnectedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "integration_disconnected_details":
-		err = json.Unmarshal(body, &u.IntegrationDisconnectedDetails)
+		case "integration_disconnected_details":
+			err = json.Unmarshal(body, &u.IntegrationDisconnectedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_add_comment_details":
-		err = json.Unmarshal(body, &u.FileAddCommentDetails)
+		case "file_add_comment_details":
+			err = json.Unmarshal(body, &u.FileAddCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_change_comment_subscription_details":
-		err = json.Unmarshal(body, &u.FileChangeCommentSubscriptionDetails)
+		case "file_change_comment_subscription_details":
+			err = json.Unmarshal(body, &u.FileChangeCommentSubscriptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_delete_comment_details":
-		err = json.Unmarshal(body, &u.FileDeleteCommentDetails)
+		case "file_delete_comment_details":
+			err = json.Unmarshal(body, &u.FileDeleteCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_edit_comment_details":
-		err = json.Unmarshal(body, &u.FileEditCommentDetails)
+		case "file_edit_comment_details":
+			err = json.Unmarshal(body, &u.FileEditCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_like_comment_details":
-		err = json.Unmarshal(body, &u.FileLikeCommentDetails)
+		case "file_like_comment_details":
+			err = json.Unmarshal(body, &u.FileLikeCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_resolve_comment_details":
-		err = json.Unmarshal(body, &u.FileResolveCommentDetails)
+		case "file_resolve_comment_details":
+			err = json.Unmarshal(body, &u.FileResolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_unlike_comment_details":
-		err = json.Unmarshal(body, &u.FileUnlikeCommentDetails)
+		case "file_unlike_comment_details":
+			err = json.Unmarshal(body, &u.FileUnlikeCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.FileUnresolveCommentDetails)
+		case "file_unresolve_comment_details":
+			err = json.Unmarshal(body, &u.FileUnresolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_desktop_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpDesktopDetails)
+		case "device_change_ip_desktop_details":
+			err = json.Unmarshal(body, &u.DeviceChangeIpDesktopDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_mobile_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpMobileDetails)
+		case "device_change_ip_mobile_details":
+			err = json.Unmarshal(body, &u.DeviceChangeIpMobileDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_web_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpWebDetails)
+		case "device_change_ip_web_details":
+			err = json.Unmarshal(body, &u.DeviceChangeIpWebDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_delete_on_unlink_fail_details":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFailDetails)
+		case "device_delete_on_unlink_fail_details":
+			err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_delete_on_unlink_success_details":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccessDetails)
+		case "device_delete_on_unlink_success_details":
+			err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_link_fail_details":
-		err = json.Unmarshal(body, &u.DeviceLinkFailDetails)
+		case "device_link_fail_details":
+			err = json.Unmarshal(body, &u.DeviceLinkFailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_link_success_details":
-		err = json.Unmarshal(body, &u.DeviceLinkSuccessDetails)
+		case "device_link_success_details":
+			err = json.Unmarshal(body, &u.DeviceLinkSuccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_management_disabled_details":
-		err = json.Unmarshal(body, &u.DeviceManagementDisabledDetails)
+		case "device_management_disabled_details":
+			err = json.Unmarshal(body, &u.DeviceManagementDisabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_management_enabled_details":
-		err = json.Unmarshal(body, &u.DeviceManagementEnabledDetails)
+		case "device_management_enabled_details":
+			err = json.Unmarshal(body, &u.DeviceManagementEnabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_unlink_details":
-		err = json.Unmarshal(body, &u.DeviceUnlinkDetails)
+		case "device_unlink_details":
+			err = json.Unmarshal(body, &u.DeviceUnlinkDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_refresh_auth_token_details":
-		err = json.Unmarshal(body, &u.EmmRefreshAuthTokenDetails)
+		case "emm_refresh_auth_token_details":
+			err = json.Unmarshal(body, &u.EmmRefreshAuthTokenDetails)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_change_availability_details":
-		err = json.Unmarshal(body, &u.AccountCaptureChangeAvailabilityDetails)
+		case "account_capture_change_availability_details":
+			err = json.Unmarshal(body, &u.AccountCaptureChangeAvailabilityDetails)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_migrate_account_details":
-		err = json.Unmarshal(body, &u.AccountCaptureMigrateAccountDetails)
+		case "account_capture_migrate_account_details":
+			err = json.Unmarshal(body, &u.AccountCaptureMigrateAccountDetails)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_notification_emails_sent_details":
-		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSentDetails)
+		case "account_capture_notification_emails_sent_details":
+			err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_relinquish_account_details":
-		err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccountDetails)
+		case "account_capture_relinquish_account_details":
+			err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccountDetails)
 
 		if err != nil {
 			return err
 		}
-	case "disabled_domain_invites_details":
-		err = json.Unmarshal(body, &u.DisabledDomainInvitesDetails)
+		case "disabled_domain_invites_details":
+			err = json.Unmarshal(body, &u.DisabledDomainInvitesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_approve_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeamDetails)
+		case "domain_invites_approve_request_to_join_team_details":
+			err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_decline_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeamDetails)
+		case "domain_invites_decline_request_to_join_team_details":
+			err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_email_existing_users_details":
-		err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsersDetails)
+		case "domain_invites_email_existing_users_details":
+			err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsersDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeamDetails)
+		case "domain_invites_request_to_join_team_details":
+			err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_set_invite_new_user_pref_to_no_details":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNoDetails)
+		case "domain_invites_set_invite_new_user_pref_to_no_details":
+			err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNoDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_set_invite_new_user_pref_to_yes_details":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYesDetails)
+		case "domain_invites_set_invite_new_user_pref_to_yes_details":
+			err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_add_domain_fail_details":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainFailDetails)
+		case "domain_verification_add_domain_fail_details":
+			err = json.Unmarshal(body, &u.DomainVerificationAddDomainFailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_add_domain_success_details":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccessDetails)
+		case "domain_verification_add_domain_success_details":
+			err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_remove_domain_details":
-		err = json.Unmarshal(body, &u.DomainVerificationRemoveDomainDetails)
+		case "domain_verification_remove_domain_details":
+			err = json.Unmarshal(body, &u.DomainVerificationRemoveDomainDetails)
 
 		if err != nil {
 			return err
 		}
-	case "enabled_domain_invites_details":
-		err = json.Unmarshal(body, &u.EnabledDomainInvitesDetails)
+		case "enabled_domain_invites_details":
+			err = json.Unmarshal(body, &u.EnabledDomainInvitesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "create_folder_details":
-		err = json.Unmarshal(body, &u.CreateFolderDetails)
+		case "create_folder_details":
+			err = json.Unmarshal(body, &u.CreateFolderDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_add_details":
-		err = json.Unmarshal(body, &u.FileAddDetails)
+		case "file_add_details":
+			err = json.Unmarshal(body, &u.FileAddDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_copy_details":
-		err = json.Unmarshal(body, &u.FileCopyDetails)
+		case "file_copy_details":
+			err = json.Unmarshal(body, &u.FileCopyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_delete_details":
-		err = json.Unmarshal(body, &u.FileDeleteDetails)
+		case "file_delete_details":
+			err = json.Unmarshal(body, &u.FileDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_download_details":
-		err = json.Unmarshal(body, &u.FileDownloadDetails)
+		case "file_download_details":
+			err = json.Unmarshal(body, &u.FileDownloadDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_edit_details":
-		err = json.Unmarshal(body, &u.FileEditDetails)
+		case "file_edit_details":
+			err = json.Unmarshal(body, &u.FileEditDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_get_copy_reference_details":
-		err = json.Unmarshal(body, &u.FileGetCopyReferenceDetails)
+		case "file_get_copy_reference_details":
+			err = json.Unmarshal(body, &u.FileGetCopyReferenceDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_move_details":
-		err = json.Unmarshal(body, &u.FileMoveDetails)
+		case "file_move_details":
+			err = json.Unmarshal(body, &u.FileMoveDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_permanently_delete_details":
-		err = json.Unmarshal(body, &u.FilePermanentlyDeleteDetails)
+		case "file_permanently_delete_details":
+			err = json.Unmarshal(body, &u.FilePermanentlyDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_preview_details":
-		err = json.Unmarshal(body, &u.FilePreviewDetails)
+		case "file_preview_details":
+			err = json.Unmarshal(body, &u.FilePreviewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_rename_details":
-		err = json.Unmarshal(body, &u.FileRenameDetails)
+		case "file_rename_details":
+			err = json.Unmarshal(body, &u.FileRenameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_restore_details":
-		err = json.Unmarshal(body, &u.FileRestoreDetails)
+		case "file_restore_details":
+			err = json.Unmarshal(body, &u.FileRestoreDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_revert_details":
-		err = json.Unmarshal(body, &u.FileRevertDetails)
+		case "file_revert_details":
+			err = json.Unmarshal(body, &u.FileRevertDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_rollback_changes_details":
-		err = json.Unmarshal(body, &u.FileRollbackChangesDetails)
+		case "file_rollback_changes_details":
+			err = json.Unmarshal(body, &u.FileRollbackChangesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_save_copy_reference_details":
-		err = json.Unmarshal(body, &u.FileSaveCopyReferenceDetails)
+		case "file_save_copy_reference_details":
+			err = json.Unmarshal(body, &u.FileSaveCopyReferenceDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_change_details":
-		err = json.Unmarshal(body, &u.FileRequestChangeDetails)
+		case "file_request_change_details":
+			err = json.Unmarshal(body, &u.FileRequestChangeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_close_details":
-		err = json.Unmarshal(body, &u.FileRequestCloseDetails)
+		case "file_request_close_details":
+			err = json.Unmarshal(body, &u.FileRequestCloseDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_create_details":
-		err = json.Unmarshal(body, &u.FileRequestCreateDetails)
+		case "file_request_create_details":
+			err = json.Unmarshal(body, &u.FileRequestCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_delete_details":
-		err = json.Unmarshal(body, &u.FileRequestDeleteDetails)
+		case "file_request_delete_details":
+			err = json.Unmarshal(body, &u.FileRequestDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_receive_file_details":
-		err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails)
+		case "file_request_receive_file_details":
+			err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_add_external_id_details":
-		err = json.Unmarshal(body, &u.GroupAddExternalIdDetails)
+		case "group_add_external_id_details":
+			err = json.Unmarshal(body, &u.GroupAddExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_add_member_details":
-		err = json.Unmarshal(body, &u.GroupAddMemberDetails)
+		case "group_add_member_details":
+			err = json.Unmarshal(body, &u.GroupAddMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_external_id_details":
-		err = json.Unmarshal(body, &u.GroupChangeExternalIdDetails)
+		case "group_change_external_id_details":
+			err = json.Unmarshal(body, &u.GroupChangeExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_management_type_details":
-		err = json.Unmarshal(body, &u.GroupChangeManagementTypeDetails)
+		case "group_change_management_type_details":
+			err = json.Unmarshal(body, &u.GroupChangeManagementTypeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_member_role_details":
-		err = json.Unmarshal(body, &u.GroupChangeMemberRoleDetails)
+		case "group_change_member_role_details":
+			err = json.Unmarshal(body, &u.GroupChangeMemberRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_create_details":
-		err = json.Unmarshal(body, &u.GroupCreateDetails)
+		case "group_create_details":
+			err = json.Unmarshal(body, &u.GroupCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_delete_details":
-		err = json.Unmarshal(body, &u.GroupDeleteDetails)
+		case "group_delete_details":
+			err = json.Unmarshal(body, &u.GroupDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_description_updated_details":
-		err = json.Unmarshal(body, &u.GroupDescriptionUpdatedDetails)
+		case "group_description_updated_details":
+			err = json.Unmarshal(body, &u.GroupDescriptionUpdatedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_join_policy_updated_details":
-		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdatedDetails)
+		case "group_join_policy_updated_details":
+			err = json.Unmarshal(body, &u.GroupJoinPolicyUpdatedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_moved_details":
-		err = json.Unmarshal(body, &u.GroupMovedDetails)
+		case "group_moved_details":
+			err = json.Unmarshal(body, &u.GroupMovedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_remove_external_id_details":
-		err = json.Unmarshal(body, &u.GroupRemoveExternalIdDetails)
+		case "group_remove_external_id_details":
+			err = json.Unmarshal(body, &u.GroupRemoveExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_remove_member_details":
-		err = json.Unmarshal(body, &u.GroupRemoveMemberDetails)
+		case "group_remove_member_details":
+			err = json.Unmarshal(body, &u.GroupRemoveMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_rename_details":
-		err = json.Unmarshal(body, &u.GroupRenameDetails)
+		case "group_rename_details":
+			err = json.Unmarshal(body, &u.GroupRenameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_error_details":
-		err = json.Unmarshal(body, &u.EmmErrorDetails)
+		case "emm_error_details":
+			err = json.Unmarshal(body, &u.EmmErrorDetails)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_signed_in_via_trusted_teams_details":
-		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeamsDetails)
+		case "guest_admin_signed_in_via_trusted_teams_details":
+			err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeamsDetails)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_signed_out_via_trusted_teams_details":
-		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeamsDetails)
+		case "guest_admin_signed_out_via_trusted_teams_details":
+			err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeamsDetails)
 
 		if err != nil {
 			return err
 		}
-	case "login_fail_details":
-		err = json.Unmarshal(body, &u.LoginFailDetails)
+		case "login_fail_details":
+			err = json.Unmarshal(body, &u.LoginFailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "login_success_details":
-		err = json.Unmarshal(body, &u.LoginSuccessDetails)
+		case "login_success_details":
+			err = json.Unmarshal(body, &u.LoginSuccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "logout_details":
-		err = json.Unmarshal(body, &u.LogoutDetails)
+		case "logout_details":
+			err = json.Unmarshal(body, &u.LogoutDetails)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_session_end_details":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionEndDetails)
+		case "reseller_support_session_end_details":
+			err = json.Unmarshal(body, &u.ResellerSupportSessionEndDetails)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_session_start_details":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionStartDetails)
+		case "reseller_support_session_start_details":
+			err = json.Unmarshal(body, &u.ResellerSupportSessionStartDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as_session_end_details":
-		err = json.Unmarshal(body, &u.SignInAsSessionEndDetails)
+		case "sign_in_as_session_end_details":
+			err = json.Unmarshal(body, &u.SignInAsSessionEndDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as_session_start_details":
-		err = json.Unmarshal(body, &u.SignInAsSessionStartDetails)
+		case "sign_in_as_session_start_details":
+			err = json.Unmarshal(body, &u.SignInAsSessionStartDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_error_details":
-		err = json.Unmarshal(body, &u.SsoErrorDetails)
+		case "sso_error_details":
+			err = json.Unmarshal(body, &u.SsoErrorDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_add_external_id_details":
-		err = json.Unmarshal(body, &u.MemberAddExternalIdDetails)
+		case "member_add_external_id_details":
+			err = json.Unmarshal(body, &u.MemberAddExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_add_name_details":
-		err = json.Unmarshal(body, &u.MemberAddNameDetails)
+		case "member_add_name_details":
+			err = json.Unmarshal(body, &u.MemberAddNameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_admin_role_details":
-		err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails)
+		case "member_change_admin_role_details":
+			err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_email_details":
-		err = json.Unmarshal(body, &u.MemberChangeEmailDetails)
+		case "member_change_email_details":
+			err = json.Unmarshal(body, &u.MemberChangeEmailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_external_id_details":
-		err = json.Unmarshal(body, &u.MemberChangeExternalIdDetails)
+		case "member_change_external_id_details":
+			err = json.Unmarshal(body, &u.MemberChangeExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_membership_type_details":
-		err = json.Unmarshal(body, &u.MemberChangeMembershipTypeDetails)
+		case "member_change_membership_type_details":
+			err = json.Unmarshal(body, &u.MemberChangeMembershipTypeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_name_details":
-		err = json.Unmarshal(body, &u.MemberChangeNameDetails)
+		case "member_change_name_details":
+			err = json.Unmarshal(body, &u.MemberChangeNameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_status_details":
-		err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
+		case "member_change_status_details":
+			err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_delete_manual_contacts_details":
-		err = json.Unmarshal(body, &u.MemberDeleteManualContactsDetails)
+		case "member_delete_manual_contacts_details":
+			err = json.Unmarshal(body, &u.MemberDeleteManualContactsDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_permanently_delete_account_contents_details":
-		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails)
+		case "member_permanently_delete_account_contents_details":
+			err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_remove_external_id_details":
-		err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails)
+		case "member_remove_external_id_details":
+			err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_add_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuotaDetails)
+		case "member_space_limits_add_custom_quota_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuotaDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuotaDetails)
+		case "member_space_limits_change_custom_quota_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuotaDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_status_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatusDetails)
+		case "member_space_limits_change_status_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_remove_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuotaDetails)
+		case "member_space_limits_remove_custom_quota_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuotaDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_suggest_details":
-		err = json.Unmarshal(body, &u.MemberSuggestDetails)
+		case "member_suggest_details":
+			err = json.Unmarshal(body, &u.MemberSuggestDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_transfer_account_contents_details":
-		err = json.Unmarshal(body, &u.MemberTransferAccountContentsDetails)
+		case "member_transfer_account_contents_details":
+			err = json.Unmarshal(body, &u.MemberTransferAccountContentsDetails)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_mails_policy_changed_details":
-		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails)
+		case "secondary_mails_policy_changed_details":
+			err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_add_member_details":
-		err = json.Unmarshal(body, &u.PaperContentAddMemberDetails)
+		case "paper_content_add_member_details":
+			err = json.Unmarshal(body, &u.PaperContentAddMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_add_to_folder_details":
-		err = json.Unmarshal(body, &u.PaperContentAddToFolderDetails)
+		case "paper_content_add_to_folder_details":
+			err = json.Unmarshal(body, &u.PaperContentAddToFolderDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_archive_details":
-		err = json.Unmarshal(body, &u.PaperContentArchiveDetails)
+		case "paper_content_archive_details":
+			err = json.Unmarshal(body, &u.PaperContentArchiveDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_create_details":
-		err = json.Unmarshal(body, &u.PaperContentCreateDetails)
+		case "paper_content_create_details":
+			err = json.Unmarshal(body, &u.PaperContentCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_permanently_delete_details":
-		err = json.Unmarshal(body, &u.PaperContentPermanentlyDeleteDetails)
+		case "paper_content_permanently_delete_details":
+			err = json.Unmarshal(body, &u.PaperContentPermanentlyDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_remove_from_folder_details":
-		err = json.Unmarshal(body, &u.PaperContentRemoveFromFolderDetails)
+		case "paper_content_remove_from_folder_details":
+			err = json.Unmarshal(body, &u.PaperContentRemoveFromFolderDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_remove_member_details":
-		err = json.Unmarshal(body, &u.PaperContentRemoveMemberDetails)
+		case "paper_content_remove_member_details":
+			err = json.Unmarshal(body, &u.PaperContentRemoveMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_rename_details":
-		err = json.Unmarshal(body, &u.PaperContentRenameDetails)
+		case "paper_content_rename_details":
+			err = json.Unmarshal(body, &u.PaperContentRenameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_restore_details":
-		err = json.Unmarshal(body, &u.PaperContentRestoreDetails)
+		case "paper_content_restore_details":
+			err = json.Unmarshal(body, &u.PaperContentRestoreDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_add_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocAddCommentDetails)
+		case "paper_doc_add_comment_details":
+			err = json.Unmarshal(body, &u.PaperDocAddCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_member_role_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeMemberRoleDetails)
+		case "paper_doc_change_member_role_details":
+			err = json.Unmarshal(body, &u.PaperDocChangeMemberRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_sharing_policy_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicyDetails)
+		case "paper_doc_change_sharing_policy_details":
+			err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_subscription_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeSubscriptionDetails)
+		case "paper_doc_change_subscription_details":
+			err = json.Unmarshal(body, &u.PaperDocChangeSubscriptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_deleted_details":
-		err = json.Unmarshal(body, &u.PaperDocDeletedDetails)
+		case "paper_doc_deleted_details":
+			err = json.Unmarshal(body, &u.PaperDocDeletedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_delete_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocDeleteCommentDetails)
+		case "paper_doc_delete_comment_details":
+			err = json.Unmarshal(body, &u.PaperDocDeleteCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_download_details":
-		err = json.Unmarshal(body, &u.PaperDocDownloadDetails)
+		case "paper_doc_download_details":
+			err = json.Unmarshal(body, &u.PaperDocDownloadDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_edit_details":
-		err = json.Unmarshal(body, &u.PaperDocEditDetails)
+		case "paper_doc_edit_details":
+			err = json.Unmarshal(body, &u.PaperDocEditDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_edit_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocEditCommentDetails)
+		case "paper_doc_edit_comment_details":
+			err = json.Unmarshal(body, &u.PaperDocEditCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_followed_details":
-		err = json.Unmarshal(body, &u.PaperDocFollowedDetails)
+		case "paper_doc_followed_details":
+			err = json.Unmarshal(body, &u.PaperDocFollowedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_mention_details":
-		err = json.Unmarshal(body, &u.PaperDocMentionDetails)
+		case "paper_doc_mention_details":
+			err = json.Unmarshal(body, &u.PaperDocMentionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_ownership_changed_details":
-		err = json.Unmarshal(body, &u.PaperDocOwnershipChangedDetails)
+		case "paper_doc_ownership_changed_details":
+			err = json.Unmarshal(body, &u.PaperDocOwnershipChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_request_access_details":
-		err = json.Unmarshal(body, &u.PaperDocRequestAccessDetails)
+		case "paper_doc_request_access_details":
+			err = json.Unmarshal(body, &u.PaperDocRequestAccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_resolve_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocResolveCommentDetails)
+		case "paper_doc_resolve_comment_details":
+			err = json.Unmarshal(body, &u.PaperDocResolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_revert_details":
-		err = json.Unmarshal(body, &u.PaperDocRevertDetails)
+		case "paper_doc_revert_details":
+			err = json.Unmarshal(body, &u.PaperDocRevertDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_slack_share_details":
-		err = json.Unmarshal(body, &u.PaperDocSlackShareDetails)
+		case "paper_doc_slack_share_details":
+			err = json.Unmarshal(body, &u.PaperDocSlackShareDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_team_invite_details":
-		err = json.Unmarshal(body, &u.PaperDocTeamInviteDetails)
+		case "paper_doc_team_invite_details":
+			err = json.Unmarshal(body, &u.PaperDocTeamInviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_trashed_details":
-		err = json.Unmarshal(body, &u.PaperDocTrashedDetails)
+		case "paper_doc_trashed_details":
+			err = json.Unmarshal(body, &u.PaperDocTrashedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocUnresolveCommentDetails)
+		case "paper_doc_unresolve_comment_details":
+			err = json.Unmarshal(body, &u.PaperDocUnresolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_untrashed_details":
-		err = json.Unmarshal(body, &u.PaperDocUntrashedDetails)
+		case "paper_doc_untrashed_details":
+			err = json.Unmarshal(body, &u.PaperDocUntrashedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_view_details":
-		err = json.Unmarshal(body, &u.PaperDocViewDetails)
+		case "paper_doc_view_details":
+			err = json.Unmarshal(body, &u.PaperDocViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_allow_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewAllowDetails)
+		case "paper_external_view_allow_details":
+			err = json.Unmarshal(body, &u.PaperExternalViewAllowDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_default_team_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeamDetails)
+		case "paper_external_view_default_team_details":
+			err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_forbid_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewForbidDetails)
+		case "paper_external_view_forbid_details":
+			err = json.Unmarshal(body, &u.PaperExternalViewForbidDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_change_subscription_details":
-		err = json.Unmarshal(body, &u.PaperFolderChangeSubscriptionDetails)
+		case "paper_folder_change_subscription_details":
+			err = json.Unmarshal(body, &u.PaperFolderChangeSubscriptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_deleted_details":
-		err = json.Unmarshal(body, &u.PaperFolderDeletedDetails)
+		case "paper_folder_deleted_details":
+			err = json.Unmarshal(body, &u.PaperFolderDeletedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_followed_details":
-		err = json.Unmarshal(body, &u.PaperFolderFollowedDetails)
+		case "paper_folder_followed_details":
+			err = json.Unmarshal(body, &u.PaperFolderFollowedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_team_invite_details":
-		err = json.Unmarshal(body, &u.PaperFolderTeamInviteDetails)
+		case "paper_folder_team_invite_details":
+			err = json.Unmarshal(body, &u.PaperFolderTeamInviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_create_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails)
+		case "paper_published_link_create_details":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_disabled_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabledDetails)
+		case "paper_published_link_disabled_details":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkDisabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_view_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkViewDetails)
+		case "paper_published_link_view_details":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "password_change_details":
-		err = json.Unmarshal(body, &u.PasswordChangeDetails)
+		case "password_change_details":
+			err = json.Unmarshal(body, &u.PasswordChangeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "password_reset_details":
-		err = json.Unmarshal(body, &u.PasswordResetDetails)
+		case "password_reset_details":
+			err = json.Unmarshal(body, &u.PasswordResetDetails)
 
 		if err != nil {
 			return err
 		}
-	case "password_reset_all_details":
-		err = json.Unmarshal(body, &u.PasswordResetAllDetails)
+		case "password_reset_all_details":
+			err = json.Unmarshal(body, &u.PasswordResetAllDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_create_exceptions_report_details":
-		err = json.Unmarshal(body, &u.EmmCreateExceptionsReportDetails)
+		case "emm_create_exceptions_report_details":
+			err = json.Unmarshal(body, &u.EmmCreateExceptionsReportDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_create_usage_report_details":
-		err = json.Unmarshal(body, &u.EmmCreateUsageReportDetails)
+		case "emm_create_usage_report_details":
+			err = json.Unmarshal(body, &u.EmmCreateUsageReportDetails)
 
 		if err != nil {
 			return err
 		}
-	case "export_members_report_details":
-		err = json.Unmarshal(body, &u.ExportMembersReportDetails)
+		case "export_members_report_details":
+			err = json.Unmarshal(body, &u.ExportMembersReportDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_admin_export_start_details":
-		err = json.Unmarshal(body, &u.PaperAdminExportStartDetails)
+		case "paper_admin_export_start_details":
+			err = json.Unmarshal(body, &u.PaperAdminExportStartDetails)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_create_admin_privilege_report_details":
-		err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReportDetails)
+		case "smart_sync_create_admin_privilege_report_details":
+			err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReportDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_activity_create_report_details":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportDetails)
+		case "team_activity_create_report_details":
+			err = json.Unmarshal(body, &u.TeamActivityCreateReportDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_activity_create_report_fail_details":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportFailDetails)
+		case "team_activity_create_report_fail_details":
+			err = json.Unmarshal(body, &u.TeamActivityCreateReportFailDetails)
 
 		if err != nil {
 			return err
 		}
-	case "collection_share_details":
-		err = json.Unmarshal(body, &u.CollectionShareDetails)
+		case "collection_share_details":
+			err = json.Unmarshal(body, &u.CollectionShareDetails)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_invite_only_details":
-		err = json.Unmarshal(body, &u.NoteAclInviteOnlyDetails)
+		case "note_acl_invite_only_details":
+			err = json.Unmarshal(body, &u.NoteAclInviteOnlyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_link_details":
-		err = json.Unmarshal(body, &u.NoteAclLinkDetails)
+		case "note_acl_link_details":
+			err = json.Unmarshal(body, &u.NoteAclLinkDetails)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_team_link_details":
-		err = json.Unmarshal(body, &u.NoteAclTeamLinkDetails)
+		case "note_acl_team_link_details":
+			err = json.Unmarshal(body, &u.NoteAclTeamLinkDetails)
 
 		if err != nil {
 			return err
 		}
-	case "note_shared_details":
-		err = json.Unmarshal(body, &u.NoteSharedDetails)
+		case "note_shared_details":
+			err = json.Unmarshal(body, &u.NoteSharedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "note_share_receive_details":
-		err = json.Unmarshal(body, &u.NoteShareReceiveDetails)
+		case "note_share_receive_details":
+			err = json.Unmarshal(body, &u.NoteShareReceiveDetails)
 
 		if err != nil {
 			return err
 		}
-	case "open_note_shared_details":
-		err = json.Unmarshal(body, &u.OpenNoteSharedDetails)
+		case "open_note_shared_details":
+			err = json.Unmarshal(body, &u.OpenNoteSharedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_add_group_details":
-		err = json.Unmarshal(body, &u.SfAddGroupDetails)
+		case "sf_add_group_details":
+			err = json.Unmarshal(body, &u.SfAddGroupDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_allow_non_members_to_view_shared_links_details":
-		err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinksDetails)
+		case "sf_allow_non_members_to_view_shared_links_details":
+			err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinksDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_external_invite_warn_details":
-		err = json.Unmarshal(body, &u.SfExternalInviteWarnDetails)
+		case "sf_external_invite_warn_details":
+			err = json.Unmarshal(body, &u.SfExternalInviteWarnDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_invite_details":
-		err = json.Unmarshal(body, &u.SfFbInviteDetails)
+		case "sf_fb_invite_details":
+			err = json.Unmarshal(body, &u.SfFbInviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_invite_change_role_details":
-		err = json.Unmarshal(body, &u.SfFbInviteChangeRoleDetails)
+		case "sf_fb_invite_change_role_details":
+			err = json.Unmarshal(body, &u.SfFbInviteChangeRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_uninvite_details":
-		err = json.Unmarshal(body, &u.SfFbUninviteDetails)
+		case "sf_fb_uninvite_details":
+			err = json.Unmarshal(body, &u.SfFbUninviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_invite_group_details":
-		err = json.Unmarshal(body, &u.SfInviteGroupDetails)
+		case "sf_invite_group_details":
+			err = json.Unmarshal(body, &u.SfInviteGroupDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_grant_access_details":
-		err = json.Unmarshal(body, &u.SfTeamGrantAccessDetails)
+		case "sf_team_grant_access_details":
+			err = json.Unmarshal(body, &u.SfTeamGrantAccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_invite_details":
-		err = json.Unmarshal(body, &u.SfTeamInviteDetails)
+		case "sf_team_invite_details":
+			err = json.Unmarshal(body, &u.SfTeamInviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_invite_change_role_details":
-		err = json.Unmarshal(body, &u.SfTeamInviteChangeRoleDetails)
+		case "sf_team_invite_change_role_details":
+			err = json.Unmarshal(body, &u.SfTeamInviteChangeRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_join_details":
-		err = json.Unmarshal(body, &u.SfTeamJoinDetails)
+		case "sf_team_join_details":
+			err = json.Unmarshal(body, &u.SfTeamJoinDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_join_from_oob_link_details":
-		err = json.Unmarshal(body, &u.SfTeamJoinFromOobLinkDetails)
+		case "sf_team_join_from_oob_link_details":
+			err = json.Unmarshal(body, &u.SfTeamJoinFromOobLinkDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_uninvite_details":
-		err = json.Unmarshal(body, &u.SfTeamUninviteDetails)
+		case "sf_team_uninvite_details":
+			err = json.Unmarshal(body, &u.SfTeamUninviteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_invitees_details":
-		err = json.Unmarshal(body, &u.SharedContentAddInviteesDetails)
+		case "shared_content_add_invitees_details":
+			err = json.Unmarshal(body, &u.SharedContentAddInviteesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkExpiryDetails)
+		case "shared_content_add_link_expiry_details":
+			err = json.Unmarshal(body, &u.SharedContentAddLinkExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkPasswordDetails)
+		case "shared_content_add_link_password_details":
+			err = json.Unmarshal(body, &u.SharedContentAddLinkPasswordDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_member_details":
-		err = json.Unmarshal(body, &u.SharedContentAddMemberDetails)
+		case "shared_content_add_member_details":
+			err = json.Unmarshal(body, &u.SharedContentAddMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_downloads_policy_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicyDetails)
+		case "shared_content_change_downloads_policy_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_invitee_role_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeInviteeRoleDetails)
+		case "shared_content_change_invitee_role_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeInviteeRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_audience_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkAudienceDetails)
+		case "shared_content_change_link_audience_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkAudienceDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiryDetails)
+		case "shared_content_change_link_expiry_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkPasswordDetails)
+		case "shared_content_change_link_password_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkPasswordDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_member_role_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeMemberRoleDetails)
+		case "shared_content_change_member_role_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeMemberRoleDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_viewer_info_policy_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicyDetails)
+		case "shared_content_change_viewer_info_policy_details":
+			err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_claim_invitation_details":
-		err = json.Unmarshal(body, &u.SharedContentClaimInvitationDetails)
+		case "shared_content_claim_invitation_details":
+			err = json.Unmarshal(body, &u.SharedContentClaimInvitationDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_copy_details":
-		err = json.Unmarshal(body, &u.SharedContentCopyDetails)
+		case "shared_content_copy_details":
+			err = json.Unmarshal(body, &u.SharedContentCopyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_download_details":
-		err = json.Unmarshal(body, &u.SharedContentDownloadDetails)
+		case "shared_content_download_details":
+			err = json.Unmarshal(body, &u.SharedContentDownloadDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_relinquish_membership_details":
-		err = json.Unmarshal(body, &u.SharedContentRelinquishMembershipDetails)
+		case "shared_content_relinquish_membership_details":
+			err = json.Unmarshal(body, &u.SharedContentRelinquishMembershipDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_invitees_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInviteesDetails)
+		case "shared_content_remove_invitees_details":
+			err = json.Unmarshal(body, &u.SharedContentRemoveInviteesDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiryDetails)
+		case "shared_content_remove_link_expiry_details":
+			err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkPasswordDetails)
+		case "shared_content_remove_link_password_details":
+			err = json.Unmarshal(body, &u.SharedContentRemoveLinkPasswordDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_member_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveMemberDetails)
+		case "shared_content_remove_member_details":
+			err = json.Unmarshal(body, &u.SharedContentRemoveMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_request_access_details":
-		err = json.Unmarshal(body, &u.SharedContentRequestAccessDetails)
+		case "shared_content_request_access_details":
+			err = json.Unmarshal(body, &u.SharedContentRequestAccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_unshare_details":
-		err = json.Unmarshal(body, &u.SharedContentUnshareDetails)
+		case "shared_content_unshare_details":
+			err = json.Unmarshal(body, &u.SharedContentUnshareDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_view_details":
-		err = json.Unmarshal(body, &u.SharedContentViewDetails)
+		case "shared_content_view_details":
+			err = json.Unmarshal(body, &u.SharedContentViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_link_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicyDetails)
+		case "shared_folder_change_link_policy_details":
+			err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_inheritance_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicyDetails)
+		case "shared_folder_change_members_inheritance_policy_details":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_management_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicyDetails)
+		case "shared_folder_change_members_management_policy_details":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicyDetails)
+		case "shared_folder_change_members_policy_details":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_create_details":
-		err = json.Unmarshal(body, &u.SharedFolderCreateDetails)
+		case "shared_folder_create_details":
+			err = json.Unmarshal(body, &u.SharedFolderCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_decline_invitation_details":
-		err = json.Unmarshal(body, &u.SharedFolderDeclineInvitationDetails)
+		case "shared_folder_decline_invitation_details":
+			err = json.Unmarshal(body, &u.SharedFolderDeclineInvitationDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_mount_details":
-		err = json.Unmarshal(body, &u.SharedFolderMountDetails)
+		case "shared_folder_mount_details":
+			err = json.Unmarshal(body, &u.SharedFolderMountDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_nest_details":
-		err = json.Unmarshal(body, &u.SharedFolderNestDetails)
+		case "shared_folder_nest_details":
+			err = json.Unmarshal(body, &u.SharedFolderNestDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_transfer_ownership_details":
-		err = json.Unmarshal(body, &u.SharedFolderTransferOwnershipDetails)
+		case "shared_folder_transfer_ownership_details":
+			err = json.Unmarshal(body, &u.SharedFolderTransferOwnershipDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_unmount_details":
-		err = json.Unmarshal(body, &u.SharedFolderUnmountDetails)
+		case "shared_folder_unmount_details":
+			err = json.Unmarshal(body, &u.SharedFolderUnmountDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_add_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkAddExpiryDetails)
+		case "shared_link_add_expiry_details":
+			err = json.Unmarshal(body, &u.SharedLinkAddExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_change_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkChangeExpiryDetails)
+		case "shared_link_change_expiry_details":
+			err = json.Unmarshal(body, &u.SharedLinkChangeExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_change_visibility_details":
-		err = json.Unmarshal(body, &u.SharedLinkChangeVisibilityDetails)
+		case "shared_link_change_visibility_details":
+			err = json.Unmarshal(body, &u.SharedLinkChangeVisibilityDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_copy_details":
-		err = json.Unmarshal(body, &u.SharedLinkCopyDetails)
+		case "shared_link_copy_details":
+			err = json.Unmarshal(body, &u.SharedLinkCopyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_create_details":
-		err = json.Unmarshal(body, &u.SharedLinkCreateDetails)
+		case "shared_link_create_details":
+			err = json.Unmarshal(body, &u.SharedLinkCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_disable_details":
-		err = json.Unmarshal(body, &u.SharedLinkDisableDetails)
+		case "shared_link_disable_details":
+			err = json.Unmarshal(body, &u.SharedLinkDisableDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_download_details":
-		err = json.Unmarshal(body, &u.SharedLinkDownloadDetails)
+		case "shared_link_download_details":
+			err = json.Unmarshal(body, &u.SharedLinkDownloadDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_remove_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkRemoveExpiryDetails)
+		case "shared_link_remove_expiry_details":
+			err = json.Unmarshal(body, &u.SharedLinkRemoveExpiryDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_share_details":
-		err = json.Unmarshal(body, &u.SharedLinkShareDetails)
+		case "shared_link_share_details":
+			err = json.Unmarshal(body, &u.SharedLinkShareDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_view_details":
-		err = json.Unmarshal(body, &u.SharedLinkViewDetails)
+		case "shared_link_view_details":
+			err = json.Unmarshal(body, &u.SharedLinkViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shared_note_opened_details":
-		err = json.Unmarshal(body, &u.SharedNoteOpenedDetails)
+		case "shared_note_opened_details":
+			err = json.Unmarshal(body, &u.SharedNoteOpenedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "shmodel_group_share_details":
-		err = json.Unmarshal(body, &u.ShmodelGroupShareDetails)
+		case "shmodel_group_share_details":
+			err = json.Unmarshal(body, &u.ShmodelGroupShareDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_access_granted_details":
-		err = json.Unmarshal(body, &u.ShowcaseAccessGrantedDetails)
+		case "showcase_access_granted_details":
+			err = json.Unmarshal(body, &u.ShowcaseAccessGrantedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_add_member_details":
-		err = json.Unmarshal(body, &u.ShowcaseAddMemberDetails)
+		case "showcase_add_member_details":
+			err = json.Unmarshal(body, &u.ShowcaseAddMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_archived_details":
-		err = json.Unmarshal(body, &u.ShowcaseArchivedDetails)
+		case "showcase_archived_details":
+			err = json.Unmarshal(body, &u.ShowcaseArchivedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_created_details":
-		err = json.Unmarshal(body, &u.ShowcaseCreatedDetails)
+		case "showcase_created_details":
+			err = json.Unmarshal(body, &u.ShowcaseCreatedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_delete_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseDeleteCommentDetails)
+		case "showcase_delete_comment_details":
+			err = json.Unmarshal(body, &u.ShowcaseDeleteCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_edited_details":
-		err = json.Unmarshal(body, &u.ShowcaseEditedDetails)
+		case "showcase_edited_details":
+			err = json.Unmarshal(body, &u.ShowcaseEditedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_edit_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseEditCommentDetails)
+		case "showcase_edit_comment_details":
+			err = json.Unmarshal(body, &u.ShowcaseEditCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_added_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileAddedDetails)
+		case "showcase_file_added_details":
+			err = json.Unmarshal(body, &u.ShowcaseFileAddedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_download_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileDownloadDetails)
+		case "showcase_file_download_details":
+			err = json.Unmarshal(body, &u.ShowcaseFileDownloadDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_removed_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileRemovedDetails)
+		case "showcase_file_removed_details":
+			err = json.Unmarshal(body, &u.ShowcaseFileRemovedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_view_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileViewDetails)
+		case "showcase_file_view_details":
+			err = json.Unmarshal(body, &u.ShowcaseFileViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_permanently_deleted_details":
-		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeletedDetails)
+		case "showcase_permanently_deleted_details":
+			err = json.Unmarshal(body, &u.ShowcasePermanentlyDeletedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_post_comment_details":
-		err = json.Unmarshal(body, &u.ShowcasePostCommentDetails)
+		case "showcase_post_comment_details":
+			err = json.Unmarshal(body, &u.ShowcasePostCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_remove_member_details":
-		err = json.Unmarshal(body, &u.ShowcaseRemoveMemberDetails)
+		case "showcase_remove_member_details":
+			err = json.Unmarshal(body, &u.ShowcaseRemoveMemberDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_renamed_details":
-		err = json.Unmarshal(body, &u.ShowcaseRenamedDetails)
+		case "showcase_renamed_details":
+			err = json.Unmarshal(body, &u.ShowcaseRenamedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_request_access_details":
-		err = json.Unmarshal(body, &u.ShowcaseRequestAccessDetails)
+		case "showcase_request_access_details":
+			err = json.Unmarshal(body, &u.ShowcaseRequestAccessDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_resolve_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseResolveCommentDetails)
+		case "showcase_resolve_comment_details":
+			err = json.Unmarshal(body, &u.ShowcaseResolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_restored_details":
-		err = json.Unmarshal(body, &u.ShowcaseRestoredDetails)
+		case "showcase_restored_details":
+			err = json.Unmarshal(body, &u.ShowcaseRestoredDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_trashed_details":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDetails)
+		case "showcase_trashed_details":
+			err = json.Unmarshal(body, &u.ShowcaseTrashedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_trashed_deprecated_details":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecatedDetails)
+		case "showcase_trashed_deprecated_details":
+			err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecatedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails)
+		case "showcase_unresolve_comment_details":
+			err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_untrashed_details":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails)
+		case "showcase_untrashed_details":
+			err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_untrashed_deprecated_details":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecatedDetails)
+		case "showcase_untrashed_deprecated_details":
+			err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecatedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_view_details":
-		err = json.Unmarshal(body, &u.ShowcaseViewDetails)
+		case "showcase_view_details":
+			err = json.Unmarshal(body, &u.ShowcaseViewDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_cert_details":
-		err = json.Unmarshal(body, &u.SsoAddCertDetails)
+		case "sso_add_cert_details":
+			err = json.Unmarshal(body, &u.SsoAddCertDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_login_url_details":
-		err = json.Unmarshal(body, &u.SsoAddLoginUrlDetails)
+		case "sso_add_login_url_details":
+			err = json.Unmarshal(body, &u.SsoAddLoginUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoAddLogoutUrlDetails)
+		case "sso_add_logout_url_details":
+			err = json.Unmarshal(body, &u.SsoAddLogoutUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_cert_details":
-		err = json.Unmarshal(body, &u.SsoChangeCertDetails)
+		case "sso_change_cert_details":
+			err = json.Unmarshal(body, &u.SsoChangeCertDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_login_url_details":
-		err = json.Unmarshal(body, &u.SsoChangeLoginUrlDetails)
+		case "sso_change_login_url_details":
+			err = json.Unmarshal(body, &u.SsoChangeLoginUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoChangeLogoutUrlDetails)
+		case "sso_change_logout_url_details":
+			err = json.Unmarshal(body, &u.SsoChangeLogoutUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_saml_identity_mode_details":
-		err = json.Unmarshal(body, &u.SsoChangeSamlIdentityModeDetails)
+		case "sso_change_saml_identity_mode_details":
+			err = json.Unmarshal(body, &u.SsoChangeSamlIdentityModeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_cert_details":
-		err = json.Unmarshal(body, &u.SsoRemoveCertDetails)
+		case "sso_remove_cert_details":
+			err = json.Unmarshal(body, &u.SsoRemoveCertDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_login_url_details":
-		err = json.Unmarshal(body, &u.SsoRemoveLoginUrlDetails)
+		case "sso_remove_login_url_details":
+			err = json.Unmarshal(body, &u.SsoRemoveLoginUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoRemoveLogoutUrlDetails)
+		case "sso_remove_logout_url_details":
+			err = json.Unmarshal(body, &u.SsoRemoveLogoutUrlDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_change_status_details":
-		err = json.Unmarshal(body, &u.TeamFolderChangeStatusDetails)
+		case "team_folder_change_status_details":
+			err = json.Unmarshal(body, &u.TeamFolderChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_create_details":
-		err = json.Unmarshal(body, &u.TeamFolderCreateDetails)
+		case "team_folder_create_details":
+			err = json.Unmarshal(body, &u.TeamFolderCreateDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_downgrade_details":
-		err = json.Unmarshal(body, &u.TeamFolderDowngradeDetails)
+		case "team_folder_downgrade_details":
+			err = json.Unmarshal(body, &u.TeamFolderDowngradeDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_permanently_delete_details":
-		err = json.Unmarshal(body, &u.TeamFolderPermanentlyDeleteDetails)
+		case "team_folder_permanently_delete_details":
+			err = json.Unmarshal(body, &u.TeamFolderPermanentlyDeleteDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_rename_details":
-		err = json.Unmarshal(body, &u.TeamFolderRenameDetails)
+		case "team_folder_rename_details":
+			err = json.Unmarshal(body, &u.TeamFolderRenameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_selective_sync_settings_changed_details":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChangedDetails)
+		case "team_selective_sync_settings_changed_details":
+			err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_change_policy_details":
-		err = json.Unmarshal(body, &u.AccountCaptureChangePolicyDetails)
+		case "account_capture_change_policy_details":
+			err = json.Unmarshal(body, &u.AccountCaptureChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "allow_download_disabled_details":
-		err = json.Unmarshal(body, &u.AllowDownloadDisabledDetails)
+		case "allow_download_disabled_details":
+			err = json.Unmarshal(body, &u.AllowDownloadDisabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "allow_download_enabled_details":
-		err = json.Unmarshal(body, &u.AllowDownloadEnabledDetails)
+		case "allow_download_enabled_details":
+			err = json.Unmarshal(body, &u.AllowDownloadEnabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "camera_uploads_policy_changed_details":
-		err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails)
+		case "camera_uploads_policy_changed_details":
+			err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "data_placement_restriction_change_policy_details":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails)
+		case "data_placement_restriction_change_policy_details":
+			err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "data_placement_restriction_satisfy_policy_details":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicyDetails)
+		case "data_placement_restriction_satisfy_policy_details":
+			err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_desktop_policy_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicyDetails)
+		case "device_approvals_change_desktop_policy_details":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_mobile_policy_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicyDetails)
+		case "device_approvals_change_mobile_policy_details":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_overage_action_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageActionDetails)
+		case "device_approvals_change_overage_action_details":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageActionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_unlink_action_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails)
+		case "device_approvals_change_unlink_action_details":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "directory_restrictions_add_members_details":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembersDetails)
+		case "directory_restrictions_add_members_details":
+			err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembersDetails)
 
 		if err != nil {
 			return err
 		}
-	case "directory_restrictions_remove_members_details":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembersDetails)
+		case "directory_restrictions_remove_members_details":
+			err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembersDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_add_exception_details":
-		err = json.Unmarshal(body, &u.EmmAddExceptionDetails)
+		case "emm_add_exception_details":
+			err = json.Unmarshal(body, &u.EmmAddExceptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_change_policy_details":
-		err = json.Unmarshal(body, &u.EmmChangePolicyDetails)
+		case "emm_change_policy_details":
+			err = json.Unmarshal(body, &u.EmmChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "emm_remove_exception_details":
-		err = json.Unmarshal(body, &u.EmmRemoveExceptionDetails)
+		case "emm_remove_exception_details":
+			err = json.Unmarshal(body, &u.EmmRemoveExceptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "extended_version_history_change_policy_details":
-		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails)
+		case "extended_version_history_change_policy_details":
+			err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_comments_change_policy_details":
-		err = json.Unmarshal(body, &u.FileCommentsChangePolicyDetails)
+		case "file_comments_change_policy_details":
+			err = json.Unmarshal(body, &u.FileCommentsChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_change_policy_details":
-		err = json.Unmarshal(body, &u.FileRequestsChangePolicyDetails)
+		case "file_requests_change_policy_details":
+			err = json.Unmarshal(body, &u.FileRequestsChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_emails_enabled_details":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsEnabledDetails)
+		case "file_requests_emails_enabled_details":
+			err = json.Unmarshal(body, &u.FileRequestsEmailsEnabledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_emails_restricted_to_team_only_details":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnlyDetails)
+		case "file_requests_emails_restricted_to_team_only_details":
+			err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnlyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "google_sso_change_policy_details":
-		err = json.Unmarshal(body, &u.GoogleSsoChangePolicyDetails)
+		case "google_sso_change_policy_details":
+			err = json.Unmarshal(body, &u.GoogleSsoChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "group_user_management_change_policy_details":
-		err = json.Unmarshal(body, &u.GroupUserManagementChangePolicyDetails)
+		case "group_user_management_change_policy_details":
+			err = json.Unmarshal(body, &u.GroupUserManagementChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "integration_policy_changed_details":
-		err = json.Unmarshal(body, &u.IntegrationPolicyChangedDetails)
+		case "integration_policy_changed_details":
+			err = json.Unmarshal(body, &u.IntegrationPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_requests_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
+		case "member_requests_change_policy_details":
+			err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_add_exception_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddExceptionDetails)
+		case "member_space_limits_add_exception_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsAddExceptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_caps_type_policy_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicyDetails)
+		case "member_space_limits_change_caps_type_policy_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicyDetails)
+		case "member_space_limits_change_policy_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_remove_exception_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveExceptionDetails)
+		case "member_space_limits_remove_exception_details":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveExceptionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "member_suggestions_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicyDetails)
+		case "member_suggestions_change_policy_details":
+			err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "microsoft_office_addin_change_policy_details":
-		err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicyDetails)
+		case "microsoft_office_addin_change_policy_details":
+			err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "network_control_change_policy_details":
-		err = json.Unmarshal(body, &u.NetworkControlChangePolicyDetails)
+		case "network_control_change_policy_details":
+			err = json.Unmarshal(body, &u.NetworkControlChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_deployment_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicyDetails)
+		case "paper_change_deployment_policy_details":
+			err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_member_link_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicyDetails)
+		case "paper_change_member_link_policy_details":
+			err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_member_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeMemberPolicyDetails)
+		case "paper_change_member_policy_details":
+			err = json.Unmarshal(body, &u.PaperChangeMemberPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangePolicyDetails)
+		case "paper_change_policy_details":
+			err = json.Unmarshal(body, &u.PaperChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_default_folder_policy_changed_details":
-		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChangedDetails)
+		case "paper_default_folder_policy_changed_details":
+			err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_desktop_policy_changed_details":
-		err = json.Unmarshal(body, &u.PaperDesktopPolicyChangedDetails)
+		case "paper_desktop_policy_changed_details":
+			err = json.Unmarshal(body, &u.PaperDesktopPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_enabled_users_group_addition_details":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAdditionDetails)
+		case "paper_enabled_users_group_addition_details":
+			err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAdditionDetails)
 
 		if err != nil {
 			return err
 		}
-	case "paper_enabled_users_group_removal_details":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemovalDetails)
+		case "paper_enabled_users_group_removal_details":
+			err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemovalDetails)
 
 		if err != nil {
 			return err
 		}
-	case "permanent_delete_change_policy_details":
-		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails)
+		case "permanent_delete_change_policy_details":
+			err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_change_policy_details":
-		err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails)
+		case "reseller_support_change_policy_details":
+			err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_folder_join_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicyDetails)
+		case "sharing_change_folder_join_policy_details":
+			err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_link_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeLinkPolicyDetails)
+		case "sharing_change_link_policy_details":
+			err = json.Unmarshal(body, &u.SharingChangeLinkPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_member_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeMemberPolicyDetails)
+		case "sharing_change_member_policy_details":
+			err = json.Unmarshal(body, &u.SharingChangeMemberPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_download_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicyDetails)
+		case "showcase_change_download_policy_details":
+			err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_enabled_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicyDetails)
+		case "showcase_change_enabled_policy_details":
+			err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_external_sharing_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicyDetails)
+		case "showcase_change_external_sharing_policy_details":
+			err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_change_policy_details":
-		err = json.Unmarshal(body, &u.SmartSyncChangePolicyDetails)
+		case "smart_sync_change_policy_details":
+			err = json.Unmarshal(body, &u.SmartSyncChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_not_opt_out_details":
-		err = json.Unmarshal(body, &u.SmartSyncNotOptOutDetails)
+		case "smart_sync_not_opt_out_details":
+			err = json.Unmarshal(body, &u.SmartSyncNotOptOutDetails)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_opt_out_details":
-		err = json.Unmarshal(body, &u.SmartSyncOptOutDetails)
+		case "smart_sync_opt_out_details":
+			err = json.Unmarshal(body, &u.SmartSyncOptOutDetails)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_policy_details":
-		err = json.Unmarshal(body, &u.SsoChangePolicyDetails)
+		case "sso_change_policy_details":
+			err = json.Unmarshal(body, &u.SsoChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_extensions_policy_changed_details":
-		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails)
+		case "team_extensions_policy_changed_details":
+			err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_selective_sync_policy_changed_details":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChangedDetails)
+		case "team_selective_sync_policy_changed_details":
+			err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_policy_details":
-		err = json.Unmarshal(body, &u.TfaChangePolicyDetails)
+		case "tfa_change_policy_details":
+			err = json.Unmarshal(body, &u.TfaChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "two_account_change_policy_details":
-		err = json.Unmarshal(body, &u.TwoAccountChangePolicyDetails)
+		case "two_account_change_policy_details":
+			err = json.Unmarshal(body, &u.TwoAccountChangePolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "viewer_info_policy_changed_details":
-		err = json.Unmarshal(body, &u.ViewerInfoPolicyChangedDetails)
+		case "viewer_info_policy_changed_details":
+			err = json.Unmarshal(body, &u.ViewerInfoPolicyChangedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "web_sessions_change_fixed_length_policy_details":
-		err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicyDetails)
+		case "web_sessions_change_fixed_length_policy_details":
+			err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "web_sessions_change_idle_length_policy_details":
-		err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicyDetails)
+		case "web_sessions_change_idle_length_policy_details":
+			err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_from_details":
-		err = json.Unmarshal(body, &u.TeamMergeFromDetails)
+		case "team_merge_from_details":
+			err = json.Unmarshal(body, &u.TeamMergeFromDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_to_details":
-		err = json.Unmarshal(body, &u.TeamMergeToDetails)
+		case "team_merge_to_details":
+			err = json.Unmarshal(body, &u.TeamMergeToDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_add_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails)
+		case "team_profile_add_logo_details":
+			err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_default_language_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguageDetails)
+		case "team_profile_change_default_language_details":
+			err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguageDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeLogoDetails)
+		case "team_profile_change_logo_details":
+			err = json.Unmarshal(body, &u.TeamProfileChangeLogoDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_name_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails)
+		case "team_profile_change_name_details":
+			err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_remove_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveLogoDetails)
+		case "team_profile_remove_logo_details":
+			err = json.Unmarshal(body, &u.TeamProfileRemoveLogoDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_add_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaAddBackupPhoneDetails)
+		case "tfa_add_backup_phone_details":
+			err = json.Unmarshal(body, &u.TfaAddBackupPhoneDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_add_security_key_details":
-		err = json.Unmarshal(body, &u.TfaAddSecurityKeyDetails)
+		case "tfa_add_security_key_details":
+			err = json.Unmarshal(body, &u.TfaAddSecurityKeyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaChangeBackupPhoneDetails)
+		case "tfa_change_backup_phone_details":
+			err = json.Unmarshal(body, &u.TfaChangeBackupPhoneDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_status_details":
-		err = json.Unmarshal(body, &u.TfaChangeStatusDetails)
+		case "tfa_change_status_details":
+			err = json.Unmarshal(body, &u.TfaChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_remove_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaRemoveBackupPhoneDetails)
+		case "tfa_remove_backup_phone_details":
+			err = json.Unmarshal(body, &u.TfaRemoveBackupPhoneDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_remove_security_key_details":
-		err = json.Unmarshal(body, &u.TfaRemoveSecurityKeyDetails)
+		case "tfa_remove_security_key_details":
+			err = json.Unmarshal(body, &u.TfaRemoveSecurityKeyDetails)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_reset_details":
-		err = json.Unmarshal(body, &u.TfaResetDetails)
+		case "tfa_reset_details":
+			err = json.Unmarshal(body, &u.TfaResetDetails)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_change_status_details":
-		err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails)
+		case "guest_admin_change_status_details":
+			err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedDetails)
+		case "team_merge_request_accepted_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
+		case "team_merge_request_accepted_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
+		case "team_merge_request_accepted_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_auto_canceled_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceledDetails)
+		case "team_merge_request_auto_canceled_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledDetails)
+		case "team_merge_request_canceled_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceledDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeamDetails)
+		case "team_merge_request_canceled_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeamDetails)
+		case "team_merge_request_canceled_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredDetails)
+		case "team_merge_request_expired_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpiredDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeamDetails)
+		case "team_merge_request_expired_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeamDetails)
+		case "team_merge_request_expired_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_rejected_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeamDetails)
+		case "team_merge_request_rejected_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_rejected_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeamDetails)
+		case "team_merge_request_rejected_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderDetails)
+		case "team_merge_request_reminder_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminderDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeamDetails)
+		case "team_merge_request_reminder_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeamDetails)
+		case "team_merge_request_reminder_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_revoked_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRevokedDetails)
+		case "team_merge_request_revoked_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRevokedDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_sent_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeamDetails)
+		case "team_merge_request_sent_shown_to_primary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_sent_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeamDetails)
+		case "team_merge_request_sent_shown_to_secondary_team_details":
+			err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeamDetails)
 
 		if err != nil {
 			return err
 		}
-	case "missing_details":
-		err = json.Unmarshal(body, &u.MissingDetails)
+		case "missing_details":
+			err = json.Unmarshal(body, &u.MissingDetails)
 
 		if err != nil {
 			return err
@@ -5503,19 +5587,19 @@ type EventType struct {
 	FileLikeComment *FileLikeCommentType `json:"file_like_comment,omitempty"`
 	// FileResolveComment : (comments) Resolved file comment
 	FileResolveComment *FileResolveCommentType `json:"file_resolve_comment,omitempty"`
-	// FileUnlikeComment : (comments) Unliked file comment (deprecated, no
-	// longer logged)
+	// FileUnlikeComment : (comments) Unliked file comment (deprecated, no longer
+	// logged)
 	FileUnlikeComment *FileUnlikeCommentType `json:"file_unlike_comment,omitempty"`
 	// FileUnresolveComment : (comments) Unresolved file comment
 	FileUnresolveComment *FileUnresolveCommentType `json:"file_unresolve_comment,omitempty"`
-	// DeviceChangeIpDesktop : (devices) Changed IP address associated with
-	// active desktop session
+	// DeviceChangeIpDesktop : (devices) Changed IP address associated with active
+	// desktop session
 	DeviceChangeIpDesktop *DeviceChangeIpDesktopType `json:"device_change_ip_desktop,omitempty"`
-	// DeviceChangeIpMobile : (devices) Changed IP address associated with
-	// active mobile session
+	// DeviceChangeIpMobile : (devices) Changed IP address associated with active
+	// mobile session
 	DeviceChangeIpMobile *DeviceChangeIpMobileType `json:"device_change_ip_mobile,omitempty"`
-	// DeviceChangeIpWeb : (devices) Changed IP address associated with active
-	// web session
+	// DeviceChangeIpWeb : (devices) Changed IP address associated with active web
+	// session
 	DeviceChangeIpWeb *DeviceChangeIpWebType `json:"device_change_ip_web,omitempty"`
 	// DeviceDeleteOnUnlinkFail : (devices) Failed to delete all files from
 	// unlinked device
@@ -5527,16 +5611,15 @@ type EventType struct {
 	DeviceLinkFail *DeviceLinkFailType `json:"device_link_fail,omitempty"`
 	// DeviceLinkSuccess : (devices) Linked device
 	DeviceLinkSuccess *DeviceLinkSuccessType `json:"device_link_success,omitempty"`
-	// DeviceManagementDisabled : (devices) Disabled device management
-	// (deprecated, no longer logged)
+	// DeviceManagementDisabled : (devices) Disabled device management (deprecated,
+	// no longer logged)
 	DeviceManagementDisabled *DeviceManagementDisabledType `json:"device_management_disabled,omitempty"`
-	// DeviceManagementEnabled : (devices) Enabled device management
-	// (deprecated, no longer logged)
+	// DeviceManagementEnabled : (devices) Enabled device management (deprecated,
+	// no longer logged)
 	DeviceManagementEnabled *DeviceManagementEnabledType `json:"device_management_enabled,omitempty"`
 	// DeviceUnlink : (devices) Disconnected device
 	DeviceUnlink *DeviceUnlinkType `json:"device_unlink,omitempty"`
-	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up
-	// EMM
+	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up EMM
 	EmmRefreshAuthToken *EmmRefreshAuthTokenType `json:"emm_refresh_auth_token,omitempty"`
 	// AccountCaptureChangeAvailability : (domains) Granted/revoked option to
 	// enable account capture on team domains
@@ -5553,14 +5636,14 @@ type EventType struct {
 	// DisabledDomainInvites : (domains) Disabled domain invites (deprecated, no
 	// longer logged)
 	DisabledDomainInvites *DisabledDomainInvitesType `json:"disabled_domain_invites,omitempty"`
-	// DomainInvitesApproveRequestToJoinTeam : (domains) Approved user's request
-	// to join team
+	// DomainInvitesApproveRequestToJoinTeam : (domains) Approved user's request to
+	// join team
 	DomainInvitesApproveRequestToJoinTeam *DomainInvitesApproveRequestToJoinTeamType `json:"domain_invites_approve_request_to_join_team,omitempty"`
-	// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined user's request
-	// to join team
+	// DomainInvitesDeclineRequestToJoinTeam : (domains) Declined user's request to
+	// join team
 	DomainInvitesDeclineRequestToJoinTeam *DomainInvitesDeclineRequestToJoinTeamType `json:"domain_invites_decline_request_to_join_team,omitempty"`
-	// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to
-	// existing domain accounts (deprecated, no longer logged)
+	// DomainInvitesEmailExistingUsers : (domains) Sent domain invites to existing
+	// domain accounts (deprecated, no longer logged)
 	DomainInvitesEmailExistingUsers *DomainInvitesEmailExistingUsersType `json:"domain_invites_email_existing_users,omitempty"`
 	// DomainInvitesRequestToJoinTeam : (domains) Requested to join team
 	DomainInvitesRequestToJoinTeam *DomainInvitesRequestToJoinTeamType `json:"domain_invites_request_to_join_team,omitempty"`
@@ -5598,8 +5681,8 @@ type EventType struct {
 	FileGetCopyReference *FileGetCopyReferenceType `json:"file_get_copy_reference,omitempty"`
 	// FileMove : (file_operations) Moved files and/or folders
 	FileMove *FileMoveType `json:"file_move,omitempty"`
-	// FilePermanentlyDelete : (file_operations) Permanently deleted files
-	// and/or folders
+	// FilePermanentlyDelete : (file_operations) Permanently deleted files and/or
+	// folders
 	FilePermanentlyDelete *FilePermanentlyDeleteType `json:"file_permanently_delete,omitempty"`
 	// FilePreview : (file_operations) Previewed files and/or folders
 	FilePreview *FilePreviewType `json:"file_preview,omitempty"`
@@ -5632,8 +5715,7 @@ type EventType struct {
 	GroupChangeExternalId *GroupChangeExternalIdType `json:"group_change_external_id,omitempty"`
 	// GroupChangeManagementType : (groups) Changed group management type
 	GroupChangeManagementType *GroupChangeManagementTypeType `json:"group_change_management_type,omitempty"`
-	// GroupChangeMemberRole : (groups) Changed manager permissions of group
-	// member
+	// GroupChangeMemberRole : (groups) Changed manager permissions of group member
 	GroupChangeMemberRole *GroupChangeMemberRoleType `json:"group_change_member_role,omitempty"`
 	// GroupCreate : (groups) Created group
 	GroupCreate *GroupCreateType `json:"group_create,omitempty"`
@@ -5642,8 +5724,8 @@ type EventType struct {
 	// GroupDescriptionUpdated : (groups) Updated group (deprecated, no longer
 	// logged)
 	GroupDescriptionUpdated *GroupDescriptionUpdatedType `json:"group_description_updated,omitempty"`
-	// GroupJoinPolicyUpdated : (groups) Updated group join policy (deprecated,
-	// no longer logged)
+	// GroupJoinPolicyUpdated : (groups) Updated group join policy (deprecated, no
+	// longer logged)
 	GroupJoinPolicyUpdated *GroupJoinPolicyUpdatedType `json:"group_join_policy_updated,omitempty"`
 	// GroupMoved : (groups) Moved group (deprecated, no longer logged)
 	GroupMoved *GroupMovedType `json:"group_moved,omitempty"`
@@ -5687,8 +5769,7 @@ type EventType struct {
 	MemberChangeAdminRole *MemberChangeAdminRoleType `json:"member_change_admin_role,omitempty"`
 	// MemberChangeEmail : (members) Changed team member email
 	MemberChangeEmail *MemberChangeEmailType `json:"member_change_email,omitempty"`
-	// MemberChangeExternalId : (members) Changed the external ID for team
-	// member
+	// MemberChangeExternalId : (members) Changed the external ID for team member
 	MemberChangeExternalId *MemberChangeExternalIdType `json:"member_change_external_id,omitempty"`
 	// MemberChangeMembershipType : (members) Changed membership type
 	// (limited/full) of member (deprecated, no longer logged)
@@ -5703,18 +5784,17 @@ type EventType struct {
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
 	MemberPermanentlyDeleteAccountContents *MemberPermanentlyDeleteAccountContentsType `json:"member_permanently_delete_account_contents,omitempty"`
-	// MemberRemoveExternalId : (members) Removed the external ID for team
-	// member
+	// MemberRemoveExternalId : (members) Removed the external ID for team member
 	MemberRemoveExternalId *MemberRemoveExternalIdType `json:"member_remove_external_id,omitempty"`
 	// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space limit
 	MemberSpaceLimitsAddCustomQuota *MemberSpaceLimitsAddCustomQuotaType `json:"member_space_limits_add_custom_quota,omitempty"`
-	// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
-	// space limit
+	// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member space
+	// limit
 	MemberSpaceLimitsChangeCustomQuota *MemberSpaceLimitsChangeCustomQuotaType `json:"member_space_limits_change_custom_quota,omitempty"`
 	// MemberSpaceLimitsChangeStatus : (members) Changed space limit status
 	MemberSpaceLimitsChangeStatus *MemberSpaceLimitsChangeStatusType `json:"member_space_limits_change_status,omitempty"`
-	// MemberSpaceLimitsRemoveCustomQuota : (members) Removed custom member
-	// space limit
+	// MemberSpaceLimitsRemoveCustomQuota : (members) Removed custom member space
+	// limit
 	MemberSpaceLimitsRemoveCustomQuota *MemberSpaceLimitsRemoveCustomQuotaType `json:"member_space_limits_remove_custom_quota,omitempty"`
 	// MemberSuggest : (members) Suggested person to add to team
 	MemberSuggest *MemberSuggestType `json:"member_suggest,omitempty"`
@@ -5731,14 +5811,11 @@ type EventType struct {
 	PaperContentArchive *PaperContentArchiveType `json:"paper_content_archive,omitempty"`
 	// PaperContentCreate : (paper) Created Paper doc/folder
 	PaperContentCreate *PaperContentCreateType `json:"paper_content_create,omitempty"`
-	// PaperContentPermanentlyDelete : (paper) Permanently deleted Paper
-	// doc/folder
+	// PaperContentPermanentlyDelete : (paper) Permanently deleted Paper doc/folder
 	PaperContentPermanentlyDelete *PaperContentPermanentlyDeleteType `json:"paper_content_permanently_delete,omitempty"`
-	// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from
-	// folder
+	// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from folder
 	PaperContentRemoveFromFolder *PaperContentRemoveFromFolderType `json:"paper_content_remove_from_folder,omitempty"`
-	// PaperContentRemoveMember : (paper) Removed team member from Paper
-	// doc/folder
+	// PaperContentRemoveMember : (paper) Removed team member from Paper doc/folder
 	PaperContentRemoveMember *PaperContentRemoveMemberType `json:"paper_content_remove_member,omitempty"`
 	// PaperContentRename : (paper) Renamed Paper doc/folder
 	PaperContentRename *PaperContentRenameType `json:"paper_content_rename,omitempty"`
@@ -5746,16 +5823,14 @@ type EventType struct {
 	PaperContentRestore *PaperContentRestoreType `json:"paper_content_restore,omitempty"`
 	// PaperDocAddComment : (paper) Added Paper doc comment
 	PaperDocAddComment *PaperDocAddCommentType `json:"paper_doc_add_comment,omitempty"`
-	// PaperDocChangeMemberRole : (paper) Changed team member permissions for
-	// Paper doc
-	PaperDocChangeMemberRole *PaperDocChangeMemberRoleType `json:"paper_doc_change_member_role,omitempty"`
-	// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for Paper
+	// PaperDocChangeMemberRole : (paper) Changed team member permissions for Paper
 	// doc
+	PaperDocChangeMemberRole *PaperDocChangeMemberRoleType `json:"paper_doc_change_member_role,omitempty"`
+	// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for Paper doc
 	PaperDocChangeSharingPolicy *PaperDocChangeSharingPolicyType `json:"paper_doc_change_sharing_policy,omitempty"`
 	// PaperDocChangeSubscription : (paper) Followed/unfollowed Paper doc
 	PaperDocChangeSubscription *PaperDocChangeSubscriptionType `json:"paper_doc_change_subscription,omitempty"`
-	// PaperDocDeleted : (paper) Archived Paper doc (deprecated, no longer
-	// logged)
+	// PaperDocDeleted : (paper) Archived Paper doc (deprecated, no longer logged)
 	PaperDocDeleted *PaperDocDeletedType `json:"paper_doc_deleted,omitempty"`
 	// PaperDocDeleteComment : (paper) Deleted Paper doc comment
 	PaperDocDeleteComment *PaperDocDeleteCommentType `json:"paper_doc_delete_comment,omitempty"`
@@ -5780,8 +5855,8 @@ type EventType struct {
 	PaperDocRevert *PaperDocRevertType `json:"paper_doc_revert,omitempty"`
 	// PaperDocSlackShare : (paper) Shared Paper doc via Slack
 	PaperDocSlackShare *PaperDocSlackShareType `json:"paper_doc_slack_share,omitempty"`
-	// PaperDocTeamInvite : (paper) Shared Paper doc with team member
-	// (deprecated, no longer logged)
+	// PaperDocTeamInvite : (paper) Shared Paper doc with team member (deprecated,
+	// no longer logged)
 	PaperDocTeamInvite *PaperDocTeamInviteType `json:"paper_doc_team_invite,omitempty"`
 	// PaperDocTrashed : (paper) Deleted Paper doc
 	PaperDocTrashed *PaperDocTrashedType `json:"paper_doc_trashed,omitempty"`
@@ -5791,25 +5866,25 @@ type EventType struct {
 	PaperDocUntrashed *PaperDocUntrashedType `json:"paper_doc_untrashed,omitempty"`
 	// PaperDocView : (paper) Viewed Paper doc
 	PaperDocView *PaperDocViewType `json:"paper_doc_view,omitempty"`
-	// PaperExternalViewAllow : (paper) Changed Paper external sharing setting
-	// to anyone (deprecated, no longer logged)
+	// PaperExternalViewAllow : (paper) Changed Paper external sharing setting to
+	// anyone (deprecated, no longer logged)
 	PaperExternalViewAllow *PaperExternalViewAllowType `json:"paper_external_view_allow,omitempty"`
 	// PaperExternalViewDefaultTeam : (paper) Changed Paper external sharing
 	// setting to default team (deprecated, no longer logged)
 	PaperExternalViewDefaultTeam *PaperExternalViewDefaultTeamType `json:"paper_external_view_default_team,omitempty"`
-	// PaperExternalViewForbid : (paper) Changed Paper external sharing setting
-	// to team-only (deprecated, no longer logged)
+	// PaperExternalViewForbid : (paper) Changed Paper external sharing setting to
+	// team-only (deprecated, no longer logged)
 	PaperExternalViewForbid *PaperExternalViewForbidType `json:"paper_external_view_forbid,omitempty"`
 	// PaperFolderChangeSubscription : (paper) Followed/unfollowed Paper folder
 	PaperFolderChangeSubscription *PaperFolderChangeSubscriptionType `json:"paper_folder_change_subscription,omitempty"`
 	// PaperFolderDeleted : (paper) Archived Paper folder (deprecated, no longer
 	// logged)
 	PaperFolderDeleted *PaperFolderDeletedType `json:"paper_folder_deleted,omitempty"`
-	// PaperFolderFollowed : (paper) Followed Paper folder (deprecated, replaced
-	// by 'Followed/unfollowed Paper folder')
+	// PaperFolderFollowed : (paper) Followed Paper folder (deprecated, replaced by
+	// 'Followed/unfollowed Paper folder')
 	PaperFolderFollowed *PaperFolderFollowedType `json:"paper_folder_followed,omitempty"`
-	// PaperFolderTeamInvite : (paper) Shared Paper folder with member
-	// (deprecated, no longer logged)
+	// PaperFolderTeamInvite : (paper) Shared Paper folder with member (deprecated,
+	// no longer logged)
 	PaperFolderTeamInvite *PaperFolderTeamInviteType `json:"paper_folder_team_invite,omitempty"`
 	// PaperPublishedLinkCreate : (paper) Published doc
 	PaperPublishedLinkCreate *PaperPublishedLinkCreateType `json:"paper_published_link_create,omitempty"`
@@ -5831,8 +5906,8 @@ type EventType struct {
 	ExportMembersReport *ExportMembersReportType `json:"export_members_report,omitempty"`
 	// PaperAdminExportStart : (reports) Exported all team Paper docs
 	PaperAdminExportStart *PaperAdminExportStartType `json:"paper_admin_export_start,omitempty"`
-	// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync
-	// non-admin devices report
+	// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync non-admin
+	// devices report
 	SmartSyncCreateAdminPrivilegeReport *SmartSyncCreateAdminPrivilegeReportType `json:"smart_sync_create_admin_privilege_report,omitempty"`
 	// TeamActivityCreateReport : (reports) Created team activity report
 	TeamActivityCreateReport *TeamActivityCreateReportType `json:"team_activity_create_report,omitempty"`
@@ -5841,11 +5916,11 @@ type EventType struct {
 	TeamActivityCreateReportFail *TeamActivityCreateReportFailType `json:"team_activity_create_report_fail,omitempty"`
 	// CollectionShare : (sharing) Shared album
 	CollectionShare *CollectionShareType `json:"collection_share,omitempty"`
-	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
-	// (deprecated, no longer logged)
-	NoteAclInviteOnly *NoteAclInviteOnlyType `json:"note_acl_invite_only,omitempty"`
-	// NoteAclLink : (sharing) Changed Paper doc to link-accessible (deprecated,
+	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only (deprecated,
 	// no longer logged)
+	NoteAclInviteOnly *NoteAclInviteOnlyType `json:"note_acl_invite_only,omitempty"`
+	// NoteAclLink : (sharing) Changed Paper doc to link-accessible (deprecated, no
+	// longer logged)
 	NoteAclLink *NoteAclLinkType `json:"note_acl_link,omitempty"`
 	// NoteAclTeamLink : (sharing) Changed Paper doc to link-accessible for team
 	// (deprecated, no longer logged)
@@ -5861,14 +5936,14 @@ type EventType struct {
 	// SfAddGroup : (sharing) Added team to shared folder (deprecated, no longer
 	// logged)
 	SfAddGroup *SfAddGroupType `json:"sf_add_group,omitempty"`
-	// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed non-collaborators
-	// to view links to files in shared folder (deprecated, no longer logged)
+	// SfAllowNonMembersToViewSharedLinks : (sharing) Allowed non-collaborators to
+	// view links to files in shared folder (deprecated, no longer logged)
 	SfAllowNonMembersToViewSharedLinks *SfAllowNonMembersToViewSharedLinksType `json:"sf_allow_non_members_to_view_shared_links,omitempty"`
 	// SfExternalInviteWarn : (sharing) Set team members to see warning before
 	// sharing folders outside team (deprecated, no longer logged)
 	SfExternalInviteWarn *SfExternalInviteWarnType `json:"sf_external_invite_warn,omitempty"`
-	// SfFbInvite : (sharing) Invited Facebook users to shared folder
-	// (deprecated, no longer logged)
+	// SfFbInvite : (sharing) Invited Facebook users to shared folder (deprecated,
+	// no longer logged)
 	SfFbInvite *SfFbInviteType `json:"sf_fb_invite,omitempty"`
 	// SfFbInviteChangeRole : (sharing) Changed Facebook user's role in shared
 	// folder (deprecated, no longer logged)
@@ -5879,12 +5954,11 @@ type EventType struct {
 	// SfInviteGroup : (sharing) Invited group to shared folder (deprecated, no
 	// longer logged)
 	SfInviteGroup *SfInviteGroupType `json:"sf_invite_group,omitempty"`
-	// SfTeamGrantAccess : (sharing) Granted access to shared folder
-	// (deprecated, no longer logged)
+	// SfTeamGrantAccess : (sharing) Granted access to shared folder (deprecated,
+	// no longer logged)
 	SfTeamGrantAccess *SfTeamGrantAccessType `json:"sf_team_grant_access,omitempty"`
-	// SfTeamInvite : (sharing) Invited team members to shared folder
-	// (deprecated, replaced by 'Invited user to Dropbox and added them to
-	// shared file/folder')
+	// SfTeamInvite : (sharing) Invited team members to shared folder (deprecated,
+	// replaced by 'Invited user to Dropbox and added them to shared file/folder')
 	SfTeamInvite *SfTeamInviteType `json:"sf_team_invite,omitempty"`
 	// SfTeamInviteChangeRole : (sharing) Changed team member's role in shared
 	// folder (deprecated, no longer logged)
@@ -5899,38 +5973,38 @@ type EventType struct {
 	// replaced by 'Removed invitee from shared file/folder before invite was
 	// accepted')
 	SfTeamUninvite *SfTeamUninviteType `json:"sf_team_uninvite,omitempty"`
-	// SharedContentAddInvitees : (sharing) Invited user to Dropbox and added
-	// them to shared file/folder
+	// SharedContentAddInvitees : (sharing) Invited user to Dropbox and added them
+	// to shared file/folder
 	SharedContentAddInvitees *SharedContentAddInviteesType `json:"shared_content_add_invitees,omitempty"`
 	// SharedContentAddLinkExpiry : (sharing) Added expiration date to link for
 	// shared file/folder
 	SharedContentAddLinkExpiry *SharedContentAddLinkExpiryType `json:"shared_content_add_link_expiry,omitempty"`
-	// SharedContentAddLinkPassword : (sharing) Added password to link for
-	// shared file/folder
+	// SharedContentAddLinkPassword : (sharing) Added password to link for shared
+	// file/folder
 	SharedContentAddLinkPassword *SharedContentAddLinkPasswordType `json:"shared_content_add_link_password,omitempty"`
 	// SharedContentAddMember : (sharing) Added users and/or groups to shared
 	// file/folder
 	SharedContentAddMember *SharedContentAddMemberType `json:"shared_content_add_member,omitempty"`
-	// SharedContentChangeDownloadsPolicy : (sharing) Changed whether members
-	// can download shared file/folder
+	// SharedContentChangeDownloadsPolicy : (sharing) Changed whether members can
+	// download shared file/folder
 	SharedContentChangeDownloadsPolicy *SharedContentChangeDownloadsPolicyType `json:"shared_content_change_downloads_policy,omitempty"`
-	// SharedContentChangeInviteeRole : (sharing) Changed access type of invitee
-	// to shared file/folder before invite was accepted
+	// SharedContentChangeInviteeRole : (sharing) Changed access type of invitee to
+	// shared file/folder before invite was accepted
 	SharedContentChangeInviteeRole *SharedContentChangeInviteeRoleType `json:"shared_content_change_invitee_role,omitempty"`
-	// SharedContentChangeLinkAudience : (sharing) Changed link audience of
-	// shared file/folder
+	// SharedContentChangeLinkAudience : (sharing) Changed link audience of shared
+	// file/folder
 	SharedContentChangeLinkAudience *SharedContentChangeLinkAudienceType `json:"shared_content_change_link_audience,omitempty"`
-	// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of
-	// shared file/folder
+	// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of shared
+	// file/folder
 	SharedContentChangeLinkExpiry *SharedContentChangeLinkExpiryType `json:"shared_content_change_link_expiry,omitempty"`
-	// SharedContentChangeLinkPassword : (sharing) Changed link password of
-	// shared file/folder
+	// SharedContentChangeLinkPassword : (sharing) Changed link password of shared
+	// file/folder
 	SharedContentChangeLinkPassword *SharedContentChangeLinkPasswordType `json:"shared_content_change_link_password,omitempty"`
 	// SharedContentChangeMemberRole : (sharing) Changed access type of shared
 	// file/folder member
 	SharedContentChangeMemberRole *SharedContentChangeMemberRoleType `json:"shared_content_change_member_role,omitempty"`
-	// SharedContentChangeViewerInfoPolicy : (sharing) Changed whether members
-	// can see who viewed shared file/folder
+	// SharedContentChangeViewerInfoPolicy : (sharing) Changed whether members can
+	// see who viewed shared file/folder
 	SharedContentChangeViewerInfoPolicy *SharedContentChangeViewerInfoPolicyType `json:"shared_content_change_viewer_info_policy,omitempty"`
 	// SharedContentClaimInvitation : (sharing) Acquired membership of shared
 	// file/folder by accepting invite
@@ -5947,8 +6021,8 @@ type EventType struct {
 	// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration date of
 	// shared file/folder
 	SharedContentRemoveLinkExpiry *SharedContentRemoveLinkExpiryType `json:"shared_content_remove_link_expiry,omitempty"`
-	// SharedContentRemoveLinkPassword : (sharing) Removed link password of
-	// shared file/folder
+	// SharedContentRemoveLinkPassword : (sharing) Removed link password of shared
+	// file/folder
 	SharedContentRemoveLinkPassword *SharedContentRemoveLinkPasswordType `json:"shared_content_remove_link_password,omitempty"`
 	// SharedContentRemoveMember : (sharing) Removed user/group from shared
 	// file/folder
@@ -5956,8 +6030,8 @@ type EventType struct {
 	// SharedContentRequestAccess : (sharing) Requested access to shared
 	// file/folder
 	SharedContentRequestAccess *SharedContentRequestAccessType `json:"shared_content_request_access,omitempty"`
-	// SharedContentUnshare : (sharing) Unshared file/folder by clearing
-	// membership and turning off link
+	// SharedContentUnshare : (sharing) Unshared file/folder by clearing membership
+	// and turning off link
 	SharedContentUnshare *SharedContentUnshareType `json:"shared_content_unshare,omitempty"`
 	// SharedContentView : (sharing) Previewed shared file/folder
 	SharedContentView *SharedContentViewType `json:"shared_content_view,omitempty"`
@@ -5970,13 +6044,13 @@ type EventType struct {
 	// SharedFolderChangeMembersManagementPolicy : (sharing) Changed who can
 	// add/remove members of shared folder
 	SharedFolderChangeMembersManagementPolicy *SharedFolderChangeMembersManagementPolicyType `json:"shared_folder_change_members_management_policy,omitempty"`
-	// SharedFolderChangeMembersPolicy : (sharing) Changed who can become member
-	// of shared folder
+	// SharedFolderChangeMembersPolicy : (sharing) Changed who can become member of
+	// shared folder
 	SharedFolderChangeMembersPolicy *SharedFolderChangeMembersPolicyType `json:"shared_folder_change_members_policy,omitempty"`
 	// SharedFolderCreate : (sharing) Created shared folder
 	SharedFolderCreate *SharedFolderCreateType `json:"shared_folder_create,omitempty"`
-	// SharedFolderDeclineInvitation : (sharing) Declined team member's invite
-	// to shared folder
+	// SharedFolderDeclineInvitation : (sharing) Declined team member's invite to
+	// shared folder
 	SharedFolderDeclineInvitation *SharedFolderDeclineInvitationType `json:"shared_folder_decline_invitation,omitempty"`
 	// SharedFolderMount : (sharing) Added shared folder to own Dropbox
 	SharedFolderMount *SharedFolderMountType `json:"shared_folder_mount,omitempty"`
@@ -6007,11 +6081,11 @@ type EventType struct {
 	SharedLinkShare *SharedLinkShareType `json:"shared_link_share,omitempty"`
 	// SharedLinkView : (sharing) Opened shared link
 	SharedLinkView *SharedLinkViewType `json:"shared_link_view,omitempty"`
-	// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no
-	// longer logged)
+	// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no longer
+	// logged)
 	SharedNoteOpened *SharedNoteOpenedType `json:"shared_note_opened,omitempty"`
-	// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no
-	// longer logged)
+	// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no longer
+	// logged)
 	ShmodelGroupShare *ShmodelGroupShareType `json:"shmodel_group_share,omitempty"`
 	// ShowcaseAccessGranted : (showcase) Granted access to showcase
 	ShowcaseAccessGranted *ShowcaseAccessGrantedType `json:"showcase_access_granted,omitempty"`
@@ -6098,20 +6172,20 @@ type EventType struct {
 	TeamFolderRename *TeamFolderRenameType `json:"team_folder_rename,omitempty"`
 	// TeamSelectiveSyncSettingsChanged : (team_folders) Changed sync default
 	TeamSelectiveSyncSettingsChanged *TeamSelectiveSyncSettingsChangedType `json:"team_selective_sync_settings_changed,omitempty"`
-	// AccountCaptureChangePolicy : (team_policies) Changed account capture
-	// setting on team domain
+	// AccountCaptureChangePolicy : (team_policies) Changed account capture setting
+	// on team domain
 	AccountCaptureChangePolicy *AccountCaptureChangePolicyType `json:"account_capture_change_policy,omitempty"`
-	// AllowDownloadDisabled : (team_policies) Disabled downloads (deprecated,
-	// no longer logged)
+	// AllowDownloadDisabled : (team_policies) Disabled downloads (deprecated, no
+	// longer logged)
 	AllowDownloadDisabled *AllowDownloadDisabledType `json:"allow_download_disabled,omitempty"`
 	// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated, no
 	// longer logged)
 	AllowDownloadEnabled *AllowDownloadEnabledType `json:"allow_download_enabled,omitempty"`
-	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
-	// setting for team
+	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads setting
+	// for team
 	CameraUploadsPolicyChanged *CameraUploadsPolicyChangedType `json:"camera_uploads_policy_changed,omitempty"`
-	// DataPlacementRestrictionChangePolicy : (team_policies) Set restrictions
-	// on data center locations where team data resides
+	// DataPlacementRestrictionChangePolicy : (team_policies) Set restrictions on
+	// data center locations where team data resides
 	DataPlacementRestrictionChangePolicy *DataPlacementRestrictionChangePolicyType `json:"data_placement_restriction_change_policy,omitempty"`
 	// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
 	// restrictions on data center locations where team data resides
@@ -6125,11 +6199,11 @@ type EventType struct {
 	// DeviceApprovalsChangeOverageAction : (team_policies) Changed device
 	// approvals setting when member is over limit
 	DeviceApprovalsChangeOverageAction *DeviceApprovalsChangeOverageActionType `json:"device_approvals_change_overage_action,omitempty"`
-	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
-	// approvals setting when member unlinks approved device
+	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device approvals
+	// setting when member unlinks approved device
 	DeviceApprovalsChangeUnlinkAction *DeviceApprovalsChangeUnlinkActionType `json:"device_approvals_change_unlink_action,omitempty"`
-	// DirectoryRestrictionsAddMembers : (team_policies) Added members to
-	// directory restrictions list
+	// DirectoryRestrictionsAddMembers : (team_policies) Added members to directory
+	// restrictions list
 	DirectoryRestrictionsAddMembers *DirectoryRestrictionsAddMembersType `json:"directory_restrictions_add_members,omitempty"`
 	// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members from
 	// directory restrictions list
@@ -6139,19 +6213,18 @@ type EventType struct {
 	// EmmChangePolicy : (team_policies) Enabled/disabled enterprise mobility
 	// management for members
 	EmmChangePolicy *EmmChangePolicyType `json:"emm_change_policy,omitempty"`
-	// EmmRemoveException : (team_policies) Removed members from EMM exception
-	// list
+	// EmmRemoveException : (team_policies) Removed members from EMM exception list
 	EmmRemoveException *EmmRemoveExceptionType `json:"emm_remove_exception,omitempty"`
-	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted out
-	// of extended version history
+	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted out of
+	// extended version history
 	ExtendedVersionHistoryChangePolicy *ExtendedVersionHistoryChangePolicyType `json:"extended_version_history_change_policy,omitempty"`
 	// FileCommentsChangePolicy : (team_policies) Enabled/disabled commenting on
 	// team files
 	FileCommentsChangePolicy *FileCommentsChangePolicyType `json:"file_comments_change_policy,omitempty"`
 	// FileRequestsChangePolicy : (team_policies) Enabled/disabled file requests
 	FileRequestsChangePolicy *FileRequestsChangePolicyType `json:"file_requests_change_policy,omitempty"`
-	// FileRequestsEmailsEnabled : (team_policies) Enabled file request emails
-	// for everyone (deprecated, no longer logged)
+	// FileRequestsEmailsEnabled : (team_policies) Enabled file request emails for
+	// everyone (deprecated, no longer logged)
 	FileRequestsEmailsEnabled *FileRequestsEmailsEnabledType `json:"file_requests_emails_enabled,omitempty"`
 	// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Enabled file
 	// request emails for team (deprecated, no longer logged)
@@ -6165,23 +6238,23 @@ type EventType struct {
 	// IntegrationPolicyChanged : (team_policies) Changed integration policy for
 	// team
 	IntegrationPolicyChanged *IntegrationPolicyChangedType `json:"integration_policy_changed,omitempty"`
-	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
-	// find team when not invited
+	// MemberRequestsChangePolicy : (team_policies) Changed whether users can find
+	// team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
 	// MemberSpaceLimitsAddException : (team_policies) Added members to member
 	// space limit exception list
 	MemberSpaceLimitsAddException *MemberSpaceLimitsAddExceptionType `json:"member_space_limits_add_exception,omitempty"`
-	// MemberSpaceLimitsChangeCapsTypePolicy : (team_policies) Changed member
-	// space limit type for team
+	// MemberSpaceLimitsChangeCapsTypePolicy : (team_policies) Changed member space
+	// limit type for team
 	MemberSpaceLimitsChangeCapsTypePolicy *MemberSpaceLimitsChangeCapsTypePolicyType `json:"member_space_limits_change_caps_type_policy,omitempty"`
-	// MemberSpaceLimitsChangePolicy : (team_policies) Changed team default
-	// member space limit
+	// MemberSpaceLimitsChangePolicy : (team_policies) Changed team default member
+	// space limit
 	MemberSpaceLimitsChangePolicy *MemberSpaceLimitsChangePolicyType `json:"member_space_limits_change_policy,omitempty"`
 	// MemberSpaceLimitsRemoveException : (team_policies) Removed members from
 	// member space limit exception list
 	MemberSpaceLimitsRemoveException *MemberSpaceLimitsRemoveExceptionType `json:"member_space_limits_remove_exception,omitempty"`
-	// MemberSuggestionsChangePolicy : (team_policies) Enabled/disabled option
-	// for team members to suggest people to add to team
+	// MemberSuggestionsChangePolicy : (team_policies) Enabled/disabled option for
+	// team members to suggest people to add to team
 	MemberSuggestionsChangePolicy *MemberSuggestionsChangePolicyType `json:"member_suggestions_change_policy,omitempty"`
 	// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled/disabled
 	// Microsoft Office add-in
@@ -6189,24 +6262,23 @@ type EventType struct {
 	// NetworkControlChangePolicy : (team_policies) Enabled/disabled network
 	// control
 	NetworkControlChangePolicy *NetworkControlChangePolicyType `json:"network_control_change_policy,omitempty"`
-	// PaperChangeDeploymentPolicy : (team_policies) Changed whether Dropbox
-	// Paper, when enabled, is deployed to all members or to specific members
+	// PaperChangeDeploymentPolicy : (team_policies) Changed whether Dropbox Paper,
+	// when enabled, is deployed to all members or to specific members
 	PaperChangeDeploymentPolicy *PaperChangeDeploymentPolicyType `json:"paper_change_deployment_policy,omitempty"`
 	// PaperChangeMemberLinkPolicy : (team_policies) Changed whether non-members
 	// can view Paper docs with link (deprecated, no longer logged)
 	PaperChangeMemberLinkPolicy *PaperChangeMemberLinkPolicyType `json:"paper_change_member_link_policy,omitempty"`
-	// PaperChangeMemberPolicy : (team_policies) Changed whether members can
-	// share Paper docs outside team, and if docs are accessible only by team
-	// members or anyone by default
+	// PaperChangeMemberPolicy : (team_policies) Changed whether members can share
+	// Paper docs outside team, and if docs are accessible only by team members or
+	// anyone by default
 	PaperChangeMemberPolicy *PaperChangeMemberPolicyType `json:"paper_change_member_policy,omitempty"`
-	// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper for
-	// team
+	// PaperChangePolicy : (team_policies) Enabled/disabled Dropbox Paper for team
 	PaperChangePolicy *PaperChangePolicyType `json:"paper_change_policy,omitempty"`
 	// PaperDefaultFolderPolicyChanged : (team_policies) Changed Paper Default
 	// Folder Policy setting for team
 	PaperDefaultFolderPolicyChanged *PaperDefaultFolderPolicyChangedType `json:"paper_default_folder_policy_changed,omitempty"`
-	// PaperDesktopPolicyChanged : (team_policies) Enabled/disabled Paper
-	// Desktop for team
+	// PaperDesktopPolicyChanged : (team_policies) Enabled/disabled Paper Desktop
+	// for team
 	PaperDesktopPolicyChanged *PaperDesktopPolicyChangedType `json:"paper_desktop_policy_changed,omitempty"`
 	// PaperEnabledUsersGroupAddition : (team_policies) Added users to
 	// Paper-enabled users list
@@ -6220,18 +6292,18 @@ type EventType struct {
 	// ResellerSupportChangePolicy : (team_policies) Enabled/disabled reseller
 	// support
 	ResellerSupportChangePolicy *ResellerSupportChangePolicyType `json:"reseller_support_change_policy,omitempty"`
-	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
-	// members can join shared folders owned outside team
+	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team members
+	// can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
-	// SharingChangeLinkPolicy : (team_policies) Changed whether members can
-	// share links outside team, and if links are accessible only by team
-	// members or anyone by default
+	// SharingChangeLinkPolicy : (team_policies) Changed whether members can share
+	// links outside team, and if links are accessible only by team members or
+	// anyone by default
 	SharingChangeLinkPolicy *SharingChangeLinkPolicyType `json:"sharing_change_link_policy,omitempty"`
 	// SharingChangeMemberPolicy : (team_policies) Changed whether members can
 	// share files/folders outside team
 	SharingChangeMemberPolicy *SharingChangeMemberPolicyType `json:"sharing_change_member_policy,omitempty"`
-	// ShowcaseChangeDownloadPolicy : (team_policies) Enabled/disabled
-	// downloading files from Dropbox Showcase for team
+	// ShowcaseChangeDownloadPolicy : (team_policies) Enabled/disabled downloading
+	// files from Dropbox Showcase for team
 	ShowcaseChangeDownloadPolicy *ShowcaseChangeDownloadPolicyType `json:"showcase_change_download_policy,omitempty"`
 	// ShowcaseChangeEnabledPolicy : (team_policies) Enabled/disabled Dropbox
 	// Showcase for team
@@ -6239,8 +6311,8 @@ type EventType struct {
 	// ShowcaseChangeExternalSharingPolicy : (team_policies) Enabled/disabled
 	// sharing Dropbox Showcase externally for team
 	ShowcaseChangeExternalSharingPolicy *ShowcaseChangeExternalSharingPolicyType `json:"showcase_change_external_sharing_policy,omitempty"`
-	// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
-	// setting for team members
+	// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync setting
+	// for team members
 	SmartSyncChangePolicy *SmartSyncChangePolicyType `json:"smart_sync_change_policy,omitempty"`
 	// SmartSyncNotOptOut : (team_policies) Opted team into Smart Sync
 	SmartSyncNotOptOut *SmartSyncNotOptOutType `json:"smart_sync_not_opt_out,omitempty"`
@@ -6254,12 +6326,11 @@ type EventType struct {
 	// TeamSelectiveSyncPolicyChanged : (team_policies) Enabled/disabled Team
 	// Selective Sync for team
 	TeamSelectiveSyncPolicyChanged *TeamSelectiveSyncPolicyChangedType `json:"team_selective_sync_policy_changed,omitempty"`
-	// TfaChangePolicy : (team_policies) Changed two-step verification setting
-	// for team
+	// TfaChangePolicy : (team_policies) Changed two-step verification setting for
+	// team
 	TfaChangePolicy *TfaChangePolicyType `json:"tfa_change_policy,omitempty"`
-	// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for
-	// members to link personal Dropbox account and team account to same
-	// computer
+	// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for members
+	// to link personal Dropbox account and team account to same computer
 	TwoAccountChangePolicy *TwoAccountChangePolicyType `json:"two_account_change_policy,omitempty"`
 	// ViewerInfoPolicyChanged : (team_policies) Changed team policy for viewer
 	// info
@@ -6277,32 +6348,29 @@ type EventType struct {
 	// TeamProfileAddLogo : (team_profile) Added team logo to display on shared
 	// link headers
 	TeamProfileAddLogo *TeamProfileAddLogoType `json:"team_profile_add_logo,omitempty"`
-	// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
-	// language for team
+	// TeamProfileChangeDefaultLanguage : (team_profile) Changed default language
+	// for team
 	TeamProfileChangeDefaultLanguage *TeamProfileChangeDefaultLanguageType `json:"team_profile_change_default_language,omitempty"`
-	// TeamProfileChangeLogo : (team_profile) Changed team logo displayed on
-	// shared link headers
+	// TeamProfileChangeLogo : (team_profile) Changed team logo displayed on shared
+	// link headers
 	TeamProfileChangeLogo *TeamProfileChangeLogoType `json:"team_profile_change_logo,omitempty"`
 	// TeamProfileChangeName : (team_profile) Changed team name
 	TeamProfileChangeName *TeamProfileChangeNameType `json:"team_profile_change_name,omitempty"`
-	// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
-	// shared link headers
+	// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on shared
+	// link headers
 	TeamProfileRemoveLogo *TeamProfileRemoveLogoType `json:"team_profile_remove_logo,omitempty"`
 	// TfaAddBackupPhone : (tfa) Added backup phone for two-step verification
 	TfaAddBackupPhone *TfaAddBackupPhoneType `json:"tfa_add_backup_phone,omitempty"`
 	// TfaAddSecurityKey : (tfa) Added security key for two-step verification
 	TfaAddSecurityKey *TfaAddSecurityKeyType `json:"tfa_add_security_key,omitempty"`
-	// TfaChangeBackupPhone : (tfa) Changed backup phone for two-step
-	// verification
+	// TfaChangeBackupPhone : (tfa) Changed backup phone for two-step verification
 	TfaChangeBackupPhone *TfaChangeBackupPhoneType `json:"tfa_change_backup_phone,omitempty"`
 	// TfaChangeStatus : (tfa) Enabled/disabled/changed two-step verification
 	// setting
 	TfaChangeStatus *TfaChangeStatusType `json:"tfa_change_status,omitempty"`
-	// TfaRemoveBackupPhone : (tfa) Removed backup phone for two-step
-	// verification
+	// TfaRemoveBackupPhone : (tfa) Removed backup phone for two-step verification
 	TfaRemoveBackupPhone *TfaRemoveBackupPhoneType `json:"tfa_remove_backup_phone,omitempty"`
-	// TfaRemoveSecurityKey : (tfa) Removed security key for two-step
-	// verification
+	// TfaRemoveSecurityKey : (tfa) Removed security key for two-step verification
 	TfaRemoveSecurityKey *TfaRemoveSecurityKeyType `json:"tfa_remove_security_key,omitempty"`
 	// TfaReset : (tfa) Reset two-step verification for team member
 	TfaReset *TfaResetType `json:"tfa_reset,omitempty"`
@@ -6310,26 +6378,22 @@ type EventType struct {
 	GuestAdminChangeStatus *GuestAdminChangeStatusType `json:"guest_admin_change_status,omitempty"`
 	// TeamMergeRequestAccepted : (trusted_teams) Accepted a team merge request
 	TeamMergeRequestAccepted *TeamMergeRequestAcceptedType `json:"team_merge_request_accepted,omitempty"`
-	// TeamMergeRequestAcceptedShownToPrimaryTeam : (trusted_teams) Accepted a
-	// team merge request (deprecated, replaced by 'Accepted a team merge
-	// request')
+	// TeamMergeRequestAcceptedShownToPrimaryTeam : (trusted_teams) Accepted a team
+	// merge request (deprecated, replaced by 'Accepted a team merge request')
 	TeamMergeRequestAcceptedShownToPrimaryTeam *TeamMergeRequestAcceptedShownToPrimaryTeamType `json:"team_merge_request_accepted_shown_to_primary_team,omitempty"`
 	// TeamMergeRequestAcceptedShownToSecondaryTeam : (trusted_teams) Accepted a
-	// team merge request (deprecated, replaced by 'Accepted a team merge
-	// request')
+	// team merge request (deprecated, replaced by 'Accepted a team merge request')
 	TeamMergeRequestAcceptedShownToSecondaryTeam *TeamMergeRequestAcceptedShownToSecondaryTeamType `json:"team_merge_request_accepted_shown_to_secondary_team,omitempty"`
-	// TeamMergeRequestAutoCanceled : (trusted_teams) Automatically canceled
-	// team merge request
+	// TeamMergeRequestAutoCanceled : (trusted_teams) Automatically canceled team
+	// merge request
 	TeamMergeRequestAutoCanceled *TeamMergeRequestAutoCanceledType `json:"team_merge_request_auto_canceled,omitempty"`
 	// TeamMergeRequestCanceled : (trusted_teams) Canceled a team merge request
 	TeamMergeRequestCanceled *TeamMergeRequestCanceledType `json:"team_merge_request_canceled,omitempty"`
-	// TeamMergeRequestCanceledShownToPrimaryTeam : (trusted_teams) Canceled a
-	// team merge request (deprecated, replaced by 'Canceled a team merge
-	// request')
+	// TeamMergeRequestCanceledShownToPrimaryTeam : (trusted_teams) Canceled a team
+	// merge request (deprecated, replaced by 'Canceled a team merge request')
 	TeamMergeRequestCanceledShownToPrimaryTeam *TeamMergeRequestCanceledShownToPrimaryTeamType `json:"team_merge_request_canceled_shown_to_primary_team,omitempty"`
 	// TeamMergeRequestCanceledShownToSecondaryTeam : (trusted_teams) Canceled a
-	// team merge request (deprecated, replaced by 'Canceled a team merge
-	// request')
+	// team merge request (deprecated, replaced by 'Canceled a team merge request')
 	TeamMergeRequestCanceledShownToSecondaryTeam *TeamMergeRequestCanceledShownToSecondaryTeamType `json:"team_merge_request_canceled_shown_to_secondary_team,omitempty"`
 	// TeamMergeRequestExpired : (trusted_teams) Team merge request expired
 	TeamMergeRequestExpired *TeamMergeRequestExpiredType `json:"team_merge_request_expired,omitempty"`
@@ -6339,8 +6403,8 @@ type EventType struct {
 	// TeamMergeRequestExpiredShownToSecondaryTeam : (trusted_teams) Team merge
 	// request expired (deprecated, replaced by 'Team merge request expired')
 	TeamMergeRequestExpiredShownToSecondaryTeam *TeamMergeRequestExpiredShownToSecondaryTeamType `json:"team_merge_request_expired_shown_to_secondary_team,omitempty"`
-	// TeamMergeRequestRejectedShownToPrimaryTeam : (trusted_teams) Rejected a
-	// team merge request (deprecated, no longer logged)
+	// TeamMergeRequestRejectedShownToPrimaryTeam : (trusted_teams) Rejected a team
+	// merge request (deprecated, no longer logged)
 	TeamMergeRequestRejectedShownToPrimaryTeam *TeamMergeRequestRejectedShownToPrimaryTeamType `json:"team_merge_request_rejected_shown_to_primary_team,omitempty"`
 	// TeamMergeRequestRejectedShownToSecondaryTeam : (trusted_teams) Rejected a
 	// team merge request (deprecated, no longer logged)
@@ -6349,17 +6413,17 @@ type EventType struct {
 	// reminder
 	TeamMergeRequestReminder *TeamMergeRequestReminderType `json:"team_merge_request_reminder,omitempty"`
 	// TeamMergeRequestReminderShownToPrimaryTeam : (trusted_teams) Sent a team
-	// merge request reminder (deprecated, replaced by 'Sent a team merge
-	// request reminder')
+	// merge request reminder (deprecated, replaced by 'Sent a team merge request
+	// reminder')
 	TeamMergeRequestReminderShownToPrimaryTeam *TeamMergeRequestReminderShownToPrimaryTeamType `json:"team_merge_request_reminder_shown_to_primary_team,omitempty"`
-	// TeamMergeRequestReminderShownToSecondaryTeam : (trusted_teams) Sent a
-	// team merge request reminder (deprecated, replaced by 'Sent a team merge
-	// request reminder')
+	// TeamMergeRequestReminderShownToSecondaryTeam : (trusted_teams) Sent a team
+	// merge request reminder (deprecated, replaced by 'Sent a team merge request
+	// reminder')
 	TeamMergeRequestReminderShownToSecondaryTeam *TeamMergeRequestReminderShownToSecondaryTeamType `json:"team_merge_request_reminder_shown_to_secondary_team,omitempty"`
 	// TeamMergeRequestRevoked : (trusted_teams) Canceled the team merge
 	TeamMergeRequestRevoked *TeamMergeRequestRevokedType `json:"team_merge_request_revoked,omitempty"`
-	// TeamMergeRequestSentShownToPrimaryTeam : (trusted_teams) Requested to
-	// merge their Dropbox team into yours
+	// TeamMergeRequestSentShownToPrimaryTeam : (trusted_teams) Requested to merge
+	// their Dropbox team into yours
 	TeamMergeRequestSentShownToPrimaryTeam *TeamMergeRequestSentShownToPrimaryTeamType `json:"team_merge_request_sent_shown_to_primary_team,omitempty"`
 	// TeamMergeRequestSentShownToSecondaryTeam : (trusted_teams) Requested to
 	// merge your team into another Dropbox team
@@ -6368,354 +6432,354 @@ type EventType struct {
 
 // Valid tag values for EventType
 const (
-	EventTypeAppLinkTeam                                  = "app_link_team"
-	EventTypeAppLinkUser                                  = "app_link_user"
-	EventTypeAppUnlinkTeam                                = "app_unlink_team"
-	EventTypeAppUnlinkUser                                = "app_unlink_user"
-	EventTypeIntegrationConnected                         = "integration_connected"
-	EventTypeIntegrationDisconnected                      = "integration_disconnected"
-	EventTypeFileAddComment                               = "file_add_comment"
-	EventTypeFileChangeCommentSubscription                = "file_change_comment_subscription"
-	EventTypeFileDeleteComment                            = "file_delete_comment"
-	EventTypeFileEditComment                              = "file_edit_comment"
-	EventTypeFileLikeComment                              = "file_like_comment"
-	EventTypeFileResolveComment                           = "file_resolve_comment"
-	EventTypeFileUnlikeComment                            = "file_unlike_comment"
-	EventTypeFileUnresolveComment                         = "file_unresolve_comment"
-	EventTypeDeviceChangeIpDesktop                        = "device_change_ip_desktop"
-	EventTypeDeviceChangeIpMobile                         = "device_change_ip_mobile"
-	EventTypeDeviceChangeIpWeb                            = "device_change_ip_web"
-	EventTypeDeviceDeleteOnUnlinkFail                     = "device_delete_on_unlink_fail"
-	EventTypeDeviceDeleteOnUnlinkSuccess                  = "device_delete_on_unlink_success"
-	EventTypeDeviceLinkFail                               = "device_link_fail"
-	EventTypeDeviceLinkSuccess                            = "device_link_success"
-	EventTypeDeviceManagementDisabled                     = "device_management_disabled"
-	EventTypeDeviceManagementEnabled                      = "device_management_enabled"
-	EventTypeDeviceUnlink                                 = "device_unlink"
-	EventTypeEmmRefreshAuthToken                          = "emm_refresh_auth_token"
-	EventTypeAccountCaptureChangeAvailability             = "account_capture_change_availability"
-	EventTypeAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
-	EventTypeAccountCaptureNotificationEmailsSent         = "account_capture_notification_emails_sent"
-	EventTypeAccountCaptureRelinquishAccount              = "account_capture_relinquish_account"
-	EventTypeDisabledDomainInvites                        = "disabled_domain_invites"
-	EventTypeDomainInvitesApproveRequestToJoinTeam        = "domain_invites_approve_request_to_join_team"
-	EventTypeDomainInvitesDeclineRequestToJoinTeam        = "domain_invites_decline_request_to_join_team"
-	EventTypeDomainInvitesEmailExistingUsers              = "domain_invites_email_existing_users"
-	EventTypeDomainInvitesRequestToJoinTeam               = "domain_invites_request_to_join_team"
-	EventTypeDomainInvitesSetInviteNewUserPrefToNo        = "domain_invites_set_invite_new_user_pref_to_no"
-	EventTypeDomainInvitesSetInviteNewUserPrefToYes       = "domain_invites_set_invite_new_user_pref_to_yes"
-	EventTypeDomainVerificationAddDomainFail              = "domain_verification_add_domain_fail"
-	EventTypeDomainVerificationAddDomainSuccess           = "domain_verification_add_domain_success"
-	EventTypeDomainVerificationRemoveDomain               = "domain_verification_remove_domain"
-	EventTypeEnabledDomainInvites                         = "enabled_domain_invites"
-	EventTypeCreateFolder                                 = "create_folder"
-	EventTypeFileAdd                                      = "file_add"
-	EventTypeFileCopy                                     = "file_copy"
-	EventTypeFileDelete                                   = "file_delete"
-	EventTypeFileDownload                                 = "file_download"
-	EventTypeFileEdit                                     = "file_edit"
-	EventTypeFileGetCopyReference                         = "file_get_copy_reference"
-	EventTypeFileMove                                     = "file_move"
-	EventTypeFilePermanentlyDelete                        = "file_permanently_delete"
-	EventTypeFilePreview                                  = "file_preview"
-	EventTypeFileRename                                   = "file_rename"
-	EventTypeFileRestore                                  = "file_restore"
-	EventTypeFileRevert                                   = "file_revert"
-	EventTypeFileRollbackChanges                          = "file_rollback_changes"
-	EventTypeFileSaveCopyReference                        = "file_save_copy_reference"
-	EventTypeFileRequestChange                            = "file_request_change"
-	EventTypeFileRequestClose                             = "file_request_close"
-	EventTypeFileRequestCreate                            = "file_request_create"
-	EventTypeFileRequestDelete                            = "file_request_delete"
-	EventTypeFileRequestReceiveFile                       = "file_request_receive_file"
-	EventTypeGroupAddExternalId                           = "group_add_external_id"
-	EventTypeGroupAddMember                               = "group_add_member"
-	EventTypeGroupChangeExternalId                        = "group_change_external_id"
-	EventTypeGroupChangeManagementType                    = "group_change_management_type"
-	EventTypeGroupChangeMemberRole                        = "group_change_member_role"
-	EventTypeGroupCreate                                  = "group_create"
-	EventTypeGroupDelete                                  = "group_delete"
-	EventTypeGroupDescriptionUpdated                      = "group_description_updated"
-	EventTypeGroupJoinPolicyUpdated                       = "group_join_policy_updated"
-	EventTypeGroupMoved                                   = "group_moved"
-	EventTypeGroupRemoveExternalId                        = "group_remove_external_id"
-	EventTypeGroupRemoveMember                            = "group_remove_member"
-	EventTypeGroupRename                                  = "group_rename"
-	EventTypeEmmError                                     = "emm_error"
-	EventTypeGuestAdminSignedInViaTrustedTeams            = "guest_admin_signed_in_via_trusted_teams"
-	EventTypeGuestAdminSignedOutViaTrustedTeams           = "guest_admin_signed_out_via_trusted_teams"
-	EventTypeLoginFail                                    = "login_fail"
-	EventTypeLoginSuccess                                 = "login_success"
-	EventTypeLogout                                       = "logout"
-	EventTypeResellerSupportSessionEnd                    = "reseller_support_session_end"
-	EventTypeResellerSupportSessionStart                  = "reseller_support_session_start"
-	EventTypeSignInAsSessionEnd                           = "sign_in_as_session_end"
-	EventTypeSignInAsSessionStart                         = "sign_in_as_session_start"
-	EventTypeSsoError                                     = "sso_error"
-	EventTypeMemberAddExternalId                          = "member_add_external_id"
-	EventTypeMemberAddName                                = "member_add_name"
-	EventTypeMemberChangeAdminRole                        = "member_change_admin_role"
-	EventTypeMemberChangeEmail                            = "member_change_email"
-	EventTypeMemberChangeExternalId                       = "member_change_external_id"
-	EventTypeMemberChangeMembershipType                   = "member_change_membership_type"
-	EventTypeMemberChangeName                             = "member_change_name"
-	EventTypeMemberChangeStatus                           = "member_change_status"
-	EventTypeMemberDeleteManualContacts                   = "member_delete_manual_contacts"
-	EventTypeMemberPermanentlyDeleteAccountContents       = "member_permanently_delete_account_contents"
-	EventTypeMemberRemoveExternalId                       = "member_remove_external_id"
-	EventTypeMemberSpaceLimitsAddCustomQuota              = "member_space_limits_add_custom_quota"
-	EventTypeMemberSpaceLimitsChangeCustomQuota           = "member_space_limits_change_custom_quota"
-	EventTypeMemberSpaceLimitsChangeStatus                = "member_space_limits_change_status"
-	EventTypeMemberSpaceLimitsRemoveCustomQuota           = "member_space_limits_remove_custom_quota"
-	EventTypeMemberSuggest                                = "member_suggest"
-	EventTypeMemberTransferAccountContents                = "member_transfer_account_contents"
-	EventTypeSecondaryMailsPolicyChanged                  = "secondary_mails_policy_changed"
-	EventTypePaperContentAddMember                        = "paper_content_add_member"
-	EventTypePaperContentAddToFolder                      = "paper_content_add_to_folder"
-	EventTypePaperContentArchive                          = "paper_content_archive"
-	EventTypePaperContentCreate                           = "paper_content_create"
-	EventTypePaperContentPermanentlyDelete                = "paper_content_permanently_delete"
-	EventTypePaperContentRemoveFromFolder                 = "paper_content_remove_from_folder"
-	EventTypePaperContentRemoveMember                     = "paper_content_remove_member"
-	EventTypePaperContentRename                           = "paper_content_rename"
-	EventTypePaperContentRestore                          = "paper_content_restore"
-	EventTypePaperDocAddComment                           = "paper_doc_add_comment"
-	EventTypePaperDocChangeMemberRole                     = "paper_doc_change_member_role"
-	EventTypePaperDocChangeSharingPolicy                  = "paper_doc_change_sharing_policy"
-	EventTypePaperDocChangeSubscription                   = "paper_doc_change_subscription"
-	EventTypePaperDocDeleted                              = "paper_doc_deleted"
-	EventTypePaperDocDeleteComment                        = "paper_doc_delete_comment"
-	EventTypePaperDocDownload                             = "paper_doc_download"
-	EventTypePaperDocEdit                                 = "paper_doc_edit"
-	EventTypePaperDocEditComment                          = "paper_doc_edit_comment"
-	EventTypePaperDocFollowed                             = "paper_doc_followed"
-	EventTypePaperDocMention                              = "paper_doc_mention"
-	EventTypePaperDocOwnershipChanged                     = "paper_doc_ownership_changed"
-	EventTypePaperDocRequestAccess                        = "paper_doc_request_access"
-	EventTypePaperDocResolveComment                       = "paper_doc_resolve_comment"
-	EventTypePaperDocRevert                               = "paper_doc_revert"
-	EventTypePaperDocSlackShare                           = "paper_doc_slack_share"
-	EventTypePaperDocTeamInvite                           = "paper_doc_team_invite"
-	EventTypePaperDocTrashed                              = "paper_doc_trashed"
-	EventTypePaperDocUnresolveComment                     = "paper_doc_unresolve_comment"
-	EventTypePaperDocUntrashed                            = "paper_doc_untrashed"
-	EventTypePaperDocView                                 = "paper_doc_view"
-	EventTypePaperExternalViewAllow                       = "paper_external_view_allow"
-	EventTypePaperExternalViewDefaultTeam                 = "paper_external_view_default_team"
-	EventTypePaperExternalViewForbid                      = "paper_external_view_forbid"
-	EventTypePaperFolderChangeSubscription                = "paper_folder_change_subscription"
-	EventTypePaperFolderDeleted                           = "paper_folder_deleted"
-	EventTypePaperFolderFollowed                          = "paper_folder_followed"
-	EventTypePaperFolderTeamInvite                        = "paper_folder_team_invite"
-	EventTypePaperPublishedLinkCreate                     = "paper_published_link_create"
-	EventTypePaperPublishedLinkDisabled                   = "paper_published_link_disabled"
-	EventTypePaperPublishedLinkView                       = "paper_published_link_view"
-	EventTypePasswordChange                               = "password_change"
-	EventTypePasswordReset                                = "password_reset"
-	EventTypePasswordResetAll                             = "password_reset_all"
-	EventTypeEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
-	EventTypeEmmCreateUsageReport                         = "emm_create_usage_report"
-	EventTypeExportMembersReport                          = "export_members_report"
-	EventTypePaperAdminExportStart                        = "paper_admin_export_start"
-	EventTypeSmartSyncCreateAdminPrivilegeReport          = "smart_sync_create_admin_privilege_report"
-	EventTypeTeamActivityCreateReport                     = "team_activity_create_report"
-	EventTypeTeamActivityCreateReportFail                 = "team_activity_create_report_fail"
-	EventTypeCollectionShare                              = "collection_share"
-	EventTypeNoteAclInviteOnly                            = "note_acl_invite_only"
-	EventTypeNoteAclLink                                  = "note_acl_link"
-	EventTypeNoteAclTeamLink                              = "note_acl_team_link"
-	EventTypeNoteShared                                   = "note_shared"
-	EventTypeNoteShareReceive                             = "note_share_receive"
-	EventTypeOpenNoteShared                               = "open_note_shared"
-	EventTypeSfAddGroup                                   = "sf_add_group"
-	EventTypeSfAllowNonMembersToViewSharedLinks           = "sf_allow_non_members_to_view_shared_links"
-	EventTypeSfExternalInviteWarn                         = "sf_external_invite_warn"
-	EventTypeSfFbInvite                                   = "sf_fb_invite"
-	EventTypeSfFbInviteChangeRole                         = "sf_fb_invite_change_role"
-	EventTypeSfFbUninvite                                 = "sf_fb_uninvite"
-	EventTypeSfInviteGroup                                = "sf_invite_group"
-	EventTypeSfTeamGrantAccess                            = "sf_team_grant_access"
-	EventTypeSfTeamInvite                                 = "sf_team_invite"
-	EventTypeSfTeamInviteChangeRole                       = "sf_team_invite_change_role"
-	EventTypeSfTeamJoin                                   = "sf_team_join"
-	EventTypeSfTeamJoinFromOobLink                        = "sf_team_join_from_oob_link"
-	EventTypeSfTeamUninvite                               = "sf_team_uninvite"
-	EventTypeSharedContentAddInvitees                     = "shared_content_add_invitees"
-	EventTypeSharedContentAddLinkExpiry                   = "shared_content_add_link_expiry"
-	EventTypeSharedContentAddLinkPassword                 = "shared_content_add_link_password"
-	EventTypeSharedContentAddMember                       = "shared_content_add_member"
-	EventTypeSharedContentChangeDownloadsPolicy           = "shared_content_change_downloads_policy"
-	EventTypeSharedContentChangeInviteeRole               = "shared_content_change_invitee_role"
-	EventTypeSharedContentChangeLinkAudience              = "shared_content_change_link_audience"
-	EventTypeSharedContentChangeLinkExpiry                = "shared_content_change_link_expiry"
-	EventTypeSharedContentChangeLinkPassword              = "shared_content_change_link_password"
-	EventTypeSharedContentChangeMemberRole                = "shared_content_change_member_role"
-	EventTypeSharedContentChangeViewerInfoPolicy          = "shared_content_change_viewer_info_policy"
-	EventTypeSharedContentClaimInvitation                 = "shared_content_claim_invitation"
-	EventTypeSharedContentCopy                            = "shared_content_copy"
-	EventTypeSharedContentDownload                        = "shared_content_download"
-	EventTypeSharedContentRelinquishMembership            = "shared_content_relinquish_membership"
-	EventTypeSharedContentRemoveInvitees                  = "shared_content_remove_invitees"
-	EventTypeSharedContentRemoveLinkExpiry                = "shared_content_remove_link_expiry"
-	EventTypeSharedContentRemoveLinkPassword              = "shared_content_remove_link_password"
-	EventTypeSharedContentRemoveMember                    = "shared_content_remove_member"
-	EventTypeSharedContentRequestAccess                   = "shared_content_request_access"
-	EventTypeSharedContentUnshare                         = "shared_content_unshare"
-	EventTypeSharedContentView                            = "shared_content_view"
-	EventTypeSharedFolderChangeLinkPolicy                 = "shared_folder_change_link_policy"
-	EventTypeSharedFolderChangeMembersInheritancePolicy   = "shared_folder_change_members_inheritance_policy"
-	EventTypeSharedFolderChangeMembersManagementPolicy    = "shared_folder_change_members_management_policy"
-	EventTypeSharedFolderChangeMembersPolicy              = "shared_folder_change_members_policy"
-	EventTypeSharedFolderCreate                           = "shared_folder_create"
-	EventTypeSharedFolderDeclineInvitation                = "shared_folder_decline_invitation"
-	EventTypeSharedFolderMount                            = "shared_folder_mount"
-	EventTypeSharedFolderNest                             = "shared_folder_nest"
-	EventTypeSharedFolderTransferOwnership                = "shared_folder_transfer_ownership"
-	EventTypeSharedFolderUnmount                          = "shared_folder_unmount"
-	EventTypeSharedLinkAddExpiry                          = "shared_link_add_expiry"
-	EventTypeSharedLinkChangeExpiry                       = "shared_link_change_expiry"
-	EventTypeSharedLinkChangeVisibility                   = "shared_link_change_visibility"
-	EventTypeSharedLinkCopy                               = "shared_link_copy"
-	EventTypeSharedLinkCreate                             = "shared_link_create"
-	EventTypeSharedLinkDisable                            = "shared_link_disable"
-	EventTypeSharedLinkDownload                           = "shared_link_download"
-	EventTypeSharedLinkRemoveExpiry                       = "shared_link_remove_expiry"
-	EventTypeSharedLinkShare                              = "shared_link_share"
-	EventTypeSharedLinkView                               = "shared_link_view"
-	EventTypeSharedNoteOpened                             = "shared_note_opened"
-	EventTypeShmodelGroupShare                            = "shmodel_group_share"
-	EventTypeShowcaseAccessGranted                        = "showcase_access_granted"
-	EventTypeShowcaseAddMember                            = "showcase_add_member"
-	EventTypeShowcaseArchived                             = "showcase_archived"
-	EventTypeShowcaseCreated                              = "showcase_created"
-	EventTypeShowcaseDeleteComment                        = "showcase_delete_comment"
-	EventTypeShowcaseEdited                               = "showcase_edited"
-	EventTypeShowcaseEditComment                          = "showcase_edit_comment"
-	EventTypeShowcaseFileAdded                            = "showcase_file_added"
-	EventTypeShowcaseFileDownload                         = "showcase_file_download"
-	EventTypeShowcaseFileRemoved                          = "showcase_file_removed"
-	EventTypeShowcaseFileView                             = "showcase_file_view"
-	EventTypeShowcasePermanentlyDeleted                   = "showcase_permanently_deleted"
-	EventTypeShowcasePostComment                          = "showcase_post_comment"
-	EventTypeShowcaseRemoveMember                         = "showcase_remove_member"
-	EventTypeShowcaseRenamed                              = "showcase_renamed"
-	EventTypeShowcaseRequestAccess                        = "showcase_request_access"
-	EventTypeShowcaseResolveComment                       = "showcase_resolve_comment"
-	EventTypeShowcaseRestored                             = "showcase_restored"
-	EventTypeShowcaseTrashed                              = "showcase_trashed"
-	EventTypeShowcaseTrashedDeprecated                    = "showcase_trashed_deprecated"
-	EventTypeShowcaseUnresolveComment                     = "showcase_unresolve_comment"
-	EventTypeShowcaseUntrashed                            = "showcase_untrashed"
-	EventTypeShowcaseUntrashedDeprecated                  = "showcase_untrashed_deprecated"
-	EventTypeShowcaseView                                 = "showcase_view"
-	EventTypeSsoAddCert                                   = "sso_add_cert"
-	EventTypeSsoAddLoginUrl                               = "sso_add_login_url"
-	EventTypeSsoAddLogoutUrl                              = "sso_add_logout_url"
-	EventTypeSsoChangeCert                                = "sso_change_cert"
-	EventTypeSsoChangeLoginUrl                            = "sso_change_login_url"
-	EventTypeSsoChangeLogoutUrl                           = "sso_change_logout_url"
-	EventTypeSsoChangeSamlIdentityMode                    = "sso_change_saml_identity_mode"
-	EventTypeSsoRemoveCert                                = "sso_remove_cert"
-	EventTypeSsoRemoveLoginUrl                            = "sso_remove_login_url"
-	EventTypeSsoRemoveLogoutUrl                           = "sso_remove_logout_url"
-	EventTypeTeamFolderChangeStatus                       = "team_folder_change_status"
-	EventTypeTeamFolderCreate                             = "team_folder_create"
-	EventTypeTeamFolderDowngrade                          = "team_folder_downgrade"
-	EventTypeTeamFolderPermanentlyDelete                  = "team_folder_permanently_delete"
-	EventTypeTeamFolderRename                             = "team_folder_rename"
-	EventTypeTeamSelectiveSyncSettingsChanged             = "team_selective_sync_settings_changed"
-	EventTypeAccountCaptureChangePolicy                   = "account_capture_change_policy"
-	EventTypeAllowDownloadDisabled                        = "allow_download_disabled"
-	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
-	EventTypeCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
-	EventTypeDataPlacementRestrictionChangePolicy         = "data_placement_restriction_change_policy"
-	EventTypeDataPlacementRestrictionSatisfyPolicy        = "data_placement_restriction_satisfy_policy"
-	EventTypeDeviceApprovalsChangeDesktopPolicy           = "device_approvals_change_desktop_policy"
-	EventTypeDeviceApprovalsChangeMobilePolicy            = "device_approvals_change_mobile_policy"
-	EventTypeDeviceApprovalsChangeOverageAction           = "device_approvals_change_overage_action"
-	EventTypeDeviceApprovalsChangeUnlinkAction            = "device_approvals_change_unlink_action"
-	EventTypeDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
-	EventTypeDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
-	EventTypeEmmAddException                              = "emm_add_exception"
-	EventTypeEmmChangePolicy                              = "emm_change_policy"
-	EventTypeEmmRemoveException                           = "emm_remove_exception"
-	EventTypeExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
-	EventTypeFileCommentsChangePolicy                     = "file_comments_change_policy"
-	EventTypeFileRequestsChangePolicy                     = "file_requests_change_policy"
-	EventTypeFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
-	EventTypeFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
-	EventTypeGoogleSsoChangePolicy                        = "google_sso_change_policy"
-	EventTypeGroupUserManagementChangePolicy              = "group_user_management_change_policy"
-	EventTypeIntegrationPolicyChanged                     = "integration_policy_changed"
-	EventTypeMemberRequestsChangePolicy                   = "member_requests_change_policy"
-	EventTypeMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
-	EventTypeMemberSpaceLimitsChangeCapsTypePolicy        = "member_space_limits_change_caps_type_policy"
-	EventTypeMemberSpaceLimitsChangePolicy                = "member_space_limits_change_policy"
-	EventTypeMemberSpaceLimitsRemoveException             = "member_space_limits_remove_exception"
-	EventTypeMemberSuggestionsChangePolicy                = "member_suggestions_change_policy"
-	EventTypeMicrosoftOfficeAddinChangePolicy             = "microsoft_office_addin_change_policy"
-	EventTypeNetworkControlChangePolicy                   = "network_control_change_policy"
-	EventTypePaperChangeDeploymentPolicy                  = "paper_change_deployment_policy"
-	EventTypePaperChangeMemberLinkPolicy                  = "paper_change_member_link_policy"
-	EventTypePaperChangeMemberPolicy                      = "paper_change_member_policy"
-	EventTypePaperChangePolicy                            = "paper_change_policy"
-	EventTypePaperDefaultFolderPolicyChanged              = "paper_default_folder_policy_changed"
-	EventTypePaperDesktopPolicyChanged                    = "paper_desktop_policy_changed"
-	EventTypePaperEnabledUsersGroupAddition               = "paper_enabled_users_group_addition"
-	EventTypePaperEnabledUsersGroupRemoval                = "paper_enabled_users_group_removal"
-	EventTypePermanentDeleteChangePolicy                  = "permanent_delete_change_policy"
-	EventTypeResellerSupportChangePolicy                  = "reseller_support_change_policy"
-	EventTypeSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
-	EventTypeSharingChangeLinkPolicy                      = "sharing_change_link_policy"
-	EventTypeSharingChangeMemberPolicy                    = "sharing_change_member_policy"
-	EventTypeShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
-	EventTypeShowcaseChangeEnabledPolicy                  = "showcase_change_enabled_policy"
-	EventTypeShowcaseChangeExternalSharingPolicy          = "showcase_change_external_sharing_policy"
-	EventTypeSmartSyncChangePolicy                        = "smart_sync_change_policy"
-	EventTypeSmartSyncNotOptOut                           = "smart_sync_not_opt_out"
-	EventTypeSmartSyncOptOut                              = "smart_sync_opt_out"
-	EventTypeSsoChangePolicy                              = "sso_change_policy"
-	EventTypeTeamExtensionsPolicyChanged                  = "team_extensions_policy_changed"
-	EventTypeTeamSelectiveSyncPolicyChanged               = "team_selective_sync_policy_changed"
-	EventTypeTfaChangePolicy                              = "tfa_change_policy"
-	EventTypeTwoAccountChangePolicy                       = "two_account_change_policy"
-	EventTypeViewerInfoPolicyChanged                      = "viewer_info_policy_changed"
-	EventTypeWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
-	EventTypeWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
-	EventTypeTeamMergeFrom                                = "team_merge_from"
-	EventTypeTeamMergeTo                                  = "team_merge_to"
-	EventTypeTeamProfileAddLogo                           = "team_profile_add_logo"
-	EventTypeTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
-	EventTypeTeamProfileChangeLogo                        = "team_profile_change_logo"
-	EventTypeTeamProfileChangeName                        = "team_profile_change_name"
-	EventTypeTeamProfileRemoveLogo                        = "team_profile_remove_logo"
-	EventTypeTfaAddBackupPhone                            = "tfa_add_backup_phone"
-	EventTypeTfaAddSecurityKey                            = "tfa_add_security_key"
-	EventTypeTfaChangeBackupPhone                         = "tfa_change_backup_phone"
-	EventTypeTfaChangeStatus                              = "tfa_change_status"
-	EventTypeTfaRemoveBackupPhone                         = "tfa_remove_backup_phone"
-	EventTypeTfaRemoveSecurityKey                         = "tfa_remove_security_key"
-	EventTypeTfaReset                                     = "tfa_reset"
-	EventTypeGuestAdminChangeStatus                       = "guest_admin_change_status"
-	EventTypeTeamMergeRequestAccepted                     = "team_merge_request_accepted"
-	EventTypeTeamMergeRequestAcceptedShownToPrimaryTeam   = "team_merge_request_accepted_shown_to_primary_team"
+	EventTypeAppLinkTeam = "app_link_team"
+	EventTypeAppLinkUser = "app_link_user"
+	EventTypeAppUnlinkTeam = "app_unlink_team"
+	EventTypeAppUnlinkUser = "app_unlink_user"
+	EventTypeIntegrationConnected = "integration_connected"
+	EventTypeIntegrationDisconnected = "integration_disconnected"
+	EventTypeFileAddComment = "file_add_comment"
+	EventTypeFileChangeCommentSubscription = "file_change_comment_subscription"
+	EventTypeFileDeleteComment = "file_delete_comment"
+	EventTypeFileEditComment = "file_edit_comment"
+	EventTypeFileLikeComment = "file_like_comment"
+	EventTypeFileResolveComment = "file_resolve_comment"
+	EventTypeFileUnlikeComment = "file_unlike_comment"
+	EventTypeFileUnresolveComment = "file_unresolve_comment"
+	EventTypeDeviceChangeIpDesktop = "device_change_ip_desktop"
+	EventTypeDeviceChangeIpMobile = "device_change_ip_mobile"
+	EventTypeDeviceChangeIpWeb = "device_change_ip_web"
+	EventTypeDeviceDeleteOnUnlinkFail = "device_delete_on_unlink_fail"
+	EventTypeDeviceDeleteOnUnlinkSuccess = "device_delete_on_unlink_success"
+	EventTypeDeviceLinkFail = "device_link_fail"
+	EventTypeDeviceLinkSuccess = "device_link_success"
+	EventTypeDeviceManagementDisabled = "device_management_disabled"
+	EventTypeDeviceManagementEnabled = "device_management_enabled"
+	EventTypeDeviceUnlink = "device_unlink"
+	EventTypeEmmRefreshAuthToken = "emm_refresh_auth_token"
+	EventTypeAccountCaptureChangeAvailability = "account_capture_change_availability"
+	EventTypeAccountCaptureMigrateAccount = "account_capture_migrate_account"
+	EventTypeAccountCaptureNotificationEmailsSent = "account_capture_notification_emails_sent"
+	EventTypeAccountCaptureRelinquishAccount = "account_capture_relinquish_account"
+	EventTypeDisabledDomainInvites = "disabled_domain_invites"
+	EventTypeDomainInvitesApproveRequestToJoinTeam = "domain_invites_approve_request_to_join_team"
+	EventTypeDomainInvitesDeclineRequestToJoinTeam = "domain_invites_decline_request_to_join_team"
+	EventTypeDomainInvitesEmailExistingUsers = "domain_invites_email_existing_users"
+	EventTypeDomainInvitesRequestToJoinTeam = "domain_invites_request_to_join_team"
+	EventTypeDomainInvitesSetInviteNewUserPrefToNo = "domain_invites_set_invite_new_user_pref_to_no"
+	EventTypeDomainInvitesSetInviteNewUserPrefToYes = "domain_invites_set_invite_new_user_pref_to_yes"
+	EventTypeDomainVerificationAddDomainFail = "domain_verification_add_domain_fail"
+	EventTypeDomainVerificationAddDomainSuccess = "domain_verification_add_domain_success"
+	EventTypeDomainVerificationRemoveDomain = "domain_verification_remove_domain"
+	EventTypeEnabledDomainInvites = "enabled_domain_invites"
+	EventTypeCreateFolder = "create_folder"
+	EventTypeFileAdd = "file_add"
+	EventTypeFileCopy = "file_copy"
+	EventTypeFileDelete = "file_delete"
+	EventTypeFileDownload = "file_download"
+	EventTypeFileEdit = "file_edit"
+	EventTypeFileGetCopyReference = "file_get_copy_reference"
+	EventTypeFileMove = "file_move"
+	EventTypeFilePermanentlyDelete = "file_permanently_delete"
+	EventTypeFilePreview = "file_preview"
+	EventTypeFileRename = "file_rename"
+	EventTypeFileRestore = "file_restore"
+	EventTypeFileRevert = "file_revert"
+	EventTypeFileRollbackChanges = "file_rollback_changes"
+	EventTypeFileSaveCopyReference = "file_save_copy_reference"
+	EventTypeFileRequestChange = "file_request_change"
+	EventTypeFileRequestClose = "file_request_close"
+	EventTypeFileRequestCreate = "file_request_create"
+	EventTypeFileRequestDelete = "file_request_delete"
+	EventTypeFileRequestReceiveFile = "file_request_receive_file"
+	EventTypeGroupAddExternalId = "group_add_external_id"
+	EventTypeGroupAddMember = "group_add_member"
+	EventTypeGroupChangeExternalId = "group_change_external_id"
+	EventTypeGroupChangeManagementType = "group_change_management_type"
+	EventTypeGroupChangeMemberRole = "group_change_member_role"
+	EventTypeGroupCreate = "group_create"
+	EventTypeGroupDelete = "group_delete"
+	EventTypeGroupDescriptionUpdated = "group_description_updated"
+	EventTypeGroupJoinPolicyUpdated = "group_join_policy_updated"
+	EventTypeGroupMoved = "group_moved"
+	EventTypeGroupRemoveExternalId = "group_remove_external_id"
+	EventTypeGroupRemoveMember = "group_remove_member"
+	EventTypeGroupRename = "group_rename"
+	EventTypeEmmError = "emm_error"
+	EventTypeGuestAdminSignedInViaTrustedTeams = "guest_admin_signed_in_via_trusted_teams"
+	EventTypeGuestAdminSignedOutViaTrustedTeams = "guest_admin_signed_out_via_trusted_teams"
+	EventTypeLoginFail = "login_fail"
+	EventTypeLoginSuccess = "login_success"
+	EventTypeLogout = "logout"
+	EventTypeResellerSupportSessionEnd = "reseller_support_session_end"
+	EventTypeResellerSupportSessionStart = "reseller_support_session_start"
+	EventTypeSignInAsSessionEnd = "sign_in_as_session_end"
+	EventTypeSignInAsSessionStart = "sign_in_as_session_start"
+	EventTypeSsoError = "sso_error"
+	EventTypeMemberAddExternalId = "member_add_external_id"
+	EventTypeMemberAddName = "member_add_name"
+	EventTypeMemberChangeAdminRole = "member_change_admin_role"
+	EventTypeMemberChangeEmail = "member_change_email"
+	EventTypeMemberChangeExternalId = "member_change_external_id"
+	EventTypeMemberChangeMembershipType = "member_change_membership_type"
+	EventTypeMemberChangeName = "member_change_name"
+	EventTypeMemberChangeStatus = "member_change_status"
+	EventTypeMemberDeleteManualContacts = "member_delete_manual_contacts"
+	EventTypeMemberPermanentlyDeleteAccountContents = "member_permanently_delete_account_contents"
+	EventTypeMemberRemoveExternalId = "member_remove_external_id"
+	EventTypeMemberSpaceLimitsAddCustomQuota = "member_space_limits_add_custom_quota"
+	EventTypeMemberSpaceLimitsChangeCustomQuota = "member_space_limits_change_custom_quota"
+	EventTypeMemberSpaceLimitsChangeStatus = "member_space_limits_change_status"
+	EventTypeMemberSpaceLimitsRemoveCustomQuota = "member_space_limits_remove_custom_quota"
+	EventTypeMemberSuggest = "member_suggest"
+	EventTypeMemberTransferAccountContents = "member_transfer_account_contents"
+	EventTypeSecondaryMailsPolicyChanged = "secondary_mails_policy_changed"
+	EventTypePaperContentAddMember = "paper_content_add_member"
+	EventTypePaperContentAddToFolder = "paper_content_add_to_folder"
+	EventTypePaperContentArchive = "paper_content_archive"
+	EventTypePaperContentCreate = "paper_content_create"
+	EventTypePaperContentPermanentlyDelete = "paper_content_permanently_delete"
+	EventTypePaperContentRemoveFromFolder = "paper_content_remove_from_folder"
+	EventTypePaperContentRemoveMember = "paper_content_remove_member"
+	EventTypePaperContentRename = "paper_content_rename"
+	EventTypePaperContentRestore = "paper_content_restore"
+	EventTypePaperDocAddComment = "paper_doc_add_comment"
+	EventTypePaperDocChangeMemberRole = "paper_doc_change_member_role"
+	EventTypePaperDocChangeSharingPolicy = "paper_doc_change_sharing_policy"
+	EventTypePaperDocChangeSubscription = "paper_doc_change_subscription"
+	EventTypePaperDocDeleted = "paper_doc_deleted"
+	EventTypePaperDocDeleteComment = "paper_doc_delete_comment"
+	EventTypePaperDocDownload = "paper_doc_download"
+	EventTypePaperDocEdit = "paper_doc_edit"
+	EventTypePaperDocEditComment = "paper_doc_edit_comment"
+	EventTypePaperDocFollowed = "paper_doc_followed"
+	EventTypePaperDocMention = "paper_doc_mention"
+	EventTypePaperDocOwnershipChanged = "paper_doc_ownership_changed"
+	EventTypePaperDocRequestAccess = "paper_doc_request_access"
+	EventTypePaperDocResolveComment = "paper_doc_resolve_comment"
+	EventTypePaperDocRevert = "paper_doc_revert"
+	EventTypePaperDocSlackShare = "paper_doc_slack_share"
+	EventTypePaperDocTeamInvite = "paper_doc_team_invite"
+	EventTypePaperDocTrashed = "paper_doc_trashed"
+	EventTypePaperDocUnresolveComment = "paper_doc_unresolve_comment"
+	EventTypePaperDocUntrashed = "paper_doc_untrashed"
+	EventTypePaperDocView = "paper_doc_view"
+	EventTypePaperExternalViewAllow = "paper_external_view_allow"
+	EventTypePaperExternalViewDefaultTeam = "paper_external_view_default_team"
+	EventTypePaperExternalViewForbid = "paper_external_view_forbid"
+	EventTypePaperFolderChangeSubscription = "paper_folder_change_subscription"
+	EventTypePaperFolderDeleted = "paper_folder_deleted"
+	EventTypePaperFolderFollowed = "paper_folder_followed"
+	EventTypePaperFolderTeamInvite = "paper_folder_team_invite"
+	EventTypePaperPublishedLinkCreate = "paper_published_link_create"
+	EventTypePaperPublishedLinkDisabled = "paper_published_link_disabled"
+	EventTypePaperPublishedLinkView = "paper_published_link_view"
+	EventTypePasswordChange = "password_change"
+	EventTypePasswordReset = "password_reset"
+	EventTypePasswordResetAll = "password_reset_all"
+	EventTypeEmmCreateExceptionsReport = "emm_create_exceptions_report"
+	EventTypeEmmCreateUsageReport = "emm_create_usage_report"
+	EventTypeExportMembersReport = "export_members_report"
+	EventTypePaperAdminExportStart = "paper_admin_export_start"
+	EventTypeSmartSyncCreateAdminPrivilegeReport = "smart_sync_create_admin_privilege_report"
+	EventTypeTeamActivityCreateReport = "team_activity_create_report"
+	EventTypeTeamActivityCreateReportFail = "team_activity_create_report_fail"
+	EventTypeCollectionShare = "collection_share"
+	EventTypeNoteAclInviteOnly = "note_acl_invite_only"
+	EventTypeNoteAclLink = "note_acl_link"
+	EventTypeNoteAclTeamLink = "note_acl_team_link"
+	EventTypeNoteShared = "note_shared"
+	EventTypeNoteShareReceive = "note_share_receive"
+	EventTypeOpenNoteShared = "open_note_shared"
+	EventTypeSfAddGroup = "sf_add_group"
+	EventTypeSfAllowNonMembersToViewSharedLinks = "sf_allow_non_members_to_view_shared_links"
+	EventTypeSfExternalInviteWarn = "sf_external_invite_warn"
+	EventTypeSfFbInvite = "sf_fb_invite"
+	EventTypeSfFbInviteChangeRole = "sf_fb_invite_change_role"
+	EventTypeSfFbUninvite = "sf_fb_uninvite"
+	EventTypeSfInviteGroup = "sf_invite_group"
+	EventTypeSfTeamGrantAccess = "sf_team_grant_access"
+	EventTypeSfTeamInvite = "sf_team_invite"
+	EventTypeSfTeamInviteChangeRole = "sf_team_invite_change_role"
+	EventTypeSfTeamJoin = "sf_team_join"
+	EventTypeSfTeamJoinFromOobLink = "sf_team_join_from_oob_link"
+	EventTypeSfTeamUninvite = "sf_team_uninvite"
+	EventTypeSharedContentAddInvitees = "shared_content_add_invitees"
+	EventTypeSharedContentAddLinkExpiry = "shared_content_add_link_expiry"
+	EventTypeSharedContentAddLinkPassword = "shared_content_add_link_password"
+	EventTypeSharedContentAddMember = "shared_content_add_member"
+	EventTypeSharedContentChangeDownloadsPolicy = "shared_content_change_downloads_policy"
+	EventTypeSharedContentChangeInviteeRole = "shared_content_change_invitee_role"
+	EventTypeSharedContentChangeLinkAudience = "shared_content_change_link_audience"
+	EventTypeSharedContentChangeLinkExpiry = "shared_content_change_link_expiry"
+	EventTypeSharedContentChangeLinkPassword = "shared_content_change_link_password"
+	EventTypeSharedContentChangeMemberRole = "shared_content_change_member_role"
+	EventTypeSharedContentChangeViewerInfoPolicy = "shared_content_change_viewer_info_policy"
+	EventTypeSharedContentClaimInvitation = "shared_content_claim_invitation"
+	EventTypeSharedContentCopy = "shared_content_copy"
+	EventTypeSharedContentDownload = "shared_content_download"
+	EventTypeSharedContentRelinquishMembership = "shared_content_relinquish_membership"
+	EventTypeSharedContentRemoveInvitees = "shared_content_remove_invitees"
+	EventTypeSharedContentRemoveLinkExpiry = "shared_content_remove_link_expiry"
+	EventTypeSharedContentRemoveLinkPassword = "shared_content_remove_link_password"
+	EventTypeSharedContentRemoveMember = "shared_content_remove_member"
+	EventTypeSharedContentRequestAccess = "shared_content_request_access"
+	EventTypeSharedContentUnshare = "shared_content_unshare"
+	EventTypeSharedContentView = "shared_content_view"
+	EventTypeSharedFolderChangeLinkPolicy = "shared_folder_change_link_policy"
+	EventTypeSharedFolderChangeMembersInheritancePolicy = "shared_folder_change_members_inheritance_policy"
+	EventTypeSharedFolderChangeMembersManagementPolicy = "shared_folder_change_members_management_policy"
+	EventTypeSharedFolderChangeMembersPolicy = "shared_folder_change_members_policy"
+	EventTypeSharedFolderCreate = "shared_folder_create"
+	EventTypeSharedFolderDeclineInvitation = "shared_folder_decline_invitation"
+	EventTypeSharedFolderMount = "shared_folder_mount"
+	EventTypeSharedFolderNest = "shared_folder_nest"
+	EventTypeSharedFolderTransferOwnership = "shared_folder_transfer_ownership"
+	EventTypeSharedFolderUnmount = "shared_folder_unmount"
+	EventTypeSharedLinkAddExpiry = "shared_link_add_expiry"
+	EventTypeSharedLinkChangeExpiry = "shared_link_change_expiry"
+	EventTypeSharedLinkChangeVisibility = "shared_link_change_visibility"
+	EventTypeSharedLinkCopy = "shared_link_copy"
+	EventTypeSharedLinkCreate = "shared_link_create"
+	EventTypeSharedLinkDisable = "shared_link_disable"
+	EventTypeSharedLinkDownload = "shared_link_download"
+	EventTypeSharedLinkRemoveExpiry = "shared_link_remove_expiry"
+	EventTypeSharedLinkShare = "shared_link_share"
+	EventTypeSharedLinkView = "shared_link_view"
+	EventTypeSharedNoteOpened = "shared_note_opened"
+	EventTypeShmodelGroupShare = "shmodel_group_share"
+	EventTypeShowcaseAccessGranted = "showcase_access_granted"
+	EventTypeShowcaseAddMember = "showcase_add_member"
+	EventTypeShowcaseArchived = "showcase_archived"
+	EventTypeShowcaseCreated = "showcase_created"
+	EventTypeShowcaseDeleteComment = "showcase_delete_comment"
+	EventTypeShowcaseEdited = "showcase_edited"
+	EventTypeShowcaseEditComment = "showcase_edit_comment"
+	EventTypeShowcaseFileAdded = "showcase_file_added"
+	EventTypeShowcaseFileDownload = "showcase_file_download"
+	EventTypeShowcaseFileRemoved = "showcase_file_removed"
+	EventTypeShowcaseFileView = "showcase_file_view"
+	EventTypeShowcasePermanentlyDeleted = "showcase_permanently_deleted"
+	EventTypeShowcasePostComment = "showcase_post_comment"
+	EventTypeShowcaseRemoveMember = "showcase_remove_member"
+	EventTypeShowcaseRenamed = "showcase_renamed"
+	EventTypeShowcaseRequestAccess = "showcase_request_access"
+	EventTypeShowcaseResolveComment = "showcase_resolve_comment"
+	EventTypeShowcaseRestored = "showcase_restored"
+	EventTypeShowcaseTrashed = "showcase_trashed"
+	EventTypeShowcaseTrashedDeprecated = "showcase_trashed_deprecated"
+	EventTypeShowcaseUnresolveComment = "showcase_unresolve_comment"
+	EventTypeShowcaseUntrashed = "showcase_untrashed"
+	EventTypeShowcaseUntrashedDeprecated = "showcase_untrashed_deprecated"
+	EventTypeShowcaseView = "showcase_view"
+	EventTypeSsoAddCert = "sso_add_cert"
+	EventTypeSsoAddLoginUrl = "sso_add_login_url"
+	EventTypeSsoAddLogoutUrl = "sso_add_logout_url"
+	EventTypeSsoChangeCert = "sso_change_cert"
+	EventTypeSsoChangeLoginUrl = "sso_change_login_url"
+	EventTypeSsoChangeLogoutUrl = "sso_change_logout_url"
+	EventTypeSsoChangeSamlIdentityMode = "sso_change_saml_identity_mode"
+	EventTypeSsoRemoveCert = "sso_remove_cert"
+	EventTypeSsoRemoveLoginUrl = "sso_remove_login_url"
+	EventTypeSsoRemoveLogoutUrl = "sso_remove_logout_url"
+	EventTypeTeamFolderChangeStatus = "team_folder_change_status"
+	EventTypeTeamFolderCreate = "team_folder_create"
+	EventTypeTeamFolderDowngrade = "team_folder_downgrade"
+	EventTypeTeamFolderPermanentlyDelete = "team_folder_permanently_delete"
+	EventTypeTeamFolderRename = "team_folder_rename"
+	EventTypeTeamSelectiveSyncSettingsChanged = "team_selective_sync_settings_changed"
+	EventTypeAccountCaptureChangePolicy = "account_capture_change_policy"
+	EventTypeAllowDownloadDisabled = "allow_download_disabled"
+	EventTypeAllowDownloadEnabled = "allow_download_enabled"
+	EventTypeCameraUploadsPolicyChanged = "camera_uploads_policy_changed"
+	EventTypeDataPlacementRestrictionChangePolicy = "data_placement_restriction_change_policy"
+	EventTypeDataPlacementRestrictionSatisfyPolicy = "data_placement_restriction_satisfy_policy"
+	EventTypeDeviceApprovalsChangeDesktopPolicy = "device_approvals_change_desktop_policy"
+	EventTypeDeviceApprovalsChangeMobilePolicy = "device_approvals_change_mobile_policy"
+	EventTypeDeviceApprovalsChangeOverageAction = "device_approvals_change_overage_action"
+	EventTypeDeviceApprovalsChangeUnlinkAction = "device_approvals_change_unlink_action"
+	EventTypeDirectoryRestrictionsAddMembers = "directory_restrictions_add_members"
+	EventTypeDirectoryRestrictionsRemoveMembers = "directory_restrictions_remove_members"
+	EventTypeEmmAddException = "emm_add_exception"
+	EventTypeEmmChangePolicy = "emm_change_policy"
+	EventTypeEmmRemoveException = "emm_remove_exception"
+	EventTypeExtendedVersionHistoryChangePolicy = "extended_version_history_change_policy"
+	EventTypeFileCommentsChangePolicy = "file_comments_change_policy"
+	EventTypeFileRequestsChangePolicy = "file_requests_change_policy"
+	EventTypeFileRequestsEmailsEnabled = "file_requests_emails_enabled"
+	EventTypeFileRequestsEmailsRestrictedToTeamOnly = "file_requests_emails_restricted_to_team_only"
+	EventTypeGoogleSsoChangePolicy = "google_sso_change_policy"
+	EventTypeGroupUserManagementChangePolicy = "group_user_management_change_policy"
+	EventTypeIntegrationPolicyChanged = "integration_policy_changed"
+	EventTypeMemberRequestsChangePolicy = "member_requests_change_policy"
+	EventTypeMemberSpaceLimitsAddException = "member_space_limits_add_exception"
+	EventTypeMemberSpaceLimitsChangeCapsTypePolicy = "member_space_limits_change_caps_type_policy"
+	EventTypeMemberSpaceLimitsChangePolicy = "member_space_limits_change_policy"
+	EventTypeMemberSpaceLimitsRemoveException = "member_space_limits_remove_exception"
+	EventTypeMemberSuggestionsChangePolicy = "member_suggestions_change_policy"
+	EventTypeMicrosoftOfficeAddinChangePolicy = "microsoft_office_addin_change_policy"
+	EventTypeNetworkControlChangePolicy = "network_control_change_policy"
+	EventTypePaperChangeDeploymentPolicy = "paper_change_deployment_policy"
+	EventTypePaperChangeMemberLinkPolicy = "paper_change_member_link_policy"
+	EventTypePaperChangeMemberPolicy = "paper_change_member_policy"
+	EventTypePaperChangePolicy = "paper_change_policy"
+	EventTypePaperDefaultFolderPolicyChanged = "paper_default_folder_policy_changed"
+	EventTypePaperDesktopPolicyChanged = "paper_desktop_policy_changed"
+	EventTypePaperEnabledUsersGroupAddition = "paper_enabled_users_group_addition"
+	EventTypePaperEnabledUsersGroupRemoval = "paper_enabled_users_group_removal"
+	EventTypePermanentDeleteChangePolicy = "permanent_delete_change_policy"
+	EventTypeResellerSupportChangePolicy = "reseller_support_change_policy"
+	EventTypeSharingChangeFolderJoinPolicy = "sharing_change_folder_join_policy"
+	EventTypeSharingChangeLinkPolicy = "sharing_change_link_policy"
+	EventTypeSharingChangeMemberPolicy = "sharing_change_member_policy"
+	EventTypeShowcaseChangeDownloadPolicy = "showcase_change_download_policy"
+	EventTypeShowcaseChangeEnabledPolicy = "showcase_change_enabled_policy"
+	EventTypeShowcaseChangeExternalSharingPolicy = "showcase_change_external_sharing_policy"
+	EventTypeSmartSyncChangePolicy = "smart_sync_change_policy"
+	EventTypeSmartSyncNotOptOut = "smart_sync_not_opt_out"
+	EventTypeSmartSyncOptOut = "smart_sync_opt_out"
+	EventTypeSsoChangePolicy = "sso_change_policy"
+	EventTypeTeamExtensionsPolicyChanged = "team_extensions_policy_changed"
+	EventTypeTeamSelectiveSyncPolicyChanged = "team_selective_sync_policy_changed"
+	EventTypeTfaChangePolicy = "tfa_change_policy"
+	EventTypeTwoAccountChangePolicy = "two_account_change_policy"
+	EventTypeViewerInfoPolicyChanged = "viewer_info_policy_changed"
+	EventTypeWebSessionsChangeFixedLengthPolicy = "web_sessions_change_fixed_length_policy"
+	EventTypeWebSessionsChangeIdleLengthPolicy = "web_sessions_change_idle_length_policy"
+	EventTypeTeamMergeFrom = "team_merge_from"
+	EventTypeTeamMergeTo = "team_merge_to"
+	EventTypeTeamProfileAddLogo = "team_profile_add_logo"
+	EventTypeTeamProfileChangeDefaultLanguage = "team_profile_change_default_language"
+	EventTypeTeamProfileChangeLogo = "team_profile_change_logo"
+	EventTypeTeamProfileChangeName = "team_profile_change_name"
+	EventTypeTeamProfileRemoveLogo = "team_profile_remove_logo"
+	EventTypeTfaAddBackupPhone = "tfa_add_backup_phone"
+	EventTypeTfaAddSecurityKey = "tfa_add_security_key"
+	EventTypeTfaChangeBackupPhone = "tfa_change_backup_phone"
+	EventTypeTfaChangeStatus = "tfa_change_status"
+	EventTypeTfaRemoveBackupPhone = "tfa_remove_backup_phone"
+	EventTypeTfaRemoveSecurityKey = "tfa_remove_security_key"
+	EventTypeTfaReset = "tfa_reset"
+	EventTypeGuestAdminChangeStatus = "guest_admin_change_status"
+	EventTypeTeamMergeRequestAccepted = "team_merge_request_accepted"
+	EventTypeTeamMergeRequestAcceptedShownToPrimaryTeam = "team_merge_request_accepted_shown_to_primary_team"
 	EventTypeTeamMergeRequestAcceptedShownToSecondaryTeam = "team_merge_request_accepted_shown_to_secondary_team"
-	EventTypeTeamMergeRequestAutoCanceled                 = "team_merge_request_auto_canceled"
-	EventTypeTeamMergeRequestCanceled                     = "team_merge_request_canceled"
-	EventTypeTeamMergeRequestCanceledShownToPrimaryTeam   = "team_merge_request_canceled_shown_to_primary_team"
+	EventTypeTeamMergeRequestAutoCanceled = "team_merge_request_auto_canceled"
+	EventTypeTeamMergeRequestCanceled = "team_merge_request_canceled"
+	EventTypeTeamMergeRequestCanceledShownToPrimaryTeam = "team_merge_request_canceled_shown_to_primary_team"
 	EventTypeTeamMergeRequestCanceledShownToSecondaryTeam = "team_merge_request_canceled_shown_to_secondary_team"
-	EventTypeTeamMergeRequestExpired                      = "team_merge_request_expired"
-	EventTypeTeamMergeRequestExpiredShownToPrimaryTeam    = "team_merge_request_expired_shown_to_primary_team"
-	EventTypeTeamMergeRequestExpiredShownToSecondaryTeam  = "team_merge_request_expired_shown_to_secondary_team"
-	EventTypeTeamMergeRequestRejectedShownToPrimaryTeam   = "team_merge_request_rejected_shown_to_primary_team"
+	EventTypeTeamMergeRequestExpired = "team_merge_request_expired"
+	EventTypeTeamMergeRequestExpiredShownToPrimaryTeam = "team_merge_request_expired_shown_to_primary_team"
+	EventTypeTeamMergeRequestExpiredShownToSecondaryTeam = "team_merge_request_expired_shown_to_secondary_team"
+	EventTypeTeamMergeRequestRejectedShownToPrimaryTeam = "team_merge_request_rejected_shown_to_primary_team"
 	EventTypeTeamMergeRequestRejectedShownToSecondaryTeam = "team_merge_request_rejected_shown_to_secondary_team"
-	EventTypeTeamMergeRequestReminder                     = "team_merge_request_reminder"
-	EventTypeTeamMergeRequestReminderShownToPrimaryTeam   = "team_merge_request_reminder_shown_to_primary_team"
+	EventTypeTeamMergeRequestReminder = "team_merge_request_reminder"
+	EventTypeTeamMergeRequestReminderShownToPrimaryTeam = "team_merge_request_reminder_shown_to_primary_team"
 	EventTypeTeamMergeRequestReminderShownToSecondaryTeam = "team_merge_request_reminder_shown_to_secondary_team"
-	EventTypeTeamMergeRequestRevoked                      = "team_merge_request_revoked"
-	EventTypeTeamMergeRequestSentShownToPrimaryTeam       = "team_merge_request_sent_shown_to_primary_team"
-	EventTypeTeamMergeRequestSentShownToSecondaryTeam     = "team_merge_request_sent_shown_to_secondary_team"
-	EventTypeOther                                        = "other"
+	EventTypeTeamMergeRequestRevoked = "team_merge_request_revoked"
+	EventTypeTeamMergeRequestSentShownToPrimaryTeam = "team_merge_request_sent_shown_to_primary_team"
+	EventTypeTeamMergeRequestSentShownToSecondaryTeam = "team_merge_request_sent_shown_to_secondary_team"
+	EventTypeOther = "other"
 )
 
 // UnmarshalJSON deserializes into a EventType instance
@@ -6730,2084 +6794,2084 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "app_link_team":
-		err = json.Unmarshal(body, &u.AppLinkTeam)
+		case "app_link_team":
+			err = json.Unmarshal(body, &u.AppLinkTeam)
 
 		if err != nil {
 			return err
 		}
-	case "app_link_user":
-		err = json.Unmarshal(body, &u.AppLinkUser)
+		case "app_link_user":
+			err = json.Unmarshal(body, &u.AppLinkUser)
 
 		if err != nil {
 			return err
 		}
-	case "app_unlink_team":
-		err = json.Unmarshal(body, &u.AppUnlinkTeam)
+		case "app_unlink_team":
+			err = json.Unmarshal(body, &u.AppUnlinkTeam)
 
 		if err != nil {
 			return err
 		}
-	case "app_unlink_user":
-		err = json.Unmarshal(body, &u.AppUnlinkUser)
+		case "app_unlink_user":
+			err = json.Unmarshal(body, &u.AppUnlinkUser)
 
 		if err != nil {
 			return err
 		}
-	case "integration_connected":
-		err = json.Unmarshal(body, &u.IntegrationConnected)
+		case "integration_connected":
+			err = json.Unmarshal(body, &u.IntegrationConnected)
 
 		if err != nil {
 			return err
 		}
-	case "integration_disconnected":
-		err = json.Unmarshal(body, &u.IntegrationDisconnected)
+		case "integration_disconnected":
+			err = json.Unmarshal(body, &u.IntegrationDisconnected)
 
 		if err != nil {
 			return err
 		}
-	case "file_add_comment":
-		err = json.Unmarshal(body, &u.FileAddComment)
+		case "file_add_comment":
+			err = json.Unmarshal(body, &u.FileAddComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_change_comment_subscription":
-		err = json.Unmarshal(body, &u.FileChangeCommentSubscription)
+		case "file_change_comment_subscription":
+			err = json.Unmarshal(body, &u.FileChangeCommentSubscription)
 
 		if err != nil {
 			return err
 		}
-	case "file_delete_comment":
-		err = json.Unmarshal(body, &u.FileDeleteComment)
+		case "file_delete_comment":
+			err = json.Unmarshal(body, &u.FileDeleteComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_edit_comment":
-		err = json.Unmarshal(body, &u.FileEditComment)
+		case "file_edit_comment":
+			err = json.Unmarshal(body, &u.FileEditComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_like_comment":
-		err = json.Unmarshal(body, &u.FileLikeComment)
+		case "file_like_comment":
+			err = json.Unmarshal(body, &u.FileLikeComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_resolve_comment":
-		err = json.Unmarshal(body, &u.FileResolveComment)
+		case "file_resolve_comment":
+			err = json.Unmarshal(body, &u.FileResolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_unlike_comment":
-		err = json.Unmarshal(body, &u.FileUnlikeComment)
+		case "file_unlike_comment":
+			err = json.Unmarshal(body, &u.FileUnlikeComment)
 
 		if err != nil {
 			return err
 		}
-	case "file_unresolve_comment":
-		err = json.Unmarshal(body, &u.FileUnresolveComment)
+		case "file_unresolve_comment":
+			err = json.Unmarshal(body, &u.FileUnresolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_desktop":
-		err = json.Unmarshal(body, &u.DeviceChangeIpDesktop)
+		case "device_change_ip_desktop":
+			err = json.Unmarshal(body, &u.DeviceChangeIpDesktop)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_mobile":
-		err = json.Unmarshal(body, &u.DeviceChangeIpMobile)
+		case "device_change_ip_mobile":
+			err = json.Unmarshal(body, &u.DeviceChangeIpMobile)
 
 		if err != nil {
 			return err
 		}
-	case "device_change_ip_web":
-		err = json.Unmarshal(body, &u.DeviceChangeIpWeb)
+		case "device_change_ip_web":
+			err = json.Unmarshal(body, &u.DeviceChangeIpWeb)
 
 		if err != nil {
 			return err
 		}
-	case "device_delete_on_unlink_fail":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFail)
+		case "device_delete_on_unlink_fail":
+			err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFail)
 
 		if err != nil {
 			return err
 		}
-	case "device_delete_on_unlink_success":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccess)
+		case "device_delete_on_unlink_success":
+			err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccess)
 
 		if err != nil {
 			return err
 		}
-	case "device_link_fail":
-		err = json.Unmarshal(body, &u.DeviceLinkFail)
+		case "device_link_fail":
+			err = json.Unmarshal(body, &u.DeviceLinkFail)
 
 		if err != nil {
 			return err
 		}
-	case "device_link_success":
-		err = json.Unmarshal(body, &u.DeviceLinkSuccess)
+		case "device_link_success":
+			err = json.Unmarshal(body, &u.DeviceLinkSuccess)
 
 		if err != nil {
 			return err
 		}
-	case "device_management_disabled":
-		err = json.Unmarshal(body, &u.DeviceManagementDisabled)
+		case "device_management_disabled":
+			err = json.Unmarshal(body, &u.DeviceManagementDisabled)
 
 		if err != nil {
 			return err
 		}
-	case "device_management_enabled":
-		err = json.Unmarshal(body, &u.DeviceManagementEnabled)
+		case "device_management_enabled":
+			err = json.Unmarshal(body, &u.DeviceManagementEnabled)
 
 		if err != nil {
 			return err
 		}
-	case "device_unlink":
-		err = json.Unmarshal(body, &u.DeviceUnlink)
+		case "device_unlink":
+			err = json.Unmarshal(body, &u.DeviceUnlink)
 
 		if err != nil {
 			return err
 		}
-	case "emm_refresh_auth_token":
-		err = json.Unmarshal(body, &u.EmmRefreshAuthToken)
+		case "emm_refresh_auth_token":
+			err = json.Unmarshal(body, &u.EmmRefreshAuthToken)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_change_availability":
-		err = json.Unmarshal(body, &u.AccountCaptureChangeAvailability)
+		case "account_capture_change_availability":
+			err = json.Unmarshal(body, &u.AccountCaptureChangeAvailability)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_migrate_account":
-		err = json.Unmarshal(body, &u.AccountCaptureMigrateAccount)
+		case "account_capture_migrate_account":
+			err = json.Unmarshal(body, &u.AccountCaptureMigrateAccount)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_notification_emails_sent":
-		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSent)
+		case "account_capture_notification_emails_sent":
+			err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSent)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_relinquish_account":
-		err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccount)
+		case "account_capture_relinquish_account":
+			err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccount)
 
 		if err != nil {
 			return err
 		}
-	case "disabled_domain_invites":
-		err = json.Unmarshal(body, &u.DisabledDomainInvites)
+		case "disabled_domain_invites":
+			err = json.Unmarshal(body, &u.DisabledDomainInvites)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_approve_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeam)
+		case "domain_invites_approve_request_to_join_team":
+			err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeam)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_decline_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeam)
+		case "domain_invites_decline_request_to_join_team":
+			err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeam)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_email_existing_users":
-		err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsers)
+		case "domain_invites_email_existing_users":
+			err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsers)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeam)
+		case "domain_invites_request_to_join_team":
+			err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeam)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_set_invite_new_user_pref_to_no":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNo)
+		case "domain_invites_set_invite_new_user_pref_to_no":
+			err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNo)
 
 		if err != nil {
 			return err
 		}
-	case "domain_invites_set_invite_new_user_pref_to_yes":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYes)
+		case "domain_invites_set_invite_new_user_pref_to_yes":
+			err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYes)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_add_domain_fail":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainFail)
+		case "domain_verification_add_domain_fail":
+			err = json.Unmarshal(body, &u.DomainVerificationAddDomainFail)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_add_domain_success":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccess)
+		case "domain_verification_add_domain_success":
+			err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccess)
 
 		if err != nil {
 			return err
 		}
-	case "domain_verification_remove_domain":
-		err = json.Unmarshal(body, &u.DomainVerificationRemoveDomain)
+		case "domain_verification_remove_domain":
+			err = json.Unmarshal(body, &u.DomainVerificationRemoveDomain)
 
 		if err != nil {
 			return err
 		}
-	case "enabled_domain_invites":
-		err = json.Unmarshal(body, &u.EnabledDomainInvites)
+		case "enabled_domain_invites":
+			err = json.Unmarshal(body, &u.EnabledDomainInvites)
 
 		if err != nil {
 			return err
 		}
-	case "create_folder":
-		err = json.Unmarshal(body, &u.CreateFolder)
+		case "create_folder":
+			err = json.Unmarshal(body, &u.CreateFolder)
 
 		if err != nil {
 			return err
 		}
-	case "file_add":
-		err = json.Unmarshal(body, &u.FileAdd)
+		case "file_add":
+			err = json.Unmarshal(body, &u.FileAdd)
 
 		if err != nil {
 			return err
 		}
-	case "file_copy":
-		err = json.Unmarshal(body, &u.FileCopy)
+		case "file_copy":
+			err = json.Unmarshal(body, &u.FileCopy)
 
 		if err != nil {
 			return err
 		}
-	case "file_delete":
-		err = json.Unmarshal(body, &u.FileDelete)
+		case "file_delete":
+			err = json.Unmarshal(body, &u.FileDelete)
 
 		if err != nil {
 			return err
 		}
-	case "file_download":
-		err = json.Unmarshal(body, &u.FileDownload)
+		case "file_download":
+			err = json.Unmarshal(body, &u.FileDownload)
 
 		if err != nil {
 			return err
 		}
-	case "file_edit":
-		err = json.Unmarshal(body, &u.FileEdit)
+		case "file_edit":
+			err = json.Unmarshal(body, &u.FileEdit)
 
 		if err != nil {
 			return err
 		}
-	case "file_get_copy_reference":
-		err = json.Unmarshal(body, &u.FileGetCopyReference)
+		case "file_get_copy_reference":
+			err = json.Unmarshal(body, &u.FileGetCopyReference)
 
 		if err != nil {
 			return err
 		}
-	case "file_move":
-		err = json.Unmarshal(body, &u.FileMove)
+		case "file_move":
+			err = json.Unmarshal(body, &u.FileMove)
 
 		if err != nil {
 			return err
 		}
-	case "file_permanently_delete":
-		err = json.Unmarshal(body, &u.FilePermanentlyDelete)
+		case "file_permanently_delete":
+			err = json.Unmarshal(body, &u.FilePermanentlyDelete)
 
 		if err != nil {
 			return err
 		}
-	case "file_preview":
-		err = json.Unmarshal(body, &u.FilePreview)
+		case "file_preview":
+			err = json.Unmarshal(body, &u.FilePreview)
 
 		if err != nil {
 			return err
 		}
-	case "file_rename":
-		err = json.Unmarshal(body, &u.FileRename)
+		case "file_rename":
+			err = json.Unmarshal(body, &u.FileRename)
 
 		if err != nil {
 			return err
 		}
-	case "file_restore":
-		err = json.Unmarshal(body, &u.FileRestore)
+		case "file_restore":
+			err = json.Unmarshal(body, &u.FileRestore)
 
 		if err != nil {
 			return err
 		}
-	case "file_revert":
-		err = json.Unmarshal(body, &u.FileRevert)
+		case "file_revert":
+			err = json.Unmarshal(body, &u.FileRevert)
 
 		if err != nil {
 			return err
 		}
-	case "file_rollback_changes":
-		err = json.Unmarshal(body, &u.FileRollbackChanges)
+		case "file_rollback_changes":
+			err = json.Unmarshal(body, &u.FileRollbackChanges)
 
 		if err != nil {
 			return err
 		}
-	case "file_save_copy_reference":
-		err = json.Unmarshal(body, &u.FileSaveCopyReference)
+		case "file_save_copy_reference":
+			err = json.Unmarshal(body, &u.FileSaveCopyReference)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_change":
-		err = json.Unmarshal(body, &u.FileRequestChange)
+		case "file_request_change":
+			err = json.Unmarshal(body, &u.FileRequestChange)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_close":
-		err = json.Unmarshal(body, &u.FileRequestClose)
+		case "file_request_close":
+			err = json.Unmarshal(body, &u.FileRequestClose)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_create":
-		err = json.Unmarshal(body, &u.FileRequestCreate)
+		case "file_request_create":
+			err = json.Unmarshal(body, &u.FileRequestCreate)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_delete":
-		err = json.Unmarshal(body, &u.FileRequestDelete)
+		case "file_request_delete":
+			err = json.Unmarshal(body, &u.FileRequestDelete)
 
 		if err != nil {
 			return err
 		}
-	case "file_request_receive_file":
-		err = json.Unmarshal(body, &u.FileRequestReceiveFile)
+		case "file_request_receive_file":
+			err = json.Unmarshal(body, &u.FileRequestReceiveFile)
 
 		if err != nil {
 			return err
 		}
-	case "group_add_external_id":
-		err = json.Unmarshal(body, &u.GroupAddExternalId)
+		case "group_add_external_id":
+			err = json.Unmarshal(body, &u.GroupAddExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "group_add_member":
-		err = json.Unmarshal(body, &u.GroupAddMember)
+		case "group_add_member":
+			err = json.Unmarshal(body, &u.GroupAddMember)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_external_id":
-		err = json.Unmarshal(body, &u.GroupChangeExternalId)
+		case "group_change_external_id":
+			err = json.Unmarshal(body, &u.GroupChangeExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_management_type":
-		err = json.Unmarshal(body, &u.GroupChangeManagementType)
+		case "group_change_management_type":
+			err = json.Unmarshal(body, &u.GroupChangeManagementType)
 
 		if err != nil {
 			return err
 		}
-	case "group_change_member_role":
-		err = json.Unmarshal(body, &u.GroupChangeMemberRole)
+		case "group_change_member_role":
+			err = json.Unmarshal(body, &u.GroupChangeMemberRole)
 
 		if err != nil {
 			return err
 		}
-	case "group_create":
-		err = json.Unmarshal(body, &u.GroupCreate)
+		case "group_create":
+			err = json.Unmarshal(body, &u.GroupCreate)
 
 		if err != nil {
 			return err
 		}
-	case "group_delete":
-		err = json.Unmarshal(body, &u.GroupDelete)
+		case "group_delete":
+			err = json.Unmarshal(body, &u.GroupDelete)
 
 		if err != nil {
 			return err
 		}
-	case "group_description_updated":
-		err = json.Unmarshal(body, &u.GroupDescriptionUpdated)
+		case "group_description_updated":
+			err = json.Unmarshal(body, &u.GroupDescriptionUpdated)
 
 		if err != nil {
 			return err
 		}
-	case "group_join_policy_updated":
-		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdated)
+		case "group_join_policy_updated":
+			err = json.Unmarshal(body, &u.GroupJoinPolicyUpdated)
 
 		if err != nil {
 			return err
 		}
-	case "group_moved":
-		err = json.Unmarshal(body, &u.GroupMoved)
+		case "group_moved":
+			err = json.Unmarshal(body, &u.GroupMoved)
 
 		if err != nil {
 			return err
 		}
-	case "group_remove_external_id":
-		err = json.Unmarshal(body, &u.GroupRemoveExternalId)
+		case "group_remove_external_id":
+			err = json.Unmarshal(body, &u.GroupRemoveExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "group_remove_member":
-		err = json.Unmarshal(body, &u.GroupRemoveMember)
+		case "group_remove_member":
+			err = json.Unmarshal(body, &u.GroupRemoveMember)
 
 		if err != nil {
 			return err
 		}
-	case "group_rename":
-		err = json.Unmarshal(body, &u.GroupRename)
+		case "group_rename":
+			err = json.Unmarshal(body, &u.GroupRename)
 
 		if err != nil {
 			return err
 		}
-	case "emm_error":
-		err = json.Unmarshal(body, &u.EmmError)
+		case "emm_error":
+			err = json.Unmarshal(body, &u.EmmError)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_signed_in_via_trusted_teams":
-		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeams)
+		case "guest_admin_signed_in_via_trusted_teams":
+			err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeams)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_signed_out_via_trusted_teams":
-		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeams)
+		case "guest_admin_signed_out_via_trusted_teams":
+			err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeams)
 
 		if err != nil {
 			return err
 		}
-	case "login_fail":
-		err = json.Unmarshal(body, &u.LoginFail)
+		case "login_fail":
+			err = json.Unmarshal(body, &u.LoginFail)
 
 		if err != nil {
 			return err
 		}
-	case "login_success":
-		err = json.Unmarshal(body, &u.LoginSuccess)
+		case "login_success":
+			err = json.Unmarshal(body, &u.LoginSuccess)
 
 		if err != nil {
 			return err
 		}
-	case "logout":
-		err = json.Unmarshal(body, &u.Logout)
+		case "logout":
+			err = json.Unmarshal(body, &u.Logout)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_session_end":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionEnd)
+		case "reseller_support_session_end":
+			err = json.Unmarshal(body, &u.ResellerSupportSessionEnd)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_session_start":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionStart)
+		case "reseller_support_session_start":
+			err = json.Unmarshal(body, &u.ResellerSupportSessionStart)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as_session_end":
-		err = json.Unmarshal(body, &u.SignInAsSessionEnd)
+		case "sign_in_as_session_end":
+			err = json.Unmarshal(body, &u.SignInAsSessionEnd)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as_session_start":
-		err = json.Unmarshal(body, &u.SignInAsSessionStart)
+		case "sign_in_as_session_start":
+			err = json.Unmarshal(body, &u.SignInAsSessionStart)
 
 		if err != nil {
 			return err
 		}
-	case "sso_error":
-		err = json.Unmarshal(body, &u.SsoError)
+		case "sso_error":
+			err = json.Unmarshal(body, &u.SsoError)
 
 		if err != nil {
 			return err
 		}
-	case "member_add_external_id":
-		err = json.Unmarshal(body, &u.MemberAddExternalId)
+		case "member_add_external_id":
+			err = json.Unmarshal(body, &u.MemberAddExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "member_add_name":
-		err = json.Unmarshal(body, &u.MemberAddName)
+		case "member_add_name":
+			err = json.Unmarshal(body, &u.MemberAddName)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_admin_role":
-		err = json.Unmarshal(body, &u.MemberChangeAdminRole)
+		case "member_change_admin_role":
+			err = json.Unmarshal(body, &u.MemberChangeAdminRole)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_email":
-		err = json.Unmarshal(body, &u.MemberChangeEmail)
+		case "member_change_email":
+			err = json.Unmarshal(body, &u.MemberChangeEmail)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_external_id":
-		err = json.Unmarshal(body, &u.MemberChangeExternalId)
+		case "member_change_external_id":
+			err = json.Unmarshal(body, &u.MemberChangeExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_membership_type":
-		err = json.Unmarshal(body, &u.MemberChangeMembershipType)
+		case "member_change_membership_type":
+			err = json.Unmarshal(body, &u.MemberChangeMembershipType)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_name":
-		err = json.Unmarshal(body, &u.MemberChangeName)
+		case "member_change_name":
+			err = json.Unmarshal(body, &u.MemberChangeName)
 
 		if err != nil {
 			return err
 		}
-	case "member_change_status":
-		err = json.Unmarshal(body, &u.MemberChangeStatus)
+		case "member_change_status":
+			err = json.Unmarshal(body, &u.MemberChangeStatus)
 
 		if err != nil {
 			return err
 		}
-	case "member_delete_manual_contacts":
-		err = json.Unmarshal(body, &u.MemberDeleteManualContacts)
+		case "member_delete_manual_contacts":
+			err = json.Unmarshal(body, &u.MemberDeleteManualContacts)
 
 		if err != nil {
 			return err
 		}
-	case "member_permanently_delete_account_contents":
-		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents)
+		case "member_permanently_delete_account_contents":
+			err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents)
 
 		if err != nil {
 			return err
 		}
-	case "member_remove_external_id":
-		err = json.Unmarshal(body, &u.MemberRemoveExternalId)
+		case "member_remove_external_id":
+			err = json.Unmarshal(body, &u.MemberRemoveExternalId)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_add_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuota)
+		case "member_space_limits_add_custom_quota":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuota)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuota)
+		case "member_space_limits_change_custom_quota":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuota)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_status":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatus)
+		case "member_space_limits_change_status":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatus)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_remove_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuota)
+		case "member_space_limits_remove_custom_quota":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuota)
 
 		if err != nil {
 			return err
 		}
-	case "member_suggest":
-		err = json.Unmarshal(body, &u.MemberSuggest)
+		case "member_suggest":
+			err = json.Unmarshal(body, &u.MemberSuggest)
 
 		if err != nil {
 			return err
 		}
-	case "member_transfer_account_contents":
-		err = json.Unmarshal(body, &u.MemberTransferAccountContents)
+		case "member_transfer_account_contents":
+			err = json.Unmarshal(body, &u.MemberTransferAccountContents)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_mails_policy_changed":
-		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged)
+		case "secondary_mails_policy_changed":
+			err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_add_member":
-		err = json.Unmarshal(body, &u.PaperContentAddMember)
+		case "paper_content_add_member":
+			err = json.Unmarshal(body, &u.PaperContentAddMember)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_add_to_folder":
-		err = json.Unmarshal(body, &u.PaperContentAddToFolder)
+		case "paper_content_add_to_folder":
+			err = json.Unmarshal(body, &u.PaperContentAddToFolder)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_archive":
-		err = json.Unmarshal(body, &u.PaperContentArchive)
+		case "paper_content_archive":
+			err = json.Unmarshal(body, &u.PaperContentArchive)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_create":
-		err = json.Unmarshal(body, &u.PaperContentCreate)
+		case "paper_content_create":
+			err = json.Unmarshal(body, &u.PaperContentCreate)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_permanently_delete":
-		err = json.Unmarshal(body, &u.PaperContentPermanentlyDelete)
+		case "paper_content_permanently_delete":
+			err = json.Unmarshal(body, &u.PaperContentPermanentlyDelete)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_remove_from_folder":
-		err = json.Unmarshal(body, &u.PaperContentRemoveFromFolder)
+		case "paper_content_remove_from_folder":
+			err = json.Unmarshal(body, &u.PaperContentRemoveFromFolder)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_remove_member":
-		err = json.Unmarshal(body, &u.PaperContentRemoveMember)
+		case "paper_content_remove_member":
+			err = json.Unmarshal(body, &u.PaperContentRemoveMember)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_rename":
-		err = json.Unmarshal(body, &u.PaperContentRename)
+		case "paper_content_rename":
+			err = json.Unmarshal(body, &u.PaperContentRename)
 
 		if err != nil {
 			return err
 		}
-	case "paper_content_restore":
-		err = json.Unmarshal(body, &u.PaperContentRestore)
+		case "paper_content_restore":
+			err = json.Unmarshal(body, &u.PaperContentRestore)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_add_comment":
-		err = json.Unmarshal(body, &u.PaperDocAddComment)
+		case "paper_doc_add_comment":
+			err = json.Unmarshal(body, &u.PaperDocAddComment)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_member_role":
-		err = json.Unmarshal(body, &u.PaperDocChangeMemberRole)
+		case "paper_doc_change_member_role":
+			err = json.Unmarshal(body, &u.PaperDocChangeMemberRole)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_sharing_policy":
-		err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicy)
+		case "paper_doc_change_sharing_policy":
+			err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_change_subscription":
-		err = json.Unmarshal(body, &u.PaperDocChangeSubscription)
+		case "paper_doc_change_subscription":
+			err = json.Unmarshal(body, &u.PaperDocChangeSubscription)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_deleted":
-		err = json.Unmarshal(body, &u.PaperDocDeleted)
+		case "paper_doc_deleted":
+			err = json.Unmarshal(body, &u.PaperDocDeleted)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_delete_comment":
-		err = json.Unmarshal(body, &u.PaperDocDeleteComment)
+		case "paper_doc_delete_comment":
+			err = json.Unmarshal(body, &u.PaperDocDeleteComment)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_download":
-		err = json.Unmarshal(body, &u.PaperDocDownload)
+		case "paper_doc_download":
+			err = json.Unmarshal(body, &u.PaperDocDownload)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_edit":
-		err = json.Unmarshal(body, &u.PaperDocEdit)
+		case "paper_doc_edit":
+			err = json.Unmarshal(body, &u.PaperDocEdit)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_edit_comment":
-		err = json.Unmarshal(body, &u.PaperDocEditComment)
+		case "paper_doc_edit_comment":
+			err = json.Unmarshal(body, &u.PaperDocEditComment)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_followed":
-		err = json.Unmarshal(body, &u.PaperDocFollowed)
+		case "paper_doc_followed":
+			err = json.Unmarshal(body, &u.PaperDocFollowed)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_mention":
-		err = json.Unmarshal(body, &u.PaperDocMention)
+		case "paper_doc_mention":
+			err = json.Unmarshal(body, &u.PaperDocMention)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_ownership_changed":
-		err = json.Unmarshal(body, &u.PaperDocOwnershipChanged)
+		case "paper_doc_ownership_changed":
+			err = json.Unmarshal(body, &u.PaperDocOwnershipChanged)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_request_access":
-		err = json.Unmarshal(body, &u.PaperDocRequestAccess)
+		case "paper_doc_request_access":
+			err = json.Unmarshal(body, &u.PaperDocRequestAccess)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_resolve_comment":
-		err = json.Unmarshal(body, &u.PaperDocResolveComment)
+		case "paper_doc_resolve_comment":
+			err = json.Unmarshal(body, &u.PaperDocResolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_revert":
-		err = json.Unmarshal(body, &u.PaperDocRevert)
+		case "paper_doc_revert":
+			err = json.Unmarshal(body, &u.PaperDocRevert)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_slack_share":
-		err = json.Unmarshal(body, &u.PaperDocSlackShare)
+		case "paper_doc_slack_share":
+			err = json.Unmarshal(body, &u.PaperDocSlackShare)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_team_invite":
-		err = json.Unmarshal(body, &u.PaperDocTeamInvite)
+		case "paper_doc_team_invite":
+			err = json.Unmarshal(body, &u.PaperDocTeamInvite)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_trashed":
-		err = json.Unmarshal(body, &u.PaperDocTrashed)
+		case "paper_doc_trashed":
+			err = json.Unmarshal(body, &u.PaperDocTrashed)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_unresolve_comment":
-		err = json.Unmarshal(body, &u.PaperDocUnresolveComment)
+		case "paper_doc_unresolve_comment":
+			err = json.Unmarshal(body, &u.PaperDocUnresolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_untrashed":
-		err = json.Unmarshal(body, &u.PaperDocUntrashed)
+		case "paper_doc_untrashed":
+			err = json.Unmarshal(body, &u.PaperDocUntrashed)
 
 		if err != nil {
 			return err
 		}
-	case "paper_doc_view":
-		err = json.Unmarshal(body, &u.PaperDocView)
+		case "paper_doc_view":
+			err = json.Unmarshal(body, &u.PaperDocView)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_allow":
-		err = json.Unmarshal(body, &u.PaperExternalViewAllow)
+		case "paper_external_view_allow":
+			err = json.Unmarshal(body, &u.PaperExternalViewAllow)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_default_team":
-		err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeam)
+		case "paper_external_view_default_team":
+			err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeam)
 
 		if err != nil {
 			return err
 		}
-	case "paper_external_view_forbid":
-		err = json.Unmarshal(body, &u.PaperExternalViewForbid)
+		case "paper_external_view_forbid":
+			err = json.Unmarshal(body, &u.PaperExternalViewForbid)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_change_subscription":
-		err = json.Unmarshal(body, &u.PaperFolderChangeSubscription)
+		case "paper_folder_change_subscription":
+			err = json.Unmarshal(body, &u.PaperFolderChangeSubscription)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_deleted":
-		err = json.Unmarshal(body, &u.PaperFolderDeleted)
+		case "paper_folder_deleted":
+			err = json.Unmarshal(body, &u.PaperFolderDeleted)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_followed":
-		err = json.Unmarshal(body, &u.PaperFolderFollowed)
+		case "paper_folder_followed":
+			err = json.Unmarshal(body, &u.PaperFolderFollowed)
 
 		if err != nil {
 			return err
 		}
-	case "paper_folder_team_invite":
-		err = json.Unmarshal(body, &u.PaperFolderTeamInvite)
+		case "paper_folder_team_invite":
+			err = json.Unmarshal(body, &u.PaperFolderTeamInvite)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_create":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkCreate)
+		case "paper_published_link_create":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkCreate)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_disabled":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabled)
+		case "paper_published_link_disabled":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkDisabled)
 
 		if err != nil {
 			return err
 		}
-	case "paper_published_link_view":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkView)
+		case "paper_published_link_view":
+			err = json.Unmarshal(body, &u.PaperPublishedLinkView)
 
 		if err != nil {
 			return err
 		}
-	case "password_change":
-		err = json.Unmarshal(body, &u.PasswordChange)
+		case "password_change":
+			err = json.Unmarshal(body, &u.PasswordChange)
 
 		if err != nil {
 			return err
 		}
-	case "password_reset":
-		err = json.Unmarshal(body, &u.PasswordReset)
+		case "password_reset":
+			err = json.Unmarshal(body, &u.PasswordReset)
 
 		if err != nil {
 			return err
 		}
-	case "password_reset_all":
-		err = json.Unmarshal(body, &u.PasswordResetAll)
+		case "password_reset_all":
+			err = json.Unmarshal(body, &u.PasswordResetAll)
 
 		if err != nil {
 			return err
 		}
-	case "emm_create_exceptions_report":
-		err = json.Unmarshal(body, &u.EmmCreateExceptionsReport)
+		case "emm_create_exceptions_report":
+			err = json.Unmarshal(body, &u.EmmCreateExceptionsReport)
 
 		if err != nil {
 			return err
 		}
-	case "emm_create_usage_report":
-		err = json.Unmarshal(body, &u.EmmCreateUsageReport)
+		case "emm_create_usage_report":
+			err = json.Unmarshal(body, &u.EmmCreateUsageReport)
 
 		if err != nil {
 			return err
 		}
-	case "export_members_report":
-		err = json.Unmarshal(body, &u.ExportMembersReport)
+		case "export_members_report":
+			err = json.Unmarshal(body, &u.ExportMembersReport)
 
 		if err != nil {
 			return err
 		}
-	case "paper_admin_export_start":
-		err = json.Unmarshal(body, &u.PaperAdminExportStart)
+		case "paper_admin_export_start":
+			err = json.Unmarshal(body, &u.PaperAdminExportStart)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_create_admin_privilege_report":
-		err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReport)
+		case "smart_sync_create_admin_privilege_report":
+			err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReport)
 
 		if err != nil {
 			return err
 		}
-	case "team_activity_create_report":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReport)
+		case "team_activity_create_report":
+			err = json.Unmarshal(body, &u.TeamActivityCreateReport)
 
 		if err != nil {
 			return err
 		}
-	case "team_activity_create_report_fail":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportFail)
+		case "team_activity_create_report_fail":
+			err = json.Unmarshal(body, &u.TeamActivityCreateReportFail)
 
 		if err != nil {
 			return err
 		}
-	case "collection_share":
-		err = json.Unmarshal(body, &u.CollectionShare)
+		case "collection_share":
+			err = json.Unmarshal(body, &u.CollectionShare)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_invite_only":
-		err = json.Unmarshal(body, &u.NoteAclInviteOnly)
+		case "note_acl_invite_only":
+			err = json.Unmarshal(body, &u.NoteAclInviteOnly)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_link":
-		err = json.Unmarshal(body, &u.NoteAclLink)
+		case "note_acl_link":
+			err = json.Unmarshal(body, &u.NoteAclLink)
 
 		if err != nil {
 			return err
 		}
-	case "note_acl_team_link":
-		err = json.Unmarshal(body, &u.NoteAclTeamLink)
+		case "note_acl_team_link":
+			err = json.Unmarshal(body, &u.NoteAclTeamLink)
 
 		if err != nil {
 			return err
 		}
-	case "note_shared":
-		err = json.Unmarshal(body, &u.NoteShared)
+		case "note_shared":
+			err = json.Unmarshal(body, &u.NoteShared)
 
 		if err != nil {
 			return err
 		}
-	case "note_share_receive":
-		err = json.Unmarshal(body, &u.NoteShareReceive)
+		case "note_share_receive":
+			err = json.Unmarshal(body, &u.NoteShareReceive)
 
 		if err != nil {
 			return err
 		}
-	case "open_note_shared":
-		err = json.Unmarshal(body, &u.OpenNoteShared)
+		case "open_note_shared":
+			err = json.Unmarshal(body, &u.OpenNoteShared)
 
 		if err != nil {
 			return err
 		}
-	case "sf_add_group":
-		err = json.Unmarshal(body, &u.SfAddGroup)
+		case "sf_add_group":
+			err = json.Unmarshal(body, &u.SfAddGroup)
 
 		if err != nil {
 			return err
 		}
-	case "sf_allow_non_members_to_view_shared_links":
-		err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinks)
+		case "sf_allow_non_members_to_view_shared_links":
+			err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinks)
 
 		if err != nil {
 			return err
 		}
-	case "sf_external_invite_warn":
-		err = json.Unmarshal(body, &u.SfExternalInviteWarn)
+		case "sf_external_invite_warn":
+			err = json.Unmarshal(body, &u.SfExternalInviteWarn)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_invite":
-		err = json.Unmarshal(body, &u.SfFbInvite)
+		case "sf_fb_invite":
+			err = json.Unmarshal(body, &u.SfFbInvite)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_invite_change_role":
-		err = json.Unmarshal(body, &u.SfFbInviteChangeRole)
+		case "sf_fb_invite_change_role":
+			err = json.Unmarshal(body, &u.SfFbInviteChangeRole)
 
 		if err != nil {
 			return err
 		}
-	case "sf_fb_uninvite":
-		err = json.Unmarshal(body, &u.SfFbUninvite)
+		case "sf_fb_uninvite":
+			err = json.Unmarshal(body, &u.SfFbUninvite)
 
 		if err != nil {
 			return err
 		}
-	case "sf_invite_group":
-		err = json.Unmarshal(body, &u.SfInviteGroup)
+		case "sf_invite_group":
+			err = json.Unmarshal(body, &u.SfInviteGroup)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_grant_access":
-		err = json.Unmarshal(body, &u.SfTeamGrantAccess)
+		case "sf_team_grant_access":
+			err = json.Unmarshal(body, &u.SfTeamGrantAccess)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_invite":
-		err = json.Unmarshal(body, &u.SfTeamInvite)
+		case "sf_team_invite":
+			err = json.Unmarshal(body, &u.SfTeamInvite)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_invite_change_role":
-		err = json.Unmarshal(body, &u.SfTeamInviteChangeRole)
+		case "sf_team_invite_change_role":
+			err = json.Unmarshal(body, &u.SfTeamInviteChangeRole)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_join":
-		err = json.Unmarshal(body, &u.SfTeamJoin)
+		case "sf_team_join":
+			err = json.Unmarshal(body, &u.SfTeamJoin)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_join_from_oob_link":
-		err = json.Unmarshal(body, &u.SfTeamJoinFromOobLink)
+		case "sf_team_join_from_oob_link":
+			err = json.Unmarshal(body, &u.SfTeamJoinFromOobLink)
 
 		if err != nil {
 			return err
 		}
-	case "sf_team_uninvite":
-		err = json.Unmarshal(body, &u.SfTeamUninvite)
+		case "sf_team_uninvite":
+			err = json.Unmarshal(body, &u.SfTeamUninvite)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_invitees":
-		err = json.Unmarshal(body, &u.SharedContentAddInvitees)
+		case "shared_content_add_invitees":
+			err = json.Unmarshal(body, &u.SharedContentAddInvitees)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkExpiry)
+		case "shared_content_add_link_expiry":
+			err = json.Unmarshal(body, &u.SharedContentAddLinkExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_link_password":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkPassword)
+		case "shared_content_add_link_password":
+			err = json.Unmarshal(body, &u.SharedContentAddLinkPassword)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_add_member":
-		err = json.Unmarshal(body, &u.SharedContentAddMember)
+		case "shared_content_add_member":
+			err = json.Unmarshal(body, &u.SharedContentAddMember)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_downloads_policy":
-		err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicy)
+		case "shared_content_change_downloads_policy":
+			err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_invitee_role":
-		err = json.Unmarshal(body, &u.SharedContentChangeInviteeRole)
+		case "shared_content_change_invitee_role":
+			err = json.Unmarshal(body, &u.SharedContentChangeInviteeRole)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_audience":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkAudience)
+		case "shared_content_change_link_audience":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkAudience)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiry)
+		case "shared_content_change_link_expiry":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_link_password":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkPassword)
+		case "shared_content_change_link_password":
+			err = json.Unmarshal(body, &u.SharedContentChangeLinkPassword)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_member_role":
-		err = json.Unmarshal(body, &u.SharedContentChangeMemberRole)
+		case "shared_content_change_member_role":
+			err = json.Unmarshal(body, &u.SharedContentChangeMemberRole)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_change_viewer_info_policy":
-		err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicy)
+		case "shared_content_change_viewer_info_policy":
+			err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_claim_invitation":
-		err = json.Unmarshal(body, &u.SharedContentClaimInvitation)
+		case "shared_content_claim_invitation":
+			err = json.Unmarshal(body, &u.SharedContentClaimInvitation)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_copy":
-		err = json.Unmarshal(body, &u.SharedContentCopy)
+		case "shared_content_copy":
+			err = json.Unmarshal(body, &u.SharedContentCopy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_download":
-		err = json.Unmarshal(body, &u.SharedContentDownload)
+		case "shared_content_download":
+			err = json.Unmarshal(body, &u.SharedContentDownload)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_relinquish_membership":
-		err = json.Unmarshal(body, &u.SharedContentRelinquishMembership)
+		case "shared_content_relinquish_membership":
+			err = json.Unmarshal(body, &u.SharedContentRelinquishMembership)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_invitees":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInvitees)
+		case "shared_content_remove_invitees":
+			err = json.Unmarshal(body, &u.SharedContentRemoveInvitees)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiry)
+		case "shared_content_remove_link_expiry":
+			err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_link_password":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkPassword)
+		case "shared_content_remove_link_password":
+			err = json.Unmarshal(body, &u.SharedContentRemoveLinkPassword)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_remove_member":
-		err = json.Unmarshal(body, &u.SharedContentRemoveMember)
+		case "shared_content_remove_member":
+			err = json.Unmarshal(body, &u.SharedContentRemoveMember)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_request_access":
-		err = json.Unmarshal(body, &u.SharedContentRequestAccess)
+		case "shared_content_request_access":
+			err = json.Unmarshal(body, &u.SharedContentRequestAccess)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_unshare":
-		err = json.Unmarshal(body, &u.SharedContentUnshare)
+		case "shared_content_unshare":
+			err = json.Unmarshal(body, &u.SharedContentUnshare)
 
 		if err != nil {
 			return err
 		}
-	case "shared_content_view":
-		err = json.Unmarshal(body, &u.SharedContentView)
+		case "shared_content_view":
+			err = json.Unmarshal(body, &u.SharedContentView)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_link_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicy)
+		case "shared_folder_change_link_policy":
+			err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_inheritance_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicy)
+		case "shared_folder_change_members_inheritance_policy":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_management_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicy)
+		case "shared_folder_change_members_management_policy":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_change_members_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicy)
+		case "shared_folder_change_members_policy":
+			err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_create":
-		err = json.Unmarshal(body, &u.SharedFolderCreate)
+		case "shared_folder_create":
+			err = json.Unmarshal(body, &u.SharedFolderCreate)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_decline_invitation":
-		err = json.Unmarshal(body, &u.SharedFolderDeclineInvitation)
+		case "shared_folder_decline_invitation":
+			err = json.Unmarshal(body, &u.SharedFolderDeclineInvitation)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_mount":
-		err = json.Unmarshal(body, &u.SharedFolderMount)
+		case "shared_folder_mount":
+			err = json.Unmarshal(body, &u.SharedFolderMount)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_nest":
-		err = json.Unmarshal(body, &u.SharedFolderNest)
+		case "shared_folder_nest":
+			err = json.Unmarshal(body, &u.SharedFolderNest)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_transfer_ownership":
-		err = json.Unmarshal(body, &u.SharedFolderTransferOwnership)
+		case "shared_folder_transfer_ownership":
+			err = json.Unmarshal(body, &u.SharedFolderTransferOwnership)
 
 		if err != nil {
 			return err
 		}
-	case "shared_folder_unmount":
-		err = json.Unmarshal(body, &u.SharedFolderUnmount)
+		case "shared_folder_unmount":
+			err = json.Unmarshal(body, &u.SharedFolderUnmount)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_add_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkAddExpiry)
+		case "shared_link_add_expiry":
+			err = json.Unmarshal(body, &u.SharedLinkAddExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_change_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkChangeExpiry)
+		case "shared_link_change_expiry":
+			err = json.Unmarshal(body, &u.SharedLinkChangeExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_change_visibility":
-		err = json.Unmarshal(body, &u.SharedLinkChangeVisibility)
+		case "shared_link_change_visibility":
+			err = json.Unmarshal(body, &u.SharedLinkChangeVisibility)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_copy":
-		err = json.Unmarshal(body, &u.SharedLinkCopy)
+		case "shared_link_copy":
+			err = json.Unmarshal(body, &u.SharedLinkCopy)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_create":
-		err = json.Unmarshal(body, &u.SharedLinkCreate)
+		case "shared_link_create":
+			err = json.Unmarshal(body, &u.SharedLinkCreate)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_disable":
-		err = json.Unmarshal(body, &u.SharedLinkDisable)
+		case "shared_link_disable":
+			err = json.Unmarshal(body, &u.SharedLinkDisable)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_download":
-		err = json.Unmarshal(body, &u.SharedLinkDownload)
+		case "shared_link_download":
+			err = json.Unmarshal(body, &u.SharedLinkDownload)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_remove_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkRemoveExpiry)
+		case "shared_link_remove_expiry":
+			err = json.Unmarshal(body, &u.SharedLinkRemoveExpiry)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_share":
-		err = json.Unmarshal(body, &u.SharedLinkShare)
+		case "shared_link_share":
+			err = json.Unmarshal(body, &u.SharedLinkShare)
 
 		if err != nil {
 			return err
 		}
-	case "shared_link_view":
-		err = json.Unmarshal(body, &u.SharedLinkView)
+		case "shared_link_view":
+			err = json.Unmarshal(body, &u.SharedLinkView)
 
 		if err != nil {
 			return err
 		}
-	case "shared_note_opened":
-		err = json.Unmarshal(body, &u.SharedNoteOpened)
+		case "shared_note_opened":
+			err = json.Unmarshal(body, &u.SharedNoteOpened)
 
 		if err != nil {
 			return err
 		}
-	case "shmodel_group_share":
-		err = json.Unmarshal(body, &u.ShmodelGroupShare)
+		case "shmodel_group_share":
+			err = json.Unmarshal(body, &u.ShmodelGroupShare)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_access_granted":
-		err = json.Unmarshal(body, &u.ShowcaseAccessGranted)
+		case "showcase_access_granted":
+			err = json.Unmarshal(body, &u.ShowcaseAccessGranted)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_add_member":
-		err = json.Unmarshal(body, &u.ShowcaseAddMember)
+		case "showcase_add_member":
+			err = json.Unmarshal(body, &u.ShowcaseAddMember)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_archived":
-		err = json.Unmarshal(body, &u.ShowcaseArchived)
+		case "showcase_archived":
+			err = json.Unmarshal(body, &u.ShowcaseArchived)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_created":
-		err = json.Unmarshal(body, &u.ShowcaseCreated)
+		case "showcase_created":
+			err = json.Unmarshal(body, &u.ShowcaseCreated)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_delete_comment":
-		err = json.Unmarshal(body, &u.ShowcaseDeleteComment)
+		case "showcase_delete_comment":
+			err = json.Unmarshal(body, &u.ShowcaseDeleteComment)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_edited":
-		err = json.Unmarshal(body, &u.ShowcaseEdited)
+		case "showcase_edited":
+			err = json.Unmarshal(body, &u.ShowcaseEdited)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_edit_comment":
-		err = json.Unmarshal(body, &u.ShowcaseEditComment)
+		case "showcase_edit_comment":
+			err = json.Unmarshal(body, &u.ShowcaseEditComment)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_added":
-		err = json.Unmarshal(body, &u.ShowcaseFileAdded)
+		case "showcase_file_added":
+			err = json.Unmarshal(body, &u.ShowcaseFileAdded)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_download":
-		err = json.Unmarshal(body, &u.ShowcaseFileDownload)
+		case "showcase_file_download":
+			err = json.Unmarshal(body, &u.ShowcaseFileDownload)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_removed":
-		err = json.Unmarshal(body, &u.ShowcaseFileRemoved)
+		case "showcase_file_removed":
+			err = json.Unmarshal(body, &u.ShowcaseFileRemoved)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_file_view":
-		err = json.Unmarshal(body, &u.ShowcaseFileView)
+		case "showcase_file_view":
+			err = json.Unmarshal(body, &u.ShowcaseFileView)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_permanently_deleted":
-		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeleted)
+		case "showcase_permanently_deleted":
+			err = json.Unmarshal(body, &u.ShowcasePermanentlyDeleted)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_post_comment":
-		err = json.Unmarshal(body, &u.ShowcasePostComment)
+		case "showcase_post_comment":
+			err = json.Unmarshal(body, &u.ShowcasePostComment)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_remove_member":
-		err = json.Unmarshal(body, &u.ShowcaseRemoveMember)
+		case "showcase_remove_member":
+			err = json.Unmarshal(body, &u.ShowcaseRemoveMember)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_renamed":
-		err = json.Unmarshal(body, &u.ShowcaseRenamed)
+		case "showcase_renamed":
+			err = json.Unmarshal(body, &u.ShowcaseRenamed)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_request_access":
-		err = json.Unmarshal(body, &u.ShowcaseRequestAccess)
+		case "showcase_request_access":
+			err = json.Unmarshal(body, &u.ShowcaseRequestAccess)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_resolve_comment":
-		err = json.Unmarshal(body, &u.ShowcaseResolveComment)
+		case "showcase_resolve_comment":
+			err = json.Unmarshal(body, &u.ShowcaseResolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_restored":
-		err = json.Unmarshal(body, &u.ShowcaseRestored)
+		case "showcase_restored":
+			err = json.Unmarshal(body, &u.ShowcaseRestored)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_trashed":
-		err = json.Unmarshal(body, &u.ShowcaseTrashed)
+		case "showcase_trashed":
+			err = json.Unmarshal(body, &u.ShowcaseTrashed)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_trashed_deprecated":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecated)
+		case "showcase_trashed_deprecated":
+			err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecated)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_unresolve_comment":
-		err = json.Unmarshal(body, &u.ShowcaseUnresolveComment)
+		case "showcase_unresolve_comment":
+			err = json.Unmarshal(body, &u.ShowcaseUnresolveComment)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_untrashed":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashed)
+		case "showcase_untrashed":
+			err = json.Unmarshal(body, &u.ShowcaseUntrashed)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_untrashed_deprecated":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecated)
+		case "showcase_untrashed_deprecated":
+			err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecated)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_view":
-		err = json.Unmarshal(body, &u.ShowcaseView)
+		case "showcase_view":
+			err = json.Unmarshal(body, &u.ShowcaseView)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_cert":
-		err = json.Unmarshal(body, &u.SsoAddCert)
+		case "sso_add_cert":
+			err = json.Unmarshal(body, &u.SsoAddCert)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_login_url":
-		err = json.Unmarshal(body, &u.SsoAddLoginUrl)
+		case "sso_add_login_url":
+			err = json.Unmarshal(body, &u.SsoAddLoginUrl)
 
 		if err != nil {
 			return err
 		}
-	case "sso_add_logout_url":
-		err = json.Unmarshal(body, &u.SsoAddLogoutUrl)
+		case "sso_add_logout_url":
+			err = json.Unmarshal(body, &u.SsoAddLogoutUrl)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_cert":
-		err = json.Unmarshal(body, &u.SsoChangeCert)
+		case "sso_change_cert":
+			err = json.Unmarshal(body, &u.SsoChangeCert)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_login_url":
-		err = json.Unmarshal(body, &u.SsoChangeLoginUrl)
+		case "sso_change_login_url":
+			err = json.Unmarshal(body, &u.SsoChangeLoginUrl)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_logout_url":
-		err = json.Unmarshal(body, &u.SsoChangeLogoutUrl)
+		case "sso_change_logout_url":
+			err = json.Unmarshal(body, &u.SsoChangeLogoutUrl)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_saml_identity_mode":
-		err = json.Unmarshal(body, &u.SsoChangeSamlIdentityMode)
+		case "sso_change_saml_identity_mode":
+			err = json.Unmarshal(body, &u.SsoChangeSamlIdentityMode)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_cert":
-		err = json.Unmarshal(body, &u.SsoRemoveCert)
+		case "sso_remove_cert":
+			err = json.Unmarshal(body, &u.SsoRemoveCert)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_login_url":
-		err = json.Unmarshal(body, &u.SsoRemoveLoginUrl)
+		case "sso_remove_login_url":
+			err = json.Unmarshal(body, &u.SsoRemoveLoginUrl)
 
 		if err != nil {
 			return err
 		}
-	case "sso_remove_logout_url":
-		err = json.Unmarshal(body, &u.SsoRemoveLogoutUrl)
+		case "sso_remove_logout_url":
+			err = json.Unmarshal(body, &u.SsoRemoveLogoutUrl)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_change_status":
-		err = json.Unmarshal(body, &u.TeamFolderChangeStatus)
+		case "team_folder_change_status":
+			err = json.Unmarshal(body, &u.TeamFolderChangeStatus)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_create":
-		err = json.Unmarshal(body, &u.TeamFolderCreate)
+		case "team_folder_create":
+			err = json.Unmarshal(body, &u.TeamFolderCreate)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_downgrade":
-		err = json.Unmarshal(body, &u.TeamFolderDowngrade)
+		case "team_folder_downgrade":
+			err = json.Unmarshal(body, &u.TeamFolderDowngrade)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_permanently_delete":
-		err = json.Unmarshal(body, &u.TeamFolderPermanentlyDelete)
+		case "team_folder_permanently_delete":
+			err = json.Unmarshal(body, &u.TeamFolderPermanentlyDelete)
 
 		if err != nil {
 			return err
 		}
-	case "team_folder_rename":
-		err = json.Unmarshal(body, &u.TeamFolderRename)
+		case "team_folder_rename":
+			err = json.Unmarshal(body, &u.TeamFolderRename)
 
 		if err != nil {
 			return err
 		}
-	case "team_selective_sync_settings_changed":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChanged)
+		case "team_selective_sync_settings_changed":
+			err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChanged)
 
 		if err != nil {
 			return err
 		}
-	case "account_capture_change_policy":
-		err = json.Unmarshal(body, &u.AccountCaptureChangePolicy)
+		case "account_capture_change_policy":
+			err = json.Unmarshal(body, &u.AccountCaptureChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "allow_download_disabled":
-		err = json.Unmarshal(body, &u.AllowDownloadDisabled)
+		case "allow_download_disabled":
+			err = json.Unmarshal(body, &u.AllowDownloadDisabled)
 
 		if err != nil {
 			return err
 		}
-	case "allow_download_enabled":
-		err = json.Unmarshal(body, &u.AllowDownloadEnabled)
+		case "allow_download_enabled":
+			err = json.Unmarshal(body, &u.AllowDownloadEnabled)
 
 		if err != nil {
 			return err
 		}
-	case "camera_uploads_policy_changed":
-		err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged)
+		case "camera_uploads_policy_changed":
+			err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "data_placement_restriction_change_policy":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy)
+		case "data_placement_restriction_change_policy":
+			err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "data_placement_restriction_satisfy_policy":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicy)
+		case "data_placement_restriction_satisfy_policy":
+			err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_desktop_policy":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicy)
+		case "device_approvals_change_desktop_policy":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_mobile_policy":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicy)
+		case "device_approvals_change_mobile_policy":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_overage_action":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageAction)
+		case "device_approvals_change_overage_action":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageAction)
 
 		if err != nil {
 			return err
 		}
-	case "device_approvals_change_unlink_action":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction)
+		case "device_approvals_change_unlink_action":
+			err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction)
 
 		if err != nil {
 			return err
 		}
-	case "directory_restrictions_add_members":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembers)
+		case "directory_restrictions_add_members":
+			err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembers)
 
 		if err != nil {
 			return err
 		}
-	case "directory_restrictions_remove_members":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembers)
+		case "directory_restrictions_remove_members":
+			err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembers)
 
 		if err != nil {
 			return err
 		}
-	case "emm_add_exception":
-		err = json.Unmarshal(body, &u.EmmAddException)
+		case "emm_add_exception":
+			err = json.Unmarshal(body, &u.EmmAddException)
 
 		if err != nil {
 			return err
 		}
-	case "emm_change_policy":
-		err = json.Unmarshal(body, &u.EmmChangePolicy)
+		case "emm_change_policy":
+			err = json.Unmarshal(body, &u.EmmChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "emm_remove_exception":
-		err = json.Unmarshal(body, &u.EmmRemoveException)
+		case "emm_remove_exception":
+			err = json.Unmarshal(body, &u.EmmRemoveException)
 
 		if err != nil {
 			return err
 		}
-	case "extended_version_history_change_policy":
-		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy)
+		case "extended_version_history_change_policy":
+			err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "file_comments_change_policy":
-		err = json.Unmarshal(body, &u.FileCommentsChangePolicy)
+		case "file_comments_change_policy":
+			err = json.Unmarshal(body, &u.FileCommentsChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_change_policy":
-		err = json.Unmarshal(body, &u.FileRequestsChangePolicy)
+		case "file_requests_change_policy":
+			err = json.Unmarshal(body, &u.FileRequestsChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_emails_enabled":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsEnabled)
+		case "file_requests_emails_enabled":
+			err = json.Unmarshal(body, &u.FileRequestsEmailsEnabled)
 
 		if err != nil {
 			return err
 		}
-	case "file_requests_emails_restricted_to_team_only":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnly)
+		case "file_requests_emails_restricted_to_team_only":
+			err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnly)
 
 		if err != nil {
 			return err
 		}
-	case "google_sso_change_policy":
-		err = json.Unmarshal(body, &u.GoogleSsoChangePolicy)
+		case "google_sso_change_policy":
+			err = json.Unmarshal(body, &u.GoogleSsoChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "group_user_management_change_policy":
-		err = json.Unmarshal(body, &u.GroupUserManagementChangePolicy)
+		case "group_user_management_change_policy":
+			err = json.Unmarshal(body, &u.GroupUserManagementChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "integration_policy_changed":
-		err = json.Unmarshal(body, &u.IntegrationPolicyChanged)
+		case "integration_policy_changed":
+			err = json.Unmarshal(body, &u.IntegrationPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "member_requests_change_policy":
-		err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
+		case "member_requests_change_policy":
+			err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_add_exception":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddException)
+		case "member_space_limits_add_exception":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsAddException)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_caps_type_policy":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicy)
+		case "member_space_limits_change_caps_type_policy":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_change_policy":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicy)
+		case "member_space_limits_change_policy":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "member_space_limits_remove_exception":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveException)
+		case "member_space_limits_remove_exception":
+			err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveException)
 
 		if err != nil {
 			return err
 		}
-	case "member_suggestions_change_policy":
-		err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicy)
+		case "member_suggestions_change_policy":
+			err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "microsoft_office_addin_change_policy":
-		err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicy)
+		case "microsoft_office_addin_change_policy":
+			err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "network_control_change_policy":
-		err = json.Unmarshal(body, &u.NetworkControlChangePolicy)
+		case "network_control_change_policy":
+			err = json.Unmarshal(body, &u.NetworkControlChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_deployment_policy":
-		err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicy)
+		case "paper_change_deployment_policy":
+			err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_member_link_policy":
-		err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicy)
+		case "paper_change_member_link_policy":
+			err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_member_policy":
-		err = json.Unmarshal(body, &u.PaperChangeMemberPolicy)
+		case "paper_change_member_policy":
+			err = json.Unmarshal(body, &u.PaperChangeMemberPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_change_policy":
-		err = json.Unmarshal(body, &u.PaperChangePolicy)
+		case "paper_change_policy":
+			err = json.Unmarshal(body, &u.PaperChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "paper_default_folder_policy_changed":
-		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChanged)
+		case "paper_default_folder_policy_changed":
+			err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "paper_desktop_policy_changed":
-		err = json.Unmarshal(body, &u.PaperDesktopPolicyChanged)
+		case "paper_desktop_policy_changed":
+			err = json.Unmarshal(body, &u.PaperDesktopPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "paper_enabled_users_group_addition":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAddition)
+		case "paper_enabled_users_group_addition":
+			err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAddition)
 
 		if err != nil {
 			return err
 		}
-	case "paper_enabled_users_group_removal":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemoval)
+		case "paper_enabled_users_group_removal":
+			err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemoval)
 
 		if err != nil {
 			return err
 		}
-	case "permanent_delete_change_policy":
-		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy)
+		case "permanent_delete_change_policy":
+			err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "reseller_support_change_policy":
-		err = json.Unmarshal(body, &u.ResellerSupportChangePolicy)
+		case "reseller_support_change_policy":
+			err = json.Unmarshal(body, &u.ResellerSupportChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_folder_join_policy":
-		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicy)
+		case "sharing_change_folder_join_policy":
+			err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_link_policy":
-		err = json.Unmarshal(body, &u.SharingChangeLinkPolicy)
+		case "sharing_change_link_policy":
+			err = json.Unmarshal(body, &u.SharingChangeLinkPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "sharing_change_member_policy":
-		err = json.Unmarshal(body, &u.SharingChangeMemberPolicy)
+		case "sharing_change_member_policy":
+			err = json.Unmarshal(body, &u.SharingChangeMemberPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_download_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicy)
+		case "showcase_change_download_policy":
+			err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_enabled_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicy)
+		case "showcase_change_enabled_policy":
+			err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "showcase_change_external_sharing_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicy)
+		case "showcase_change_external_sharing_policy":
+			err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_change_policy":
-		err = json.Unmarshal(body, &u.SmartSyncChangePolicy)
+		case "smart_sync_change_policy":
+			err = json.Unmarshal(body, &u.SmartSyncChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_not_opt_out":
-		err = json.Unmarshal(body, &u.SmartSyncNotOptOut)
+		case "smart_sync_not_opt_out":
+			err = json.Unmarshal(body, &u.SmartSyncNotOptOut)
 
 		if err != nil {
 			return err
 		}
-	case "smart_sync_opt_out":
-		err = json.Unmarshal(body, &u.SmartSyncOptOut)
+		case "smart_sync_opt_out":
+			err = json.Unmarshal(body, &u.SmartSyncOptOut)
 
 		if err != nil {
 			return err
 		}
-	case "sso_change_policy":
-		err = json.Unmarshal(body, &u.SsoChangePolicy)
+		case "sso_change_policy":
+			err = json.Unmarshal(body, &u.SsoChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "team_extensions_policy_changed":
-		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged)
+		case "team_extensions_policy_changed":
+			err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "team_selective_sync_policy_changed":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChanged)
+		case "team_selective_sync_policy_changed":
+			err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_policy":
-		err = json.Unmarshal(body, &u.TfaChangePolicy)
+		case "tfa_change_policy":
+			err = json.Unmarshal(body, &u.TfaChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "two_account_change_policy":
-		err = json.Unmarshal(body, &u.TwoAccountChangePolicy)
+		case "two_account_change_policy":
+			err = json.Unmarshal(body, &u.TwoAccountChangePolicy)
 
 		if err != nil {
 			return err
 		}
-	case "viewer_info_policy_changed":
-		err = json.Unmarshal(body, &u.ViewerInfoPolicyChanged)
+		case "viewer_info_policy_changed":
+			err = json.Unmarshal(body, &u.ViewerInfoPolicyChanged)
 
 		if err != nil {
 			return err
 		}
-	case "web_sessions_change_fixed_length_policy":
-		err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicy)
+		case "web_sessions_change_fixed_length_policy":
+			err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "web_sessions_change_idle_length_policy":
-		err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicy)
+		case "web_sessions_change_idle_length_policy":
+			err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicy)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_from":
-		err = json.Unmarshal(body, &u.TeamMergeFrom)
+		case "team_merge_from":
+			err = json.Unmarshal(body, &u.TeamMergeFrom)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_to":
-		err = json.Unmarshal(body, &u.TeamMergeTo)
+		case "team_merge_to":
+			err = json.Unmarshal(body, &u.TeamMergeTo)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_add_logo":
-		err = json.Unmarshal(body, &u.TeamProfileAddLogo)
+		case "team_profile_add_logo":
+			err = json.Unmarshal(body, &u.TeamProfileAddLogo)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_default_language":
-		err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguage)
+		case "team_profile_change_default_language":
+			err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguage)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_logo":
-		err = json.Unmarshal(body, &u.TeamProfileChangeLogo)
+		case "team_profile_change_logo":
+			err = json.Unmarshal(body, &u.TeamProfileChangeLogo)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_change_name":
-		err = json.Unmarshal(body, &u.TeamProfileChangeName)
+		case "team_profile_change_name":
+			err = json.Unmarshal(body, &u.TeamProfileChangeName)
 
 		if err != nil {
 			return err
 		}
-	case "team_profile_remove_logo":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveLogo)
+		case "team_profile_remove_logo":
+			err = json.Unmarshal(body, &u.TeamProfileRemoveLogo)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_add_backup_phone":
-		err = json.Unmarshal(body, &u.TfaAddBackupPhone)
+		case "tfa_add_backup_phone":
+			err = json.Unmarshal(body, &u.TfaAddBackupPhone)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_add_security_key":
-		err = json.Unmarshal(body, &u.TfaAddSecurityKey)
+		case "tfa_add_security_key":
+			err = json.Unmarshal(body, &u.TfaAddSecurityKey)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_backup_phone":
-		err = json.Unmarshal(body, &u.TfaChangeBackupPhone)
+		case "tfa_change_backup_phone":
+			err = json.Unmarshal(body, &u.TfaChangeBackupPhone)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_change_status":
-		err = json.Unmarshal(body, &u.TfaChangeStatus)
+		case "tfa_change_status":
+			err = json.Unmarshal(body, &u.TfaChangeStatus)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_remove_backup_phone":
-		err = json.Unmarshal(body, &u.TfaRemoveBackupPhone)
+		case "tfa_remove_backup_phone":
+			err = json.Unmarshal(body, &u.TfaRemoveBackupPhone)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_remove_security_key":
-		err = json.Unmarshal(body, &u.TfaRemoveSecurityKey)
+		case "tfa_remove_security_key":
+			err = json.Unmarshal(body, &u.TfaRemoveSecurityKey)
 
 		if err != nil {
 			return err
 		}
-	case "tfa_reset":
-		err = json.Unmarshal(body, &u.TfaReset)
+		case "tfa_reset":
+			err = json.Unmarshal(body, &u.TfaReset)
 
 		if err != nil {
 			return err
 		}
-	case "guest_admin_change_status":
-		err = json.Unmarshal(body, &u.GuestAdminChangeStatus)
+		case "guest_admin_change_status":
+			err = json.Unmarshal(body, &u.GuestAdminChangeStatus)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAccepted)
+		case "team_merge_request_accepted":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAccepted)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeam)
+		case "team_merge_request_accepted_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_accepted_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeam)
+		case "team_merge_request_accepted_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_auto_canceled":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceled)
+		case "team_merge_request_auto_canceled":
+			err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceled)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceled)
+		case "team_merge_request_canceled":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceled)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeam)
+		case "team_merge_request_canceled_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_canceled_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeam)
+		case "team_merge_request_canceled_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpired)
+		case "team_merge_request_expired":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpired)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeam)
+		case "team_merge_request_expired_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_expired_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeam)
+		case "team_merge_request_expired_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_rejected_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeam)
+		case "team_merge_request_rejected_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_rejected_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeam)
+		case "team_merge_request_rejected_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminder)
+		case "team_merge_request_reminder":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminder)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeam)
+		case "team_merge_request_reminder_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_reminder_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeam)
+		case "team_merge_request_reminder_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_revoked":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRevoked)
+		case "team_merge_request_revoked":
+			err = json.Unmarshal(body, &u.TeamMergeRequestRevoked)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_sent_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeam)
+		case "team_merge_request_sent_shown_to_primary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "team_merge_request_sent_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeam)
+		case "team_merge_request_sent_shown_to_secondary_team":
+			err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeam)
 
 		if err != nil {
 			return err
@@ -8819,19 +8883,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 // ExportMembersReportDetails : Created member data report.
 type ExportMembersReportDetails struct {
 }
-
 // NewExportMembersReportDetails returns a new ExportMembersReportDetails instance
 func NewExportMembersReportDetails() *ExportMembersReportDetails {
 	s := new(ExportMembersReportDetails)
 	return s
 }
 
+
 // ExportMembersReportType : has no documentation (yet)
 type ExportMembersReportType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewExportMembersReportType returns a new ExportMembersReportType instance
 func NewExportMembersReportType(Description string) *ExportMembersReportType {
 	s := new(ExportMembersReportType)
@@ -8839,16 +8902,16 @@ func NewExportMembersReportType(Description string) *ExportMembersReportType {
 	return s
 }
 
+
 // ExtendedVersionHistoryChangePolicyDetails : Accepted/opted out of extended
 // version history.
 type ExtendedVersionHistoryChangePolicyDetails struct {
 	// NewValue : New extended version history policy.
 	NewValue *ExtendedVersionHistoryPolicy `json:"new_value"`
-	// PreviousValue : Previous extended version history policy. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous extended version history policy. Might be missing
+	// due to historical data gap.
 	PreviousValue *ExtendedVersionHistoryPolicy `json:"previous_value,omitempty"`
 }
-
 // NewExtendedVersionHistoryChangePolicyDetails returns a new ExtendedVersionHistoryChangePolicyDetails instance
 func NewExtendedVersionHistoryChangePolicyDetails(NewValue *ExtendedVersionHistoryPolicy) *ExtendedVersionHistoryChangePolicyDetails {
 	s := new(ExtendedVersionHistoryChangePolicyDetails)
@@ -8856,18 +8919,19 @@ func NewExtendedVersionHistoryChangePolicyDetails(NewValue *ExtendedVersionHisto
 	return s
 }
 
+
 // ExtendedVersionHistoryChangePolicyType : has no documentation (yet)
 type ExtendedVersionHistoryChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewExtendedVersionHistoryChangePolicyType returns a new ExtendedVersionHistoryChangePolicyType instance
 func NewExtendedVersionHistoryChangePolicyType(Description string) *ExtendedVersionHistoryChangePolicyType {
 	s := new(ExtendedVersionHistoryChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // ExtendedVersionHistoryPolicy : has no documentation (yet)
 type ExtendedVersionHistoryPolicy struct {
@@ -8876,11 +8940,11 @@ type ExtendedVersionHistoryPolicy struct {
 
 // Valid tag values for ExtendedVersionHistoryPolicy
 const (
-	ExtendedVersionHistoryPolicyExplicitlyLimited   = "explicitly_limited"
+	ExtendedVersionHistoryPolicyExplicitlyLimited = "explicitly_limited"
 	ExtendedVersionHistoryPolicyExplicitlyUnlimited = "explicitly_unlimited"
-	ExtendedVersionHistoryPolicyImplicitlyLimited   = "implicitly_limited"
+	ExtendedVersionHistoryPolicyImplicitlyLimited = "implicitly_limited"
 	ExtendedVersionHistoryPolicyImplicitlyUnlimited = "implicitly_unlimited"
-	ExtendedVersionHistoryPolicyOther               = "other"
+	ExtendedVersionHistoryPolicyOther = "other"
 )
 
 // ExternalUserLogInfo : A user without a Dropbox account.
@@ -8890,7 +8954,6 @@ type ExternalUserLogInfo struct {
 	// IdentifierType : Identifier type.
 	IdentifierType *IdentifierType `json:"identifier_type"`
 }
-
 // NewExternalUserLogInfo returns a new ExternalUserLogInfo instance
 func NewExternalUserLogInfo(UserIdentifier string, IdentifierType *IdentifierType) *ExternalUserLogInfo {
 	s := new(ExternalUserLogInfo)
@@ -8898,6 +8961,7 @@ func NewExternalUserLogInfo(UserIdentifier string, IdentifierType *IdentifierTyp
 	s.IdentifierType = IdentifierType
 	return s
 }
+
 
 // FailureDetailsLogInfo : Provides details about a failure
 type FailureDetailsLogInfo struct {
@@ -8908,31 +8972,30 @@ type FailureDetailsLogInfo struct {
 	// relevant for some errors.
 	TechnicalErrorMessage string `json:"technical_error_message,omitempty"`
 }
-
 // NewFailureDetailsLogInfo returns a new FailureDetailsLogInfo instance
 func NewFailureDetailsLogInfo() *FailureDetailsLogInfo {
 	s := new(FailureDetailsLogInfo)
 	return s
 }
 
+
 // FileAddCommentDetails : Added file comment.
 type FileAddCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileAddCommentDetails returns a new FileAddCommentDetails instance
 func NewFileAddCommentDetails() *FileAddCommentDetails {
 	s := new(FileAddCommentDetails)
 	return s
 }
 
+
 // FileAddCommentType : has no documentation (yet)
 type FileAddCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileAddCommentType returns a new FileAddCommentType instance
 func NewFileAddCommentType(Description string) *FileAddCommentType {
 	s := new(FileAddCommentType)
@@ -8940,22 +9003,22 @@ func NewFileAddCommentType(Description string) *FileAddCommentType {
 	return s
 }
 
+
 // FileAddDetails : Added files and/or folders.
 type FileAddDetails struct {
 }
-
 // NewFileAddDetails returns a new FileAddDetails instance
 func NewFileAddDetails() *FileAddDetails {
 	s := new(FileAddDetails)
 	return s
 }
 
+
 // FileAddType : has no documentation (yet)
 type FileAddType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileAddType returns a new FileAddType instance
 func NewFileAddType(Description string) *FileAddType {
 	s := new(FileAddType)
@@ -8963,16 +9026,16 @@ func NewFileAddType(Description string) *FileAddType {
 	return s
 }
 
+
 // FileChangeCommentSubscriptionDetails : Subscribed to or unsubscribed from
 // comment notifications for file.
 type FileChangeCommentSubscriptionDetails struct {
 	// NewValue : New file comment subscription.
 	NewValue *FileCommentNotificationPolicy `json:"new_value"`
-	// PreviousValue : Previous file comment subscription. Might be missing due
-	// to historical data gap.
+	// PreviousValue : Previous file comment subscription. Might be missing due to
+	// historical data gap.
 	PreviousValue *FileCommentNotificationPolicy `json:"previous_value,omitempty"`
 }
-
 // NewFileChangeCommentSubscriptionDetails returns a new FileChangeCommentSubscriptionDetails instance
 func NewFileChangeCommentSubscriptionDetails(NewValue *FileCommentNotificationPolicy) *FileChangeCommentSubscriptionDetails {
 	s := new(FileChangeCommentSubscriptionDetails)
@@ -8980,18 +9043,19 @@ func NewFileChangeCommentSubscriptionDetails(NewValue *FileCommentNotificationPo
 	return s
 }
 
+
 // FileChangeCommentSubscriptionType : has no documentation (yet)
 type FileChangeCommentSubscriptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileChangeCommentSubscriptionType returns a new FileChangeCommentSubscriptionType instance
 func NewFileChangeCommentSubscriptionType(Description string) *FileChangeCommentSubscriptionType {
 	s := new(FileChangeCommentSubscriptionType)
 	s.Description = Description
 	return s
 }
+
 
 // FileCommentNotificationPolicy : Enable or disable file comments notifications
 type FileCommentNotificationPolicy struct {
@@ -9001,19 +9065,18 @@ type FileCommentNotificationPolicy struct {
 // Valid tag values for FileCommentNotificationPolicy
 const (
 	FileCommentNotificationPolicyDisabled = "disabled"
-	FileCommentNotificationPolicyEnabled  = "enabled"
-	FileCommentNotificationPolicyOther    = "other"
+	FileCommentNotificationPolicyEnabled = "enabled"
+	FileCommentNotificationPolicyOther = "other"
 )
 
 // FileCommentsChangePolicyDetails : Enabled/disabled commenting on team files.
 type FileCommentsChangePolicyDetails struct {
 	// NewValue : New commenting on team files policy.
 	NewValue *FileCommentsPolicy `json:"new_value"`
-	// PreviousValue : Previous commenting on team files policy. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous commenting on team files policy. Might be missing
+	// due to historical data gap.
 	PreviousValue *FileCommentsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewFileCommentsChangePolicyDetails returns a new FileCommentsChangePolicyDetails instance
 func NewFileCommentsChangePolicyDetails(NewValue *FileCommentsPolicy) *FileCommentsChangePolicyDetails {
 	s := new(FileCommentsChangePolicyDetails)
@@ -9021,18 +9084,19 @@ func NewFileCommentsChangePolicyDetails(NewValue *FileCommentsPolicy) *FileComme
 	return s
 }
 
+
 // FileCommentsChangePolicyType : has no documentation (yet)
 type FileCommentsChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileCommentsChangePolicyType returns a new FileCommentsChangePolicyType instance
 func NewFileCommentsChangePolicyType(Description string) *FileCommentsChangePolicyType {
 	s := new(FileCommentsChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // FileCommentsPolicy : File comments policy
 type FileCommentsPolicy struct {
@@ -9042,8 +9106,8 @@ type FileCommentsPolicy struct {
 // Valid tag values for FileCommentsPolicy
 const (
 	FileCommentsPolicyDisabled = "disabled"
-	FileCommentsPolicyEnabled  = "enabled"
-	FileCommentsPolicyOther    = "other"
+	FileCommentsPolicyEnabled = "enabled"
+	FileCommentsPolicyOther = "other"
 )
 
 // FileCopyDetails : Copied files and/or folders.
@@ -9051,7 +9115,6 @@ type FileCopyDetails struct {
 	// RelocateActionDetails : Relocate action details.
 	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
-
 // NewFileCopyDetails returns a new FileCopyDetails instance
 func NewFileCopyDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileCopyDetails {
 	s := new(FileCopyDetails)
@@ -9059,12 +9122,12 @@ func NewFileCopyDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo)
 	return s
 }
 
+
 // FileCopyType : has no documentation (yet)
 type FileCopyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileCopyType returns a new FileCopyType instance
 func NewFileCopyType(Description string) *FileCopyType {
 	s := new(FileCopyType)
@@ -9072,24 +9135,24 @@ func NewFileCopyType(Description string) *FileCopyType {
 	return s
 }
 
+
 // FileDeleteCommentDetails : Deleted file comment.
 type FileDeleteCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileDeleteCommentDetails returns a new FileDeleteCommentDetails instance
 func NewFileDeleteCommentDetails() *FileDeleteCommentDetails {
 	s := new(FileDeleteCommentDetails)
 	return s
 }
 
+
 // FileDeleteCommentType : has no documentation (yet)
 type FileDeleteCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileDeleteCommentType returns a new FileDeleteCommentType instance
 func NewFileDeleteCommentType(Description string) *FileDeleteCommentType {
 	s := new(FileDeleteCommentType)
@@ -9097,22 +9160,22 @@ func NewFileDeleteCommentType(Description string) *FileDeleteCommentType {
 	return s
 }
 
+
 // FileDeleteDetails : Deleted files and/or folders.
 type FileDeleteDetails struct {
 }
-
 // NewFileDeleteDetails returns a new FileDeleteDetails instance
 func NewFileDeleteDetails() *FileDeleteDetails {
 	s := new(FileDeleteDetails)
 	return s
 }
 
+
 // FileDeleteType : has no documentation (yet)
 type FileDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileDeleteType returns a new FileDeleteType instance
 func NewFileDeleteType(Description string) *FileDeleteType {
 	s := new(FileDeleteType)
@@ -9120,28 +9183,29 @@ func NewFileDeleteType(Description string) *FileDeleteType {
 	return s
 }
 
+
 // FileDownloadDetails : Downloaded files and/or folders.
 type FileDownloadDetails struct {
 }
-
 // NewFileDownloadDetails returns a new FileDownloadDetails instance
 func NewFileDownloadDetails() *FileDownloadDetails {
 	s := new(FileDownloadDetails)
 	return s
 }
 
+
 // FileDownloadType : has no documentation (yet)
 type FileDownloadType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileDownloadType returns a new FileDownloadType instance
 func NewFileDownloadType(Description string) *FileDownloadType {
 	s := new(FileDownloadType)
 	s.Description = Description
 	return s
 }
+
 
 // FileEditCommentDetails : Edited file comment.
 type FileEditCommentDetails struct {
@@ -9150,7 +9214,6 @@ type FileEditCommentDetails struct {
 	// PreviousCommentText : Previous comment text.
 	PreviousCommentText string `json:"previous_comment_text"`
 }
-
 // NewFileEditCommentDetails returns a new FileEditCommentDetails instance
 func NewFileEditCommentDetails(PreviousCommentText string) *FileEditCommentDetails {
 	s := new(FileEditCommentDetails)
@@ -9158,12 +9221,12 @@ func NewFileEditCommentDetails(PreviousCommentText string) *FileEditCommentDetai
 	return s
 }
 
+
 // FileEditCommentType : has no documentation (yet)
 type FileEditCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileEditCommentType returns a new FileEditCommentType instance
 func NewFileEditCommentType(Description string) *FileEditCommentType {
 	s := new(FileEditCommentType)
@@ -9171,22 +9234,22 @@ func NewFileEditCommentType(Description string) *FileEditCommentType {
 	return s
 }
 
+
 // FileEditDetails : Edited files.
 type FileEditDetails struct {
 }
-
 // NewFileEditDetails returns a new FileEditDetails instance
 func NewFileEditDetails() *FileEditDetails {
 	s := new(FileEditDetails)
 	return s
 }
 
+
 // FileEditType : has no documentation (yet)
 type FileEditType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileEditType returns a new FileEditType instance
 func NewFileEditType(Description string) *FileEditType {
 	s := new(FileEditType)
@@ -9194,22 +9257,22 @@ func NewFileEditType(Description string) *FileEditType {
 	return s
 }
 
+
 // FileGetCopyReferenceDetails : Created copy reference to file/folder.
 type FileGetCopyReferenceDetails struct {
 }
-
 // NewFileGetCopyReferenceDetails returns a new FileGetCopyReferenceDetails instance
 func NewFileGetCopyReferenceDetails() *FileGetCopyReferenceDetails {
 	s := new(FileGetCopyReferenceDetails)
 	return s
 }
 
+
 // FileGetCopyReferenceType : has no documentation (yet)
 type FileGetCopyReferenceType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileGetCopyReferenceType returns a new FileGetCopyReferenceType instance
 func NewFileGetCopyReferenceType(Description string) *FileGetCopyReferenceType {
 	s := new(FileGetCopyReferenceType)
@@ -9217,30 +9280,31 @@ func NewFileGetCopyReferenceType(Description string) *FileGetCopyReferenceType {
 	return s
 }
 
+
 // FileLikeCommentDetails : Liked file comment.
 type FileLikeCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileLikeCommentDetails returns a new FileLikeCommentDetails instance
 func NewFileLikeCommentDetails() *FileLikeCommentDetails {
 	s := new(FileLikeCommentDetails)
 	return s
 }
 
+
 // FileLikeCommentType : has no documentation (yet)
 type FileLikeCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileLikeCommentType returns a new FileLikeCommentType instance
 func NewFileLikeCommentType(Description string) *FileLikeCommentType {
 	s := new(FileLikeCommentType)
 	s.Description = Description
 	return s
 }
+
 
 // FileOrFolderLogInfo : Generic information relevant both for files and folders
 type FileOrFolderLogInfo struct {
@@ -9251,7 +9315,6 @@ type FileOrFolderLogInfo struct {
 	// FileId : Unique ID. Might be missing due to historical data gap.
 	FileId string `json:"file_id,omitempty"`
 }
-
 // NewFileOrFolderLogInfo returns a new FileOrFolderLogInfo instance
 func NewFileOrFolderLogInfo(Path *PathLogInfo) *FileOrFolderLogInfo {
 	s := new(FileOrFolderLogInfo)
@@ -9259,11 +9322,11 @@ func NewFileOrFolderLogInfo(Path *PathLogInfo) *FileOrFolderLogInfo {
 	return s
 }
 
+
 // FileLogInfo : File's logged information.
 type FileLogInfo struct {
 	FileOrFolderLogInfo
 }
-
 // NewFileLogInfo returns a new FileLogInfo instance
 func NewFileLogInfo(Path *PathLogInfo) *FileLogInfo {
 	s := new(FileLogInfo)
@@ -9271,12 +9334,12 @@ func NewFileLogInfo(Path *PathLogInfo) *FileLogInfo {
 	return s
 }
 
+
 // FileMoveDetails : Moved files and/or folders.
 type FileMoveDetails struct {
 	// RelocateActionDetails : Relocate action details.
 	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
-
 // NewFileMoveDetails returns a new FileMoveDetails instance
 func NewFileMoveDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileMoveDetails {
 	s := new(FileMoveDetails)
@@ -9284,12 +9347,12 @@ func NewFileMoveDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo)
 	return s
 }
 
+
 // FileMoveType : has no documentation (yet)
 type FileMoveType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileMoveType returns a new FileMoveType instance
 func NewFileMoveType(Description string) *FileMoveType {
 	s := new(FileMoveType)
@@ -9297,22 +9360,22 @@ func NewFileMoveType(Description string) *FileMoveType {
 	return s
 }
 
+
 // FilePermanentlyDeleteDetails : Permanently deleted files and/or folders.
 type FilePermanentlyDeleteDetails struct {
 }
-
 // NewFilePermanentlyDeleteDetails returns a new FilePermanentlyDeleteDetails instance
 func NewFilePermanentlyDeleteDetails() *FilePermanentlyDeleteDetails {
 	s := new(FilePermanentlyDeleteDetails)
 	return s
 }
 
+
 // FilePermanentlyDeleteType : has no documentation (yet)
 type FilePermanentlyDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFilePermanentlyDeleteType returns a new FilePermanentlyDeleteType instance
 func NewFilePermanentlyDeleteType(Description string) *FilePermanentlyDeleteType {
 	s := new(FilePermanentlyDeleteType)
@@ -9320,22 +9383,22 @@ func NewFilePermanentlyDeleteType(Description string) *FilePermanentlyDeleteType
 	return s
 }
 
+
 // FilePreviewDetails : Previewed files and/or folders.
 type FilePreviewDetails struct {
 }
-
 // NewFilePreviewDetails returns a new FilePreviewDetails instance
 func NewFilePreviewDetails() *FilePreviewDetails {
 	s := new(FilePreviewDetails)
 	return s
 }
 
+
 // FilePreviewType : has no documentation (yet)
 type FilePreviewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFilePreviewType returns a new FilePreviewType instance
 func NewFilePreviewType(Description string) *FilePreviewType {
 	s := new(FilePreviewType)
@@ -9343,12 +9406,12 @@ func NewFilePreviewType(Description string) *FilePreviewType {
 	return s
 }
 
+
 // FileRenameDetails : Renamed files and/or folders.
 type FileRenameDetails struct {
 	// RelocateActionDetails : Relocate action details.
 	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
-
 // NewFileRenameDetails returns a new FileRenameDetails instance
 func NewFileRenameDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileRenameDetails {
 	s := new(FileRenameDetails)
@@ -9356,18 +9419,19 @@ func NewFileRenameDetails(RelocateActionDetails []*RelocateAssetReferencesLogInf
 	return s
 }
 
+
 // FileRenameType : has no documentation (yet)
 type FileRenameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRenameType returns a new FileRenameType instance
 func NewFileRenameType(Description string) *FileRenameType {
 	s := new(FileRenameType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestChangeDetails : Changed file request.
 type FileRequestChangeDetails struct {
@@ -9380,7 +9444,6 @@ type FileRequestChangeDetails struct {
 	// NewDetails : New file request details.
 	NewDetails *FileRequestDetails `json:"new_details"`
 }
-
 // NewFileRequestChangeDetails returns a new FileRequestChangeDetails instance
 func NewFileRequestChangeDetails(NewDetails *FileRequestDetails) *FileRequestChangeDetails {
 	s := new(FileRequestChangeDetails)
@@ -9388,18 +9451,19 @@ func NewFileRequestChangeDetails(NewDetails *FileRequestDetails) *FileRequestCha
 	return s
 }
 
+
 // FileRequestChangeType : has no documentation (yet)
 type FileRequestChangeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestChangeType returns a new FileRequestChangeType instance
 func NewFileRequestChangeType(Description string) *FileRequestChangeType {
 	s := new(FileRequestChangeType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestCloseDetails : Closed file request.
 type FileRequestCloseDetails struct {
@@ -9410,25 +9474,25 @@ type FileRequestCloseDetails struct {
 	// historical data gap.
 	PreviousDetails *FileRequestDetails `json:"previous_details,omitempty"`
 }
-
 // NewFileRequestCloseDetails returns a new FileRequestCloseDetails instance
 func NewFileRequestCloseDetails() *FileRequestCloseDetails {
 	s := new(FileRequestCloseDetails)
 	return s
 }
 
+
 // FileRequestCloseType : has no documentation (yet)
 type FileRequestCloseType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestCloseType returns a new FileRequestCloseType instance
 func NewFileRequestCloseType(Description string) *FileRequestCloseType {
 	s := new(FileRequestCloseType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestCreateDetails : Created file request.
 type FileRequestCreateDetails struct {
@@ -9439,25 +9503,25 @@ type FileRequestCreateDetails struct {
 	// data gap.
 	RequestDetails *FileRequestDetails `json:"request_details,omitempty"`
 }
-
 // NewFileRequestCreateDetails returns a new FileRequestCreateDetails instance
 func NewFileRequestCreateDetails() *FileRequestCreateDetails {
 	s := new(FileRequestCreateDetails)
 	return s
 }
 
+
 // FileRequestCreateType : has no documentation (yet)
 type FileRequestCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestCreateType returns a new FileRequestCreateType instance
 func NewFileRequestCreateType(Description string) *FileRequestCreateType {
 	s := new(FileRequestCreateType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestDeadline : File request deadline
 type FileRequestDeadline struct {
@@ -9468,12 +9532,12 @@ type FileRequestDeadline struct {
 	// Might be missing due to historical data gap.
 	AllowLateUploads string `json:"allow_late_uploads,omitempty"`
 }
-
 // NewFileRequestDeadline returns a new FileRequestDeadline instance
 func NewFileRequestDeadline() *FileRequestDeadline {
 	s := new(FileRequestDeadline)
 	return s
 }
+
 
 // FileRequestDeleteDetails : Delete file request.
 type FileRequestDeleteDetails struct {
@@ -9484,25 +9548,25 @@ type FileRequestDeleteDetails struct {
 	// historical data gap.
 	PreviousDetails *FileRequestDetails `json:"previous_details,omitempty"`
 }
-
 // NewFileRequestDeleteDetails returns a new FileRequestDeleteDetails instance
 func NewFileRequestDeleteDetails() *FileRequestDeleteDetails {
 	s := new(FileRequestDeleteDetails)
 	return s
 }
 
+
 // FileRequestDeleteType : has no documentation (yet)
 type FileRequestDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestDeleteType returns a new FileRequestDeleteType instance
 func NewFileRequestDeleteType(Description string) *FileRequestDeleteType {
 	s := new(FileRequestDeleteType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestDetails : File request details
 type FileRequestDetails struct {
@@ -9512,13 +9576,13 @@ type FileRequestDetails struct {
 	// gap.
 	Deadline *FileRequestDeadline `json:"deadline,omitempty"`
 }
-
 // NewFileRequestDetails returns a new FileRequestDetails instance
 func NewFileRequestDetails(AssetIndex uint64) *FileRequestDetails {
 	s := new(FileRequestDetails)
 	s.AssetIndex = AssetIndex
 	return s
 }
+
 
 // FileRequestReceiveFileDetails : Received files for file request.
 type FileRequestReceiveFileDetails struct {
@@ -9530,14 +9594,13 @@ type FileRequestReceiveFileDetails struct {
 	FileRequestDetails *FileRequestDetails `json:"file_request_details,omitempty"`
 	// SubmittedFileNames : Submitted file names.
 	SubmittedFileNames []string `json:"submitted_file_names"`
-	// SubmitterName : The name as provided by the submitter. Might be missing
-	// due to historical data gap.
+	// SubmitterName : The name as provided by the submitter. Might be missing due
+	// to historical data gap.
 	SubmitterName string `json:"submitter_name,omitempty"`
 	// SubmitterEmail : The email as provided by the submitter. Might be missing
 	// due to historical data gap.
 	SubmitterEmail string `json:"submitter_email,omitempty"`
 }
-
 // NewFileRequestReceiveFileDetails returns a new FileRequestReceiveFileDetails instance
 func NewFileRequestReceiveFileDetails(SubmittedFileNames []string) *FileRequestReceiveFileDetails {
 	s := new(FileRequestReceiveFileDetails)
@@ -9545,18 +9608,19 @@ func NewFileRequestReceiveFileDetails(SubmittedFileNames []string) *FileRequestR
 	return s
 }
 
+
 // FileRequestReceiveFileType : has no documentation (yet)
 type FileRequestReceiveFileType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestReceiveFileType returns a new FileRequestReceiveFileType instance
 func NewFileRequestReceiveFileType(Description string) *FileRequestReceiveFileType {
 	s := new(FileRequestReceiveFileType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestsChangePolicyDetails : Enabled/disabled file requests.
 type FileRequestsChangePolicyDetails struct {
@@ -9566,7 +9630,6 @@ type FileRequestsChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *FileRequestsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewFileRequestsChangePolicyDetails returns a new FileRequestsChangePolicyDetails instance
 func NewFileRequestsChangePolicyDetails(NewValue *FileRequestsPolicy) *FileRequestsChangePolicyDetails {
 	s := new(FileRequestsChangePolicyDetails)
@@ -9574,12 +9637,12 @@ func NewFileRequestsChangePolicyDetails(NewValue *FileRequestsPolicy) *FileReque
 	return s
 }
 
+
 // FileRequestsChangePolicyType : has no documentation (yet)
 type FileRequestsChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestsChangePolicyType returns a new FileRequestsChangePolicyType instance
 func NewFileRequestsChangePolicyType(Description string) *FileRequestsChangePolicyType {
 	s := new(FileRequestsChangePolicyType)
@@ -9587,22 +9650,22 @@ func NewFileRequestsChangePolicyType(Description string) *FileRequestsChangePoli
 	return s
 }
 
+
 // FileRequestsEmailsEnabledDetails : Enabled file request emails for everyone.
 type FileRequestsEmailsEnabledDetails struct {
 }
-
 // NewFileRequestsEmailsEnabledDetails returns a new FileRequestsEmailsEnabledDetails instance
 func NewFileRequestsEmailsEnabledDetails() *FileRequestsEmailsEnabledDetails {
 	s := new(FileRequestsEmailsEnabledDetails)
 	return s
 }
 
+
 // FileRequestsEmailsEnabledType : has no documentation (yet)
 type FileRequestsEmailsEnabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestsEmailsEnabledType returns a new FileRequestsEmailsEnabledType instance
 func NewFileRequestsEmailsEnabledType(Description string) *FileRequestsEmailsEnabledType {
 	s := new(FileRequestsEmailsEnabledType)
@@ -9610,29 +9673,30 @@ func NewFileRequestsEmailsEnabledType(Description string) *FileRequestsEmailsEna
 	return s
 }
 
+
 // FileRequestsEmailsRestrictedToTeamOnlyDetails : Enabled file request emails
 // for team.
 type FileRequestsEmailsRestrictedToTeamOnlyDetails struct {
 }
-
 // NewFileRequestsEmailsRestrictedToTeamOnlyDetails returns a new FileRequestsEmailsRestrictedToTeamOnlyDetails instance
 func NewFileRequestsEmailsRestrictedToTeamOnlyDetails() *FileRequestsEmailsRestrictedToTeamOnlyDetails {
 	s := new(FileRequestsEmailsRestrictedToTeamOnlyDetails)
 	return s
 }
 
+
 // FileRequestsEmailsRestrictedToTeamOnlyType : has no documentation (yet)
 type FileRequestsEmailsRestrictedToTeamOnlyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRequestsEmailsRestrictedToTeamOnlyType returns a new FileRequestsEmailsRestrictedToTeamOnlyType instance
 func NewFileRequestsEmailsRestrictedToTeamOnlyType(Description string) *FileRequestsEmailsRestrictedToTeamOnlyType {
 	s := new(FileRequestsEmailsRestrictedToTeamOnlyType)
 	s.Description = Description
 	return s
 }
+
 
 // FileRequestsPolicy : File requests policy
 type FileRequestsPolicy struct {
@@ -9642,8 +9706,8 @@ type FileRequestsPolicy struct {
 // Valid tag values for FileRequestsPolicy
 const (
 	FileRequestsPolicyDisabled = "disabled"
-	FileRequestsPolicyEnabled  = "enabled"
-	FileRequestsPolicyOther    = "other"
+	FileRequestsPolicyEnabled = "enabled"
+	FileRequestsPolicyOther = "other"
 )
 
 // FileResolveCommentDetails : Resolved file comment.
@@ -9651,19 +9715,18 @@ type FileResolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileResolveCommentDetails returns a new FileResolveCommentDetails instance
 func NewFileResolveCommentDetails() *FileResolveCommentDetails {
 	s := new(FileResolveCommentDetails)
 	return s
 }
 
+
 // FileResolveCommentType : has no documentation (yet)
 type FileResolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileResolveCommentType returns a new FileResolveCommentType instance
 func NewFileResolveCommentType(Description string) *FileResolveCommentType {
 	s := new(FileResolveCommentType)
@@ -9671,22 +9734,22 @@ func NewFileResolveCommentType(Description string) *FileResolveCommentType {
 	return s
 }
 
+
 // FileRestoreDetails : Restored deleted files and/or folders.
 type FileRestoreDetails struct {
 }
-
 // NewFileRestoreDetails returns a new FileRestoreDetails instance
 func NewFileRestoreDetails() *FileRestoreDetails {
 	s := new(FileRestoreDetails)
 	return s
 }
 
+
 // FileRestoreType : has no documentation (yet)
 type FileRestoreType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRestoreType returns a new FileRestoreType instance
 func NewFileRestoreType(Description string) *FileRestoreType {
 	s := new(FileRestoreType)
@@ -9694,22 +9757,22 @@ func NewFileRestoreType(Description string) *FileRestoreType {
 	return s
 }
 
+
 // FileRevertDetails : Reverted files to previous version.
 type FileRevertDetails struct {
 }
-
 // NewFileRevertDetails returns a new FileRevertDetails instance
 func NewFileRevertDetails() *FileRevertDetails {
 	s := new(FileRevertDetails)
 	return s
 }
 
+
 // FileRevertType : has no documentation (yet)
 type FileRevertType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRevertType returns a new FileRevertType instance
 func NewFileRevertType(Description string) *FileRevertType {
 	s := new(FileRevertType)
@@ -9717,22 +9780,22 @@ func NewFileRevertType(Description string) *FileRevertType {
 	return s
 }
 
+
 // FileRollbackChangesDetails : Rolled back file actions.
 type FileRollbackChangesDetails struct {
 }
-
 // NewFileRollbackChangesDetails returns a new FileRollbackChangesDetails instance
 func NewFileRollbackChangesDetails() *FileRollbackChangesDetails {
 	s := new(FileRollbackChangesDetails)
 	return s
 }
 
+
 // FileRollbackChangesType : has no documentation (yet)
 type FileRollbackChangesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileRollbackChangesType returns a new FileRollbackChangesType instance
 func NewFileRollbackChangesType(Description string) *FileRollbackChangesType {
 	s := new(FileRollbackChangesType)
@@ -9740,12 +9803,12 @@ func NewFileRollbackChangesType(Description string) *FileRollbackChangesType {
 	return s
 }
 
+
 // FileSaveCopyReferenceDetails : Saved file/folder using copy reference.
 type FileSaveCopyReferenceDetails struct {
 	// RelocateActionDetails : Relocate action details.
 	RelocateActionDetails []*RelocateAssetReferencesLogInfo `json:"relocate_action_details"`
 }
-
 // NewFileSaveCopyReferenceDetails returns a new FileSaveCopyReferenceDetails instance
 func NewFileSaveCopyReferenceDetails(RelocateActionDetails []*RelocateAssetReferencesLogInfo) *FileSaveCopyReferenceDetails {
 	s := new(FileSaveCopyReferenceDetails)
@@ -9753,12 +9816,12 @@ func NewFileSaveCopyReferenceDetails(RelocateActionDetails []*RelocateAssetRefer
 	return s
 }
 
+
 // FileSaveCopyReferenceType : has no documentation (yet)
 type FileSaveCopyReferenceType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileSaveCopyReferenceType returns a new FileSaveCopyReferenceType instance
 func NewFileSaveCopyReferenceType(Description string) *FileSaveCopyReferenceType {
 	s := new(FileSaveCopyReferenceType)
@@ -9766,24 +9829,24 @@ func NewFileSaveCopyReferenceType(Description string) *FileSaveCopyReferenceType
 	return s
 }
 
+
 // FileUnlikeCommentDetails : Unliked file comment.
 type FileUnlikeCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileUnlikeCommentDetails returns a new FileUnlikeCommentDetails instance
 func NewFileUnlikeCommentDetails() *FileUnlikeCommentDetails {
 	s := new(FileUnlikeCommentDetails)
 	return s
 }
 
+
 // FileUnlikeCommentType : has no documentation (yet)
 type FileUnlikeCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileUnlikeCommentType returns a new FileUnlikeCommentType instance
 func NewFileUnlikeCommentType(Description string) *FileUnlikeCommentType {
 	s := new(FileUnlikeCommentType)
@@ -9791,24 +9854,24 @@ func NewFileUnlikeCommentType(Description string) *FileUnlikeCommentType {
 	return s
 }
 
+
 // FileUnresolveCommentDetails : Unresolved file comment.
 type FileUnresolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewFileUnresolveCommentDetails returns a new FileUnresolveCommentDetails instance
 func NewFileUnresolveCommentDetails() *FileUnresolveCommentDetails {
 	s := new(FileUnresolveCommentDetails)
 	return s
 }
 
+
 // FileUnresolveCommentType : has no documentation (yet)
 type FileUnresolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewFileUnresolveCommentType returns a new FileUnresolveCommentType instance
 func NewFileUnresolveCommentType(Description string) *FileUnresolveCommentType {
 	s := new(FileUnresolveCommentType)
@@ -9816,17 +9879,18 @@ func NewFileUnresolveCommentType(Description string) *FileUnresolveCommentType {
 	return s
 }
 
+
 // FolderLogInfo : Folder's logged information.
 type FolderLogInfo struct {
 	FileOrFolderLogInfo
 }
-
 // NewFolderLogInfo returns a new FolderLogInfo instance
 func NewFolderLogInfo(Path *PathLogInfo) *FolderLogInfo {
 	s := new(FolderLogInfo)
 	s.Path = Path
 	return s
 }
+
 
 // GeoLocationLogInfo : Geographic location details.
 type GeoLocationLogInfo struct {
@@ -9839,7 +9903,6 @@ type GeoLocationLogInfo struct {
 	// IpAddress : IP address.
 	IpAddress string `json:"ip_address"`
 }
-
 // NewGeoLocationLogInfo returns a new GeoLocationLogInfo instance
 func NewGeoLocationLogInfo(IpAddress string) *GeoLocationLogInfo {
 	s := new(GeoLocationLogInfo)
@@ -9847,12 +9910,13 @@ func NewGeoLocationLogInfo(IpAddress string) *GeoLocationLogInfo {
 	return s
 }
 
+
 // GetTeamEventsArg : has no documentation (yet)
 type GetTeamEventsArg struct {
 	// Limit : The maximal number of results to return per call. Note that some
 	// calls may not return `limit` number of events, and may even return no
-	// events, even with `has_more` set to true. In this case, callers should
-	// fetch again using `getEventsContinue`.
+	// events, even with `has_more` set to true. In this case, callers should fetch
+	// again using `getEventsContinue`.
 	Limit uint32 `json:"limit"`
 	// AccountId : Filter the events by account ID. Return ony events with this
 	// account_id as either Actor, Context, or Participants.
@@ -9862,7 +9926,6 @@ type GetTeamEventsArg struct {
 	// Category : Filter the returned events to a single category.
 	Category *EventCategory `json:"category,omitempty"`
 }
-
 // NewGetTeamEventsArg returns a new GetTeamEventsArg instance
 func NewGetTeamEventsArg() *GetTeamEventsArg {
 	s := new(GetTeamEventsArg)
@@ -9870,12 +9933,12 @@ func NewGetTeamEventsArg() *GetTeamEventsArg {
 	return s
 }
 
+
 // GetTeamEventsContinueArg : has no documentation (yet)
 type GetTeamEventsContinueArg struct {
 	// Cursor : Indicates from what point to get the next set of events.
 	Cursor string `json:"cursor"`
 }
-
 // NewGetTeamEventsContinueArg returns a new GetTeamEventsContinueArg instance
 func NewGetTeamEventsContinueArg(Cursor string) *GetTeamEventsContinueArg {
 	s := new(GetTeamEventsContinueArg)
@@ -9883,37 +9946,37 @@ func NewGetTeamEventsContinueArg(Cursor string) *GetTeamEventsContinueArg {
 	return s
 }
 
+
 // GetTeamEventsContinueError : Errors that can be raised when calling
 // `getEventsContinue`.
 type GetTeamEventsContinueError struct {
 	dropbox.Tagged
 	// Reset : Cursors are intended to be used quickly. Individual cursor values
-	// are normally valid for days, but in rare cases may be reset sooner.
-	// Cursor reset errors should be handled by fetching a new cursor from
-	// `getEvents`. The associated value is the approximate timestamp of the
-	// most recent event returned by the cursor. This should be used as a
-	// resumption point when calling `getEvents` to obtain a new cursor.
+	// are normally valid for days, but in rare cases may be reset sooner. Cursor
+	// reset errors should be handled by fetching a new cursor from `getEvents`.
+	// The associated value is the approximate timestamp of the most recent event
+	// returned by the cursor. This should be used as a resumption point when
+	// calling `getEvents` to obtain a new cursor.
 	Reset time.Time `json:"reset,omitempty"`
 }
 
 // Valid tag values for GetTeamEventsContinueError
 const (
 	GetTeamEventsContinueErrorBadCursor = "bad_cursor"
-	GetTeamEventsContinueErrorReset     = "reset"
-	GetTeamEventsContinueErrorOther     = "other"
+	GetTeamEventsContinueErrorReset = "reset"
+	GetTeamEventsContinueErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a GetTeamEventsContinueError instance
 func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Reset : Cursors are intended to be used quickly. Individual cursor
-		// values are normally valid for days, but in rare cases may be reset
-		// sooner. Cursor reset errors should be handled by fetching a new
-		// cursor from `getEvents`. The associated value is the approximate
-		// timestamp of the most recent event returned by the cursor. This
-		// should be used as a resumption point when calling `getEvents` to
-		// obtain a new cursor.
+		// Reset : Cursors are intended to be used quickly. Individual cursor values
+		// are normally valid for days, but in rare cases may be reset sooner. Cursor
+		// reset errors should be handled by fetching a new cursor from `getEvents`.
+		// The associated value is the approximate timestamp of the most recent event
+		// returned by the cursor. This should be used as a resumption point when
+		// calling `getEvents` to obtain a new cursor.
 		Reset time.Time `json:"reset,omitempty"`
 	}
 	var w wrap
@@ -9923,8 +9986,8 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "reset":
-		u.Reset = w.Reset
+		case "reset":
+			u.Reset = w.Reset
 
 		if err != nil {
 			return err
@@ -9941,29 +10004,28 @@ type GetTeamEventsError struct {
 // Valid tag values for GetTeamEventsError
 const (
 	GetTeamEventsErrorAccountIdNotFound = "account_id_not_found"
-	GetTeamEventsErrorInvalidTimeRange  = "invalid_time_range"
-	GetTeamEventsErrorOther             = "other"
+	GetTeamEventsErrorInvalidTimeRange = "invalid_time_range"
+	GetTeamEventsErrorOther = "other"
 )
 
 // GetTeamEventsResult : has no documentation (yet)
 type GetTeamEventsResult struct {
-	// Events : List of events. Note that events are not guaranteed to be sorted
-	// by their timestamp value.
+	// Events : List of events. Note that events are not guaranteed to be sorted by
+	// their timestamp value.
 	Events []*TeamEvent `json:"events"`
 	// Cursor : Pass the cursor into `getEventsContinue` to obtain additional
 	// events. The value of `cursor` may change for each response from
 	// `getEventsContinue`, regardless of the value of `has_more`; older cursor
 	// strings may expire. Thus, callers should ensure that they update their
 	// cursor based on the latest value of `cursor` after each call, and poll
-	// regularly if they wish to poll for new events. Callers should handle
-	// reset exceptions for expired cursors.
+	// regularly if they wish to poll for new events. Callers should handle reset
+	// exceptions for expired cursors.
 	Cursor string `json:"cursor"`
 	// HasMore : Is true if there may be additional events that have not been
-	// returned yet. An additional call to `getEventsContinue` can retrieve
-	// them. Note that `has_more` may be true, even if `events` is empty.
+	// returned yet. An additional call to `getEventsContinue` can retrieve them.
+	// Note that `has_more` may be true, even if `events` is empty.
 	HasMore bool `json:"has_more"`
 }
-
 // NewGetTeamEventsResult returns a new GetTeamEventsResult instance
 func NewGetTeamEventsResult(Events []*TeamEvent, Cursor string, HasMore bool) *GetTeamEventsResult {
 	s := new(GetTeamEventsResult)
@@ -9973,16 +10035,16 @@ func NewGetTeamEventsResult(Events []*TeamEvent, Cursor string, HasMore bool) *G
 	return s
 }
 
+
 // GoogleSsoChangePolicyDetails : Enabled/disabled Google single sign-on for
 // team.
 type GoogleSsoChangePolicyDetails struct {
 	// NewValue : New Google single sign-on policy.
 	NewValue *GoogleSsoPolicy `json:"new_value"`
-	// PreviousValue : Previous Google single sign-on policy. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous Google single sign-on policy. Might be missing due
+	// to historical data gap.
 	PreviousValue *GoogleSsoPolicy `json:"previous_value,omitempty"`
 }
-
 // NewGoogleSsoChangePolicyDetails returns a new GoogleSsoChangePolicyDetails instance
 func NewGoogleSsoChangePolicyDetails(NewValue *GoogleSsoPolicy) *GoogleSsoChangePolicyDetails {
 	s := new(GoogleSsoChangePolicyDetails)
@@ -9990,18 +10052,19 @@ func NewGoogleSsoChangePolicyDetails(NewValue *GoogleSsoPolicy) *GoogleSsoChange
 	return s
 }
 
+
 // GoogleSsoChangePolicyType : has no documentation (yet)
 type GoogleSsoChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGoogleSsoChangePolicyType returns a new GoogleSsoChangePolicyType instance
 func NewGoogleSsoChangePolicyType(Description string) *GoogleSsoChangePolicyType {
 	s := new(GoogleSsoChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // GoogleSsoPolicy : Google SSO policy
 type GoogleSsoPolicy struct {
@@ -10011,8 +10074,8 @@ type GoogleSsoPolicy struct {
 // Valid tag values for GoogleSsoPolicy
 const (
 	GoogleSsoPolicyDisabled = "disabled"
-	GoogleSsoPolicyEnabled  = "enabled"
-	GoogleSsoPolicyOther    = "other"
+	GoogleSsoPolicyEnabled = "enabled"
+	GoogleSsoPolicyOther = "other"
 )
 
 // GroupAddExternalIdDetails : Added external ID for group.
@@ -10020,7 +10083,6 @@ type GroupAddExternalIdDetails struct {
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
 }
-
 // NewGroupAddExternalIdDetails returns a new GroupAddExternalIdDetails instance
 func NewGroupAddExternalIdDetails(NewValue string) *GroupAddExternalIdDetails {
 	s := new(GroupAddExternalIdDetails)
@@ -10028,12 +10090,12 @@ func NewGroupAddExternalIdDetails(NewValue string) *GroupAddExternalIdDetails {
 	return s
 }
 
+
 // GroupAddExternalIdType : has no documentation (yet)
 type GroupAddExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupAddExternalIdType returns a new GroupAddExternalIdType instance
 func NewGroupAddExternalIdType(Description string) *GroupAddExternalIdType {
 	s := new(GroupAddExternalIdType)
@@ -10041,12 +10103,12 @@ func NewGroupAddExternalIdType(Description string) *GroupAddExternalIdType {
 	return s
 }
 
+
 // GroupAddMemberDetails : Added team members to group.
 type GroupAddMemberDetails struct {
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
 }
-
 // NewGroupAddMemberDetails returns a new GroupAddMemberDetails instance
 func NewGroupAddMemberDetails(IsGroupOwner bool) *GroupAddMemberDetails {
 	s := new(GroupAddMemberDetails)
@@ -10054,18 +10116,19 @@ func NewGroupAddMemberDetails(IsGroupOwner bool) *GroupAddMemberDetails {
 	return s
 }
 
+
 // GroupAddMemberType : has no documentation (yet)
 type GroupAddMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupAddMemberType returns a new GroupAddMemberType instance
 func NewGroupAddMemberType(Description string) *GroupAddMemberType {
 	s := new(GroupAddMemberType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupChangeExternalIdDetails : Changed external ID for group.
 type GroupChangeExternalIdDetails struct {
@@ -10074,7 +10137,6 @@ type GroupChangeExternalIdDetails struct {
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewGroupChangeExternalIdDetails returns a new GroupChangeExternalIdDetails instance
 func NewGroupChangeExternalIdDetails(NewValue string, PreviousValue string) *GroupChangeExternalIdDetails {
 	s := new(GroupChangeExternalIdDetails)
@@ -10083,18 +10145,19 @@ func NewGroupChangeExternalIdDetails(NewValue string, PreviousValue string) *Gro
 	return s
 }
 
+
 // GroupChangeExternalIdType : has no documentation (yet)
 type GroupChangeExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupChangeExternalIdType returns a new GroupChangeExternalIdType instance
 func NewGroupChangeExternalIdType(Description string) *GroupChangeExternalIdType {
 	s := new(GroupChangeExternalIdType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupChangeManagementTypeDetails : Changed group management type.
 type GroupChangeManagementTypeDetails struct {
@@ -10104,7 +10167,6 @@ type GroupChangeManagementTypeDetails struct {
 	// historical data gap.
 	PreviousValue *team_common.GroupManagementType `json:"previous_value,omitempty"`
 }
-
 // NewGroupChangeManagementTypeDetails returns a new GroupChangeManagementTypeDetails instance
 func NewGroupChangeManagementTypeDetails(NewValue *team_common.GroupManagementType) *GroupChangeManagementTypeDetails {
 	s := new(GroupChangeManagementTypeDetails)
@@ -10112,12 +10174,12 @@ func NewGroupChangeManagementTypeDetails(NewValue *team_common.GroupManagementTy
 	return s
 }
 
+
 // GroupChangeManagementTypeType : has no documentation (yet)
 type GroupChangeManagementTypeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupChangeManagementTypeType returns a new GroupChangeManagementTypeType instance
 func NewGroupChangeManagementTypeType(Description string) *GroupChangeManagementTypeType {
 	s := new(GroupChangeManagementTypeType)
@@ -10125,12 +10187,12 @@ func NewGroupChangeManagementTypeType(Description string) *GroupChangeManagement
 	return s
 }
 
+
 // GroupChangeMemberRoleDetails : Changed manager permissions of group member.
 type GroupChangeMemberRoleDetails struct {
 	// IsGroupOwner : Is group owner.
 	IsGroupOwner bool `json:"is_group_owner"`
 }
-
 // NewGroupChangeMemberRoleDetails returns a new GroupChangeMemberRoleDetails instance
 func NewGroupChangeMemberRoleDetails(IsGroupOwner bool) *GroupChangeMemberRoleDetails {
 	s := new(GroupChangeMemberRoleDetails)
@@ -10138,18 +10200,19 @@ func NewGroupChangeMemberRoleDetails(IsGroupOwner bool) *GroupChangeMemberRoleDe
 	return s
 }
 
+
 // GroupChangeMemberRoleType : has no documentation (yet)
 type GroupChangeMemberRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupChangeMemberRoleType returns a new GroupChangeMemberRoleType instance
 func NewGroupChangeMemberRoleType(Description string) *GroupChangeMemberRoleType {
 	s := new(GroupChangeMemberRoleType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupCreateDetails : Created group.
 type GroupCreateDetails struct {
@@ -10159,19 +10222,18 @@ type GroupCreateDetails struct {
 	// JoinPolicy : Group join policy.
 	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
 }
-
 // NewGroupCreateDetails returns a new GroupCreateDetails instance
 func NewGroupCreateDetails() *GroupCreateDetails {
 	s := new(GroupCreateDetails)
 	return s
 }
 
+
 // GroupCreateType : has no documentation (yet)
 type GroupCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupCreateType returns a new GroupCreateType instance
 func NewGroupCreateType(Description string) *GroupCreateType {
 	s := new(GroupCreateType)
@@ -10179,25 +10241,25 @@ func NewGroupCreateType(Description string) *GroupCreateType {
 	return s
 }
 
+
 // GroupDeleteDetails : Deleted group.
 type GroupDeleteDetails struct {
 	// IsCompanyManaged : Is company managed group. Might be missing due to
 	// historical data gap.
 	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
 }
-
 // NewGroupDeleteDetails returns a new GroupDeleteDetails instance
 func NewGroupDeleteDetails() *GroupDeleteDetails {
 	s := new(GroupDeleteDetails)
 	return s
 }
 
+
 // GroupDeleteType : has no documentation (yet)
 type GroupDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupDeleteType returns a new GroupDeleteType instance
 func NewGroupDeleteType(Description string) *GroupDeleteType {
 	s := new(GroupDeleteType)
@@ -10205,28 +10267,29 @@ func NewGroupDeleteType(Description string) *GroupDeleteType {
 	return s
 }
 
+
 // GroupDescriptionUpdatedDetails : Updated group.
 type GroupDescriptionUpdatedDetails struct {
 }
-
 // NewGroupDescriptionUpdatedDetails returns a new GroupDescriptionUpdatedDetails instance
 func NewGroupDescriptionUpdatedDetails() *GroupDescriptionUpdatedDetails {
 	s := new(GroupDescriptionUpdatedDetails)
 	return s
 }
 
+
 // GroupDescriptionUpdatedType : has no documentation (yet)
 type GroupDescriptionUpdatedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupDescriptionUpdatedType returns a new GroupDescriptionUpdatedType instance
 func NewGroupDescriptionUpdatedType(Description string) *GroupDescriptionUpdatedType {
 	s := new(GroupDescriptionUpdatedType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupJoinPolicy : has no documentation (yet)
 type GroupJoinPolicy struct {
@@ -10235,9 +10298,9 @@ type GroupJoinPolicy struct {
 
 // Valid tag values for GroupJoinPolicy
 const (
-	GroupJoinPolicyOpen          = "open"
+	GroupJoinPolicyOpen = "open"
 	GroupJoinPolicyRequestToJoin = "request_to_join"
-	GroupJoinPolicyOther         = "other"
+	GroupJoinPolicyOther = "other"
 )
 
 // GroupJoinPolicyUpdatedDetails : Updated group join policy.
@@ -10248,25 +10311,25 @@ type GroupJoinPolicyUpdatedDetails struct {
 	// JoinPolicy : Group join policy.
 	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
 }
-
 // NewGroupJoinPolicyUpdatedDetails returns a new GroupJoinPolicyUpdatedDetails instance
 func NewGroupJoinPolicyUpdatedDetails() *GroupJoinPolicyUpdatedDetails {
 	s := new(GroupJoinPolicyUpdatedDetails)
 	return s
 }
 
+
 // GroupJoinPolicyUpdatedType : has no documentation (yet)
 type GroupJoinPolicyUpdatedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupJoinPolicyUpdatedType returns a new GroupJoinPolicyUpdatedType instance
 func NewGroupJoinPolicyUpdatedType(Description string) *GroupJoinPolicyUpdatedType {
 	s := new(GroupJoinPolicyUpdatedType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupLogInfo : Group's logged information.
 type GroupLogInfo struct {
@@ -10275,11 +10338,9 @@ type GroupLogInfo struct {
 	GroupId string `json:"group_id,omitempty"`
 	// DisplayName : The name of this group.
 	DisplayName string `json:"display_name"`
-	// ExternalId : External group ID. Might be missing due to historical data
-	// gap.
+	// ExternalId : External group ID. Might be missing due to historical data gap.
 	ExternalId string `json:"external_id,omitempty"`
 }
-
 // NewGroupLogInfo returns a new GroupLogInfo instance
 func NewGroupLogInfo(DisplayName string) *GroupLogInfo {
 	s := new(GroupLogInfo)
@@ -10287,22 +10348,22 @@ func NewGroupLogInfo(DisplayName string) *GroupLogInfo {
 	return s
 }
 
+
 // GroupMovedDetails : Moved group.
 type GroupMovedDetails struct {
 }
-
 // NewGroupMovedDetails returns a new GroupMovedDetails instance
 func NewGroupMovedDetails() *GroupMovedDetails {
 	s := new(GroupMovedDetails)
 	return s
 }
 
+
 // GroupMovedType : has no documentation (yet)
 type GroupMovedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupMovedType returns a new GroupMovedType instance
 func NewGroupMovedType(Description string) *GroupMovedType {
 	s := new(GroupMovedType)
@@ -10310,12 +10371,12 @@ func NewGroupMovedType(Description string) *GroupMovedType {
 	return s
 }
 
+
 // GroupRemoveExternalIdDetails : Removed external ID for group.
 type GroupRemoveExternalIdDetails struct {
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewGroupRemoveExternalIdDetails returns a new GroupRemoveExternalIdDetails instance
 func NewGroupRemoveExternalIdDetails(PreviousValue string) *GroupRemoveExternalIdDetails {
 	s := new(GroupRemoveExternalIdDetails)
@@ -10323,12 +10384,12 @@ func NewGroupRemoveExternalIdDetails(PreviousValue string) *GroupRemoveExternalI
 	return s
 }
 
+
 // GroupRemoveExternalIdType : has no documentation (yet)
 type GroupRemoveExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupRemoveExternalIdType returns a new GroupRemoveExternalIdType instance
 func NewGroupRemoveExternalIdType(Description string) *GroupRemoveExternalIdType {
 	s := new(GroupRemoveExternalIdType)
@@ -10336,28 +10397,29 @@ func NewGroupRemoveExternalIdType(Description string) *GroupRemoveExternalIdType
 	return s
 }
 
+
 // GroupRemoveMemberDetails : Removed team members from group.
 type GroupRemoveMemberDetails struct {
 }
-
 // NewGroupRemoveMemberDetails returns a new GroupRemoveMemberDetails instance
 func NewGroupRemoveMemberDetails() *GroupRemoveMemberDetails {
 	s := new(GroupRemoveMemberDetails)
 	return s
 }
 
+
 // GroupRemoveMemberType : has no documentation (yet)
 type GroupRemoveMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupRemoveMemberType returns a new GroupRemoveMemberType instance
 func NewGroupRemoveMemberType(Description string) *GroupRemoveMemberType {
 	s := new(GroupRemoveMemberType)
 	s.Description = Description
 	return s
 }
+
 
 // GroupRenameDetails : Renamed group.
 type GroupRenameDetails struct {
@@ -10366,7 +10428,6 @@ type GroupRenameDetails struct {
 	// NewValue : New display name.
 	NewValue string `json:"new_value"`
 }
-
 // NewGroupRenameDetails returns a new GroupRenameDetails instance
 func NewGroupRenameDetails(PreviousValue string, NewValue string) *GroupRenameDetails {
 	s := new(GroupRenameDetails)
@@ -10375,12 +10436,12 @@ func NewGroupRenameDetails(PreviousValue string, NewValue string) *GroupRenameDe
 	return s
 }
 
+
 // GroupRenameType : has no documentation (yet)
 type GroupRenameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupRenameType returns a new GroupRenameType instance
 func NewGroupRenameType(Description string) *GroupRenameType {
 	s := new(GroupRenameType)
@@ -10388,15 +10449,15 @@ func NewGroupRenameType(Description string) *GroupRenameType {
 	return s
 }
 
+
 // GroupUserManagementChangePolicyDetails : Changed who can create groups.
 type GroupUserManagementChangePolicyDetails struct {
 	// NewValue : New group users management policy.
 	NewValue *team_policies.GroupCreation `json:"new_value"`
-	// PreviousValue : Previous group users management policy. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous group users management policy. Might be missing due
+	// to historical data gap.
 	PreviousValue *team_policies.GroupCreation `json:"previous_value,omitempty"`
 }
-
 // NewGroupUserManagementChangePolicyDetails returns a new GroupUserManagementChangePolicyDetails instance
 func NewGroupUserManagementChangePolicyDetails(NewValue *team_policies.GroupCreation) *GroupUserManagementChangePolicyDetails {
 	s := new(GroupUserManagementChangePolicyDetails)
@@ -10404,18 +10465,19 @@ func NewGroupUserManagementChangePolicyDetails(NewValue *team_policies.GroupCrea
 	return s
 }
 
+
 // GroupUserManagementChangePolicyType : has no documentation (yet)
 type GroupUserManagementChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGroupUserManagementChangePolicyType returns a new GroupUserManagementChangePolicyType instance
 func NewGroupUserManagementChangePolicyType(Description string) *GroupUserManagementChangePolicyType {
 	s := new(GroupUserManagementChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // GuestAdminChangeStatusDetails : Changed guest team admin status.
 type GuestAdminChangeStatusDetails struct {
@@ -10432,7 +10494,6 @@ type GuestAdminChangeStatusDetails struct {
 	// ActionDetails : Action details.
 	ActionDetails *TrustedTeamsRequestAction `json:"action_details"`
 }
-
 // NewGuestAdminChangeStatusDetails returns a new GuestAdminChangeStatusDetails instance
 func NewGuestAdminChangeStatusDetails(IsGuest bool, PreviousValue *TrustedTeamsRequestState, NewValue *TrustedTeamsRequestState, ActionDetails *TrustedTeamsRequestAction) *GuestAdminChangeStatusDetails {
 	s := new(GuestAdminChangeStatusDetails)
@@ -10443,18 +10504,19 @@ func NewGuestAdminChangeStatusDetails(IsGuest bool, PreviousValue *TrustedTeamsR
 	return s
 }
 
+
 // GuestAdminChangeStatusType : has no documentation (yet)
 type GuestAdminChangeStatusType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGuestAdminChangeStatusType returns a new GuestAdminChangeStatusType instance
 func NewGuestAdminChangeStatusType(Description string) *GuestAdminChangeStatusType {
 	s := new(GuestAdminChangeStatusType)
 	s.Description = Description
 	return s
 }
+
 
 // GuestAdminSignedInViaTrustedTeamsDetails : Started trusted team admin
 // session.
@@ -10464,25 +10526,25 @@ type GuestAdminSignedInViaTrustedTeamsDetails struct {
 	// TrustedTeamName : Trusted team name.
 	TrustedTeamName string `json:"trusted_team_name,omitempty"`
 }
-
 // NewGuestAdminSignedInViaTrustedTeamsDetails returns a new GuestAdminSignedInViaTrustedTeamsDetails instance
 func NewGuestAdminSignedInViaTrustedTeamsDetails() *GuestAdminSignedInViaTrustedTeamsDetails {
 	s := new(GuestAdminSignedInViaTrustedTeamsDetails)
 	return s
 }
 
+
 // GuestAdminSignedInViaTrustedTeamsType : has no documentation (yet)
 type GuestAdminSignedInViaTrustedTeamsType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGuestAdminSignedInViaTrustedTeamsType returns a new GuestAdminSignedInViaTrustedTeamsType instance
 func NewGuestAdminSignedInViaTrustedTeamsType(Description string) *GuestAdminSignedInViaTrustedTeamsType {
 	s := new(GuestAdminSignedInViaTrustedTeamsType)
 	s.Description = Description
 	return s
 }
+
 
 // GuestAdminSignedOutViaTrustedTeamsDetails : Ended trusted team admin session.
 type GuestAdminSignedOutViaTrustedTeamsDetails struct {
@@ -10491,25 +10553,25 @@ type GuestAdminSignedOutViaTrustedTeamsDetails struct {
 	// TrustedTeamName : Trusted team name.
 	TrustedTeamName string `json:"trusted_team_name,omitempty"`
 }
-
 // NewGuestAdminSignedOutViaTrustedTeamsDetails returns a new GuestAdminSignedOutViaTrustedTeamsDetails instance
 func NewGuestAdminSignedOutViaTrustedTeamsDetails() *GuestAdminSignedOutViaTrustedTeamsDetails {
 	s := new(GuestAdminSignedOutViaTrustedTeamsDetails)
 	return s
 }
 
+
 // GuestAdminSignedOutViaTrustedTeamsType : has no documentation (yet)
 type GuestAdminSignedOutViaTrustedTeamsType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewGuestAdminSignedOutViaTrustedTeamsType returns a new GuestAdminSignedOutViaTrustedTeamsType instance
 func NewGuestAdminSignedOutViaTrustedTeamsType(Description string) *GuestAdminSignedOutViaTrustedTeamsType {
 	s := new(GuestAdminSignedOutViaTrustedTeamsType)
 	s.Description = Description
 	return s
 }
+
 
 // IdentifierType : has no documentation (yet)
 type IdentifierType struct {
@@ -10518,9 +10580,9 @@ type IdentifierType struct {
 
 // Valid tag values for IdentifierType
 const (
-	IdentifierTypeEmail               = "email"
+	IdentifierTypeEmail = "email"
 	IdentifierTypeFacebookProfileName = "facebook_profile_name"
-	IdentifierTypeOther               = "other"
+	IdentifierTypeOther = "other"
 )
 
 // IntegrationConnectedDetails : Connected integration for member.
@@ -10528,7 +10590,6 @@ type IntegrationConnectedDetails struct {
 	// IntegrationName : Name of the third-party integration.
 	IntegrationName string `json:"integration_name"`
 }
-
 // NewIntegrationConnectedDetails returns a new IntegrationConnectedDetails instance
 func NewIntegrationConnectedDetails(IntegrationName string) *IntegrationConnectedDetails {
 	s := new(IntegrationConnectedDetails)
@@ -10536,12 +10597,12 @@ func NewIntegrationConnectedDetails(IntegrationName string) *IntegrationConnecte
 	return s
 }
 
+
 // IntegrationConnectedType : has no documentation (yet)
 type IntegrationConnectedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewIntegrationConnectedType returns a new IntegrationConnectedType instance
 func NewIntegrationConnectedType(Description string) *IntegrationConnectedType {
 	s := new(IntegrationConnectedType)
@@ -10549,12 +10610,12 @@ func NewIntegrationConnectedType(Description string) *IntegrationConnectedType {
 	return s
 }
 
+
 // IntegrationDisconnectedDetails : Disconnected integration for member.
 type IntegrationDisconnectedDetails struct {
 	// IntegrationName : Name of the third-party integration.
 	IntegrationName string `json:"integration_name"`
 }
-
 // NewIntegrationDisconnectedDetails returns a new IntegrationDisconnectedDetails instance
 func NewIntegrationDisconnectedDetails(IntegrationName string) *IntegrationDisconnectedDetails {
 	s := new(IntegrationDisconnectedDetails)
@@ -10562,18 +10623,19 @@ func NewIntegrationDisconnectedDetails(IntegrationName string) *IntegrationDisco
 	return s
 }
 
+
 // IntegrationDisconnectedType : has no documentation (yet)
 type IntegrationDisconnectedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewIntegrationDisconnectedType returns a new IntegrationDisconnectedType instance
 func NewIntegrationDisconnectedType(Description string) *IntegrationDisconnectedType {
 	s := new(IntegrationDisconnectedType)
 	s.Description = Description
 	return s
 }
+
 
 // IntegrationPolicy : Policy for controlling whether a service integration is
 // enabled for the team.
@@ -10584,8 +10646,8 @@ type IntegrationPolicy struct {
 // Valid tag values for IntegrationPolicy
 const (
 	IntegrationPolicyDisabled = "disabled"
-	IntegrationPolicyEnabled  = "enabled"
-	IntegrationPolicyOther    = "other"
+	IntegrationPolicyEnabled = "enabled"
+	IntegrationPolicyOther = "other"
 )
 
 // IntegrationPolicyChangedDetails : Changed integration policy for team.
@@ -10597,7 +10659,6 @@ type IntegrationPolicyChangedDetails struct {
 	// PreviousValue : Previous integration policy.
 	PreviousValue *IntegrationPolicy `json:"previous_value"`
 }
-
 // NewIntegrationPolicyChangedDetails returns a new IntegrationPolicyChangedDetails instance
 func NewIntegrationPolicyChangedDetails(IntegrationName string, NewValue *IntegrationPolicy, PreviousValue *IntegrationPolicy) *IntegrationPolicyChangedDetails {
 	s := new(IntegrationPolicyChangedDetails)
@@ -10607,18 +10668,19 @@ func NewIntegrationPolicyChangedDetails(IntegrationName string, NewValue *Integr
 	return s
 }
 
+
 // IntegrationPolicyChangedType : has no documentation (yet)
 type IntegrationPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewIntegrationPolicyChangedType returns a new IntegrationPolicyChangedType instance
 func NewIntegrationPolicyChangedType(Description string) *IntegrationPolicyChangedType {
 	s := new(IntegrationPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // JoinTeamDetails : Additional information relevant when a new member joins the
 // team.
@@ -10630,7 +10692,6 @@ type JoinTeamDetails struct {
 	// LinkedSharedFolders : Linked shared folders.
 	LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
 }
-
 // NewJoinTeamDetails returns a new JoinTeamDetails instance
 func NewJoinTeamDetails(LinkedApps []*UserLinkedAppLogInfo, LinkedDevices []*LinkedDeviceLogInfo, LinkedSharedFolders []*FolderLogInfo) *JoinTeamDetails {
 	s := new(JoinTeamDetails)
@@ -10640,44 +10701,105 @@ func NewJoinTeamDetails(LinkedApps []*UserLinkedAppLogInfo, LinkedDevices []*Lin
 	return s
 }
 
+
 // LegacyDeviceSessionLogInfo : Information on sessions, in legacy format
 type LegacyDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
 	// SessionInfo : Session unique id. Might be missing due to historical data
 	// gap.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
-	// DisplayName : The device name. Might be missing due to historical data
-	// gap.
+	// DisplayName : The device name. Might be missing due to historical data gap.
 	DisplayName string `json:"display_name,omitempty"`
-	// IsEmmManaged : Is device managed by emm. Might be missing due to
-	// historical data gap.
+	// IsEmmManaged : Is device managed by emm. Might be missing due to historical
+	// data gap.
 	IsEmmManaged bool `json:"is_emm_managed,omitempty"`
 	// Platform : Information on the hosting platform. Might be missing due to
 	// historical data gap.
 	Platform string `json:"platform,omitempty"`
-	// MacAddress : The mac address of the last activity from this session.
-	// Might be missing due to historical data gap.
+	// MacAddress : The mac address of the last activity from this session. Might
+	// be missing due to historical data gap.
 	MacAddress string `json:"mac_address,omitempty"`
-	// OsVersion : The hosting OS version. Might be missing due to historical
-	// data gap.
+	// OsVersion : The hosting OS version. Might be missing due to historical data
+	// gap.
 	OsVersion string `json:"os_version,omitempty"`
-	// DeviceType : Information on the hosting device type. Might be missing due
-	// to historical data gap.
+	// DeviceType : Information on the hosting device type. Might be missing due to
+	// historical data gap.
 	DeviceType string `json:"device_type,omitempty"`
 	// ClientVersion : The Dropbox client version. Might be missing due to
 	// historical data gap.
 	ClientVersion string `json:"client_version,omitempty"`
-	// LegacyUniqId : Alternative unique device session id, instead of session
-	// id field. Might be missing due to historical data gap.
+	// LegacyUniqId : Alternative unique device session id, instead of session id
+	// field. Might be missing due to historical data gap.
 	LegacyUniqId string `json:"legacy_uniq_id,omitempty"`
 }
-
 // NewLegacyDeviceSessionLogInfo returns a new LegacyDeviceSessionLogInfo instance
 func NewLegacyDeviceSessionLogInfo() *LegacyDeviceSessionLogInfo {
 	s := new(LegacyDeviceSessionLogInfo)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a LegacyDeviceSessionLogInfo instance
+func (u *LegacyDeviceSessionLogInfo) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// IpAddress : The IP address of the last activity from this session. Might be
+		// missing due to historical data gap.
+		IpAddress string `json:"ip_address,omitempty"`
+		// Created : The time this session was created. Might be missing due to
+		// historical data gap.
+		Created time.Time `json:"created,omitempty"`
+		// Updated : The time of the last activity from this session. Might be missing
+		// due to historical data gap.
+		Updated time.Time `json:"updated,omitempty"`
+		// SessionInfo : Session unique id. Might be missing due to historical data
+		// gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical data gap.
+		DisplayName string `json:"display_name,omitempty"`
+		// IsEmmManaged : Is device managed by emm. Might be missing due to historical
+		// data gap.
+		IsEmmManaged bool `json:"is_emm_managed,omitempty"`
+		// Platform : Information on the hosting platform. Might be missing due to
+		// historical data gap.
+		Platform string `json:"platform,omitempty"`
+		// MacAddress : The mac address of the last activity from this session. Might
+		// be missing due to historical data gap.
+		MacAddress string `json:"mac_address,omitempty"`
+		// OsVersion : The hosting OS version. Might be missing due to historical data
+		// gap.
+		OsVersion string `json:"os_version,omitempty"`
+		// DeviceType : Information on the hosting device type. Might be missing due
+		// to historical data gap.
+		DeviceType string `json:"device_type,omitempty"`
+		// ClientVersion : The Dropbox client version. Might be missing due to
+		// historical data gap.
+		ClientVersion string `json:"client_version,omitempty"`
+		// LegacyUniqId : Alternative unique device session id, instead of session id
+		// field. Might be missing due to historical data gap.
+		LegacyUniqId string `json:"legacy_uniq_id,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.IpAddress = w.IpAddress
+	u.Created = w.Created
+	u.Updated = w.Updated
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	u.IsEmmManaged = w.IsEmmManaged
+	u.Platform = w.Platform
+	u.MacAddress = w.MacAddress
+	u.OsVersion = w.OsVersion
+	u.DeviceType = w.DeviceType
+	u.ClientVersion = w.ClientVersion
+	u.LegacyUniqId = w.LegacyUniqId
+	return nil
+}
 // LinkedDeviceLogInfo : The device sessions that user is linked to.
 type LinkedDeviceLogInfo struct {
 	dropbox.Tagged
@@ -10693,11 +10815,11 @@ type LinkedDeviceLogInfo struct {
 
 // Valid tag values for LinkedDeviceLogInfo
 const (
-	LinkedDeviceLogInfoMobileDeviceSession  = "mobile_device_session"
+	LinkedDeviceLogInfoMobileDeviceSession = "mobile_device_session"
 	LinkedDeviceLogInfoDesktopDeviceSession = "desktop_device_session"
-	LinkedDeviceLogInfoWebDeviceSession     = "web_device_session"
-	LinkedDeviceLogInfoLegacyDeviceSession  = "legacy_device_session"
-	LinkedDeviceLogInfoOther                = "other"
+	LinkedDeviceLogInfoWebDeviceSession = "web_device_session"
+	LinkedDeviceLogInfoLegacyDeviceSession = "legacy_device_session"
+	LinkedDeviceLogInfoOther = "other"
 )
 
 // UnmarshalJSON deserializes into a LinkedDeviceLogInfo instance
@@ -10712,26 +10834,26 @@ func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "mobile_device_session":
-		err = json.Unmarshal(body, &u.MobileDeviceSession)
+		case "mobile_device_session":
+			err = json.Unmarshal(body, &u.MobileDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "desktop_device_session":
-		err = json.Unmarshal(body, &u.DesktopDeviceSession)
+		case "desktop_device_session":
+			err = json.Unmarshal(body, &u.DesktopDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "web_device_session":
-		err = json.Unmarshal(body, &u.WebDeviceSession)
+		case "web_device_session":
+			err = json.Unmarshal(body, &u.WebDeviceSession)
 
 		if err != nil {
 			return err
 		}
-	case "legacy_device_session":
-		err = json.Unmarshal(body, &u.LegacyDeviceSession)
+		case "legacy_device_session":
+			err = json.Unmarshal(body, &u.LegacyDeviceSession)
 
 		if err != nil {
 			return err
@@ -10750,7 +10872,6 @@ type LoginFailDetails struct {
 	// ErrorDetails : Error details.
 	ErrorDetails *FailureDetailsLogInfo `json:"error_details"`
 }
-
 // NewLoginFailDetails returns a new LoginFailDetails instance
 func NewLoginFailDetails(LoginMethod *LoginMethod, ErrorDetails *FailureDetailsLogInfo) *LoginFailDetails {
 	s := new(LoginFailDetails)
@@ -10759,18 +10880,19 @@ func NewLoginFailDetails(LoginMethod *LoginMethod, ErrorDetails *FailureDetailsL
 	return s
 }
 
+
 // LoginFailType : has no documentation (yet)
 type LoginFailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewLoginFailType returns a new LoginFailType instance
 func NewLoginFailType(Description string) *LoginFailType {
 	s := new(LoginFailType)
 	s.Description = Description
 	return s
 }
+
 
 // LoginMethod : has no documentation (yet)
 type LoginMethod struct {
@@ -10779,11 +10901,11 @@ type LoginMethod struct {
 
 // Valid tag values for LoginMethod
 const (
-	LoginMethodPassword                = "password"
+	LoginMethodPassword = "password"
 	LoginMethodTwoFactorAuthentication = "two_factor_authentication"
-	LoginMethodSaml                    = "saml"
-	LoginMethodGoogleOauth             = "google_oauth"
-	LoginMethodOther                   = "other"
+	LoginMethodSaml = "saml"
+	LoginMethodGoogleOauth = "google_oauth"
+	LoginMethodOther = "other"
 )
 
 // LoginSuccessDetails : Signed in.
@@ -10794,7 +10916,6 @@ type LoginSuccessDetails struct {
 	// LoginMethod : Login method.
 	LoginMethod *LoginMethod `json:"login_method"`
 }
-
 // NewLoginSuccessDetails returns a new LoginSuccessDetails instance
 func NewLoginSuccessDetails(LoginMethod *LoginMethod) *LoginSuccessDetails {
 	s := new(LoginSuccessDetails)
@@ -10802,12 +10923,12 @@ func NewLoginSuccessDetails(LoginMethod *LoginMethod) *LoginSuccessDetails {
 	return s
 }
 
+
 // LoginSuccessType : has no documentation (yet)
 type LoginSuccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewLoginSuccessType returns a new LoginSuccessType instance
 func NewLoginSuccessType(Description string) *LoginSuccessType {
 	s := new(LoginSuccessType)
@@ -10815,22 +10936,22 @@ func NewLoginSuccessType(Description string) *LoginSuccessType {
 	return s
 }
 
+
 // LogoutDetails : Signed out.
 type LogoutDetails struct {
 }
-
 // NewLogoutDetails returns a new LogoutDetails instance
 func NewLogoutDetails() *LogoutDetails {
 	s := new(LogoutDetails)
 	return s
 }
 
+
 // LogoutType : has no documentation (yet)
 type LogoutType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewLogoutType returns a new LogoutType instance
 func NewLogoutType(Description string) *LogoutType {
 	s := new(LogoutType)
@@ -10838,12 +10959,12 @@ func NewLogoutType(Description string) *LogoutType {
 	return s
 }
 
+
 // MemberAddExternalIdDetails : Added an external ID for team member.
 type MemberAddExternalIdDetails struct {
 	// NewValue : Current external id.
 	NewValue string `json:"new_value"`
 }
-
 // NewMemberAddExternalIdDetails returns a new MemberAddExternalIdDetails instance
 func NewMemberAddExternalIdDetails(NewValue string) *MemberAddExternalIdDetails {
 	s := new(MemberAddExternalIdDetails)
@@ -10851,12 +10972,12 @@ func NewMemberAddExternalIdDetails(NewValue string) *MemberAddExternalIdDetails 
 	return s
 }
 
+
 // MemberAddExternalIdType : has no documentation (yet)
 type MemberAddExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberAddExternalIdType returns a new MemberAddExternalIdType instance
 func NewMemberAddExternalIdType(Description string) *MemberAddExternalIdType {
 	s := new(MemberAddExternalIdType)
@@ -10864,12 +10985,12 @@ func NewMemberAddExternalIdType(Description string) *MemberAddExternalIdType {
 	return s
 }
 
+
 // MemberAddNameDetails : Added team member name.
 type MemberAddNameDetails struct {
 	// NewValue : New user's name.
 	NewValue *UserNameLogInfo `json:"new_value"`
 }
-
 // NewMemberAddNameDetails returns a new MemberAddNameDetails instance
 func NewMemberAddNameDetails(NewValue *UserNameLogInfo) *MemberAddNameDetails {
 	s := new(MemberAddNameDetails)
@@ -10877,12 +10998,12 @@ func NewMemberAddNameDetails(NewValue *UserNameLogInfo) *MemberAddNameDetails {
 	return s
 }
 
+
 // MemberAddNameType : has no documentation (yet)
 type MemberAddNameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberAddNameType returns a new MemberAddNameType instance
 func NewMemberAddNameType(Description string) *MemberAddNameType {
 	s := new(MemberAddNameType)
@@ -10890,29 +11011,29 @@ func NewMemberAddNameType(Description string) *MemberAddNameType {
 	return s
 }
 
+
 // MemberChangeAdminRoleDetails : Changed team member admin role.
 type MemberChangeAdminRoleDetails struct {
 	// NewValue : New admin role. This field is relevant when the admin role is
 	// changed or whenthe user role changes from no admin rights to with admin
 	// rights.
 	NewValue *AdminRole `json:"new_value,omitempty"`
-	// PreviousValue : Previous admin role. This field is relevant when the
-	// admin role is changed or when the admin role is removed.
+	// PreviousValue : Previous admin role. This field is relevant when the admin
+	// role is changed or when the admin role is removed.
 	PreviousValue *AdminRole `json:"previous_value,omitempty"`
 }
-
 // NewMemberChangeAdminRoleDetails returns a new MemberChangeAdminRoleDetails instance
 func NewMemberChangeAdminRoleDetails() *MemberChangeAdminRoleDetails {
 	s := new(MemberChangeAdminRoleDetails)
 	return s
 }
 
+
 // MemberChangeAdminRoleType : has no documentation (yet)
 type MemberChangeAdminRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeAdminRoleType returns a new MemberChangeAdminRoleType instance
 func NewMemberChangeAdminRoleType(Description string) *MemberChangeAdminRoleType {
 	s := new(MemberChangeAdminRoleType)
@@ -10920,15 +11041,14 @@ func NewMemberChangeAdminRoleType(Description string) *MemberChangeAdminRoleType
 	return s
 }
 
+
 // MemberChangeEmailDetails : Changed team member email.
 type MemberChangeEmailDetails struct {
 	// NewValue : New email.
 	NewValue string `json:"new_value"`
-	// PreviousValue : Previous email. Might be missing due to historical data
-	// gap.
+	// PreviousValue : Previous email. Might be missing due to historical data gap.
 	PreviousValue string `json:"previous_value,omitempty"`
 }
-
 // NewMemberChangeEmailDetails returns a new MemberChangeEmailDetails instance
 func NewMemberChangeEmailDetails(NewValue string) *MemberChangeEmailDetails {
 	s := new(MemberChangeEmailDetails)
@@ -10936,18 +11056,19 @@ func NewMemberChangeEmailDetails(NewValue string) *MemberChangeEmailDetails {
 	return s
 }
 
+
 // MemberChangeEmailType : has no documentation (yet)
 type MemberChangeEmailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeEmailType returns a new MemberChangeEmailType instance
 func NewMemberChangeEmailType(Description string) *MemberChangeEmailType {
 	s := new(MemberChangeEmailType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberChangeExternalIdDetails : Changed the external ID for team member.
 type MemberChangeExternalIdDetails struct {
@@ -10956,7 +11077,6 @@ type MemberChangeExternalIdDetails struct {
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewMemberChangeExternalIdDetails returns a new MemberChangeExternalIdDetails instance
 func NewMemberChangeExternalIdDetails(NewValue string, PreviousValue string) *MemberChangeExternalIdDetails {
 	s := new(MemberChangeExternalIdDetails)
@@ -10965,18 +11085,19 @@ func NewMemberChangeExternalIdDetails(NewValue string, PreviousValue string) *Me
 	return s
 }
 
+
 // MemberChangeExternalIdType : has no documentation (yet)
 type MemberChangeExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeExternalIdType returns a new MemberChangeExternalIdType instance
 func NewMemberChangeExternalIdType(Description string) *MemberChangeExternalIdType {
 	s := new(MemberChangeExternalIdType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberChangeMembershipTypeDetails : Changed membership type (limited/full) of
 // member.
@@ -10986,7 +11107,6 @@ type MemberChangeMembershipTypeDetails struct {
 	// NewValue : New membership type.
 	NewValue *TeamMembershipType `json:"new_value"`
 }
-
 // NewMemberChangeMembershipTypeDetails returns a new MemberChangeMembershipTypeDetails instance
 func NewMemberChangeMembershipTypeDetails(PrevValue *TeamMembershipType, NewValue *TeamMembershipType) *MemberChangeMembershipTypeDetails {
 	s := new(MemberChangeMembershipTypeDetails)
@@ -10995,18 +11115,19 @@ func NewMemberChangeMembershipTypeDetails(PrevValue *TeamMembershipType, NewValu
 	return s
 }
 
+
 // MemberChangeMembershipTypeType : has no documentation (yet)
 type MemberChangeMembershipTypeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeMembershipTypeType returns a new MemberChangeMembershipTypeType instance
 func NewMemberChangeMembershipTypeType(Description string) *MemberChangeMembershipTypeType {
 	s := new(MemberChangeMembershipTypeType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberChangeNameDetails : Changed team member name.
 type MemberChangeNameDetails struct {
@@ -11016,7 +11137,6 @@ type MemberChangeNameDetails struct {
 	// data gap.
 	PreviousValue *UserNameLogInfo `json:"previous_value,omitempty"`
 }
-
 // NewMemberChangeNameDetails returns a new MemberChangeNameDetails instance
 func NewMemberChangeNameDetails(NewValue *UserNameLogInfo) *MemberChangeNameDetails {
 	s := new(MemberChangeNameDetails)
@@ -11024,12 +11144,12 @@ func NewMemberChangeNameDetails(NewValue *UserNameLogInfo) *MemberChangeNameDeta
 	return s
 }
 
+
 // MemberChangeNameType : has no documentation (yet)
 type MemberChangeNameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeNameType returns a new MemberChangeNameType instance
 func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	s := new(MemberChangeNameType)
@@ -11037,11 +11157,12 @@ func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	return s
 }
 
+
 // MemberChangeStatusDetails : Changed member status (invited, joined,
 // suspended, etc.).
 type MemberChangeStatusDetails struct {
-	// PreviousValue : Previous member status. Might be missing due to
-	// historical data gap.
+	// PreviousValue : Previous member status. Might be missing due to historical
+	// data gap.
 	PreviousValue *MemberStatus `json:"previous_value,omitempty"`
 	// NewValue : New member status.
 	NewValue *MemberStatus `json:"new_value"`
@@ -11049,7 +11170,6 @@ type MemberChangeStatusDetails struct {
 	// status change.
 	Action *ActionDetails `json:"action,omitempty"`
 }
-
 // NewMemberChangeStatusDetails returns a new MemberChangeStatusDetails instance
 func NewMemberChangeStatusDetails(NewValue *MemberStatus) *MemberChangeStatusDetails {
 	s := new(MemberChangeStatusDetails)
@@ -11057,12 +11177,12 @@ func NewMemberChangeStatusDetails(NewValue *MemberStatus) *MemberChangeStatusDet
 	return s
 }
 
+
 // MemberChangeStatusType : has no documentation (yet)
 type MemberChangeStatusType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberChangeStatusType returns a new MemberChangeStatusType instance
 func NewMemberChangeStatusType(Description string) *MemberChangeStatusType {
 	s := new(MemberChangeStatusType)
@@ -11070,22 +11190,22 @@ func NewMemberChangeStatusType(Description string) *MemberChangeStatusType {
 	return s
 }
 
+
 // MemberDeleteManualContactsDetails : Cleared manually added contacts.
 type MemberDeleteManualContactsDetails struct {
 }
-
 // NewMemberDeleteManualContactsDetails returns a new MemberDeleteManualContactsDetails instance
 func NewMemberDeleteManualContactsDetails() *MemberDeleteManualContactsDetails {
 	s := new(MemberDeleteManualContactsDetails)
 	return s
 }
 
+
 // MemberDeleteManualContactsType : has no documentation (yet)
 type MemberDeleteManualContactsType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberDeleteManualContactsType returns a new MemberDeleteManualContactsType instance
 func NewMemberDeleteManualContactsType(Description string) *MemberDeleteManualContactsType {
 	s := new(MemberDeleteManualContactsType)
@@ -11093,29 +11213,30 @@ func NewMemberDeleteManualContactsType(Description string) *MemberDeleteManualCo
 	return s
 }
 
+
 // MemberPermanentlyDeleteAccountContentsDetails : Permanently deleted contents
 // of deleted team member account.
 type MemberPermanentlyDeleteAccountContentsDetails struct {
 }
-
 // NewMemberPermanentlyDeleteAccountContentsDetails returns a new MemberPermanentlyDeleteAccountContentsDetails instance
 func NewMemberPermanentlyDeleteAccountContentsDetails() *MemberPermanentlyDeleteAccountContentsDetails {
 	s := new(MemberPermanentlyDeleteAccountContentsDetails)
 	return s
 }
 
+
 // MemberPermanentlyDeleteAccountContentsType : has no documentation (yet)
 type MemberPermanentlyDeleteAccountContentsType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberPermanentlyDeleteAccountContentsType returns a new MemberPermanentlyDeleteAccountContentsType instance
 func NewMemberPermanentlyDeleteAccountContentsType(Description string) *MemberPermanentlyDeleteAccountContentsType {
 	s := new(MemberPermanentlyDeleteAccountContentsType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberRemoveActionType : has no documentation (yet)
 type MemberRemoveActionType struct {
@@ -11124,11 +11245,11 @@ type MemberRemoveActionType struct {
 
 // Valid tag values for MemberRemoveActionType
 const (
-	MemberRemoveActionTypeDelete                       = "delete"
-	MemberRemoveActionTypeOffboard                     = "offboard"
-	MemberRemoveActionTypeLeave                        = "leave"
+	MemberRemoveActionTypeDelete = "delete"
+	MemberRemoveActionTypeOffboard = "offboard"
+	MemberRemoveActionTypeLeave = "leave"
 	MemberRemoveActionTypeOffboardAndRetainTeamFolders = "offboard_and_retain_team_folders"
-	MemberRemoveActionTypeOther                        = "other"
+	MemberRemoveActionTypeOther = "other"
 )
 
 // MemberRemoveExternalIdDetails : Removed the external ID for team member.
@@ -11136,7 +11257,6 @@ type MemberRemoveExternalIdDetails struct {
 	// PreviousValue : Old external id.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewMemberRemoveExternalIdDetails returns a new MemberRemoveExternalIdDetails instance
 func NewMemberRemoveExternalIdDetails(PreviousValue string) *MemberRemoveExternalIdDetails {
 	s := new(MemberRemoveExternalIdDetails)
@@ -11144,12 +11264,12 @@ func NewMemberRemoveExternalIdDetails(PreviousValue string) *MemberRemoveExterna
 	return s
 }
 
+
 // MemberRemoveExternalIdType : has no documentation (yet)
 type MemberRemoveExternalIdType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberRemoveExternalIdType returns a new MemberRemoveExternalIdType instance
 func NewMemberRemoveExternalIdType(Description string) *MemberRemoveExternalIdType {
 	s := new(MemberRemoveExternalIdType)
@@ -11157,16 +11277,16 @@ func NewMemberRemoveExternalIdType(Description string) *MemberRemoveExternalIdTy
 	return s
 }
 
+
 // MemberRequestsChangePolicyDetails : Changed whether users can find team when
 // not invited.
 type MemberRequestsChangePolicyDetails struct {
 	// NewValue : New member change requests policy.
 	NewValue *MemberRequestsPolicy `json:"new_value"`
-	// PreviousValue : Previous member change requests policy. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous member change requests policy. Might be missing due
+	// to historical data gap.
 	PreviousValue *MemberRequestsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewMemberRequestsChangePolicyDetails returns a new MemberRequestsChangePolicyDetails instance
 func NewMemberRequestsChangePolicyDetails(NewValue *MemberRequestsPolicy) *MemberRequestsChangePolicyDetails {
 	s := new(MemberRequestsChangePolicyDetails)
@@ -11174,18 +11294,19 @@ func NewMemberRequestsChangePolicyDetails(NewValue *MemberRequestsPolicy) *Membe
 	return s
 }
 
+
 // MemberRequestsChangePolicyType : has no documentation (yet)
 type MemberRequestsChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberRequestsChangePolicyType returns a new MemberRequestsChangePolicyType instance
 func NewMemberRequestsChangePolicyType(Description string) *MemberRequestsChangePolicyType {
 	s := new(MemberRequestsChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberRequestsPolicy : has no documentation (yet)
 type MemberRequestsPolicy struct {
@@ -11194,10 +11315,10 @@ type MemberRequestsPolicy struct {
 
 // Valid tag values for MemberRequestsPolicy
 const (
-	MemberRequestsPolicyAutoAccept      = "auto_accept"
-	MemberRequestsPolicyDisabled        = "disabled"
+	MemberRequestsPolicyAutoAccept = "auto_accept"
+	MemberRequestsPolicyDisabled = "disabled"
 	MemberRequestsPolicyRequireApproval = "require_approval"
-	MemberRequestsPolicyOther           = "other"
+	MemberRequestsPolicyOther = "other"
 )
 
 // MemberSpaceLimitsAddCustomQuotaDetails : Set custom member space limit.
@@ -11205,7 +11326,6 @@ type MemberSpaceLimitsAddCustomQuotaDetails struct {
 	// NewValue : New custom quota value in bytes.
 	NewValue uint64 `json:"new_value"`
 }
-
 // NewMemberSpaceLimitsAddCustomQuotaDetails returns a new MemberSpaceLimitsAddCustomQuotaDetails instance
 func NewMemberSpaceLimitsAddCustomQuotaDetails(NewValue uint64) *MemberSpaceLimitsAddCustomQuotaDetails {
 	s := new(MemberSpaceLimitsAddCustomQuotaDetails)
@@ -11213,12 +11333,12 @@ func NewMemberSpaceLimitsAddCustomQuotaDetails(NewValue uint64) *MemberSpaceLimi
 	return s
 }
 
+
 // MemberSpaceLimitsAddCustomQuotaType : has no documentation (yet)
 type MemberSpaceLimitsAddCustomQuotaType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsAddCustomQuotaType returns a new MemberSpaceLimitsAddCustomQuotaType instance
 func NewMemberSpaceLimitsAddCustomQuotaType(Description string) *MemberSpaceLimitsAddCustomQuotaType {
 	s := new(MemberSpaceLimitsAddCustomQuotaType)
@@ -11226,29 +11346,30 @@ func NewMemberSpaceLimitsAddCustomQuotaType(Description string) *MemberSpaceLimi
 	return s
 }
 
+
 // MemberSpaceLimitsAddExceptionDetails : Added members to member space limit
 // exception list.
 type MemberSpaceLimitsAddExceptionDetails struct {
 }
-
 // NewMemberSpaceLimitsAddExceptionDetails returns a new MemberSpaceLimitsAddExceptionDetails instance
 func NewMemberSpaceLimitsAddExceptionDetails() *MemberSpaceLimitsAddExceptionDetails {
 	s := new(MemberSpaceLimitsAddExceptionDetails)
 	return s
 }
 
+
 // MemberSpaceLimitsAddExceptionType : has no documentation (yet)
 type MemberSpaceLimitsAddExceptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsAddExceptionType returns a new MemberSpaceLimitsAddExceptionType instance
 func NewMemberSpaceLimitsAddExceptionType(Description string) *MemberSpaceLimitsAddExceptionType {
 	s := new(MemberSpaceLimitsAddExceptionType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberSpaceLimitsChangeCapsTypePolicyDetails : Changed member space limit
 // type for team.
@@ -11258,7 +11379,6 @@ type MemberSpaceLimitsChangeCapsTypePolicyDetails struct {
 	// NewValue : New space limit type.
 	NewValue *SpaceCapsType `json:"new_value"`
 }
-
 // NewMemberSpaceLimitsChangeCapsTypePolicyDetails returns a new MemberSpaceLimitsChangeCapsTypePolicyDetails instance
 func NewMemberSpaceLimitsChangeCapsTypePolicyDetails(PreviousValue *SpaceCapsType, NewValue *SpaceCapsType) *MemberSpaceLimitsChangeCapsTypePolicyDetails {
 	s := new(MemberSpaceLimitsChangeCapsTypePolicyDetails)
@@ -11267,18 +11387,19 @@ func NewMemberSpaceLimitsChangeCapsTypePolicyDetails(PreviousValue *SpaceCapsTyp
 	return s
 }
 
+
 // MemberSpaceLimitsChangeCapsTypePolicyType : has no documentation (yet)
 type MemberSpaceLimitsChangeCapsTypePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsChangeCapsTypePolicyType returns a new MemberSpaceLimitsChangeCapsTypePolicyType instance
 func NewMemberSpaceLimitsChangeCapsTypePolicyType(Description string) *MemberSpaceLimitsChangeCapsTypePolicyType {
 	s := new(MemberSpaceLimitsChangeCapsTypePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberSpaceLimitsChangeCustomQuotaDetails : Changed custom member space
 // limit.
@@ -11288,7 +11409,6 @@ type MemberSpaceLimitsChangeCustomQuotaDetails struct {
 	// NewValue : New custom quota value in bytes.
 	NewValue uint64 `json:"new_value"`
 }
-
 // NewMemberSpaceLimitsChangeCustomQuotaDetails returns a new MemberSpaceLimitsChangeCustomQuotaDetails instance
 func NewMemberSpaceLimitsChangeCustomQuotaDetails(PreviousValue uint64, NewValue uint64) *MemberSpaceLimitsChangeCustomQuotaDetails {
 	s := new(MemberSpaceLimitsChangeCustomQuotaDetails)
@@ -11297,12 +11417,12 @@ func NewMemberSpaceLimitsChangeCustomQuotaDetails(PreviousValue uint64, NewValue
 	return s
 }
 
+
 // MemberSpaceLimitsChangeCustomQuotaType : has no documentation (yet)
 type MemberSpaceLimitsChangeCustomQuotaType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsChangeCustomQuotaType returns a new MemberSpaceLimitsChangeCustomQuotaType instance
 func NewMemberSpaceLimitsChangeCustomQuotaType(Description string) *MemberSpaceLimitsChangeCustomQuotaType {
 	s := new(MemberSpaceLimitsChangeCustomQuotaType)
@@ -11310,35 +11430,36 @@ func NewMemberSpaceLimitsChangeCustomQuotaType(Description string) *MemberSpaceL
 	return s
 }
 
+
 // MemberSpaceLimitsChangePolicyDetails : Changed team default member space
 // limit.
 type MemberSpaceLimitsChangePolicyDetails struct {
-	// PreviousValue : Previous team default limit value in bytes. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous team default limit value in bytes. Might be missing
+	// due to historical data gap.
 	PreviousValue uint64 `json:"previous_value,omitempty"`
 	// NewValue : New team default limit value in bytes. Might be missing due to
 	// historical data gap.
 	NewValue uint64 `json:"new_value,omitempty"`
 }
-
 // NewMemberSpaceLimitsChangePolicyDetails returns a new MemberSpaceLimitsChangePolicyDetails instance
 func NewMemberSpaceLimitsChangePolicyDetails() *MemberSpaceLimitsChangePolicyDetails {
 	s := new(MemberSpaceLimitsChangePolicyDetails)
 	return s
 }
 
+
 // MemberSpaceLimitsChangePolicyType : has no documentation (yet)
 type MemberSpaceLimitsChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsChangePolicyType returns a new MemberSpaceLimitsChangePolicyType instance
 func NewMemberSpaceLimitsChangePolicyType(Description string) *MemberSpaceLimitsChangePolicyType {
 	s := new(MemberSpaceLimitsChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberSpaceLimitsChangeStatusDetails : Changed space limit status.
 type MemberSpaceLimitsChangeStatusDetails struct {
@@ -11347,7 +11468,6 @@ type MemberSpaceLimitsChangeStatusDetails struct {
 	// NewValue : New storage quota status.
 	NewValue *SpaceLimitsStatus `json:"new_value"`
 }
-
 // NewMemberSpaceLimitsChangeStatusDetails returns a new MemberSpaceLimitsChangeStatusDetails instance
 func NewMemberSpaceLimitsChangeStatusDetails(PreviousValue *SpaceLimitsStatus, NewValue *SpaceLimitsStatus) *MemberSpaceLimitsChangeStatusDetails {
 	s := new(MemberSpaceLimitsChangeStatusDetails)
@@ -11356,12 +11476,12 @@ func NewMemberSpaceLimitsChangeStatusDetails(PreviousValue *SpaceLimitsStatus, N
 	return s
 }
 
+
 // MemberSpaceLimitsChangeStatusType : has no documentation (yet)
 type MemberSpaceLimitsChangeStatusType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsChangeStatusType returns a new MemberSpaceLimitsChangeStatusType instance
 func NewMemberSpaceLimitsChangeStatusType(Description string) *MemberSpaceLimitsChangeStatusType {
 	s := new(MemberSpaceLimitsChangeStatusType)
@@ -11369,23 +11489,23 @@ func NewMemberSpaceLimitsChangeStatusType(Description string) *MemberSpaceLimits
 	return s
 }
 
+
 // MemberSpaceLimitsRemoveCustomQuotaDetails : Removed custom member space
 // limit.
 type MemberSpaceLimitsRemoveCustomQuotaDetails struct {
 }
-
 // NewMemberSpaceLimitsRemoveCustomQuotaDetails returns a new MemberSpaceLimitsRemoveCustomQuotaDetails instance
 func NewMemberSpaceLimitsRemoveCustomQuotaDetails() *MemberSpaceLimitsRemoveCustomQuotaDetails {
 	s := new(MemberSpaceLimitsRemoveCustomQuotaDetails)
 	return s
 }
 
+
 // MemberSpaceLimitsRemoveCustomQuotaType : has no documentation (yet)
 type MemberSpaceLimitsRemoveCustomQuotaType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsRemoveCustomQuotaType returns a new MemberSpaceLimitsRemoveCustomQuotaType instance
 func NewMemberSpaceLimitsRemoveCustomQuotaType(Description string) *MemberSpaceLimitsRemoveCustomQuotaType {
 	s := new(MemberSpaceLimitsRemoveCustomQuotaType)
@@ -11393,29 +11513,30 @@ func NewMemberSpaceLimitsRemoveCustomQuotaType(Description string) *MemberSpaceL
 	return s
 }
 
+
 // MemberSpaceLimitsRemoveExceptionDetails : Removed members from member space
 // limit exception list.
 type MemberSpaceLimitsRemoveExceptionDetails struct {
 }
-
 // NewMemberSpaceLimitsRemoveExceptionDetails returns a new MemberSpaceLimitsRemoveExceptionDetails instance
 func NewMemberSpaceLimitsRemoveExceptionDetails() *MemberSpaceLimitsRemoveExceptionDetails {
 	s := new(MemberSpaceLimitsRemoveExceptionDetails)
 	return s
 }
 
+
 // MemberSpaceLimitsRemoveExceptionType : has no documentation (yet)
 type MemberSpaceLimitsRemoveExceptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSpaceLimitsRemoveExceptionType returns a new MemberSpaceLimitsRemoveExceptionType instance
 func NewMemberSpaceLimitsRemoveExceptionType(Description string) *MemberSpaceLimitsRemoveExceptionType {
 	s := new(MemberSpaceLimitsRemoveExceptionType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberStatus : has no documentation (yet)
 type MemberStatus struct {
@@ -11425,11 +11546,11 @@ type MemberStatus struct {
 // Valid tag values for MemberStatus
 const (
 	MemberStatusNotJoined = "not_joined"
-	MemberStatusInvited   = "invited"
-	MemberStatusActive    = "active"
+	MemberStatusInvited = "invited"
+	MemberStatusActive = "active"
 	MemberStatusSuspended = "suspended"
-	MemberStatusRemoved   = "removed"
-	MemberStatusOther     = "other"
+	MemberStatusRemoved = "removed"
+	MemberStatusOther = "other"
 )
 
 // MemberSuggestDetails : Suggested person to add to team.
@@ -11437,7 +11558,6 @@ type MemberSuggestDetails struct {
 	// SuggestedMembers : suggested users emails.
 	SuggestedMembers []string `json:"suggested_members"`
 }
-
 // NewMemberSuggestDetails returns a new MemberSuggestDetails instance
 func NewMemberSuggestDetails(SuggestedMembers []string) *MemberSuggestDetails {
 	s := new(MemberSuggestDetails)
@@ -11445,18 +11565,19 @@ func NewMemberSuggestDetails(SuggestedMembers []string) *MemberSuggestDetails {
 	return s
 }
 
+
 // MemberSuggestType : has no documentation (yet)
 type MemberSuggestType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSuggestType returns a new MemberSuggestType instance
 func NewMemberSuggestType(Description string) *MemberSuggestType {
 	s := new(MemberSuggestType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberSuggestionsChangePolicyDetails : Enabled/disabled option for team
 // members to suggest people to add to team.
@@ -11467,7 +11588,6 @@ type MemberSuggestionsChangePolicyDetails struct {
 	// due to historical data gap.
 	PreviousValue *MemberSuggestionsPolicy `json:"previous_value,omitempty"`
 }
-
 // NewMemberSuggestionsChangePolicyDetails returns a new MemberSuggestionsChangePolicyDetails instance
 func NewMemberSuggestionsChangePolicyDetails(NewValue *MemberSuggestionsPolicy) *MemberSuggestionsChangePolicyDetails {
 	s := new(MemberSuggestionsChangePolicyDetails)
@@ -11475,18 +11595,19 @@ func NewMemberSuggestionsChangePolicyDetails(NewValue *MemberSuggestionsPolicy) 
 	return s
 }
 
+
 // MemberSuggestionsChangePolicyType : has no documentation (yet)
 type MemberSuggestionsChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberSuggestionsChangePolicyType returns a new MemberSuggestionsChangePolicyType instance
 func NewMemberSuggestionsChangePolicyType(Description string) *MemberSuggestionsChangePolicyType {
 	s := new(MemberSuggestionsChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // MemberSuggestionsPolicy : Member suggestions policy
 type MemberSuggestionsPolicy struct {
@@ -11496,27 +11617,26 @@ type MemberSuggestionsPolicy struct {
 // Valid tag values for MemberSuggestionsPolicy
 const (
 	MemberSuggestionsPolicyDisabled = "disabled"
-	MemberSuggestionsPolicyEnabled  = "enabled"
-	MemberSuggestionsPolicyOther    = "other"
+	MemberSuggestionsPolicyEnabled = "enabled"
+	MemberSuggestionsPolicyOther = "other"
 )
 
 // MemberTransferAccountContentsDetails : Transferred contents of deleted member
 // account to another member.
 type MemberTransferAccountContentsDetails struct {
 }
-
 // NewMemberTransferAccountContentsDetails returns a new MemberTransferAccountContentsDetails instance
 func NewMemberTransferAccountContentsDetails() *MemberTransferAccountContentsDetails {
 	s := new(MemberTransferAccountContentsDetails)
 	return s
 }
 
+
 // MemberTransferAccountContentsType : has no documentation (yet)
 type MemberTransferAccountContentsType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMemberTransferAccountContentsType returns a new MemberTransferAccountContentsType instance
 func NewMemberTransferAccountContentsType(Description string) *MemberTransferAccountContentsType {
 	s := new(MemberTransferAccountContentsType)
@@ -11524,16 +11644,16 @@ func NewMemberTransferAccountContentsType(Description string) *MemberTransferAcc
 	return s
 }
 
+
 // MicrosoftOfficeAddinChangePolicyDetails : Enabled/disabled Microsoft Office
 // add-in.
 type MicrosoftOfficeAddinChangePolicyDetails struct {
 	// NewValue : New Microsoft Office addin policy.
 	NewValue *MicrosoftOfficeAddinPolicy `json:"new_value"`
-	// PreviousValue : Previous Microsoft Office addin policy. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous Microsoft Office addin policy. Might be missing due
+	// to historical data gap.
 	PreviousValue *MicrosoftOfficeAddinPolicy `json:"previous_value,omitempty"`
 }
-
 // NewMicrosoftOfficeAddinChangePolicyDetails returns a new MicrosoftOfficeAddinChangePolicyDetails instance
 func NewMicrosoftOfficeAddinChangePolicyDetails(NewValue *MicrosoftOfficeAddinPolicy) *MicrosoftOfficeAddinChangePolicyDetails {
 	s := new(MicrosoftOfficeAddinChangePolicyDetails)
@@ -11541,18 +11661,19 @@ func NewMicrosoftOfficeAddinChangePolicyDetails(NewValue *MicrosoftOfficeAddinPo
 	return s
 }
 
+
 // MicrosoftOfficeAddinChangePolicyType : has no documentation (yet)
 type MicrosoftOfficeAddinChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewMicrosoftOfficeAddinChangePolicyType returns a new MicrosoftOfficeAddinChangePolicyType instance
 func NewMicrosoftOfficeAddinChangePolicyType(Description string) *MicrosoftOfficeAddinChangePolicyType {
 	s := new(MicrosoftOfficeAddinChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // MicrosoftOfficeAddinPolicy : Microsoft Office addin policy
 type MicrosoftOfficeAddinPolicy struct {
@@ -11562,30 +11683,30 @@ type MicrosoftOfficeAddinPolicy struct {
 // Valid tag values for MicrosoftOfficeAddinPolicy
 const (
 	MicrosoftOfficeAddinPolicyDisabled = "disabled"
-	MicrosoftOfficeAddinPolicyEnabled  = "enabled"
-	MicrosoftOfficeAddinPolicyOther    = "other"
+	MicrosoftOfficeAddinPolicyEnabled = "enabled"
+	MicrosoftOfficeAddinPolicyOther = "other"
 )
 
 // MissingDetails : An indication that an error occurred while retrieving the
 // event. Some attributes of the event may be omitted as a result.
 type MissingDetails struct {
-	// SourceEventFields : All the data that could be retrieved and converted
-	// from the source event.
+	// SourceEventFields : All the data that could be retrieved and converted from
+	// the source event.
 	SourceEventFields string `json:"source_event_fields,omitempty"`
 }
-
 // NewMissingDetails returns a new MissingDetails instance
 func NewMissingDetails() *MissingDetails {
 	s := new(MissingDetails)
 	return s
 }
 
+
 // MobileDeviceSessionLogInfo : Information about linked Dropbox mobile client
 // sessions
 type MobileDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Mobile session unique id. Might be missing due to
-	// historical data gap.
+	// SessionInfo : Mobile session unique id. Might be missing due to historical
+	// data gap.
 	SessionInfo *MobileSessionLogInfo `json:"session_info,omitempty"`
 	// DeviceName : The device name.
 	DeviceName string `json:"device_name"`
@@ -11598,7 +11719,6 @@ type MobileDeviceSessionLogInfo struct {
 	// LastCarrier : last carrier used by the device.
 	LastCarrier string `json:"last_carrier,omitempty"`
 }
-
 // NewMobileDeviceSessionLogInfo returns a new MobileDeviceSessionLogInfo instance
 func NewMobileDeviceSessionLogInfo(DeviceName string, ClientType *team.MobileClientPlatform) *MobileDeviceSessionLogInfo {
 	s := new(MobileDeviceSessionLogInfo)
@@ -11607,16 +11727,17 @@ func NewMobileDeviceSessionLogInfo(DeviceName string, ClientType *team.MobileCli
 	return s
 }
 
+
 // MobileSessionLogInfo : Mobile session.
 type MobileSessionLogInfo struct {
 	SessionLogInfo
 }
-
 // NewMobileSessionLogInfo returns a new MobileSessionLogInfo instance
 func NewMobileSessionLogInfo() *MobileSessionLogInfo {
 	s := new(MobileSessionLogInfo)
 	return s
 }
+
 
 // NamespaceRelativePathLogInfo : Namespace relative path details.
 type NamespaceRelativePathLogInfo struct {
@@ -11626,12 +11747,12 @@ type NamespaceRelativePathLogInfo struct {
 	// missing due to historical data gap.
 	RelativePath string `json:"relative_path,omitempty"`
 }
-
 // NewNamespaceRelativePathLogInfo returns a new NamespaceRelativePathLogInfo instance
 func NewNamespaceRelativePathLogInfo() *NamespaceRelativePathLogInfo {
 	s := new(NamespaceRelativePathLogInfo)
 	return s
 }
+
 
 // NetworkControlChangePolicyDetails : Enabled/disabled network control.
 type NetworkControlChangePolicyDetails struct {
@@ -11641,7 +11762,6 @@ type NetworkControlChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *NetworkControlPolicy `json:"previous_value,omitempty"`
 }
-
 // NewNetworkControlChangePolicyDetails returns a new NetworkControlChangePolicyDetails instance
 func NewNetworkControlChangePolicyDetails(NewValue *NetworkControlPolicy) *NetworkControlChangePolicyDetails {
 	s := new(NetworkControlChangePolicyDetails)
@@ -11649,18 +11769,19 @@ func NewNetworkControlChangePolicyDetails(NewValue *NetworkControlPolicy) *Netwo
 	return s
 }
 
+
 // NetworkControlChangePolicyType : has no documentation (yet)
 type NetworkControlChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNetworkControlChangePolicyType returns a new NetworkControlChangePolicyType instance
 func NewNetworkControlChangePolicyType(Description string) *NetworkControlChangePolicyType {
 	s := new(NetworkControlChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // NetworkControlPolicy : Network control policy
 type NetworkControlPolicy struct {
@@ -11670,8 +11791,8 @@ type NetworkControlPolicy struct {
 // Valid tag values for NetworkControlPolicy
 const (
 	NetworkControlPolicyDisabled = "disabled"
-	NetworkControlPolicyEnabled  = "enabled"
-	NetworkControlPolicyOther    = "other"
+	NetworkControlPolicyEnabled = "enabled"
+	NetworkControlPolicyOther = "other"
 )
 
 // UserLogInfo : User's logged information.
@@ -11684,12 +11805,12 @@ type UserLogInfo struct {
 	// Email : User email address. Might be missing due to historical data gap.
 	Email string `json:"email,omitempty"`
 }
-
 // NewUserLogInfo returns a new UserLogInfo instance
 func NewUserLogInfo() *UserLogInfo {
 	s := new(UserLogInfo)
 	return s
 }
+
 
 // IsUserLogInfo is the interface type for UserLogInfo and its subtypes
 type IsUserLogInfo interface {
@@ -11711,9 +11832,9 @@ type userLogInfoUnion struct {
 
 // Valid tag values for UserLogInfo
 const (
-	UserLogInfoTeamMember           = "team_member"
+	UserLogInfoTeamMember = "team_member"
 	UserLogInfoTrustedNonTeamMember = "trusted_non_team_member"
-	UserLogInfoNonTeamMember        = "non_team_member"
+	UserLogInfoNonTeamMember = "non_team_member"
 )
 
 // UnmarshalJSON deserializes into a userLogInfoUnion instance
@@ -11728,20 +11849,20 @@ func (u *userLogInfoUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "team_member":
-		err = json.Unmarshal(body, &u.TeamMember)
+		case "team_member":
+			err = json.Unmarshal(body, &u.TeamMember)
 
 		if err != nil {
 			return err
 		}
-	case "trusted_non_team_member":
-		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
+		case "trusted_non_team_member":
+			err = json.Unmarshal(body, &u.TrustedNonTeamMember)
 
 		if err != nil {
 			return err
 		}
-	case "non_team_member":
-		err = json.Unmarshal(body, &u.NonTeamMember)
+		case "non_team_member":
+			err = json.Unmarshal(body, &u.NonTeamMember)
 
 		if err != nil {
 			return err
@@ -11757,46 +11878,44 @@ func IsUserLogInfoFromJSON(data []byte) (IsUserLogInfo, error) {
 		return nil, err
 	}
 	switch t.Tag {
-	case "team_member":
-		return t.TeamMember, nil
+		case "team_member":
+			return t.TeamMember, nil
 
-	case "trusted_non_team_member":
-		return t.TrustedNonTeamMember, nil
+		case "trusted_non_team_member":
+			return t.TrustedNonTeamMember, nil
 
-	case "non_team_member":
-		return t.NonTeamMember, nil
+		case "non_team_member":
+			return t.NonTeamMember, nil
 
 	}
 	return nil, nil
 }
-
 // NonTeamMemberLogInfo : Non team member's logged information.
 type NonTeamMemberLogInfo struct {
 	UserLogInfo
 }
-
 // NewNonTeamMemberLogInfo returns a new NonTeamMemberLogInfo instance
 func NewNonTeamMemberLogInfo() *NonTeamMemberLogInfo {
 	s := new(NonTeamMemberLogInfo)
 	return s
 }
 
+
 // NoteAclInviteOnlyDetails : Changed Paper doc to invite-only.
 type NoteAclInviteOnlyDetails struct {
 }
-
 // NewNoteAclInviteOnlyDetails returns a new NoteAclInviteOnlyDetails instance
 func NewNoteAclInviteOnlyDetails() *NoteAclInviteOnlyDetails {
 	s := new(NoteAclInviteOnlyDetails)
 	return s
 }
 
+
 // NoteAclInviteOnlyType : has no documentation (yet)
 type NoteAclInviteOnlyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNoteAclInviteOnlyType returns a new NoteAclInviteOnlyType instance
 func NewNoteAclInviteOnlyType(Description string) *NoteAclInviteOnlyType {
 	s := new(NoteAclInviteOnlyType)
@@ -11804,22 +11923,22 @@ func NewNoteAclInviteOnlyType(Description string) *NoteAclInviteOnlyType {
 	return s
 }
 
+
 // NoteAclLinkDetails : Changed Paper doc to link-accessible.
 type NoteAclLinkDetails struct {
 }
-
 // NewNoteAclLinkDetails returns a new NoteAclLinkDetails instance
 func NewNoteAclLinkDetails() *NoteAclLinkDetails {
 	s := new(NoteAclLinkDetails)
 	return s
 }
 
+
 // NoteAclLinkType : has no documentation (yet)
 type NoteAclLinkType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNoteAclLinkType returns a new NoteAclLinkType instance
 func NewNoteAclLinkType(Description string) *NoteAclLinkType {
 	s := new(NoteAclLinkType)
@@ -11827,22 +11946,22 @@ func NewNoteAclLinkType(Description string) *NoteAclLinkType {
 	return s
 }
 
+
 // NoteAclTeamLinkDetails : Changed Paper doc to link-accessible for team.
 type NoteAclTeamLinkDetails struct {
 }
-
 // NewNoteAclTeamLinkDetails returns a new NoteAclTeamLinkDetails instance
 func NewNoteAclTeamLinkDetails() *NoteAclTeamLinkDetails {
 	s := new(NoteAclTeamLinkDetails)
 	return s
 }
 
+
 // NoteAclTeamLinkType : has no documentation (yet)
 type NoteAclTeamLinkType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNoteAclTeamLinkType returns a new NoteAclTeamLinkType instance
 func NewNoteAclTeamLinkType(Description string) *NoteAclTeamLinkType {
 	s := new(NoteAclTeamLinkType)
@@ -11850,22 +11969,22 @@ func NewNoteAclTeamLinkType(Description string) *NoteAclTeamLinkType {
 	return s
 }
 
+
 // NoteShareReceiveDetails : Shared received Paper doc.
 type NoteShareReceiveDetails struct {
 }
-
 // NewNoteShareReceiveDetails returns a new NoteShareReceiveDetails instance
 func NewNoteShareReceiveDetails() *NoteShareReceiveDetails {
 	s := new(NoteShareReceiveDetails)
 	return s
 }
 
+
 // NoteShareReceiveType : has no documentation (yet)
 type NoteShareReceiveType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNoteShareReceiveType returns a new NoteShareReceiveType instance
 func NewNoteShareReceiveType(Description string) *NoteShareReceiveType {
 	s := new(NoteShareReceiveType)
@@ -11873,22 +11992,22 @@ func NewNoteShareReceiveType(Description string) *NoteShareReceiveType {
 	return s
 }
 
+
 // NoteSharedDetails : Shared Paper doc.
 type NoteSharedDetails struct {
 }
-
 // NewNoteSharedDetails returns a new NoteSharedDetails instance
 func NewNoteSharedDetails() *NoteSharedDetails {
 	s := new(NoteSharedDetails)
 	return s
 }
 
+
 // NoteSharedType : has no documentation (yet)
 type NoteSharedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewNoteSharedType returns a new NoteSharedType instance
 func NewNoteSharedType(Description string) *NoteSharedType {
 	s := new(NoteSharedType)
@@ -11896,28 +12015,29 @@ func NewNoteSharedType(Description string) *NoteSharedType {
 	return s
 }
 
+
 // OpenNoteSharedDetails : Opened shared Paper doc.
 type OpenNoteSharedDetails struct {
 }
-
 // NewOpenNoteSharedDetails returns a new OpenNoteSharedDetails instance
 func NewOpenNoteSharedDetails() *OpenNoteSharedDetails {
 	s := new(OpenNoteSharedDetails)
 	return s
 }
 
+
 // OpenNoteSharedType : has no documentation (yet)
 type OpenNoteSharedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewOpenNoteSharedType returns a new OpenNoteSharedType instance
 func NewOpenNoteSharedType(Description string) *OpenNoteSharedType {
 	s := new(OpenNoteSharedType)
 	s.Description = Description
 	return s
 }
+
 
 // OriginLogInfo : The origin from which the actor performed the action.
 type OriginLogInfo struct {
@@ -11926,13 +12046,13 @@ type OriginLogInfo struct {
 	// AccessMethod : The method that was used to perform the action.
 	AccessMethod *AccessMethodLogInfo `json:"access_method"`
 }
-
 // NewOriginLogInfo returns a new OriginLogInfo instance
 func NewOriginLogInfo(AccessMethod *AccessMethodLogInfo) *OriginLogInfo {
 	s := new(OriginLogInfo)
 	s.AccessMethod = AccessMethod
 	return s
 }
+
 
 // PaperAccessType : has no documentation (yet)
 type PaperAccessType struct {
@@ -11941,28 +12061,27 @@ type PaperAccessType struct {
 
 // Valid tag values for PaperAccessType
 const (
-	PaperAccessTypeViewer    = "viewer"
+	PaperAccessTypeViewer = "viewer"
 	PaperAccessTypeCommenter = "commenter"
-	PaperAccessTypeEditor    = "editor"
-	PaperAccessTypeOther     = "other"
+	PaperAccessTypeEditor = "editor"
+	PaperAccessTypeOther = "other"
 )
 
 // PaperAdminExportStartDetails : Exported all team Paper docs.
 type PaperAdminExportStartDetails struct {
 }
-
 // NewPaperAdminExportStartDetails returns a new PaperAdminExportStartDetails instance
 func NewPaperAdminExportStartDetails() *PaperAdminExportStartDetails {
 	s := new(PaperAdminExportStartDetails)
 	return s
 }
 
+
 // PaperAdminExportStartType : has no documentation (yet)
 type PaperAdminExportStartType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperAdminExportStartType returns a new PaperAdminExportStartType instance
 func NewPaperAdminExportStartType(Description string) *PaperAdminExportStartType {
 	s := new(PaperAdminExportStartType)
@@ -11970,16 +12089,16 @@ func NewPaperAdminExportStartType(Description string) *PaperAdminExportStartType
 	return s
 }
 
+
 // PaperChangeDeploymentPolicyDetails : Changed whether Dropbox Paper, when
 // enabled, is deployed to all members or to specific members.
 type PaperChangeDeploymentPolicyDetails struct {
 	// NewValue : New Dropbox Paper deployment policy.
 	NewValue *team_policies.PaperDeploymentPolicy `json:"new_value"`
-	// PreviousValue : Previous Dropbox Paper deployment policy. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous Dropbox Paper deployment policy. Might be missing
+	// due to historical data gap.
 	PreviousValue *team_policies.PaperDeploymentPolicy `json:"previous_value,omitempty"`
 }
-
 // NewPaperChangeDeploymentPolicyDetails returns a new PaperChangeDeploymentPolicyDetails instance
 func NewPaperChangeDeploymentPolicyDetails(NewValue *team_policies.PaperDeploymentPolicy) *PaperChangeDeploymentPolicyDetails {
 	s := new(PaperChangeDeploymentPolicyDetails)
@@ -11987,12 +12106,12 @@ func NewPaperChangeDeploymentPolicyDetails(NewValue *team_policies.PaperDeployme
 	return s
 }
 
+
 // PaperChangeDeploymentPolicyType : has no documentation (yet)
 type PaperChangeDeploymentPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperChangeDeploymentPolicyType returns a new PaperChangeDeploymentPolicyType instance
 func NewPaperChangeDeploymentPolicyType(Description string) *PaperChangeDeploymentPolicyType {
 	s := new(PaperChangeDeploymentPolicyType)
@@ -12000,13 +12119,13 @@ func NewPaperChangeDeploymentPolicyType(Description string) *PaperChangeDeployme
 	return s
 }
 
+
 // PaperChangeMemberLinkPolicyDetails : Changed whether non-members can view
 // Paper docs with link.
 type PaperChangeMemberLinkPolicyDetails struct {
 	// NewValue : New paper external link accessibility policy.
 	NewValue *PaperMemberPolicy `json:"new_value"`
 }
-
 // NewPaperChangeMemberLinkPolicyDetails returns a new PaperChangeMemberLinkPolicyDetails instance
 func NewPaperChangeMemberLinkPolicyDetails(NewValue *PaperMemberPolicy) *PaperChangeMemberLinkPolicyDetails {
 	s := new(PaperChangeMemberLinkPolicyDetails)
@@ -12014,18 +12133,19 @@ func NewPaperChangeMemberLinkPolicyDetails(NewValue *PaperMemberPolicy) *PaperCh
 	return s
 }
 
+
 // PaperChangeMemberLinkPolicyType : has no documentation (yet)
 type PaperChangeMemberLinkPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperChangeMemberLinkPolicyType returns a new PaperChangeMemberLinkPolicyType instance
 func NewPaperChangeMemberLinkPolicyType(Description string) *PaperChangeMemberLinkPolicyType {
 	s := new(PaperChangeMemberLinkPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperChangeMemberPolicyDetails : Changed whether members can share Paper docs
 // outside team, and if docs are accessible only by team members or anyone by
@@ -12037,7 +12157,6 @@ type PaperChangeMemberPolicyDetails struct {
 	// missing due to historical data gap.
 	PreviousValue *PaperMemberPolicy `json:"previous_value,omitempty"`
 }
-
 // NewPaperChangeMemberPolicyDetails returns a new PaperChangeMemberPolicyDetails instance
 func NewPaperChangeMemberPolicyDetails(NewValue *PaperMemberPolicy) *PaperChangeMemberPolicyDetails {
 	s := new(PaperChangeMemberPolicyDetails)
@@ -12045,18 +12164,19 @@ func NewPaperChangeMemberPolicyDetails(NewValue *PaperMemberPolicy) *PaperChange
 	return s
 }
 
+
 // PaperChangeMemberPolicyType : has no documentation (yet)
 type PaperChangeMemberPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperChangeMemberPolicyType returns a new PaperChangeMemberPolicyType instance
 func NewPaperChangeMemberPolicyType(Description string) *PaperChangeMemberPolicyType {
 	s := new(PaperChangeMemberPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperChangePolicyDetails : Enabled/disabled Dropbox Paper for team.
 type PaperChangePolicyDetails struct {
@@ -12066,7 +12186,6 @@ type PaperChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *team_policies.PaperEnabledPolicy `json:"previous_value,omitempty"`
 }
-
 // NewPaperChangePolicyDetails returns a new PaperChangePolicyDetails instance
 func NewPaperChangePolicyDetails(NewValue *team_policies.PaperEnabledPolicy) *PaperChangePolicyDetails {
 	s := new(PaperChangePolicyDetails)
@@ -12074,12 +12193,12 @@ func NewPaperChangePolicyDetails(NewValue *team_policies.PaperEnabledPolicy) *Pa
 	return s
 }
 
+
 // PaperChangePolicyType : has no documentation (yet)
 type PaperChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperChangePolicyType returns a new PaperChangePolicyType instance
 func NewPaperChangePolicyType(Description string) *PaperChangePolicyType {
 	s := new(PaperChangePolicyType)
@@ -12087,12 +12206,12 @@ func NewPaperChangePolicyType(Description string) *PaperChangePolicyType {
 	return s
 }
 
+
 // PaperContentAddMemberDetails : Added team member to Paper doc/folder.
 type PaperContentAddMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentAddMemberDetails returns a new PaperContentAddMemberDetails instance
 func NewPaperContentAddMemberDetails(EventUuid string) *PaperContentAddMemberDetails {
 	s := new(PaperContentAddMemberDetails)
@@ -12100,18 +12219,19 @@ func NewPaperContentAddMemberDetails(EventUuid string) *PaperContentAddMemberDet
 	return s
 }
 
+
 // PaperContentAddMemberType : has no documentation (yet)
 type PaperContentAddMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentAddMemberType returns a new PaperContentAddMemberType instance
 func NewPaperContentAddMemberType(Description string) *PaperContentAddMemberType {
 	s := new(PaperContentAddMemberType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperContentAddToFolderDetails : Added Paper doc/folder to folder.
 type PaperContentAddToFolderDetails struct {
@@ -12122,7 +12242,6 @@ type PaperContentAddToFolderDetails struct {
 	// ParentAssetIndex : Parent asset position in the Assets list.
 	ParentAssetIndex uint64 `json:"parent_asset_index"`
 }
-
 // NewPaperContentAddToFolderDetails returns a new PaperContentAddToFolderDetails instance
 func NewPaperContentAddToFolderDetails(EventUuid string, TargetAssetIndex uint64, ParentAssetIndex uint64) *PaperContentAddToFolderDetails {
 	s := new(PaperContentAddToFolderDetails)
@@ -12132,12 +12251,12 @@ func NewPaperContentAddToFolderDetails(EventUuid string, TargetAssetIndex uint64
 	return s
 }
 
+
 // PaperContentAddToFolderType : has no documentation (yet)
 type PaperContentAddToFolderType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentAddToFolderType returns a new PaperContentAddToFolderType instance
 func NewPaperContentAddToFolderType(Description string) *PaperContentAddToFolderType {
 	s := new(PaperContentAddToFolderType)
@@ -12145,12 +12264,12 @@ func NewPaperContentAddToFolderType(Description string) *PaperContentAddToFolder
 	return s
 }
 
+
 // PaperContentArchiveDetails : Archived Paper doc/folder.
 type PaperContentArchiveDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentArchiveDetails returns a new PaperContentArchiveDetails instance
 func NewPaperContentArchiveDetails(EventUuid string) *PaperContentArchiveDetails {
 	s := new(PaperContentArchiveDetails)
@@ -12158,12 +12277,12 @@ func NewPaperContentArchiveDetails(EventUuid string) *PaperContentArchiveDetails
 	return s
 }
 
+
 // PaperContentArchiveType : has no documentation (yet)
 type PaperContentArchiveType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentArchiveType returns a new PaperContentArchiveType instance
 func NewPaperContentArchiveType(Description string) *PaperContentArchiveType {
 	s := new(PaperContentArchiveType)
@@ -12171,12 +12290,12 @@ func NewPaperContentArchiveType(Description string) *PaperContentArchiveType {
 	return s
 }
 
+
 // PaperContentCreateDetails : Created Paper doc/folder.
 type PaperContentCreateDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentCreateDetails returns a new PaperContentCreateDetails instance
 func NewPaperContentCreateDetails(EventUuid string) *PaperContentCreateDetails {
 	s := new(PaperContentCreateDetails)
@@ -12184,12 +12303,12 @@ func NewPaperContentCreateDetails(EventUuid string) *PaperContentCreateDetails {
 	return s
 }
 
+
 // PaperContentCreateType : has no documentation (yet)
 type PaperContentCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentCreateType returns a new PaperContentCreateType instance
 func NewPaperContentCreateType(Description string) *PaperContentCreateType {
 	s := new(PaperContentCreateType)
@@ -12197,12 +12316,12 @@ func NewPaperContentCreateType(Description string) *PaperContentCreateType {
 	return s
 }
 
+
 // PaperContentPermanentlyDeleteDetails : Permanently deleted Paper doc/folder.
 type PaperContentPermanentlyDeleteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentPermanentlyDeleteDetails returns a new PaperContentPermanentlyDeleteDetails instance
 func NewPaperContentPermanentlyDeleteDetails(EventUuid string) *PaperContentPermanentlyDeleteDetails {
 	s := new(PaperContentPermanentlyDeleteDetails)
@@ -12210,18 +12329,19 @@ func NewPaperContentPermanentlyDeleteDetails(EventUuid string) *PaperContentPerm
 	return s
 }
 
+
 // PaperContentPermanentlyDeleteType : has no documentation (yet)
 type PaperContentPermanentlyDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentPermanentlyDeleteType returns a new PaperContentPermanentlyDeleteType instance
 func NewPaperContentPermanentlyDeleteType(Description string) *PaperContentPermanentlyDeleteType {
 	s := new(PaperContentPermanentlyDeleteType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperContentRemoveFromFolderDetails : Removed Paper doc/folder from folder.
 type PaperContentRemoveFromFolderDetails struct {
@@ -12232,7 +12352,6 @@ type PaperContentRemoveFromFolderDetails struct {
 	// ParentAssetIndex : Parent asset position in the Assets list.
 	ParentAssetIndex uint64 `json:"parent_asset_index"`
 }
-
 // NewPaperContentRemoveFromFolderDetails returns a new PaperContentRemoveFromFolderDetails instance
 func NewPaperContentRemoveFromFolderDetails(EventUuid string, TargetAssetIndex uint64, ParentAssetIndex uint64) *PaperContentRemoveFromFolderDetails {
 	s := new(PaperContentRemoveFromFolderDetails)
@@ -12242,12 +12361,12 @@ func NewPaperContentRemoveFromFolderDetails(EventUuid string, TargetAssetIndex u
 	return s
 }
 
+
 // PaperContentRemoveFromFolderType : has no documentation (yet)
 type PaperContentRemoveFromFolderType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentRemoveFromFolderType returns a new PaperContentRemoveFromFolderType instance
 func NewPaperContentRemoveFromFolderType(Description string) *PaperContentRemoveFromFolderType {
 	s := new(PaperContentRemoveFromFolderType)
@@ -12255,12 +12374,12 @@ func NewPaperContentRemoveFromFolderType(Description string) *PaperContentRemove
 	return s
 }
 
+
 // PaperContentRemoveMemberDetails : Removed team member from Paper doc/folder.
 type PaperContentRemoveMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentRemoveMemberDetails returns a new PaperContentRemoveMemberDetails instance
 func NewPaperContentRemoveMemberDetails(EventUuid string) *PaperContentRemoveMemberDetails {
 	s := new(PaperContentRemoveMemberDetails)
@@ -12268,12 +12387,12 @@ func NewPaperContentRemoveMemberDetails(EventUuid string) *PaperContentRemoveMem
 	return s
 }
 
+
 // PaperContentRemoveMemberType : has no documentation (yet)
 type PaperContentRemoveMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentRemoveMemberType returns a new PaperContentRemoveMemberType instance
 func NewPaperContentRemoveMemberType(Description string) *PaperContentRemoveMemberType {
 	s := new(PaperContentRemoveMemberType)
@@ -12281,12 +12400,12 @@ func NewPaperContentRemoveMemberType(Description string) *PaperContentRemoveMemb
 	return s
 }
 
+
 // PaperContentRenameDetails : Renamed Paper doc/folder.
 type PaperContentRenameDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentRenameDetails returns a new PaperContentRenameDetails instance
 func NewPaperContentRenameDetails(EventUuid string) *PaperContentRenameDetails {
 	s := new(PaperContentRenameDetails)
@@ -12294,12 +12413,12 @@ func NewPaperContentRenameDetails(EventUuid string) *PaperContentRenameDetails {
 	return s
 }
 
+
 // PaperContentRenameType : has no documentation (yet)
 type PaperContentRenameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentRenameType returns a new PaperContentRenameType instance
 func NewPaperContentRenameType(Description string) *PaperContentRenameType {
 	s := new(PaperContentRenameType)
@@ -12307,12 +12426,12 @@ func NewPaperContentRenameType(Description string) *PaperContentRenameType {
 	return s
 }
 
+
 // PaperContentRestoreDetails : Restored archived Paper doc/folder.
 type PaperContentRestoreDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperContentRestoreDetails returns a new PaperContentRestoreDetails instance
 func NewPaperContentRestoreDetails(EventUuid string) *PaperContentRestoreDetails {
 	s := new(PaperContentRestoreDetails)
@@ -12320,18 +12439,19 @@ func NewPaperContentRestoreDetails(EventUuid string) *PaperContentRestoreDetails
 	return s
 }
 
+
 // PaperContentRestoreType : has no documentation (yet)
 type PaperContentRestoreType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperContentRestoreType returns a new PaperContentRestoreType instance
 func NewPaperContentRestoreType(Description string) *PaperContentRestoreType {
 	s := new(PaperContentRestoreType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDefaultFolderPolicy : Policy to set default access for newly created
 // Paper folders.
@@ -12342,8 +12462,8 @@ type PaperDefaultFolderPolicy struct {
 // Valid tag values for PaperDefaultFolderPolicy
 const (
 	PaperDefaultFolderPolicyEveryoneInTeam = "everyone_in_team"
-	PaperDefaultFolderPolicyInviteOnly     = "invite_only"
-	PaperDefaultFolderPolicyOther          = "other"
+	PaperDefaultFolderPolicyInviteOnly = "invite_only"
+	PaperDefaultFolderPolicyOther = "other"
 )
 
 // PaperDefaultFolderPolicyChangedDetails : Changed Paper Default Folder Policy
@@ -12354,7 +12474,6 @@ type PaperDefaultFolderPolicyChangedDetails struct {
 	// PreviousValue : Previous Paper Default Folder Policy.
 	PreviousValue *PaperDefaultFolderPolicy `json:"previous_value"`
 }
-
 // NewPaperDefaultFolderPolicyChangedDetails returns a new PaperDefaultFolderPolicyChangedDetails instance
 func NewPaperDefaultFolderPolicyChangedDetails(NewValue *PaperDefaultFolderPolicy, PreviousValue *PaperDefaultFolderPolicy) *PaperDefaultFolderPolicyChangedDetails {
 	s := new(PaperDefaultFolderPolicyChangedDetails)
@@ -12363,18 +12482,19 @@ func NewPaperDefaultFolderPolicyChangedDetails(NewValue *PaperDefaultFolderPolic
 	return s
 }
 
+
 // PaperDefaultFolderPolicyChangedType : has no documentation (yet)
 type PaperDefaultFolderPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDefaultFolderPolicyChangedType returns a new PaperDefaultFolderPolicyChangedType instance
 func NewPaperDefaultFolderPolicyChangedType(Description string) *PaperDefaultFolderPolicyChangedType {
 	s := new(PaperDefaultFolderPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDesktopPolicy : Policy for controlling if team members can use Paper
 // Desktop
@@ -12385,8 +12505,8 @@ type PaperDesktopPolicy struct {
 // Valid tag values for PaperDesktopPolicy
 const (
 	PaperDesktopPolicyDisabled = "disabled"
-	PaperDesktopPolicyEnabled  = "enabled"
-	PaperDesktopPolicyOther    = "other"
+	PaperDesktopPolicyEnabled = "enabled"
+	PaperDesktopPolicyOther = "other"
 )
 
 // PaperDesktopPolicyChangedDetails : Enabled/disabled Paper Desktop for team.
@@ -12396,7 +12516,6 @@ type PaperDesktopPolicyChangedDetails struct {
 	// PreviousValue : Previous Paper Desktop policy.
 	PreviousValue *PaperDesktopPolicy `json:"previous_value"`
 }
-
 // NewPaperDesktopPolicyChangedDetails returns a new PaperDesktopPolicyChangedDetails instance
 func NewPaperDesktopPolicyChangedDetails(NewValue *PaperDesktopPolicy, PreviousValue *PaperDesktopPolicy) *PaperDesktopPolicyChangedDetails {
 	s := new(PaperDesktopPolicyChangedDetails)
@@ -12405,18 +12524,19 @@ func NewPaperDesktopPolicyChangedDetails(NewValue *PaperDesktopPolicy, PreviousV
 	return s
 }
 
+
 // PaperDesktopPolicyChangedType : has no documentation (yet)
 type PaperDesktopPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDesktopPolicyChangedType returns a new PaperDesktopPolicyChangedType instance
 func NewPaperDesktopPolicyChangedType(Description string) *PaperDesktopPolicyChangedType {
 	s := new(PaperDesktopPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocAddCommentDetails : Added Paper doc comment.
 type PaperDocAddCommentDetails struct {
@@ -12425,7 +12545,6 @@ type PaperDocAddCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewPaperDocAddCommentDetails returns a new PaperDocAddCommentDetails instance
 func NewPaperDocAddCommentDetails(EventUuid string) *PaperDocAddCommentDetails {
 	s := new(PaperDocAddCommentDetails)
@@ -12433,18 +12552,19 @@ func NewPaperDocAddCommentDetails(EventUuid string) *PaperDocAddCommentDetails {
 	return s
 }
 
+
 // PaperDocAddCommentType : has no documentation (yet)
 type PaperDocAddCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocAddCommentType returns a new PaperDocAddCommentType instance
 func NewPaperDocAddCommentType(Description string) *PaperDocAddCommentType {
 	s := new(PaperDocAddCommentType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocChangeMemberRoleDetails : Changed team member permissions for Paper
 // doc.
@@ -12454,7 +12574,6 @@ type PaperDocChangeMemberRoleDetails struct {
 	// AccessType : Paper doc access type.
 	AccessType *PaperAccessType `json:"access_type"`
 }
-
 // NewPaperDocChangeMemberRoleDetails returns a new PaperDocChangeMemberRoleDetails instance
 func NewPaperDocChangeMemberRoleDetails(EventUuid string, AccessType *PaperAccessType) *PaperDocChangeMemberRoleDetails {
 	s := new(PaperDocChangeMemberRoleDetails)
@@ -12463,12 +12582,12 @@ func NewPaperDocChangeMemberRoleDetails(EventUuid string, AccessType *PaperAcces
 	return s
 }
 
+
 // PaperDocChangeMemberRoleType : has no documentation (yet)
 type PaperDocChangeMemberRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocChangeMemberRoleType returns a new PaperDocChangeMemberRoleType instance
 func NewPaperDocChangeMemberRoleType(Description string) *PaperDocChangeMemberRoleType {
 	s := new(PaperDocChangeMemberRoleType)
@@ -12476,18 +12595,18 @@ func NewPaperDocChangeMemberRoleType(Description string) *PaperDocChangeMemberRo
 	return s
 }
 
+
 // PaperDocChangeSharingPolicyDetails : Changed sharing setting for Paper doc.
 type PaperDocChangeSharingPolicyDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// PublicSharingPolicy : Sharing policy with external users. Might be
-	// missing due to historical data gap.
+	// PublicSharingPolicy : Sharing policy with external users. Might be missing
+	// due to historical data gap.
 	PublicSharingPolicy string `json:"public_sharing_policy,omitempty"`
 	// TeamSharingPolicy : Sharing policy with team. Might be missing due to
 	// historical data gap.
 	TeamSharingPolicy string `json:"team_sharing_policy,omitempty"`
 }
-
 // NewPaperDocChangeSharingPolicyDetails returns a new PaperDocChangeSharingPolicyDetails instance
 func NewPaperDocChangeSharingPolicyDetails(EventUuid string) *PaperDocChangeSharingPolicyDetails {
 	s := new(PaperDocChangeSharingPolicyDetails)
@@ -12495,18 +12614,19 @@ func NewPaperDocChangeSharingPolicyDetails(EventUuid string) *PaperDocChangeShar
 	return s
 }
 
+
 // PaperDocChangeSharingPolicyType : has no documentation (yet)
 type PaperDocChangeSharingPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocChangeSharingPolicyType returns a new PaperDocChangeSharingPolicyType instance
 func NewPaperDocChangeSharingPolicyType(Description string) *PaperDocChangeSharingPolicyType {
 	s := new(PaperDocChangeSharingPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocChangeSubscriptionDetails : Followed/unfollowed Paper doc.
 type PaperDocChangeSubscriptionDetails struct {
@@ -12518,7 +12638,6 @@ type PaperDocChangeSubscriptionDetails struct {
 	// missing due to historical data gap.
 	PreviousSubscriptionLevel string `json:"previous_subscription_level,omitempty"`
 }
-
 // NewPaperDocChangeSubscriptionDetails returns a new PaperDocChangeSubscriptionDetails instance
 func NewPaperDocChangeSubscriptionDetails(EventUuid string, NewSubscriptionLevel string) *PaperDocChangeSubscriptionDetails {
 	s := new(PaperDocChangeSubscriptionDetails)
@@ -12527,18 +12646,19 @@ func NewPaperDocChangeSubscriptionDetails(EventUuid string, NewSubscriptionLevel
 	return s
 }
 
+
 // PaperDocChangeSubscriptionType : has no documentation (yet)
 type PaperDocChangeSubscriptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocChangeSubscriptionType returns a new PaperDocChangeSubscriptionType instance
 func NewPaperDocChangeSubscriptionType(Description string) *PaperDocChangeSubscriptionType {
 	s := new(PaperDocChangeSubscriptionType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocDeleteCommentDetails : Deleted Paper doc comment.
 type PaperDocDeleteCommentDetails struct {
@@ -12547,7 +12667,6 @@ type PaperDocDeleteCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewPaperDocDeleteCommentDetails returns a new PaperDocDeleteCommentDetails instance
 func NewPaperDocDeleteCommentDetails(EventUuid string) *PaperDocDeleteCommentDetails {
 	s := new(PaperDocDeleteCommentDetails)
@@ -12555,12 +12674,12 @@ func NewPaperDocDeleteCommentDetails(EventUuid string) *PaperDocDeleteCommentDet
 	return s
 }
 
+
 // PaperDocDeleteCommentType : has no documentation (yet)
 type PaperDocDeleteCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocDeleteCommentType returns a new PaperDocDeleteCommentType instance
 func NewPaperDocDeleteCommentType(Description string) *PaperDocDeleteCommentType {
 	s := new(PaperDocDeleteCommentType)
@@ -12568,12 +12687,12 @@ func NewPaperDocDeleteCommentType(Description string) *PaperDocDeleteCommentType
 	return s
 }
 
+
 // PaperDocDeletedDetails : Archived Paper doc.
 type PaperDocDeletedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocDeletedDetails returns a new PaperDocDeletedDetails instance
 func NewPaperDocDeletedDetails(EventUuid string) *PaperDocDeletedDetails {
 	s := new(PaperDocDeletedDetails)
@@ -12581,18 +12700,19 @@ func NewPaperDocDeletedDetails(EventUuid string) *PaperDocDeletedDetails {
 	return s
 }
 
+
 // PaperDocDeletedType : has no documentation (yet)
 type PaperDocDeletedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocDeletedType returns a new PaperDocDeletedType instance
 func NewPaperDocDeletedType(Description string) *PaperDocDeletedType {
 	s := new(PaperDocDeletedType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocDownloadDetails : Downloaded Paper doc in specific format.
 type PaperDocDownloadDetails struct {
@@ -12601,7 +12721,6 @@ type PaperDocDownloadDetails struct {
 	// ExportFileFormat : Export file format.
 	ExportFileFormat *PaperDownloadFormat `json:"export_file_format"`
 }
-
 // NewPaperDocDownloadDetails returns a new PaperDocDownloadDetails instance
 func NewPaperDocDownloadDetails(EventUuid string, ExportFileFormat *PaperDownloadFormat) *PaperDocDownloadDetails {
 	s := new(PaperDocDownloadDetails)
@@ -12610,18 +12729,19 @@ func NewPaperDocDownloadDetails(EventUuid string, ExportFileFormat *PaperDownloa
 	return s
 }
 
+
 // PaperDocDownloadType : has no documentation (yet)
 type PaperDocDownloadType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocDownloadType returns a new PaperDocDownloadType instance
 func NewPaperDocDownloadType(Description string) *PaperDocDownloadType {
 	s := new(PaperDocDownloadType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocEditCommentDetails : Edited Paper doc comment.
 type PaperDocEditCommentDetails struct {
@@ -12630,7 +12750,6 @@ type PaperDocEditCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewPaperDocEditCommentDetails returns a new PaperDocEditCommentDetails instance
 func NewPaperDocEditCommentDetails(EventUuid string) *PaperDocEditCommentDetails {
 	s := new(PaperDocEditCommentDetails)
@@ -12638,12 +12757,12 @@ func NewPaperDocEditCommentDetails(EventUuid string) *PaperDocEditCommentDetails
 	return s
 }
 
+
 // PaperDocEditCommentType : has no documentation (yet)
 type PaperDocEditCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocEditCommentType returns a new PaperDocEditCommentType instance
 func NewPaperDocEditCommentType(Description string) *PaperDocEditCommentType {
 	s := new(PaperDocEditCommentType)
@@ -12651,12 +12770,12 @@ func NewPaperDocEditCommentType(Description string) *PaperDocEditCommentType {
 	return s
 }
 
+
 // PaperDocEditDetails : Edited Paper doc.
 type PaperDocEditDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocEditDetails returns a new PaperDocEditDetails instance
 func NewPaperDocEditDetails(EventUuid string) *PaperDocEditDetails {
 	s := new(PaperDocEditDetails)
@@ -12664,12 +12783,12 @@ func NewPaperDocEditDetails(EventUuid string) *PaperDocEditDetails {
 	return s
 }
 
+
 // PaperDocEditType : has no documentation (yet)
 type PaperDocEditType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocEditType returns a new PaperDocEditType instance
 func NewPaperDocEditType(Description string) *PaperDocEditType {
 	s := new(PaperDocEditType)
@@ -12677,12 +12796,12 @@ func NewPaperDocEditType(Description string) *PaperDocEditType {
 	return s
 }
 
+
 // PaperDocFollowedDetails : Followed Paper doc.
 type PaperDocFollowedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocFollowedDetails returns a new PaperDocFollowedDetails instance
 func NewPaperDocFollowedDetails(EventUuid string) *PaperDocFollowedDetails {
 	s := new(PaperDocFollowedDetails)
@@ -12690,12 +12809,12 @@ func NewPaperDocFollowedDetails(EventUuid string) *PaperDocFollowedDetails {
 	return s
 }
 
+
 // PaperDocFollowedType : has no documentation (yet)
 type PaperDocFollowedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocFollowedType returns a new PaperDocFollowedType instance
 func NewPaperDocFollowedType(Description string) *PaperDocFollowedType {
 	s := new(PaperDocFollowedType)
@@ -12703,12 +12822,12 @@ func NewPaperDocFollowedType(Description string) *PaperDocFollowedType {
 	return s
 }
 
+
 // PaperDocMentionDetails : Mentioned team member in Paper doc.
 type PaperDocMentionDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocMentionDetails returns a new PaperDocMentionDetails instance
 func NewPaperDocMentionDetails(EventUuid string) *PaperDocMentionDetails {
 	s := new(PaperDocMentionDetails)
@@ -12716,18 +12835,19 @@ func NewPaperDocMentionDetails(EventUuid string) *PaperDocMentionDetails {
 	return s
 }
 
+
 // PaperDocMentionType : has no documentation (yet)
 type PaperDocMentionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocMentionType returns a new PaperDocMentionType instance
 func NewPaperDocMentionType(Description string) *PaperDocMentionType {
 	s := new(PaperDocMentionType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocOwnershipChangedDetails : Transferred ownership of Paper doc.
 type PaperDocOwnershipChangedDetails struct {
@@ -12738,7 +12858,6 @@ type PaperDocOwnershipChangedDetails struct {
 	// NewOwnerUserId : New owner.
 	NewOwnerUserId string `json:"new_owner_user_id"`
 }
-
 // NewPaperDocOwnershipChangedDetails returns a new PaperDocOwnershipChangedDetails instance
 func NewPaperDocOwnershipChangedDetails(EventUuid string, NewOwnerUserId string) *PaperDocOwnershipChangedDetails {
 	s := new(PaperDocOwnershipChangedDetails)
@@ -12747,12 +12866,12 @@ func NewPaperDocOwnershipChangedDetails(EventUuid string, NewOwnerUserId string)
 	return s
 }
 
+
 // PaperDocOwnershipChangedType : has no documentation (yet)
 type PaperDocOwnershipChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocOwnershipChangedType returns a new PaperDocOwnershipChangedType instance
 func NewPaperDocOwnershipChangedType(Description string) *PaperDocOwnershipChangedType {
 	s := new(PaperDocOwnershipChangedType)
@@ -12760,12 +12879,12 @@ func NewPaperDocOwnershipChangedType(Description string) *PaperDocOwnershipChang
 	return s
 }
 
+
 // PaperDocRequestAccessDetails : Requested access to Paper doc.
 type PaperDocRequestAccessDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocRequestAccessDetails returns a new PaperDocRequestAccessDetails instance
 func NewPaperDocRequestAccessDetails(EventUuid string) *PaperDocRequestAccessDetails {
 	s := new(PaperDocRequestAccessDetails)
@@ -12773,18 +12892,19 @@ func NewPaperDocRequestAccessDetails(EventUuid string) *PaperDocRequestAccessDet
 	return s
 }
 
+
 // PaperDocRequestAccessType : has no documentation (yet)
 type PaperDocRequestAccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocRequestAccessType returns a new PaperDocRequestAccessType instance
 func NewPaperDocRequestAccessType(Description string) *PaperDocRequestAccessType {
 	s := new(PaperDocRequestAccessType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocResolveCommentDetails : Resolved Paper doc comment.
 type PaperDocResolveCommentDetails struct {
@@ -12793,7 +12913,6 @@ type PaperDocResolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewPaperDocResolveCommentDetails returns a new PaperDocResolveCommentDetails instance
 func NewPaperDocResolveCommentDetails(EventUuid string) *PaperDocResolveCommentDetails {
 	s := new(PaperDocResolveCommentDetails)
@@ -12801,12 +12920,12 @@ func NewPaperDocResolveCommentDetails(EventUuid string) *PaperDocResolveCommentD
 	return s
 }
 
+
 // PaperDocResolveCommentType : has no documentation (yet)
 type PaperDocResolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocResolveCommentType returns a new PaperDocResolveCommentType instance
 func NewPaperDocResolveCommentType(Description string) *PaperDocResolveCommentType {
 	s := new(PaperDocResolveCommentType)
@@ -12814,12 +12933,12 @@ func NewPaperDocResolveCommentType(Description string) *PaperDocResolveCommentTy
 	return s
 }
 
+
 // PaperDocRevertDetails : Restored Paper doc to previous version.
 type PaperDocRevertDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocRevertDetails returns a new PaperDocRevertDetails instance
 func NewPaperDocRevertDetails(EventUuid string) *PaperDocRevertDetails {
 	s := new(PaperDocRevertDetails)
@@ -12827,12 +12946,12 @@ func NewPaperDocRevertDetails(EventUuid string) *PaperDocRevertDetails {
 	return s
 }
 
+
 // PaperDocRevertType : has no documentation (yet)
 type PaperDocRevertType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocRevertType returns a new PaperDocRevertType instance
 func NewPaperDocRevertType(Description string) *PaperDocRevertType {
 	s := new(PaperDocRevertType)
@@ -12840,12 +12959,12 @@ func NewPaperDocRevertType(Description string) *PaperDocRevertType {
 	return s
 }
 
+
 // PaperDocSlackShareDetails : Shared Paper doc via Slack.
 type PaperDocSlackShareDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocSlackShareDetails returns a new PaperDocSlackShareDetails instance
 func NewPaperDocSlackShareDetails(EventUuid string) *PaperDocSlackShareDetails {
 	s := new(PaperDocSlackShareDetails)
@@ -12853,12 +12972,12 @@ func NewPaperDocSlackShareDetails(EventUuid string) *PaperDocSlackShareDetails {
 	return s
 }
 
+
 // PaperDocSlackShareType : has no documentation (yet)
 type PaperDocSlackShareType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocSlackShareType returns a new PaperDocSlackShareType instance
 func NewPaperDocSlackShareType(Description string) *PaperDocSlackShareType {
 	s := new(PaperDocSlackShareType)
@@ -12866,12 +12985,12 @@ func NewPaperDocSlackShareType(Description string) *PaperDocSlackShareType {
 	return s
 }
 
+
 // PaperDocTeamInviteDetails : Shared Paper doc with team member.
 type PaperDocTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocTeamInviteDetails returns a new PaperDocTeamInviteDetails instance
 func NewPaperDocTeamInviteDetails(EventUuid string) *PaperDocTeamInviteDetails {
 	s := new(PaperDocTeamInviteDetails)
@@ -12879,12 +12998,12 @@ func NewPaperDocTeamInviteDetails(EventUuid string) *PaperDocTeamInviteDetails {
 	return s
 }
 
+
 // PaperDocTeamInviteType : has no documentation (yet)
 type PaperDocTeamInviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocTeamInviteType returns a new PaperDocTeamInviteType instance
 func NewPaperDocTeamInviteType(Description string) *PaperDocTeamInviteType {
 	s := new(PaperDocTeamInviteType)
@@ -12892,12 +13011,12 @@ func NewPaperDocTeamInviteType(Description string) *PaperDocTeamInviteType {
 	return s
 }
 
+
 // PaperDocTrashedDetails : Deleted Paper doc.
 type PaperDocTrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocTrashedDetails returns a new PaperDocTrashedDetails instance
 func NewPaperDocTrashedDetails(EventUuid string) *PaperDocTrashedDetails {
 	s := new(PaperDocTrashedDetails)
@@ -12905,18 +13024,19 @@ func NewPaperDocTrashedDetails(EventUuid string) *PaperDocTrashedDetails {
 	return s
 }
 
+
 // PaperDocTrashedType : has no documentation (yet)
 type PaperDocTrashedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocTrashedType returns a new PaperDocTrashedType instance
 func NewPaperDocTrashedType(Description string) *PaperDocTrashedType {
 	s := new(PaperDocTrashedType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocUnresolveCommentDetails : Unresolved Paper doc comment.
 type PaperDocUnresolveCommentDetails struct {
@@ -12925,7 +13045,6 @@ type PaperDocUnresolveCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewPaperDocUnresolveCommentDetails returns a new PaperDocUnresolveCommentDetails instance
 func NewPaperDocUnresolveCommentDetails(EventUuid string) *PaperDocUnresolveCommentDetails {
 	s := new(PaperDocUnresolveCommentDetails)
@@ -12933,12 +13052,12 @@ func NewPaperDocUnresolveCommentDetails(EventUuid string) *PaperDocUnresolveComm
 	return s
 }
 
+
 // PaperDocUnresolveCommentType : has no documentation (yet)
 type PaperDocUnresolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocUnresolveCommentType returns a new PaperDocUnresolveCommentType instance
 func NewPaperDocUnresolveCommentType(Description string) *PaperDocUnresolveCommentType {
 	s := new(PaperDocUnresolveCommentType)
@@ -12946,12 +13065,12 @@ func NewPaperDocUnresolveCommentType(Description string) *PaperDocUnresolveComme
 	return s
 }
 
+
 // PaperDocUntrashedDetails : Restored Paper doc.
 type PaperDocUntrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocUntrashedDetails returns a new PaperDocUntrashedDetails instance
 func NewPaperDocUntrashedDetails(EventUuid string) *PaperDocUntrashedDetails {
 	s := new(PaperDocUntrashedDetails)
@@ -12959,12 +13078,12 @@ func NewPaperDocUntrashedDetails(EventUuid string) *PaperDocUntrashedDetails {
 	return s
 }
 
+
 // PaperDocUntrashedType : has no documentation (yet)
 type PaperDocUntrashedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocUntrashedType returns a new PaperDocUntrashedType instance
 func NewPaperDocUntrashedType(Description string) *PaperDocUntrashedType {
 	s := new(PaperDocUntrashedType)
@@ -12972,12 +13091,12 @@ func NewPaperDocUntrashedType(Description string) *PaperDocUntrashedType {
 	return s
 }
 
+
 // PaperDocViewDetails : Viewed Paper doc.
 type PaperDocViewDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperDocViewDetails returns a new PaperDocViewDetails instance
 func NewPaperDocViewDetails(EventUuid string) *PaperDocViewDetails {
 	s := new(PaperDocViewDetails)
@@ -12985,18 +13104,19 @@ func NewPaperDocViewDetails(EventUuid string) *PaperDocViewDetails {
 	return s
 }
 
+
 // PaperDocViewType : has no documentation (yet)
 type PaperDocViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperDocViewType returns a new PaperDocViewType instance
 func NewPaperDocViewType(Description string) *PaperDocViewType {
 	s := new(PaperDocViewType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperDocumentLogInfo : Paper document's logged information.
 type PaperDocumentLogInfo struct {
@@ -13005,7 +13125,6 @@ type PaperDocumentLogInfo struct {
 	// DocTitle : Paper document title.
 	DocTitle string `json:"doc_title"`
 }
-
 // NewPaperDocumentLogInfo returns a new PaperDocumentLogInfo instance
 func NewPaperDocumentLogInfo(DocId string, DocTitle string) *PaperDocumentLogInfo {
 	s := new(PaperDocumentLogInfo)
@@ -13014,6 +13133,7 @@ func NewPaperDocumentLogInfo(DocId string, DocTitle string) *PaperDocumentLogInf
 	return s
 }
 
+
 // PaperDownloadFormat : has no documentation (yet)
 type PaperDownloadFormat struct {
 	dropbox.Tagged
@@ -13021,30 +13141,29 @@ type PaperDownloadFormat struct {
 
 // Valid tag values for PaperDownloadFormat
 const (
-	PaperDownloadFormatDocx     = "docx"
-	PaperDownloadFormatHtml     = "html"
+	PaperDownloadFormatDocx = "docx"
+	PaperDownloadFormatHtml = "html"
 	PaperDownloadFormatMarkdown = "markdown"
-	PaperDownloadFormatPdf      = "pdf"
-	PaperDownloadFormatOther    = "other"
+	PaperDownloadFormatPdf = "pdf"
+	PaperDownloadFormatOther = "other"
 )
 
 // PaperEnabledUsersGroupAdditionDetails : Added users to Paper-enabled users
 // list.
 type PaperEnabledUsersGroupAdditionDetails struct {
 }
-
 // NewPaperEnabledUsersGroupAdditionDetails returns a new PaperEnabledUsersGroupAdditionDetails instance
 func NewPaperEnabledUsersGroupAdditionDetails() *PaperEnabledUsersGroupAdditionDetails {
 	s := new(PaperEnabledUsersGroupAdditionDetails)
 	return s
 }
 
+
 // PaperEnabledUsersGroupAdditionType : has no documentation (yet)
 type PaperEnabledUsersGroupAdditionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperEnabledUsersGroupAdditionType returns a new PaperEnabledUsersGroupAdditionType instance
 func NewPaperEnabledUsersGroupAdditionType(Description string) *PaperEnabledUsersGroupAdditionType {
 	s := new(PaperEnabledUsersGroupAdditionType)
@@ -13052,23 +13171,23 @@ func NewPaperEnabledUsersGroupAdditionType(Description string) *PaperEnabledUser
 	return s
 }
 
+
 // PaperEnabledUsersGroupRemovalDetails : Removed users from Paper-enabled users
 // list.
 type PaperEnabledUsersGroupRemovalDetails struct {
 }
-
 // NewPaperEnabledUsersGroupRemovalDetails returns a new PaperEnabledUsersGroupRemovalDetails instance
 func NewPaperEnabledUsersGroupRemovalDetails() *PaperEnabledUsersGroupRemovalDetails {
 	s := new(PaperEnabledUsersGroupRemovalDetails)
 	return s
 }
 
+
 // PaperEnabledUsersGroupRemovalType : has no documentation (yet)
 type PaperEnabledUsersGroupRemovalType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperEnabledUsersGroupRemovalType returns a new PaperEnabledUsersGroupRemovalType instance
 func NewPaperEnabledUsersGroupRemovalType(Description string) *PaperEnabledUsersGroupRemovalType {
 	s := new(PaperEnabledUsersGroupRemovalType)
@@ -13076,13 +13195,13 @@ func NewPaperEnabledUsersGroupRemovalType(Description string) *PaperEnabledUsers
 	return s
 }
 
+
 // PaperExternalViewAllowDetails : Changed Paper external sharing setting to
 // anyone.
 type PaperExternalViewAllowDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperExternalViewAllowDetails returns a new PaperExternalViewAllowDetails instance
 func NewPaperExternalViewAllowDetails(EventUuid string) *PaperExternalViewAllowDetails {
 	s := new(PaperExternalViewAllowDetails)
@@ -13090,12 +13209,12 @@ func NewPaperExternalViewAllowDetails(EventUuid string) *PaperExternalViewAllowD
 	return s
 }
 
+
 // PaperExternalViewAllowType : has no documentation (yet)
 type PaperExternalViewAllowType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperExternalViewAllowType returns a new PaperExternalViewAllowType instance
 func NewPaperExternalViewAllowType(Description string) *PaperExternalViewAllowType {
 	s := new(PaperExternalViewAllowType)
@@ -13103,13 +13222,13 @@ func NewPaperExternalViewAllowType(Description string) *PaperExternalViewAllowTy
 	return s
 }
 
+
 // PaperExternalViewDefaultTeamDetails : Changed Paper external sharing setting
 // to default team.
 type PaperExternalViewDefaultTeamDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperExternalViewDefaultTeamDetails returns a new PaperExternalViewDefaultTeamDetails instance
 func NewPaperExternalViewDefaultTeamDetails(EventUuid string) *PaperExternalViewDefaultTeamDetails {
 	s := new(PaperExternalViewDefaultTeamDetails)
@@ -13117,12 +13236,12 @@ func NewPaperExternalViewDefaultTeamDetails(EventUuid string) *PaperExternalView
 	return s
 }
 
+
 // PaperExternalViewDefaultTeamType : has no documentation (yet)
 type PaperExternalViewDefaultTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperExternalViewDefaultTeamType returns a new PaperExternalViewDefaultTeamType instance
 func NewPaperExternalViewDefaultTeamType(Description string) *PaperExternalViewDefaultTeamType {
 	s := new(PaperExternalViewDefaultTeamType)
@@ -13130,13 +13249,13 @@ func NewPaperExternalViewDefaultTeamType(Description string) *PaperExternalViewD
 	return s
 }
 
+
 // PaperExternalViewForbidDetails : Changed Paper external sharing setting to
 // team-only.
 type PaperExternalViewForbidDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperExternalViewForbidDetails returns a new PaperExternalViewForbidDetails instance
 func NewPaperExternalViewForbidDetails(EventUuid string) *PaperExternalViewForbidDetails {
 	s := new(PaperExternalViewForbidDetails)
@@ -13144,18 +13263,19 @@ func NewPaperExternalViewForbidDetails(EventUuid string) *PaperExternalViewForbi
 	return s
 }
 
+
 // PaperExternalViewForbidType : has no documentation (yet)
 type PaperExternalViewForbidType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperExternalViewForbidType returns a new PaperExternalViewForbidType instance
 func NewPaperExternalViewForbidType(Description string) *PaperExternalViewForbidType {
 	s := new(PaperExternalViewForbidType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperFolderChangeSubscriptionDetails : Followed/unfollowed Paper folder.
 type PaperFolderChangeSubscriptionDetails struct {
@@ -13167,7 +13287,6 @@ type PaperFolderChangeSubscriptionDetails struct {
 	// missing due to historical data gap.
 	PreviousSubscriptionLevel string `json:"previous_subscription_level,omitempty"`
 }
-
 // NewPaperFolderChangeSubscriptionDetails returns a new PaperFolderChangeSubscriptionDetails instance
 func NewPaperFolderChangeSubscriptionDetails(EventUuid string, NewSubscriptionLevel string) *PaperFolderChangeSubscriptionDetails {
 	s := new(PaperFolderChangeSubscriptionDetails)
@@ -13176,12 +13295,12 @@ func NewPaperFolderChangeSubscriptionDetails(EventUuid string, NewSubscriptionLe
 	return s
 }
 
+
 // PaperFolderChangeSubscriptionType : has no documentation (yet)
 type PaperFolderChangeSubscriptionType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperFolderChangeSubscriptionType returns a new PaperFolderChangeSubscriptionType instance
 func NewPaperFolderChangeSubscriptionType(Description string) *PaperFolderChangeSubscriptionType {
 	s := new(PaperFolderChangeSubscriptionType)
@@ -13189,12 +13308,12 @@ func NewPaperFolderChangeSubscriptionType(Description string) *PaperFolderChange
 	return s
 }
 
+
 // PaperFolderDeletedDetails : Archived Paper folder.
 type PaperFolderDeletedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperFolderDeletedDetails returns a new PaperFolderDeletedDetails instance
 func NewPaperFolderDeletedDetails(EventUuid string) *PaperFolderDeletedDetails {
 	s := new(PaperFolderDeletedDetails)
@@ -13202,12 +13321,12 @@ func NewPaperFolderDeletedDetails(EventUuid string) *PaperFolderDeletedDetails {
 	return s
 }
 
+
 // PaperFolderDeletedType : has no documentation (yet)
 type PaperFolderDeletedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperFolderDeletedType returns a new PaperFolderDeletedType instance
 func NewPaperFolderDeletedType(Description string) *PaperFolderDeletedType {
 	s := new(PaperFolderDeletedType)
@@ -13215,12 +13334,12 @@ func NewPaperFolderDeletedType(Description string) *PaperFolderDeletedType {
 	return s
 }
 
+
 // PaperFolderFollowedDetails : Followed Paper folder.
 type PaperFolderFollowedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperFolderFollowedDetails returns a new PaperFolderFollowedDetails instance
 func NewPaperFolderFollowedDetails(EventUuid string) *PaperFolderFollowedDetails {
 	s := new(PaperFolderFollowedDetails)
@@ -13228,18 +13347,19 @@ func NewPaperFolderFollowedDetails(EventUuid string) *PaperFolderFollowedDetails
 	return s
 }
 
+
 // PaperFolderFollowedType : has no documentation (yet)
 type PaperFolderFollowedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperFolderFollowedType returns a new PaperFolderFollowedType instance
 func NewPaperFolderFollowedType(Description string) *PaperFolderFollowedType {
 	s := new(PaperFolderFollowedType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperFolderLogInfo : Paper folder's logged information.
 type PaperFolderLogInfo struct {
@@ -13248,7 +13368,6 @@ type PaperFolderLogInfo struct {
 	// FolderName : Paper folder name.
 	FolderName string `json:"folder_name"`
 }
-
 // NewPaperFolderLogInfo returns a new PaperFolderLogInfo instance
 func NewPaperFolderLogInfo(FolderId string, FolderName string) *PaperFolderLogInfo {
 	s := new(PaperFolderLogInfo)
@@ -13257,12 +13376,12 @@ func NewPaperFolderLogInfo(FolderId string, FolderName string) *PaperFolderLogIn
 	return s
 }
 
+
 // PaperFolderTeamInviteDetails : Shared Paper folder with member.
 type PaperFolderTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperFolderTeamInviteDetails returns a new PaperFolderTeamInviteDetails instance
 func NewPaperFolderTeamInviteDetails(EventUuid string) *PaperFolderTeamInviteDetails {
 	s := new(PaperFolderTeamInviteDetails)
@@ -13270,18 +13389,19 @@ func NewPaperFolderTeamInviteDetails(EventUuid string) *PaperFolderTeamInviteDet
 	return s
 }
 
+
 // PaperFolderTeamInviteType : has no documentation (yet)
 type PaperFolderTeamInviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperFolderTeamInviteType returns a new PaperFolderTeamInviteType instance
 func NewPaperFolderTeamInviteType(Description string) *PaperFolderTeamInviteType {
 	s := new(PaperFolderTeamInviteType)
 	s.Description = Description
 	return s
 }
+
 
 // PaperMemberPolicy : Policy for controlling if team members can share Paper
 // documents externally.
@@ -13291,10 +13411,10 @@ type PaperMemberPolicy struct {
 
 // Valid tag values for PaperMemberPolicy
 const (
-	PaperMemberPolicyAnyoneWithLink          = "anyone_with_link"
-	PaperMemberPolicyOnlyTeam                = "only_team"
+	PaperMemberPolicyAnyoneWithLink = "anyone_with_link"
+	PaperMemberPolicyOnlyTeam = "only_team"
 	PaperMemberPolicyTeamAndExplicitlyShared = "team_and_explicitly_shared"
-	PaperMemberPolicyOther                   = "other"
+	PaperMemberPolicyOther = "other"
 )
 
 // PaperPublishedLinkCreateDetails : Published doc.
@@ -13302,7 +13422,6 @@ type PaperPublishedLinkCreateDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperPublishedLinkCreateDetails returns a new PaperPublishedLinkCreateDetails instance
 func NewPaperPublishedLinkCreateDetails(EventUuid string) *PaperPublishedLinkCreateDetails {
 	s := new(PaperPublishedLinkCreateDetails)
@@ -13310,12 +13429,12 @@ func NewPaperPublishedLinkCreateDetails(EventUuid string) *PaperPublishedLinkCre
 	return s
 }
 
+
 // PaperPublishedLinkCreateType : has no documentation (yet)
 type PaperPublishedLinkCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperPublishedLinkCreateType returns a new PaperPublishedLinkCreateType instance
 func NewPaperPublishedLinkCreateType(Description string) *PaperPublishedLinkCreateType {
 	s := new(PaperPublishedLinkCreateType)
@@ -13323,12 +13442,12 @@ func NewPaperPublishedLinkCreateType(Description string) *PaperPublishedLinkCrea
 	return s
 }
 
+
 // PaperPublishedLinkDisabledDetails : Unpublished doc.
 type PaperPublishedLinkDisabledDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperPublishedLinkDisabledDetails returns a new PaperPublishedLinkDisabledDetails instance
 func NewPaperPublishedLinkDisabledDetails(EventUuid string) *PaperPublishedLinkDisabledDetails {
 	s := new(PaperPublishedLinkDisabledDetails)
@@ -13336,12 +13455,12 @@ func NewPaperPublishedLinkDisabledDetails(EventUuid string) *PaperPublishedLinkD
 	return s
 }
 
+
 // PaperPublishedLinkDisabledType : has no documentation (yet)
 type PaperPublishedLinkDisabledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperPublishedLinkDisabledType returns a new PaperPublishedLinkDisabledType instance
 func NewPaperPublishedLinkDisabledType(Description string) *PaperPublishedLinkDisabledType {
 	s := new(PaperPublishedLinkDisabledType)
@@ -13349,12 +13468,12 @@ func NewPaperPublishedLinkDisabledType(Description string) *PaperPublishedLinkDi
 	return s
 }
 
+
 // PaperPublishedLinkViewDetails : Viewed published doc.
 type PaperPublishedLinkViewDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewPaperPublishedLinkViewDetails returns a new PaperPublishedLinkViewDetails instance
 func NewPaperPublishedLinkViewDetails(EventUuid string) *PaperPublishedLinkViewDetails {
 	s := new(PaperPublishedLinkViewDetails)
@@ -13362,18 +13481,19 @@ func NewPaperPublishedLinkViewDetails(EventUuid string) *PaperPublishedLinkViewD
 	return s
 }
 
+
 // PaperPublishedLinkViewType : has no documentation (yet)
 type PaperPublishedLinkViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPaperPublishedLinkViewType returns a new PaperPublishedLinkViewType instance
 func NewPaperPublishedLinkViewType(Description string) *PaperPublishedLinkViewType {
 	s := new(PaperPublishedLinkViewType)
 	s.Description = Description
 	return s
 }
+
 
 // ParticipantLogInfo : A user or group
 type ParticipantLogInfo struct {
@@ -13386,7 +13506,7 @@ type ParticipantLogInfo struct {
 
 // Valid tag values for ParticipantLogInfo
 const (
-	ParticipantLogInfoUser  = "user"
+	ParticipantLogInfoUser = "user"
 	ParticipantLogInfoGroup = "group"
 	ParticipantLogInfoOther = "other"
 )
@@ -13405,14 +13525,14 @@ func (u *ParticipantLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
+		case "user":
+			u.User, err = IsUserLogInfoFromJSON(w.User)
 
 		if err != nil {
 			return err
 		}
-	case "group":
-		err = json.Unmarshal(body, &u.Group)
+		case "group":
+			err = json.Unmarshal(body, &u.Group)
 
 		if err != nil {
 			return err
@@ -13428,28 +13548,27 @@ type PassPolicy struct {
 
 // Valid tag values for PassPolicy
 const (
-	PassPolicyEnabled  = "enabled"
-	PassPolicyAllow    = "allow"
+	PassPolicyEnabled = "enabled"
+	PassPolicyAllow = "allow"
 	PassPolicyDisabled = "disabled"
-	PassPolicyOther    = "other"
+	PassPolicyOther = "other"
 )
 
 // PasswordChangeDetails : Changed password.
 type PasswordChangeDetails struct {
 }
-
 // NewPasswordChangeDetails returns a new PasswordChangeDetails instance
 func NewPasswordChangeDetails() *PasswordChangeDetails {
 	s := new(PasswordChangeDetails)
 	return s
 }
 
+
 // PasswordChangeType : has no documentation (yet)
 type PasswordChangeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPasswordChangeType returns a new PasswordChangeType instance
 func NewPasswordChangeType(Description string) *PasswordChangeType {
 	s := new(PasswordChangeType)
@@ -13457,22 +13576,22 @@ func NewPasswordChangeType(Description string) *PasswordChangeType {
 	return s
 }
 
+
 // PasswordResetAllDetails : Reset all team member passwords.
 type PasswordResetAllDetails struct {
 }
-
 // NewPasswordResetAllDetails returns a new PasswordResetAllDetails instance
 func NewPasswordResetAllDetails() *PasswordResetAllDetails {
 	s := new(PasswordResetAllDetails)
 	return s
 }
 
+
 // PasswordResetAllType : has no documentation (yet)
 type PasswordResetAllType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPasswordResetAllType returns a new PasswordResetAllType instance
 func NewPasswordResetAllType(Description string) *PasswordResetAllType {
 	s := new(PasswordResetAllType)
@@ -13480,22 +13599,22 @@ func NewPasswordResetAllType(Description string) *PasswordResetAllType {
 	return s
 }
 
+
 // PasswordResetDetails : Reset password.
 type PasswordResetDetails struct {
 }
-
 // NewPasswordResetDetails returns a new PasswordResetDetails instance
 func NewPasswordResetDetails() *PasswordResetDetails {
 	s := new(PasswordResetDetails)
 	return s
 }
 
+
 // PasswordResetType : has no documentation (yet)
 type PasswordResetType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPasswordResetType returns a new PasswordResetType instance
 func NewPasswordResetType(Description string) *PasswordResetType {
 	s := new(PasswordResetType)
@@ -13503,16 +13622,15 @@ func NewPasswordResetType(Description string) *PasswordResetType {
 	return s
 }
 
+
 // PathLogInfo : Path's details.
 type PathLogInfo struct {
 	// Contextual : Fully qualified path relative to event's context. Might be
 	// missing due to historical data gap.
 	Contextual string `json:"contextual,omitempty"`
-	// NamespaceRelative : Path relative to the namespace containing the
-	// content.
+	// NamespaceRelative : Path relative to the namespace containing the content.
 	NamespaceRelative *NamespaceRelativePathLogInfo `json:"namespace_relative"`
 }
-
 // NewPathLogInfo returns a new PathLogInfo instance
 func NewPathLogInfo(NamespaceRelative *NamespaceRelativePathLogInfo) *PathLogInfo {
 	s := new(PathLogInfo)
@@ -13520,16 +13638,16 @@ func NewPathLogInfo(NamespaceRelative *NamespaceRelativePathLogInfo) *PathLogInf
 	return s
 }
 
+
 // PermanentDeleteChangePolicyDetails : Enabled/disabled ability of team members
 // to permanently delete content.
 type PermanentDeleteChangePolicyDetails struct {
 	// NewValue : New permanent delete content policy.
 	NewValue *ContentPermanentDeletePolicy `json:"new_value"`
-	// PreviousValue : Previous permanent delete content policy. Might be
-	// missing due to historical data gap.
+	// PreviousValue : Previous permanent delete content policy. Might be missing
+	// due to historical data gap.
 	PreviousValue *ContentPermanentDeletePolicy `json:"previous_value,omitempty"`
 }
-
 // NewPermanentDeleteChangePolicyDetails returns a new PermanentDeleteChangePolicyDetails instance
 func NewPermanentDeleteChangePolicyDetails(NewValue *ContentPermanentDeletePolicy) *PermanentDeleteChangePolicyDetails {
 	s := new(PermanentDeleteChangePolicyDetails)
@@ -13537,18 +13655,19 @@ func NewPermanentDeleteChangePolicyDetails(NewValue *ContentPermanentDeletePolic
 	return s
 }
 
+
 // PermanentDeleteChangePolicyType : has no documentation (yet)
 type PermanentDeleteChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewPermanentDeleteChangePolicyType returns a new PermanentDeleteChangePolicyType instance
 func NewPermanentDeleteChangePolicyType(Description string) *PermanentDeleteChangePolicyType {
 	s := new(PermanentDeleteChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // PlacementRestriction : has no documentation (yet)
 type PlacementRestriction struct {
@@ -13558,10 +13677,10 @@ type PlacementRestriction struct {
 // Valid tag values for PlacementRestriction
 const (
 	PlacementRestrictionAustraliaOnly = "australia_only"
-	PlacementRestrictionEuropeOnly    = "europe_only"
-	PlacementRestrictionJapanOnly     = "japan_only"
-	PlacementRestrictionNone          = "none"
-	PlacementRestrictionOther         = "other"
+	PlacementRestrictionEuropeOnly = "europe_only"
+	PlacementRestrictionJapanOnly = "japan_only"
+	PlacementRestrictionNone = "none"
+	PlacementRestrictionOther = "other"
 )
 
 // PrimaryTeamRequestAcceptedDetails : Team merge request acceptance details
@@ -13573,7 +13692,6 @@ type PrimaryTeamRequestAcceptedDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewPrimaryTeamRequestAcceptedDetails returns a new PrimaryTeamRequestAcceptedDetails instance
 func NewPrimaryTeamRequestAcceptedDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestAcceptedDetails {
 	s := new(PrimaryTeamRequestAcceptedDetails)
@@ -13581,6 +13699,7 @@ func NewPrimaryTeamRequestAcceptedDetails(SecondaryTeam string, SentBy string) *
 	s.SentBy = SentBy
 	return s
 }
+
 
 // PrimaryTeamRequestCanceledDetails : Team merge request cancellation details
 // shown to the primary team
@@ -13591,7 +13710,6 @@ type PrimaryTeamRequestCanceledDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewPrimaryTeamRequestCanceledDetails returns a new PrimaryTeamRequestCanceledDetails instance
 func NewPrimaryTeamRequestCanceledDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestCanceledDetails {
 	s := new(PrimaryTeamRequestCanceledDetails)
@@ -13599,6 +13717,7 @@ func NewPrimaryTeamRequestCanceledDetails(SecondaryTeam string, SentBy string) *
 	s.SentBy = SentBy
 	return s
 }
+
 
 // PrimaryTeamRequestExpiredDetails : Team merge request expiration details
 // shown to the primary team
@@ -13609,7 +13728,6 @@ type PrimaryTeamRequestExpiredDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewPrimaryTeamRequestExpiredDetails returns a new PrimaryTeamRequestExpiredDetails instance
 func NewPrimaryTeamRequestExpiredDetails(SecondaryTeam string, SentBy string) *PrimaryTeamRequestExpiredDetails {
 	s := new(PrimaryTeamRequestExpiredDetails)
@@ -13617,6 +13735,7 @@ func NewPrimaryTeamRequestExpiredDetails(SecondaryTeam string, SentBy string) *P
 	s.SentBy = SentBy
 	return s
 }
+
 
 // PrimaryTeamRequestReminderDetails : Team merge request reminder details shown
 // to the primary team
@@ -13626,7 +13745,6 @@ type PrimaryTeamRequestReminderDetails struct {
 	// SentTo : The name of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewPrimaryTeamRequestReminderDetails returns a new PrimaryTeamRequestReminderDetails instance
 func NewPrimaryTeamRequestReminderDetails(SecondaryTeam string, SentTo string) *PrimaryTeamRequestReminderDetails {
 	s := new(PrimaryTeamRequestReminderDetails)
@@ -13635,6 +13753,7 @@ func NewPrimaryTeamRequestReminderDetails(SecondaryTeam string, SentTo string) *
 	return s
 }
 
+
 // QuickActionType : Quick action type.
 type QuickActionType struct {
 	dropbox.Tagged
@@ -13642,12 +13761,12 @@ type QuickActionType struct {
 
 // Valid tag values for QuickActionType
 const (
-	QuickActionTypeDeleteSharedLink    = "delete_shared_link"
-	QuickActionTypeResetPassword       = "reset_password"
+	QuickActionTypeDeleteSharedLink = "delete_shared_link"
+	QuickActionTypeResetPassword = "reset_password"
 	QuickActionTypeRestoreFileOrFolder = "restore_file_or_folder"
-	QuickActionTypeUnlinkApp           = "unlink_app"
-	QuickActionTypeUnlinkSession       = "unlink_session"
-	QuickActionTypeOther               = "other"
+	QuickActionTypeUnlinkApp = "unlink_app"
+	QuickActionTypeUnlinkSession = "unlink_session"
+	QuickActionTypeOther = "other"
 )
 
 // RelocateAssetReferencesLogInfo : Provides the indices of the source asset and
@@ -13658,7 +13777,6 @@ type RelocateAssetReferencesLogInfo struct {
 	// DestAssetIndex : Destination asset position in the Assets list.
 	DestAssetIndex uint64 `json:"dest_asset_index"`
 }
-
 // NewRelocateAssetReferencesLogInfo returns a new RelocateAssetReferencesLogInfo instance
 func NewRelocateAssetReferencesLogInfo(SrcAssetIndex uint64, DestAssetIndex uint64) *RelocateAssetReferencesLogInfo {
 	s := new(RelocateAssetReferencesLogInfo)
@@ -13667,6 +13785,7 @@ func NewRelocateAssetReferencesLogInfo(SrcAssetIndex uint64, DestAssetIndex uint
 	return s
 }
 
+
 // ResellerLogInfo : Reseller information.
 type ResellerLogInfo struct {
 	// ResellerName : Reseller name.
@@ -13674,7 +13793,6 @@ type ResellerLogInfo struct {
 	// ResellerEmail : Reseller email.
 	ResellerEmail string `json:"reseller_email"`
 }
-
 // NewResellerLogInfo returns a new ResellerLogInfo instance
 func NewResellerLogInfo(ResellerName string, ResellerEmail string) *ResellerLogInfo {
 	s := new(ResellerLogInfo)
@@ -13683,6 +13801,7 @@ func NewResellerLogInfo(ResellerName string, ResellerEmail string) *ResellerLogI
 	return s
 }
 
+
 // ResellerSupportChangePolicyDetails : Enabled/disabled reseller support.
 type ResellerSupportChangePolicyDetails struct {
 	// NewValue : New Reseller support policy.
@@ -13690,7 +13809,6 @@ type ResellerSupportChangePolicyDetails struct {
 	// PreviousValue : Previous Reseller support policy.
 	PreviousValue *ResellerSupportPolicy `json:"previous_value"`
 }
-
 // NewResellerSupportChangePolicyDetails returns a new ResellerSupportChangePolicyDetails instance
 func NewResellerSupportChangePolicyDetails(NewValue *ResellerSupportPolicy, PreviousValue *ResellerSupportPolicy) *ResellerSupportChangePolicyDetails {
 	s := new(ResellerSupportChangePolicyDetails)
@@ -13699,18 +13817,19 @@ func NewResellerSupportChangePolicyDetails(NewValue *ResellerSupportPolicy, Prev
 	return s
 }
 
+
 // ResellerSupportChangePolicyType : has no documentation (yet)
 type ResellerSupportChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewResellerSupportChangePolicyType returns a new ResellerSupportChangePolicyType instance
 func NewResellerSupportChangePolicyType(Description string) *ResellerSupportChangePolicyType {
 	s := new(ResellerSupportChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // ResellerSupportPolicy : Policy for controlling if reseller can access the
 // admin console as administrator
@@ -13721,26 +13840,25 @@ type ResellerSupportPolicy struct {
 // Valid tag values for ResellerSupportPolicy
 const (
 	ResellerSupportPolicyDisabled = "disabled"
-	ResellerSupportPolicyEnabled  = "enabled"
-	ResellerSupportPolicyOther    = "other"
+	ResellerSupportPolicyEnabled = "enabled"
+	ResellerSupportPolicyOther = "other"
 )
 
 // ResellerSupportSessionEndDetails : Ended reseller support session.
 type ResellerSupportSessionEndDetails struct {
 }
-
 // NewResellerSupportSessionEndDetails returns a new ResellerSupportSessionEndDetails instance
 func NewResellerSupportSessionEndDetails() *ResellerSupportSessionEndDetails {
 	s := new(ResellerSupportSessionEndDetails)
 	return s
 }
 
+
 // ResellerSupportSessionEndType : has no documentation (yet)
 type ResellerSupportSessionEndType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewResellerSupportSessionEndType returns a new ResellerSupportSessionEndType instance
 func NewResellerSupportSessionEndType(Description string) *ResellerSupportSessionEndType {
 	s := new(ResellerSupportSessionEndType)
@@ -13748,28 +13866,29 @@ func NewResellerSupportSessionEndType(Description string) *ResellerSupportSessio
 	return s
 }
 
+
 // ResellerSupportSessionStartDetails : Started reseller support session.
 type ResellerSupportSessionStartDetails struct {
 }
-
 // NewResellerSupportSessionStartDetails returns a new ResellerSupportSessionStartDetails instance
 func NewResellerSupportSessionStartDetails() *ResellerSupportSessionStartDetails {
 	s := new(ResellerSupportSessionStartDetails)
 	return s
 }
 
+
 // ResellerSupportSessionStartType : has no documentation (yet)
 type ResellerSupportSessionStartType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewResellerSupportSessionStartType returns a new ResellerSupportSessionStartType instance
 func NewResellerSupportSessionStartType(Description string) *ResellerSupportSessionStartType {
 	s := new(ResellerSupportSessionStartType)
 	s.Description = Description
 	return s
 }
+
 
 // SecondaryMailsPolicy : has no documentation (yet)
 type SecondaryMailsPolicy struct {
@@ -13779,8 +13898,8 @@ type SecondaryMailsPolicy struct {
 // Valid tag values for SecondaryMailsPolicy
 const (
 	SecondaryMailsPolicyDisabled = "disabled"
-	SecondaryMailsPolicyEnabled  = "enabled"
-	SecondaryMailsPolicyOther    = "other"
+	SecondaryMailsPolicyEnabled = "enabled"
+	SecondaryMailsPolicyOther = "other"
 )
 
 // SecondaryMailsPolicyChangedDetails : Secondary mails policy changed.
@@ -13790,7 +13909,6 @@ type SecondaryMailsPolicyChangedDetails struct {
 	// NewValue : New secondary mails policy.
 	NewValue *SecondaryMailsPolicy `json:"new_value"`
 }
-
 // NewSecondaryMailsPolicyChangedDetails returns a new SecondaryMailsPolicyChangedDetails instance
 func NewSecondaryMailsPolicyChangedDetails(PreviousValue *SecondaryMailsPolicy, NewValue *SecondaryMailsPolicy) *SecondaryMailsPolicyChangedDetails {
 	s := new(SecondaryMailsPolicyChangedDetails)
@@ -13799,18 +13917,19 @@ func NewSecondaryMailsPolicyChangedDetails(PreviousValue *SecondaryMailsPolicy, 
 	return s
 }
 
+
 // SecondaryMailsPolicyChangedType : has no documentation (yet)
 type SecondaryMailsPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSecondaryMailsPolicyChangedType returns a new SecondaryMailsPolicyChangedType instance
 func NewSecondaryMailsPolicyChangedType(Description string) *SecondaryMailsPolicyChangedType {
 	s := new(SecondaryMailsPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // SecondaryTeamRequestAcceptedDetails : Team merge request acceptance details
 // shown to the secondary team
@@ -13821,7 +13940,6 @@ type SecondaryTeamRequestAcceptedDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewSecondaryTeamRequestAcceptedDetails returns a new SecondaryTeamRequestAcceptedDetails instance
 func NewSecondaryTeamRequestAcceptedDetails(PrimaryTeam string, SentBy string) *SecondaryTeamRequestAcceptedDetails {
 	s := new(SecondaryTeamRequestAcceptedDetails)
@@ -13830,17 +13948,16 @@ func NewSecondaryTeamRequestAcceptedDetails(PrimaryTeam string, SentBy string) *
 	return s
 }
 
+
 // SecondaryTeamRequestCanceledDetails : Team merge request cancellation details
 // shown to the secondary team
 type SecondaryTeamRequestCanceledDetails struct {
-	// SentTo : The email of the primary team admin that the request was sent
-	// to.
+	// SentTo : The email of the primary team admin that the request was sent to.
 	SentTo string `json:"sent_to"`
 	// SentBy : The name of the secondary team admin who sent the request
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewSecondaryTeamRequestCanceledDetails returns a new SecondaryTeamRequestCanceledDetails instance
 func NewSecondaryTeamRequestCanceledDetails(SentTo string, SentBy string) *SecondaryTeamRequestCanceledDetails {
 	s := new(SecondaryTeamRequestCanceledDetails)
@@ -13849,13 +13966,13 @@ func NewSecondaryTeamRequestCanceledDetails(SentTo string, SentBy string) *Secon
 	return s
 }
 
+
 // SecondaryTeamRequestExpiredDetails : Team merge request expiration details
 // shown to the secondary team
 type SecondaryTeamRequestExpiredDetails struct {
 	// SentTo : The email of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewSecondaryTeamRequestExpiredDetails returns a new SecondaryTeamRequestExpiredDetails instance
 func NewSecondaryTeamRequestExpiredDetails(SentTo string) *SecondaryTeamRequestExpiredDetails {
 	s := new(SecondaryTeamRequestExpiredDetails)
@@ -13863,13 +13980,13 @@ func NewSecondaryTeamRequestExpiredDetails(SentTo string) *SecondaryTeamRequestE
 	return s
 }
 
+
 // SecondaryTeamRequestReminderDetails : Team merge request reminder details
 // shown to the secondary team
 type SecondaryTeamRequestReminderDetails struct {
 	// SentTo : The email of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewSecondaryTeamRequestReminderDetails returns a new SecondaryTeamRequestReminderDetails instance
 func NewSecondaryTeamRequestReminderDetails(SentTo string) *SecondaryTeamRequestReminderDetails {
 	s := new(SecondaryTeamRequestReminderDetails)
@@ -13877,19 +13994,19 @@ func NewSecondaryTeamRequestReminderDetails(SentTo string) *SecondaryTeamRequest
 	return s
 }
 
+
 // SfAddGroupDetails : Added team to shared folder.
 type SfAddGroupDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission. Might be missing due to historical
+	// data gap.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 	// TeamName : Team name.
 	TeamName string `json:"team_name"`
 }
-
 // NewSfAddGroupDetails returns a new SfAddGroupDetails instance
 func NewSfAddGroupDetails(TargetAssetIndex uint64, OriginalFolderName string, TeamName string) *SfAddGroupDetails {
 	s := new(SfAddGroupDetails)
@@ -13899,18 +14016,19 @@ func NewSfAddGroupDetails(TargetAssetIndex uint64, OriginalFolderName string, Te
 	return s
 }
 
+
 // SfAddGroupType : has no documentation (yet)
 type SfAddGroupType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfAddGroupType returns a new SfAddGroupType instance
 func NewSfAddGroupType(Description string) *SfAddGroupType {
 	s := new(SfAddGroupType)
 	s.Description = Description
 	return s
 }
+
 
 // SfAllowNonMembersToViewSharedLinksDetails : Allowed non-collaborators to view
 // links to files in shared folder.
@@ -13923,7 +14041,6 @@ type SfAllowNonMembersToViewSharedLinksDetails struct {
 	// data gap.
 	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
-
 // NewSfAllowNonMembersToViewSharedLinksDetails returns a new SfAllowNonMembersToViewSharedLinksDetails instance
 func NewSfAllowNonMembersToViewSharedLinksDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfAllowNonMembersToViewSharedLinksDetails {
 	s := new(SfAllowNonMembersToViewSharedLinksDetails)
@@ -13932,18 +14049,19 @@ func NewSfAllowNonMembersToViewSharedLinksDetails(TargetAssetIndex uint64, Origi
 	return s
 }
 
+
 // SfAllowNonMembersToViewSharedLinksType : has no documentation (yet)
 type SfAllowNonMembersToViewSharedLinksType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfAllowNonMembersToViewSharedLinksType returns a new SfAllowNonMembersToViewSharedLinksType instance
 func NewSfAllowNonMembersToViewSharedLinksType(Description string) *SfAllowNonMembersToViewSharedLinksType {
 	s := new(SfAllowNonMembersToViewSharedLinksType)
 	s.Description = Description
 	return s
 }
+
 
 // SfExternalInviteWarnDetails : Set team members to see warning before sharing
 // folders outside team.
@@ -13959,7 +14077,6 @@ type SfExternalInviteWarnDetails struct {
 	// due to historical data gap.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
 }
-
 // NewSfExternalInviteWarnDetails returns a new SfExternalInviteWarnDetails instance
 func NewSfExternalInviteWarnDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfExternalInviteWarnDetails {
 	s := new(SfExternalInviteWarnDetails)
@@ -13968,18 +14085,19 @@ func NewSfExternalInviteWarnDetails(TargetAssetIndex uint64, OriginalFolderName 
 	return s
 }
 
+
 // SfExternalInviteWarnType : has no documentation (yet)
 type SfExternalInviteWarnType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfExternalInviteWarnType returns a new SfExternalInviteWarnType instance
 func NewSfExternalInviteWarnType(Description string) *SfExternalInviteWarnType {
 	s := new(SfExternalInviteWarnType)
 	s.Description = Description
 	return s
 }
+
 
 // SfFbInviteChangeRoleDetails : Changed Facebook user's role in shared folder.
 type SfFbInviteChangeRoleDetails struct {
@@ -13994,7 +14112,6 @@ type SfFbInviteChangeRoleDetails struct {
 	// historical data gap.
 	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
 }
-
 // NewSfFbInviteChangeRoleDetails returns a new SfFbInviteChangeRoleDetails instance
 func NewSfFbInviteChangeRoleDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbInviteChangeRoleDetails {
 	s := new(SfFbInviteChangeRoleDetails)
@@ -14003,12 +14120,12 @@ func NewSfFbInviteChangeRoleDetails(TargetAssetIndex uint64, OriginalFolderName 
 	return s
 }
 
+
 // SfFbInviteChangeRoleType : has no documentation (yet)
 type SfFbInviteChangeRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfFbInviteChangeRoleType returns a new SfFbInviteChangeRoleType instance
 func NewSfFbInviteChangeRoleType(Description string) *SfFbInviteChangeRoleType {
 	s := new(SfFbInviteChangeRoleType)
@@ -14016,17 +14133,17 @@ func NewSfFbInviteChangeRoleType(Description string) *SfFbInviteChangeRoleType {
 	return s
 }
 
+
 // SfFbInviteDetails : Invited Facebook users to shared folder.
 type SfFbInviteDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission. Might be missing due to historical
+	// data gap.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
-
 // NewSfFbInviteDetails returns a new SfFbInviteDetails instance
 func NewSfFbInviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbInviteDetails {
 	s := new(SfFbInviteDetails)
@@ -14035,18 +14152,19 @@ func NewSfFbInviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *S
 	return s
 }
 
+
 // SfFbInviteType : has no documentation (yet)
 type SfFbInviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfFbInviteType returns a new SfFbInviteType instance
 func NewSfFbInviteType(Description string) *SfFbInviteType {
 	s := new(SfFbInviteType)
 	s.Description = Description
 	return s
 }
+
 
 // SfFbUninviteDetails : Uninvited Facebook user from shared folder.
 type SfFbUninviteDetails struct {
@@ -14055,7 +14173,6 @@ type SfFbUninviteDetails struct {
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
 }
-
 // NewSfFbUninviteDetails returns a new SfFbUninviteDetails instance
 func NewSfFbUninviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfFbUninviteDetails {
 	s := new(SfFbUninviteDetails)
@@ -14064,12 +14181,12 @@ func NewSfFbUninviteDetails(TargetAssetIndex uint64, OriginalFolderName string) 
 	return s
 }
 
+
 // SfFbUninviteType : has no documentation (yet)
 type SfFbUninviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfFbUninviteType returns a new SfFbUninviteType instance
 func NewSfFbUninviteType(Description string) *SfFbUninviteType {
 	s := new(SfFbUninviteType)
@@ -14077,12 +14194,12 @@ func NewSfFbUninviteType(Description string) *SfFbUninviteType {
 	return s
 }
 
+
 // SfInviteGroupDetails : Invited group to shared folder.
 type SfInviteGroupDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 }
-
 // NewSfInviteGroupDetails returns a new SfInviteGroupDetails instance
 func NewSfInviteGroupDetails(TargetAssetIndex uint64) *SfInviteGroupDetails {
 	s := new(SfInviteGroupDetails)
@@ -14090,18 +14207,19 @@ func NewSfInviteGroupDetails(TargetAssetIndex uint64) *SfInviteGroupDetails {
 	return s
 }
 
+
 // SfInviteGroupType : has no documentation (yet)
 type SfInviteGroupType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfInviteGroupType returns a new SfInviteGroupType instance
 func NewSfInviteGroupType(Description string) *SfInviteGroupType {
 	s := new(SfInviteGroupType)
 	s.Description = Description
 	return s
 }
+
 
 // SfTeamGrantAccessDetails : Granted access to shared folder.
 type SfTeamGrantAccessDetails struct {
@@ -14110,7 +14228,6 @@ type SfTeamGrantAccessDetails struct {
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
 }
-
 // NewSfTeamGrantAccessDetails returns a new SfTeamGrantAccessDetails instance
 func NewSfTeamGrantAccessDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamGrantAccessDetails {
 	s := new(SfTeamGrantAccessDetails)
@@ -14119,18 +14236,19 @@ func NewSfTeamGrantAccessDetails(TargetAssetIndex uint64, OriginalFolderName str
 	return s
 }
 
+
 // SfTeamGrantAccessType : has no documentation (yet)
 type SfTeamGrantAccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamGrantAccessType returns a new SfTeamGrantAccessType instance
 func NewSfTeamGrantAccessType(Description string) *SfTeamGrantAccessType {
 	s := new(SfTeamGrantAccessType)
 	s.Description = Description
 	return s
 }
+
 
 // SfTeamInviteChangeRoleDetails : Changed team member's role in shared folder.
 type SfTeamInviteChangeRoleDetails struct {
@@ -14145,7 +14263,6 @@ type SfTeamInviteChangeRoleDetails struct {
 	// due to historical data gap.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
 }
-
 // NewSfTeamInviteChangeRoleDetails returns a new SfTeamInviteChangeRoleDetails instance
 func NewSfTeamInviteChangeRoleDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamInviteChangeRoleDetails {
 	s := new(SfTeamInviteChangeRoleDetails)
@@ -14154,12 +14271,12 @@ func NewSfTeamInviteChangeRoleDetails(TargetAssetIndex uint64, OriginalFolderNam
 	return s
 }
 
+
 // SfTeamInviteChangeRoleType : has no documentation (yet)
 type SfTeamInviteChangeRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamInviteChangeRoleType returns a new SfTeamInviteChangeRoleType instance
 func NewSfTeamInviteChangeRoleType(Description string) *SfTeamInviteChangeRoleType {
 	s := new(SfTeamInviteChangeRoleType)
@@ -14167,17 +14284,17 @@ func NewSfTeamInviteChangeRoleType(Description string) *SfTeamInviteChangeRoleTy
 	return s
 }
 
+
 // SfTeamInviteDetails : Invited team members to shared folder.
 type SfTeamInviteDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission. Might be missing due to historical
+	// data gap.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
-
 // NewSfTeamInviteDetails returns a new SfTeamInviteDetails instance
 func NewSfTeamInviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamInviteDetails {
 	s := new(SfTeamInviteDetails)
@@ -14186,18 +14303,19 @@ func NewSfTeamInviteDetails(TargetAssetIndex uint64, OriginalFolderName string) 
 	return s
 }
 
+
 // SfTeamInviteType : has no documentation (yet)
 type SfTeamInviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamInviteType returns a new SfTeamInviteType instance
 func NewSfTeamInviteType(Description string) *SfTeamInviteType {
 	s := new(SfTeamInviteType)
 	s.Description = Description
 	return s
 }
+
 
 // SfTeamJoinDetails : Joined team member's shared folder.
 type SfTeamJoinDetails struct {
@@ -14206,7 +14324,6 @@ type SfTeamJoinDetails struct {
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
 }
-
 // NewSfTeamJoinDetails returns a new SfTeamJoinDetails instance
 func NewSfTeamJoinDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamJoinDetails {
 	s := new(SfTeamJoinDetails)
@@ -14214,6 +14331,7 @@ func NewSfTeamJoinDetails(TargetAssetIndex uint64, OriginalFolderName string) *S
 	s.OriginalFolderName = OriginalFolderName
 	return s
 }
+
 
 // SfTeamJoinFromOobLinkDetails : Joined team member's shared folder from link.
 type SfTeamJoinFromOobLinkDetails struct {
@@ -14223,11 +14341,10 @@ type SfTeamJoinFromOobLinkDetails struct {
 	OriginalFolderName string `json:"original_folder_name"`
 	// TokenKey : Shared link token key.
 	TokenKey string `json:"token_key,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission. Might be missing due to historical
+	// data gap.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
-
 // NewSfTeamJoinFromOobLinkDetails returns a new SfTeamJoinFromOobLinkDetails instance
 func NewSfTeamJoinFromOobLinkDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamJoinFromOobLinkDetails {
 	s := new(SfTeamJoinFromOobLinkDetails)
@@ -14236,12 +14353,12 @@ func NewSfTeamJoinFromOobLinkDetails(TargetAssetIndex uint64, OriginalFolderName
 	return s
 }
 
+
 // SfTeamJoinFromOobLinkType : has no documentation (yet)
 type SfTeamJoinFromOobLinkType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamJoinFromOobLinkType returns a new SfTeamJoinFromOobLinkType instance
 func NewSfTeamJoinFromOobLinkType(Description string) *SfTeamJoinFromOobLinkType {
 	s := new(SfTeamJoinFromOobLinkType)
@@ -14249,18 +14366,19 @@ func NewSfTeamJoinFromOobLinkType(Description string) *SfTeamJoinFromOobLinkType
 	return s
 }
 
+
 // SfTeamJoinType : has no documentation (yet)
 type SfTeamJoinType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamJoinType returns a new SfTeamJoinType instance
 func NewSfTeamJoinType(Description string) *SfTeamJoinType {
 	s := new(SfTeamJoinType)
 	s.Description = Description
 	return s
 }
+
 
 // SfTeamUninviteDetails : Unshared folder with team member.
 type SfTeamUninviteDetails struct {
@@ -14269,7 +14387,6 @@ type SfTeamUninviteDetails struct {
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
 }
-
 // NewSfTeamUninviteDetails returns a new SfTeamUninviteDetails instance
 func NewSfTeamUninviteDetails(TargetAssetIndex uint64, OriginalFolderName string) *SfTeamUninviteDetails {
 	s := new(SfTeamUninviteDetails)
@@ -14278,18 +14395,19 @@ func NewSfTeamUninviteDetails(TargetAssetIndex uint64, OriginalFolderName string
 	return s
 }
 
+
 // SfTeamUninviteType : has no documentation (yet)
 type SfTeamUninviteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSfTeamUninviteType returns a new SfTeamUninviteType instance
 func NewSfTeamUninviteType(Description string) *SfTeamUninviteType {
 	s := new(SfTeamUninviteType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentAddInviteesDetails : Invited user to Dropbox and added them to
 // shared file/folder.
@@ -14299,7 +14417,6 @@ type SharedContentAddInviteesDetails struct {
 	// Invitees : A list of invitees.
 	Invitees []string `json:"invitees"`
 }
-
 // NewSharedContentAddInviteesDetails returns a new SharedContentAddInviteesDetails instance
 func NewSharedContentAddInviteesDetails(SharedContentAccessLevel *sharing.AccessLevel, Invitees []string) *SharedContentAddInviteesDetails {
 	s := new(SharedContentAddInviteesDetails)
@@ -14308,12 +14425,12 @@ func NewSharedContentAddInviteesDetails(SharedContentAccessLevel *sharing.Access
 	return s
 }
 
+
 // SharedContentAddInviteesType : has no documentation (yet)
 type SharedContentAddInviteesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentAddInviteesType returns a new SharedContentAddInviteesType instance
 func NewSharedContentAddInviteesType(Description string) *SharedContentAddInviteesType {
 	s := new(SharedContentAddInviteesType)
@@ -14321,26 +14438,26 @@ func NewSharedContentAddInviteesType(Description string) *SharedContentAddInvite
 	return s
 }
 
+
 // SharedContentAddLinkExpiryDetails : Added expiration date to link for shared
 // file/folder.
 type SharedContentAddLinkExpiryDetails struct {
-	// NewValue : New shared content link expiration date. Might be missing due
-	// to historical data gap.
+	// NewValue : New shared content link expiration date. Might be missing due to
+	// historical data gap.
 	NewValue time.Time `json:"new_value,omitempty"`
 }
-
 // NewSharedContentAddLinkExpiryDetails returns a new SharedContentAddLinkExpiryDetails instance
 func NewSharedContentAddLinkExpiryDetails() *SharedContentAddLinkExpiryDetails {
 	s := new(SharedContentAddLinkExpiryDetails)
 	return s
 }
 
+
 // SharedContentAddLinkExpiryType : has no documentation (yet)
 type SharedContentAddLinkExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentAddLinkExpiryType returns a new SharedContentAddLinkExpiryType instance
 func NewSharedContentAddLinkExpiryType(Description string) *SharedContentAddLinkExpiryType {
 	s := new(SharedContentAddLinkExpiryType)
@@ -14348,23 +14465,23 @@ func NewSharedContentAddLinkExpiryType(Description string) *SharedContentAddLink
 	return s
 }
 
+
 // SharedContentAddLinkPasswordDetails : Added password to link for shared
 // file/folder.
 type SharedContentAddLinkPasswordDetails struct {
 }
-
 // NewSharedContentAddLinkPasswordDetails returns a new SharedContentAddLinkPasswordDetails instance
 func NewSharedContentAddLinkPasswordDetails() *SharedContentAddLinkPasswordDetails {
 	s := new(SharedContentAddLinkPasswordDetails)
 	return s
 }
 
+
 // SharedContentAddLinkPasswordType : has no documentation (yet)
 type SharedContentAddLinkPasswordType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentAddLinkPasswordType returns a new SharedContentAddLinkPasswordType instance
 func NewSharedContentAddLinkPasswordType(Description string) *SharedContentAddLinkPasswordType {
 	s := new(SharedContentAddLinkPasswordType)
@@ -14372,13 +14489,13 @@ func NewSharedContentAddLinkPasswordType(Description string) *SharedContentAddLi
 	return s
 }
 
+
 // SharedContentAddMemberDetails : Added users and/or groups to shared
 // file/folder.
 type SharedContentAddMemberDetails struct {
 	// SharedContentAccessLevel : Shared content access level.
 	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
-
 // NewSharedContentAddMemberDetails returns a new SharedContentAddMemberDetails instance
 func NewSharedContentAddMemberDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedContentAddMemberDetails {
 	s := new(SharedContentAddMemberDetails)
@@ -14386,18 +14503,19 @@ func NewSharedContentAddMemberDetails(SharedContentAccessLevel *sharing.AccessLe
 	return s
 }
 
+
 // SharedContentAddMemberType : has no documentation (yet)
 type SharedContentAddMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentAddMemberType returns a new SharedContentAddMemberType instance
 func NewSharedContentAddMemberType(Description string) *SharedContentAddMemberType {
 	s := new(SharedContentAddMemberType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentChangeDownloadsPolicyDetails : Changed whether members can
 // download shared file/folder.
@@ -14408,7 +14526,6 @@ type SharedContentChangeDownloadsPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *DownloadPolicyType `json:"previous_value,omitempty"`
 }
-
 // NewSharedContentChangeDownloadsPolicyDetails returns a new SharedContentChangeDownloadsPolicyDetails instance
 func NewSharedContentChangeDownloadsPolicyDetails(NewValue *DownloadPolicyType) *SharedContentChangeDownloadsPolicyDetails {
 	s := new(SharedContentChangeDownloadsPolicyDetails)
@@ -14416,18 +14533,19 @@ func NewSharedContentChangeDownloadsPolicyDetails(NewValue *DownloadPolicyType) 
 	return s
 }
 
+
 // SharedContentChangeDownloadsPolicyType : has no documentation (yet)
 type SharedContentChangeDownloadsPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeDownloadsPolicyType returns a new SharedContentChangeDownloadsPolicyType instance
 func NewSharedContentChangeDownloadsPolicyType(Description string) *SharedContentChangeDownloadsPolicyType {
 	s := new(SharedContentChangeDownloadsPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentChangeInviteeRoleDetails : Changed access type of invitee to
 // shared file/folder before invite was accepted.
@@ -14440,7 +14558,6 @@ type SharedContentChangeInviteeRoleDetails struct {
 	// Invitee : The invitee whose role was changed.
 	Invitee string `json:"invitee"`
 }
-
 // NewSharedContentChangeInviteeRoleDetails returns a new SharedContentChangeInviteeRoleDetails instance
 func NewSharedContentChangeInviteeRoleDetails(NewAccessLevel *sharing.AccessLevel, Invitee string) *SharedContentChangeInviteeRoleDetails {
 	s := new(SharedContentChangeInviteeRoleDetails)
@@ -14449,18 +14566,19 @@ func NewSharedContentChangeInviteeRoleDetails(NewAccessLevel *sharing.AccessLeve
 	return s
 }
 
+
 // SharedContentChangeInviteeRoleType : has no documentation (yet)
 type SharedContentChangeInviteeRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeInviteeRoleType returns a new SharedContentChangeInviteeRoleType instance
 func NewSharedContentChangeInviteeRoleType(Description string) *SharedContentChangeInviteeRoleType {
 	s := new(SharedContentChangeInviteeRoleType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentChangeLinkAudienceDetails : Changed link audience of shared
 // file/folder.
@@ -14470,7 +14588,6 @@ type SharedContentChangeLinkAudienceDetails struct {
 	// PreviousValue : Previous link audience value.
 	PreviousValue *sharing.LinkAudience `json:"previous_value,omitempty"`
 }
-
 // NewSharedContentChangeLinkAudienceDetails returns a new SharedContentChangeLinkAudienceDetails instance
 func NewSharedContentChangeLinkAudienceDetails(NewValue *sharing.LinkAudience) *SharedContentChangeLinkAudienceDetails {
 	s := new(SharedContentChangeLinkAudienceDetails)
@@ -14478,12 +14595,12 @@ func NewSharedContentChangeLinkAudienceDetails(NewValue *sharing.LinkAudience) *
 	return s
 }
 
+
 // SharedContentChangeLinkAudienceType : has no documentation (yet)
 type SharedContentChangeLinkAudienceType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeLinkAudienceType returns a new SharedContentChangeLinkAudienceType instance
 func NewSharedContentChangeLinkAudienceType(Description string) *SharedContentChangeLinkAudienceType {
 	s := new(SharedContentChangeLinkAudienceType)
@@ -14491,29 +14608,29 @@ func NewSharedContentChangeLinkAudienceType(Description string) *SharedContentCh
 	return s
 }
 
+
 // SharedContentChangeLinkExpiryDetails : Changed link expiration of shared
 // file/folder.
 type SharedContentChangeLinkExpiryDetails struct {
-	// NewValue : New shared content link expiration date. Might be missing due
-	// to historical data gap.
+	// NewValue : New shared content link expiration date. Might be missing due to
+	// historical data gap.
 	NewValue time.Time `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
 	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
-
 // NewSharedContentChangeLinkExpiryDetails returns a new SharedContentChangeLinkExpiryDetails instance
 func NewSharedContentChangeLinkExpiryDetails() *SharedContentChangeLinkExpiryDetails {
 	s := new(SharedContentChangeLinkExpiryDetails)
 	return s
 }
 
+
 // SharedContentChangeLinkExpiryType : has no documentation (yet)
 type SharedContentChangeLinkExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeLinkExpiryType returns a new SharedContentChangeLinkExpiryType instance
 func NewSharedContentChangeLinkExpiryType(Description string) *SharedContentChangeLinkExpiryType {
 	s := new(SharedContentChangeLinkExpiryType)
@@ -14521,29 +14638,30 @@ func NewSharedContentChangeLinkExpiryType(Description string) *SharedContentChan
 	return s
 }
 
+
 // SharedContentChangeLinkPasswordDetails : Changed link password of shared
 // file/folder.
 type SharedContentChangeLinkPasswordDetails struct {
 }
-
 // NewSharedContentChangeLinkPasswordDetails returns a new SharedContentChangeLinkPasswordDetails instance
 func NewSharedContentChangeLinkPasswordDetails() *SharedContentChangeLinkPasswordDetails {
 	s := new(SharedContentChangeLinkPasswordDetails)
 	return s
 }
 
+
 // SharedContentChangeLinkPasswordType : has no documentation (yet)
 type SharedContentChangeLinkPasswordType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeLinkPasswordType returns a new SharedContentChangeLinkPasswordType instance
 func NewSharedContentChangeLinkPasswordType(Description string) *SharedContentChangeLinkPasswordType {
 	s := new(SharedContentChangeLinkPasswordType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentChangeMemberRoleDetails : Changed access type of shared
 // file/folder member.
@@ -14554,7 +14672,6 @@ type SharedContentChangeMemberRoleDetails struct {
 	// NewAccessLevel : New access level.
 	NewAccessLevel *sharing.AccessLevel `json:"new_access_level"`
 }
-
 // NewSharedContentChangeMemberRoleDetails returns a new SharedContentChangeMemberRoleDetails instance
 func NewSharedContentChangeMemberRoleDetails(NewAccessLevel *sharing.AccessLevel) *SharedContentChangeMemberRoleDetails {
 	s := new(SharedContentChangeMemberRoleDetails)
@@ -14562,18 +14679,19 @@ func NewSharedContentChangeMemberRoleDetails(NewAccessLevel *sharing.AccessLevel
 	return s
 }
 
+
 // SharedContentChangeMemberRoleType : has no documentation (yet)
 type SharedContentChangeMemberRoleType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeMemberRoleType returns a new SharedContentChangeMemberRoleType instance
 func NewSharedContentChangeMemberRoleType(Description string) *SharedContentChangeMemberRoleType {
 	s := new(SharedContentChangeMemberRoleType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentChangeViewerInfoPolicyDetails : Changed whether members can see
 // who viewed shared file/folder.
@@ -14584,7 +14702,6 @@ type SharedContentChangeViewerInfoPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *sharing.ViewerInfoPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharedContentChangeViewerInfoPolicyDetails returns a new SharedContentChangeViewerInfoPolicyDetails instance
 func NewSharedContentChangeViewerInfoPolicyDetails(NewValue *sharing.ViewerInfoPolicy) *SharedContentChangeViewerInfoPolicyDetails {
 	s := new(SharedContentChangeViewerInfoPolicyDetails)
@@ -14592,12 +14709,12 @@ func NewSharedContentChangeViewerInfoPolicyDetails(NewValue *sharing.ViewerInfoP
 	return s
 }
 
+
 // SharedContentChangeViewerInfoPolicyType : has no documentation (yet)
 type SharedContentChangeViewerInfoPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentChangeViewerInfoPolicyType returns a new SharedContentChangeViewerInfoPolicyType instance
 func NewSharedContentChangeViewerInfoPolicyType(Description string) *SharedContentChangeViewerInfoPolicyType {
 	s := new(SharedContentChangeViewerInfoPolicyType)
@@ -14605,31 +14722,32 @@ func NewSharedContentChangeViewerInfoPolicyType(Description string) *SharedConte
 	return s
 }
 
+
 // SharedContentClaimInvitationDetails : Acquired membership of shared
 // file/folder by accepting invite.
 type SharedContentClaimInvitationDetails struct {
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 }
-
 // NewSharedContentClaimInvitationDetails returns a new SharedContentClaimInvitationDetails instance
 func NewSharedContentClaimInvitationDetails() *SharedContentClaimInvitationDetails {
 	s := new(SharedContentClaimInvitationDetails)
 	return s
 }
 
+
 // SharedContentClaimInvitationType : has no documentation (yet)
 type SharedContentClaimInvitationType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentClaimInvitationType returns a new SharedContentClaimInvitationType instance
 func NewSharedContentClaimInvitationType(Description string) *SharedContentClaimInvitationType {
 	s := new(SharedContentClaimInvitationType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentCopyDetails : Copied shared file/folder to own Dropbox.
 type SharedContentCopyDetails struct {
@@ -14642,7 +14760,6 @@ type SharedContentCopyDetails struct {
 	// DestinationPath : The path where the member saved the content.
 	DestinationPath string `json:"destination_path"`
 }
-
 // NewSharedContentCopyDetails returns a new SharedContentCopyDetails instance
 func NewSharedContentCopyDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel, DestinationPath string) *SharedContentCopyDetails {
 	s := new(SharedContentCopyDetails)
@@ -14652,18 +14769,45 @@ func NewSharedContentCopyDetails(SharedContentLink string, SharedContentAccessLe
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedContentCopyDetails instance
+func (u *SharedContentCopyDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// DestinationPath : The path where the member saved the content.
+		DestinationPath string `json:"destination_path"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	u.DestinationPath = w.DestinationPath
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
+}
 // SharedContentCopyType : has no documentation (yet)
 type SharedContentCopyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentCopyType returns a new SharedContentCopyType instance
 func NewSharedContentCopyType(Description string) *SharedContentCopyType {
 	s := new(SharedContentCopyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentDownloadDetails : Downloaded shared file/folder.
 type SharedContentDownloadDetails struct {
@@ -14674,7 +14818,6 @@ type SharedContentDownloadDetails struct {
 	// SharedContentAccessLevel : Shared content access level.
 	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
-
 // NewSharedContentDownloadDetails returns a new SharedContentDownloadDetails instance
 func NewSharedContentDownloadDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel) *SharedContentDownloadDetails {
 	s := new(SharedContentDownloadDetails)
@@ -14683,12 +14826,35 @@ func NewSharedContentDownloadDetails(SharedContentLink string, SharedContentAcce
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedContentDownloadDetails instance
+func (u *SharedContentDownloadDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
+}
 // SharedContentDownloadType : has no documentation (yet)
 type SharedContentDownloadType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentDownloadType returns a new SharedContentDownloadType instance
 func NewSharedContentDownloadType(Description string) *SharedContentDownloadType {
 	s := new(SharedContentDownloadType)
@@ -14696,22 +14862,22 @@ func NewSharedContentDownloadType(Description string) *SharedContentDownloadType
 	return s
 }
 
+
 // SharedContentRelinquishMembershipDetails : Left shared file/folder.
 type SharedContentRelinquishMembershipDetails struct {
 }
-
 // NewSharedContentRelinquishMembershipDetails returns a new SharedContentRelinquishMembershipDetails instance
 func NewSharedContentRelinquishMembershipDetails() *SharedContentRelinquishMembershipDetails {
 	s := new(SharedContentRelinquishMembershipDetails)
 	return s
 }
 
+
 // SharedContentRelinquishMembershipType : has no documentation (yet)
 type SharedContentRelinquishMembershipType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRelinquishMembershipType returns a new SharedContentRelinquishMembershipType instance
 func NewSharedContentRelinquishMembershipType(Description string) *SharedContentRelinquishMembershipType {
 	s := new(SharedContentRelinquishMembershipType)
@@ -14719,13 +14885,13 @@ func NewSharedContentRelinquishMembershipType(Description string) *SharedContent
 	return s
 }
 
+
 // SharedContentRemoveInviteesDetails : Removed invitee from shared file/folder
 // before invite was accepted.
 type SharedContentRemoveInviteesDetails struct {
 	// Invitees : A list of invitees.
 	Invitees []string `json:"invitees"`
 }
-
 // NewSharedContentRemoveInviteesDetails returns a new SharedContentRemoveInviteesDetails instance
 func NewSharedContentRemoveInviteesDetails(Invitees []string) *SharedContentRemoveInviteesDetails {
 	s := new(SharedContentRemoveInviteesDetails)
@@ -14733,18 +14899,19 @@ func NewSharedContentRemoveInviteesDetails(Invitees []string) *SharedContentRemo
 	return s
 }
 
+
 // SharedContentRemoveInviteesType : has no documentation (yet)
 type SharedContentRemoveInviteesType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRemoveInviteesType returns a new SharedContentRemoveInviteesType instance
 func NewSharedContentRemoveInviteesType(Description string) *SharedContentRemoveInviteesType {
 	s := new(SharedContentRemoveInviteesType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentRemoveLinkExpiryDetails : Removed link expiration date of shared
 // file/folder.
@@ -14753,19 +14920,18 @@ type SharedContentRemoveLinkExpiryDetails struct {
 	// missing due to historical data gap.
 	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
-
 // NewSharedContentRemoveLinkExpiryDetails returns a new SharedContentRemoveLinkExpiryDetails instance
 func NewSharedContentRemoveLinkExpiryDetails() *SharedContentRemoveLinkExpiryDetails {
 	s := new(SharedContentRemoveLinkExpiryDetails)
 	return s
 }
 
+
 // SharedContentRemoveLinkExpiryType : has no documentation (yet)
 type SharedContentRemoveLinkExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRemoveLinkExpiryType returns a new SharedContentRemoveLinkExpiryType instance
 func NewSharedContentRemoveLinkExpiryType(Description string) *SharedContentRemoveLinkExpiryType {
 	s := new(SharedContentRemoveLinkExpiryType)
@@ -14773,23 +14939,23 @@ func NewSharedContentRemoveLinkExpiryType(Description string) *SharedContentRemo
 	return s
 }
 
+
 // SharedContentRemoveLinkPasswordDetails : Removed link password of shared
 // file/folder.
 type SharedContentRemoveLinkPasswordDetails struct {
 }
-
 // NewSharedContentRemoveLinkPasswordDetails returns a new SharedContentRemoveLinkPasswordDetails instance
 func NewSharedContentRemoveLinkPasswordDetails() *SharedContentRemoveLinkPasswordDetails {
 	s := new(SharedContentRemoveLinkPasswordDetails)
 	return s
 }
 
+
 // SharedContentRemoveLinkPasswordType : has no documentation (yet)
 type SharedContentRemoveLinkPasswordType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRemoveLinkPasswordType returns a new SharedContentRemoveLinkPasswordType instance
 func NewSharedContentRemoveLinkPasswordType(Description string) *SharedContentRemoveLinkPasswordType {
 	s := new(SharedContentRemoveLinkPasswordType)
@@ -14797,25 +14963,25 @@ func NewSharedContentRemoveLinkPasswordType(Description string) *SharedContentRe
 	return s
 }
 
+
 // SharedContentRemoveMemberDetails : Removed user/group from shared
 // file/folder.
 type SharedContentRemoveMemberDetails struct {
 	// SharedContentAccessLevel : Shared content access level.
 	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level,omitempty"`
 }
-
 // NewSharedContentRemoveMemberDetails returns a new SharedContentRemoveMemberDetails instance
 func NewSharedContentRemoveMemberDetails() *SharedContentRemoveMemberDetails {
 	s := new(SharedContentRemoveMemberDetails)
 	return s
 }
 
+
 // SharedContentRemoveMemberType : has no documentation (yet)
 type SharedContentRemoveMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRemoveMemberType returns a new SharedContentRemoveMemberType instance
 func NewSharedContentRemoveMemberType(Description string) *SharedContentRemoveMemberType {
 	s := new(SharedContentRemoveMemberType)
@@ -14823,24 +14989,24 @@ func NewSharedContentRemoveMemberType(Description string) *SharedContentRemoveMe
 	return s
 }
 
+
 // SharedContentRequestAccessDetails : Requested access to shared file/folder.
 type SharedContentRequestAccessDetails struct {
 	// SharedContentLink : Shared content link.
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 }
-
 // NewSharedContentRequestAccessDetails returns a new SharedContentRequestAccessDetails instance
 func NewSharedContentRequestAccessDetails() *SharedContentRequestAccessDetails {
 	s := new(SharedContentRequestAccessDetails)
 	return s
 }
 
+
 // SharedContentRequestAccessType : has no documentation (yet)
 type SharedContentRequestAccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentRequestAccessType returns a new SharedContentRequestAccessType instance
 func NewSharedContentRequestAccessType(Description string) *SharedContentRequestAccessType {
 	s := new(SharedContentRequestAccessType)
@@ -14848,29 +15014,30 @@ func NewSharedContentRequestAccessType(Description string) *SharedContentRequest
 	return s
 }
 
+
 // SharedContentUnshareDetails : Unshared file/folder by clearing membership and
 // turning off link.
 type SharedContentUnshareDetails struct {
 }
-
 // NewSharedContentUnshareDetails returns a new SharedContentUnshareDetails instance
 func NewSharedContentUnshareDetails() *SharedContentUnshareDetails {
 	s := new(SharedContentUnshareDetails)
 	return s
 }
 
+
 // SharedContentUnshareType : has no documentation (yet)
 type SharedContentUnshareType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentUnshareType returns a new SharedContentUnshareType instance
 func NewSharedContentUnshareType(Description string) *SharedContentUnshareType {
 	s := new(SharedContentUnshareType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedContentViewDetails : Previewed shared file/folder.
 type SharedContentViewDetails struct {
@@ -14881,7 +15048,6 @@ type SharedContentViewDetails struct {
 	// SharedContentAccessLevel : Shared content access level.
 	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
 }
-
 // NewSharedContentViewDetails returns a new SharedContentViewDetails instance
 func NewSharedContentViewDetails(SharedContentLink string, SharedContentAccessLevel *sharing.AccessLevel) *SharedContentViewDetails {
 	s := new(SharedContentViewDetails)
@@ -14890,12 +15056,35 @@ func NewSharedContentViewDetails(SharedContentLink string, SharedContentAccessLe
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedContentViewDetails instance
+func (u *SharedContentViewDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
+}
 // SharedContentViewType : has no documentation (yet)
 type SharedContentViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedContentViewType returns a new SharedContentViewType instance
 func NewSharedContentViewType(Description string) *SharedContentViewType {
 	s := new(SharedContentViewType)
@@ -14903,16 +15092,16 @@ func NewSharedContentViewType(Description string) *SharedContentViewType {
 	return s
 }
 
+
 // SharedFolderChangeLinkPolicyDetails : Changed who can access shared folder
 // via link.
 type SharedFolderChangeLinkPolicyDetails struct {
 	// NewValue : New shared folder link policy.
 	NewValue *sharing.SharedLinkPolicy `json:"new_value"`
-	// PreviousValue : Previous shared folder link policy. Might be missing due
-	// to historical data gap.
+	// PreviousValue : Previous shared folder link policy. Might be missing due to
+	// historical data gap.
 	PreviousValue *sharing.SharedLinkPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharedFolderChangeLinkPolicyDetails returns a new SharedFolderChangeLinkPolicyDetails instance
 func NewSharedFolderChangeLinkPolicyDetails(NewValue *sharing.SharedLinkPolicy) *SharedFolderChangeLinkPolicyDetails {
 	s := new(SharedFolderChangeLinkPolicyDetails)
@@ -14920,12 +15109,12 @@ func NewSharedFolderChangeLinkPolicyDetails(NewValue *sharing.SharedLinkPolicy) 
 	return s
 }
 
+
 // SharedFolderChangeLinkPolicyType : has no documentation (yet)
 type SharedFolderChangeLinkPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderChangeLinkPolicyType returns a new SharedFolderChangeLinkPolicyType instance
 func NewSharedFolderChangeLinkPolicyType(Description string) *SharedFolderChangeLinkPolicyType {
 	s := new(SharedFolderChangeLinkPolicyType)
@@ -14933,16 +15122,16 @@ func NewSharedFolderChangeLinkPolicyType(Description string) *SharedFolderChange
 	return s
 }
 
+
 // SharedFolderChangeMembersInheritancePolicyDetails : Changed whether shared
 // folder inherits members from parent folder.
 type SharedFolderChangeMembersInheritancePolicyDetails struct {
 	// NewValue : New member inheritance policy.
 	NewValue *SharedFolderMembersInheritancePolicy `json:"new_value"`
-	// PreviousValue : Previous member inheritance policy. Might be missing due
-	// to historical data gap.
+	// PreviousValue : Previous member inheritance policy. Might be missing due to
+	// historical data gap.
 	PreviousValue *SharedFolderMembersInheritancePolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharedFolderChangeMembersInheritancePolicyDetails returns a new SharedFolderChangeMembersInheritancePolicyDetails instance
 func NewSharedFolderChangeMembersInheritancePolicyDetails(NewValue *SharedFolderMembersInheritancePolicy) *SharedFolderChangeMembersInheritancePolicyDetails {
 	s := new(SharedFolderChangeMembersInheritancePolicyDetails)
@@ -14950,12 +15139,12 @@ func NewSharedFolderChangeMembersInheritancePolicyDetails(NewValue *SharedFolder
 	return s
 }
 
+
 // SharedFolderChangeMembersInheritancePolicyType : has no documentation (yet)
 type SharedFolderChangeMembersInheritancePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderChangeMembersInheritancePolicyType returns a new SharedFolderChangeMembersInheritancePolicyType instance
 func NewSharedFolderChangeMembersInheritancePolicyType(Description string) *SharedFolderChangeMembersInheritancePolicyType {
 	s := new(SharedFolderChangeMembersInheritancePolicyType)
@@ -14963,16 +15152,16 @@ func NewSharedFolderChangeMembersInheritancePolicyType(Description string) *Shar
 	return s
 }
 
+
 // SharedFolderChangeMembersManagementPolicyDetails : Changed who can add/remove
 // members of shared folder.
 type SharedFolderChangeMembersManagementPolicyDetails struct {
 	// NewValue : New members management policy.
 	NewValue *sharing.AclUpdatePolicy `json:"new_value"`
-	// PreviousValue : Previous members management policy. Might be missing due
-	// to historical data gap.
+	// PreviousValue : Previous members management policy. Might be missing due to
+	// historical data gap.
 	PreviousValue *sharing.AclUpdatePolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharedFolderChangeMembersManagementPolicyDetails returns a new SharedFolderChangeMembersManagementPolicyDetails instance
 func NewSharedFolderChangeMembersManagementPolicyDetails(NewValue *sharing.AclUpdatePolicy) *SharedFolderChangeMembersManagementPolicyDetails {
 	s := new(SharedFolderChangeMembersManagementPolicyDetails)
@@ -14980,18 +15169,19 @@ func NewSharedFolderChangeMembersManagementPolicyDetails(NewValue *sharing.AclUp
 	return s
 }
 
+
 // SharedFolderChangeMembersManagementPolicyType : has no documentation (yet)
 type SharedFolderChangeMembersManagementPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderChangeMembersManagementPolicyType returns a new SharedFolderChangeMembersManagementPolicyType instance
 func NewSharedFolderChangeMembersManagementPolicyType(Description string) *SharedFolderChangeMembersManagementPolicyType {
 	s := new(SharedFolderChangeMembersManagementPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedFolderChangeMembersPolicyDetails : Changed who can become member of
 // shared folder.
@@ -15002,7 +15192,6 @@ type SharedFolderChangeMembersPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *sharing.MemberPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharedFolderChangeMembersPolicyDetails returns a new SharedFolderChangeMembersPolicyDetails instance
 func NewSharedFolderChangeMembersPolicyDetails(NewValue *sharing.MemberPolicy) *SharedFolderChangeMembersPolicyDetails {
 	s := new(SharedFolderChangeMembersPolicyDetails)
@@ -15010,12 +15199,12 @@ func NewSharedFolderChangeMembersPolicyDetails(NewValue *sharing.MemberPolicy) *
 	return s
 }
 
+
 // SharedFolderChangeMembersPolicyType : has no documentation (yet)
 type SharedFolderChangeMembersPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderChangeMembersPolicyType returns a new SharedFolderChangeMembersPolicyType instance
 func NewSharedFolderChangeMembersPolicyType(Description string) *SharedFolderChangeMembersPolicyType {
 	s := new(SharedFolderChangeMembersPolicyType)
@@ -15023,25 +15212,25 @@ func NewSharedFolderChangeMembersPolicyType(Description string) *SharedFolderCha
 	return s
 }
 
+
 // SharedFolderCreateDetails : Created shared folder.
 type SharedFolderCreateDetails struct {
 	// TargetNsId : Target namespace ID. Might be missing due to historical data
 	// gap.
 	TargetNsId string `json:"target_ns_id,omitempty"`
 }
-
 // NewSharedFolderCreateDetails returns a new SharedFolderCreateDetails instance
 func NewSharedFolderCreateDetails() *SharedFolderCreateDetails {
 	s := new(SharedFolderCreateDetails)
 	return s
 }
 
+
 // SharedFolderCreateType : has no documentation (yet)
 type SharedFolderCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderCreateType returns a new SharedFolderCreateType instance
 func NewSharedFolderCreateType(Description string) *SharedFolderCreateType {
 	s := new(SharedFolderCreateType)
@@ -15049,29 +15238,30 @@ func NewSharedFolderCreateType(Description string) *SharedFolderCreateType {
 	return s
 }
 
+
 // SharedFolderDeclineInvitationDetails : Declined team member's invite to
 // shared folder.
 type SharedFolderDeclineInvitationDetails struct {
 }
-
 // NewSharedFolderDeclineInvitationDetails returns a new SharedFolderDeclineInvitationDetails instance
 func NewSharedFolderDeclineInvitationDetails() *SharedFolderDeclineInvitationDetails {
 	s := new(SharedFolderDeclineInvitationDetails)
 	return s
 }
 
+
 // SharedFolderDeclineInvitationType : has no documentation (yet)
 type SharedFolderDeclineInvitationType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderDeclineInvitationType returns a new SharedFolderDeclineInvitationType instance
 func NewSharedFolderDeclineInvitationType(Description string) *SharedFolderDeclineInvitationType {
 	s := new(SharedFolderDeclineInvitationType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedFolderMembersInheritancePolicy : Specifies if a shared folder inherits
 // its members from the parent folder.
@@ -15081,27 +15271,26 @@ type SharedFolderMembersInheritancePolicy struct {
 
 // Valid tag values for SharedFolderMembersInheritancePolicy
 const (
-	SharedFolderMembersInheritancePolicyInheritMembers     = "inherit_members"
+	SharedFolderMembersInheritancePolicyInheritMembers = "inherit_members"
 	SharedFolderMembersInheritancePolicyDontInheritMembers = "dont_inherit_members"
-	SharedFolderMembersInheritancePolicyOther              = "other"
+	SharedFolderMembersInheritancePolicyOther = "other"
 )
 
 // SharedFolderMountDetails : Added shared folder to own Dropbox.
 type SharedFolderMountDetails struct {
 }
-
 // NewSharedFolderMountDetails returns a new SharedFolderMountDetails instance
 func NewSharedFolderMountDetails() *SharedFolderMountDetails {
 	s := new(SharedFolderMountDetails)
 	return s
 }
 
+
 // SharedFolderMountType : has no documentation (yet)
 type SharedFolderMountType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderMountType returns a new SharedFolderMountType instance
 func NewSharedFolderMountType(Description string) *SharedFolderMountType {
 	s := new(SharedFolderMountType)
@@ -15109,34 +15298,33 @@ func NewSharedFolderMountType(Description string) *SharedFolderMountType {
 	return s
 }
 
+
 // SharedFolderNestDetails : Changed parent of shared folder.
 type SharedFolderNestDetails struct {
-	// PreviousParentNsId : Previous parent namespace ID. Might be missing due
-	// to historical data gap.
+	// PreviousParentNsId : Previous parent namespace ID. Might be missing due to
+	// historical data gap.
 	PreviousParentNsId string `json:"previous_parent_ns_id,omitempty"`
-	// NewParentNsId : New parent namespace ID. Might be missing due to
-	// historical data gap.
+	// NewParentNsId : New parent namespace ID. Might be missing due to historical
+	// data gap.
 	NewParentNsId string `json:"new_parent_ns_id,omitempty"`
-	// PreviousNsPath : Previous namespace path. Might be missing due to
-	// historical data gap.
+	// PreviousNsPath : Previous namespace path. Might be missing due to historical
+	// data gap.
 	PreviousNsPath string `json:"previous_ns_path,omitempty"`
-	// NewNsPath : New namespace path. Might be missing due to historical data
-	// gap.
+	// NewNsPath : New namespace path. Might be missing due to historical data gap.
 	NewNsPath string `json:"new_ns_path,omitempty"`
 }
-
 // NewSharedFolderNestDetails returns a new SharedFolderNestDetails instance
 func NewSharedFolderNestDetails() *SharedFolderNestDetails {
 	s := new(SharedFolderNestDetails)
 	return s
 }
 
+
 // SharedFolderNestType : has no documentation (yet)
 type SharedFolderNestType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderNestType returns a new SharedFolderNestType instance
 func NewSharedFolderNestType(Description string) *SharedFolderNestType {
 	s := new(SharedFolderNestType)
@@ -15144,16 +15332,15 @@ func NewSharedFolderNestType(Description string) *SharedFolderNestType {
 	return s
 }
 
+
 // SharedFolderTransferOwnershipDetails : Transferred ownership of shared folder
 // to another member.
 type SharedFolderTransferOwnershipDetails struct {
-	// PreviousOwnerEmail : The email address of the previous shared folder
-	// owner.
+	// PreviousOwnerEmail : The email address of the previous shared folder owner.
 	PreviousOwnerEmail string `json:"previous_owner_email,omitempty"`
 	// NewOwnerEmail : The email address of the new shared folder owner.
 	NewOwnerEmail string `json:"new_owner_email"`
 }
-
 // NewSharedFolderTransferOwnershipDetails returns a new SharedFolderTransferOwnershipDetails instance
 func NewSharedFolderTransferOwnershipDetails(NewOwnerEmail string) *SharedFolderTransferOwnershipDetails {
 	s := new(SharedFolderTransferOwnershipDetails)
@@ -15161,12 +15348,12 @@ func NewSharedFolderTransferOwnershipDetails(NewOwnerEmail string) *SharedFolder
 	return s
 }
 
+
 // SharedFolderTransferOwnershipType : has no documentation (yet)
 type SharedFolderTransferOwnershipType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderTransferOwnershipType returns a new SharedFolderTransferOwnershipType instance
 func NewSharedFolderTransferOwnershipType(Description string) *SharedFolderTransferOwnershipType {
 	s := new(SharedFolderTransferOwnershipType)
@@ -15174,28 +15361,29 @@ func NewSharedFolderTransferOwnershipType(Description string) *SharedFolderTrans
 	return s
 }
 
+
 // SharedFolderUnmountDetails : Deleted shared folder from Dropbox.
 type SharedFolderUnmountDetails struct {
 }
-
 // NewSharedFolderUnmountDetails returns a new SharedFolderUnmountDetails instance
 func NewSharedFolderUnmountDetails() *SharedFolderUnmountDetails {
 	s := new(SharedFolderUnmountDetails)
 	return s
 }
 
+
 // SharedFolderUnmountType : has no documentation (yet)
 type SharedFolderUnmountType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedFolderUnmountType returns a new SharedFolderUnmountType instance
 func NewSharedFolderUnmountType(Description string) *SharedFolderUnmountType {
 	s := new(SharedFolderUnmountType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedLinkAccessLevel : Shared link access level.
 type SharedLinkAccessLevel struct {
@@ -15204,10 +15392,10 @@ type SharedLinkAccessLevel struct {
 
 // Valid tag values for SharedLinkAccessLevel
 const (
-	SharedLinkAccessLevelNone   = "none"
+	SharedLinkAccessLevelNone = "none"
 	SharedLinkAccessLevelReader = "reader"
 	SharedLinkAccessLevelWriter = "writer"
-	SharedLinkAccessLevelOther  = "other"
+	SharedLinkAccessLevelOther = "other"
 )
 
 // SharedLinkAddExpiryDetails : Added shared link expiration date.
@@ -15215,7 +15403,6 @@ type SharedLinkAddExpiryDetails struct {
 	// NewValue : New shared link expiration date.
 	NewValue time.Time `json:"new_value"`
 }
-
 // NewSharedLinkAddExpiryDetails returns a new SharedLinkAddExpiryDetails instance
 func NewSharedLinkAddExpiryDetails(NewValue time.Time) *SharedLinkAddExpiryDetails {
 	s := new(SharedLinkAddExpiryDetails)
@@ -15223,12 +15410,12 @@ func NewSharedLinkAddExpiryDetails(NewValue time.Time) *SharedLinkAddExpiryDetai
 	return s
 }
 
+
 // SharedLinkAddExpiryType : has no documentation (yet)
 type SharedLinkAddExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkAddExpiryType returns a new SharedLinkAddExpiryType instance
 func NewSharedLinkAddExpiryType(Description string) *SharedLinkAddExpiryType {
 	s := new(SharedLinkAddExpiryType)
@@ -15236,34 +15423,35 @@ func NewSharedLinkAddExpiryType(Description string) *SharedLinkAddExpiryType {
 	return s
 }
 
+
 // SharedLinkChangeExpiryDetails : Changed shared link expiration date.
 type SharedLinkChangeExpiryDetails struct {
 	// NewValue : New shared link expiration date. Might be missing due to
 	// historical data gap.
 	NewValue time.Time `json:"new_value,omitempty"`
-	// PreviousValue : Previous shared link expiration date. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous shared link expiration date. Might be missing due
+	// to historical data gap.
 	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
-
 // NewSharedLinkChangeExpiryDetails returns a new SharedLinkChangeExpiryDetails instance
 func NewSharedLinkChangeExpiryDetails() *SharedLinkChangeExpiryDetails {
 	s := new(SharedLinkChangeExpiryDetails)
 	return s
 }
 
+
 // SharedLinkChangeExpiryType : has no documentation (yet)
 type SharedLinkChangeExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkChangeExpiryType returns a new SharedLinkChangeExpiryType instance
 func NewSharedLinkChangeExpiryType(Description string) *SharedLinkChangeExpiryType {
 	s := new(SharedLinkChangeExpiryType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedLinkChangeVisibilityDetails : Changed visibility of shared link.
 type SharedLinkChangeVisibilityDetails struct {
@@ -15273,7 +15461,6 @@ type SharedLinkChangeVisibilityDetails struct {
 	// historical data gap.
 	PreviousValue *SharedLinkVisibility `json:"previous_value,omitempty"`
 }
-
 // NewSharedLinkChangeVisibilityDetails returns a new SharedLinkChangeVisibilityDetails instance
 func NewSharedLinkChangeVisibilityDetails(NewValue *SharedLinkVisibility) *SharedLinkChangeVisibilityDetails {
 	s := new(SharedLinkChangeVisibilityDetails)
@@ -15281,12 +15468,12 @@ func NewSharedLinkChangeVisibilityDetails(NewValue *SharedLinkVisibility) *Share
 	return s
 }
 
+
 // SharedLinkChangeVisibilityType : has no documentation (yet)
 type SharedLinkChangeVisibilityType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkChangeVisibilityType returns a new SharedLinkChangeVisibilityType instance
 func NewSharedLinkChangeVisibilityType(Description string) *SharedLinkChangeVisibilityType {
 	s := new(SharedLinkChangeVisibilityType)
@@ -15294,25 +15481,43 @@ func NewSharedLinkChangeVisibilityType(Description string) *SharedLinkChangeVisi
 	return s
 }
 
+
 // SharedLinkCopyDetails : Added file/folder to Dropbox from shared link.
 type SharedLinkCopyDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
 	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
 }
-
 // NewSharedLinkCopyDetails returns a new SharedLinkCopyDetails instance
 func NewSharedLinkCopyDetails() *SharedLinkCopyDetails {
 	s := new(SharedLinkCopyDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedLinkCopyDetails instance
+func (u *SharedLinkCopyDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
 // SharedLinkCopyType : has no documentation (yet)
 type SharedLinkCopyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkCopyType returns a new SharedLinkCopyType instance
 func NewSharedLinkCopyType(Description string) *SharedLinkCopyType {
 	s := new(SharedLinkCopyType)
@@ -15320,25 +15525,25 @@ func NewSharedLinkCopyType(Description string) *SharedLinkCopyType {
 	return s
 }
 
+
 // SharedLinkCreateDetails : Created shared link.
 type SharedLinkCreateDetails struct {
 	// SharedLinkAccessLevel : Defines who can access the shared link. Might be
 	// missing due to historical data gap.
 	SharedLinkAccessLevel *SharedLinkAccessLevel `json:"shared_link_access_level,omitempty"`
 }
-
 // NewSharedLinkCreateDetails returns a new SharedLinkCreateDetails instance
 func NewSharedLinkCreateDetails() *SharedLinkCreateDetails {
 	s := new(SharedLinkCreateDetails)
 	return s
 }
 
+
 // SharedLinkCreateType : has no documentation (yet)
 type SharedLinkCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkCreateType returns a new SharedLinkCreateType instance
 func NewSharedLinkCreateType(Description string) *SharedLinkCreateType {
 	s := new(SharedLinkCreateType)
@@ -15346,25 +15551,43 @@ func NewSharedLinkCreateType(Description string) *SharedLinkCreateType {
 	return s
 }
 
+
 // SharedLinkDisableDetails : Removed shared link.
 type SharedLinkDisableDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
 	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
 }
-
 // NewSharedLinkDisableDetails returns a new SharedLinkDisableDetails instance
 func NewSharedLinkDisableDetails() *SharedLinkDisableDetails {
 	s := new(SharedLinkDisableDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedLinkDisableDetails instance
+func (u *SharedLinkDisableDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
 // SharedLinkDisableType : has no documentation (yet)
 type SharedLinkDisableType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkDisableType returns a new SharedLinkDisableType instance
 func NewSharedLinkDisableType(Description string) *SharedLinkDisableType {
 	s := new(SharedLinkDisableType)
@@ -15372,25 +15595,43 @@ func NewSharedLinkDisableType(Description string) *SharedLinkDisableType {
 	return s
 }
 
+
 // SharedLinkDownloadDetails : Downloaded file/folder from shared link.
 type SharedLinkDownloadDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
 	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
 }
-
 // NewSharedLinkDownloadDetails returns a new SharedLinkDownloadDetails instance
 func NewSharedLinkDownloadDetails() *SharedLinkDownloadDetails {
 	s := new(SharedLinkDownloadDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedLinkDownloadDetails instance
+func (u *SharedLinkDownloadDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
 // SharedLinkDownloadType : has no documentation (yet)
 type SharedLinkDownloadType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkDownloadType returns a new SharedLinkDownloadType instance
 func NewSharedLinkDownloadType(Description string) *SharedLinkDownloadType {
 	s := new(SharedLinkDownloadType)
@@ -15398,31 +15639,32 @@ func NewSharedLinkDownloadType(Description string) *SharedLinkDownloadType {
 	return s
 }
 
+
 // SharedLinkRemoveExpiryDetails : Removed shared link expiration date.
 type SharedLinkRemoveExpiryDetails struct {
-	// PreviousValue : Previous shared link expiration date. Might be missing
-	// due to historical data gap.
+	// PreviousValue : Previous shared link expiration date. Might be missing due
+	// to historical data gap.
 	PreviousValue time.Time `json:"previous_value,omitempty"`
 }
-
 // NewSharedLinkRemoveExpiryDetails returns a new SharedLinkRemoveExpiryDetails instance
 func NewSharedLinkRemoveExpiryDetails() *SharedLinkRemoveExpiryDetails {
 	s := new(SharedLinkRemoveExpiryDetails)
 	return s
 }
 
+
 // SharedLinkRemoveExpiryType : has no documentation (yet)
 type SharedLinkRemoveExpiryType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkRemoveExpiryType returns a new SharedLinkRemoveExpiryType instance
 func NewSharedLinkRemoveExpiryType(Description string) *SharedLinkRemoveExpiryType {
 	s := new(SharedLinkRemoveExpiryType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedLinkShareDetails : Added members as audience of shared link.
 type SharedLinkShareDetails struct {
@@ -15433,19 +15675,40 @@ type SharedLinkShareDetails struct {
 	// link audience.
 	ExternalUsers []*ExternalUserLogInfo `json:"external_users,omitempty"`
 }
-
 // NewSharedLinkShareDetails returns a new SharedLinkShareDetails instance
 func NewSharedLinkShareDetails() *SharedLinkShareDetails {
 	s := new(SharedLinkShareDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedLinkShareDetails instance
+func (u *SharedLinkShareDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+		// ExternalUsers : Users without a Dropbox account that were added as shared
+		// link audience.
+		ExternalUsers []*ExternalUserLogInfo `json:"external_users,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	u.ExternalUsers = w.ExternalUsers
+	return nil
+}
 // SharedLinkShareType : has no documentation (yet)
 type SharedLinkShareType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkShareType returns a new SharedLinkShareType instance
 func NewSharedLinkShareType(Description string) *SharedLinkShareType {
 	s := new(SharedLinkShareType)
@@ -15453,31 +15716,50 @@ func NewSharedLinkShareType(Description string) *SharedLinkShareType {
 	return s
 }
 
+
 // SharedLinkViewDetails : Opened shared link.
 type SharedLinkViewDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
 	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
 }
-
 // NewSharedLinkViewDetails returns a new SharedLinkViewDetails instance
 func NewSharedLinkViewDetails() *SharedLinkViewDetails {
 	s := new(SharedLinkViewDetails)
 	return s
 }
 
+
+// UnmarshalJSON deserializes into a SharedLinkViewDetails instance
+func (u *SharedLinkViewDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
 // SharedLinkViewType : has no documentation (yet)
 type SharedLinkViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedLinkViewType returns a new SharedLinkViewType instance
 func NewSharedLinkViewType(Description string) *SharedLinkViewType {
 	s := new(SharedLinkViewType)
 	s.Description = Description
 	return s
 }
+
 
 // SharedLinkVisibility : Defines who has access to a shared link.
 type SharedLinkVisibility struct {
@@ -15487,33 +15769,33 @@ type SharedLinkVisibility struct {
 // Valid tag values for SharedLinkVisibility
 const (
 	SharedLinkVisibilityPassword = "password"
-	SharedLinkVisibilityPublic   = "public"
+	SharedLinkVisibilityPublic = "public"
 	SharedLinkVisibilityTeamOnly = "team_only"
-	SharedLinkVisibilityOther    = "other"
+	SharedLinkVisibilityOther = "other"
 )
 
 // SharedNoteOpenedDetails : Opened shared Paper doc.
 type SharedNoteOpenedDetails struct {
 }
-
 // NewSharedNoteOpenedDetails returns a new SharedNoteOpenedDetails instance
 func NewSharedNoteOpenedDetails() *SharedNoteOpenedDetails {
 	s := new(SharedNoteOpenedDetails)
 	return s
 }
 
+
 // SharedNoteOpenedType : has no documentation (yet)
 type SharedNoteOpenedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharedNoteOpenedType returns a new SharedNoteOpenedType instance
 func NewSharedNoteOpenedType(Description string) *SharedNoteOpenedType {
 	s := new(SharedNoteOpenedType)
 	s.Description = Description
 	return s
 }
+
 
 // SharingChangeFolderJoinPolicyDetails : Changed whether team members can join
 // shared folders owned outside team.
@@ -15524,7 +15806,6 @@ type SharingChangeFolderJoinPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *SharingFolderJoinPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharingChangeFolderJoinPolicyDetails returns a new SharingChangeFolderJoinPolicyDetails instance
 func NewSharingChangeFolderJoinPolicyDetails(NewValue *SharingFolderJoinPolicy) *SharingChangeFolderJoinPolicyDetails {
 	s := new(SharingChangeFolderJoinPolicyDetails)
@@ -15532,18 +15813,19 @@ func NewSharingChangeFolderJoinPolicyDetails(NewValue *SharingFolderJoinPolicy) 
 	return s
 }
 
+
 // SharingChangeFolderJoinPolicyType : has no documentation (yet)
 type SharingChangeFolderJoinPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharingChangeFolderJoinPolicyType returns a new SharingChangeFolderJoinPolicyType instance
 func NewSharingChangeFolderJoinPolicyType(Description string) *SharingChangeFolderJoinPolicyType {
 	s := new(SharingChangeFolderJoinPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharingChangeLinkPolicyDetails : Changed whether members can share links
 // outside team, and if links are accessible only by team members or anyone by
@@ -15555,7 +15837,6 @@ type SharingChangeLinkPolicyDetails struct {
 	// missing due to historical data gap.
 	PreviousValue *SharingLinkPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharingChangeLinkPolicyDetails returns a new SharingChangeLinkPolicyDetails instance
 func NewSharingChangeLinkPolicyDetails(NewValue *SharingLinkPolicy) *SharingChangeLinkPolicyDetails {
 	s := new(SharingChangeLinkPolicyDetails)
@@ -15563,18 +15844,19 @@ func NewSharingChangeLinkPolicyDetails(NewValue *SharingLinkPolicy) *SharingChan
 	return s
 }
 
+
 // SharingChangeLinkPolicyType : has no documentation (yet)
 type SharingChangeLinkPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharingChangeLinkPolicyType returns a new SharingChangeLinkPolicyType instance
 func NewSharingChangeLinkPolicyType(Description string) *SharingChangeLinkPolicyType {
 	s := new(SharingChangeLinkPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharingChangeMemberPolicyDetails : Changed whether members can share
 // files/folders outside team.
@@ -15585,7 +15867,6 @@ type SharingChangeMemberPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *SharingMemberPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSharingChangeMemberPolicyDetails returns a new SharingChangeMemberPolicyDetails instance
 func NewSharingChangeMemberPolicyDetails(NewValue *SharingMemberPolicy) *SharingChangeMemberPolicyDetails {
 	s := new(SharingChangeMemberPolicyDetails)
@@ -15593,18 +15874,19 @@ func NewSharingChangeMemberPolicyDetails(NewValue *SharingMemberPolicy) *Sharing
 	return s
 }
 
+
 // SharingChangeMemberPolicyType : has no documentation (yet)
 type SharingChangeMemberPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSharingChangeMemberPolicyType returns a new SharingChangeMemberPolicyType instance
 func NewSharingChangeMemberPolicyType(Description string) *SharingChangeMemberPolicyType {
 	s := new(SharingChangeMemberPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SharingFolderJoinPolicy : Policy for controlling if team members can join
 // shared folders owned by non team members.
@@ -15614,9 +15896,9 @@ type SharingFolderJoinPolicy struct {
 
 // Valid tag values for SharingFolderJoinPolicy
 const (
-	SharingFolderJoinPolicyFromAnyone   = "from_anyone"
+	SharingFolderJoinPolicyFromAnyone = "from_anyone"
 	SharingFolderJoinPolicyFromTeamOnly = "from_team_only"
-	SharingFolderJoinPolicyOther        = "other"
+	SharingFolderJoinPolicyOther = "other"
 )
 
 // SharingLinkPolicy : Policy for controlling if team members can share links
@@ -15628,9 +15910,9 @@ type SharingLinkPolicy struct {
 // Valid tag values for SharingLinkPolicy
 const (
 	SharingLinkPolicyDefaultPrivate = "default_private"
-	SharingLinkPolicyDefaultPublic  = "default_public"
-	SharingLinkPolicyOnlyPrivate    = "only_private"
-	SharingLinkPolicyOther          = "other"
+	SharingLinkPolicyDefaultPublic = "default_public"
+	SharingLinkPolicyOnlyPrivate = "only_private"
+	SharingLinkPolicyOther = "other"
 )
 
 // SharingMemberPolicy : External sharing policy
@@ -15640,27 +15922,26 @@ type SharingMemberPolicy struct {
 
 // Valid tag values for SharingMemberPolicy
 const (
-	SharingMemberPolicyAllow  = "allow"
+	SharingMemberPolicyAllow = "allow"
 	SharingMemberPolicyForbid = "forbid"
-	SharingMemberPolicyOther  = "other"
+	SharingMemberPolicyOther = "other"
 )
 
 // ShmodelGroupShareDetails : Shared link with group.
 type ShmodelGroupShareDetails struct {
 }
-
 // NewShmodelGroupShareDetails returns a new ShmodelGroupShareDetails instance
 func NewShmodelGroupShareDetails() *ShmodelGroupShareDetails {
 	s := new(ShmodelGroupShareDetails)
 	return s
 }
 
+
 // ShmodelGroupShareType : has no documentation (yet)
 type ShmodelGroupShareType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShmodelGroupShareType returns a new ShmodelGroupShareType instance
 func NewShmodelGroupShareType(Description string) *ShmodelGroupShareType {
 	s := new(ShmodelGroupShareType)
@@ -15668,12 +15949,12 @@ func NewShmodelGroupShareType(Description string) *ShmodelGroupShareType {
 	return s
 }
 
+
 // ShowcaseAccessGrantedDetails : Granted access to showcase.
 type ShowcaseAccessGrantedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseAccessGrantedDetails returns a new ShowcaseAccessGrantedDetails instance
 func NewShowcaseAccessGrantedDetails(EventUuid string) *ShowcaseAccessGrantedDetails {
 	s := new(ShowcaseAccessGrantedDetails)
@@ -15681,12 +15962,12 @@ func NewShowcaseAccessGrantedDetails(EventUuid string) *ShowcaseAccessGrantedDet
 	return s
 }
 
+
 // ShowcaseAccessGrantedType : has no documentation (yet)
 type ShowcaseAccessGrantedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseAccessGrantedType returns a new ShowcaseAccessGrantedType instance
 func NewShowcaseAccessGrantedType(Description string) *ShowcaseAccessGrantedType {
 	s := new(ShowcaseAccessGrantedType)
@@ -15694,12 +15975,12 @@ func NewShowcaseAccessGrantedType(Description string) *ShowcaseAccessGrantedType
 	return s
 }
 
+
 // ShowcaseAddMemberDetails : Added member to showcase.
 type ShowcaseAddMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseAddMemberDetails returns a new ShowcaseAddMemberDetails instance
 func NewShowcaseAddMemberDetails(EventUuid string) *ShowcaseAddMemberDetails {
 	s := new(ShowcaseAddMemberDetails)
@@ -15707,12 +15988,12 @@ func NewShowcaseAddMemberDetails(EventUuid string) *ShowcaseAddMemberDetails {
 	return s
 }
 
+
 // ShowcaseAddMemberType : has no documentation (yet)
 type ShowcaseAddMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseAddMemberType returns a new ShowcaseAddMemberType instance
 func NewShowcaseAddMemberType(Description string) *ShowcaseAddMemberType {
 	s := new(ShowcaseAddMemberType)
@@ -15720,12 +16001,12 @@ func NewShowcaseAddMemberType(Description string) *ShowcaseAddMemberType {
 	return s
 }
 
+
 // ShowcaseArchivedDetails : Archived showcase.
 type ShowcaseArchivedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseArchivedDetails returns a new ShowcaseArchivedDetails instance
 func NewShowcaseArchivedDetails(EventUuid string) *ShowcaseArchivedDetails {
 	s := new(ShowcaseArchivedDetails)
@@ -15733,18 +16014,19 @@ func NewShowcaseArchivedDetails(EventUuid string) *ShowcaseArchivedDetails {
 	return s
 }
 
+
 // ShowcaseArchivedType : has no documentation (yet)
 type ShowcaseArchivedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseArchivedType returns a new ShowcaseArchivedType instance
 func NewShowcaseArchivedType(Description string) *ShowcaseArchivedType {
 	s := new(ShowcaseArchivedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseChangeDownloadPolicyDetails : Enabled/disabled downloading files from
 // Dropbox Showcase for team.
@@ -15754,7 +16036,6 @@ type ShowcaseChangeDownloadPolicyDetails struct {
 	// PreviousValue : Previous Dropbox Showcase download policy.
 	PreviousValue *ShowcaseDownloadPolicy `json:"previous_value"`
 }
-
 // NewShowcaseChangeDownloadPolicyDetails returns a new ShowcaseChangeDownloadPolicyDetails instance
 func NewShowcaseChangeDownloadPolicyDetails(NewValue *ShowcaseDownloadPolicy, PreviousValue *ShowcaseDownloadPolicy) *ShowcaseChangeDownloadPolicyDetails {
 	s := new(ShowcaseChangeDownloadPolicyDetails)
@@ -15763,18 +16044,19 @@ func NewShowcaseChangeDownloadPolicyDetails(NewValue *ShowcaseDownloadPolicy, Pr
 	return s
 }
 
+
 // ShowcaseChangeDownloadPolicyType : has no documentation (yet)
 type ShowcaseChangeDownloadPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseChangeDownloadPolicyType returns a new ShowcaseChangeDownloadPolicyType instance
 func NewShowcaseChangeDownloadPolicyType(Description string) *ShowcaseChangeDownloadPolicyType {
 	s := new(ShowcaseChangeDownloadPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseChangeEnabledPolicyDetails : Enabled/disabled Dropbox Showcase for
 // team.
@@ -15784,7 +16066,6 @@ type ShowcaseChangeEnabledPolicyDetails struct {
 	// PreviousValue : Previous Dropbox Showcase policy.
 	PreviousValue *ShowcaseEnabledPolicy `json:"previous_value"`
 }
-
 // NewShowcaseChangeEnabledPolicyDetails returns a new ShowcaseChangeEnabledPolicyDetails instance
 func NewShowcaseChangeEnabledPolicyDetails(NewValue *ShowcaseEnabledPolicy, PreviousValue *ShowcaseEnabledPolicy) *ShowcaseChangeEnabledPolicyDetails {
 	s := new(ShowcaseChangeEnabledPolicyDetails)
@@ -15793,18 +16074,19 @@ func NewShowcaseChangeEnabledPolicyDetails(NewValue *ShowcaseEnabledPolicy, Prev
 	return s
 }
 
+
 // ShowcaseChangeEnabledPolicyType : has no documentation (yet)
 type ShowcaseChangeEnabledPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseChangeEnabledPolicyType returns a new ShowcaseChangeEnabledPolicyType instance
 func NewShowcaseChangeEnabledPolicyType(Description string) *ShowcaseChangeEnabledPolicyType {
 	s := new(ShowcaseChangeEnabledPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseChangeExternalSharingPolicyDetails : Enabled/disabled sharing Dropbox
 // Showcase externally for team.
@@ -15814,7 +16096,6 @@ type ShowcaseChangeExternalSharingPolicyDetails struct {
 	// PreviousValue : Previous Dropbox Showcase external sharing policy.
 	PreviousValue *ShowcaseExternalSharingPolicy `json:"previous_value"`
 }
-
 // NewShowcaseChangeExternalSharingPolicyDetails returns a new ShowcaseChangeExternalSharingPolicyDetails instance
 func NewShowcaseChangeExternalSharingPolicyDetails(NewValue *ShowcaseExternalSharingPolicy, PreviousValue *ShowcaseExternalSharingPolicy) *ShowcaseChangeExternalSharingPolicyDetails {
 	s := new(ShowcaseChangeExternalSharingPolicyDetails)
@@ -15823,12 +16104,12 @@ func NewShowcaseChangeExternalSharingPolicyDetails(NewValue *ShowcaseExternalSha
 	return s
 }
 
+
 // ShowcaseChangeExternalSharingPolicyType : has no documentation (yet)
 type ShowcaseChangeExternalSharingPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseChangeExternalSharingPolicyType returns a new ShowcaseChangeExternalSharingPolicyType instance
 func NewShowcaseChangeExternalSharingPolicyType(Description string) *ShowcaseChangeExternalSharingPolicyType {
 	s := new(ShowcaseChangeExternalSharingPolicyType)
@@ -15836,12 +16117,12 @@ func NewShowcaseChangeExternalSharingPolicyType(Description string) *ShowcaseCha
 	return s
 }
 
+
 // ShowcaseCreatedDetails : Created showcase.
 type ShowcaseCreatedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseCreatedDetails returns a new ShowcaseCreatedDetails instance
 func NewShowcaseCreatedDetails(EventUuid string) *ShowcaseCreatedDetails {
 	s := new(ShowcaseCreatedDetails)
@@ -15849,18 +16130,19 @@ func NewShowcaseCreatedDetails(EventUuid string) *ShowcaseCreatedDetails {
 	return s
 }
 
+
 // ShowcaseCreatedType : has no documentation (yet)
 type ShowcaseCreatedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseCreatedType returns a new ShowcaseCreatedType instance
 func NewShowcaseCreatedType(Description string) *ShowcaseCreatedType {
 	s := new(ShowcaseCreatedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseDeleteCommentDetails : Deleted showcase comment.
 type ShowcaseDeleteCommentDetails struct {
@@ -15869,7 +16151,6 @@ type ShowcaseDeleteCommentDetails struct {
 	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewShowcaseDeleteCommentDetails returns a new ShowcaseDeleteCommentDetails instance
 func NewShowcaseDeleteCommentDetails(EventUuid string) *ShowcaseDeleteCommentDetails {
 	s := new(ShowcaseDeleteCommentDetails)
@@ -15877,18 +16158,19 @@ func NewShowcaseDeleteCommentDetails(EventUuid string) *ShowcaseDeleteCommentDet
 	return s
 }
 
+
 // ShowcaseDeleteCommentType : has no documentation (yet)
 type ShowcaseDeleteCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseDeleteCommentType returns a new ShowcaseDeleteCommentType instance
 func NewShowcaseDeleteCommentType(Description string) *ShowcaseDeleteCommentType {
 	s := new(ShowcaseDeleteCommentType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseDocumentLogInfo : Showcase document's logged information.
 type ShowcaseDocumentLogInfo struct {
@@ -15897,7 +16179,6 @@ type ShowcaseDocumentLogInfo struct {
 	// ShowcaseTitle : Showcase document title.
 	ShowcaseTitle string `json:"showcase_title"`
 }
-
 // NewShowcaseDocumentLogInfo returns a new ShowcaseDocumentLogInfo instance
 func NewShowcaseDocumentLogInfo(ShowcaseId string, ShowcaseTitle string) *ShowcaseDocumentLogInfo {
 	s := new(ShowcaseDocumentLogInfo)
@@ -15905,6 +16186,7 @@ func NewShowcaseDocumentLogInfo(ShowcaseId string, ShowcaseTitle string) *Showca
 	s.ShowcaseTitle = ShowcaseTitle
 	return s
 }
+
 
 // ShowcaseDownloadPolicy : Policy for controlling if files can be downloaded
 // from Showcases by team members
@@ -15915,8 +16197,8 @@ type ShowcaseDownloadPolicy struct {
 // Valid tag values for ShowcaseDownloadPolicy
 const (
 	ShowcaseDownloadPolicyDisabled = "disabled"
-	ShowcaseDownloadPolicyEnabled  = "enabled"
-	ShowcaseDownloadPolicyOther    = "other"
+	ShowcaseDownloadPolicyEnabled = "enabled"
+	ShowcaseDownloadPolicyOther = "other"
 )
 
 // ShowcaseEditCommentDetails : Edited showcase comment.
@@ -15926,7 +16208,6 @@ type ShowcaseEditCommentDetails struct {
 	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewShowcaseEditCommentDetails returns a new ShowcaseEditCommentDetails instance
 func NewShowcaseEditCommentDetails(EventUuid string) *ShowcaseEditCommentDetails {
 	s := new(ShowcaseEditCommentDetails)
@@ -15934,12 +16215,12 @@ func NewShowcaseEditCommentDetails(EventUuid string) *ShowcaseEditCommentDetails
 	return s
 }
 
+
 // ShowcaseEditCommentType : has no documentation (yet)
 type ShowcaseEditCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseEditCommentType returns a new ShowcaseEditCommentType instance
 func NewShowcaseEditCommentType(Description string) *ShowcaseEditCommentType {
 	s := new(ShowcaseEditCommentType)
@@ -15947,12 +16228,12 @@ func NewShowcaseEditCommentType(Description string) *ShowcaseEditCommentType {
 	return s
 }
 
+
 // ShowcaseEditedDetails : Edited showcase.
 type ShowcaseEditedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseEditedDetails returns a new ShowcaseEditedDetails instance
 func NewShowcaseEditedDetails(EventUuid string) *ShowcaseEditedDetails {
 	s := new(ShowcaseEditedDetails)
@@ -15960,18 +16241,19 @@ func NewShowcaseEditedDetails(EventUuid string) *ShowcaseEditedDetails {
 	return s
 }
 
+
 // ShowcaseEditedType : has no documentation (yet)
 type ShowcaseEditedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseEditedType returns a new ShowcaseEditedType instance
 func NewShowcaseEditedType(Description string) *ShowcaseEditedType {
 	s := new(ShowcaseEditedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseEnabledPolicy : Policy for controlling whether Showcase is enabled.
 type ShowcaseEnabledPolicy struct {
@@ -15981,8 +16263,8 @@ type ShowcaseEnabledPolicy struct {
 // Valid tag values for ShowcaseEnabledPolicy
 const (
 	ShowcaseEnabledPolicyDisabled = "disabled"
-	ShowcaseEnabledPolicyEnabled  = "enabled"
-	ShowcaseEnabledPolicyOther    = "other"
+	ShowcaseEnabledPolicyEnabled = "enabled"
+	ShowcaseEnabledPolicyOther = "other"
 )
 
 // ShowcaseExternalSharingPolicy : Policy for controlling if team members can
@@ -15994,8 +16276,8 @@ type ShowcaseExternalSharingPolicy struct {
 // Valid tag values for ShowcaseExternalSharingPolicy
 const (
 	ShowcaseExternalSharingPolicyDisabled = "disabled"
-	ShowcaseExternalSharingPolicyEnabled  = "enabled"
-	ShowcaseExternalSharingPolicyOther    = "other"
+	ShowcaseExternalSharingPolicyEnabled = "enabled"
+	ShowcaseExternalSharingPolicyOther = "other"
 )
 
 // ShowcaseFileAddedDetails : Added file to showcase.
@@ -16003,7 +16285,6 @@ type ShowcaseFileAddedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseFileAddedDetails returns a new ShowcaseFileAddedDetails instance
 func NewShowcaseFileAddedDetails(EventUuid string) *ShowcaseFileAddedDetails {
 	s := new(ShowcaseFileAddedDetails)
@@ -16011,18 +16292,19 @@ func NewShowcaseFileAddedDetails(EventUuid string) *ShowcaseFileAddedDetails {
 	return s
 }
 
+
 // ShowcaseFileAddedType : has no documentation (yet)
 type ShowcaseFileAddedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseFileAddedType returns a new ShowcaseFileAddedType instance
 func NewShowcaseFileAddedType(Description string) *ShowcaseFileAddedType {
 	s := new(ShowcaseFileAddedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseFileDownloadDetails : Downloaded file from showcase.
 type ShowcaseFileDownloadDetails struct {
@@ -16031,7 +16313,6 @@ type ShowcaseFileDownloadDetails struct {
 	// DownloadType : Showcase download type.
 	DownloadType string `json:"download_type"`
 }
-
 // NewShowcaseFileDownloadDetails returns a new ShowcaseFileDownloadDetails instance
 func NewShowcaseFileDownloadDetails(EventUuid string, DownloadType string) *ShowcaseFileDownloadDetails {
 	s := new(ShowcaseFileDownloadDetails)
@@ -16040,12 +16321,12 @@ func NewShowcaseFileDownloadDetails(EventUuid string, DownloadType string) *Show
 	return s
 }
 
+
 // ShowcaseFileDownloadType : has no documentation (yet)
 type ShowcaseFileDownloadType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseFileDownloadType returns a new ShowcaseFileDownloadType instance
 func NewShowcaseFileDownloadType(Description string) *ShowcaseFileDownloadType {
 	s := new(ShowcaseFileDownloadType)
@@ -16053,12 +16334,12 @@ func NewShowcaseFileDownloadType(Description string) *ShowcaseFileDownloadType {
 	return s
 }
 
+
 // ShowcaseFileRemovedDetails : Removed file from showcase.
 type ShowcaseFileRemovedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseFileRemovedDetails returns a new ShowcaseFileRemovedDetails instance
 func NewShowcaseFileRemovedDetails(EventUuid string) *ShowcaseFileRemovedDetails {
 	s := new(ShowcaseFileRemovedDetails)
@@ -16066,12 +16347,12 @@ func NewShowcaseFileRemovedDetails(EventUuid string) *ShowcaseFileRemovedDetails
 	return s
 }
 
+
 // ShowcaseFileRemovedType : has no documentation (yet)
 type ShowcaseFileRemovedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseFileRemovedType returns a new ShowcaseFileRemovedType instance
 func NewShowcaseFileRemovedType(Description string) *ShowcaseFileRemovedType {
 	s := new(ShowcaseFileRemovedType)
@@ -16079,12 +16360,12 @@ func NewShowcaseFileRemovedType(Description string) *ShowcaseFileRemovedType {
 	return s
 }
 
+
 // ShowcaseFileViewDetails : Viewed file in showcase.
 type ShowcaseFileViewDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseFileViewDetails returns a new ShowcaseFileViewDetails instance
 func NewShowcaseFileViewDetails(EventUuid string) *ShowcaseFileViewDetails {
 	s := new(ShowcaseFileViewDetails)
@@ -16092,12 +16373,12 @@ func NewShowcaseFileViewDetails(EventUuid string) *ShowcaseFileViewDetails {
 	return s
 }
 
+
 // ShowcaseFileViewType : has no documentation (yet)
 type ShowcaseFileViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseFileViewType returns a new ShowcaseFileViewType instance
 func NewShowcaseFileViewType(Description string) *ShowcaseFileViewType {
 	s := new(ShowcaseFileViewType)
@@ -16105,12 +16386,12 @@ func NewShowcaseFileViewType(Description string) *ShowcaseFileViewType {
 	return s
 }
 
+
 // ShowcasePermanentlyDeletedDetails : Permanently deleted showcase.
 type ShowcasePermanentlyDeletedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcasePermanentlyDeletedDetails returns a new ShowcasePermanentlyDeletedDetails instance
 func NewShowcasePermanentlyDeletedDetails(EventUuid string) *ShowcasePermanentlyDeletedDetails {
 	s := new(ShowcasePermanentlyDeletedDetails)
@@ -16118,18 +16399,19 @@ func NewShowcasePermanentlyDeletedDetails(EventUuid string) *ShowcasePermanently
 	return s
 }
 
+
 // ShowcasePermanentlyDeletedType : has no documentation (yet)
 type ShowcasePermanentlyDeletedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcasePermanentlyDeletedType returns a new ShowcasePermanentlyDeletedType instance
 func NewShowcasePermanentlyDeletedType(Description string) *ShowcasePermanentlyDeletedType {
 	s := new(ShowcasePermanentlyDeletedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcasePostCommentDetails : Added showcase comment.
 type ShowcasePostCommentDetails struct {
@@ -16138,7 +16420,6 @@ type ShowcasePostCommentDetails struct {
 	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewShowcasePostCommentDetails returns a new ShowcasePostCommentDetails instance
 func NewShowcasePostCommentDetails(EventUuid string) *ShowcasePostCommentDetails {
 	s := new(ShowcasePostCommentDetails)
@@ -16146,12 +16427,12 @@ func NewShowcasePostCommentDetails(EventUuid string) *ShowcasePostCommentDetails
 	return s
 }
 
+
 // ShowcasePostCommentType : has no documentation (yet)
 type ShowcasePostCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcasePostCommentType returns a new ShowcasePostCommentType instance
 func NewShowcasePostCommentType(Description string) *ShowcasePostCommentType {
 	s := new(ShowcasePostCommentType)
@@ -16159,12 +16440,12 @@ func NewShowcasePostCommentType(Description string) *ShowcasePostCommentType {
 	return s
 }
 
+
 // ShowcaseRemoveMemberDetails : Removed member from showcase.
 type ShowcaseRemoveMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseRemoveMemberDetails returns a new ShowcaseRemoveMemberDetails instance
 func NewShowcaseRemoveMemberDetails(EventUuid string) *ShowcaseRemoveMemberDetails {
 	s := new(ShowcaseRemoveMemberDetails)
@@ -16172,12 +16453,12 @@ func NewShowcaseRemoveMemberDetails(EventUuid string) *ShowcaseRemoveMemberDetai
 	return s
 }
 
+
 // ShowcaseRemoveMemberType : has no documentation (yet)
 type ShowcaseRemoveMemberType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseRemoveMemberType returns a new ShowcaseRemoveMemberType instance
 func NewShowcaseRemoveMemberType(Description string) *ShowcaseRemoveMemberType {
 	s := new(ShowcaseRemoveMemberType)
@@ -16185,12 +16466,12 @@ func NewShowcaseRemoveMemberType(Description string) *ShowcaseRemoveMemberType {
 	return s
 }
 
+
 // ShowcaseRenamedDetails : Renamed showcase.
 type ShowcaseRenamedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseRenamedDetails returns a new ShowcaseRenamedDetails instance
 func NewShowcaseRenamedDetails(EventUuid string) *ShowcaseRenamedDetails {
 	s := new(ShowcaseRenamedDetails)
@@ -16198,12 +16479,12 @@ func NewShowcaseRenamedDetails(EventUuid string) *ShowcaseRenamedDetails {
 	return s
 }
 
+
 // ShowcaseRenamedType : has no documentation (yet)
 type ShowcaseRenamedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseRenamedType returns a new ShowcaseRenamedType instance
 func NewShowcaseRenamedType(Description string) *ShowcaseRenamedType {
 	s := new(ShowcaseRenamedType)
@@ -16211,12 +16492,12 @@ func NewShowcaseRenamedType(Description string) *ShowcaseRenamedType {
 	return s
 }
 
+
 // ShowcaseRequestAccessDetails : Requested access to showcase.
 type ShowcaseRequestAccessDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseRequestAccessDetails returns a new ShowcaseRequestAccessDetails instance
 func NewShowcaseRequestAccessDetails(EventUuid string) *ShowcaseRequestAccessDetails {
 	s := new(ShowcaseRequestAccessDetails)
@@ -16224,18 +16505,19 @@ func NewShowcaseRequestAccessDetails(EventUuid string) *ShowcaseRequestAccessDet
 	return s
 }
 
+
 // ShowcaseRequestAccessType : has no documentation (yet)
 type ShowcaseRequestAccessType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseRequestAccessType returns a new ShowcaseRequestAccessType instance
 func NewShowcaseRequestAccessType(Description string) *ShowcaseRequestAccessType {
 	s := new(ShowcaseRequestAccessType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseResolveCommentDetails : Resolved showcase comment.
 type ShowcaseResolveCommentDetails struct {
@@ -16244,7 +16526,6 @@ type ShowcaseResolveCommentDetails struct {
 	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewShowcaseResolveCommentDetails returns a new ShowcaseResolveCommentDetails instance
 func NewShowcaseResolveCommentDetails(EventUuid string) *ShowcaseResolveCommentDetails {
 	s := new(ShowcaseResolveCommentDetails)
@@ -16252,12 +16533,12 @@ func NewShowcaseResolveCommentDetails(EventUuid string) *ShowcaseResolveCommentD
 	return s
 }
 
+
 // ShowcaseResolveCommentType : has no documentation (yet)
 type ShowcaseResolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseResolveCommentType returns a new ShowcaseResolveCommentType instance
 func NewShowcaseResolveCommentType(Description string) *ShowcaseResolveCommentType {
 	s := new(ShowcaseResolveCommentType)
@@ -16265,12 +16546,12 @@ func NewShowcaseResolveCommentType(Description string) *ShowcaseResolveCommentTy
 	return s
 }
 
+
 // ShowcaseRestoredDetails : Unarchived showcase.
 type ShowcaseRestoredDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseRestoredDetails returns a new ShowcaseRestoredDetails instance
 func NewShowcaseRestoredDetails(EventUuid string) *ShowcaseRestoredDetails {
 	s := new(ShowcaseRestoredDetails)
@@ -16278,12 +16559,12 @@ func NewShowcaseRestoredDetails(EventUuid string) *ShowcaseRestoredDetails {
 	return s
 }
 
+
 // ShowcaseRestoredType : has no documentation (yet)
 type ShowcaseRestoredType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseRestoredType returns a new ShowcaseRestoredType instance
 func NewShowcaseRestoredType(Description string) *ShowcaseRestoredType {
 	s := new(ShowcaseRestoredType)
@@ -16291,12 +16572,12 @@ func NewShowcaseRestoredType(Description string) *ShowcaseRestoredType {
 	return s
 }
 
+
 // ShowcaseTrashedDeprecatedDetails : Deleted showcase (old version).
 type ShowcaseTrashedDeprecatedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseTrashedDeprecatedDetails returns a new ShowcaseTrashedDeprecatedDetails instance
 func NewShowcaseTrashedDeprecatedDetails(EventUuid string) *ShowcaseTrashedDeprecatedDetails {
 	s := new(ShowcaseTrashedDeprecatedDetails)
@@ -16304,12 +16585,12 @@ func NewShowcaseTrashedDeprecatedDetails(EventUuid string) *ShowcaseTrashedDepre
 	return s
 }
 
+
 // ShowcaseTrashedDeprecatedType : has no documentation (yet)
 type ShowcaseTrashedDeprecatedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseTrashedDeprecatedType returns a new ShowcaseTrashedDeprecatedType instance
 func NewShowcaseTrashedDeprecatedType(Description string) *ShowcaseTrashedDeprecatedType {
 	s := new(ShowcaseTrashedDeprecatedType)
@@ -16317,12 +16598,12 @@ func NewShowcaseTrashedDeprecatedType(Description string) *ShowcaseTrashedDeprec
 	return s
 }
 
+
 // ShowcaseTrashedDetails : Deleted showcase.
 type ShowcaseTrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseTrashedDetails returns a new ShowcaseTrashedDetails instance
 func NewShowcaseTrashedDetails(EventUuid string) *ShowcaseTrashedDetails {
 	s := new(ShowcaseTrashedDetails)
@@ -16330,18 +16611,19 @@ func NewShowcaseTrashedDetails(EventUuid string) *ShowcaseTrashedDetails {
 	return s
 }
 
+
 // ShowcaseTrashedType : has no documentation (yet)
 type ShowcaseTrashedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseTrashedType returns a new ShowcaseTrashedType instance
 func NewShowcaseTrashedType(Description string) *ShowcaseTrashedType {
 	s := new(ShowcaseTrashedType)
 	s.Description = Description
 	return s
 }
+
 
 // ShowcaseUnresolveCommentDetails : Unresolved showcase comment.
 type ShowcaseUnresolveCommentDetails struct {
@@ -16350,7 +16632,6 @@ type ShowcaseUnresolveCommentDetails struct {
 	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
-
 // NewShowcaseUnresolveCommentDetails returns a new ShowcaseUnresolveCommentDetails instance
 func NewShowcaseUnresolveCommentDetails(EventUuid string) *ShowcaseUnresolveCommentDetails {
 	s := new(ShowcaseUnresolveCommentDetails)
@@ -16358,12 +16639,12 @@ func NewShowcaseUnresolveCommentDetails(EventUuid string) *ShowcaseUnresolveComm
 	return s
 }
 
+
 // ShowcaseUnresolveCommentType : has no documentation (yet)
 type ShowcaseUnresolveCommentType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseUnresolveCommentType returns a new ShowcaseUnresolveCommentType instance
 func NewShowcaseUnresolveCommentType(Description string) *ShowcaseUnresolveCommentType {
 	s := new(ShowcaseUnresolveCommentType)
@@ -16371,12 +16652,12 @@ func NewShowcaseUnresolveCommentType(Description string) *ShowcaseUnresolveComme
 	return s
 }
 
+
 // ShowcaseUntrashedDeprecatedDetails : Restored showcase (old version).
 type ShowcaseUntrashedDeprecatedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseUntrashedDeprecatedDetails returns a new ShowcaseUntrashedDeprecatedDetails instance
 func NewShowcaseUntrashedDeprecatedDetails(EventUuid string) *ShowcaseUntrashedDeprecatedDetails {
 	s := new(ShowcaseUntrashedDeprecatedDetails)
@@ -16384,12 +16665,12 @@ func NewShowcaseUntrashedDeprecatedDetails(EventUuid string) *ShowcaseUntrashedD
 	return s
 }
 
+
 // ShowcaseUntrashedDeprecatedType : has no documentation (yet)
 type ShowcaseUntrashedDeprecatedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseUntrashedDeprecatedType returns a new ShowcaseUntrashedDeprecatedType instance
 func NewShowcaseUntrashedDeprecatedType(Description string) *ShowcaseUntrashedDeprecatedType {
 	s := new(ShowcaseUntrashedDeprecatedType)
@@ -16397,12 +16678,12 @@ func NewShowcaseUntrashedDeprecatedType(Description string) *ShowcaseUntrashedDe
 	return s
 }
 
+
 // ShowcaseUntrashedDetails : Restored showcase.
 type ShowcaseUntrashedDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseUntrashedDetails returns a new ShowcaseUntrashedDetails instance
 func NewShowcaseUntrashedDetails(EventUuid string) *ShowcaseUntrashedDetails {
 	s := new(ShowcaseUntrashedDetails)
@@ -16410,12 +16691,12 @@ func NewShowcaseUntrashedDetails(EventUuid string) *ShowcaseUntrashedDetails {
 	return s
 }
 
+
 // ShowcaseUntrashedType : has no documentation (yet)
 type ShowcaseUntrashedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseUntrashedType returns a new ShowcaseUntrashedType instance
 func NewShowcaseUntrashedType(Description string) *ShowcaseUntrashedType {
 	s := new(ShowcaseUntrashedType)
@@ -16423,12 +16704,12 @@ func NewShowcaseUntrashedType(Description string) *ShowcaseUntrashedType {
 	return s
 }
 
+
 // ShowcaseViewDetails : Viewed showcase.
 type ShowcaseViewDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 }
-
 // NewShowcaseViewDetails returns a new ShowcaseViewDetails instance
 func NewShowcaseViewDetails(EventUuid string) *ShowcaseViewDetails {
 	s := new(ShowcaseViewDetails)
@@ -16436,12 +16717,12 @@ func NewShowcaseViewDetails(EventUuid string) *ShowcaseViewDetails {
 	return s
 }
 
+
 // ShowcaseViewType : has no documentation (yet)
 type ShowcaseViewType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewShowcaseViewType returns a new ShowcaseViewType instance
 func NewShowcaseViewType(Description string) *ShowcaseViewType {
 	s := new(ShowcaseViewType)
@@ -16449,22 +16730,22 @@ func NewShowcaseViewType(Description string) *ShowcaseViewType {
 	return s
 }
 
+
 // SignInAsSessionEndDetails : Ended admin sign-in-as session.
 type SignInAsSessionEndDetails struct {
 }
-
 // NewSignInAsSessionEndDetails returns a new SignInAsSessionEndDetails instance
 func NewSignInAsSessionEndDetails() *SignInAsSessionEndDetails {
 	s := new(SignInAsSessionEndDetails)
 	return s
 }
 
+
 // SignInAsSessionEndType : has no documentation (yet)
 type SignInAsSessionEndType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSignInAsSessionEndType returns a new SignInAsSessionEndType instance
 func NewSignInAsSessionEndType(Description string) *SignInAsSessionEndType {
 	s := new(SignInAsSessionEndType)
@@ -16472,28 +16753,29 @@ func NewSignInAsSessionEndType(Description string) *SignInAsSessionEndType {
 	return s
 }
 
+
 // SignInAsSessionStartDetails : Started admin sign-in-as session.
 type SignInAsSessionStartDetails struct {
 }
-
 // NewSignInAsSessionStartDetails returns a new SignInAsSessionStartDetails instance
 func NewSignInAsSessionStartDetails() *SignInAsSessionStartDetails {
 	s := new(SignInAsSessionStartDetails)
 	return s
 }
 
+
 // SignInAsSessionStartType : has no documentation (yet)
 type SignInAsSessionStartType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSignInAsSessionStartType returns a new SignInAsSessionStartType instance
 func NewSignInAsSessionStartType(Description string) *SignInAsSessionStartType {
 	s := new(SignInAsSessionStartType)
 	s.Description = Description
 	return s
 }
+
 
 // SmartSyncChangePolicyDetails : Changed default Smart Sync setting for team
 // members.
@@ -16503,19 +16785,18 @@ type SmartSyncChangePolicyDetails struct {
 	// PreviousValue : Previous smart sync policy.
 	PreviousValue *team_policies.SmartSyncPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSmartSyncChangePolicyDetails returns a new SmartSyncChangePolicyDetails instance
 func NewSmartSyncChangePolicyDetails() *SmartSyncChangePolicyDetails {
 	s := new(SmartSyncChangePolicyDetails)
 	return s
 }
 
+
 // SmartSyncChangePolicyType : has no documentation (yet)
 type SmartSyncChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSmartSyncChangePolicyType returns a new SmartSyncChangePolicyType instance
 func NewSmartSyncChangePolicyType(Description string) *SmartSyncChangePolicyType {
 	s := new(SmartSyncChangePolicyType)
@@ -16523,29 +16804,30 @@ func NewSmartSyncChangePolicyType(Description string) *SmartSyncChangePolicyType
 	return s
 }
 
+
 // SmartSyncCreateAdminPrivilegeReportDetails : Created Smart Sync non-admin
 // devices report.
 type SmartSyncCreateAdminPrivilegeReportDetails struct {
 }
-
 // NewSmartSyncCreateAdminPrivilegeReportDetails returns a new SmartSyncCreateAdminPrivilegeReportDetails instance
 func NewSmartSyncCreateAdminPrivilegeReportDetails() *SmartSyncCreateAdminPrivilegeReportDetails {
 	s := new(SmartSyncCreateAdminPrivilegeReportDetails)
 	return s
 }
 
+
 // SmartSyncCreateAdminPrivilegeReportType : has no documentation (yet)
 type SmartSyncCreateAdminPrivilegeReportType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSmartSyncCreateAdminPrivilegeReportType returns a new SmartSyncCreateAdminPrivilegeReportType instance
 func NewSmartSyncCreateAdminPrivilegeReportType(Description string) *SmartSyncCreateAdminPrivilegeReportType {
 	s := new(SmartSyncCreateAdminPrivilegeReportType)
 	s.Description = Description
 	return s
 }
+
 
 // SmartSyncNotOptOutDetails : Opted team into Smart Sync.
 type SmartSyncNotOptOutDetails struct {
@@ -16554,7 +16836,6 @@ type SmartSyncNotOptOutDetails struct {
 	// NewValue : New Smart Sync opt out policy.
 	NewValue *SmartSyncOptOutPolicy `json:"new_value"`
 }
-
 // NewSmartSyncNotOptOutDetails returns a new SmartSyncNotOptOutDetails instance
 func NewSmartSyncNotOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue *SmartSyncOptOutPolicy) *SmartSyncNotOptOutDetails {
 	s := new(SmartSyncNotOptOutDetails)
@@ -16563,18 +16844,19 @@ func NewSmartSyncNotOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue
 	return s
 }
 
+
 // SmartSyncNotOptOutType : has no documentation (yet)
 type SmartSyncNotOptOutType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSmartSyncNotOptOutType returns a new SmartSyncNotOptOutType instance
 func NewSmartSyncNotOptOutType(Description string) *SmartSyncNotOptOutType {
 	s := new(SmartSyncNotOptOutType)
 	s.Description = Description
 	return s
 }
+
 
 // SmartSyncOptOutDetails : Opted team out of Smart Sync.
 type SmartSyncOptOutDetails struct {
@@ -16583,7 +16865,6 @@ type SmartSyncOptOutDetails struct {
 	// NewValue : New Smart Sync opt out policy.
 	NewValue *SmartSyncOptOutPolicy `json:"new_value"`
 }
-
 // NewSmartSyncOptOutDetails returns a new SmartSyncOptOutDetails instance
 func NewSmartSyncOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue *SmartSyncOptOutPolicy) *SmartSyncOptOutDetails {
 	s := new(SmartSyncOptOutDetails)
@@ -16592,6 +16873,7 @@ func NewSmartSyncOptOutDetails(PreviousValue *SmartSyncOptOutPolicy, NewValue *S
 	return s
 }
 
+
 // SmartSyncOptOutPolicy : has no documentation (yet)
 type SmartSyncOptOutPolicy struct {
 	dropbox.Tagged
@@ -16599,9 +16881,9 @@ type SmartSyncOptOutPolicy struct {
 
 // Valid tag values for SmartSyncOptOutPolicy
 const (
-	SmartSyncOptOutPolicyDefault  = "default"
+	SmartSyncOptOutPolicyDefault = "default"
 	SmartSyncOptOutPolicyOptedOut = "opted_out"
-	SmartSyncOptOutPolicyOther    = "other"
+	SmartSyncOptOutPolicyOther = "other"
 )
 
 // SmartSyncOptOutType : has no documentation (yet)
@@ -16609,13 +16891,13 @@ type SmartSyncOptOutType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSmartSyncOptOutType returns a new SmartSyncOptOutType instance
 func NewSmartSyncOptOutType(Description string) *SmartSyncOptOutType {
 	s := new(SmartSyncOptOutType)
 	s.Description = Description
 	return s
 }
+
 
 // SpaceCapsType : Space limit alert policy
 type SpaceCapsType struct {
@@ -16624,9 +16906,9 @@ type SpaceCapsType struct {
 
 // Valid tag values for SpaceCapsType
 const (
-	SpaceCapsTypeHard  = "hard"
-	SpaceCapsTypeOff   = "off"
-	SpaceCapsTypeSoft  = "soft"
+	SpaceCapsTypeHard = "hard"
+	SpaceCapsTypeOff = "off"
+	SpaceCapsTypeSoft = "soft"
 	SpaceCapsTypeOther = "other"
 )
 
@@ -16638,9 +16920,9 @@ type SpaceLimitsStatus struct {
 // Valid tag values for SpaceLimitsStatus
 const (
 	SpaceLimitsStatusWithinQuota = "within_quota"
-	SpaceLimitsStatusNearQuota   = "near_quota"
-	SpaceLimitsStatusOverQuota   = "over_quota"
-	SpaceLimitsStatusOther       = "other"
+	SpaceLimitsStatusNearQuota = "near_quota"
+	SpaceLimitsStatusOverQuota = "over_quota"
+	SpaceLimitsStatusOther = "other"
 )
 
 // SsoAddCertDetails : Added X.509 certificate for SSO.
@@ -16648,7 +16930,6 @@ type SsoAddCertDetails struct {
 	// CertificateDetails : SSO certificate details.
 	CertificateDetails *Certificate `json:"certificate_details"`
 }
-
 // NewSsoAddCertDetails returns a new SsoAddCertDetails instance
 func NewSsoAddCertDetails(CertificateDetails *Certificate) *SsoAddCertDetails {
 	s := new(SsoAddCertDetails)
@@ -16656,12 +16937,12 @@ func NewSsoAddCertDetails(CertificateDetails *Certificate) *SsoAddCertDetails {
 	return s
 }
 
+
 // SsoAddCertType : has no documentation (yet)
 type SsoAddCertType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoAddCertType returns a new SsoAddCertType instance
 func NewSsoAddCertType(Description string) *SsoAddCertType {
 	s := new(SsoAddCertType)
@@ -16669,12 +16950,12 @@ func NewSsoAddCertType(Description string) *SsoAddCertType {
 	return s
 }
 
+
 // SsoAddLoginUrlDetails : Added sign-in URL for SSO.
 type SsoAddLoginUrlDetails struct {
 	// NewValue : New single sign-on login URL.
 	NewValue string `json:"new_value"`
 }
-
 // NewSsoAddLoginUrlDetails returns a new SsoAddLoginUrlDetails instance
 func NewSsoAddLoginUrlDetails(NewValue string) *SsoAddLoginUrlDetails {
 	s := new(SsoAddLoginUrlDetails)
@@ -16682,12 +16963,12 @@ func NewSsoAddLoginUrlDetails(NewValue string) *SsoAddLoginUrlDetails {
 	return s
 }
 
+
 // SsoAddLoginUrlType : has no documentation (yet)
 type SsoAddLoginUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoAddLoginUrlType returns a new SsoAddLoginUrlType instance
 func NewSsoAddLoginUrlType(Description string) *SsoAddLoginUrlType {
 	s := new(SsoAddLoginUrlType)
@@ -16695,31 +16976,32 @@ func NewSsoAddLoginUrlType(Description string) *SsoAddLoginUrlType {
 	return s
 }
 
+
 // SsoAddLogoutUrlDetails : Added sign-out URL for SSO.
 type SsoAddLogoutUrlDetails struct {
-	// NewValue : New single sign-on logout URL. Might be missing due to
-	// historical data gap.
+	// NewValue : New single sign-on logout URL. Might be missing due to historical
+	// data gap.
 	NewValue string `json:"new_value,omitempty"`
 }
-
 // NewSsoAddLogoutUrlDetails returns a new SsoAddLogoutUrlDetails instance
 func NewSsoAddLogoutUrlDetails() *SsoAddLogoutUrlDetails {
 	s := new(SsoAddLogoutUrlDetails)
 	return s
 }
 
+
 // SsoAddLogoutUrlType : has no documentation (yet)
 type SsoAddLogoutUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoAddLogoutUrlType returns a new SsoAddLogoutUrlType instance
 func NewSsoAddLogoutUrlType(Description string) *SsoAddLogoutUrlType {
 	s := new(SsoAddLogoutUrlType)
 	s.Description = Description
 	return s
 }
+
 
 // SsoChangeCertDetails : Changed X.509 certificate for SSO.
 type SsoChangeCertDetails struct {
@@ -16729,7 +17011,6 @@ type SsoChangeCertDetails struct {
 	// NewCertificateDetails : New SSO certificate details.
 	NewCertificateDetails *Certificate `json:"new_certificate_details"`
 }
-
 // NewSsoChangeCertDetails returns a new SsoChangeCertDetails instance
 func NewSsoChangeCertDetails(NewCertificateDetails *Certificate) *SsoChangeCertDetails {
 	s := new(SsoChangeCertDetails)
@@ -16737,18 +17018,19 @@ func NewSsoChangeCertDetails(NewCertificateDetails *Certificate) *SsoChangeCertD
 	return s
 }
 
+
 // SsoChangeCertType : has no documentation (yet)
 type SsoChangeCertType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoChangeCertType returns a new SsoChangeCertType instance
 func NewSsoChangeCertType(Description string) *SsoChangeCertType {
 	s := new(SsoChangeCertType)
 	s.Description = Description
 	return s
 }
+
 
 // SsoChangeLoginUrlDetails : Changed sign-in URL for SSO.
 type SsoChangeLoginUrlDetails struct {
@@ -16757,7 +17039,6 @@ type SsoChangeLoginUrlDetails struct {
 	// NewValue : New single sign-on login URL.
 	NewValue string `json:"new_value"`
 }
-
 // NewSsoChangeLoginUrlDetails returns a new SsoChangeLoginUrlDetails instance
 func NewSsoChangeLoginUrlDetails(PreviousValue string, NewValue string) *SsoChangeLoginUrlDetails {
 	s := new(SsoChangeLoginUrlDetails)
@@ -16766,12 +17047,12 @@ func NewSsoChangeLoginUrlDetails(PreviousValue string, NewValue string) *SsoChan
 	return s
 }
 
+
 // SsoChangeLoginUrlType : has no documentation (yet)
 type SsoChangeLoginUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoChangeLoginUrlType returns a new SsoChangeLoginUrlType instance
 func NewSsoChangeLoginUrlType(Description string) *SsoChangeLoginUrlType {
 	s := new(SsoChangeLoginUrlType)
@@ -16779,34 +17060,35 @@ func NewSsoChangeLoginUrlType(Description string) *SsoChangeLoginUrlType {
 	return s
 }
 
+
 // SsoChangeLogoutUrlDetails : Changed sign-out URL for SSO.
 type SsoChangeLogoutUrlDetails struct {
-	// PreviousValue : Previous single sign-on logout URL. Might be missing due
-	// to historical data gap.
-	PreviousValue string `json:"previous_value,omitempty"`
-	// NewValue : New single sign-on logout URL. Might be missing due to
+	// PreviousValue : Previous single sign-on logout URL. Might be missing due to
 	// historical data gap.
+	PreviousValue string `json:"previous_value,omitempty"`
+	// NewValue : New single sign-on logout URL. Might be missing due to historical
+	// data gap.
 	NewValue string `json:"new_value,omitempty"`
 }
-
 // NewSsoChangeLogoutUrlDetails returns a new SsoChangeLogoutUrlDetails instance
 func NewSsoChangeLogoutUrlDetails() *SsoChangeLogoutUrlDetails {
 	s := new(SsoChangeLogoutUrlDetails)
 	return s
 }
 
+
 // SsoChangeLogoutUrlType : has no documentation (yet)
 type SsoChangeLogoutUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoChangeLogoutUrlType returns a new SsoChangeLogoutUrlType instance
 func NewSsoChangeLogoutUrlType(Description string) *SsoChangeLogoutUrlType {
 	s := new(SsoChangeLogoutUrlType)
 	s.Description = Description
 	return s
 }
+
 
 // SsoChangePolicyDetails : Changed single sign-on setting for team.
 type SsoChangePolicyDetails struct {
@@ -16816,7 +17098,6 @@ type SsoChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *team_policies.SsoPolicy `json:"previous_value,omitempty"`
 }
-
 // NewSsoChangePolicyDetails returns a new SsoChangePolicyDetails instance
 func NewSsoChangePolicyDetails(NewValue *team_policies.SsoPolicy) *SsoChangePolicyDetails {
 	s := new(SsoChangePolicyDetails)
@@ -16824,18 +17105,19 @@ func NewSsoChangePolicyDetails(NewValue *team_policies.SsoPolicy) *SsoChangePoli
 	return s
 }
 
+
 // SsoChangePolicyType : has no documentation (yet)
 type SsoChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoChangePolicyType returns a new SsoChangePolicyType instance
 func NewSsoChangePolicyType(Description string) *SsoChangePolicyType {
 	s := new(SsoChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // SsoChangeSamlIdentityModeDetails : Changed SAML identity mode for SSO.
 type SsoChangeSamlIdentityModeDetails struct {
@@ -16844,7 +17126,6 @@ type SsoChangeSamlIdentityModeDetails struct {
 	// NewValue : New single sign-on identity mode.
 	NewValue int64 `json:"new_value"`
 }
-
 // NewSsoChangeSamlIdentityModeDetails returns a new SsoChangeSamlIdentityModeDetails instance
 func NewSsoChangeSamlIdentityModeDetails(PreviousValue int64, NewValue int64) *SsoChangeSamlIdentityModeDetails {
 	s := new(SsoChangeSamlIdentityModeDetails)
@@ -16853,12 +17134,12 @@ func NewSsoChangeSamlIdentityModeDetails(PreviousValue int64, NewValue int64) *S
 	return s
 }
 
+
 // SsoChangeSamlIdentityModeType : has no documentation (yet)
 type SsoChangeSamlIdentityModeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoChangeSamlIdentityModeType returns a new SsoChangeSamlIdentityModeType instance
 func NewSsoChangeSamlIdentityModeType(Description string) *SsoChangeSamlIdentityModeType {
 	s := new(SsoChangeSamlIdentityModeType)
@@ -16866,12 +17147,12 @@ func NewSsoChangeSamlIdentityModeType(Description string) *SsoChangeSamlIdentity
 	return s
 }
 
+
 // SsoErrorDetails : Failed to sign in via SSO.
 type SsoErrorDetails struct {
 	// ErrorDetails : Error details.
 	ErrorDetails *FailureDetailsLogInfo `json:"error_details"`
 }
-
 // NewSsoErrorDetails returns a new SsoErrorDetails instance
 func NewSsoErrorDetails(ErrorDetails *FailureDetailsLogInfo) *SsoErrorDetails {
 	s := new(SsoErrorDetails)
@@ -16879,12 +17160,12 @@ func NewSsoErrorDetails(ErrorDetails *FailureDetailsLogInfo) *SsoErrorDetails {
 	return s
 }
 
+
 // SsoErrorType : has no documentation (yet)
 type SsoErrorType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoErrorType returns a new SsoErrorType instance
 func NewSsoErrorType(Description string) *SsoErrorType {
 	s := new(SsoErrorType)
@@ -16892,22 +17173,22 @@ func NewSsoErrorType(Description string) *SsoErrorType {
 	return s
 }
 
+
 // SsoRemoveCertDetails : Removed X.509 certificate for SSO.
 type SsoRemoveCertDetails struct {
 }
-
 // NewSsoRemoveCertDetails returns a new SsoRemoveCertDetails instance
 func NewSsoRemoveCertDetails() *SsoRemoveCertDetails {
 	s := new(SsoRemoveCertDetails)
 	return s
 }
 
+
 // SsoRemoveCertType : has no documentation (yet)
 type SsoRemoveCertType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoRemoveCertType returns a new SsoRemoveCertType instance
 func NewSsoRemoveCertType(Description string) *SsoRemoveCertType {
 	s := new(SsoRemoveCertType)
@@ -16915,12 +17196,12 @@ func NewSsoRemoveCertType(Description string) *SsoRemoveCertType {
 	return s
 }
 
+
 // SsoRemoveLoginUrlDetails : Removed sign-in URL for SSO.
 type SsoRemoveLoginUrlDetails struct {
 	// PreviousValue : Previous single sign-on login URL.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewSsoRemoveLoginUrlDetails returns a new SsoRemoveLoginUrlDetails instance
 func NewSsoRemoveLoginUrlDetails(PreviousValue string) *SsoRemoveLoginUrlDetails {
 	s := new(SsoRemoveLoginUrlDetails)
@@ -16928,12 +17209,12 @@ func NewSsoRemoveLoginUrlDetails(PreviousValue string) *SsoRemoveLoginUrlDetails
 	return s
 }
 
+
 // SsoRemoveLoginUrlType : has no documentation (yet)
 type SsoRemoveLoginUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoRemoveLoginUrlType returns a new SsoRemoveLoginUrlType instance
 func NewSsoRemoveLoginUrlType(Description string) *SsoRemoveLoginUrlType {
 	s := new(SsoRemoveLoginUrlType)
@@ -16941,12 +17222,12 @@ func NewSsoRemoveLoginUrlType(Description string) *SsoRemoveLoginUrlType {
 	return s
 }
 
+
 // SsoRemoveLogoutUrlDetails : Removed sign-out URL for SSO.
 type SsoRemoveLogoutUrlDetails struct {
 	// PreviousValue : Previous single sign-on logout URL.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewSsoRemoveLogoutUrlDetails returns a new SsoRemoveLogoutUrlDetails instance
 func NewSsoRemoveLogoutUrlDetails(PreviousValue string) *SsoRemoveLogoutUrlDetails {
 	s := new(SsoRemoveLogoutUrlDetails)
@@ -16954,18 +17235,19 @@ func NewSsoRemoveLogoutUrlDetails(PreviousValue string) *SsoRemoveLogoutUrlDetai
 	return s
 }
 
+
 // SsoRemoveLogoutUrlType : has no documentation (yet)
 type SsoRemoveLogoutUrlType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewSsoRemoveLogoutUrlType returns a new SsoRemoveLogoutUrlType instance
 func NewSsoRemoveLogoutUrlType(Description string) *SsoRemoveLogoutUrlType {
 	s := new(SsoRemoveLogoutUrlType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamActivityCreateReportDetails : Created team activity report.
 type TeamActivityCreateReportDetails struct {
@@ -16974,7 +17256,6 @@ type TeamActivityCreateReportDetails struct {
 	// EndDate : Report end date.
 	EndDate time.Time `json:"end_date"`
 }
-
 // NewTeamActivityCreateReportDetails returns a new TeamActivityCreateReportDetails instance
 func NewTeamActivityCreateReportDetails(StartDate time.Time, EndDate time.Time) *TeamActivityCreateReportDetails {
 	s := new(TeamActivityCreateReportDetails)
@@ -16983,12 +17264,12 @@ func NewTeamActivityCreateReportDetails(StartDate time.Time, EndDate time.Time) 
 	return s
 }
 
+
 // TeamActivityCreateReportFailDetails : Couldn't generate team activity report.
 type TeamActivityCreateReportFailDetails struct {
 	// FailureReason : Failure reason.
 	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
 }
-
 // NewTeamActivityCreateReportFailDetails returns a new TeamActivityCreateReportFailDetails instance
 func NewTeamActivityCreateReportFailDetails(FailureReason *team.TeamReportFailureReason) *TeamActivityCreateReportFailDetails {
 	s := new(TeamActivityCreateReportFailDetails)
@@ -16996,12 +17277,12 @@ func NewTeamActivityCreateReportFailDetails(FailureReason *team.TeamReportFailur
 	return s
 }
 
+
 // TeamActivityCreateReportFailType : has no documentation (yet)
 type TeamActivityCreateReportFailType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamActivityCreateReportFailType returns a new TeamActivityCreateReportFailType instance
 func NewTeamActivityCreateReportFailType(Description string) *TeamActivityCreateReportFailType {
 	s := new(TeamActivityCreateReportFailType)
@@ -17009,12 +17290,12 @@ func NewTeamActivityCreateReportFailType(Description string) *TeamActivityCreate
 	return s
 }
 
+
 // TeamActivityCreateReportType : has no documentation (yet)
 type TeamActivityCreateReportType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamActivityCreateReportType returns a new TeamActivityCreateReportType instance
 func NewTeamActivityCreateReportType(Description string) *TeamActivityCreateReportType {
 	s := new(TeamActivityCreateReportType)
@@ -17022,34 +17303,34 @@ func NewTeamActivityCreateReportType(Description string) *TeamActivityCreateRepo
 	return s
 }
 
+
 // TeamEvent : An audit log event.
 type TeamEvent struct {
 	// Timestamp : The Dropbox timestamp representing when the action was taken.
 	Timestamp time.Time `json:"timestamp"`
 	// EventCategory : The category that this type of action belongs to.
 	EventCategory *EventCategory `json:"event_category"`
-	// Actor : The entity who actually performed the action. Might be missing
-	// due to historical data gap.
+	// Actor : The entity who actually performed the action. Might be missing due
+	// to historical data gap.
 	Actor *ActorLogInfo `json:"actor,omitempty"`
 	// Origin : The origin from which the actor performed the action including
 	// information about host, ip address, location, session, etc. If the action
 	// was performed programmatically via the API the origin represents the API
 	// client.
 	Origin *OriginLogInfo `json:"origin,omitempty"`
-	// InvolveNonTeamMember : True if the action involved a non team member
-	// either as the actor or as one of the affected users. Might be missing due
-	// to historical data gap.
+	// InvolveNonTeamMember : True if the action involved a non team member either
+	// as the actor or as one of the affected users. Might be missing due to
+	// historical data gap.
 	InvolveNonTeamMember bool `json:"involve_non_team_member,omitempty"`
-	// Context : The user or team on whose behalf the actor performed the
-	// action. Might be missing due to historical data gap.
+	// Context : The user or team on whose behalf the actor performed the action.
+	// Might be missing due to historical data gap.
 	Context *ContextLogInfo `json:"context,omitempty"`
 	// Participants : Zero or more users and/or groups that are affected by the
-	// action. Note that this list doesn't include any actors or users in
-	// context.
+	// action. Note that this list doesn't include any actors or users in context.
 	Participants []*ParticipantLogInfo `json:"participants,omitempty"`
-	// Assets : Zero or more content assets involved in the action. Currently
-	// these include Dropbox files and folders but in the future we might add
-	// other asset types such as Paper documents, folders, projects, etc.
+	// Assets : Zero or more content assets involved in the action. Currently these
+	// include Dropbox files and folders but in the future we might add other asset
+	// types such as Paper documents, folders, projects, etc.
 	Assets []*AssetLogInfo `json:"assets,omitempty"`
 	// EventType : The particular type of action taken.
 	EventType *EventType `json:"event_type"`
@@ -17057,7 +17338,6 @@ type TeamEvent struct {
 	// instantiated with respect to this particular action.
 	Details *EventDetails `json:"details"`
 }
-
 // NewTeamEvent returns a new TeamEvent instance
 func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, EventType *EventType, Details *EventDetails) *TeamEvent {
 	s := new(TeamEvent)
@@ -17068,6 +17348,7 @@ func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, EventType *
 	return s
 }
 
+
 // TeamExtensionsPolicy : Policy for controlling whether App Integrations are
 // enabled for the team.
 type TeamExtensionsPolicy struct {
@@ -17077,8 +17358,8 @@ type TeamExtensionsPolicy struct {
 // Valid tag values for TeamExtensionsPolicy
 const (
 	TeamExtensionsPolicyDisabled = "disabled"
-	TeamExtensionsPolicyEnabled  = "enabled"
-	TeamExtensionsPolicyOther    = "other"
+	TeamExtensionsPolicyEnabled = "enabled"
+	TeamExtensionsPolicyOther = "other"
 )
 
 // TeamExtensionsPolicyChangedDetails : Changed App Integrations setting for
@@ -17089,7 +17370,6 @@ type TeamExtensionsPolicyChangedDetails struct {
 	// PreviousValue : Previous Extensions policy.
 	PreviousValue *TeamExtensionsPolicy `json:"previous_value"`
 }
-
 // NewTeamExtensionsPolicyChangedDetails returns a new TeamExtensionsPolicyChangedDetails instance
 func NewTeamExtensionsPolicyChangedDetails(NewValue *TeamExtensionsPolicy, PreviousValue *TeamExtensionsPolicy) *TeamExtensionsPolicyChangedDetails {
 	s := new(TeamExtensionsPolicyChangedDetails)
@@ -17098,18 +17378,19 @@ func NewTeamExtensionsPolicyChangedDetails(NewValue *TeamExtensionsPolicy, Previ
 	return s
 }
 
+
 // TeamExtensionsPolicyChangedType : has no documentation (yet)
 type TeamExtensionsPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamExtensionsPolicyChangedType returns a new TeamExtensionsPolicyChangedType instance
 func NewTeamExtensionsPolicyChangedType(Description string) *TeamExtensionsPolicyChangedType {
 	s := new(TeamExtensionsPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamFolderChangeStatusDetails : Changed archival status of team folder.
 type TeamFolderChangeStatusDetails struct {
@@ -17119,7 +17400,6 @@ type TeamFolderChangeStatusDetails struct {
 	// historical data gap.
 	PreviousValue *team.TeamFolderStatus `json:"previous_value,omitempty"`
 }
-
 // NewTeamFolderChangeStatusDetails returns a new TeamFolderChangeStatusDetails instance
 func NewTeamFolderChangeStatusDetails(NewValue *team.TeamFolderStatus) *TeamFolderChangeStatusDetails {
 	s := new(TeamFolderChangeStatusDetails)
@@ -17127,12 +17407,12 @@ func NewTeamFolderChangeStatusDetails(NewValue *team.TeamFolderStatus) *TeamFold
 	return s
 }
 
+
 // TeamFolderChangeStatusType : has no documentation (yet)
 type TeamFolderChangeStatusType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamFolderChangeStatusType returns a new TeamFolderChangeStatusType instance
 func NewTeamFolderChangeStatusType(Description string) *TeamFolderChangeStatusType {
 	s := new(TeamFolderChangeStatusType)
@@ -17140,22 +17420,22 @@ func NewTeamFolderChangeStatusType(Description string) *TeamFolderChangeStatusTy
 	return s
 }
 
+
 // TeamFolderCreateDetails : Created team folder in active status.
 type TeamFolderCreateDetails struct {
 }
-
 // NewTeamFolderCreateDetails returns a new TeamFolderCreateDetails instance
 func NewTeamFolderCreateDetails() *TeamFolderCreateDetails {
 	s := new(TeamFolderCreateDetails)
 	return s
 }
 
+
 // TeamFolderCreateType : has no documentation (yet)
 type TeamFolderCreateType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamFolderCreateType returns a new TeamFolderCreateType instance
 func NewTeamFolderCreateType(Description string) *TeamFolderCreateType {
 	s := new(TeamFolderCreateType)
@@ -17163,12 +17443,12 @@ func NewTeamFolderCreateType(Description string) *TeamFolderCreateType {
 	return s
 }
 
+
 // TeamFolderDowngradeDetails : Downgraded team folder to regular shared folder.
 type TeamFolderDowngradeDetails struct {
 	// TargetAssetIndex : Target asset position in the Assets list.
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 }
-
 // NewTeamFolderDowngradeDetails returns a new TeamFolderDowngradeDetails instance
 func NewTeamFolderDowngradeDetails(TargetAssetIndex uint64) *TeamFolderDowngradeDetails {
 	s := new(TeamFolderDowngradeDetails)
@@ -17176,12 +17456,12 @@ func NewTeamFolderDowngradeDetails(TargetAssetIndex uint64) *TeamFolderDowngrade
 	return s
 }
 
+
 // TeamFolderDowngradeType : has no documentation (yet)
 type TeamFolderDowngradeType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamFolderDowngradeType returns a new TeamFolderDowngradeType instance
 func NewTeamFolderDowngradeType(Description string) *TeamFolderDowngradeType {
 	s := new(TeamFolderDowngradeType)
@@ -17189,29 +17469,30 @@ func NewTeamFolderDowngradeType(Description string) *TeamFolderDowngradeType {
 	return s
 }
 
+
 // TeamFolderPermanentlyDeleteDetails : Permanently deleted archived team
 // folder.
 type TeamFolderPermanentlyDeleteDetails struct {
 }
-
 // NewTeamFolderPermanentlyDeleteDetails returns a new TeamFolderPermanentlyDeleteDetails instance
 func NewTeamFolderPermanentlyDeleteDetails() *TeamFolderPermanentlyDeleteDetails {
 	s := new(TeamFolderPermanentlyDeleteDetails)
 	return s
 }
 
+
 // TeamFolderPermanentlyDeleteType : has no documentation (yet)
 type TeamFolderPermanentlyDeleteType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamFolderPermanentlyDeleteType returns a new TeamFolderPermanentlyDeleteType instance
 func NewTeamFolderPermanentlyDeleteType(Description string) *TeamFolderPermanentlyDeleteType {
 	s := new(TeamFolderPermanentlyDeleteType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamFolderRenameDetails : Renamed active/archived team folder.
 type TeamFolderRenameDetails struct {
@@ -17220,7 +17501,6 @@ type TeamFolderRenameDetails struct {
 	// NewFolderName : New folder name.
 	NewFolderName string `json:"new_folder_name"`
 }
-
 // NewTeamFolderRenameDetails returns a new TeamFolderRenameDetails instance
 func NewTeamFolderRenameDetails(PreviousFolderName string, NewFolderName string) *TeamFolderRenameDetails {
 	s := new(TeamFolderRenameDetails)
@@ -17229,12 +17509,12 @@ func NewTeamFolderRenameDetails(PreviousFolderName string, NewFolderName string)
 	return s
 }
 
+
 // TeamFolderRenameType : has no documentation (yet)
 type TeamFolderRenameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamFolderRenameType returns a new TeamFolderRenameType instance
 func NewTeamFolderRenameType(Description string) *TeamFolderRenameType {
 	s := new(TeamFolderRenameType)
@@ -17242,32 +17522,32 @@ func NewTeamFolderRenameType(Description string) *TeamFolderRenameType {
 	return s
 }
 
+
 // TeamLinkedAppLogInfo : Team linked app
 type TeamLinkedAppLogInfo struct {
 	AppLogInfo
 }
-
 // NewTeamLinkedAppLogInfo returns a new TeamLinkedAppLogInfo instance
 func NewTeamLinkedAppLogInfo() *TeamLinkedAppLogInfo {
 	s := new(TeamLinkedAppLogInfo)
 	return s
 }
 
+
 // TeamMemberLogInfo : Team member's logged information.
 type TeamMemberLogInfo struct {
 	UserLogInfo
-	// TeamMemberId : Team member ID. Might be missing due to historical data
-	// gap.
+	// TeamMemberId : Team member ID. Might be missing due to historical data gap.
 	TeamMemberId string `json:"team_member_id,omitempty"`
 	// MemberExternalId : Team member external ID.
 	MemberExternalId string `json:"member_external_id,omitempty"`
 }
-
 // NewTeamMemberLogInfo returns a new TeamMemberLogInfo instance
 func NewTeamMemberLogInfo() *TeamMemberLogInfo {
 	s := new(TeamMemberLogInfo)
 	return s
 }
+
 
 // TeamMembershipType : has no documentation (yet)
 type TeamMembershipType struct {
@@ -17276,8 +17556,8 @@ type TeamMembershipType struct {
 
 // Valid tag values for TeamMembershipType
 const (
-	TeamMembershipTypeFree  = "free"
-	TeamMembershipTypeFull  = "full"
+	TeamMembershipTypeFree = "free"
+	TeamMembershipTypeFull = "full"
 	TeamMembershipTypeOther = "other"
 )
 
@@ -17286,7 +17566,6 @@ type TeamMergeFromDetails struct {
 	// TeamName : The name of the team that was merged into this team.
 	TeamName string `json:"team_name"`
 }
-
 // NewTeamMergeFromDetails returns a new TeamMergeFromDetails instance
 func NewTeamMergeFromDetails(TeamName string) *TeamMergeFromDetails {
 	s := new(TeamMergeFromDetails)
@@ -17294,12 +17573,12 @@ func NewTeamMergeFromDetails(TeamName string) *TeamMergeFromDetails {
 	return s
 }
 
+
 // TeamMergeFromType : has no documentation (yet)
 type TeamMergeFromType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeFromType returns a new TeamMergeFromType instance
 func NewTeamMergeFromType(Description string) *TeamMergeFromType {
 	s := new(TeamMergeFromType)
@@ -17307,12 +17586,12 @@ func NewTeamMergeFromType(Description string) *TeamMergeFromType {
 	return s
 }
 
+
 // TeamMergeRequestAcceptedDetails : Accepted a team merge request.
 type TeamMergeRequestAcceptedDetails struct {
 	// RequestAcceptedDetails : Team merge request acceptance details.
 	RequestAcceptedDetails *TeamMergeRequestAcceptedExtraDetails `json:"request_accepted_details"`
 }
-
 // NewTeamMergeRequestAcceptedDetails returns a new TeamMergeRequestAcceptedDetails instance
 func NewTeamMergeRequestAcceptedDetails(RequestAcceptedDetails *TeamMergeRequestAcceptedExtraDetails) *TeamMergeRequestAcceptedDetails {
 	s := new(TeamMergeRequestAcceptedDetails)
@@ -17320,22 +17599,22 @@ func NewTeamMergeRequestAcceptedDetails(RequestAcceptedDetails *TeamMergeRequest
 	return s
 }
 
+
 // TeamMergeRequestAcceptedExtraDetails : Team merge request acceptance details
 type TeamMergeRequestAcceptedExtraDetails struct {
 	dropbox.Tagged
-	// PrimaryTeam : Team merge request accepted details shown to the primary
-	// team.
+	// PrimaryTeam : Team merge request accepted details shown to the primary team.
 	PrimaryTeam *PrimaryTeamRequestAcceptedDetails `json:"primary_team,omitempty"`
-	// SecondaryTeam : Team merge request accepted details shown to the
-	// secondary team.
+	// SecondaryTeam : Team merge request accepted details shown to the secondary
+	// team.
 	SecondaryTeam *SecondaryTeamRequestAcceptedDetails `json:"secondary_team,omitempty"`
 }
 
 // Valid tag values for TeamMergeRequestAcceptedExtraDetails
 const (
-	TeamMergeRequestAcceptedExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestAcceptedExtraDetailsPrimaryTeam = "primary_team"
 	TeamMergeRequestAcceptedExtraDetailsSecondaryTeam = "secondary_team"
-	TeamMergeRequestAcceptedExtraDetailsOther         = "other"
+	TeamMergeRequestAcceptedExtraDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TeamMergeRequestAcceptedExtraDetails instance
@@ -17350,14 +17629,14 @@ func (u *TeamMergeRequestAcceptedExtraDetails) UnmarshalJSON(body []byte) error 
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
+		case "primary_team":
+			err = json.Unmarshal(body, &u.PrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
+		case "secondary_team":
+			err = json.Unmarshal(body, &u.SecondaryTeam)
 
 		if err != nil {
 			return err
@@ -17375,7 +17654,6 @@ type TeamMergeRequestAcceptedShownToPrimaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestAcceptedShownToPrimaryTeamDetails returns a new TeamMergeRequestAcceptedShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestAcceptedShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestAcceptedShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
@@ -17384,18 +17662,19 @@ func NewTeamMergeRequestAcceptedShownToPrimaryTeamDetails(SecondaryTeam string, 
 	return s
 }
 
+
 // TeamMergeRequestAcceptedShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestAcceptedShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestAcceptedShownToPrimaryTeamType returns a new TeamMergeRequestAcceptedShownToPrimaryTeamType instance
 func NewTeamMergeRequestAcceptedShownToPrimaryTeamType(Description string) *TeamMergeRequestAcceptedShownToPrimaryTeamType {
 	s := new(TeamMergeRequestAcceptedShownToPrimaryTeamType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamMergeRequestAcceptedShownToSecondaryTeamDetails : Accepted a team merge
 // request.
@@ -17406,7 +17685,6 @@ type TeamMergeRequestAcceptedShownToSecondaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestAcceptedShownToSecondaryTeamDetails returns a new TeamMergeRequestAcceptedShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestAcceptedShownToSecondaryTeamDetails(PrimaryTeam string, SentBy string) *TeamMergeRequestAcceptedShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
@@ -17415,12 +17693,12 @@ func NewTeamMergeRequestAcceptedShownToSecondaryTeamDetails(PrimaryTeam string, 
 	return s
 }
 
+
 // TeamMergeRequestAcceptedShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestAcceptedShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestAcceptedShownToSecondaryTeamType returns a new TeamMergeRequestAcceptedShownToSecondaryTeamType instance
 func NewTeamMergeRequestAcceptedShownToSecondaryTeamType(Description string) *TeamMergeRequestAcceptedShownToSecondaryTeamType {
 	s := new(TeamMergeRequestAcceptedShownToSecondaryTeamType)
@@ -17428,12 +17706,12 @@ func NewTeamMergeRequestAcceptedShownToSecondaryTeamType(Description string) *Te
 	return s
 }
 
+
 // TeamMergeRequestAcceptedType : has no documentation (yet)
 type TeamMergeRequestAcceptedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestAcceptedType returns a new TeamMergeRequestAcceptedType instance
 func NewTeamMergeRequestAcceptedType(Description string) *TeamMergeRequestAcceptedType {
 	s := new(TeamMergeRequestAcceptedType)
@@ -17441,25 +17719,25 @@ func NewTeamMergeRequestAcceptedType(Description string) *TeamMergeRequestAccept
 	return s
 }
 
+
 // TeamMergeRequestAutoCanceledDetails : Automatically canceled team merge
 // request.
 type TeamMergeRequestAutoCanceledDetails struct {
 	// Details : The cancellation reason.
 	Details string `json:"details,omitempty"`
 }
-
 // NewTeamMergeRequestAutoCanceledDetails returns a new TeamMergeRequestAutoCanceledDetails instance
 func NewTeamMergeRequestAutoCanceledDetails() *TeamMergeRequestAutoCanceledDetails {
 	s := new(TeamMergeRequestAutoCanceledDetails)
 	return s
 }
 
+
 // TeamMergeRequestAutoCanceledType : has no documentation (yet)
 type TeamMergeRequestAutoCanceledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestAutoCanceledType returns a new TeamMergeRequestAutoCanceledType instance
 func NewTeamMergeRequestAutoCanceledType(Description string) *TeamMergeRequestAutoCanceledType {
 	s := new(TeamMergeRequestAutoCanceledType)
@@ -17467,12 +17745,12 @@ func NewTeamMergeRequestAutoCanceledType(Description string) *TeamMergeRequestAu
 	return s
 }
 
+
 // TeamMergeRequestCanceledDetails : Canceled a team merge request.
 type TeamMergeRequestCanceledDetails struct {
 	// RequestCanceledDetails : Team merge request cancellation details.
 	RequestCanceledDetails *TeamMergeRequestCanceledExtraDetails `json:"request_canceled_details"`
 }
-
 // NewTeamMergeRequestCanceledDetails returns a new TeamMergeRequestCanceledDetails instance
 func NewTeamMergeRequestCanceledDetails(RequestCanceledDetails *TeamMergeRequestCanceledExtraDetails) *TeamMergeRequestCanceledDetails {
 	s := new(TeamMergeRequestCanceledDetails)
@@ -17480,12 +17758,13 @@ func NewTeamMergeRequestCanceledDetails(RequestCanceledDetails *TeamMergeRequest
 	return s
 }
 
+
 // TeamMergeRequestCanceledExtraDetails : Team merge request cancellation
 // details
 type TeamMergeRequestCanceledExtraDetails struct {
 	dropbox.Tagged
-	// PrimaryTeam : Team merge request cancellation details shown to the
-	// primary team.
+	// PrimaryTeam : Team merge request cancellation details shown to the primary
+	// team.
 	PrimaryTeam *PrimaryTeamRequestCanceledDetails `json:"primary_team,omitempty"`
 	// SecondaryTeam : Team merge request cancellation details shown to the
 	// secondary team.
@@ -17494,9 +17773,9 @@ type TeamMergeRequestCanceledExtraDetails struct {
 
 // Valid tag values for TeamMergeRequestCanceledExtraDetails
 const (
-	TeamMergeRequestCanceledExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestCanceledExtraDetailsPrimaryTeam = "primary_team"
 	TeamMergeRequestCanceledExtraDetailsSecondaryTeam = "secondary_team"
-	TeamMergeRequestCanceledExtraDetailsOther         = "other"
+	TeamMergeRequestCanceledExtraDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TeamMergeRequestCanceledExtraDetails instance
@@ -17511,14 +17790,14 @@ func (u *TeamMergeRequestCanceledExtraDetails) UnmarshalJSON(body []byte) error 
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
+		case "primary_team":
+			err = json.Unmarshal(body, &u.PrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
+		case "secondary_team":
+			err = json.Unmarshal(body, &u.SecondaryTeam)
 
 		if err != nil {
 			return err
@@ -17536,7 +17815,6 @@ type TeamMergeRequestCanceledShownToPrimaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestCanceledShownToPrimaryTeamDetails returns a new TeamMergeRequestCanceledShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestCanceledShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestCanceledShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestCanceledShownToPrimaryTeamDetails)
@@ -17545,12 +17823,12 @@ func NewTeamMergeRequestCanceledShownToPrimaryTeamDetails(SecondaryTeam string, 
 	return s
 }
 
+
 // TeamMergeRequestCanceledShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestCanceledShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestCanceledShownToPrimaryTeamType returns a new TeamMergeRequestCanceledShownToPrimaryTeamType instance
 func NewTeamMergeRequestCanceledShownToPrimaryTeamType(Description string) *TeamMergeRequestCanceledShownToPrimaryTeamType {
 	s := new(TeamMergeRequestCanceledShownToPrimaryTeamType)
@@ -17558,17 +17836,16 @@ func NewTeamMergeRequestCanceledShownToPrimaryTeamType(Description string) *Team
 	return s
 }
 
+
 // TeamMergeRequestCanceledShownToSecondaryTeamDetails : Canceled a team merge
 // request.
 type TeamMergeRequestCanceledShownToSecondaryTeamDetails struct {
-	// SentTo : The email of the primary team admin that the request was sent
-	// to.
+	// SentTo : The email of the primary team admin that the request was sent to.
 	SentTo string `json:"sent_to"`
 	// SentBy : The name of the secondary team admin who sent the request
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestCanceledShownToSecondaryTeamDetails returns a new TeamMergeRequestCanceledShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestCanceledShownToSecondaryTeamDetails(SentTo string, SentBy string) *TeamMergeRequestCanceledShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestCanceledShownToSecondaryTeamDetails)
@@ -17577,12 +17854,12 @@ func NewTeamMergeRequestCanceledShownToSecondaryTeamDetails(SentTo string, SentB
 	return s
 }
 
+
 // TeamMergeRequestCanceledShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestCanceledShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestCanceledShownToSecondaryTeamType returns a new TeamMergeRequestCanceledShownToSecondaryTeamType instance
 func NewTeamMergeRequestCanceledShownToSecondaryTeamType(Description string) *TeamMergeRequestCanceledShownToSecondaryTeamType {
 	s := new(TeamMergeRequestCanceledShownToSecondaryTeamType)
@@ -17590,12 +17867,12 @@ func NewTeamMergeRequestCanceledShownToSecondaryTeamType(Description string) *Te
 	return s
 }
 
+
 // TeamMergeRequestCanceledType : has no documentation (yet)
 type TeamMergeRequestCanceledType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestCanceledType returns a new TeamMergeRequestCanceledType instance
 func NewTeamMergeRequestCanceledType(Description string) *TeamMergeRequestCanceledType {
 	s := new(TeamMergeRequestCanceledType)
@@ -17603,12 +17880,12 @@ func NewTeamMergeRequestCanceledType(Description string) *TeamMergeRequestCancel
 	return s
 }
 
+
 // TeamMergeRequestExpiredDetails : Team merge request expired.
 type TeamMergeRequestExpiredDetails struct {
 	// RequestExpiredDetails : Team merge request expiration details.
 	RequestExpiredDetails *TeamMergeRequestExpiredExtraDetails `json:"request_expired_details"`
 }
-
 // NewTeamMergeRequestExpiredDetails returns a new TeamMergeRequestExpiredDetails instance
 func NewTeamMergeRequestExpiredDetails(RequestExpiredDetails *TeamMergeRequestExpiredExtraDetails) *TeamMergeRequestExpiredDetails {
 	s := new(TeamMergeRequestExpiredDetails)
@@ -17616,22 +17893,22 @@ func NewTeamMergeRequestExpiredDetails(RequestExpiredDetails *TeamMergeRequestEx
 	return s
 }
 
+
 // TeamMergeRequestExpiredExtraDetails : Team merge request expiration details
 type TeamMergeRequestExpiredExtraDetails struct {
 	dropbox.Tagged
-	// PrimaryTeam : Team merge request canceled details shown to the primary
-	// team.
+	// PrimaryTeam : Team merge request canceled details shown to the primary team.
 	PrimaryTeam *PrimaryTeamRequestExpiredDetails `json:"primary_team,omitempty"`
-	// SecondaryTeam : Team merge request canceled details shown to the
-	// secondary team.
+	// SecondaryTeam : Team merge request canceled details shown to the secondary
+	// team.
 	SecondaryTeam *SecondaryTeamRequestExpiredDetails `json:"secondary_team,omitempty"`
 }
 
 // Valid tag values for TeamMergeRequestExpiredExtraDetails
 const (
-	TeamMergeRequestExpiredExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestExpiredExtraDetailsPrimaryTeam = "primary_team"
 	TeamMergeRequestExpiredExtraDetailsSecondaryTeam = "secondary_team"
-	TeamMergeRequestExpiredExtraDetailsOther         = "other"
+	TeamMergeRequestExpiredExtraDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TeamMergeRequestExpiredExtraDetails instance
@@ -17646,14 +17923,14 @@ func (u *TeamMergeRequestExpiredExtraDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
+		case "primary_team":
+			err = json.Unmarshal(body, &u.PrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
+		case "secondary_team":
+			err = json.Unmarshal(body, &u.SecondaryTeam)
 
 		if err != nil {
 			return err
@@ -17671,7 +17948,6 @@ type TeamMergeRequestExpiredShownToPrimaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestExpiredShownToPrimaryTeamDetails returns a new TeamMergeRequestExpiredShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestExpiredShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestExpiredShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestExpiredShownToPrimaryTeamDetails)
@@ -17680,12 +17956,12 @@ func NewTeamMergeRequestExpiredShownToPrimaryTeamDetails(SecondaryTeam string, S
 	return s
 }
 
+
 // TeamMergeRequestExpiredShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestExpiredShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestExpiredShownToPrimaryTeamType returns a new TeamMergeRequestExpiredShownToPrimaryTeamType instance
 func NewTeamMergeRequestExpiredShownToPrimaryTeamType(Description string) *TeamMergeRequestExpiredShownToPrimaryTeamType {
 	s := new(TeamMergeRequestExpiredShownToPrimaryTeamType)
@@ -17693,13 +17969,13 @@ func NewTeamMergeRequestExpiredShownToPrimaryTeamType(Description string) *TeamM
 	return s
 }
 
+
 // TeamMergeRequestExpiredShownToSecondaryTeamDetails : Team merge request
 // expired.
 type TeamMergeRequestExpiredShownToSecondaryTeamDetails struct {
 	// SentTo : The email of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewTeamMergeRequestExpiredShownToSecondaryTeamDetails returns a new TeamMergeRequestExpiredShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestExpiredShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestExpiredShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestExpiredShownToSecondaryTeamDetails)
@@ -17707,12 +17983,12 @@ func NewTeamMergeRequestExpiredShownToSecondaryTeamDetails(SentTo string) *TeamM
 	return s
 }
 
+
 // TeamMergeRequestExpiredShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestExpiredShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestExpiredShownToSecondaryTeamType returns a new TeamMergeRequestExpiredShownToSecondaryTeamType instance
 func NewTeamMergeRequestExpiredShownToSecondaryTeamType(Description string) *TeamMergeRequestExpiredShownToSecondaryTeamType {
 	s := new(TeamMergeRequestExpiredShownToSecondaryTeamType)
@@ -17720,18 +17996,19 @@ func NewTeamMergeRequestExpiredShownToSecondaryTeamType(Description string) *Tea
 	return s
 }
 
+
 // TeamMergeRequestExpiredType : has no documentation (yet)
 type TeamMergeRequestExpiredType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestExpiredType returns a new TeamMergeRequestExpiredType instance
 func NewTeamMergeRequestExpiredType(Description string) *TeamMergeRequestExpiredType {
 	s := new(TeamMergeRequestExpiredType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamMergeRequestRejectedShownToPrimaryTeamDetails : Rejected a team merge
 // request.
@@ -17742,7 +18019,6 @@ type TeamMergeRequestRejectedShownToPrimaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestRejectedShownToPrimaryTeamDetails returns a new TeamMergeRequestRejectedShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestRejectedShownToPrimaryTeamDetails(SecondaryTeam string, SentBy string) *TeamMergeRequestRejectedShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestRejectedShownToPrimaryTeamDetails)
@@ -17751,18 +18027,19 @@ func NewTeamMergeRequestRejectedShownToPrimaryTeamDetails(SecondaryTeam string, 
 	return s
 }
 
+
 // TeamMergeRequestRejectedShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestRejectedShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestRejectedShownToPrimaryTeamType returns a new TeamMergeRequestRejectedShownToPrimaryTeamType instance
 func NewTeamMergeRequestRejectedShownToPrimaryTeamType(Description string) *TeamMergeRequestRejectedShownToPrimaryTeamType {
 	s := new(TeamMergeRequestRejectedShownToPrimaryTeamType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamMergeRequestRejectedShownToSecondaryTeamDetails : Rejected a team merge
 // request.
@@ -17771,7 +18048,6 @@ type TeamMergeRequestRejectedShownToSecondaryTeamDetails struct {
 	// originally.
 	SentBy string `json:"sent_by"`
 }
-
 // NewTeamMergeRequestRejectedShownToSecondaryTeamDetails returns a new TeamMergeRequestRejectedShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestRejectedShownToSecondaryTeamDetails(SentBy string) *TeamMergeRequestRejectedShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestRejectedShownToSecondaryTeamDetails)
@@ -17779,12 +18055,12 @@ func NewTeamMergeRequestRejectedShownToSecondaryTeamDetails(SentBy string) *Team
 	return s
 }
 
+
 // TeamMergeRequestRejectedShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestRejectedShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestRejectedShownToSecondaryTeamType returns a new TeamMergeRequestRejectedShownToSecondaryTeamType instance
 func NewTeamMergeRequestRejectedShownToSecondaryTeamType(Description string) *TeamMergeRequestRejectedShownToSecondaryTeamType {
 	s := new(TeamMergeRequestRejectedShownToSecondaryTeamType)
@@ -17792,12 +18068,12 @@ func NewTeamMergeRequestRejectedShownToSecondaryTeamType(Description string) *Te
 	return s
 }
 
+
 // TeamMergeRequestReminderDetails : Sent a team merge request reminder.
 type TeamMergeRequestReminderDetails struct {
 	// RequestReminderDetails : Team merge request reminder details.
 	RequestReminderDetails *TeamMergeRequestReminderExtraDetails `json:"request_reminder_details"`
 }
-
 // NewTeamMergeRequestReminderDetails returns a new TeamMergeRequestReminderDetails instance
 func NewTeamMergeRequestReminderDetails(RequestReminderDetails *TeamMergeRequestReminderExtraDetails) *TeamMergeRequestReminderDetails {
 	s := new(TeamMergeRequestReminderDetails)
@@ -17805,22 +18081,22 @@ func NewTeamMergeRequestReminderDetails(RequestReminderDetails *TeamMergeRequest
 	return s
 }
 
+
 // TeamMergeRequestReminderExtraDetails : Team merge request reminder details
 type TeamMergeRequestReminderExtraDetails struct {
 	dropbox.Tagged
-	// PrimaryTeam : Team merge request reminder details shown to the primary
-	// team.
+	// PrimaryTeam : Team merge request reminder details shown to the primary team.
 	PrimaryTeam *PrimaryTeamRequestReminderDetails `json:"primary_team,omitempty"`
-	// SecondaryTeam : Team merge request reminder details shown to the
-	// secondary team.
+	// SecondaryTeam : Team merge request reminder details shown to the secondary
+	// team.
 	SecondaryTeam *SecondaryTeamRequestReminderDetails `json:"secondary_team,omitempty"`
 }
 
 // Valid tag values for TeamMergeRequestReminderExtraDetails
 const (
-	TeamMergeRequestReminderExtraDetailsPrimaryTeam   = "primary_team"
+	TeamMergeRequestReminderExtraDetailsPrimaryTeam = "primary_team"
 	TeamMergeRequestReminderExtraDetailsSecondaryTeam = "secondary_team"
-	TeamMergeRequestReminderExtraDetailsOther         = "other"
+	TeamMergeRequestReminderExtraDetailsOther = "other"
 )
 
 // UnmarshalJSON deserializes into a TeamMergeRequestReminderExtraDetails instance
@@ -17835,14 +18111,14 @@ func (u *TeamMergeRequestReminderExtraDetails) UnmarshalJSON(body []byte) error 
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
+		case "primary_team":
+			err = json.Unmarshal(body, &u.PrimaryTeam)
 
 		if err != nil {
 			return err
 		}
-	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
+		case "secondary_team":
+			err = json.Unmarshal(body, &u.SecondaryTeam)
 
 		if err != nil {
 			return err
@@ -17859,7 +18135,6 @@ type TeamMergeRequestReminderShownToPrimaryTeamDetails struct {
 	// SentTo : The name of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewTeamMergeRequestReminderShownToPrimaryTeamDetails returns a new TeamMergeRequestReminderShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestReminderShownToPrimaryTeamDetails(SecondaryTeam string, SentTo string) *TeamMergeRequestReminderShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestReminderShownToPrimaryTeamDetails)
@@ -17868,12 +18143,12 @@ func NewTeamMergeRequestReminderShownToPrimaryTeamDetails(SecondaryTeam string, 
 	return s
 }
 
+
 // TeamMergeRequestReminderShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestReminderShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestReminderShownToPrimaryTeamType returns a new TeamMergeRequestReminderShownToPrimaryTeamType instance
 func NewTeamMergeRequestReminderShownToPrimaryTeamType(Description string) *TeamMergeRequestReminderShownToPrimaryTeamType {
 	s := new(TeamMergeRequestReminderShownToPrimaryTeamType)
@@ -17881,13 +18156,13 @@ func NewTeamMergeRequestReminderShownToPrimaryTeamType(Description string) *Team
 	return s
 }
 
+
 // TeamMergeRequestReminderShownToSecondaryTeamDetails : Sent a team merge
 // request reminder.
 type TeamMergeRequestReminderShownToSecondaryTeamDetails struct {
 	// SentTo : The email of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewTeamMergeRequestReminderShownToSecondaryTeamDetails returns a new TeamMergeRequestReminderShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestReminderShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestReminderShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestReminderShownToSecondaryTeamDetails)
@@ -17895,12 +18170,12 @@ func NewTeamMergeRequestReminderShownToSecondaryTeamDetails(SentTo string) *Team
 	return s
 }
 
+
 // TeamMergeRequestReminderShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestReminderShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestReminderShownToSecondaryTeamType returns a new TeamMergeRequestReminderShownToSecondaryTeamType instance
 func NewTeamMergeRequestReminderShownToSecondaryTeamType(Description string) *TeamMergeRequestReminderShownToSecondaryTeamType {
 	s := new(TeamMergeRequestReminderShownToSecondaryTeamType)
@@ -17908,12 +18183,12 @@ func NewTeamMergeRequestReminderShownToSecondaryTeamType(Description string) *Te
 	return s
 }
 
+
 // TeamMergeRequestReminderType : has no documentation (yet)
 type TeamMergeRequestReminderType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestReminderType returns a new TeamMergeRequestReminderType instance
 func NewTeamMergeRequestReminderType(Description string) *TeamMergeRequestReminderType {
 	s := new(TeamMergeRequestReminderType)
@@ -17921,12 +18196,12 @@ func NewTeamMergeRequestReminderType(Description string) *TeamMergeRequestRemind
 	return s
 }
 
+
 // TeamMergeRequestRevokedDetails : Canceled the team merge.
 type TeamMergeRequestRevokedDetails struct {
 	// Team : The name of the other team.
 	Team string `json:"team"`
 }
-
 // NewTeamMergeRequestRevokedDetails returns a new TeamMergeRequestRevokedDetails instance
 func NewTeamMergeRequestRevokedDetails(Team string) *TeamMergeRequestRevokedDetails {
 	s := new(TeamMergeRequestRevokedDetails)
@@ -17934,18 +18209,19 @@ func NewTeamMergeRequestRevokedDetails(Team string) *TeamMergeRequestRevokedDeta
 	return s
 }
 
+
 // TeamMergeRequestRevokedType : has no documentation (yet)
 type TeamMergeRequestRevokedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestRevokedType returns a new TeamMergeRequestRevokedType instance
 func NewTeamMergeRequestRevokedType(Description string) *TeamMergeRequestRevokedType {
 	s := new(TeamMergeRequestRevokedType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamMergeRequestSentShownToPrimaryTeamDetails : Requested to merge their
 // Dropbox team into yours.
@@ -17955,7 +18231,6 @@ type TeamMergeRequestSentShownToPrimaryTeamDetails struct {
 	// SentTo : The name of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewTeamMergeRequestSentShownToPrimaryTeamDetails returns a new TeamMergeRequestSentShownToPrimaryTeamDetails instance
 func NewTeamMergeRequestSentShownToPrimaryTeamDetails(SecondaryTeam string, SentTo string) *TeamMergeRequestSentShownToPrimaryTeamDetails {
 	s := new(TeamMergeRequestSentShownToPrimaryTeamDetails)
@@ -17964,12 +18239,12 @@ func NewTeamMergeRequestSentShownToPrimaryTeamDetails(SecondaryTeam string, Sent
 	return s
 }
 
+
 // TeamMergeRequestSentShownToPrimaryTeamType : has no documentation (yet)
 type TeamMergeRequestSentShownToPrimaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestSentShownToPrimaryTeamType returns a new TeamMergeRequestSentShownToPrimaryTeamType instance
 func NewTeamMergeRequestSentShownToPrimaryTeamType(Description string) *TeamMergeRequestSentShownToPrimaryTeamType {
 	s := new(TeamMergeRequestSentShownToPrimaryTeamType)
@@ -17977,13 +18252,13 @@ func NewTeamMergeRequestSentShownToPrimaryTeamType(Description string) *TeamMerg
 	return s
 }
 
+
 // TeamMergeRequestSentShownToSecondaryTeamDetails : Requested to merge your
 // team into another Dropbox team.
 type TeamMergeRequestSentShownToSecondaryTeamDetails struct {
 	// SentTo : The email of the primary team admin the request was sent to.
 	SentTo string `json:"sent_to"`
 }
-
 // NewTeamMergeRequestSentShownToSecondaryTeamDetails returns a new TeamMergeRequestSentShownToSecondaryTeamDetails instance
 func NewTeamMergeRequestSentShownToSecondaryTeamDetails(SentTo string) *TeamMergeRequestSentShownToSecondaryTeamDetails {
 	s := new(TeamMergeRequestSentShownToSecondaryTeamDetails)
@@ -17991,12 +18266,12 @@ func NewTeamMergeRequestSentShownToSecondaryTeamDetails(SentTo string) *TeamMerg
 	return s
 }
 
+
 // TeamMergeRequestSentShownToSecondaryTeamType : has no documentation (yet)
 type TeamMergeRequestSentShownToSecondaryTeamType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeRequestSentShownToSecondaryTeamType returns a new TeamMergeRequestSentShownToSecondaryTeamType instance
 func NewTeamMergeRequestSentShownToSecondaryTeamType(Description string) *TeamMergeRequestSentShownToSecondaryTeamType {
 	s := new(TeamMergeRequestSentShownToSecondaryTeamType)
@@ -18004,12 +18279,12 @@ func NewTeamMergeRequestSentShownToSecondaryTeamType(Description string) *TeamMe
 	return s
 }
 
+
 // TeamMergeToDetails : Merged this team into another team.
 type TeamMergeToDetails struct {
 	// TeamName : The name of the team that this team was merged into.
 	TeamName string `json:"team_name"`
 }
-
 // NewTeamMergeToDetails returns a new TeamMergeToDetails instance
 func NewTeamMergeToDetails(TeamName string) *TeamMergeToDetails {
 	s := new(TeamMergeToDetails)
@@ -18017,18 +18292,19 @@ func NewTeamMergeToDetails(TeamName string) *TeamMergeToDetails {
 	return s
 }
 
+
 // TeamMergeToType : has no documentation (yet)
 type TeamMergeToType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamMergeToType returns a new TeamMergeToType instance
 func NewTeamMergeToType(Description string) *TeamMergeToType {
 	s := new(TeamMergeToType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamName : Team name details
 type TeamName struct {
@@ -18037,7 +18313,6 @@ type TeamName struct {
 	// TeamLegalName : Team's legal name.
 	TeamLegalName string `json:"team_legal_name"`
 }
-
 // NewTeamName returns a new TeamName instance
 func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
 	s := new(TeamName)
@@ -18046,29 +18321,30 @@ func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
 	return s
 }
 
+
 // TeamProfileAddLogoDetails : Added team logo to display on shared link
 // headers.
 type TeamProfileAddLogoDetails struct {
 }
-
 // NewTeamProfileAddLogoDetails returns a new TeamProfileAddLogoDetails instance
 func NewTeamProfileAddLogoDetails() *TeamProfileAddLogoDetails {
 	s := new(TeamProfileAddLogoDetails)
 	return s
 }
 
+
 // TeamProfileAddLogoType : has no documentation (yet)
 type TeamProfileAddLogoType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamProfileAddLogoType returns a new TeamProfileAddLogoType instance
 func NewTeamProfileAddLogoType(Description string) *TeamProfileAddLogoType {
 	s := new(TeamProfileAddLogoType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamProfileChangeDefaultLanguageDetails : Changed default language for team.
 type TeamProfileChangeDefaultLanguageDetails struct {
@@ -18077,7 +18353,6 @@ type TeamProfileChangeDefaultLanguageDetails struct {
 	// PreviousValue : Previous team's default language.
 	PreviousValue string `json:"previous_value"`
 }
-
 // NewTeamProfileChangeDefaultLanguageDetails returns a new TeamProfileChangeDefaultLanguageDetails instance
 func NewTeamProfileChangeDefaultLanguageDetails(NewValue string, PreviousValue string) *TeamProfileChangeDefaultLanguageDetails {
 	s := new(TeamProfileChangeDefaultLanguageDetails)
@@ -18086,12 +18361,12 @@ func NewTeamProfileChangeDefaultLanguageDetails(NewValue string, PreviousValue s
 	return s
 }
 
+
 // TeamProfileChangeDefaultLanguageType : has no documentation (yet)
 type TeamProfileChangeDefaultLanguageType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamProfileChangeDefaultLanguageType returns a new TeamProfileChangeDefaultLanguageType instance
 func NewTeamProfileChangeDefaultLanguageType(Description string) *TeamProfileChangeDefaultLanguageType {
 	s := new(TeamProfileChangeDefaultLanguageType)
@@ -18099,23 +18374,23 @@ func NewTeamProfileChangeDefaultLanguageType(Description string) *TeamProfileCha
 	return s
 }
 
+
 // TeamProfileChangeLogoDetails : Changed team logo displayed on shared link
 // headers.
 type TeamProfileChangeLogoDetails struct {
 }
-
 // NewTeamProfileChangeLogoDetails returns a new TeamProfileChangeLogoDetails instance
 func NewTeamProfileChangeLogoDetails() *TeamProfileChangeLogoDetails {
 	s := new(TeamProfileChangeLogoDetails)
 	return s
 }
 
+
 // TeamProfileChangeLogoType : has no documentation (yet)
 type TeamProfileChangeLogoType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamProfileChangeLogoType returns a new TeamProfileChangeLogoType instance
 func NewTeamProfileChangeLogoType(Description string) *TeamProfileChangeLogoType {
 	s := new(TeamProfileChangeLogoType)
@@ -18123,15 +18398,15 @@ func NewTeamProfileChangeLogoType(Description string) *TeamProfileChangeLogoType
 	return s
 }
 
+
 // TeamProfileChangeNameDetails : Changed team name.
 type TeamProfileChangeNameDetails struct {
-	// PreviousValue : Previous teams name. Might be missing due to historical
-	// data gap.
+	// PreviousValue : Previous teams name. Might be missing due to historical data
+	// gap.
 	PreviousValue *TeamName `json:"previous_value,omitempty"`
 	// NewValue : New team name.
 	NewValue *TeamName `json:"new_value"`
 }
-
 // NewTeamProfileChangeNameDetails returns a new TeamProfileChangeNameDetails instance
 func NewTeamProfileChangeNameDetails(NewValue *TeamName) *TeamProfileChangeNameDetails {
 	s := new(TeamProfileChangeNameDetails)
@@ -18139,12 +18414,12 @@ func NewTeamProfileChangeNameDetails(NewValue *TeamName) *TeamProfileChangeNameD
 	return s
 }
 
+
 // TeamProfileChangeNameType : has no documentation (yet)
 type TeamProfileChangeNameType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamProfileChangeNameType returns a new TeamProfileChangeNameType instance
 func NewTeamProfileChangeNameType(Description string) *TeamProfileChangeNameType {
 	s := new(TeamProfileChangeNameType)
@@ -18152,29 +18427,30 @@ func NewTeamProfileChangeNameType(Description string) *TeamProfileChangeNameType
 	return s
 }
 
+
 // TeamProfileRemoveLogoDetails : Removed team logo displayed on shared link
 // headers.
 type TeamProfileRemoveLogoDetails struct {
 }
-
 // NewTeamProfileRemoveLogoDetails returns a new TeamProfileRemoveLogoDetails instance
 func NewTeamProfileRemoveLogoDetails() *TeamProfileRemoveLogoDetails {
 	s := new(TeamProfileRemoveLogoDetails)
 	return s
 }
 
+
 // TeamProfileRemoveLogoType : has no documentation (yet)
 type TeamProfileRemoveLogoType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamProfileRemoveLogoType returns a new TeamProfileRemoveLogoType instance
 func NewTeamProfileRemoveLogoType(Description string) *TeamProfileRemoveLogoType {
 	s := new(TeamProfileRemoveLogoType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamSelectiveSyncPolicy : Policy for controlling whether team selective sync
 // is enabled for team.
@@ -18185,8 +18461,8 @@ type TeamSelectiveSyncPolicy struct {
 // Valid tag values for TeamSelectiveSyncPolicy
 const (
 	TeamSelectiveSyncPolicyDisabled = "disabled"
-	TeamSelectiveSyncPolicyEnabled  = "enabled"
-	TeamSelectiveSyncPolicyOther    = "other"
+	TeamSelectiveSyncPolicyEnabled = "enabled"
+	TeamSelectiveSyncPolicyOther = "other"
 )
 
 // TeamSelectiveSyncPolicyChangedDetails : Enabled/disabled Team Selective Sync
@@ -18197,7 +18473,6 @@ type TeamSelectiveSyncPolicyChangedDetails struct {
 	// PreviousValue : Previous Team Selective Sync policy.
 	PreviousValue *TeamSelectiveSyncPolicy `json:"previous_value"`
 }
-
 // NewTeamSelectiveSyncPolicyChangedDetails returns a new TeamSelectiveSyncPolicyChangedDetails instance
 func NewTeamSelectiveSyncPolicyChangedDetails(NewValue *TeamSelectiveSyncPolicy, PreviousValue *TeamSelectiveSyncPolicy) *TeamSelectiveSyncPolicyChangedDetails {
 	s := new(TeamSelectiveSyncPolicyChangedDetails)
@@ -18206,18 +18481,19 @@ func NewTeamSelectiveSyncPolicyChangedDetails(NewValue *TeamSelectiveSyncPolicy,
 	return s
 }
 
+
 // TeamSelectiveSyncPolicyChangedType : has no documentation (yet)
 type TeamSelectiveSyncPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamSelectiveSyncPolicyChangedType returns a new TeamSelectiveSyncPolicyChangedType instance
 func NewTeamSelectiveSyncPolicyChangedType(Description string) *TeamSelectiveSyncPolicyChangedType {
 	s := new(TeamSelectiveSyncPolicyChangedType)
 	s.Description = Description
 	return s
 }
+
 
 // TeamSelectiveSyncSettingsChangedDetails : Changed sync default.
 type TeamSelectiveSyncSettingsChangedDetails struct {
@@ -18226,7 +18502,6 @@ type TeamSelectiveSyncSettingsChangedDetails struct {
 	// NewValue : New value.
 	NewValue *files.SyncSetting `json:"new_value"`
 }
-
 // NewTeamSelectiveSyncSettingsChangedDetails returns a new TeamSelectiveSyncSettingsChangedDetails instance
 func NewTeamSelectiveSyncSettingsChangedDetails(PreviousValue *files.SyncSetting, NewValue *files.SyncSetting) *TeamSelectiveSyncSettingsChangedDetails {
 	s := new(TeamSelectiveSyncSettingsChangedDetails)
@@ -18235,12 +18510,12 @@ func NewTeamSelectiveSyncSettingsChangedDetails(PreviousValue *files.SyncSetting
 	return s
 }
 
+
 // TeamSelectiveSyncSettingsChangedType : has no documentation (yet)
 type TeamSelectiveSyncSettingsChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTeamSelectiveSyncSettingsChangedType returns a new TeamSelectiveSyncSettingsChangedType instance
 func NewTeamSelectiveSyncSettingsChangedType(Description string) *TeamSelectiveSyncSettingsChangedType {
 	s := new(TeamSelectiveSyncSettingsChangedType)
@@ -18248,22 +18523,22 @@ func NewTeamSelectiveSyncSettingsChangedType(Description string) *TeamSelectiveS
 	return s
 }
 
+
 // TfaAddBackupPhoneDetails : Added backup phone for two-step verification.
 type TfaAddBackupPhoneDetails struct {
 }
-
 // NewTfaAddBackupPhoneDetails returns a new TfaAddBackupPhoneDetails instance
 func NewTfaAddBackupPhoneDetails() *TfaAddBackupPhoneDetails {
 	s := new(TfaAddBackupPhoneDetails)
 	return s
 }
 
+
 // TfaAddBackupPhoneType : has no documentation (yet)
 type TfaAddBackupPhoneType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaAddBackupPhoneType returns a new TfaAddBackupPhoneType instance
 func NewTfaAddBackupPhoneType(Description string) *TfaAddBackupPhoneType {
 	s := new(TfaAddBackupPhoneType)
@@ -18271,22 +18546,22 @@ func NewTfaAddBackupPhoneType(Description string) *TfaAddBackupPhoneType {
 	return s
 }
 
+
 // TfaAddSecurityKeyDetails : Added security key for two-step verification.
 type TfaAddSecurityKeyDetails struct {
 }
-
 // NewTfaAddSecurityKeyDetails returns a new TfaAddSecurityKeyDetails instance
 func NewTfaAddSecurityKeyDetails() *TfaAddSecurityKeyDetails {
 	s := new(TfaAddSecurityKeyDetails)
 	return s
 }
 
+
 // TfaAddSecurityKeyType : has no documentation (yet)
 type TfaAddSecurityKeyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaAddSecurityKeyType returns a new TfaAddSecurityKeyType instance
 func NewTfaAddSecurityKeyType(Description string) *TfaAddSecurityKeyType {
 	s := new(TfaAddSecurityKeyType)
@@ -18294,22 +18569,22 @@ func NewTfaAddSecurityKeyType(Description string) *TfaAddSecurityKeyType {
 	return s
 }
 
+
 // TfaChangeBackupPhoneDetails : Changed backup phone for two-step verification.
 type TfaChangeBackupPhoneDetails struct {
 }
-
 // NewTfaChangeBackupPhoneDetails returns a new TfaChangeBackupPhoneDetails instance
 func NewTfaChangeBackupPhoneDetails() *TfaChangeBackupPhoneDetails {
 	s := new(TfaChangeBackupPhoneDetails)
 	return s
 }
 
+
 // TfaChangeBackupPhoneType : has no documentation (yet)
 type TfaChangeBackupPhoneType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaChangeBackupPhoneType returns a new TfaChangeBackupPhoneType instance
 func NewTfaChangeBackupPhoneType(Description string) *TfaChangeBackupPhoneType {
 	s := new(TfaChangeBackupPhoneType)
@@ -18317,15 +18592,15 @@ func NewTfaChangeBackupPhoneType(Description string) *TfaChangeBackupPhoneType {
 	return s
 }
 
+
 // TfaChangePolicyDetails : Changed two-step verification setting for team.
 type TfaChangePolicyDetails struct {
 	// NewValue : New change policy.
 	NewValue *team_policies.TwoStepVerificationPolicy `json:"new_value"`
-	// PreviousValue : Previous change policy. Might be missing due to
-	// historical data gap.
+	// PreviousValue : Previous change policy. Might be missing due to historical
+	// data gap.
 	PreviousValue *team_policies.TwoStepVerificationPolicy `json:"previous_value,omitempty"`
 }
-
 // NewTfaChangePolicyDetails returns a new TfaChangePolicyDetails instance
 func NewTfaChangePolicyDetails(NewValue *team_policies.TwoStepVerificationPolicy) *TfaChangePolicyDetails {
 	s := new(TfaChangePolicyDetails)
@@ -18333,12 +18608,12 @@ func NewTfaChangePolicyDetails(NewValue *team_policies.TwoStepVerificationPolicy
 	return s
 }
 
+
 // TfaChangePolicyType : has no documentation (yet)
 type TfaChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaChangePolicyType returns a new TfaChangePolicyType instance
 func NewTfaChangePolicyType(Description string) *TfaChangePolicyType {
 	s := new(TfaChangePolicyType)
@@ -18346,19 +18621,19 @@ func NewTfaChangePolicyType(Description string) *TfaChangePolicyType {
 	return s
 }
 
+
 // TfaChangeStatusDetails : Enabled/disabled/changed two-step verification
 // setting.
 type TfaChangeStatusDetails struct {
 	// NewValue : The new two factor authentication configuration.
 	NewValue *TfaConfiguration `json:"new_value"`
-	// PreviousValue : The previous two factor authentication configuration.
-	// Might be missing due to historical data gap.
+	// PreviousValue : The previous two factor authentication configuration. Might
+	// be missing due to historical data gap.
 	PreviousValue *TfaConfiguration `json:"previous_value,omitempty"`
 	// UsedRescueCode : Used two factor authentication rescue code. This flag is
 	// relevant when the two factor authentication configuration is disabled.
 	UsedRescueCode bool `json:"used_rescue_code,omitempty"`
 }
-
 // NewTfaChangeStatusDetails returns a new TfaChangeStatusDetails instance
 func NewTfaChangeStatusDetails(NewValue *TfaConfiguration) *TfaChangeStatusDetails {
 	s := new(TfaChangeStatusDetails)
@@ -18366,18 +18641,19 @@ func NewTfaChangeStatusDetails(NewValue *TfaConfiguration) *TfaChangeStatusDetai
 	return s
 }
 
+
 // TfaChangeStatusType : has no documentation (yet)
 type TfaChangeStatusType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaChangeStatusType returns a new TfaChangeStatusType instance
 func NewTfaChangeStatusType(Description string) *TfaChangeStatusType {
 	s := new(TfaChangeStatusType)
 	s.Description = Description
 	return s
 }
+
 
 // TfaConfiguration : Two factor authentication configuration. Note: the enabled
 // option is deprecated.
@@ -18387,29 +18663,28 @@ type TfaConfiguration struct {
 
 // Valid tag values for TfaConfiguration
 const (
-	TfaConfigurationDisabled      = "disabled"
-	TfaConfigurationEnabled       = "enabled"
-	TfaConfigurationSms           = "sms"
+	TfaConfigurationDisabled = "disabled"
+	TfaConfigurationEnabled = "enabled"
+	TfaConfigurationSms = "sms"
 	TfaConfigurationAuthenticator = "authenticator"
-	TfaConfigurationOther         = "other"
+	TfaConfigurationOther = "other"
 )
 
 // TfaRemoveBackupPhoneDetails : Removed backup phone for two-step verification.
 type TfaRemoveBackupPhoneDetails struct {
 }
-
 // NewTfaRemoveBackupPhoneDetails returns a new TfaRemoveBackupPhoneDetails instance
 func NewTfaRemoveBackupPhoneDetails() *TfaRemoveBackupPhoneDetails {
 	s := new(TfaRemoveBackupPhoneDetails)
 	return s
 }
 
+
 // TfaRemoveBackupPhoneType : has no documentation (yet)
 type TfaRemoveBackupPhoneType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaRemoveBackupPhoneType returns a new TfaRemoveBackupPhoneType instance
 func NewTfaRemoveBackupPhoneType(Description string) *TfaRemoveBackupPhoneType {
 	s := new(TfaRemoveBackupPhoneType)
@@ -18417,22 +18692,22 @@ func NewTfaRemoveBackupPhoneType(Description string) *TfaRemoveBackupPhoneType {
 	return s
 }
 
+
 // TfaRemoveSecurityKeyDetails : Removed security key for two-step verification.
 type TfaRemoveSecurityKeyDetails struct {
 }
-
 // NewTfaRemoveSecurityKeyDetails returns a new TfaRemoveSecurityKeyDetails instance
 func NewTfaRemoveSecurityKeyDetails() *TfaRemoveSecurityKeyDetails {
 	s := new(TfaRemoveSecurityKeyDetails)
 	return s
 }
 
+
 // TfaRemoveSecurityKeyType : has no documentation (yet)
 type TfaRemoveSecurityKeyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaRemoveSecurityKeyType returns a new TfaRemoveSecurityKeyType instance
 func NewTfaRemoveSecurityKeyType(Description string) *TfaRemoveSecurityKeyType {
 	s := new(TfaRemoveSecurityKeyType)
@@ -18440,28 +18715,29 @@ func NewTfaRemoveSecurityKeyType(Description string) *TfaRemoveSecurityKeyType {
 	return s
 }
 
+
 // TfaResetDetails : Reset two-step verification for team member.
 type TfaResetDetails struct {
 }
-
 // NewTfaResetDetails returns a new TfaResetDetails instance
 func NewTfaResetDetails() *TfaResetDetails {
 	s := new(TfaResetDetails)
 	return s
 }
 
+
 // TfaResetType : has no documentation (yet)
 type TfaResetType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTfaResetType returns a new TfaResetType instance
 func NewTfaResetType(Description string) *TfaResetType {
 	s := new(TfaResetType)
 	s.Description = Description
 	return s
 }
+
 
 // TimeUnit : has no documentation (yet)
 type TimeUnit struct {
@@ -18471,31 +18747,31 @@ type TimeUnit struct {
 // Valid tag values for TimeUnit
 const (
 	TimeUnitMilliseconds = "milliseconds"
-	TimeUnitSeconds      = "seconds"
-	TimeUnitMinutes      = "minutes"
-	TimeUnitHours        = "hours"
-	TimeUnitDays         = "days"
-	TimeUnitWeeks        = "weeks"
-	TimeUnitMonths       = "months"
-	TimeUnitYears        = "years"
-	TimeUnitOther        = "other"
+	TimeUnitSeconds = "seconds"
+	TimeUnitMinutes = "minutes"
+	TimeUnitHours = "hours"
+	TimeUnitDays = "days"
+	TimeUnitWeeks = "weeks"
+	TimeUnitMonths = "months"
+	TimeUnitYears = "years"
+	TimeUnitOther = "other"
 )
 
 // TrustedNonTeamMemberLogInfo : User that is not a member of the team but
 // considered trusted.
 type TrustedNonTeamMemberLogInfo struct {
 	UserLogInfo
-	// TrustedNonTeamMemberType : Indicates the type of the trusted non team
-	// member user.
+	// TrustedNonTeamMemberType : Indicates the type of the trusted non team member
+	// user.
 	TrustedNonTeamMemberType *TrustedNonTeamMemberType `json:"trusted_non_team_member_type"`
 }
-
 // NewTrustedNonTeamMemberLogInfo returns a new TrustedNonTeamMemberLogInfo instance
 func NewTrustedNonTeamMemberLogInfo(TrustedNonTeamMemberType *TrustedNonTeamMemberType) *TrustedNonTeamMemberLogInfo {
 	s := new(TrustedNonTeamMemberLogInfo)
 	s.TrustedNonTeamMemberType = TrustedNonTeamMemberType
 	return s
 }
+
 
 // TrustedNonTeamMemberType : has no documentation (yet)
 type TrustedNonTeamMemberType struct {
@@ -18505,7 +18781,7 @@ type TrustedNonTeamMemberType struct {
 // Valid tag values for TrustedNonTeamMemberType
 const (
 	TrustedNonTeamMemberTypeMultiInstanceAdmin = "multi_instance_admin"
-	TrustedNonTeamMemberTypeOther              = "other"
+	TrustedNonTeamMemberTypeOther = "other"
 )
 
 // TrustedTeamsRequestAction : has no documentation (yet)
@@ -18515,12 +18791,12 @@ type TrustedTeamsRequestAction struct {
 
 // Valid tag values for TrustedTeamsRequestAction
 const (
-	TrustedTeamsRequestActionInvited  = "invited"
-	TrustedTeamsRequestActionExpired  = "expired"
-	TrustedTeamsRequestActionRevoked  = "revoked"
+	TrustedTeamsRequestActionInvited = "invited"
+	TrustedTeamsRequestActionExpired = "expired"
+	TrustedTeamsRequestActionRevoked = "revoked"
 	TrustedTeamsRequestActionAccepted = "accepted"
 	TrustedTeamsRequestActionDeclined = "declined"
-	TrustedTeamsRequestActionOther    = "other"
+	TrustedTeamsRequestActionOther = "other"
 )
 
 // TrustedTeamsRequestState : has no documentation (yet)
@@ -18530,10 +18806,10 @@ type TrustedTeamsRequestState struct {
 
 // Valid tag values for TrustedTeamsRequestState
 const (
-	TrustedTeamsRequestStateInvited  = "invited"
-	TrustedTeamsRequestStateLinked   = "linked"
+	TrustedTeamsRequestStateInvited = "invited"
+	TrustedTeamsRequestStateLinked = "linked"
 	TrustedTeamsRequestStateUnlinked = "unlinked"
-	TrustedTeamsRequestStateOther    = "other"
+	TrustedTeamsRequestStateOther = "other"
 )
 
 // TwoAccountChangePolicyDetails : Enabled/disabled option for members to link
@@ -18545,7 +18821,6 @@ type TwoAccountChangePolicyDetails struct {
 	// historical data gap.
 	PreviousValue *TwoAccountPolicy `json:"previous_value,omitempty"`
 }
-
 // NewTwoAccountChangePolicyDetails returns a new TwoAccountChangePolicyDetails instance
 func NewTwoAccountChangePolicyDetails(NewValue *TwoAccountPolicy) *TwoAccountChangePolicyDetails {
 	s := new(TwoAccountChangePolicyDetails)
@@ -18553,18 +18828,19 @@ func NewTwoAccountChangePolicyDetails(NewValue *TwoAccountPolicy) *TwoAccountCha
 	return s
 }
 
+
 // TwoAccountChangePolicyType : has no documentation (yet)
 type TwoAccountChangePolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewTwoAccountChangePolicyType returns a new TwoAccountChangePolicyType instance
 func NewTwoAccountChangePolicyType(Description string) *TwoAccountChangePolicyType {
 	s := new(TwoAccountChangePolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // TwoAccountPolicy : Policy for pairing personal account to work account
 type TwoAccountPolicy struct {
@@ -18574,20 +18850,20 @@ type TwoAccountPolicy struct {
 // Valid tag values for TwoAccountPolicy
 const (
 	TwoAccountPolicyDisabled = "disabled"
-	TwoAccountPolicyEnabled  = "enabled"
-	TwoAccountPolicyOther    = "other"
+	TwoAccountPolicyEnabled = "enabled"
+	TwoAccountPolicyOther = "other"
 )
 
 // UserLinkedAppLogInfo : User linked app
 type UserLinkedAppLogInfo struct {
 	AppLogInfo
 }
-
 // NewUserLinkedAppLogInfo returns a new UserLinkedAppLogInfo instance
 func NewUserLinkedAppLogInfo() *UserLinkedAppLogInfo {
 	s := new(UserLinkedAppLogInfo)
 	return s
 }
+
 
 // UserNameLogInfo : User's name logged information
 type UserNameLogInfo struct {
@@ -18598,7 +18874,6 @@ type UserNameLogInfo struct {
 	// Locale : Locale. Might be missing due to historical data gap.
 	Locale string `json:"locale,omitempty"`
 }
-
 // NewUserNameLogInfo returns a new UserNameLogInfo instance
 func NewUserNameLogInfo(GivenName string, Surname string) *UserNameLogInfo {
 	s := new(UserNameLogInfo)
@@ -18607,17 +18882,18 @@ func NewUserNameLogInfo(GivenName string, Surname string) *UserNameLogInfo {
 	return s
 }
 
+
 // UserOrTeamLinkedAppLogInfo : User or team linked app. Used when linked type
 // is missing due to historical data gap.
 type UserOrTeamLinkedAppLogInfo struct {
 	AppLogInfo
 }
-
 // NewUserOrTeamLinkedAppLogInfo returns a new UserOrTeamLinkedAppLogInfo instance
 func NewUserOrTeamLinkedAppLogInfo() *UserOrTeamLinkedAppLogInfo {
 	s := new(UserOrTeamLinkedAppLogInfo)
 	return s
 }
+
 
 // ViewerInfoPolicyChangedDetails : Changed team policy for viewer info.
 type ViewerInfoPolicyChangedDetails struct {
@@ -18626,7 +18902,6 @@ type ViewerInfoPolicyChangedDetails struct {
 	// NewValue : New Viewer Info policy.
 	NewValue *PassPolicy `json:"new_value"`
 }
-
 // NewViewerInfoPolicyChangedDetails returns a new ViewerInfoPolicyChangedDetails instance
 func NewViewerInfoPolicyChangedDetails(PreviousValue *PassPolicy, NewValue *PassPolicy) *ViewerInfoPolicyChangedDetails {
 	s := new(ViewerInfoPolicyChangedDetails)
@@ -18635,12 +18910,12 @@ func NewViewerInfoPolicyChangedDetails(PreviousValue *PassPolicy, NewValue *Pass
 	return s
 }
 
+
 // ViewerInfoPolicyChangedType : has no documentation (yet)
 type ViewerInfoPolicyChangedType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewViewerInfoPolicyChangedType returns a new ViewerInfoPolicyChangedType instance
 func NewViewerInfoPolicyChangedType(Description string) *ViewerInfoPolicyChangedType {
 	s := new(ViewerInfoPolicyChangedType)
@@ -18648,11 +18923,12 @@ func NewViewerInfoPolicyChangedType(Description string) *ViewerInfoPolicyChanged
 	return s
 }
 
+
 // WebDeviceSessionLogInfo : Information on active web sessions
 type WebDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Web session unique id. Might be missing due to historical
-	// data gap.
+	// SessionInfo : Web session unique id. Might be missing due to historical data
+	// gap.
 	SessionInfo *WebSessionLogInfo `json:"session_info,omitempty"`
 	// UserAgent : Information on the hosting device.
 	UserAgent string `json:"user_agent"`
@@ -18661,7 +18937,6 @@ type WebDeviceSessionLogInfo struct {
 	// Browser : Information on the browser used for this web session.
 	Browser string `json:"browser"`
 }
-
 // NewWebDeviceSessionLogInfo returns a new WebDeviceSessionLogInfo instance
 func NewWebDeviceSessionLogInfo(UserAgent string, Os string, Browser string) *WebDeviceSessionLogInfo {
 	s := new(WebDeviceSessionLogInfo)
@@ -18671,16 +18946,17 @@ func NewWebDeviceSessionLogInfo(UserAgent string, Os string, Browser string) *We
 	return s
 }
 
+
 // WebSessionLogInfo : Web session.
 type WebSessionLogInfo struct {
 	SessionLogInfo
 }
-
 // NewWebSessionLogInfo returns a new WebSessionLogInfo instance
 func NewWebSessionLogInfo() *WebSessionLogInfo {
 	s := new(WebSessionLogInfo)
 	return s
 }
+
 
 // WebSessionsChangeFixedLengthPolicyDetails : Changed how long members can stay
 // signed in to Dropbox.com.
@@ -18692,19 +18968,18 @@ type WebSessionsChangeFixedLengthPolicyDetails struct {
 	// historical data gap.
 	PreviousValue *WebSessionsFixedLengthPolicy `json:"previous_value,omitempty"`
 }
-
 // NewWebSessionsChangeFixedLengthPolicyDetails returns a new WebSessionsChangeFixedLengthPolicyDetails instance
 func NewWebSessionsChangeFixedLengthPolicyDetails() *WebSessionsChangeFixedLengthPolicyDetails {
 	s := new(WebSessionsChangeFixedLengthPolicyDetails)
 	return s
 }
 
+
 // WebSessionsChangeFixedLengthPolicyType : has no documentation (yet)
 type WebSessionsChangeFixedLengthPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewWebSessionsChangeFixedLengthPolicyType returns a new WebSessionsChangeFixedLengthPolicyType instance
 func NewWebSessionsChangeFixedLengthPolicyType(Description string) *WebSessionsChangeFixedLengthPolicyType {
 	s := new(WebSessionsChangeFixedLengthPolicyType)
@@ -18712,35 +18987,36 @@ func NewWebSessionsChangeFixedLengthPolicyType(Description string) *WebSessionsC
 	return s
 }
 
+
 // WebSessionsChangeIdleLengthPolicyDetails : Changed how long team members can
 // be idle while signed in to Dropbox.com.
 type WebSessionsChangeIdleLengthPolicyDetails struct {
-	// NewValue : New idle length policy. Might be missing due to historical
-	// data gap.
+	// NewValue : New idle length policy. Might be missing due to historical data
+	// gap.
 	NewValue *WebSessionsIdleLengthPolicy `json:"new_value,omitempty"`
 	// PreviousValue : Previous idle length policy. Might be missing due to
 	// historical data gap.
 	PreviousValue *WebSessionsIdleLengthPolicy `json:"previous_value,omitempty"`
 }
-
 // NewWebSessionsChangeIdleLengthPolicyDetails returns a new WebSessionsChangeIdleLengthPolicyDetails instance
 func NewWebSessionsChangeIdleLengthPolicyDetails() *WebSessionsChangeIdleLengthPolicyDetails {
 	s := new(WebSessionsChangeIdleLengthPolicyDetails)
 	return s
 }
 
+
 // WebSessionsChangeIdleLengthPolicyType : has no documentation (yet)
 type WebSessionsChangeIdleLengthPolicyType struct {
 	// Description : has no documentation (yet)
 	Description string `json:"description"`
 }
-
 // NewWebSessionsChangeIdleLengthPolicyType returns a new WebSessionsChangeIdleLengthPolicyType instance
 func NewWebSessionsChangeIdleLengthPolicyType(Description string) *WebSessionsChangeIdleLengthPolicyType {
 	s := new(WebSessionsChangeIdleLengthPolicyType)
 	s.Description = Description
 	return s
 }
+
 
 // WebSessionsFixedLengthPolicy : Web sessions fixed length policy.
 type WebSessionsFixedLengthPolicy struct {
@@ -18751,9 +19027,9 @@ type WebSessionsFixedLengthPolicy struct {
 
 // Valid tag values for WebSessionsFixedLengthPolicy
 const (
-	WebSessionsFixedLengthPolicyDefined   = "defined"
+	WebSessionsFixedLengthPolicyDefined = "defined"
 	WebSessionsFixedLengthPolicyUndefined = "undefined"
-	WebSessionsFixedLengthPolicyOther     = "other"
+	WebSessionsFixedLengthPolicyOther = "other"
 )
 
 // UnmarshalJSON deserializes into a WebSessionsFixedLengthPolicy instance
@@ -18768,8 +19044,8 @@ func (u *WebSessionsFixedLengthPolicy) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "defined":
-		err = json.Unmarshal(body, &u.Defined)
+		case "defined":
+			err = json.Unmarshal(body, &u.Defined)
 
 		if err != nil {
 			return err
@@ -18787,9 +19063,9 @@ type WebSessionsIdleLengthPolicy struct {
 
 // Valid tag values for WebSessionsIdleLengthPolicy
 const (
-	WebSessionsIdleLengthPolicyDefined   = "defined"
+	WebSessionsIdleLengthPolicyDefined = "defined"
 	WebSessionsIdleLengthPolicyUndefined = "undefined"
-	WebSessionsIdleLengthPolicyOther     = "other"
+	WebSessionsIdleLengthPolicyOther = "other"
 )
 
 // UnmarshalJSON deserializes into a WebSessionsIdleLengthPolicy instance
@@ -18804,8 +19080,8 @@ func (u *WebSessionsIdleLengthPolicy) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "defined":
-		err = json.Unmarshal(body, &u.Defined)
+		case "defined":
+			err = json.Unmarshal(body, &u.Defined)
 
 		if err != nil {
 			return err
@@ -18813,3 +19089,4 @@ func (u *WebSessionsIdleLengthPolicy) UnmarshalJSON(body []byte) error {
 	}
 	return nil
 }
+

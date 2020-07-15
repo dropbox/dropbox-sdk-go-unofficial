@@ -8,5 +8,5 @@
 # emacs backups
 *~
 
-.pyc
+*.pyc
 __pycache__

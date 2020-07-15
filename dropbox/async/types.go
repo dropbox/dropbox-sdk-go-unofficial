@@ -22,9 +22,8 @@
 package async
 
 import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 )
 
 // LaunchResultBase : Result returned by methods that launch an asynchronous
@@ -49,9 +48,9 @@ const (
 func (u *LaunchResultBase) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -61,8 +60,8 @@ func (u *LaunchResultBase) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -85,16 +84,16 @@ type LaunchEmptyResult struct {
 // Valid tag values for LaunchEmptyResult
 const (
 	LaunchEmptyResultAsyncJobId = "async_job_id"
-	LaunchEmptyResultComplete   = "complete"
+	LaunchEmptyResultComplete = "complete"
 )
 
 // UnmarshalJSON deserializes into a LaunchEmptyResult instance
 func (u *LaunchEmptyResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -104,8 +103,8 @@ func (u *LaunchEmptyResult) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
@@ -120,13 +119,13 @@ type PollArg struct {
 	// returned from the method that launched the job.
 	AsyncJobId string `json:"async_job_id"`
 }
-
 // NewPollArg returns a new PollArg instance
 func NewPollArg(AsyncJobId string) *PollArg {
 	s := new(PollArg)
 	s.AsyncJobId = AsyncJobId
 	return s
 }
+
 
 // PollResultBase : Result returned by methods that poll for the status of an
 // asynchronous job. Unions that extend this union should add a 'complete' field
@@ -151,7 +150,7 @@ type PollEmptyResult struct {
 // Valid tag values for PollEmptyResult
 const (
 	PollEmptyResultInProgress = "in_progress"
-	PollEmptyResultComplete   = "complete"
+	PollEmptyResultComplete = "complete"
 )
 
 // PollError : Error returned by methods for polling the status of asynchronous
@@ -163,6 +162,7 @@ type PollError struct {
 // Valid tag values for PollError
 const (
 	PollErrorInvalidAsyncJobId = "invalid_async_job_id"
-	PollErrorInternalError     = "internal_error"
-	PollErrorOther             = "other"
+	PollErrorInternalError = "internal_error"
+	PollErrorOther = "other"
 )
+

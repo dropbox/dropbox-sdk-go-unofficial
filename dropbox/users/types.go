@@ -23,13 +23,12 @@
 package users
 
 import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users_common"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	common "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/common"
+	team_common "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
+	team_policies "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
+	users_common "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users_common"
 )
 
 // Account : The amount of detail revealed about an account depends on the user
@@ -39,9 +38,9 @@ type Account struct {
 	AccountId string `json:"account_id"`
 	// Name : Details of a user's name.
 	Name *Name `json:"name"`
-	// Email : The user's e-mail address. Do not rely on this without checking
-	// the `email_verified` field. Even then, it's possible that the user has
-	// since lost access to their e-mail.
+	// Email : The user's e-mail address. Do not rely on this without checking the
+	// `email_verified` field. Even then, it's possible that the user has since
+	// lost access to their e-mail.
 	Email string `json:"email"`
 	// EmailVerified : Whether the user has verified their e-mail address.
 	EmailVerified bool `json:"email_verified"`
@@ -50,7 +49,6 @@ type Account struct {
 	// Disabled : Whether the user has been disabled.
 	Disabled bool `json:"disabled"`
 }
-
 // NewAccount returns a new Account instance
 func NewAccount(AccountId string, Name *Name, Email string, EmailVerified bool, Disabled bool) *Account {
 	s := new(Account)
@@ -62,6 +60,7 @@ func NewAccount(AccountId string, Name *Name, Email string, EmailVerified bool, 
 	return s
 }
 
+
 // BasicAccount : Basic information about any account.
 type BasicAccount struct {
 	Account
@@ -72,7 +71,6 @@ type BasicAccount struct {
 	// present if the user is part of a team and `is_teammate` is true.
 	TeamMemberId string `json:"team_member_id,omitempty"`
 }
-
 // NewBasicAccount returns a new BasicAccount instance
 func NewBasicAccount(AccountId string, Name *Name, Email string, EmailVerified bool, Disabled bool, IsTeammate bool) *BasicAccount {
 	s := new(BasicAccount)
@@ -84,6 +82,7 @@ func NewBasicAccount(AccountId string, Name *Name, Email string, EmailVerified b
 	s.IsTeammate = IsTeammate
 	return s
 }
+
 
 // FullAccount : Detailed information about the current user's account.
 type FullAccount struct {
@@ -97,22 +96,20 @@ type FullAccount struct {
 	// ReferralLink : The user's `referral link`
 	// <https://www.dropbox.com/referrals>.
 	ReferralLink string `json:"referral_link"`
-	// Team : If this account is a member of a team, information about that
-	// team.
+	// Team : If this account is a member of a team, information about that team.
 	Team *FullTeam `json:"team,omitempty"`
-	// TeamMemberId : This account's unique team member id. This field will only
-	// be present if `team` is present.
+	// TeamMemberId : This account's unique team member id. This field will only be
+	// present if `team` is present.
 	TeamMemberId string `json:"team_member_id,omitempty"`
-	// IsPaired : Whether the user has a personal and work account. If the
-	// current account is personal, then `team` will always be nil, but
-	// `is_paired` will indicate if a work account is linked.
+	// IsPaired : Whether the user has a personal and work account. If the current
+	// account is personal, then `team` will always be nil, but `is_paired` will
+	// indicate if a work account is linked.
 	IsPaired bool `json:"is_paired"`
 	// AccountType : What type of account this user has.
 	AccountType *users_common.AccountType `json:"account_type"`
 	// RootInfo : The root info for this account.
 	RootInfo common.IsRootInfo `json:"root_info"`
 }
-
 // NewFullAccount returns a new FullAccount instance
 func NewFullAccount(AccountId string, Name *Name, Email string, EmailVerified bool, Disabled bool, Locale string, ReferralLink string, IsPaired bool, AccountType *users_common.AccountType, RootInfo common.IsRootInfo) *FullAccount {
 	s := new(FullAccount)
@@ -129,6 +126,7 @@ func NewFullAccount(AccountId string, Name *Name, Email string, EmailVerified bo
 	return s
 }
 
+
 // UnmarshalJSON deserializes into a FullAccount instance
 func (u *FullAccount) UnmarshalJSON(b []byte) error {
 	type wrap struct {
@@ -136,41 +134,37 @@ func (u *FullAccount) UnmarshalJSON(b []byte) error {
 		AccountId string `json:"account_id"`
 		// Name : Details of a user's name.
 		Name *Name `json:"name"`
-		// Email : The user's e-mail address. Do not rely on this without
-		// checking the `email_verified` field. Even then, it's possible that
-		// the user has since lost access to their e-mail.
+		// Email : The user's e-mail address. Do not rely on this without checking the
+		// `email_verified` field. Even then, it's possible that the user has since
+		// lost access to their e-mail.
 		Email string `json:"email"`
 		// EmailVerified : Whether the user has verified their e-mail address.
 		EmailVerified bool `json:"email_verified"`
 		// Disabled : Whether the user has been disabled.
 		Disabled bool `json:"disabled"`
-		// Locale : The language that the user specified. Locale tags will be
-		// `IETF language tags`
-		// <http://en.wikipedia.org/wiki/IETF_language_tag>.
+		// Locale : The language that the user specified. Locale tags will be `IETF
+		// language tags` <http://en.wikipedia.org/wiki/IETF_language_tag>.
 		Locale string `json:"locale"`
 		// ReferralLink : The user's `referral link`
 		// <https://www.dropbox.com/referrals>.
 		ReferralLink string `json:"referral_link"`
-		// IsPaired : Whether the user has a personal and work account. If the
-		// current account is personal, then `team` will always be nil, but
-		// `is_paired` will indicate if a work account is linked.
+		// IsPaired : Whether the user has a personal and work account. If the current
+		// account is personal, then `team` will always be nil, but `is_paired` will
+		// indicate if a work account is linked.
 		IsPaired bool `json:"is_paired"`
 		// AccountType : What type of account this user has.
 		AccountType *users_common.AccountType `json:"account_type"`
 		// RootInfo : The root info for this account.
 		RootInfo json.RawMessage `json:"root_info"`
-		// ProfilePhotoUrl : URL for the photo representing the user, if one is
-		// set.
+		// ProfilePhotoUrl : URL for the photo representing the user, if one is set.
 		ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
-		// Country : The user's two-letter country code, if available. Country
-		// codes are based on `ISO 3166-1`
-		// <http://en.wikipedia.org/wiki/ISO_3166-1>.
+		// Country : The user's two-letter country code, if available. Country codes
+		// are based on `ISO 3166-1` <http://en.wikipedia.org/wiki/ISO_3166-1>.
 		Country string `json:"country,omitempty"`
-		// Team : If this account is a member of a team, information about that
-		// team.
+		// Team : If this account is a member of a team, information about that team.
 		Team *FullTeam `json:"team,omitempty"`
-		// TeamMemberId : This account's unique team member id. This field will
-		// only be present if `team` is present.
+		// TeamMemberId : This account's unique team member id. This field will only
+		// be present if `team` is present.
 		TeamMemberId string `json:"team_member_id,omitempty"`
 	}
 	var w wrap
@@ -197,7 +191,6 @@ func (u *FullAccount) UnmarshalJSON(b []byte) error {
 	u.TeamMemberId = w.TeamMemberId
 	return nil
 }
-
 // Team : Information about a team.
 type Team struct {
 	// Id : The team's unique ID.
@@ -205,7 +198,6 @@ type Team struct {
 	// Name : The name of the team.
 	Name string `json:"name"`
 }
-
 // NewTeam returns a new Team instance
 func NewTeam(Id string, Name string) *Team {
 	s := new(Team)
@@ -213,6 +205,7 @@ func NewTeam(Id string, Name string) *Team {
 	s.Name = Name
 	return s
 }
+
 
 // FullTeam : Detailed information about a team.
 type FullTeam struct {
@@ -222,7 +215,6 @@ type FullTeam struct {
 	// OfficeAddinPolicy : Team policy governing the use of the Office Add-In.
 	OfficeAddinPolicy *team_policies.OfficeAddInPolicy `json:"office_addin_policy"`
 }
-
 // NewFullTeam returns a new FullTeam instance
 func NewFullTeam(Id string, Name string, SharingPolicies *team_policies.TeamSharingPolicies, OfficeAddinPolicy *team_policies.OfficeAddInPolicy) *FullTeam {
 	s := new(FullTeam)
@@ -233,12 +225,12 @@ func NewFullTeam(Id string, Name string, SharingPolicies *team_policies.TeamShar
 	return s
 }
 
+
 // GetAccountArg : has no documentation (yet)
 type GetAccountArg struct {
 	// AccountId : A user's account identifier.
 	AccountId string `json:"account_id"`
 }
-
 // NewGetAccountArg returns a new GetAccountArg instance
 func NewGetAccountArg(AccountId string) *GetAccountArg {
 	s := new(GetAccountArg)
@@ -246,19 +238,20 @@ func NewGetAccountArg(AccountId string) *GetAccountArg {
 	return s
 }
 
+
 // GetAccountBatchArg : has no documentation (yet)
 type GetAccountBatchArg struct {
 	// AccountIds : List of user account identifiers.  Should not contain any
 	// duplicate account IDs.
 	AccountIds []string `json:"account_ids"`
 }
-
 // NewGetAccountBatchArg returns a new GetAccountBatchArg instance
 func NewGetAccountBatchArg(AccountIds []string) *GetAccountBatchArg {
 	s := new(GetAccountBatchArg)
 	s.AccountIds = AccountIds
 	return s
 }
+
 
 // GetAccountBatchError : has no documentation (yet)
 type GetAccountBatchError struct {
@@ -271,7 +264,7 @@ type GetAccountBatchError struct {
 // Valid tag values for GetAccountBatchError
 const (
 	GetAccountBatchErrorNoAccount = "no_account"
-	GetAccountBatchErrorOther     = "other"
+	GetAccountBatchErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a GetAccountBatchError instance
@@ -289,8 +282,8 @@ func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "no_account":
-		u.NoAccount = w.NoAccount
+		case "no_account":
+			u.NoAccount = w.NoAccount
 
 		if err != nil {
 			return err
@@ -307,7 +300,7 @@ type GetAccountError struct {
 // Valid tag values for GetAccountError
 const (
 	GetAccountErrorNoAccount = "no_account"
-	GetAccountErrorOther     = "other"
+	GetAccountErrorOther = "other"
 )
 
 // IndividualSpaceAllocation : has no documentation (yet)
@@ -315,13 +308,13 @@ type IndividualSpaceAllocation struct {
 	// Allocated : The total space allocated to the user's account (bytes).
 	Allocated uint64 `json:"allocated"`
 }
-
 // NewIndividualSpaceAllocation returns a new IndividualSpaceAllocation instance
 func NewIndividualSpaceAllocation(Allocated uint64) *IndividualSpaceAllocation {
 	s := new(IndividualSpaceAllocation)
 	s.Allocated = Allocated
 	return s
 }
+
 
 // Name : Representations for a person's name to assist with
 // internationalization.
@@ -330,18 +323,17 @@ type Name struct {
 	GivenName string `json:"given_name"`
 	// Surname : Also known as a last name or family name.
 	Surname string `json:"surname"`
-	// FamiliarName : Locale-dependent name. In the US, a person's familiar name
-	// is their `given_name`, but elsewhere, it could be any combination of a
-	// person's `given_name` and `surname`.
+	// FamiliarName : Locale-dependent name. In the US, a person's familiar name is
+	// their `given_name`, but elsewhere, it could be any combination of a person's
+	// `given_name` and `surname`.
 	FamiliarName string `json:"familiar_name"`
 	// DisplayName : A name that can be used directly to represent the name of a
 	// user's Dropbox account.
 	DisplayName string `json:"display_name"`
-	// AbbreviatedName : An abbreviated form of the person's name. Their
-	// initials in most locales.
+	// AbbreviatedName : An abbreviated form of the person's name. Their initials
+	// in most locales.
 	AbbreviatedName string `json:"abbreviated_name"`
 }
-
 // NewName returns a new Name instance
 func NewName(GivenName string, Surname string, FamiliarName string, DisplayName string, AbbreviatedName string) *Name {
 	s := new(Name)
@@ -352,6 +344,7 @@ func NewName(GivenName string, Surname string, FamiliarName string, DisplayName 
 	s.AbbreviatedName = AbbreviatedName
 	return s
 }
+
 
 // SpaceAllocation : Space is allocated differently based on the type of
 // account.
@@ -367,8 +360,8 @@ type SpaceAllocation struct {
 // Valid tag values for SpaceAllocation
 const (
 	SpaceAllocationIndividual = "individual"
-	SpaceAllocationTeam       = "team"
-	SpaceAllocationOther      = "other"
+	SpaceAllocationTeam = "team"
+	SpaceAllocationOther = "other"
 )
 
 // UnmarshalJSON deserializes into a SpaceAllocation instance
@@ -383,14 +376,14 @@ func (u *SpaceAllocation) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "individual":
-		err = json.Unmarshal(body, &u.Individual)
+		case "individual":
+			err = json.Unmarshal(body, &u.Individual)
 
 		if err != nil {
 			return err
 		}
-	case "team":
-		err = json.Unmarshal(body, &u.Team)
+		case "team":
+			err = json.Unmarshal(body, &u.Team)
 
 		if err != nil {
 			return err
@@ -406,7 +399,6 @@ type SpaceUsage struct {
 	// Allocation : The user's space allocation.
 	Allocation *SpaceAllocation `json:"allocation"`
 }
-
 // NewSpaceUsage returns a new SpaceUsage instance
 func NewSpaceUsage(Used uint64, Allocation *SpaceAllocation) *SpaceUsage {
 	s := new(SpaceUsage)
@@ -415,21 +407,21 @@ func NewSpaceUsage(Used uint64, Allocation *SpaceAllocation) *SpaceUsage {
 	return s
 }
 
+
 // TeamSpaceAllocation : has no documentation (yet)
 type TeamSpaceAllocation struct {
 	// Used : The total space currently used by the user's team (bytes).
 	Used uint64 `json:"used"`
 	// Allocated : The total space allocated to the user's team (bytes).
 	Allocated uint64 `json:"allocated"`
-	// UserWithinTeamSpaceAllocated : The total space allocated to the user
-	// within its team allocated space (0 means that no restriction is imposed
-	// on the user's quota within its team).
+	// UserWithinTeamSpaceAllocated : The total space allocated to the user within
+	// its team allocated space (0 means that no restriction is imposed on the
+	// user's quota within its team).
 	UserWithinTeamSpaceAllocated uint64 `json:"user_within_team_space_allocated"`
 	// UserWithinTeamSpaceLimitType : The type of the space limit imposed on the
 	// team member (off, alert_only, stop_sync).
 	UserWithinTeamSpaceLimitType *team_common.MemberSpaceLimitType `json:"user_within_team_space_limit_type"`
 }
-
 // NewTeamSpaceAllocation returns a new TeamSpaceAllocation instance
 func NewTeamSpaceAllocation(Used uint64, Allocated uint64, UserWithinTeamSpaceAllocated uint64, UserWithinTeamSpaceLimitType *team_common.MemberSpaceLimitType) *TeamSpaceAllocation {
 	s := new(TeamSpaceAllocation)
@@ -439,3 +431,5 @@ func NewTeamSpaceAllocation(Used uint64, Allocated uint64, UserWithinTeamSpaceAl
 	s.UserWithinTeamSpaceLimitType = UserWithinTeamSpaceLimitType
 	return s
 }
+
+

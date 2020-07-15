@@ -23,33 +23,30 @@
 package files
 
 import (
-	"encoding/json"
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/file_properties"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	file_properties "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/file_properties"
+	time "time"
 )
 
 // GetMetadataArg : has no documentation (yet)
 type GetMetadataArg struct {
 	// Path : The path of a file or folder on Dropbox.
 	Path string `json:"path"`
-	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo
-	// and video.
+	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo and
+	// video.
 	IncludeMediaInfo bool `json:"include_media_info"`
 	// IncludeDeleted : If true, `DeletedMetadata` will be returned for deleted
 	// file or folder, otherwise `LookupError.not_found` will be returned.
 	IncludeDeleted bool `json:"include_deleted"`
-	// IncludeHasExplicitSharedMembers : If true, the results will include a
-	// flag for each file indicating whether or not  that file has any explicit
-	// members.
+	// IncludeHasExplicitSharedMembers : If true, the results will include a flag
+	// for each file indicating whether or not  that file has any explicit members.
 	IncludeHasExplicitSharedMembers bool `json:"include_has_explicit_shared_members"`
 	// IncludePropertyGroups : If set to a valid list of template IDs,
 	// `FileMetadata.property_groups` is set if there exists property data
 	// associated with the file and each of the listed templates.
 	IncludePropertyGroups *file_properties.TemplateFilterBase `json:"include_property_groups,omitempty"`
 }
-
 // NewGetMetadataArg returns a new GetMetadataArg instance
 func NewGetMetadataArg(Path string) *GetMetadataArg {
 	s := new(GetMetadataArg)
@@ -60,6 +57,7 @@ func NewGetMetadataArg(Path string) *GetMetadataArg {
 	return s
 }
 
+
 // AlphaGetMetadataArg : has no documentation (yet)
 type AlphaGetMetadataArg struct {
 	GetMetadataArg
@@ -67,7 +65,6 @@ type AlphaGetMetadataArg struct {
 	// `FileMetadata.property_groups` is set for files with custom properties.
 	IncludePropertyTemplates []string `json:"include_property_templates,omitempty"`
 }
-
 // NewAlphaGetMetadataArg returns a new AlphaGetMetadataArg instance
 func NewAlphaGetMetadataArg(Path string) *AlphaGetMetadataArg {
 	s := new(AlphaGetMetadataArg)
@@ -77,6 +74,7 @@ func NewAlphaGetMetadataArg(Path string) *AlphaGetMetadataArg {
 	s.IncludeHasExplicitSharedMembers = false
 	return s
 }
+
 
 // GetMetadataError : has no documentation (yet)
 type GetMetadataError struct {
@@ -104,8 +102,8 @@ func (u *GetMetadataError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -125,7 +123,7 @@ type AlphaGetMetadataError struct {
 
 // Valid tag values for AlphaGetMetadataError
 const (
-	AlphaGetMetadataErrorPath            = "path"
+	AlphaGetMetadataErrorPath = "path"
 	AlphaGetMetadataErrorPropertiesError = "properties_error"
 )
 
@@ -145,14 +143,14 @@ func (u *AlphaGetMetadataError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
-	case "properties_error":
-		u.PropertiesError = w.PropertiesError
+		case "properties_error":
+			u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -171,10 +169,10 @@ type CommitInfo struct {
 	// Dropbox server try to autorename the file to avoid conflict.
 	Autorename bool `json:"autorename"`
 	// ClientModified : The value to store as the `client_modified` timestamp.
-	// Dropbox automatically records the time at which the file was written to
-	// the Dropbox servers. It can also record an additional timestamp, provided
-	// by Dropbox desktop clients, mobile clients, and API apps of when the file
-	// was actually created or modified.
+	// Dropbox automatically records the time at which the file was written to the
+	// Dropbox servers. It can also record an additional timestamp, provided by
+	// Dropbox desktop clients, mobile clients, and API apps of when the file was
+	// actually created or modified.
 	ClientModified time.Time `json:"client_modified,omitempty"`
 	// Mute : Normally, users are made aware of any file modifications in their
 	// Dropbox account via notifications in the client software. If true, this
@@ -183,39 +181,39 @@ type CommitInfo struct {
 	Mute bool `json:"mute"`
 	// PropertyGroups : List of custom properties to add to file.
 	PropertyGroups []*file_properties.PropertyGroup `json:"property_groups,omitempty"`
-	// StrictConflict : Be more strict about how each `WriteMode` detects
-	// conflict. For example, always return a conflict error when `mode` =
-	// `WriteMode.update` and the given "rev" doesn't match the existing file's
-	// "rev", even if the existing file has been deleted.
+	// StrictConflict : Be more strict about how each `WriteMode` detects conflict.
+	// For example, always return a conflict error when `mode` = `WriteMode.update`
+	// and the given "rev" doesn't match the existing file's "rev", even if the
+	// existing file has been deleted.
 	StrictConflict bool `json:"strict_conflict"`
 }
-
 // NewCommitInfo returns a new CommitInfo instance
 func NewCommitInfo(Path string) *CommitInfo {
 	s := new(CommitInfo)
 	s.Path = Path
-	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
+	s.Mode = &WriteMode{Tagged:dropbox.Tagged{"add"}}
 	s.Autorename = false
 	s.Mute = false
 	s.StrictConflict = false
 	return s
 }
+
 
 // CommitInfoWithProperties : has no documentation (yet)
 type CommitInfoWithProperties struct {
 	CommitInfo
 }
-
 // NewCommitInfoWithProperties returns a new CommitInfoWithProperties instance
 func NewCommitInfoWithProperties(Path string) *CommitInfoWithProperties {
 	s := new(CommitInfoWithProperties)
 	s.Path = Path
-	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
+	s.Mode = &WriteMode{Tagged:dropbox.Tagged{"add"}}
 	s.Autorename = false
 	s.Mute = false
 	s.StrictConflict = false
 	return s
 }
+
 
 // ContentSyncSetting : has no documentation (yet)
 type ContentSyncSetting struct {
@@ -224,7 +222,6 @@ type ContentSyncSetting struct {
 	// SyncSetting : Setting for this item.
 	SyncSetting *SyncSetting `json:"sync_setting"`
 }
-
 // NewContentSyncSetting returns a new ContentSyncSetting instance
 func NewContentSyncSetting(Id string, SyncSetting *SyncSetting) *ContentSyncSetting {
 	s := new(ContentSyncSetting)
@@ -233,6 +230,7 @@ func NewContentSyncSetting(Id string, SyncSetting *SyncSetting) *ContentSyncSett
 	return s
 }
 
+
 // ContentSyncSettingArg : has no documentation (yet)
 type ContentSyncSettingArg struct {
 	// Id : Id of the item this setting is applied to.
@@ -240,7 +238,6 @@ type ContentSyncSettingArg struct {
 	// SyncSetting : Setting for this item.
 	SyncSetting *SyncSettingArg `json:"sync_setting"`
 }
-
 // NewContentSyncSettingArg returns a new ContentSyncSettingArg instance
 func NewContentSyncSettingArg(Id string, SyncSetting *SyncSettingArg) *ContentSyncSettingArg {
 	s := new(ContentSyncSettingArg)
@@ -248,6 +245,7 @@ func NewContentSyncSettingArg(Id string, SyncSetting *SyncSettingArg) *ContentSy
 	s.SyncSetting = SyncSetting
 	return s
 }
+
 
 // CreateFolderArg : has no documentation (yet)
 type CreateFolderArg struct {
@@ -257,7 +255,6 @@ type CreateFolderArg struct {
 	// autorename the folder to avoid the conflict.
 	Autorename bool `json:"autorename"`
 }
-
 // NewCreateFolderArg returns a new CreateFolderArg instance
 func NewCreateFolderArg(Path string) *CreateFolderArg {
 	s := new(CreateFolderArg)
@@ -265,6 +262,7 @@ func NewCreateFolderArg(Path string) *CreateFolderArg {
 	s.Autorename = false
 	return s
 }
+
 
 // CreateFolderBatchArg : has no documentation (yet)
 type CreateFolderBatchArg struct {
@@ -277,7 +275,6 @@ type CreateFolderBatchArg struct {
 	// ForceAsync : Whether to force the create to happen asynchronously.
 	ForceAsync bool `json:"force_async"`
 }
-
 // NewCreateFolderBatchArg returns a new CreateFolderBatchArg instance
 func NewCreateFolderBatchArg(Paths []string) *CreateFolderBatchArg {
 	s := new(CreateFolderBatchArg)
@@ -287,6 +284,7 @@ func NewCreateFolderBatchArg(Paths []string) *CreateFolderBatchArg {
 	return s
 }
 
+
 // CreateFolderBatchError : has no documentation (yet)
 type CreateFolderBatchError struct {
 	dropbox.Tagged
@@ -295,7 +293,7 @@ type CreateFolderBatchError struct {
 // Valid tag values for CreateFolderBatchError
 const (
 	CreateFolderBatchErrorTooManyFiles = "too_many_files"
-	CreateFolderBatchErrorOther        = "other"
+	CreateFolderBatchErrorOther = "other"
 )
 
 // CreateFolderBatchJobStatus : has no documentation (yet)
@@ -310,9 +308,9 @@ type CreateFolderBatchJobStatus struct {
 // Valid tag values for CreateFolderBatchJobStatus
 const (
 	CreateFolderBatchJobStatusInProgress = "in_progress"
-	CreateFolderBatchJobStatusComplete   = "complete"
-	CreateFolderBatchJobStatusFailed     = "failed"
-	CreateFolderBatchJobStatusOther      = "other"
+	CreateFolderBatchJobStatusComplete = "complete"
+	CreateFolderBatchJobStatusFailed = "failed"
+	CreateFolderBatchJobStatusOther = "other"
 )
 
 // UnmarshalJSON deserializes into a CreateFolderBatchJobStatus instance
@@ -329,14 +327,14 @@ func (u *CreateFolderBatchJobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
 		}
-	case "failed":
-		u.Failed = w.Failed
+		case "failed":
+			u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -360,17 +358,17 @@ type CreateFolderBatchLaunch struct {
 // Valid tag values for CreateFolderBatchLaunch
 const (
 	CreateFolderBatchLaunchAsyncJobId = "async_job_id"
-	CreateFolderBatchLaunchComplete   = "complete"
-	CreateFolderBatchLaunchOther      = "other"
+	CreateFolderBatchLaunchComplete = "complete"
+	CreateFolderBatchLaunchOther = "other"
 )
 
 // UnmarshalJSON deserializes into a CreateFolderBatchLaunch instance
 func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -380,14 +378,14 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -399,27 +397,27 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 // FileOpsResult : has no documentation (yet)
 type FileOpsResult struct {
 }
-
 // NewFileOpsResult returns a new FileOpsResult instance
 func NewFileOpsResult() *FileOpsResult {
 	s := new(FileOpsResult)
 	return s
 }
 
+
 // CreateFolderBatchResult : has no documentation (yet)
 type CreateFolderBatchResult struct {
 	FileOpsResult
-	// Entries : Each entry in `CreateFolderBatchArg.paths` will appear at the
-	// same position inside `CreateFolderBatchResult.entries`.
+	// Entries : Each entry in `CreateFolderBatchArg.paths` will appear at the same
+	// position inside `CreateFolderBatchResult.entries`.
 	Entries []*CreateFolderBatchResultEntry `json:"entries"`
 }
-
 // NewCreateFolderBatchResult returns a new CreateFolderBatchResult instance
 func NewCreateFolderBatchResult(Entries []*CreateFolderBatchResultEntry) *CreateFolderBatchResult {
 	s := new(CreateFolderBatchResult)
 	s.Entries = Entries
 	return s
 }
+
 
 // CreateFolderBatchResultEntry : has no documentation (yet)
 type CreateFolderBatchResultEntry struct {
@@ -450,14 +448,14 @@ func (u *CreateFolderBatchResultEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		err = json.Unmarshal(body, &u.Success)
+		case "success":
+			err = json.Unmarshal(body, &u.Success)
 
 		if err != nil {
 			return err
 		}
-	case "failure":
-		u.Failure = w.Failure
+		case "failure":
+			u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -475,7 +473,7 @@ type CreateFolderEntryError struct {
 
 // Valid tag values for CreateFolderEntryError
 const (
-	CreateFolderEntryErrorPath  = "path"
+	CreateFolderEntryErrorPath = "path"
 	CreateFolderEntryErrorOther = "other"
 )
 
@@ -493,8 +491,8 @@ func (u *CreateFolderEntryError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -508,13 +506,13 @@ type CreateFolderEntryResult struct {
 	// Metadata : Metadata of the created folder.
 	Metadata *FolderMetadata `json:"metadata"`
 }
-
 // NewCreateFolderEntryResult returns a new CreateFolderEntryResult instance
 func NewCreateFolderEntryResult(Metadata *FolderMetadata) *CreateFolderEntryResult {
 	s := new(CreateFolderEntryResult)
 	s.Metadata = Metadata
 	return s
 }
+
 
 // CreateFolderError : has no documentation (yet)
 type CreateFolderError struct {
@@ -542,8 +540,8 @@ func (u *CreateFolderError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -558,7 +556,6 @@ type CreateFolderResult struct {
 	// Metadata : Metadata of the created folder.
 	Metadata *FolderMetadata `json:"metadata"`
 }
-
 // NewCreateFolderResult returns a new CreateFolderResult instance
 func NewCreateFolderResult(Metadata *FolderMetadata) *CreateFolderResult {
 	s := new(CreateFolderResult)
@@ -566,15 +563,15 @@ func NewCreateFolderResult(Metadata *FolderMetadata) *CreateFolderResult {
 	return s
 }
 
+
 // DeleteArg : has no documentation (yet)
 type DeleteArg struct {
 	// Path : Path in the user's Dropbox to delete.
 	Path string `json:"path"`
-	// ParentRev : Perform delete if given "rev" matches the existing file's
-	// latest "rev". This field does not support deleting a folder.
+	// ParentRev : Perform delete if given "rev" matches the existing file's latest
+	// "rev". This field does not support deleting a folder.
 	ParentRev string `json:"parent_rev,omitempty"`
 }
-
 // NewDeleteArg returns a new DeleteArg instance
 func NewDeleteArg(Path string) *DeleteArg {
 	s := new(DeleteArg)
@@ -582,18 +579,19 @@ func NewDeleteArg(Path string) *DeleteArg {
 	return s
 }
 
+
 // DeleteBatchArg : has no documentation (yet)
 type DeleteBatchArg struct {
 	// Entries : has no documentation (yet)
 	Entries []*DeleteArg `json:"entries"`
 }
-
 // NewDeleteBatchArg returns a new DeleteBatchArg instance
 func NewDeleteBatchArg(Entries []*DeleteArg) *DeleteBatchArg {
 	s := new(DeleteBatchArg)
 	s.Entries = Entries
 	return s
 }
+
 
 // DeleteBatchError : has no documentation (yet)
 type DeleteBatchError struct {
@@ -603,7 +601,7 @@ type DeleteBatchError struct {
 // Valid tag values for DeleteBatchError
 const (
 	DeleteBatchErrorTooManyWriteOperations = "too_many_write_operations"
-	DeleteBatchErrorOther                  = "other"
+	DeleteBatchErrorOther = "other"
 )
 
 // DeleteBatchJobStatus : has no documentation (yet)
@@ -618,9 +616,9 @@ type DeleteBatchJobStatus struct {
 // Valid tag values for DeleteBatchJobStatus
 const (
 	DeleteBatchJobStatusInProgress = "in_progress"
-	DeleteBatchJobStatusComplete   = "complete"
-	DeleteBatchJobStatusFailed     = "failed"
-	DeleteBatchJobStatusOther      = "other"
+	DeleteBatchJobStatusComplete = "complete"
+	DeleteBatchJobStatusFailed = "failed"
+	DeleteBatchJobStatusOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DeleteBatchJobStatus instance
@@ -637,14 +635,14 @@ func (u *DeleteBatchJobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
 		}
-	case "failed":
-		u.Failed = w.Failed
+		case "failed":
+			u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -668,17 +666,17 @@ type DeleteBatchLaunch struct {
 // Valid tag values for DeleteBatchLaunch
 const (
 	DeleteBatchLaunchAsyncJobId = "async_job_id"
-	DeleteBatchLaunchComplete   = "complete"
-	DeleteBatchLaunchOther      = "other"
+	DeleteBatchLaunchComplete = "complete"
+	DeleteBatchLaunchOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DeleteBatchLaunch instance
 func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -688,14 +686,14 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -711,7 +709,6 @@ type DeleteBatchResult struct {
 	// position inside `DeleteBatchResult.entries`.
 	Entries []*DeleteBatchResultEntry `json:"entries"`
 }
-
 // NewDeleteBatchResult returns a new DeleteBatchResult instance
 func NewDeleteBatchResult(Entries []*DeleteBatchResultEntry) *DeleteBatchResult {
 	s := new(DeleteBatchResult)
@@ -719,18 +716,19 @@ func NewDeleteBatchResult(Entries []*DeleteBatchResultEntry) *DeleteBatchResult 
 	return s
 }
 
+
 // DeleteBatchResultData : has no documentation (yet)
 type DeleteBatchResultData struct {
 	// Metadata : Metadata of the deleted object.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewDeleteBatchResultData returns a new DeleteBatchResultData instance
 func NewDeleteBatchResultData(Metadata IsMetadata) *DeleteBatchResultData {
 	s := new(DeleteBatchResultData)
 	s.Metadata = Metadata
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a DeleteBatchResultData instance
 func (u *DeleteBatchResultData) UnmarshalJSON(b []byte) error {
@@ -749,7 +747,6 @@ func (u *DeleteBatchResultData) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // DeleteBatchResultEntry : has no documentation (yet)
 type DeleteBatchResultEntry struct {
 	dropbox.Tagged
@@ -779,14 +776,14 @@ func (u *DeleteBatchResultEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		err = json.Unmarshal(body, &u.Success)
+		case "success":
+			err = json.Unmarshal(body, &u.Success)
 
 		if err != nil {
 			return err
 		}
-	case "failure":
-		u.Failure = w.Failure
+		case "failure":
+			u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -806,11 +803,11 @@ type DeleteError struct {
 
 // Valid tag values for DeleteError
 const (
-	DeleteErrorPathLookup             = "path_lookup"
-	DeleteErrorPathWrite              = "path_write"
+	DeleteErrorPathLookup = "path_lookup"
+	DeleteErrorPathWrite = "path_write"
 	DeleteErrorTooManyWriteOperations = "too_many_write_operations"
-	DeleteErrorTooManyFiles           = "too_many_files"
-	DeleteErrorOther                  = "other"
+	DeleteErrorTooManyFiles = "too_many_files"
+	DeleteErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DeleteError instance
@@ -829,14 +826,14 @@ func (u *DeleteError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path_lookup":
-		u.PathLookup = w.PathLookup
+		case "path_lookup":
+			u.PathLookup = w.PathLookup
 
 		if err != nil {
 			return err
 		}
-	case "path_write":
-		u.PathWrite = w.PathWrite
+		case "path_write":
+			u.PathWrite = w.PathWrite
 
 		if err != nil {
 			return err
@@ -851,13 +848,13 @@ type DeleteResult struct {
 	// Metadata : Metadata of the deleted object.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewDeleteResult returns a new DeleteResult instance
 func NewDeleteResult(Metadata IsMetadata) *DeleteResult {
 	s := new(DeleteResult)
 	s.Metadata = Metadata
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a DeleteResult instance
 func (u *DeleteResult) UnmarshalJSON(b []byte) error {
@@ -876,7 +873,6 @@ func (u *DeleteResult) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // Metadata : Metadata for a file or folder.
 type Metadata struct {
 	// Name : The last component of the path (including extension). This never
@@ -886,25 +882,24 @@ type Metadata struct {
 	// starts with a slash. This field will be null if the file or folder is not
 	// mounted.
 	PathLower string `json:"path_lower,omitempty"`
-	// PathDisplay : The cased path to be used for display purposes only. In
-	// rare instances the casing will not correctly match the user's filesystem,
-	// but this behavior will match the path provided in the Core API v1, and at
-	// least the last path component will have the correct casing. Changes to
-	// only the casing of paths won't be returned by `listFolderContinue`. This
-	// field will be null if the file or folder is not mounted.
+	// PathDisplay : The cased path to be used for display purposes only. In rare
+	// instances the casing will not correctly match the user's filesystem, but
+	// this behavior will match the path provided in the Core API v1, and at least
+	// the last path component will have the correct casing. Changes to only the
+	// casing of paths won't be returned by `listFolderContinue`. This field will
+	// be null if the file or folder is not mounted.
 	PathDisplay string `json:"path_display,omitempty"`
-	// ParentSharedFolderId : Please use
-	// `FileSharingInfo.parent_shared_folder_id` or
-	// `FolderSharingInfo.parent_shared_folder_id` instead.
+	// ParentSharedFolderId : Please use `FileSharingInfo.parent_shared_folder_id`
+	// or `FolderSharingInfo.parent_shared_folder_id` instead.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
 }
-
 // NewMetadata returns a new Metadata instance
 func NewMetadata(Name string) *Metadata {
 	s := new(Metadata)
 	s.Name = Name
 	return s
 }
+
 
 // IsMetadata is the interface type for Metadata and its subtypes
 type IsMetadata interface {
@@ -926,8 +921,8 @@ type metadataUnion struct {
 
 // Valid tag values for Metadata
 const (
-	MetadataFile    = "file"
-	MetadataFolder  = "folder"
+	MetadataFile = "file"
+	MetadataFolder = "folder"
 	MetadataDeleted = "deleted"
 )
 
@@ -943,20 +938,20 @@ func (u *metadataUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "file":
-		err = json.Unmarshal(body, &u.File)
+		case "file":
+			err = json.Unmarshal(body, &u.File)
 
 		if err != nil {
 			return err
 		}
-	case "folder":
-		err = json.Unmarshal(body, &u.Folder)
+		case "folder":
+			err = json.Unmarshal(body, &u.Folder)
 
 		if err != nil {
 			return err
 		}
-	case "deleted":
-		err = json.Unmarshal(body, &u.Deleted)
+		case "deleted":
+			err = json.Unmarshal(body, &u.Deleted)
 
 		if err != nil {
 			return err
@@ -972,31 +967,30 @@ func IsMetadataFromJSON(data []byte) (IsMetadata, error) {
 		return nil, err
 	}
 	switch t.Tag {
-	case "file":
-		return t.File, nil
+		case "file":
+			return t.File, nil
 
-	case "folder":
-		return t.Folder, nil
+		case "folder":
+			return t.Folder, nil
 
-	case "deleted":
-		return t.Deleted, nil
+		case "deleted":
+			return t.Deleted, nil
 
 	}
 	return nil, nil
 }
-
 // DeletedMetadata : Indicates that there used to be a file or folder at this
 // path, but it no longer exists.
 type DeletedMetadata struct {
 	Metadata
 }
-
 // NewDeletedMetadata returns a new DeletedMetadata instance
 func NewDeletedMetadata(Name string) *DeletedMetadata {
 	s := new(DeletedMetadata)
 	s.Name = Name
 	return s
 }
+
 
 // Dimensions : Dimensions for a photo or video.
 type Dimensions struct {
@@ -1005,7 +999,6 @@ type Dimensions struct {
 	// Width : Width of the photo/video.
 	Width uint64 `json:"width"`
 }
-
 // NewDimensions returns a new Dimensions instance
 func NewDimensions(Height uint64, Width uint64) *Dimensions {
 	s := new(Dimensions)
@@ -1013,6 +1006,7 @@ func NewDimensions(Height uint64, Width uint64) *Dimensions {
 	s.Width = Width
 	return s
 }
+
 
 // DownloadArg : has no documentation (yet)
 type DownloadArg struct {
@@ -1023,13 +1017,13 @@ type DownloadArg struct {
 	// ExtraHeaders can be used to pass Range, If-None-Match headers
 	ExtraHeaders map[string]string `json:"-"`
 }
-
 // NewDownloadArg returns a new DownloadArg instance
 func NewDownloadArg(Path string) *DownloadArg {
 	s := new(DownloadArg)
 	s.Path = Path
 	return s
 }
+
 
 // DownloadError : has no documentation (yet)
 type DownloadError struct {
@@ -1040,9 +1034,9 @@ type DownloadError struct {
 
 // Valid tag values for DownloadError
 const (
-	DownloadErrorPath            = "path"
+	DownloadErrorPath = "path"
 	DownloadErrorUnsupportedFile = "unsupported_file"
-	DownloadErrorOther           = "other"
+	DownloadErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DownloadError instance
@@ -1059,8 +1053,8 @@ func (u *DownloadError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1074,13 +1068,13 @@ type DownloadZipArg struct {
 	// Path : The path of the folder to download.
 	Path string `json:"path"`
 }
-
 // NewDownloadZipArg returns a new DownloadZipArg instance
 func NewDownloadZipArg(Path string) *DownloadZipArg {
 	s := new(DownloadZipArg)
 	s.Path = Path
 	return s
 }
+
 
 // DownloadZipError : has no documentation (yet)
 type DownloadZipError struct {
@@ -1091,10 +1085,10 @@ type DownloadZipError struct {
 
 // Valid tag values for DownloadZipError
 const (
-	DownloadZipErrorPath         = "path"
-	DownloadZipErrorTooLarge     = "too_large"
+	DownloadZipErrorPath = "path"
+	DownloadZipErrorTooLarge = "too_large"
 	DownloadZipErrorTooManyFiles = "too_many_files"
-	DownloadZipErrorOther        = "other"
+	DownloadZipErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a DownloadZipError instance
@@ -1111,8 +1105,8 @@ func (u *DownloadZipError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1126,7 +1120,6 @@ type DownloadZipResult struct {
 	// Metadata : has no documentation (yet)
 	Metadata *FolderMetadata `json:"metadata"`
 }
-
 // NewDownloadZipResult returns a new DownloadZipResult instance
 func NewDownloadZipResult(Metadata *FolderMetadata) *DownloadZipResult {
 	s := new(DownloadZipResult)
@@ -1134,18 +1127,19 @@ func NewDownloadZipResult(Metadata *FolderMetadata) *DownloadZipResult {
 	return s
 }
 
+
 // ExportArg : has no documentation (yet)
 type ExportArg struct {
 	// Path : The path of the file to be exported.
 	Path string `json:"path"`
 }
-
 // NewExportArg returns a new ExportArg instance
 func NewExportArg(Path string) *ExportArg {
 	s := new(ExportArg)
 	s.Path = Path
 	return s
 }
+
 
 // ExportError : has no documentation (yet)
 type ExportError struct {
@@ -1156,9 +1150,9 @@ type ExportError struct {
 
 // Valid tag values for ExportError
 const (
-	ExportErrorPath          = "path"
+	ExportErrorPath = "path"
 	ExportErrorNonExportable = "non_exportable"
-	ExportErrorOther         = "other"
+	ExportErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a ExportError instance
@@ -1175,8 +1169,8 @@ func (u *ExportError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1190,12 +1184,12 @@ type ExportInfo struct {
 	// ExportAs : Format to which the file can be exported to.
 	ExportAs string `json:"export_as,omitempty"`
 }
-
 // NewExportInfo returns a new ExportInfo instance
 func NewExportInfo() *ExportInfo {
 	s := new(ExportInfo)
 	return s
 }
+
 
 // ExportMetadata : has no documentation (yet)
 type ExportMetadata struct {
@@ -1205,12 +1199,11 @@ type ExportMetadata struct {
 	// Size : The file size in bytes.
 	Size uint64 `json:"size"`
 	// ExportHash : A hash based on the exported file content. This field can be
-	// used to verify data integrity. Similar to content hash. For more
-	// information see our `Content hash`
+	// used to verify data integrity. Similar to content hash. For more information
+	// see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ExportHash string `json:"export_hash,omitempty"`
 }
-
 // NewExportMetadata returns a new ExportMetadata instance
 func NewExportMetadata(Name string, Size uint64) *ExportMetadata {
 	s := new(ExportMetadata)
@@ -1219,6 +1212,7 @@ func NewExportMetadata(Name string, Size uint64) *ExportMetadata {
 	return s
 }
 
+
 // ExportResult : has no documentation (yet)
 type ExportResult struct {
 	// ExportMetadata : Metadata for the exported version of the file.
@@ -1226,7 +1220,6 @@ type ExportResult struct {
 	// FileMetadata : Metadata for the original file.
 	FileMetadata *FileMetadata `json:"file_metadata"`
 }
-
 // NewExportResult returns a new ExportResult instance
 func NewExportResult(ExportMetadata *ExportMetadata, FileMetadata *FileMetadata) *ExportResult {
 	s := new(ExportResult)
@@ -1235,22 +1228,23 @@ func NewExportResult(ExportMetadata *ExportMetadata, FileMetadata *FileMetadata)
 	return s
 }
 
+
 // FileMetadata : has no documentation (yet)
 type FileMetadata struct {
 	Metadata
 	// Id : A unique identifier for the file.
 	Id string `json:"id"`
-	// ClientModified : For files, this is the modification time set by the
-	// desktop client when the file was added to Dropbox. Since this time is not
-	// verified (the Dropbox server stores whatever the desktop client sends
-	// up), this should only be used for display purposes (such as sorting) and
-	// not, for example, to determine if a file has changed or not.
+	// ClientModified : For files, this is the modification time set by the desktop
+	// client when the file was added to Dropbox. Since this time is not verified
+	// (the Dropbox server stores whatever the desktop client sends up), this
+	// should only be used for display purposes (such as sorting) and not, for
+	// example, to determine if a file has changed or not.
 	ClientModified time.Time `json:"client_modified"`
 	// ServerModified : The last time the file was modified on Dropbox.
 	ServerModified time.Time `json:"server_modified"`
-	// Rev : A unique identifier for the current revision of a file. This field
-	// is the same rev as elsewhere in the API and can be used to detect changes
-	// and avoid conflicts.
+	// Rev : A unique identifier for the current revision of a file. This field is
+	// the same rev as elsewhere in the API and can be used to detect changes and
+	// avoid conflicts.
 	Rev string `json:"rev"`
 	// Size : The file size in bytes.
 	Size uint64 `json:"size"`
@@ -1275,15 +1269,14 @@ type FileMetadata struct {
 	// include_has_explicit_shared_members  is true in `listFolder` or
 	// `getMetadata`. If this  flag is present, it will be true if this file has
 	// any explicit shared  members. This is different from sharing_info in that
-	// this could be true  in the case where a file has explicit members but is
-	// not contained within  a shared folder.
+	// this could be true  in the case where a file has explicit members but is not
+	// contained within  a shared folder.
 	HasExplicitSharedMembers bool `json:"has_explicit_shared_members,omitempty"`
-	// ContentHash : A hash of the file content. This field can be used to
-	// verify data integrity. For more information see our `Content hash`
+	// ContentHash : A hash of the file content. This field can be used to verify
+	// data integrity. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
-
 // NewFileMetadata returns a new FileMetadata instance
 func NewFileMetadata(Name string, Id string, ClientModified time.Time, ServerModified time.Time, Rev string, Size uint64) *FileMetadata {
 	s := new(FileMetadata)
@@ -1297,13 +1290,12 @@ func NewFileMetadata(Name string, Id string, ClientModified time.Time, ServerMod
 	return s
 }
 
+
 // SharingInfo : Sharing info for a file or folder.
 type SharingInfo struct {
-	// ReadOnly : True if the file or folder is inside a read-only shared
-	// folder.
+	// ReadOnly : True if the file or folder is inside a read-only shared folder.
 	ReadOnly bool `json:"read_only"`
 }
-
 // NewSharingInfo returns a new SharingInfo instance
 func NewSharingInfo(ReadOnly bool) *SharingInfo {
 	s := new(SharingInfo)
@@ -1311,17 +1303,17 @@ func NewSharingInfo(ReadOnly bool) *SharingInfo {
 	return s
 }
 
+
 // FileSharingInfo : Sharing info for a file which is contained by a shared
 // folder.
 type FileSharingInfo struct {
 	SharingInfo
 	// ParentSharedFolderId : ID of shared folder that holds this file.
 	ParentSharedFolderId string `json:"parent_shared_folder_id"`
-	// ModifiedBy : The last user who modified the file. This field will be null
-	// if the user's account has been deleted.
+	// ModifiedBy : The last user who modified the file. This field will be null if
+	// the user's account has been deleted.
 	ModifiedBy string `json:"modified_by,omitempty"`
 }
-
 // NewFileSharingInfo returns a new FileSharingInfo instance
 func NewFileSharingInfo(ReadOnly bool, ParentSharedFolderId string) *FileSharingInfo {
 	s := new(FileSharingInfo)
@@ -1329,6 +1321,7 @@ func NewFileSharingInfo(ReadOnly bool, ParentSharedFolderId string) *FileSharing
 	s.ParentSharedFolderId = ParentSharedFolderId
 	return s
 }
+
 
 // FolderMetadata : has no documentation (yet)
 type FolderMetadata struct {
@@ -1341,12 +1334,11 @@ type FolderMetadata struct {
 	// shared folder mount point.
 	SharingInfo *FolderSharingInfo `json:"sharing_info,omitempty"`
 	// PropertyGroups : Additional information if the file has custom properties
-	// with the property template specified. Note that only properties
-	// associated with user-owned templates, not team-owned templates, can be
-	// attached to folders.
+	// with the property template specified. Note that only properties associated
+	// with user-owned templates, not team-owned templates, can be attached to
+	// folders.
 	PropertyGroups []*file_properties.PropertyGroup `json:"property_groups,omitempty"`
 }
-
 // NewFolderMetadata returns a new FolderMetadata instance
 func NewFolderMetadata(Name string, Id string) *FolderMetadata {
 	s := new(FolderMetadata)
@@ -1354,6 +1346,7 @@ func NewFolderMetadata(Name string, Id string) *FolderMetadata {
 	s.Id = Id
 	return s
 }
+
 
 // FolderSharingInfo : Sharing info for a folder which is contained in a shared
 // folder or is a shared folder mount point.
@@ -1364,15 +1357,14 @@ type FolderSharingInfo struct {
 	// SharedFolderId : If this folder is a shared folder mount point, the ID of
 	// the shared folder mounted at this location.
 	SharedFolderId string `json:"shared_folder_id,omitempty"`
-	// TraverseOnly : Specifies that the folder can only be traversed and the
-	// user can only see a limited subset of the contents of this folder because
-	// they don't have read access to this folder. They do, however, have access
-	// to some sub folder.
+	// TraverseOnly : Specifies that the folder can only be traversed and the user
+	// can only see a limited subset of the contents of this folder because they
+	// don't have read access to this folder. They do, however, have access to some
+	// sub folder.
 	TraverseOnly bool `json:"traverse_only"`
 	// NoAccess : Specifies that the folder cannot be accessed by the user.
 	NoAccess bool `json:"no_access"`
 }
-
 // NewFolderSharingInfo returns a new FolderSharingInfo instance
 func NewFolderSharingInfo(ReadOnly bool) *FolderSharingInfo {
 	s := new(FolderSharingInfo)
@@ -1382,19 +1374,19 @@ func NewFolderSharingInfo(ReadOnly bool) *FolderSharingInfo {
 	return s
 }
 
+
 // GetCopyReferenceArg : has no documentation (yet)
 type GetCopyReferenceArg struct {
-	// Path : The path to the file or folder you want to get a copy reference
-	// to.
+	// Path : The path to the file or folder you want to get a copy reference to.
 	Path string `json:"path"`
 }
-
 // NewGetCopyReferenceArg returns a new GetCopyReferenceArg instance
 func NewGetCopyReferenceArg(Path string) *GetCopyReferenceArg {
 	s := new(GetCopyReferenceArg)
 	s.Path = Path
 	return s
 }
+
 
 // GetCopyReferenceError : has no documentation (yet)
 type GetCopyReferenceError struct {
@@ -1405,7 +1397,7 @@ type GetCopyReferenceError struct {
 
 // Valid tag values for GetCopyReferenceError
 const (
-	GetCopyReferenceErrorPath  = "path"
+	GetCopyReferenceErrorPath = "path"
 	GetCopyReferenceErrorOther = "other"
 )
 
@@ -1423,8 +1415,8 @@ func (u *GetCopyReferenceError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1439,12 +1431,11 @@ type GetCopyReferenceResult struct {
 	Metadata IsMetadata `json:"metadata"`
 	// CopyReference : A copy reference to the file or folder.
 	CopyReference string `json:"copy_reference"`
-	// Expires : The expiration date of the copy reference. This value is
-	// currently set to be far enough in the future so that expiration is
-	// effectively not an issue.
+	// Expires : The expiration date of the copy reference. This value is currently
+	// set to be far enough in the future so that expiration is effectively not an
+	// issue.
 	Expires time.Time `json:"expires"`
 }
-
 // NewGetCopyReferenceResult returns a new GetCopyReferenceResult instance
 func NewGetCopyReferenceResult(Metadata IsMetadata, CopyReference string, Expires time.Time) *GetCopyReferenceResult {
 	s := new(GetCopyReferenceResult)
@@ -1453,6 +1444,7 @@ func NewGetCopyReferenceResult(Metadata IsMetadata, CopyReference string, Expire
 	s.Expires = Expires
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a GetCopyReferenceResult instance
 func (u *GetCopyReferenceResult) UnmarshalJSON(b []byte) error {
@@ -1479,19 +1471,18 @@ func (u *GetCopyReferenceResult) UnmarshalJSON(b []byte) error {
 	u.Expires = w.Expires
 	return nil
 }
-
 // GetTemporaryLinkArg : has no documentation (yet)
 type GetTemporaryLinkArg struct {
 	// Path : The path to the file you want a temporary link to.
 	Path string `json:"path"`
 }
-
 // NewGetTemporaryLinkArg returns a new GetTemporaryLinkArg instance
 func NewGetTemporaryLinkArg(Path string) *GetTemporaryLinkArg {
 	s := new(GetTemporaryLinkArg)
 	s.Path = Path
 	return s
 }
+
 
 // GetTemporaryLinkError : has no documentation (yet)
 type GetTemporaryLinkError struct {
@@ -1502,10 +1493,10 @@ type GetTemporaryLinkError struct {
 
 // Valid tag values for GetTemporaryLinkError
 const (
-	GetTemporaryLinkErrorPath             = "path"
+	GetTemporaryLinkErrorPath = "path"
 	GetTemporaryLinkErrorEmailNotVerified = "email_not_verified"
-	GetTemporaryLinkErrorUnsupportedFile  = "unsupported_file"
-	GetTemporaryLinkErrorOther            = "other"
+	GetTemporaryLinkErrorUnsupportedFile = "unsupported_file"
+	GetTemporaryLinkErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a GetTemporaryLinkError instance
@@ -1522,8 +1513,8 @@ func (u *GetTemporaryLinkError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1539,7 +1530,6 @@ type GetTemporaryLinkResult struct {
 	// Link : The temporary link which can be used to stream content the file.
 	Link string `json:"link"`
 }
-
 // NewGetTemporaryLinkResult returns a new GetTemporaryLinkResult instance
 func NewGetTemporaryLinkResult(Metadata *FileMetadata, Link string) *GetTemporaryLinkResult {
 	s := new(GetTemporaryLinkResult)
@@ -1548,17 +1538,17 @@ func NewGetTemporaryLinkResult(Metadata *FileMetadata, Link string) *GetTemporar
 	return s
 }
 
+
 // GetTemporaryUploadLinkArg : has no documentation (yet)
 type GetTemporaryUploadLinkArg struct {
-	// CommitInfo : Contains the path and other optional modifiers for the
-	// future upload commit. Equivalent to the parameters provided to `upload`.
+	// CommitInfo : Contains the path and other optional modifiers for the future
+	// upload commit. Equivalent to the parameters provided to `upload`.
 	CommitInfo *CommitInfo `json:"commit_info"`
 	// Duration : How long before this link expires, in seconds.  Attempting to
-	// start an upload with this link longer than this period  of time after
-	// link creation will result in an error.
+	// start an upload with this link longer than this period  of time after link
+	// creation will result in an error.
 	Duration float64 `json:"duration"`
 }
-
 // NewGetTemporaryUploadLinkArg returns a new GetTemporaryUploadLinkArg instance
 func NewGetTemporaryUploadLinkArg(CommitInfo *CommitInfo) *GetTemporaryUploadLinkArg {
 	s := new(GetTemporaryUploadLinkArg)
@@ -1567,13 +1557,13 @@ func NewGetTemporaryUploadLinkArg(CommitInfo *CommitInfo) *GetTemporaryUploadLin
 	return s
 }
 
+
 // GetTemporaryUploadLinkResult : has no documentation (yet)
 type GetTemporaryUploadLinkResult struct {
 	// Link : The temporary link which can be used to stream a file to a Dropbox
 	// location.
 	Link string `json:"link"`
 }
-
 // NewGetTemporaryUploadLinkResult returns a new GetTemporaryUploadLinkResult instance
 func NewGetTemporaryUploadLinkResult(Link string) *GetTemporaryUploadLinkResult {
 	s := new(GetTemporaryUploadLinkResult)
@@ -1581,18 +1571,19 @@ func NewGetTemporaryUploadLinkResult(Link string) *GetTemporaryUploadLinkResult 
 	return s
 }
 
+
 // GetThumbnailBatchArg : Arguments for `getThumbnailBatch`.
 type GetThumbnailBatchArg struct {
 	// Entries : List of files to get thumbnails.
 	Entries []*ThumbnailArg `json:"entries"`
 }
-
 // NewGetThumbnailBatchArg returns a new GetThumbnailBatchArg instance
 func NewGetThumbnailBatchArg(Entries []*ThumbnailArg) *GetThumbnailBatchArg {
 	s := new(GetThumbnailBatchArg)
 	s.Entries = Entries
 	return s
 }
+
 
 // GetThumbnailBatchError : has no documentation (yet)
 type GetThumbnailBatchError struct {
@@ -1602,7 +1593,7 @@ type GetThumbnailBatchError struct {
 // Valid tag values for GetThumbnailBatchError
 const (
 	GetThumbnailBatchErrorTooManyFiles = "too_many_files"
-	GetThumbnailBatchErrorOther        = "other"
+	GetThumbnailBatchErrorOther = "other"
 )
 
 // GetThumbnailBatchResult : has no documentation (yet)
@@ -1610,7 +1601,6 @@ type GetThumbnailBatchResult struct {
 	// Entries : List of files and their thumbnails.
 	Entries []*GetThumbnailBatchResultEntry `json:"entries"`
 }
-
 // NewGetThumbnailBatchResult returns a new GetThumbnailBatchResult instance
 func NewGetThumbnailBatchResult(Entries []*GetThumbnailBatchResultEntry) *GetThumbnailBatchResult {
 	s := new(GetThumbnailBatchResult)
@@ -1618,15 +1608,15 @@ func NewGetThumbnailBatchResult(Entries []*GetThumbnailBatchResultEntry) *GetThu
 	return s
 }
 
+
 // GetThumbnailBatchResultData : has no documentation (yet)
 type GetThumbnailBatchResultData struct {
 	// Metadata : has no documentation (yet)
 	Metadata *FileMetadata `json:"metadata"`
-	// Thumbnail : A string containing the base64-encoded thumbnail data for
-	// this file.
+	// Thumbnail : A string containing the base64-encoded thumbnail data for this
+	// file.
 	Thumbnail string `json:"thumbnail"`
 }
-
 // NewGetThumbnailBatchResultData returns a new GetThumbnailBatchResultData instance
 func NewGetThumbnailBatchResultData(Metadata *FileMetadata, Thumbnail string) *GetThumbnailBatchResultData {
 	s := new(GetThumbnailBatchResultData)
@@ -1634,6 +1624,7 @@ func NewGetThumbnailBatchResultData(Metadata *FileMetadata, Thumbnail string) *G
 	s.Thumbnail = Thumbnail
 	return s
 }
+
 
 // GetThumbnailBatchResultEntry : has no documentation (yet)
 type GetThumbnailBatchResultEntry struct {
@@ -1648,7 +1639,7 @@ type GetThumbnailBatchResultEntry struct {
 const (
 	GetThumbnailBatchResultEntrySuccess = "success"
 	GetThumbnailBatchResultEntryFailure = "failure"
-	GetThumbnailBatchResultEntryOther   = "other"
+	GetThumbnailBatchResultEntryOther = "other"
 )
 
 // UnmarshalJSON deserializes into a GetThumbnailBatchResultEntry instance
@@ -1665,14 +1656,14 @@ func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		err = json.Unmarshal(body, &u.Success)
+		case "success":
+			err = json.Unmarshal(body, &u.Success)
 
 		if err != nil {
 			return err
 		}
-	case "failure":
-		u.Failure = w.Failure
+		case "failure":
+			u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -1688,7 +1679,6 @@ type GpsCoordinates struct {
 	// Longitude : Longitude of the GPS coordinates.
 	Longitude float64 `json:"longitude"`
 }
-
 // NewGpsCoordinates returns a new GpsCoordinates instance
 func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 	s := new(GpsCoordinates)
@@ -1697,36 +1687,35 @@ func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 	return s
 }
 
+
 // ListFolderArg : has no documentation (yet)
 type ListFolderArg struct {
 	// Path : A unique identifier for the file.
 	Path string `json:"path"`
-	// Recursive : If true, the list folder operation will be applied
-	// recursively to all subfolders and the response will contain contents of
-	// all subfolders.
+	// Recursive : If true, the list folder operation will be applied recursively
+	// to all subfolders and the response will contain contents of all subfolders.
 	Recursive bool `json:"recursive"`
-	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo
-	// and video. This parameter will no longer have an effect starting December
-	// 2, 2019.
+	// IncludeMediaInfo : If true, `FileMetadata.media_info` is set for photo and
+	// video. This parameter will no longer have an effect starting December 2,
+	// 2019.
 	IncludeMediaInfo bool `json:"include_media_info"`
 	// IncludeDeleted : If true, the results will include entries for files and
 	// folders that used to exist but were deleted.
 	IncludeDeleted bool `json:"include_deleted"`
-	// IncludeHasExplicitSharedMembers : If true, the results will include a
-	// flag for each file indicating whether or not  that file has any explicit
-	// members.
+	// IncludeHasExplicitSharedMembers : If true, the results will include a flag
+	// for each file indicating whether or not  that file has any explicit members.
 	IncludeHasExplicitSharedMembers bool `json:"include_has_explicit_shared_members"`
 	// IncludeMountedFolders : If true, the results will include entries under
 	// mounted folders which includes app folder, shared folder and team folder.
 	IncludeMountedFolders bool `json:"include_mounted_folders"`
-	// Limit : The maximum number of results to return per request. Note: This
-	// is an approximate number and there can be slightly more entries returned
-	// in some cases.
+	// Limit : The maximum number of results to return per request. Note: This is
+	// an approximate number and there can be slightly more entries returned in
+	// some cases.
 	Limit uint32 `json:"limit,omitempty"`
 	// SharedLink : A shared link to list the contents of. If the link is
-	// password-protected, the password must be provided. If this field is
-	// present, `ListFolderArg.path` will be relative to root of the shared
-	// link. Only non-recursive mode is supported for shared link.
+	// password-protected, the password must be provided. If this field is present,
+	// `ListFolderArg.path` will be relative to root of the shared link. Only
+	// non-recursive mode is supported for shared link.
 	SharedLink *SharedLink `json:"shared_link,omitempty"`
 	// IncludePropertyGroups : If set to a valid list of template IDs,
 	// `FileMetadata.property_groups` is set if there exists property data
@@ -1736,7 +1725,6 @@ type ListFolderArg struct {
 	// downloadable, i.e. Google Docs.
 	IncludeNonDownloadableFiles bool `json:"include_non_downloadable_files"`
 }
-
 // NewListFolderArg returns a new ListFolderArg instance
 func NewListFolderArg(Path string) *ListFolderArg {
 	s := new(ListFolderArg)
@@ -1750,19 +1738,20 @@ func NewListFolderArg(Path string) *ListFolderArg {
 	return s
 }
 
+
 // ListFolderContinueArg : has no documentation (yet)
 type ListFolderContinueArg struct {
 	// Cursor : The cursor returned by your last call to `listFolder` or
 	// `listFolderContinue`.
 	Cursor string `json:"cursor"`
 }
-
 // NewListFolderContinueArg returns a new ListFolderContinueArg instance
 func NewListFolderContinueArg(Cursor string) *ListFolderContinueArg {
 	s := new(ListFolderContinueArg)
 	s.Cursor = Cursor
 	return s
 }
+
 
 // ListFolderContinueError : has no documentation (yet)
 type ListFolderContinueError struct {
@@ -1773,7 +1762,7 @@ type ListFolderContinueError struct {
 
 // Valid tag values for ListFolderContinueError
 const (
-	ListFolderContinueErrorPath  = "path"
+	ListFolderContinueErrorPath = "path"
 	ListFolderContinueErrorReset = "reset"
 	ListFolderContinueErrorOther = "other"
 )
@@ -1792,8 +1781,8 @@ func (u *ListFolderContinueError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1811,7 +1800,7 @@ type ListFolderError struct {
 
 // Valid tag values for ListFolderError
 const (
-	ListFolderErrorPath  = "path"
+	ListFolderErrorPath = "path"
 	ListFolderErrorOther = "other"
 )
 
@@ -1829,8 +1818,8 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -1841,11 +1830,10 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 
 // ListFolderGetLatestCursorResult : has no documentation (yet)
 type ListFolderGetLatestCursorResult struct {
-	// Cursor : Pass the cursor into `listFolderContinue` to see what's changed
-	// in the folder since your previous query.
+	// Cursor : Pass the cursor into `listFolderContinue` to see what's changed in
+	// the folder since your previous query.
 	Cursor string `json:"cursor"`
 }
-
 // NewListFolderGetLatestCursorResult returns a new ListFolderGetLatestCursorResult instance
 func NewListFolderGetLatestCursorResult(Cursor string) *ListFolderGetLatestCursorResult {
 	s := new(ListFolderGetLatestCursorResult)
@@ -1853,19 +1841,19 @@ func NewListFolderGetLatestCursorResult(Cursor string) *ListFolderGetLatestCurso
 	return s
 }
 
+
 // ListFolderLongpollArg : has no documentation (yet)
 type ListFolderLongpollArg struct {
 	// Cursor : A cursor as returned by `listFolder` or `listFolderContinue`.
-	// Cursors retrieved by setting `ListFolderArg.include_media_info` to true
-	// are not supported.
+	// Cursors retrieved by setting `ListFolderArg.include_media_info` to true are
+	// not supported.
 	Cursor string `json:"cursor"`
 	// Timeout : A timeout in seconds. The request will block for at most this
 	// length of time, plus up to 90 seconds of random jitter added to avoid the
-	// thundering herd problem. Care should be taken when using this parameter,
-	// as some network infrastructure does not support long timeouts.
+	// thundering herd problem. Care should be taken when using this parameter, as
+	// some network infrastructure does not support long timeouts.
 	Timeout uint64 `json:"timeout"`
 }
-
 // NewListFolderLongpollArg returns a new ListFolderLongpollArg instance
 func NewListFolderLongpollArg(Cursor string) *ListFolderLongpollArg {
 	s := new(ListFolderLongpollArg)
@@ -1873,6 +1861,7 @@ func NewListFolderLongpollArg(Cursor string) *ListFolderLongpollArg {
 	s.Timeout = 30
 	return s
 }
+
 
 // ListFolderLongpollError : has no documentation (yet)
 type ListFolderLongpollError struct {
@@ -1890,11 +1879,10 @@ type ListFolderLongpollResult struct {
 	// Changes : Indicates whether new changes are available. If true, call
 	// `listFolderContinue` to retrieve the changes.
 	Changes bool `json:"changes"`
-	// Backoff : If present, backoff for at least this many seconds before
-	// calling `listFolderLongpoll` again.
+	// Backoff : If present, backoff for at least this many seconds before calling
+	// `listFolderLongpoll` again.
 	Backoff uint64 `json:"backoff,omitempty"`
 }
-
 // NewListFolderLongpollResult returns a new ListFolderLongpollResult instance
 func NewListFolderLongpollResult(Changes bool) *ListFolderLongpollResult {
 	s := new(ListFolderLongpollResult)
@@ -1902,18 +1890,18 @@ func NewListFolderLongpollResult(Changes bool) *ListFolderLongpollResult {
 	return s
 }
 
+
 // ListFolderResult : has no documentation (yet)
 type ListFolderResult struct {
 	// Entries : The files and (direct) subfolders in the folder.
 	Entries []IsMetadata `json:"entries"`
-	// Cursor : Pass the cursor into `listFolderContinue` to see what's changed
-	// in the folder since your previous query.
+	// Cursor : Pass the cursor into `listFolderContinue` to see what's changed in
+	// the folder since your previous query.
 	Cursor string `json:"cursor"`
-	// HasMore : If true, then there are more entries available. Pass the cursor
-	// to `listFolderContinue` to retrieve the rest.
+	// HasMore : If true, then there are more entries available. Pass the cursor to
+	// `listFolderContinue` to retrieve the rest.
 	HasMore bool `json:"has_more"`
 }
-
 // NewListFolderResult returns a new ListFolderResult instance
 func NewListFolderResult(Entries []IsMetadata, Cursor string, HasMore bool) *ListFolderResult {
 	s := new(ListFolderResult)
@@ -1923,16 +1911,17 @@ func NewListFolderResult(Entries []IsMetadata, Cursor string, HasMore bool) *Lis
 	return s
 }
 
+
 // UnmarshalJSON deserializes into a ListFolderResult instance
 func (u *ListFolderResult) UnmarshalJSON(b []byte) error {
 	type wrap struct {
 		// Entries : The files and (direct) subfolders in the folder.
 		Entries []json.RawMessage `json:"entries"`
-		// Cursor : Pass the cursor into `listFolderContinue` to see what's
-		// changed in the folder since your previous query.
+		// Cursor : Pass the cursor into `listFolderContinue` to see what's changed in
+		// the folder since your previous query.
 		Cursor string `json:"cursor"`
-		// HasMore : If true, then there are more entries available. Pass the
-		// cursor to `listFolderContinue` to retrieve the rest.
+		// HasMore : If true, then there are more entries available. Pass the cursor
+		// to `listFolderContinue` to retrieve the rest.
 		HasMore bool `json:"has_more"`
 	}
 	var w wrap
@@ -1951,7 +1940,6 @@ func (u *ListFolderResult) UnmarshalJSON(b []byte) error {
 	u.HasMore = w.HasMore
 	return nil
 }
-
 // ListRevisionsArg : has no documentation (yet)
 type ListRevisionsArg struct {
 	// Path : The path to the file you want to see the revisions of.
@@ -1962,15 +1950,15 @@ type ListRevisionsArg struct {
 	// Limit : The maximum number of revision entries returned.
 	Limit uint64 `json:"limit"`
 }
-
 // NewListRevisionsArg returns a new ListRevisionsArg instance
 func NewListRevisionsArg(Path string) *ListRevisionsArg {
 	s := new(ListRevisionsArg)
 	s.Path = Path
-	s.Mode = &ListRevisionsMode{Tagged: dropbox.Tagged{"path"}}
+	s.Mode = &ListRevisionsMode{Tagged:dropbox.Tagged{"path"}}
 	s.Limit = 10
 	return s
 }
+
 
 // ListRevisionsError : has no documentation (yet)
 type ListRevisionsError struct {
@@ -1981,7 +1969,7 @@ type ListRevisionsError struct {
 
 // Valid tag values for ListRevisionsError
 const (
-	ListRevisionsErrorPath  = "path"
+	ListRevisionsErrorPath = "path"
 	ListRevisionsErrorOther = "other"
 )
 
@@ -1999,8 +1987,8 @@ func (u *ListRevisionsError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -2016,15 +2004,15 @@ type ListRevisionsMode struct {
 
 // Valid tag values for ListRevisionsMode
 const (
-	ListRevisionsModePath  = "path"
-	ListRevisionsModeId    = "id"
+	ListRevisionsModePath = "path"
+	ListRevisionsModeId = "id"
 	ListRevisionsModeOther = "other"
 )
 
 // ListRevisionsResult : has no documentation (yet)
 type ListRevisionsResult struct {
-	// IsDeleted : If the file identified by the latest revision in the response
-	// is either deleted or moved.
+	// IsDeleted : If the file identified by the latest revision in the response is
+	// either deleted or moved.
 	IsDeleted bool `json:"is_deleted"`
 	// ServerDeleted : The time of deletion if the file was deleted.
 	ServerDeleted time.Time `json:"server_deleted,omitempty"`
@@ -2032,7 +2020,6 @@ type ListRevisionsResult struct {
 	// will show up here.
 	Entries []*FileMetadata `json:"entries"`
 }
-
 // NewListRevisionsResult returns a new ListRevisionsResult instance
 func NewListRevisionsResult(IsDeleted bool, Entries []*FileMetadata) *ListRevisionsResult {
 	s := new(ListRevisionsResult)
@@ -2040,6 +2027,7 @@ func NewListRevisionsResult(IsDeleted bool, Entries []*FileMetadata) *ListRevisi
 	s.Entries = Entries
 	return s
 }
+
 
 // LookupError : has no documentation (yet)
 type LookupError struct {
@@ -2053,21 +2041,21 @@ type LookupError struct {
 
 // Valid tag values for LookupError
 const (
-	LookupErrorMalformedPath          = "malformed_path"
-	LookupErrorNotFound               = "not_found"
-	LookupErrorNotFile                = "not_file"
-	LookupErrorNotFolder              = "not_folder"
-	LookupErrorRestrictedContent      = "restricted_content"
+	LookupErrorMalformedPath = "malformed_path"
+	LookupErrorNotFound = "not_found"
+	LookupErrorNotFile = "not_file"
+	LookupErrorNotFolder = "not_folder"
+	LookupErrorRestrictedContent = "restricted_content"
 	LookupErrorUnsupportedContentType = "unsupported_content_type"
-	LookupErrorOther                  = "other"
+	LookupErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a LookupError instance
 func (u *LookupError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// MalformedPath : The given path does not satisfy the required path
-		// format. Please refer to the `Path formats documentation`
+		// MalformedPath : The given path does not satisfy the required path format.
+		// Please refer to the `Path formats documentation`
 		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
 		// for more information.
 		MalformedPath string `json:"malformed_path,omitempty"`
@@ -2079,8 +2067,8 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "malformed_path":
-		u.MalformedPath = w.MalformedPath
+		case "malformed_path":
+			u.MalformedPath = w.MalformedPath
 
 		if err != nil {
 			return err
@@ -2098,7 +2086,7 @@ type MediaInfo struct {
 
 // Valid tag values for MediaInfo
 const (
-	MediaInfoPending  = "pending"
+	MediaInfoPending = "pending"
 	MediaInfoMetadata = "metadata"
 )
 
@@ -2116,8 +2104,8 @@ func (u *MediaInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "metadata":
-		u.Metadata, err = IsMediaMetadataFromJSON(w.Metadata)
+		case "metadata":
+			u.Metadata, err = IsMediaMetadataFromJSON(w.Metadata)
 
 		if err != nil {
 			return err
@@ -2135,12 +2123,12 @@ type MediaMetadata struct {
 	// TimeTaken : The timestamp when the photo/video is taken.
 	TimeTaken time.Time `json:"time_taken,omitempty"`
 }
-
 // NewMediaMetadata returns a new MediaMetadata instance
 func NewMediaMetadata() *MediaMetadata {
 	s := new(MediaMetadata)
 	return s
 }
+
 
 // IsMediaMetadata is the interface type for MediaMetadata and its subtypes
 type IsMediaMetadata interface {
@@ -2176,14 +2164,14 @@ func (u *mediaMetadataUnion) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "photo":
-		err = json.Unmarshal(body, &u.Photo)
+		case "photo":
+			err = json.Unmarshal(body, &u.Photo)
 
 		if err != nil {
 			return err
 		}
-	case "video":
-		err = json.Unmarshal(body, &u.Video)
+		case "video":
+			err = json.Unmarshal(body, &u.Video)
 
 		if err != nil {
 			return err
@@ -2199,16 +2187,15 @@ func IsMediaMetadataFromJSON(data []byte) (IsMediaMetadata, error) {
 		return nil, err
 	}
 	switch t.Tag {
-	case "photo":
-		return t.Photo, nil
+		case "photo":
+			return t.Photo, nil
 
-	case "video":
-		return t.Video, nil
+		case "video":
+			return t.Video, nil
 
 	}
 	return nil, nil
 }
-
 // RelocationBatchArgBase : has no documentation (yet)
 type RelocationBatchArgBase struct {
 	// Entries : List of entries to be moved or copied. Each entry is
@@ -2218,7 +2205,6 @@ type RelocationBatchArgBase struct {
 	// try to autorename that file to avoid the conflict.
 	Autorename bool `json:"autorename"`
 }
-
 // NewRelocationBatchArgBase returns a new RelocationBatchArgBase instance
 func NewRelocationBatchArgBase(Entries []*RelocationPath) *RelocationBatchArgBase {
 	s := new(RelocationBatchArgBase)
@@ -2227,15 +2213,15 @@ func NewRelocationBatchArgBase(Entries []*RelocationPath) *RelocationBatchArgBas
 	return s
 }
 
+
 // MoveBatchArg : has no documentation (yet)
 type MoveBatchArg struct {
 	RelocationBatchArgBase
-	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
-	// an ownership transfer for the content being moved. This does not apply to
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in an
+	// ownership transfer for the content being moved. This does not apply to
 	// copies.
 	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
 }
-
 // NewMoveBatchArg returns a new MoveBatchArg instance
 func NewMoveBatchArg(Entries []*RelocationPath) *MoveBatchArg {
 	s := new(MoveBatchArg)
@@ -2245,16 +2231,17 @@ func NewMoveBatchArg(Entries []*RelocationPath) *MoveBatchArg {
 	return s
 }
 
+
 // PhotoMetadata : Metadata for a photo.
 type PhotoMetadata struct {
 	MediaMetadata
 }
-
 // NewPhotoMetadata returns a new PhotoMetadata instance
 func NewPhotoMetadata() *PhotoMetadata {
 	s := new(PhotoMetadata)
 	return s
 }
+
 
 // PreviewArg : has no documentation (yet)
 type PreviewArg struct {
@@ -2263,13 +2250,13 @@ type PreviewArg struct {
 	// Rev : Please specify revision in `path` instead.
 	Rev string `json:"rev,omitempty"`
 }
-
 // NewPreviewArg returns a new PreviewArg instance
 func NewPreviewArg(Path string) *PreviewArg {
 	s := new(PreviewArg)
 	s.Path = Path
 	return s
 }
+
 
 // PreviewError : has no documentation (yet)
 type PreviewError struct {
@@ -2280,10 +2267,10 @@ type PreviewError struct {
 
 // Valid tag values for PreviewError
 const (
-	PreviewErrorPath                 = "path"
-	PreviewErrorInProgress           = "in_progress"
+	PreviewErrorPath = "path"
+	PreviewErrorInProgress = "in_progress"
 	PreviewErrorUnsupportedExtension = "unsupported_extension"
-	PreviewErrorUnsupportedContent   = "unsupported_content"
+	PreviewErrorUnsupportedContent = "unsupported_content"
 )
 
 // UnmarshalJSON deserializes into a PreviewError instance
@@ -2300,8 +2287,8 @@ func (u *PreviewError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -2317,7 +2304,6 @@ type RelocationPath struct {
 	// ToPath : Path in the user's Dropbox that is the destination.
 	ToPath string `json:"to_path"`
 }
-
 // NewRelocationPath returns a new RelocationPath instance
 func NewRelocationPath(FromPath string, ToPath string) *RelocationPath {
 	s := new(RelocationPath)
@@ -2325,6 +2311,7 @@ func NewRelocationPath(FromPath string, ToPath string) *RelocationPath {
 	s.ToPath = ToPath
 	return s
 }
+
 
 // RelocationArg : has no documentation (yet)
 type RelocationArg struct {
@@ -2336,12 +2323,11 @@ type RelocationArg struct {
 	// Autorename : If there's a conflict, have the Dropbox server try to
 	// autorename the file to avoid the conflict.
 	Autorename bool `json:"autorename"`
-	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
-	// an ownership transfer for the content being moved. This does not apply to
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in an
+	// ownership transfer for the content being moved. This does not apply to
 	// copies.
 	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
 }
-
 // NewRelocationArg returns a new RelocationArg instance
 func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 	s := new(RelocationArg)
@@ -2353,20 +2339,20 @@ func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 	return s
 }
 
+
 // RelocationBatchArg : has no documentation (yet)
 type RelocationBatchArg struct {
 	RelocationBatchArgBase
 	// AllowSharedFolder : If true, `copyBatch` will copy contents in shared
-	// folder, otherwise `RelocationError.cant_copy_shared_folder` will be
-	// returned if `RelocationPath.from_path` contains shared folder. This field
-	// is always true for `moveBatch`.
+	// folder, otherwise `RelocationError.cant_copy_shared_folder` will be returned
+	// if `RelocationPath.from_path` contains shared folder. This field is always
+	// true for `moveBatch`.
 	AllowSharedFolder bool `json:"allow_shared_folder"`
-	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
-	// an ownership transfer for the content being moved. This does not apply to
+	// AllowOwnershipTransfer : Allow moves by owner even if it would result in an
+	// ownership transfer for the content being moved. This does not apply to
 	// copies.
 	AllowOwnershipTransfer bool `json:"allow_ownership_transfer"`
 }
-
 // NewRelocationBatchArg returns a new RelocationBatchArg instance
 func NewRelocationBatchArg(Entries []*RelocationPath) *RelocationBatchArg {
 	s := new(RelocationBatchArg)
@@ -2376,6 +2362,7 @@ func NewRelocationBatchArg(Entries []*RelocationPath) *RelocationBatchArg {
 	s.AllowOwnershipTransfer = false
 	return s
 }
+
 
 // RelocationError : has no documentation (yet)
 type RelocationError struct {
@@ -2390,19 +2377,19 @@ type RelocationError struct {
 
 // Valid tag values for RelocationError
 const (
-	RelocationErrorFromLookup               = "from_lookup"
-	RelocationErrorFromWrite                = "from_write"
-	RelocationErrorTo                       = "to"
-	RelocationErrorCantCopySharedFolder     = "cant_copy_shared_folder"
-	RelocationErrorCantNestSharedFolder     = "cant_nest_shared_folder"
+	RelocationErrorFromLookup = "from_lookup"
+	RelocationErrorFromWrite = "from_write"
+	RelocationErrorTo = "to"
+	RelocationErrorCantCopySharedFolder = "cant_copy_shared_folder"
+	RelocationErrorCantNestSharedFolder = "cant_nest_shared_folder"
 	RelocationErrorCantMoveFolderIntoItself = "cant_move_folder_into_itself"
-	RelocationErrorTooManyFiles             = "too_many_files"
-	RelocationErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
-	RelocationErrorCantTransferOwnership    = "cant_transfer_ownership"
-	RelocationErrorInsufficientQuota        = "insufficient_quota"
-	RelocationErrorInternalError            = "internal_error"
-	RelocationErrorCantMoveSharedFolder     = "cant_move_shared_folder"
-	RelocationErrorOther                    = "other"
+	RelocationErrorTooManyFiles = "too_many_files"
+	RelocationErrorDuplicatedOrNestedPaths = "duplicated_or_nested_paths"
+	RelocationErrorCantTransferOwnership = "cant_transfer_ownership"
+	RelocationErrorInsufficientQuota = "insufficient_quota"
+	RelocationErrorInternalError = "internal_error"
+	RelocationErrorCantMoveSharedFolder = "cant_move_shared_folder"
+	RelocationErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a RelocationError instance
@@ -2423,20 +2410,20 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "from_lookup":
-		u.FromLookup = w.FromLookup
+		case "from_lookup":
+			u.FromLookup = w.FromLookup
 
 		if err != nil {
 			return err
 		}
-	case "from_write":
-		u.FromWrite = w.FromWrite
+		case "from_write":
+			u.FromWrite = w.FromWrite
 
 		if err != nil {
 			return err
 		}
-	case "to":
-		u.To = w.To
+		case "to":
+			u.To = w.To
 
 		if err != nil {
 			return err
@@ -2458,20 +2445,20 @@ type RelocationBatchError struct {
 
 // Valid tag values for RelocationBatchError
 const (
-	RelocationBatchErrorFromLookup               = "from_lookup"
-	RelocationBatchErrorFromWrite                = "from_write"
-	RelocationBatchErrorTo                       = "to"
-	RelocationBatchErrorCantCopySharedFolder     = "cant_copy_shared_folder"
-	RelocationBatchErrorCantNestSharedFolder     = "cant_nest_shared_folder"
+	RelocationBatchErrorFromLookup = "from_lookup"
+	RelocationBatchErrorFromWrite = "from_write"
+	RelocationBatchErrorTo = "to"
+	RelocationBatchErrorCantCopySharedFolder = "cant_copy_shared_folder"
+	RelocationBatchErrorCantNestSharedFolder = "cant_nest_shared_folder"
 	RelocationBatchErrorCantMoveFolderIntoItself = "cant_move_folder_into_itself"
-	RelocationBatchErrorTooManyFiles             = "too_many_files"
-	RelocationBatchErrorDuplicatedOrNestedPaths  = "duplicated_or_nested_paths"
-	RelocationBatchErrorCantTransferOwnership    = "cant_transfer_ownership"
-	RelocationBatchErrorInsufficientQuota        = "insufficient_quota"
-	RelocationBatchErrorInternalError            = "internal_error"
-	RelocationBatchErrorCantMoveSharedFolder     = "cant_move_shared_folder"
-	RelocationBatchErrorOther                    = "other"
-	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
+	RelocationBatchErrorTooManyFiles = "too_many_files"
+	RelocationBatchErrorDuplicatedOrNestedPaths = "duplicated_or_nested_paths"
+	RelocationBatchErrorCantTransferOwnership = "cant_transfer_ownership"
+	RelocationBatchErrorInsufficientQuota = "insufficient_quota"
+	RelocationBatchErrorInternalError = "internal_error"
+	RelocationBatchErrorCantMoveSharedFolder = "cant_move_shared_folder"
+	RelocationBatchErrorOther = "other"
+	RelocationBatchErrorTooManyWriteOperations = "too_many_write_operations"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchError instance
@@ -2492,20 +2479,20 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "from_lookup":
-		u.FromLookup = w.FromLookup
+		case "from_lookup":
+			u.FromLookup = w.FromLookup
 
 		if err != nil {
 			return err
 		}
-	case "from_write":
-		u.FromWrite = w.FromWrite
+		case "from_write":
+			u.FromWrite = w.FromWrite
 
 		if err != nil {
 			return err
 		}
-	case "to":
-		u.To = w.To
+		case "to":
+			u.To = w.To
 
 		if err != nil {
 			return err
@@ -2523,10 +2510,10 @@ type RelocationBatchErrorEntry struct {
 
 // Valid tag values for RelocationBatchErrorEntry
 const (
-	RelocationBatchErrorEntryRelocationError        = "relocation_error"
-	RelocationBatchErrorEntryInternalError          = "internal_error"
+	RelocationBatchErrorEntryRelocationError = "relocation_error"
+	RelocationBatchErrorEntryInternalError = "internal_error"
 	RelocationBatchErrorEntryTooManyWriteOperations = "too_many_write_operations"
-	RelocationBatchErrorEntryOther                  = "other"
+	RelocationBatchErrorEntryOther = "other"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchErrorEntry instance
@@ -2543,8 +2530,8 @@ func (u *RelocationBatchErrorEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "relocation_error":
-		u.RelocationError = w.RelocationError
+		case "relocation_error":
+			u.RelocationError = w.RelocationError
 
 		if err != nil {
 			return err
@@ -2565,8 +2552,8 @@ type RelocationBatchJobStatus struct {
 // Valid tag values for RelocationBatchJobStatus
 const (
 	RelocationBatchJobStatusInProgress = "in_progress"
-	RelocationBatchJobStatusComplete   = "complete"
-	RelocationBatchJobStatusFailed     = "failed"
+	RelocationBatchJobStatusComplete = "complete"
+	RelocationBatchJobStatusFailed = "failed"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchJobStatus instance
@@ -2583,14 +2570,14 @@ func (u *RelocationBatchJobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
 		}
-	case "failed":
-		u.Failed = w.Failed
+		case "failed":
+			u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -2614,17 +2601,17 @@ type RelocationBatchLaunch struct {
 // Valid tag values for RelocationBatchLaunch
 const (
 	RelocationBatchLaunchAsyncJobId = "async_job_id"
-	RelocationBatchLaunchComplete   = "complete"
-	RelocationBatchLaunchOther      = "other"
+	RelocationBatchLaunchComplete = "complete"
+	RelocationBatchLaunchOther = "other"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchLaunch instance
 func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -2634,14 +2621,14 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -2656,7 +2643,6 @@ type RelocationBatchResult struct {
 	// Entries : has no documentation (yet)
 	Entries []*RelocationBatchResultData `json:"entries"`
 }
-
 // NewRelocationBatchResult returns a new RelocationBatchResult instance
 func NewRelocationBatchResult(Entries []*RelocationBatchResultData) *RelocationBatchResult {
 	s := new(RelocationBatchResult)
@@ -2664,18 +2650,19 @@ func NewRelocationBatchResult(Entries []*RelocationBatchResultData) *RelocationB
 	return s
 }
 
+
 // RelocationBatchResultData : has no documentation (yet)
 type RelocationBatchResultData struct {
 	// Metadata : Metadata of the relocated object.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewRelocationBatchResultData returns a new RelocationBatchResultData instance
 func NewRelocationBatchResultData(Metadata IsMetadata) *RelocationBatchResultData {
 	s := new(RelocationBatchResultData)
 	s.Metadata = Metadata
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a RelocationBatchResultData instance
 func (u *RelocationBatchResultData) UnmarshalJSON(b []byte) error {
@@ -2694,7 +2681,6 @@ func (u *RelocationBatchResultData) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // RelocationBatchResultEntry : has no documentation (yet)
 type RelocationBatchResultEntry struct {
 	dropbox.Tagged
@@ -2708,7 +2694,7 @@ type RelocationBatchResultEntry struct {
 const (
 	RelocationBatchResultEntrySuccess = "success"
 	RelocationBatchResultEntryFailure = "failure"
-	RelocationBatchResultEntryOther   = "other"
+	RelocationBatchResultEntryOther = "other"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchResultEntry instance
@@ -2727,14 +2713,14 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		u.Success, err = IsMetadataFromJSON(w.Success)
+		case "success":
+			u.Success, err = IsMetadataFromJSON(w.Success)
 
 		if err != nil {
 			return err
 		}
-	case "failure":
-		u.Failure = w.Failure
+		case "failure":
+			u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -2755,7 +2741,7 @@ type RelocationBatchV2JobStatus struct {
 // Valid tag values for RelocationBatchV2JobStatus
 const (
 	RelocationBatchV2JobStatusInProgress = "in_progress"
-	RelocationBatchV2JobStatusComplete   = "complete"
+	RelocationBatchV2JobStatusComplete = "complete"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchV2JobStatus instance
@@ -2770,8 +2756,8 @@ func (u *RelocationBatchV2JobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -2795,16 +2781,16 @@ type RelocationBatchV2Launch struct {
 // Valid tag values for RelocationBatchV2Launch
 const (
 	RelocationBatchV2LaunchAsyncJobId = "async_job_id"
-	RelocationBatchV2LaunchComplete   = "complete"
+	RelocationBatchV2LaunchComplete = "complete"
 )
 
 // UnmarshalJSON deserializes into a RelocationBatchV2Launch instance
 func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -2814,14 +2800,14 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -2833,12 +2819,10 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 // RelocationBatchV2Result : has no documentation (yet)
 type RelocationBatchV2Result struct {
 	FileOpsResult
-	// Entries : Each entry in CopyBatchArg.entries or `MoveBatchArg.entries`
-	// will appear at the same position inside
-	// `RelocationBatchV2Result.entries`.
+	// Entries : Each entry in CopyBatchArg.entries or `MoveBatchArg.entries` will
+	// appear at the same position inside `RelocationBatchV2Result.entries`.
 	Entries []*RelocationBatchResultEntry `json:"entries"`
 }
-
 // NewRelocationBatchV2Result returns a new RelocationBatchV2Result instance
 func NewRelocationBatchV2Result(Entries []*RelocationBatchResultEntry) *RelocationBatchV2Result {
 	s := new(RelocationBatchV2Result)
@@ -2846,19 +2830,20 @@ func NewRelocationBatchV2Result(Entries []*RelocationBatchResultEntry) *Relocati
 	return s
 }
 
+
 // RelocationResult : has no documentation (yet)
 type RelocationResult struct {
 	FileOpsResult
 	// Metadata : Metadata of the relocated object.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewRelocationResult returns a new RelocationResult instance
 func NewRelocationResult(Metadata IsMetadata) *RelocationResult {
 	s := new(RelocationResult)
 	s.Metadata = Metadata
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a RelocationResult instance
 func (u *RelocationResult) UnmarshalJSON(b []byte) error {
@@ -2877,7 +2862,6 @@ func (u *RelocationResult) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // RestoreArg : has no documentation (yet)
 type RestoreArg struct {
 	// Path : The path to save the restored file.
@@ -2885,7 +2869,6 @@ type RestoreArg struct {
 	// Rev : The revision to restore.
 	Rev string `json:"rev"`
 }
-
 // NewRestoreArg returns a new RestoreArg instance
 func NewRestoreArg(Path string, Rev string) *RestoreArg {
 	s := new(RestoreArg)
@@ -2893,6 +2876,7 @@ func NewRestoreArg(Path string, Rev string) *RestoreArg {
 	s.Rev = Rev
 	return s
 }
+
 
 // RestoreError : has no documentation (yet)
 type RestoreError struct {
@@ -2905,10 +2889,10 @@ type RestoreError struct {
 
 // Valid tag values for RestoreError
 const (
-	RestoreErrorPathLookup      = "path_lookup"
-	RestoreErrorPathWrite       = "path_write"
+	RestoreErrorPathLookup = "path_lookup"
+	RestoreErrorPathWrite = "path_write"
 	RestoreErrorInvalidRevision = "invalid_revision"
-	RestoreErrorOther           = "other"
+	RestoreErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a RestoreError instance
@@ -2917,8 +2901,7 @@ func (u *RestoreError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// PathLookup : An error occurs when downloading metadata for the file.
 		PathLookup *LookupError `json:"path_lookup,omitempty"`
-		// PathWrite : An error occurs when trying to restore the file to that
-		// path.
+		// PathWrite : An error occurs when trying to restore the file to that path.
 		PathWrite *WriteError `json:"path_write,omitempty"`
 	}
 	var w wrap
@@ -2928,14 +2911,14 @@ func (u *RestoreError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path_lookup":
-		u.PathLookup = w.PathLookup
+		case "path_lookup":
+			u.PathLookup = w.PathLookup
 
 		if err != nil {
 			return err
 		}
-	case "path_write":
-		u.PathWrite = w.PathWrite
+		case "path_write":
+			u.PathWrite = w.PathWrite
 
 		if err != nil {
 			return err
@@ -2951,7 +2934,6 @@ type SaveCopyReferenceArg struct {
 	// Path : Path in the user's Dropbox that is the destination.
 	Path string `json:"path"`
 }
-
 // NewSaveCopyReferenceArg returns a new SaveCopyReferenceArg instance
 func NewSaveCopyReferenceArg(CopyReference string, Path string) *SaveCopyReferenceArg {
 	s := new(SaveCopyReferenceArg)
@@ -2959,6 +2941,7 @@ func NewSaveCopyReferenceArg(CopyReference string, Path string) *SaveCopyReferen
 	s.Path = Path
 	return s
 }
+
 
 // SaveCopyReferenceError : has no documentation (yet)
 type SaveCopyReferenceError struct {
@@ -2969,12 +2952,12 @@ type SaveCopyReferenceError struct {
 
 // Valid tag values for SaveCopyReferenceError
 const (
-	SaveCopyReferenceErrorPath                 = "path"
+	SaveCopyReferenceErrorPath = "path"
 	SaveCopyReferenceErrorInvalidCopyReference = "invalid_copy_reference"
-	SaveCopyReferenceErrorNoPermission         = "no_permission"
-	SaveCopyReferenceErrorNotFound             = "not_found"
-	SaveCopyReferenceErrorTooManyFiles         = "too_many_files"
-	SaveCopyReferenceErrorOther                = "other"
+	SaveCopyReferenceErrorNoPermission = "no_permission"
+	SaveCopyReferenceErrorNotFound = "not_found"
+	SaveCopyReferenceErrorTooManyFiles = "too_many_files"
+	SaveCopyReferenceErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a SaveCopyReferenceError instance
@@ -2991,8 +2974,8 @@ func (u *SaveCopyReferenceError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3003,11 +2986,9 @@ func (u *SaveCopyReferenceError) UnmarshalJSON(body []byte) error {
 
 // SaveCopyReferenceResult : has no documentation (yet)
 type SaveCopyReferenceResult struct {
-	// Metadata : The metadata of the saved file or folder in the user's
-	// Dropbox.
+	// Metadata : The metadata of the saved file or folder in the user's Dropbox.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewSaveCopyReferenceResult returns a new SaveCopyReferenceResult instance
 func NewSaveCopyReferenceResult(Metadata IsMetadata) *SaveCopyReferenceResult {
 	s := new(SaveCopyReferenceResult)
@@ -3015,11 +2996,11 @@ func NewSaveCopyReferenceResult(Metadata IsMetadata) *SaveCopyReferenceResult {
 	return s
 }
 
+
 // UnmarshalJSON deserializes into a SaveCopyReferenceResult instance
 func (u *SaveCopyReferenceResult) UnmarshalJSON(b []byte) error {
 	type wrap struct {
-		// Metadata : The metadata of the saved file or folder in the user's
-		// Dropbox.
+		// Metadata : The metadata of the saved file or folder in the user's Dropbox.
 		Metadata json.RawMessage `json:"metadata"`
 	}
 	var w wrap
@@ -3033,7 +3014,6 @@ func (u *SaveCopyReferenceResult) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // SaveUrlArg : has no documentation (yet)
 type SaveUrlArg struct {
 	// Path : The path in Dropbox where the URL will be saved to.
@@ -3041,7 +3021,6 @@ type SaveUrlArg struct {
 	// Url : The URL to be saved.
 	Url string `json:"url"`
 }
-
 // NewSaveUrlArg returns a new SaveUrlArg instance
 func NewSaveUrlArg(Path string, Url string) *SaveUrlArg {
 	s := new(SaveUrlArg)
@@ -3049,6 +3028,7 @@ func NewSaveUrlArg(Path string, Url string) *SaveUrlArg {
 	s.Url = Url
 	return s
 }
+
 
 // SaveUrlError : has no documentation (yet)
 type SaveUrlError struct {
@@ -3059,11 +3039,11 @@ type SaveUrlError struct {
 
 // Valid tag values for SaveUrlError
 const (
-	SaveUrlErrorPath           = "path"
+	SaveUrlErrorPath = "path"
 	SaveUrlErrorDownloadFailed = "download_failed"
-	SaveUrlErrorInvalidUrl     = "invalid_url"
-	SaveUrlErrorNotFound       = "not_found"
-	SaveUrlErrorOther          = "other"
+	SaveUrlErrorInvalidUrl = "invalid_url"
+	SaveUrlErrorNotFound = "not_found"
+	SaveUrlErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a SaveUrlError instance
@@ -3080,8 +3060,8 @@ func (u *SaveUrlError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3102,8 +3082,8 @@ type SaveUrlJobStatus struct {
 // Valid tag values for SaveUrlJobStatus
 const (
 	SaveUrlJobStatusInProgress = "in_progress"
-	SaveUrlJobStatusComplete   = "complete"
-	SaveUrlJobStatusFailed     = "failed"
+	SaveUrlJobStatusComplete = "complete"
+	SaveUrlJobStatusFailed = "failed"
 )
 
 // UnmarshalJSON deserializes into a SaveUrlJobStatus instance
@@ -3120,14 +3100,14 @@ func (u *SaveUrlJobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
 		}
-	case "failed":
-		u.Failed = w.Failed
+		case "failed":
+			u.Failed = w.Failed
 
 		if err != nil {
 			return err
@@ -3150,16 +3130,16 @@ type SaveUrlResult struct {
 // Valid tag values for SaveUrlResult
 const (
 	SaveUrlResultAsyncJobId = "async_job_id"
-	SaveUrlResultComplete   = "complete"
+	SaveUrlResultComplete = "complete"
 )
 
 // UnmarshalJSON deserializes into a SaveUrlResult instance
 func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -3169,14 +3149,14 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -3190,9 +3170,9 @@ type SearchArg struct {
 	// Path : The path in the user's Dropbox to search. Should probably be a
 	// folder.
 	Path string `json:"path"`
-	// Query : The string to search for. The search string is split on spaces
-	// into multiple tokens. For file name searching, the last token is used for
-	// prefix matching (i.e. "bat c" matches "bat cave" but not "batman car").
+	// Query : The string to search for. The search string is split on spaces into
+	// multiple tokens. For file name searching, the last token is used for prefix
+	// matching (i.e. "bat c" matches "bat cave" but not "batman car").
 	Query string `json:"query"`
 	// Start : The starting index within the search results (used for paging).
 	Start uint64 `json:"start"`
@@ -3203,7 +3183,6 @@ type SearchArg struct {
 	// Dropbox Business accounts.
 	Mode *SearchMode `json:"mode"`
 }
-
 // NewSearchArg returns a new SearchArg instance
 func NewSearchArg(Path string, Query string) *SearchArg {
 	s := new(SearchArg)
@@ -3211,9 +3190,10 @@ func NewSearchArg(Path string, Query string) *SearchArg {
 	s.Query = Query
 	s.Start = 0
 	s.MaxResults = 100
-	s.Mode = &SearchMode{Tagged: dropbox.Tagged{"filename"}}
+	s.Mode = &SearchMode{Tagged:dropbox.Tagged{"filename"}}
 	return s
 }
+
 
 // SearchError : has no documentation (yet)
 type SearchError struct {
@@ -3224,7 +3204,7 @@ type SearchError struct {
 
 // Valid tag values for SearchError
 const (
-	SearchErrorPath  = "path"
+	SearchErrorPath = "path"
 	SearchErrorOther = "other"
 )
 
@@ -3242,8 +3222,8 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3259,7 +3239,6 @@ type SearchMatch struct {
 	// Metadata : The metadata for the matched file or folder.
 	Metadata IsMetadata `json:"metadata"`
 }
-
 // NewSearchMatch returns a new SearchMatch instance
 func NewSearchMatch(MatchType *SearchMatchType, Metadata IsMetadata) *SearchMatch {
 	s := new(SearchMatch)
@@ -3267,6 +3246,7 @@ func NewSearchMatch(MatchType *SearchMatchType, Metadata IsMetadata) *SearchMatc
 	s.Metadata = Metadata
 	return s
 }
+
 
 // UnmarshalJSON deserializes into a SearchMatch instance
 func (u *SearchMatch) UnmarshalJSON(b []byte) error {
@@ -3288,7 +3268,6 @@ func (u *SearchMatch) UnmarshalJSON(b []byte) error {
 	u.Metadata = Metadata
 	return nil
 }
-
 // SearchMatchType : Indicates what type of match was found for a given item.
 type SearchMatchType struct {
 	dropbox.Tagged
@@ -3297,8 +3276,8 @@ type SearchMatchType struct {
 // Valid tag values for SearchMatchType
 const (
 	SearchMatchTypeFilename = "filename"
-	SearchMatchTypeContent  = "content"
-	SearchMatchTypeBoth     = "both"
+	SearchMatchTypeContent = "content"
+	SearchMatchTypeBoth = "both"
 )
 
 // SearchMode : has no documentation (yet)
@@ -3308,23 +3287,22 @@ type SearchMode struct {
 
 // Valid tag values for SearchMode
 const (
-	SearchModeFilename           = "filename"
+	SearchModeFilename = "filename"
 	SearchModeFilenameAndContent = "filename_and_content"
-	SearchModeDeletedFilename    = "deleted_filename"
+	SearchModeDeletedFilename = "deleted_filename"
 )
 
 // SearchResult : has no documentation (yet)
 type SearchResult struct {
 	// Matches : A list (possibly empty) of matches for the query.
 	Matches []*SearchMatch `json:"matches"`
-	// More : Used for paging. If true, indicates there is another page of
-	// results available that can be fetched by calling `search` again.
+	// More : Used for paging. If true, indicates there is another page of results
+	// available that can be fetched by calling `search` again.
 	More bool `json:"more"`
 	// Start : Used for paging. Value to set the start argument to when calling
 	// `search` to fetch the next page of results.
 	Start uint64 `json:"start"`
 }
-
 // NewSearchResult returns a new SearchResult instance
 func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchResult {
 	s := new(SearchResult)
@@ -3334,6 +3312,7 @@ func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchRes
 	return s
 }
 
+
 // SharedLink : has no documentation (yet)
 type SharedLink struct {
 	// Url : Shared link url.
@@ -3341,7 +3320,6 @@ type SharedLink struct {
 	// Password : Password for the shared link.
 	Password string `json:"password,omitempty"`
 }
-
 // NewSharedLink returns a new SharedLink instance
 func NewSharedLink(Url string) *SharedLink {
 	s := new(SharedLink)
@@ -3349,18 +3327,19 @@ func NewSharedLink(Url string) *SharedLink {
 	return s
 }
 
+
 // SymlinkInfo : has no documentation (yet)
 type SymlinkInfo struct {
 	// Target : The target this symlink points to.
 	Target string `json:"target"`
 }
-
 // NewSymlinkInfo returns a new SymlinkInfo instance
 func NewSymlinkInfo(Target string) *SymlinkInfo {
 	s := new(SymlinkInfo)
 	s.Target = Target
 	return s
 }
+
 
 // SyncSetting : has no documentation (yet)
 type SyncSetting struct {
@@ -3369,10 +3348,10 @@ type SyncSetting struct {
 
 // Valid tag values for SyncSetting
 const (
-	SyncSettingDefault           = "default"
-	SyncSettingNotSynced         = "not_synced"
+	SyncSettingDefault = "default"
+	SyncSettingNotSynced = "not_synced"
 	SyncSettingNotSyncedInactive = "not_synced_inactive"
-	SyncSettingOther             = "other"
+	SyncSettingOther = "other"
 )
 
 // SyncSettingArg : has no documentation (yet)
@@ -3382,9 +3361,9 @@ type SyncSettingArg struct {
 
 // Valid tag values for SyncSettingArg
 const (
-	SyncSettingArgDefault   = "default"
+	SyncSettingArgDefault = "default"
 	SyncSettingArgNotSynced = "not_synced"
-	SyncSettingArgOther     = "other"
+	SyncSettingArgOther = "other"
 )
 
 // SyncSettingsError : has no documentation (yet)
@@ -3396,10 +3375,10 @@ type SyncSettingsError struct {
 
 // Valid tag values for SyncSettingsError
 const (
-	SyncSettingsErrorPath                     = "path"
-	SyncSettingsErrorUnsupportedCombination   = "unsupported_combination"
+	SyncSettingsErrorPath = "path"
+	SyncSettingsErrorUnsupportedCombination = "unsupported_combination"
 	SyncSettingsErrorUnsupportedConfiguration = "unsupported_configuration"
-	SyncSettingsErrorOther                    = "other"
+	SyncSettingsErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a SyncSettingsError instance
@@ -3416,8 +3395,8 @@ func (u *SyncSettingsError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3431,24 +3410,24 @@ type ThumbnailArg struct {
 	// Path : The path to the image file you want to thumbnail.
 	Path string `json:"path"`
 	// Format : The format for the thumbnail image, jpeg (default) or png. For
-	// images that are photos, jpeg should be preferred, while png is  better
-	// for screenshots and digital arts.
+	// images that are photos, jpeg should be preferred, while png is  better for
+	// screenshots and digital arts.
 	Format *ThumbnailFormat `json:"format"`
 	// Size : The size for the thumbnail image.
 	Size *ThumbnailSize `json:"size"`
 	// Mode : How to resize and crop the image to achieve the desired size.
 	Mode *ThumbnailMode `json:"mode"`
 }
-
 // NewThumbnailArg returns a new ThumbnailArg instance
 func NewThumbnailArg(Path string) *ThumbnailArg {
 	s := new(ThumbnailArg)
 	s.Path = Path
-	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{"jpeg"}}
-	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{"w64h64"}}
-	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{"strict"}}
+	s.Format = &ThumbnailFormat{Tagged:dropbox.Tagged{"jpeg"}}
+	s.Size = &ThumbnailSize{Tagged:dropbox.Tagged{"w64h64"}}
+	s.Mode = &ThumbnailMode{Tagged:dropbox.Tagged{"strict"}}
 	return s
 }
+
 
 // ThumbnailError : has no documentation (yet)
 type ThumbnailError struct {
@@ -3459,10 +3438,10 @@ type ThumbnailError struct {
 
 // Valid tag values for ThumbnailError
 const (
-	ThumbnailErrorPath                 = "path"
+	ThumbnailErrorPath = "path"
 	ThumbnailErrorUnsupportedExtension = "unsupported_extension"
-	ThumbnailErrorUnsupportedImage     = "unsupported_image"
-	ThumbnailErrorConversionError      = "conversion_error"
+	ThumbnailErrorUnsupportedImage = "unsupported_image"
+	ThumbnailErrorConversionError = "conversion_error"
 )
 
 // UnmarshalJSON deserializes into a ThumbnailError instance
@@ -3479,8 +3458,8 @@ func (u *ThumbnailError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
@@ -3497,7 +3476,7 @@ type ThumbnailFormat struct {
 // Valid tag values for ThumbnailFormat
 const (
 	ThumbnailFormatJpeg = "jpeg"
-	ThumbnailFormatPng  = "png"
+	ThumbnailFormatPng = "png"
 )
 
 // ThumbnailMode : has no documentation (yet)
@@ -3507,8 +3486,8 @@ type ThumbnailMode struct {
 
 // Valid tag values for ThumbnailMode
 const (
-	ThumbnailModeStrict        = "strict"
-	ThumbnailModeBestfit       = "bestfit"
+	ThumbnailModeStrict = "strict"
+	ThumbnailModeBestfit = "bestfit"
 	ThumbnailModeFitoneBestfit = "fitone_bestfit"
 )
 
@@ -3519,14 +3498,14 @@ type ThumbnailSize struct {
 
 // Valid tag values for ThumbnailSize
 const (
-	ThumbnailSizeW32h32     = "w32h32"
-	ThumbnailSizeW64h64     = "w64h64"
-	ThumbnailSizeW128h128   = "w128h128"
-	ThumbnailSizeW256h256   = "w256h256"
-	ThumbnailSizeW480h320   = "w480h320"
-	ThumbnailSizeW640h480   = "w640h480"
-	ThumbnailSizeW960h640   = "w960h640"
-	ThumbnailSizeW1024h768  = "w1024h768"
+	ThumbnailSizeW32h32 = "w32h32"
+	ThumbnailSizeW64h64 = "w64h64"
+	ThumbnailSizeW128h128 = "w128h128"
+	ThumbnailSizeW256h256 = "w256h256"
+	ThumbnailSizeW480h320 = "w480h320"
+	ThumbnailSizeW640h480 = "w640h480"
+	ThumbnailSizeW960h640 = "w960h640"
+	ThumbnailSizeW1024h768 = "w1024h768"
 	ThumbnailSizeW2048h1536 = "w2048h1536"
 )
 
@@ -3542,17 +3521,17 @@ type UploadError struct {
 
 // Valid tag values for UploadError
 const (
-	UploadErrorPath            = "path"
+	UploadErrorPath = "path"
 	UploadErrorPropertiesError = "properties_error"
-	UploadErrorOther           = "other"
+	UploadErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadError instance
 func (u *UploadError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// PropertiesError : The supplied property group is invalid. The file
-		// has uploaded without property groups.
+		// PropertiesError : The supplied property group is invalid. The file has
+		// uploaded without property groups.
 		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
@@ -3562,14 +3541,14 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		err = json.Unmarshal(body, &u.Path)
+		case "path":
+			err = json.Unmarshal(body, &u.Path)
 
 		if err != nil {
 			return err
 		}
-	case "properties_error":
-		u.PropertiesError = w.PropertiesError
+		case "properties_error":
+			u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3590,17 +3569,17 @@ type UploadErrorWithProperties struct {
 
 // Valid tag values for UploadErrorWithProperties
 const (
-	UploadErrorWithPropertiesPath            = "path"
+	UploadErrorWithPropertiesPath = "path"
 	UploadErrorWithPropertiesPropertiesError = "properties_error"
-	UploadErrorWithPropertiesOther           = "other"
+	UploadErrorWithPropertiesOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadErrorWithProperties instance
 func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// PropertiesError : The supplied property group is invalid. The file
-		// has uploaded without property groups.
+		// PropertiesError : The supplied property group is invalid. The file has
+		// uploaded without property groups.
 		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
@@ -3610,14 +3589,14 @@ func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "path":
-		err = json.Unmarshal(body, &u.Path)
+		case "path":
+			err = json.Unmarshal(body, &u.Path)
 
 		if err != nil {
 			return err
 		}
-	case "properties_error":
-		u.PropertiesError = w.PropertiesError
+		case "properties_error":
+			u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3635,7 +3614,6 @@ type UploadSessionAppendArg struct {
 	// session.
 	Close bool `json:"close"`
 }
-
 // NewUploadSessionAppendArg returns a new UploadSessionAppendArg instance
 func NewUploadSessionAppendArg(Cursor *UploadSessionCursor) *UploadSessionAppendArg {
 	s := new(UploadSessionAppendArg)
@@ -3643,6 +3621,7 @@ func NewUploadSessionAppendArg(Cursor *UploadSessionCursor) *UploadSessionAppend
 	s.Close = false
 	return s
 }
+
 
 // UploadSessionCursor : has no documentation (yet)
 type UploadSessionCursor struct {
@@ -3653,7 +3632,6 @@ type UploadSessionCursor struct {
 	// error.
 	Offset uint64 `json:"offset"`
 }
-
 // NewUploadSessionCursor returns a new UploadSessionCursor instance
 func NewUploadSessionCursor(SessionId string, Offset uint64) *UploadSessionCursor {
 	s := new(UploadSessionCursor)
@@ -3662,6 +3640,7 @@ func NewUploadSessionCursor(SessionId string, Offset uint64) *UploadSessionCurso
 	return s
 }
 
+
 // UploadSessionFinishArg : has no documentation (yet)
 type UploadSessionFinishArg struct {
 	// Cursor : Contains the upload session ID and the offset.
@@ -3669,7 +3648,6 @@ type UploadSessionFinishArg struct {
 	// Commit : Contains the path and other optional modifiers for the commit.
 	Commit *CommitInfo `json:"commit"`
 }
-
 // NewUploadSessionFinishArg returns a new UploadSessionFinishArg instance
 func NewUploadSessionFinishArg(Cursor *UploadSessionCursor, Commit *CommitInfo) *UploadSessionFinishArg {
 	s := new(UploadSessionFinishArg)
@@ -3678,18 +3656,19 @@ func NewUploadSessionFinishArg(Cursor *UploadSessionCursor, Commit *CommitInfo) 
 	return s
 }
 
+
 // UploadSessionFinishBatchArg : has no documentation (yet)
 type UploadSessionFinishBatchArg struct {
 	// Entries : Commit information for each file in the batch.
 	Entries []*UploadSessionFinishArg `json:"entries"`
 }
-
 // NewUploadSessionFinishBatchArg returns a new UploadSessionFinishBatchArg instance
 func NewUploadSessionFinishBatchArg(Entries []*UploadSessionFinishArg) *UploadSessionFinishBatchArg {
 	s := new(UploadSessionFinishBatchArg)
 	s.Entries = Entries
 	return s
 }
+
 
 // UploadSessionFinishBatchJobStatus : has no documentation (yet)
 type UploadSessionFinishBatchJobStatus struct {
@@ -3701,7 +3680,7 @@ type UploadSessionFinishBatchJobStatus struct {
 // Valid tag values for UploadSessionFinishBatchJobStatus
 const (
 	UploadSessionFinishBatchJobStatusInProgress = "in_progress"
-	UploadSessionFinishBatchJobStatusComplete   = "complete"
+	UploadSessionFinishBatchJobStatusComplete = "complete"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionFinishBatchJobStatus instance
@@ -3716,8 +3695,8 @@ func (u *UploadSessionFinishBatchJobStatus) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -3742,17 +3721,17 @@ type UploadSessionFinishBatchLaunch struct {
 // Valid tag values for UploadSessionFinishBatchLaunch
 const (
 	UploadSessionFinishBatchLaunchAsyncJobId = "async_job_id"
-	UploadSessionFinishBatchLaunchComplete   = "complete"
-	UploadSessionFinishBatchLaunchOther      = "other"
+	UploadSessionFinishBatchLaunchComplete = "complete"
+	UploadSessionFinishBatchLaunchOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionFinishBatchLaunch instance
 func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// AsyncJobId : This response indicates that the processing is
-		// asynchronous. The string is an id that can be used to obtain the
-		// status of the asynchronous job.
+		// AsyncJobId : This response indicates that the processing is asynchronous.
+		// The string is an id that can be used to obtain the status of the
+		// asynchronous job.
 		AsyncJobId string `json:"async_job_id,omitempty"`
 	}
 	var w wrap
@@ -3762,14 +3741,14 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "async_job_id":
-		u.AsyncJobId = w.AsyncJobId
+		case "async_job_id":
+			u.AsyncJobId = w.AsyncJobId
 
 		if err != nil {
 			return err
 		}
-	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
+		case "complete":
+			err = json.Unmarshal(body, &u.Complete)
 
 		if err != nil {
 			return err
@@ -3780,17 +3759,17 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 
 // UploadSessionFinishBatchResult : has no documentation (yet)
 type UploadSessionFinishBatchResult struct {
-	// Entries : Each entry in `UploadSessionFinishBatchArg.entries` will appear
-	// at the same position inside `UploadSessionFinishBatchResult.entries`.
+	// Entries : Each entry in `UploadSessionFinishBatchArg.entries` will appear at
+	// the same position inside `UploadSessionFinishBatchResult.entries`.
 	Entries []*UploadSessionFinishBatchResultEntry `json:"entries"`
 }
-
 // NewUploadSessionFinishBatchResult returns a new UploadSessionFinishBatchResult instance
 func NewUploadSessionFinishBatchResult(Entries []*UploadSessionFinishBatchResultEntry) *UploadSessionFinishBatchResult {
 	s := new(UploadSessionFinishBatchResult)
 	s.Entries = Entries
 	return s
 }
+
 
 // UploadSessionFinishBatchResultEntry : has no documentation (yet)
 type UploadSessionFinishBatchResultEntry struct {
@@ -3821,14 +3800,14 @@ func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		err = json.Unmarshal(body, &u.Success)
+		case "success":
+			err = json.Unmarshal(body, &u.Success)
 
 		if err != nil {
 			return err
 		}
-	case "failure":
-		u.Failure = w.Failure
+		case "failure":
+			u.Failure = w.Failure
 
 		if err != nil {
 			return err
@@ -3840,12 +3819,12 @@ func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 // UploadSessionFinishError : has no documentation (yet)
 type UploadSessionFinishError struct {
 	dropbox.Tagged
-	// LookupFailed : The session arguments are incorrect; the value explains
-	// the reason.
+	// LookupFailed : The session arguments are incorrect; the value explains the
+	// reason.
 	LookupFailed *UploadSessionLookupError `json:"lookup_failed,omitempty"`
-	// Path : Unable to save the uploaded contents to a file. Data has already
-	// been appended to the upload session. Please retry with empty data body
-	// and updated offset.
+	// Path : Unable to save the uploaded contents to a file. Data has already been
+	// appended to the upload session. Please retry with empty data body and
+	// updated offset.
 	Path *WriteError `json:"path,omitempty"`
 	// PropertiesError : The supplied property group is invalid. The file has
 	// uploaded without property groups.
@@ -3854,27 +3833,27 @@ type UploadSessionFinishError struct {
 
 // Valid tag values for UploadSessionFinishError
 const (
-	UploadSessionFinishErrorLookupFailed               = "lookup_failed"
-	UploadSessionFinishErrorPath                       = "path"
-	UploadSessionFinishErrorPropertiesError            = "properties_error"
+	UploadSessionFinishErrorLookupFailed = "lookup_failed"
+	UploadSessionFinishErrorPath = "path"
+	UploadSessionFinishErrorPropertiesError = "properties_error"
 	UploadSessionFinishErrorTooManySharedFolderTargets = "too_many_shared_folder_targets"
-	UploadSessionFinishErrorTooManyWriteOperations     = "too_many_write_operations"
-	UploadSessionFinishErrorOther                      = "other"
+	UploadSessionFinishErrorTooManyWriteOperations = "too_many_write_operations"
+	UploadSessionFinishErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionFinishError instance
 func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// LookupFailed : The session arguments are incorrect; the value
-		// explains the reason.
+		// LookupFailed : The session arguments are incorrect; the value explains the
+		// reason.
 		LookupFailed *UploadSessionLookupError `json:"lookup_failed,omitempty"`
-		// Path : Unable to save the uploaded contents to a file. Data has
-		// already been appended to the upload session. Please retry with empty
-		// data body and updated offset.
+		// Path : Unable to save the uploaded contents to a file. Data has already
+		// been appended to the upload session. Please retry with empty data body and
+		// updated offset.
 		Path *WriteError `json:"path,omitempty"`
-		// PropertiesError : The supplied property group is invalid. The file
-		// has uploaded without property groups.
+		// PropertiesError : The supplied property group is invalid. The file has
+		// uploaded without property groups.
 		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
 	}
 	var w wrap
@@ -3884,20 +3863,20 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "lookup_failed":
-		u.LookupFailed = w.LookupFailed
+		case "lookup_failed":
+			u.LookupFailed = w.LookupFailed
 
 		if err != nil {
 			return err
 		}
-	case "path":
-		u.Path = w.Path
+		case "path":
+			u.Path = w.Path
 
 		if err != nil {
 			return err
 		}
-	case "properties_error":
-		u.PropertiesError = w.PropertiesError
+		case "properties_error":
+			u.PropertiesError = w.PropertiesError
 
 		if err != nil {
 			return err
@@ -3909,21 +3888,21 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 // UploadSessionLookupError : has no documentation (yet)
 type UploadSessionLookupError struct {
 	dropbox.Tagged
-	// IncorrectOffset : The specified offset was incorrect. See the value for
-	// the correct offset. This error may occur when a previous request was
-	// received and processed successfully but the client did not receive the
-	// response, e.g. due to a network error.
+	// IncorrectOffset : The specified offset was incorrect. See the value for the
+	// correct offset. This error may occur when a previous request was received
+	// and processed successfully but the client did not receive the response, e.g.
+	// due to a network error.
 	IncorrectOffset *UploadSessionOffsetError `json:"incorrect_offset,omitempty"`
 }
 
 // Valid tag values for UploadSessionLookupError
 const (
-	UploadSessionLookupErrorNotFound        = "not_found"
+	UploadSessionLookupErrorNotFound = "not_found"
 	UploadSessionLookupErrorIncorrectOffset = "incorrect_offset"
-	UploadSessionLookupErrorClosed          = "closed"
-	UploadSessionLookupErrorNotClosed       = "not_closed"
-	UploadSessionLookupErrorTooLarge        = "too_large"
-	UploadSessionLookupErrorOther           = "other"
+	UploadSessionLookupErrorClosed = "closed"
+	UploadSessionLookupErrorNotClosed = "not_closed"
+	UploadSessionLookupErrorTooLarge = "too_large"
+	UploadSessionLookupErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionLookupError instance
@@ -3938,8 +3917,8 @@ func (u *UploadSessionLookupError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "incorrect_offset":
-		err = json.Unmarshal(body, &u.IncorrectOffset)
+		case "incorrect_offset":
+			err = json.Unmarshal(body, &u.IncorrectOffset)
 
 		if err != nil {
 			return err
@@ -3953,13 +3932,13 @@ type UploadSessionOffsetError struct {
 	// CorrectOffset : The offset up to which data has been collected.
 	CorrectOffset uint64 `json:"correct_offset"`
 }
-
 // NewUploadSessionOffsetError returns a new UploadSessionOffsetError instance
 func NewUploadSessionOffsetError(CorrectOffset uint64) *UploadSessionOffsetError {
 	s := new(UploadSessionOffsetError)
 	s.CorrectOffset = CorrectOffset
 	return s
 }
+
 
 // UploadSessionStartArg : has no documentation (yet)
 type UploadSessionStartArg struct {
@@ -3968,7 +3947,6 @@ type UploadSessionStartArg struct {
 	// session.
 	Close bool `json:"close"`
 }
-
 // NewUploadSessionStartArg returns a new UploadSessionStartArg instance
 func NewUploadSessionStartArg() *UploadSessionStartArg {
 	s := new(UploadSessionStartArg)
@@ -3976,13 +3954,13 @@ func NewUploadSessionStartArg() *UploadSessionStartArg {
 	return s
 }
 
+
 // UploadSessionStartResult : has no documentation (yet)
 type UploadSessionStartResult struct {
 	// SessionId : A unique identifier for the upload session. Pass this to
 	// `uploadSessionAppend` and `uploadSessionFinish`.
 	SessionId string `json:"session_id"`
 }
-
 // NewUploadSessionStartResult returns a new UploadSessionStartResult instance
 func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 	s := new(UploadSessionStartResult)
@@ -3990,16 +3968,16 @@ func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 	return s
 }
 
+
 // UploadWriteFailed : has no documentation (yet)
 type UploadWriteFailed struct {
 	// Reason : The reason why the file couldn't be saved.
 	Reason *WriteError `json:"reason"`
-	// UploadSessionId : The upload session ID; data has already been uploaded
-	// to the corresponding upload session and this ID may be used to retry the
-	// commit with `uploadSessionFinish`.
+	// UploadSessionId : The upload session ID; data has already been uploaded to
+	// the corresponding upload session and this ID may be used to retry the commit
+	// with `uploadSessionFinish`.
 	UploadSessionId string `json:"upload_session_id"`
 }
-
 // NewUploadWriteFailed returns a new UploadWriteFailed instance
 func NewUploadWriteFailed(Reason *WriteError, UploadSessionId string) *UploadWriteFailed {
 	s := new(UploadWriteFailed)
@@ -4008,18 +3986,19 @@ func NewUploadWriteFailed(Reason *WriteError, UploadSessionId string) *UploadWri
 	return s
 }
 
+
 // VideoMetadata : Metadata for a video.
 type VideoMetadata struct {
 	MediaMetadata
 	// Duration : The duration of the video in milliseconds.
 	Duration uint64 `json:"duration,omitempty"`
 }
-
 // NewVideoMetadata returns a new VideoMetadata instance
 func NewVideoMetadata() *VideoMetadata {
 	s := new(VideoMetadata)
 	return s
 }
+
 
 // WriteConflictError : has no documentation (yet)
 type WriteConflictError struct {
@@ -4028,10 +4007,10 @@ type WriteConflictError struct {
 
 // Valid tag values for WriteConflictError
 const (
-	WriteConflictErrorFile         = "file"
-	WriteConflictErrorFolder       = "folder"
+	WriteConflictErrorFile = "file"
+	WriteConflictErrorFolder = "folder"
 	WriteConflictErrorFileAncestor = "file_ancestor"
-	WriteConflictErrorOther        = "other"
+	WriteConflictErrorOther = "other"
 )
 
 // WriteError : has no documentation (yet)
@@ -4042,34 +4021,34 @@ type WriteError struct {
 	// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
 	// for more information.
 	MalformedPath string `json:"malformed_path,omitempty"`
-	// Conflict : Couldn't write to the target path because there was something
-	// in the way.
+	// Conflict : Couldn't write to the target path because there was something in
+	// the way.
 	Conflict *WriteConflictError `json:"conflict,omitempty"`
 }
 
 // Valid tag values for WriteError
 const (
-	WriteErrorMalformedPath          = "malformed_path"
-	WriteErrorConflict               = "conflict"
-	WriteErrorNoWritePermission      = "no_write_permission"
-	WriteErrorInsufficientSpace      = "insufficient_space"
-	WriteErrorDisallowedName         = "disallowed_name"
-	WriteErrorTeamFolder             = "team_folder"
+	WriteErrorMalformedPath = "malformed_path"
+	WriteErrorConflict = "conflict"
+	WriteErrorNoWritePermission = "no_write_permission"
+	WriteErrorInsufficientSpace = "insufficient_space"
+	WriteErrorDisallowedName = "disallowed_name"
+	WriteErrorTeamFolder = "team_folder"
 	WriteErrorTooManyWriteOperations = "too_many_write_operations"
-	WriteErrorOther                  = "other"
+	WriteErrorOther = "other"
 )
 
 // UnmarshalJSON deserializes into a WriteError instance
 func (u *WriteError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// MalformedPath : The given path does not satisfy the required path
-		// format. Please refer to the `Path formats documentation`
+		// MalformedPath : The given path does not satisfy the required path format.
+		// Please refer to the `Path formats documentation`
 		// <https://www.dropbox.com/developers/documentation/http/documentation#path-formats>
 		// for more information.
 		MalformedPath string `json:"malformed_path,omitempty"`
-		// Conflict : Couldn't write to the target path because there was
-		// something in the way.
+		// Conflict : Couldn't write to the target path because there was something in
+		// the way.
 		Conflict *WriteConflictError `json:"conflict,omitempty"`
 	}
 	var w wrap
@@ -4079,14 +4058,14 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "malformed_path":
-		u.MalformedPath = w.MalformedPath
+		case "malformed_path":
+			u.MalformedPath = w.MalformedPath
 
 		if err != nil {
 			return err
 		}
-	case "conflict":
-		u.Conflict = w.Conflict
+		case "conflict":
+			u.Conflict = w.Conflict
 
 		if err != nil {
 			return err
@@ -4106,29 +4085,28 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 // write.
 type WriteMode struct {
 	dropbox.Tagged
-	// Update : Overwrite if the given "rev" matches the existing file's "rev".
-	// The autorename strategy is to append the string "conflicted copy" to the
-	// file name. For example, "document.txt" might become "document (conflicted
+	// Update : Overwrite if the given "rev" matches the existing file's "rev". The
+	// autorename strategy is to append the string "conflicted copy" to the file
+	// name. For example, "document.txt" might become "document (conflicted
 	// copy).txt" or "document (Panda's conflicted copy).txt".
 	Update string `json:"update,omitempty"`
 }
 
 // Valid tag values for WriteMode
 const (
-	WriteModeAdd       = "add"
+	WriteModeAdd = "add"
 	WriteModeOverwrite = "overwrite"
-	WriteModeUpdate    = "update"
+	WriteModeUpdate = "update"
 )
 
 // UnmarshalJSON deserializes into a WriteMode instance
 func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Update : Overwrite if the given "rev" matches the existing file's
-		// "rev". The autorename strategy is to append the string "conflicted
-		// copy" to the file name. For example, "document.txt" might become
-		// "document (conflicted copy).txt" or "document (Panda's conflicted
-		// copy).txt".
+		// Update : Overwrite if the given "rev" matches the existing file's "rev".
+		// The autorename strategy is to append the string "conflicted copy" to the
+		// file name. For example, "document.txt" might become "document (conflicted
+		// copy).txt" or "document (Panda's conflicted copy).txt".
 		Update string `json:"update,omitempty"`
 	}
 	var w wrap
@@ -4138,8 +4116,8 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "update":
-		u.Update = w.Update
+		case "update":
+			u.Update = w.Update
 
 		if err != nil {
 			return err
@@ -4147,3 +4125,4 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	}
 	return nil
 }
+

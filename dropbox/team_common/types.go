@@ -22,9 +22,8 @@
 package team_common
 
 import (
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	time "time"
 )
 
 // GroupManagementType : The group type determines how a group is managed.
@@ -34,10 +33,10 @@ type GroupManagementType struct {
 
 // Valid tag values for GroupManagementType
 const (
-	GroupManagementTypeUserManaged    = "user_managed"
+	GroupManagementTypeUserManaged = "user_managed"
 	GroupManagementTypeCompanyManaged = "company_managed"
-	GroupManagementTypeSystemManaged  = "system_managed"
-	GroupManagementTypeOther          = "other"
+	GroupManagementTypeSystemManaged = "system_managed"
+	GroupManagementTypeOther = "other"
 )
 
 // GroupSummary : Information about a group.
@@ -54,7 +53,6 @@ type GroupSummary struct {
 	// GroupManagementType : Who is allowed to manage the group.
 	GroupManagementType *GroupManagementType `json:"group_management_type"`
 }
-
 // NewGroupSummary returns a new GroupSummary instance
 func NewGroupSummary(GroupName string, GroupId string, GroupManagementType *GroupManagementType) *GroupSummary {
 	s := new(GroupSummary)
@@ -64,6 +62,7 @@ func NewGroupSummary(GroupName string, GroupId string, GroupManagementType *Grou
 	return s
 }
 
+
 // GroupType : The group type determines how a group is created and managed.
 type GroupType struct {
 	dropbox.Tagged
@@ -71,9 +70,9 @@ type GroupType struct {
 
 // Valid tag values for GroupType
 const (
-	GroupTypeTeam        = "team"
+	GroupTypeTeam = "team"
 	GroupTypeUserManaged = "user_managed"
-	GroupTypeOther       = "other"
+	GroupTypeOther = "other"
 )
 
 // MemberSpaceLimitType : The type of the space limit imposed on a team member.
@@ -83,10 +82,10 @@ type MemberSpaceLimitType struct {
 
 // Valid tag values for MemberSpaceLimitType
 const (
-	MemberSpaceLimitTypeOff       = "off"
+	MemberSpaceLimitTypeOff = "off"
 	MemberSpaceLimitTypeAlertOnly = "alert_only"
-	MemberSpaceLimitTypeStopSync  = "stop_sync"
-	MemberSpaceLimitTypeOther     = "other"
+	MemberSpaceLimitTypeStopSync = "stop_sync"
+	MemberSpaceLimitTypeOther = "other"
 )
 
 // TimeRange : Time range.
@@ -96,9 +95,10 @@ type TimeRange struct {
 	// EndTime : Optional ending time (exclusive).
 	EndTime time.Time `json:"end_time,omitempty"`
 }
-
 // NewTimeRange returns a new TimeRange instance
 func NewTimeRange() *TimeRange {
 	s := new(TimeRange)
 	return s
 }
+
+

@@ -23,10 +23,9 @@
 package file_requests
 
 import (
-	"encoding/json"
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	json "encoding/json"
+	dropbox "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	time "time"
 )
 
 // GeneralFileRequestsError : There is an error accessing the file requests
@@ -38,7 +37,7 @@ type GeneralFileRequestsError struct {
 // Valid tag values for GeneralFileRequestsError
 const (
 	GeneralFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	GeneralFileRequestsErrorOther           = "other"
+	GeneralFileRequestsErrorOther = "other"
 )
 
 // CountFileRequestsError : There was an error counting the file requests.
@@ -49,7 +48,7 @@ type CountFileRequestsError struct {
 // Valid tag values for CountFileRequestsError
 const (
 	CountFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	CountFileRequestsErrorOther           = "other"
+	CountFileRequestsErrorOther = "other"
 )
 
 // CountFileRequestsResult : Result for `count`.
@@ -57,7 +56,6 @@ type CountFileRequestsResult struct {
 	// FileRequestCount : The number file requests owner by this user.
 	FileRequestCount uint64 `json:"file_request_count"`
 }
-
 // NewCountFileRequestsResult returns a new CountFileRequestsResult instance
 func NewCountFileRequestsResult(FileRequestCount uint64) *CountFileRequestsResult {
 	s := new(CountFileRequestsResult)
@@ -65,23 +63,23 @@ func NewCountFileRequestsResult(FileRequestCount uint64) *CountFileRequestsResul
 	return s
 }
 
+
 // CreateFileRequestArgs : Arguments for `create`.
 type CreateFileRequestArgs struct {
 	// Title : The title of the file request. Must not be empty.
 	Title string `json:"title"`
 	// Destination : The path of the folder in the Dropbox where uploaded files
-	// will be sent. For apps with the app folder permission, this will be
-	// relative to the app folder.
+	// will be sent. For apps with the app folder permission, this will be relative
+	// to the app folder.
 	Destination string `json:"destination"`
-	// Deadline : The deadline for the file request. Deadlines can only be set
-	// by Professional and Business accounts.
+	// Deadline : The deadline for the file request. Deadlines can only be set by
+	// Professional and Business accounts.
 	Deadline *FileRequestDeadline `json:"deadline,omitempty"`
-	// Open : Whether or not the file request should be open. If the file
-	// request is closed, it will not accept any file submissions, but it can be
-	// opened later.
+	// Open : Whether or not the file request should be open. If the file request
+	// is closed, it will not accept any file submissions, but it can be opened
+	// later.
 	Open bool `json:"open"`
 }
-
 // NewCreateFileRequestArgs returns a new CreateFileRequestArgs instance
 func NewCreateFileRequestArgs(Title string, Destination string) *CreateFileRequestArgs {
 	s := new(CreateFileRequestArgs)
@@ -91,6 +89,7 @@ func NewCreateFileRequestArgs(Title string, Destination string) *CreateFileReque
 	return s
 }
 
+
 // FileRequestError : There is an error with the file request.
 type FileRequestError struct {
 	dropbox.Tagged
@@ -99,11 +98,11 @@ type FileRequestError struct {
 // Valid tag values for FileRequestError
 const (
 	FileRequestErrorDisabledForTeam = "disabled_for_team"
-	FileRequestErrorOther           = "other"
-	FileRequestErrorNotFound        = "not_found"
-	FileRequestErrorNotAFolder      = "not_a_folder"
-	FileRequestErrorAppLacksAccess  = "app_lacks_access"
-	FileRequestErrorNoPermission    = "no_permission"
+	FileRequestErrorOther = "other"
+	FileRequestErrorNotFound = "not_found"
+	FileRequestErrorNotAFolder = "not_a_folder"
+	FileRequestErrorAppLacksAccess = "app_lacks_access"
+	FileRequestErrorNoPermission = "no_permission"
 	FileRequestErrorEmailUnverified = "email_unverified"
 	FileRequestErrorValidationError = "validation_error"
 )
@@ -116,15 +115,15 @@ type CreateFileRequestError struct {
 // Valid tag values for CreateFileRequestError
 const (
 	CreateFileRequestErrorDisabledForTeam = "disabled_for_team"
-	CreateFileRequestErrorOther           = "other"
-	CreateFileRequestErrorNotFound        = "not_found"
-	CreateFileRequestErrorNotAFolder      = "not_a_folder"
-	CreateFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	CreateFileRequestErrorNoPermission    = "no_permission"
+	CreateFileRequestErrorOther = "other"
+	CreateFileRequestErrorNotFound = "not_found"
+	CreateFileRequestErrorNotAFolder = "not_a_folder"
+	CreateFileRequestErrorAppLacksAccess = "app_lacks_access"
+	CreateFileRequestErrorNoPermission = "no_permission"
 	CreateFileRequestErrorEmailUnverified = "email_unverified"
 	CreateFileRequestErrorValidationError = "validation_error"
 	CreateFileRequestErrorInvalidLocation = "invalid_location"
-	CreateFileRequestErrorRateLimit       = "rate_limit"
+	CreateFileRequestErrorRateLimit = "rate_limit"
 )
 
 // DeleteAllClosedFileRequestsError : There was an error deleting all closed
@@ -136,11 +135,11 @@ type DeleteAllClosedFileRequestsError struct {
 // Valid tag values for DeleteAllClosedFileRequestsError
 const (
 	DeleteAllClosedFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	DeleteAllClosedFileRequestsErrorOther           = "other"
-	DeleteAllClosedFileRequestsErrorNotFound        = "not_found"
-	DeleteAllClosedFileRequestsErrorNotAFolder      = "not_a_folder"
-	DeleteAllClosedFileRequestsErrorAppLacksAccess  = "app_lacks_access"
-	DeleteAllClosedFileRequestsErrorNoPermission    = "no_permission"
+	DeleteAllClosedFileRequestsErrorOther = "other"
+	DeleteAllClosedFileRequestsErrorNotFound = "not_found"
+	DeleteAllClosedFileRequestsErrorNotAFolder = "not_a_folder"
+	DeleteAllClosedFileRequestsErrorAppLacksAccess = "app_lacks_access"
+	DeleteAllClosedFileRequestsErrorNoPermission = "no_permission"
 	DeleteAllClosedFileRequestsErrorEmailUnverified = "email_unverified"
 	DeleteAllClosedFileRequestsErrorValidationError = "validation_error"
 )
@@ -150,7 +149,6 @@ type DeleteAllClosedFileRequestsResult struct {
 	// FileRequests : The file requests deleted for this user.
 	FileRequests []*FileRequest `json:"file_requests"`
 }
-
 // NewDeleteAllClosedFileRequestsResult returns a new DeleteAllClosedFileRequestsResult instance
 func NewDeleteAllClosedFileRequestsResult(FileRequests []*FileRequest) *DeleteAllClosedFileRequestsResult {
 	s := new(DeleteAllClosedFileRequestsResult)
@@ -158,18 +156,19 @@ func NewDeleteAllClosedFileRequestsResult(FileRequests []*FileRequest) *DeleteAl
 	return s
 }
 
+
 // DeleteFileRequestArgs : Arguments for `delete`.
 type DeleteFileRequestArgs struct {
 	// Ids : List IDs of the file requests to delete.
 	Ids []string `json:"ids"`
 }
-
 // NewDeleteFileRequestArgs returns a new DeleteFileRequestArgs instance
 func NewDeleteFileRequestArgs(Ids []string) *DeleteFileRequestArgs {
 	s := new(DeleteFileRequestArgs)
 	s.Ids = Ids
 	return s
 }
+
 
 // DeleteFileRequestError : There was an error deleting these file requests.
 type DeleteFileRequestError struct {
@@ -179,11 +178,11 @@ type DeleteFileRequestError struct {
 // Valid tag values for DeleteFileRequestError
 const (
 	DeleteFileRequestErrorDisabledForTeam = "disabled_for_team"
-	DeleteFileRequestErrorOther           = "other"
-	DeleteFileRequestErrorNotFound        = "not_found"
-	DeleteFileRequestErrorNotAFolder      = "not_a_folder"
-	DeleteFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	DeleteFileRequestErrorNoPermission    = "no_permission"
+	DeleteFileRequestErrorOther = "other"
+	DeleteFileRequestErrorNotFound = "not_found"
+	DeleteFileRequestErrorNotAFolder = "not_a_folder"
+	DeleteFileRequestErrorAppLacksAccess = "app_lacks_access"
+	DeleteFileRequestErrorNoPermission = "no_permission"
 	DeleteFileRequestErrorEmailUnverified = "email_unverified"
 	DeleteFileRequestErrorValidationError = "validation_error"
 	DeleteFileRequestErrorFileRequestOpen = "file_request_open"
@@ -194,13 +193,13 @@ type DeleteFileRequestsResult struct {
 	// FileRequests : The file requests deleted by the request.
 	FileRequests []*FileRequest `json:"file_requests"`
 }
-
 // NewDeleteFileRequestsResult returns a new DeleteFileRequestsResult instance
 func NewDeleteFileRequestsResult(FileRequests []*FileRequest) *DeleteFileRequestsResult {
 	s := new(DeleteFileRequestsResult)
 	s.FileRequests = FileRequests
 	return s
 }
+
 
 // FileRequest : A `file request` <https://www.dropbox.com/help/9090> for
 // receiving files into the user's Dropbox account.
@@ -212,13 +211,13 @@ type FileRequest struct {
 	// Title : The title of the file request.
 	Title string `json:"title"`
 	// Destination : The path of the folder in the Dropbox where uploaded files
-	// will be sent. This can be nil if the destination was removed. For apps
-	// with the app folder permission, this will be relative to the app folder.
+	// will be sent. This can be nil if the destination was removed. For apps with
+	// the app folder permission, this will be relative to the app folder.
 	Destination string `json:"destination,omitempty"`
 	// Created : When this file request was created.
 	Created time.Time `json:"created"`
-	// Deadline : The deadline for this file request. Only set if the request
-	// has a deadline.
+	// Deadline : The deadline for this file request. Only set if the request has a
+	// deadline.
 	Deadline *FileRequestDeadline `json:"deadline,omitempty"`
 	// IsOpen : Whether or not the file request is open. If the file request is
 	// closed, it will not accept any more file submissions.
@@ -226,7 +225,6 @@ type FileRequest struct {
 	// FileCount : The number of files this file request has received.
 	FileCount int64 `json:"file_count"`
 }
-
 // NewFileRequest returns a new FileRequest instance
 func NewFileRequest(Id string, Url string, Title string, Created time.Time, IsOpen bool, FileCount int64) *FileRequest {
 	s := new(FileRequest)
@@ -239,6 +237,7 @@ func NewFileRequest(Id string, Url string, Title string, Created time.Time, IsOp
 	return s
 }
 
+
 // FileRequestDeadline : has no documentation (yet)
 type FileRequestDeadline struct {
 	// Deadline : The deadline for this file request.
@@ -247,7 +246,6 @@ type FileRequestDeadline struct {
 	// These     uploads will be marked overdue.
 	AllowLateUploads *GracePeriod `json:"allow_late_uploads,omitempty"`
 }
-
 // NewFileRequestDeadline returns a new FileRequestDeadline instance
 func NewFileRequestDeadline(Deadline time.Time) *FileRequestDeadline {
 	s := new(FileRequestDeadline)
@@ -255,18 +253,19 @@ func NewFileRequestDeadline(Deadline time.Time) *FileRequestDeadline {
 	return s
 }
 
+
 // GetFileRequestArgs : Arguments for `get`.
 type GetFileRequestArgs struct {
 	// Id : The ID of the file request to retrieve.
 	Id string `json:"id"`
 }
-
 // NewGetFileRequestArgs returns a new GetFileRequestArgs instance
 func NewGetFileRequestArgs(Id string) *GetFileRequestArgs {
 	s := new(GetFileRequestArgs)
 	s.Id = Id
 	return s
 }
+
 
 // GetFileRequestError : There was an error retrieving the specified file
 // request.
@@ -277,11 +276,11 @@ type GetFileRequestError struct {
 // Valid tag values for GetFileRequestError
 const (
 	GetFileRequestErrorDisabledForTeam = "disabled_for_team"
-	GetFileRequestErrorOther           = "other"
-	GetFileRequestErrorNotFound        = "not_found"
-	GetFileRequestErrorNotAFolder      = "not_a_folder"
-	GetFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	GetFileRequestErrorNoPermission    = "no_permission"
+	GetFileRequestErrorOther = "other"
+	GetFileRequestErrorNotFound = "not_found"
+	GetFileRequestErrorNotAFolder = "not_a_folder"
+	GetFileRequestErrorAppLacksAccess = "app_lacks_access"
+	GetFileRequestErrorNoPermission = "no_permission"
 	GetFileRequestErrorEmailUnverified = "email_unverified"
 	GetFileRequestErrorValidationError = "validation_error"
 )
@@ -293,12 +292,12 @@ type GracePeriod struct {
 
 // Valid tag values for GracePeriod
 const (
-	GracePeriodOneDay     = "one_day"
-	GracePeriodTwoDays    = "two_days"
-	GracePeriodSevenDays  = "seven_days"
+	GracePeriodOneDay = "one_day"
+	GracePeriodTwoDays = "two_days"
+	GracePeriodSevenDays = "seven_days"
 	GracePeriodThirtyDays = "thirty_days"
-	GracePeriodAlways     = "always"
-	GracePeriodOther      = "other"
+	GracePeriodAlways = "always"
+	GracePeriodOther = "other"
 )
 
 // ListFileRequestsArg : Arguments for `list`.
@@ -307,7 +306,6 @@ type ListFileRequestsArg struct {
 	// request.
 	Limit uint64 `json:"limit"`
 }
-
 // NewListFileRequestsArg returns a new ListFileRequestsArg instance
 func NewListFileRequestsArg() *ListFileRequestsArg {
 	s := new(ListFileRequestsArg)
@@ -315,19 +313,20 @@ func NewListFileRequestsArg() *ListFileRequestsArg {
 	return s
 }
 
+
 // ListFileRequestsContinueArg : has no documentation (yet)
 type ListFileRequestsContinueArg struct {
 	// Cursor : The cursor returned by the previous API call specified in the
 	// endpoint description.
 	Cursor string `json:"cursor"`
 }
-
 // NewListFileRequestsContinueArg returns a new ListFileRequestsContinueArg instance
 func NewListFileRequestsContinueArg(Cursor string) *ListFileRequestsContinueArg {
 	s := new(ListFileRequestsContinueArg)
 	s.Cursor = Cursor
 	return s
 }
+
 
 // ListFileRequestsContinueError : There was an error retrieving the file
 // requests.
@@ -338,8 +337,8 @@ type ListFileRequestsContinueError struct {
 // Valid tag values for ListFileRequestsContinueError
 const (
 	ListFileRequestsContinueErrorDisabledForTeam = "disabled_for_team"
-	ListFileRequestsContinueErrorOther           = "other"
-	ListFileRequestsContinueErrorInvalidCursor   = "invalid_cursor"
+	ListFileRequestsContinueErrorOther = "other"
+	ListFileRequestsContinueErrorInvalidCursor = "invalid_cursor"
 )
 
 // ListFileRequestsError : There was an error retrieving the file requests.
@@ -350,7 +349,7 @@ type ListFileRequestsError struct {
 // Valid tag values for ListFileRequestsError
 const (
 	ListFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	ListFileRequestsErrorOther           = "other"
+	ListFileRequestsErrorOther = "other"
 )
 
 // ListFileRequestsResult : Result for `list`.
@@ -359,13 +358,13 @@ type ListFileRequestsResult struct {
 	// folder permission will only see file requests in their app folder.
 	FileRequests []*FileRequest `json:"file_requests"`
 }
-
 // NewListFileRequestsResult returns a new ListFileRequestsResult instance
 func NewListFileRequestsResult(FileRequests []*FileRequest) *ListFileRequestsResult {
 	s := new(ListFileRequestsResult)
 	s.FileRequests = FileRequests
 	return s
 }
+
 
 // ListFileRequestsV2Result : Result for `list` and `listContinue`.
 type ListFileRequestsV2Result struct {
@@ -375,12 +374,10 @@ type ListFileRequestsV2Result struct {
 	// Cursor : Pass the cursor into `listContinue` to obtain additional file
 	// requests.
 	Cursor string `json:"cursor"`
-	// HasMore : Is true if there are additional file requests that have not
-	// been returned yet. An additional call to :route:list/continue` can
-	// retrieve them.
+	// HasMore : Is true if there are additional file requests that have not been
+	// returned yet. An additional call to :route:list/continue` can retrieve them.
 	HasMore bool `json:"has_more"`
 }
-
 // NewListFileRequestsV2Result returns a new ListFileRequestsV2Result instance
 func NewListFileRequestsV2Result(FileRequests []*FileRequest, Cursor string, HasMore bool) *ListFileRequestsV2Result {
 	s := new(ListFileRequestsV2Result)
@@ -390,30 +387,31 @@ func NewListFileRequestsV2Result(FileRequests []*FileRequest, Cursor string, Has
 	return s
 }
 
+
 // UpdateFileRequestArgs : Arguments for `update`.
 type UpdateFileRequestArgs struct {
 	// Id : The ID of the file request to update.
 	Id string `json:"id"`
 	// Title : The new title of the file request. Must not be empty.
 	Title string `json:"title,omitempty"`
-	// Destination : The new path of the folder in the Dropbox where uploaded
-	// files will be sent. For apps with the app folder permission, this will be
-	// relative to the app folder.
+	// Destination : The new path of the folder in the Dropbox where uploaded files
+	// will be sent. For apps with the app folder permission, this will be relative
+	// to the app folder.
 	Destination string `json:"destination,omitempty"`
-	// Deadline : The new deadline for the file request. Deadlines can only be
-	// set by Professional and Business accounts.
+	// Deadline : The new deadline for the file request. Deadlines can only be set
+	// by Professional and Business accounts.
 	Deadline *UpdateFileRequestDeadline `json:"deadline"`
 	// Open : Whether to set this file request as open or closed.
 	Open bool `json:"open,omitempty"`
 }
-
 // NewUpdateFileRequestArgs returns a new UpdateFileRequestArgs instance
 func NewUpdateFileRequestArgs(Id string) *UpdateFileRequestArgs {
 	s := new(UpdateFileRequestArgs)
 	s.Id = Id
-	s.Deadline = &UpdateFileRequestDeadline{Tagged: dropbox.Tagged{"no_update"}}
+	s.Deadline = &UpdateFileRequestDeadline{Tagged:dropbox.Tagged{"no_update"}}
 	return s
 }
+
 
 // UpdateFileRequestDeadline : has no documentation (yet)
 type UpdateFileRequestDeadline struct {
@@ -425,8 +423,8 @@ type UpdateFileRequestDeadline struct {
 // Valid tag values for UpdateFileRequestDeadline
 const (
 	UpdateFileRequestDeadlineNoUpdate = "no_update"
-	UpdateFileRequestDeadlineUpdate   = "update"
-	UpdateFileRequestDeadlineOther    = "other"
+	UpdateFileRequestDeadlineUpdate = "update"
+	UpdateFileRequestDeadlineOther = "other"
 )
 
 // UnmarshalJSON deserializes into a UpdateFileRequestDeadline instance
@@ -443,8 +441,8 @@ func (u *UpdateFileRequestDeadline) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "update":
-		u.Update = w.Update
+		case "update":
+			u.Update = w.Update
 
 		if err != nil {
 			return err
@@ -461,11 +459,12 @@ type UpdateFileRequestError struct {
 // Valid tag values for UpdateFileRequestError
 const (
 	UpdateFileRequestErrorDisabledForTeam = "disabled_for_team"
-	UpdateFileRequestErrorOther           = "other"
-	UpdateFileRequestErrorNotFound        = "not_found"
-	UpdateFileRequestErrorNotAFolder      = "not_a_folder"
-	UpdateFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	UpdateFileRequestErrorNoPermission    = "no_permission"
+	UpdateFileRequestErrorOther = "other"
+	UpdateFileRequestErrorNotFound = "not_found"
+	UpdateFileRequestErrorNotAFolder = "not_a_folder"
+	UpdateFileRequestErrorAppLacksAccess = "app_lacks_access"
+	UpdateFileRequestErrorNoPermission = "no_permission"
 	UpdateFileRequestErrorEmailUnverified = "email_unverified"
 	UpdateFileRequestErrorValidationError = "validation_error"
 )
+
