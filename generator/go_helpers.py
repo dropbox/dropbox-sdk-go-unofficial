@@ -169,8 +169,8 @@ GoPackagePath = Text
 class GoImportHelper(object):
     """
     A class to keep track of imports to Go files. Every time a package such as
-    "dropbox/proto/api_proxy" is needed, the identifier from
-    id_for_package("dropbox/proto/api_proxy") should be used instead. This will make sure that no
+    "x/y/z" is needed, the identifier from
+    id_for_package("x/y/z") should be used instead. This will make sure that no
     two imported packages have conflicting names. Then, the import declarations, including renaming
     imports, can be gotten from emit_import_statements.
     """
@@ -218,8 +218,7 @@ class GoImportHelper(object):
     def emit_import_statements(self, writer):
         # type: (CodeBackend) -> None
         """
-        Writes the import statement containing all imports that might be necessary onto the given
-        StoneWriter.
+        Writes the import statement containing all imports that might be necessary.
         """
         writer.emit("import (")
         with writer.indent():
