@@ -72,8 +72,9 @@ Here's an example:
   arg := users.NewGetAccountArg(accountId)
   if resp, err := dbx.GetAccount(arg); err != nil {
     return err
+  } else {
+    fmt.Printf("Name: %v", resp.Name)
   }
-  fmt.Printf("Name: %v", resp.Name)
 ```
 
 ### Error Handling
