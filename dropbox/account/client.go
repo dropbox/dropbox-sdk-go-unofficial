@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package contacts
+package account
 
 import (
 	"bytes"
@@ -29,77 +29,19 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// DeleteManualContacts : Removes all manually added contacts. You'll still
-	// keep contacts who are on your team or who you imported. New contacts will
-	// be added when you share.
-	DeleteManualContacts() (err error)
-	// DeleteManualContactsBatch : Removes manually added contacts from the
-	// given list.
-	DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err error)
+	// SetProfilePhoto : Sets a user's profile photo.
+	SetProfilePhoto(arg *SetProfilePhotoArg) (res *SetProfilePhotoResult, err error)
 }
 
 type apiImpl dropbox.Context
 
-//DeleteManualContactsAPIError is an error-wrapper for the delete_manual_contacts route
-type DeleteManualContactsAPIError struct {
+//SetProfilePhotoAPIError is an error-wrapper for the set_profile_photo route
+type SetProfilePhotoAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *SetProfilePhotoError `json:"error"`
 }
 
-func (dbx *apiImpl) DeleteManualContacts() (err error) {
-	cli := dbx.Client
-
-	headers := map[string]string{}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "contacts", "delete_manual_contacts", headers, nil)
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DeleteManualContactsAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//DeleteManualContactsBatchAPIError is an error-wrapper for the delete_manual_contacts_batch route
-type DeleteManualContactsBatchAPIError struct {
-	dropbox.APIError
-	EndpointError *DeleteManualContactsError `json:"error"`
-}
-
-func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err error) {
+func (dbx *apiImpl) SetProfilePhoto(arg *SetProfilePhotoArg) (res *SetProfilePhotoResult, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -115,7 +57,7 @@ func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err
 		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
 	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "contacts", "delete_manual_contacts_batch", headers, bytes.NewReader(b))
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "account", "set_profile_photo", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -135,10 +77,15 @@ func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err
 
 	dbx.Config.LogDebug("body: %s", body)
 	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError DeleteManualContactsBatchAPIError
+		var apiError SetProfilePhotoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

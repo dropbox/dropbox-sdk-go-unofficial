@@ -18,22 +18,22 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package seen_state : has no documentation (yet)
-package seen_state
+// Package secondary_emails : has no documentation (yet)
+package secondary_emails
 
-// PlatformType : Possible platforms on which a user may view content.
-type PlatformType struct {
-	dropbox.Tagged
+// SecondaryEmail : has no documentation (yet)
+type SecondaryEmail struct {
+	// Email : Secondary email address.
+	Email string `json:"email"`
+	// IsVerified : Whether or not the secondary email address is verified to be
+	// owned by a user.
+	IsVerified bool `json:"is_verified"`
 }
 
-// Valid tag values for PlatformType
-const (
-	PlatformTypeWeb           = "web"
-	PlatformTypeDesktop       = "desktop"
-	PlatformTypeMobileIos     = "mobile_ios"
-	PlatformTypeMobileAndroid = "mobile_android"
-	PlatformTypeApi           = "api"
-	PlatformTypeUnknown       = "unknown"
-	PlatformTypeMobile        = "mobile"
-	PlatformTypeOther         = "other"
-)
+// NewSecondaryEmail returns a new SecondaryEmail instance
+func NewSecondaryEmail(Email string, IsVerified bool) *SecondaryEmail {
+	s := new(SecondaryEmail)
+	s.Email = Email
+	s.IsVerified = IsVerified
+	return s
+}

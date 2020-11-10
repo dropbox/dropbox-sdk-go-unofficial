@@ -24,12 +24,6 @@ package team
 import (
 	"encoding/json"
 	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_policies"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
 )
 
 // DeviceSession : has no documentation (yet)
@@ -74,6 +68,181 @@ func NewActiveWebSession(SessionId string, UserAgent string, Os string, Browser 
 	s.UserAgent = UserAgent
 	s.Os = Os
 	s.Browser = Browser
+	return s
+}
+
+// AddSecondaryEmailResult : Result of trying to add a secondary email to a
+// user. 'success' is the only value indicating that a secondary email was
+// successfully added to a user. The other values explain the type of error that
+// occurred, and include the email for which the error occured.
+type AddSecondaryEmailResult struct {
+	dropbox.Tagged
+	// Success : Describes a secondary email that was successfully added to a
+	// user.
+	Success *secondary_emails.SecondaryEmail `json:"success,omitempty"`
+	// Unavailable : Secondary email is not available to be claimed by the user.
+	Unavailable string `json:"unavailable,omitempty"`
+	// AlreadyPending : Secondary email is already a pending email for the user.
+	AlreadyPending string `json:"already_pending,omitempty"`
+	// AlreadyOwnedByUser : Secondary email is already a verified email for the
+	// user.
+	AlreadyOwnedByUser string `json:"already_owned_by_user,omitempty"`
+	// ReachedLimit : User already has the maximum number of secondary emails
+	// allowed.
+	ReachedLimit string `json:"reached_limit,omitempty"`
+	// TransientError : A transient error occurred. Please try again later.
+	TransientError string `json:"transient_error,omitempty"`
+	// TooManyUpdates : An error occurred due to conflicting updates. Please try
+	// again later.
+	TooManyUpdates string `json:"too_many_updates,omitempty"`
+	// UnknownError : An unknown error occurred.
+	UnknownError string `json:"unknown_error,omitempty"`
+	// RateLimited : Too many emails are being sent to this email address.
+	// Please try again later.
+	RateLimited string `json:"rate_limited,omitempty"`
+}
+
+// Valid tag values for AddSecondaryEmailResult
+const (
+	AddSecondaryEmailResultSuccess            = "success"
+	AddSecondaryEmailResultUnavailable        = "unavailable"
+	AddSecondaryEmailResultAlreadyPending     = "already_pending"
+	AddSecondaryEmailResultAlreadyOwnedByUser = "already_owned_by_user"
+	AddSecondaryEmailResultReachedLimit       = "reached_limit"
+	AddSecondaryEmailResultTransientError     = "transient_error"
+	AddSecondaryEmailResultTooManyUpdates     = "too_many_updates"
+	AddSecondaryEmailResultUnknownError       = "unknown_error"
+	AddSecondaryEmailResultRateLimited        = "rate_limited"
+	AddSecondaryEmailResultOther              = "other"
+)
+
+// UnmarshalJSON deserializes into a AddSecondaryEmailResult instance
+func (u *AddSecondaryEmailResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Unavailable : Secondary email is not available to be claimed by the
+		// user.
+		Unavailable string `json:"unavailable,omitempty"`
+		// AlreadyPending : Secondary email is already a pending email for the
+		// user.
+		AlreadyPending string `json:"already_pending,omitempty"`
+		// AlreadyOwnedByUser : Secondary email is already a verified email for
+		// the user.
+		AlreadyOwnedByUser string `json:"already_owned_by_user,omitempty"`
+		// ReachedLimit : User already has the maximum number of secondary
+		// emails allowed.
+		ReachedLimit string `json:"reached_limit,omitempty"`
+		// TransientError : A transient error occurred. Please try again later.
+		TransientError string `json:"transient_error,omitempty"`
+		// TooManyUpdates : An error occurred due to conflicting updates. Please
+		// try again later.
+		TooManyUpdates string `json:"too_many_updates,omitempty"`
+		// UnknownError : An unknown error occurred.
+		UnknownError string `json:"unknown_error,omitempty"`
+		// RateLimited : Too many emails are being sent to this email address.
+		// Please try again later.
+		RateLimited string `json:"rate_limited,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "unavailable":
+		u.Unavailable = w.Unavailable
+
+		if err != nil {
+			return err
+		}
+	case "already_pending":
+		u.AlreadyPending = w.AlreadyPending
+
+		if err != nil {
+			return err
+		}
+	case "already_owned_by_user":
+		u.AlreadyOwnedByUser = w.AlreadyOwnedByUser
+
+		if err != nil {
+			return err
+		}
+	case "reached_limit":
+		u.ReachedLimit = w.ReachedLimit
+
+		if err != nil {
+			return err
+		}
+	case "transient_error":
+		u.TransientError = w.TransientError
+
+		if err != nil {
+			return err
+		}
+	case "too_many_updates":
+		u.TooManyUpdates = w.TooManyUpdates
+
+		if err != nil {
+			return err
+		}
+	case "unknown_error":
+		u.UnknownError = w.UnknownError
+
+		if err != nil {
+			return err
+		}
+	case "rate_limited":
+		u.RateLimited = w.RateLimited
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AddSecondaryEmailsArg : has no documentation (yet)
+type AddSecondaryEmailsArg struct {
+	// NewSecondaryEmails : List of users and secondary emails to add.
+	NewSecondaryEmails []*UserSecondaryEmailsArg `json:"new_secondary_emails"`
+}
+
+// NewAddSecondaryEmailsArg returns a new AddSecondaryEmailsArg instance
+func NewAddSecondaryEmailsArg(NewSecondaryEmails []*UserSecondaryEmailsArg) *AddSecondaryEmailsArg {
+	s := new(AddSecondaryEmailsArg)
+	s.NewSecondaryEmails = NewSecondaryEmails
+	return s
+}
+
+// AddSecondaryEmailsError : Error returned when adding secondary emails fails.
+type AddSecondaryEmailsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AddSecondaryEmailsError
+const (
+	AddSecondaryEmailsErrorSecondaryEmailsDisabled = "secondary_emails_disabled"
+	AddSecondaryEmailsErrorTooManyEmails           = "too_many_emails"
+	AddSecondaryEmailsErrorOther                   = "other"
+)
+
+// AddSecondaryEmailsResult : has no documentation (yet)
+type AddSecondaryEmailsResult struct {
+	// Results : List of users and secondary email results.
+	Results []*UserAddResult `json:"results"`
+}
+
+// NewAddSecondaryEmailsResult returns a new AddSecondaryEmailsResult instance
+func NewAddSecondaryEmailsResult(Results []*UserAddResult) *AddSecondaryEmailsResult {
+	s := new(AddSecondaryEmailsResult)
+	s.Results = Results
 	return s
 }
 
@@ -260,7 +429,8 @@ func NewCustomQuotaUsersArg(Users []*UserSelectorArg) *CustomQuotaUsersArg {
 
 // DateRange : Input arguments that can be provided for most reports.
 type DateRange struct {
-	// StartDate : Optional starting date (inclusive).
+	// StartDate : Optional starting date (inclusive). If start_date is None or
+	// too long ago, this field will  be set to 6 months ago.
 	StartDate time.Time `json:"start_date,omitempty"`
 	// EndDate : Optional ending date (exclusive).
 	EndDate time.Time `json:"end_date,omitempty"`
@@ -282,6 +452,96 @@ type DateRangeError struct {
 const (
 	DateRangeErrorOther = "other"
 )
+
+// DeleteSecondaryEmailResult : Result of trying to delete a secondary email
+// address. 'success' is the only value indicating that a secondary email was
+// successfully deleted. The other values explain the type of error that
+// occurred, and include the email for which the error occured.
+type DeleteSecondaryEmailResult struct {
+	dropbox.Tagged
+	// Success : The secondary email was successfully deleted.
+	Success string `json:"success,omitempty"`
+	// NotFound : The email address was not found for the user.
+	NotFound string `json:"not_found,omitempty"`
+	// CannotRemovePrimary : The email address is the primary email address of
+	// the user, and cannot be removed.
+	CannotRemovePrimary string `json:"cannot_remove_primary,omitempty"`
+}
+
+// Valid tag values for DeleteSecondaryEmailResult
+const (
+	DeleteSecondaryEmailResultSuccess             = "success"
+	DeleteSecondaryEmailResultNotFound            = "not_found"
+	DeleteSecondaryEmailResultCannotRemovePrimary = "cannot_remove_primary"
+	DeleteSecondaryEmailResultOther               = "other"
+)
+
+// UnmarshalJSON deserializes into a DeleteSecondaryEmailResult instance
+func (u *DeleteSecondaryEmailResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Success : The secondary email was successfully deleted.
+		Success string `json:"success,omitempty"`
+		// NotFound : The email address was not found for the user.
+		NotFound string `json:"not_found,omitempty"`
+		// CannotRemovePrimary : The email address is the primary email address
+		// of the user, and cannot be removed.
+		CannotRemovePrimary string `json:"cannot_remove_primary,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		u.Success = w.Success
+
+		if err != nil {
+			return err
+		}
+	case "not_found":
+		u.NotFound = w.NotFound
+
+		if err != nil {
+			return err
+		}
+	case "cannot_remove_primary":
+		u.CannotRemovePrimary = w.CannotRemovePrimary
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// DeleteSecondaryEmailsArg : has no documentation (yet)
+type DeleteSecondaryEmailsArg struct {
+	// EmailsToDelete : List of users and their secondary emails to delete.
+	EmailsToDelete []*UserSecondaryEmailsArg `json:"emails_to_delete"`
+}
+
+// NewDeleteSecondaryEmailsArg returns a new DeleteSecondaryEmailsArg instance
+func NewDeleteSecondaryEmailsArg(EmailsToDelete []*UserSecondaryEmailsArg) *DeleteSecondaryEmailsArg {
+	s := new(DeleteSecondaryEmailsArg)
+	s.EmailsToDelete = EmailsToDelete
+	return s
+}
+
+// DeleteSecondaryEmailsResult : has no documentation (yet)
+type DeleteSecondaryEmailsResult struct {
+	// Results : has no documentation (yet)
+	Results []*UserDeleteResult `json:"results"`
+}
+
+// NewDeleteSecondaryEmailsResult returns a new DeleteSecondaryEmailsResult instance
+func NewDeleteSecondaryEmailsResult(Results []*UserDeleteResult) *DeleteSecondaryEmailsResult {
+	s := new(DeleteSecondaryEmailsResult)
+	s.Results = Results
+	return s
+}
 
 // DesktopClientSession : Information about linked Dropbox desktop client
 // sessions.
@@ -792,6 +1052,8 @@ const (
 type GroupCreateArg struct {
 	// GroupName : Group name.
 	GroupName string `json:"group_name"`
+	// AddCreatorAsOwner : Automatically add the creator of the group.
+	AddCreatorAsOwner bool `json:"add_creator_as_owner"`
 	// GroupExternalId : The creator of a team can associate an arbitrary
 	// external ID to the group.
 	GroupExternalId string `json:"group_external_id,omitempty"`
@@ -804,6 +1066,7 @@ type GroupCreateArg struct {
 func NewGroupCreateArg(GroupName string) *GroupCreateArg {
 	s := new(GroupCreateArg)
 	s.GroupName = GroupName
+	s.AddCreatorAsOwner = false
 	return s
 }
 
@@ -1050,8 +1313,10 @@ type GroupMembersChangeResult struct {
 	// GroupInfo : The group info after member change operation has been
 	// performed.
 	GroupInfo *GroupFullInfo `json:"group_info"`
-	// AsyncJobId : An ID that can be used to obtain the status of
-	// granting/revoking group-owned resources.
+	// AsyncJobId : For legacy purposes async_job_id will always return one
+	// space ' '. Formerly, it was an ID that was used to obtain the status of
+	// granting/revoking group-owned resources. It's no longer necessary because
+	// the async processing now happens automatically.
 	AsyncJobId string `json:"async_job_id"`
 }
 
@@ -1626,6 +1891,362 @@ func (u *HasTeamSharedDropboxValue) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// LegalHoldHeldRevisionMetadata : has no documentation (yet)
+type LegalHoldHeldRevisionMetadata struct {
+	// NewFilename : The held revision filename.
+	NewFilename string `json:"new_filename"`
+	// OriginalRevisionId : The id of the held revision.
+	OriginalRevisionId string `json:"original_revision_id"`
+	// OriginalFilePath : The original path of the held revision.
+	OriginalFilePath string `json:"original_file_path"`
+	// ServerModified : The last time the file was modified on Dropbox.
+	ServerModified time.Time `json:"server_modified"`
+	// AuthorMemberId : The member id of the revision's author.
+	AuthorMemberId string `json:"author_member_id"`
+	// AuthorMemberStatus : The member status of the revision's author.
+	AuthorMemberStatus *TeamMemberStatus `json:"author_member_status"`
+	// AuthorEmail : The email address of the held revision author.
+	AuthorEmail string `json:"author_email"`
+	// FileType : The type of the held revision's file.
+	FileType string `json:"file_type"`
+	// Size : The file size in bytes.
+	Size uint64 `json:"size"`
+	// ContentHash : A hash of the file content. This field can be used to
+	// verify data integrity. For more information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash"`
+}
+
+// NewLegalHoldHeldRevisionMetadata returns a new LegalHoldHeldRevisionMetadata instance
+func NewLegalHoldHeldRevisionMetadata(NewFilename string, OriginalRevisionId string, OriginalFilePath string, ServerModified time.Time, AuthorMemberId string, AuthorMemberStatus *TeamMemberStatus, AuthorEmail string, FileType string, Size uint64, ContentHash string) *LegalHoldHeldRevisionMetadata {
+	s := new(LegalHoldHeldRevisionMetadata)
+	s.NewFilename = NewFilename
+	s.OriginalRevisionId = OriginalRevisionId
+	s.OriginalFilePath = OriginalFilePath
+	s.ServerModified = ServerModified
+	s.AuthorMemberId = AuthorMemberId
+	s.AuthorMemberStatus = AuthorMemberStatus
+	s.AuthorEmail = AuthorEmail
+	s.FileType = FileType
+	s.Size = Size
+	s.ContentHash = ContentHash
+	return s
+}
+
+// LegalHoldPolicy : has no documentation (yet)
+type LegalHoldPolicy struct {
+	// Id : The legal hold id.
+	Id string `json:"id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// Description : A description of the legal hold policy.
+	Description string `json:"description,omitempty"`
+	// ActivationTime : The time at which the legal hold was activated.
+	ActivationTime time.Time `json:"activation_time,omitempty"`
+	// Members : Team members IDs and number of permanetly deleted members under
+	// hold.
+	Members *MembersInfo `json:"members"`
+	// Status : The current state of the hold.
+	Status *LegalHoldStatus `json:"status"`
+	// StartDate : Start date of the legal hold policy.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : End date of the legal hold policy.
+	EndDate time.Time `json:"end_date,omitempty"`
+}
+
+// NewLegalHoldPolicy returns a new LegalHoldPolicy instance
+func NewLegalHoldPolicy(Id string, Name string, Members *MembersInfo, Status *LegalHoldStatus, StartDate time.Time) *LegalHoldPolicy {
+	s := new(LegalHoldPolicy)
+	s.Id = Id
+	s.Name = Name
+	s.Members = Members
+	s.Status = Status
+	s.StartDate = StartDate
+	return s
+}
+
+// LegalHoldStatus : has no documentation (yet)
+type LegalHoldStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldStatus
+const (
+	LegalHoldStatusActive     = "active"
+	LegalHoldStatusReleased   = "released"
+	LegalHoldStatusActivating = "activating"
+	LegalHoldStatusUpdating   = "updating"
+	LegalHoldStatusExporting  = "exporting"
+	LegalHoldStatusReleasing  = "releasing"
+	LegalHoldStatusOther      = "other"
+)
+
+// LegalHoldsError : has no documentation (yet)
+type LegalHoldsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsError
+const (
+	LegalHoldsErrorUnknownLegalHoldError   = "unknown_legal_hold_error"
+	LegalHoldsErrorInsufficientPermissions = "insufficient_permissions"
+	LegalHoldsErrorOther                   = "other"
+)
+
+// LegalHoldsGetPolicyArg : has no documentation (yet)
+type LegalHoldsGetPolicyArg struct {
+	// Id : The legal hold Id.
+	Id string `json:"id"`
+}
+
+// NewLegalHoldsGetPolicyArg returns a new LegalHoldsGetPolicyArg instance
+func NewLegalHoldsGetPolicyArg(Id string) *LegalHoldsGetPolicyArg {
+	s := new(LegalHoldsGetPolicyArg)
+	s.Id = Id
+	return s
+}
+
+// LegalHoldsGetPolicyError : has no documentation (yet)
+type LegalHoldsGetPolicyError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsGetPolicyError
+const (
+	LegalHoldsGetPolicyErrorUnknownLegalHoldError   = "unknown_legal_hold_error"
+	LegalHoldsGetPolicyErrorInsufficientPermissions = "insufficient_permissions"
+	LegalHoldsGetPolicyErrorOther                   = "other"
+	LegalHoldsGetPolicyErrorLegalHoldPolicyNotFound = "legal_hold_policy_not_found"
+)
+
+// LegalHoldsListHeldRevisionResult : has no documentation (yet)
+type LegalHoldsListHeldRevisionResult struct {
+	// Entries : List of file entries that under the hold.
+	Entries []*LegalHoldHeldRevisionMetadata `json:"entries"`
+	// Cursor : The cursor idicates where to continue reading file metadata
+	// entries for the next API call. When there are no more entries, the cursor
+	// will return none. Pass the cursor into
+	// /2/team/legal_holds/list_held_revisions/continue.
+	Cursor string `json:"cursor,omitempty"`
+	// HasMore : True if there are more file entries that haven't been returned.
+	// You can retrieve them with a call to
+	// /legal_holds/list_held_revisions_continue.
+	HasMore bool `json:"has_more"`
+}
+
+// NewLegalHoldsListHeldRevisionResult returns a new LegalHoldsListHeldRevisionResult instance
+func NewLegalHoldsListHeldRevisionResult(Entries []*LegalHoldHeldRevisionMetadata, HasMore bool) *LegalHoldsListHeldRevisionResult {
+	s := new(LegalHoldsListHeldRevisionResult)
+	s.Entries = Entries
+	s.HasMore = HasMore
+	return s
+}
+
+// LegalHoldsListHeldRevisionsArg : has no documentation (yet)
+type LegalHoldsListHeldRevisionsArg struct {
+	// Id : The legal hold Id.
+	Id string `json:"id"`
+}
+
+// NewLegalHoldsListHeldRevisionsArg returns a new LegalHoldsListHeldRevisionsArg instance
+func NewLegalHoldsListHeldRevisionsArg(Id string) *LegalHoldsListHeldRevisionsArg {
+	s := new(LegalHoldsListHeldRevisionsArg)
+	s.Id = Id
+	return s
+}
+
+// LegalHoldsListHeldRevisionsContinueArg : has no documentation (yet)
+type LegalHoldsListHeldRevisionsContinueArg struct {
+	// Id : The legal hold Id.
+	Id string `json:"id"`
+	// Cursor : The cursor idicates where to continue reading file metadata
+	// entries for the next API call. When there are no more entries, the cursor
+	// will return none.
+	Cursor string `json:"cursor,omitempty"`
+}
+
+// NewLegalHoldsListHeldRevisionsContinueArg returns a new LegalHoldsListHeldRevisionsContinueArg instance
+func NewLegalHoldsListHeldRevisionsContinueArg(Id string) *LegalHoldsListHeldRevisionsContinueArg {
+	s := new(LegalHoldsListHeldRevisionsContinueArg)
+	s.Id = Id
+	return s
+}
+
+// LegalHoldsListHeldRevisionsContinueError : has no documentation (yet)
+type LegalHoldsListHeldRevisionsContinueError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsListHeldRevisionsContinueError
+const (
+	LegalHoldsListHeldRevisionsContinueErrorUnknownLegalHoldError = "unknown_legal_hold_error"
+	LegalHoldsListHeldRevisionsContinueErrorTransientError        = "transient_error"
+	LegalHoldsListHeldRevisionsContinueErrorReset                 = "reset"
+	LegalHoldsListHeldRevisionsContinueErrorOther                 = "other"
+)
+
+// LegalHoldsListHeldRevisionsError : has no documentation (yet)
+type LegalHoldsListHeldRevisionsError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsListHeldRevisionsError
+const (
+	LegalHoldsListHeldRevisionsErrorUnknownLegalHoldError   = "unknown_legal_hold_error"
+	LegalHoldsListHeldRevisionsErrorInsufficientPermissions = "insufficient_permissions"
+	LegalHoldsListHeldRevisionsErrorOther                   = "other"
+	LegalHoldsListHeldRevisionsErrorTransientError          = "transient_error"
+	LegalHoldsListHeldRevisionsErrorLegalHoldStillEmpty     = "legal_hold_still_empty"
+	LegalHoldsListHeldRevisionsErrorInactiveLegalHold       = "inactive_legal_hold"
+)
+
+// LegalHoldsListPoliciesArg : has no documentation (yet)
+type LegalHoldsListPoliciesArg struct {
+	// IncludeReleased : Whether to return holds that were released.
+	IncludeReleased bool `json:"include_released"`
+}
+
+// NewLegalHoldsListPoliciesArg returns a new LegalHoldsListPoliciesArg instance
+func NewLegalHoldsListPoliciesArg() *LegalHoldsListPoliciesArg {
+	s := new(LegalHoldsListPoliciesArg)
+	s.IncludeReleased = false
+	return s
+}
+
+// LegalHoldsListPoliciesError : has no documentation (yet)
+type LegalHoldsListPoliciesError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsListPoliciesError
+const (
+	LegalHoldsListPoliciesErrorUnknownLegalHoldError   = "unknown_legal_hold_error"
+	LegalHoldsListPoliciesErrorInsufficientPermissions = "insufficient_permissions"
+	LegalHoldsListPoliciesErrorOther                   = "other"
+	LegalHoldsListPoliciesErrorTransientError          = "transient_error"
+)
+
+// LegalHoldsListPoliciesResult : has no documentation (yet)
+type LegalHoldsListPoliciesResult struct {
+	// Policies : has no documentation (yet)
+	Policies []*LegalHoldPolicy `json:"policies"`
+}
+
+// NewLegalHoldsListPoliciesResult returns a new LegalHoldsListPoliciesResult instance
+func NewLegalHoldsListPoliciesResult(Policies []*LegalHoldPolicy) *LegalHoldsListPoliciesResult {
+	s := new(LegalHoldsListPoliciesResult)
+	s.Policies = Policies
+	return s
+}
+
+// LegalHoldsPolicyCreateArg : has no documentation (yet)
+type LegalHoldsPolicyCreateArg struct {
+	// Name : Policy name.
+	Name string `json:"name"`
+	// Description : A description of the legal hold policy.
+	Description string `json:"description,omitempty"`
+	// Members : List of team member IDs added to the hold.
+	Members []string `json:"members"`
+	// StartDate : start date of the legal hold policy.
+	StartDate time.Time `json:"start_date,omitempty"`
+	// EndDate : end date of the legal hold policy.
+	EndDate time.Time `json:"end_date,omitempty"`
+}
+
+// NewLegalHoldsPolicyCreateArg returns a new LegalHoldsPolicyCreateArg instance
+func NewLegalHoldsPolicyCreateArg(Name string, Members []string) *LegalHoldsPolicyCreateArg {
+	s := new(LegalHoldsPolicyCreateArg)
+	s.Name = Name
+	s.Members = Members
+	return s
+}
+
+// LegalHoldsPolicyCreateError : has no documentation (yet)
+type LegalHoldsPolicyCreateError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsPolicyCreateError
+const (
+	LegalHoldsPolicyCreateErrorUnknownLegalHoldError                          = "unknown_legal_hold_error"
+	LegalHoldsPolicyCreateErrorInsufficientPermissions                        = "insufficient_permissions"
+	LegalHoldsPolicyCreateErrorOther                                          = "other"
+	LegalHoldsPolicyCreateErrorStartDateIsLaterThanEndDate                    = "start_date_is_later_than_end_date"
+	LegalHoldsPolicyCreateErrorEmptyMembersList                               = "empty_members_list"
+	LegalHoldsPolicyCreateErrorInvalidMembers                                 = "invalid_members"
+	LegalHoldsPolicyCreateErrorNumberOfUsersOnHoldIsGreaterThanHoldLimitation = "number_of_users_on_hold_is_greater_than_hold_limitation"
+	LegalHoldsPolicyCreateErrorTransientError                                 = "transient_error"
+	LegalHoldsPolicyCreateErrorNameMustBeUnique                               = "name_must_be_unique"
+	LegalHoldsPolicyCreateErrorTeamExceededLegalHoldQuota                     = "team_exceeded_legal_hold_quota"
+	LegalHoldsPolicyCreateErrorInvalidDate                                    = "invalid_date"
+)
+
+// LegalHoldsPolicyReleaseArg : has no documentation (yet)
+type LegalHoldsPolicyReleaseArg struct {
+	// Id : The legal hold Id.
+	Id string `json:"id"`
+}
+
+// NewLegalHoldsPolicyReleaseArg returns a new LegalHoldsPolicyReleaseArg instance
+func NewLegalHoldsPolicyReleaseArg(Id string) *LegalHoldsPolicyReleaseArg {
+	s := new(LegalHoldsPolicyReleaseArg)
+	s.Id = Id
+	return s
+}
+
+// LegalHoldsPolicyReleaseError : has no documentation (yet)
+type LegalHoldsPolicyReleaseError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsPolicyReleaseError
+const (
+	LegalHoldsPolicyReleaseErrorUnknownLegalHoldError               = "unknown_legal_hold_error"
+	LegalHoldsPolicyReleaseErrorInsufficientPermissions             = "insufficient_permissions"
+	LegalHoldsPolicyReleaseErrorOther                               = "other"
+	LegalHoldsPolicyReleaseErrorLegalHoldPerformingAnotherOperation = "legal_hold_performing_another_operation"
+	LegalHoldsPolicyReleaseErrorLegalHoldAlreadyReleasing           = "legal_hold_already_releasing"
+	LegalHoldsPolicyReleaseErrorLegalHoldPolicyNotFound             = "legal_hold_policy_not_found"
+)
+
+// LegalHoldsPolicyUpdateArg : has no documentation (yet)
+type LegalHoldsPolicyUpdateArg struct {
+	// Id : The legal hold Id.
+	Id string `json:"id"`
+	// Name : Policy new name.
+	Name string `json:"name,omitempty"`
+	// Description : Policy new description.
+	Description string `json:"description,omitempty"`
+	// Members : List of team member IDs to apply the policy on.
+	Members []string `json:"members,omitempty"`
+}
+
+// NewLegalHoldsPolicyUpdateArg returns a new LegalHoldsPolicyUpdateArg instance
+func NewLegalHoldsPolicyUpdateArg(Id string) *LegalHoldsPolicyUpdateArg {
+	s := new(LegalHoldsPolicyUpdateArg)
+	s.Id = Id
+	return s
+}
+
+// LegalHoldsPolicyUpdateError : has no documentation (yet)
+type LegalHoldsPolicyUpdateError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LegalHoldsPolicyUpdateError
+const (
+	LegalHoldsPolicyUpdateErrorUnknownLegalHoldError                          = "unknown_legal_hold_error"
+	LegalHoldsPolicyUpdateErrorInsufficientPermissions                        = "insufficient_permissions"
+	LegalHoldsPolicyUpdateErrorOther                                          = "other"
+	LegalHoldsPolicyUpdateErrorInactiveLegalHold                              = "inactive_legal_hold"
+	LegalHoldsPolicyUpdateErrorLegalHoldPerformingAnotherOperation            = "legal_hold_performing_another_operation"
+	LegalHoldsPolicyUpdateErrorInvalidMembers                                 = "invalid_members"
+	LegalHoldsPolicyUpdateErrorNumberOfUsersOnHoldIsGreaterThanHoldLimitation = "number_of_users_on_hold_is_greater_than_hold_limitation"
+	LegalHoldsPolicyUpdateErrorEmptyMembersList                               = "empty_members_list"
+	LegalHoldsPolicyUpdateErrorNameMustBeUnique                               = "name_must_be_unique"
+	LegalHoldsPolicyUpdateErrorLegalHoldPolicyNotFound                        = "legal_hold_policy_not_found"
+)
+
 // ListMemberAppsArg : has no documentation (yet)
 type ListMemberAppsArg struct {
 	// TeamMemberId : The team member id.
@@ -2190,6 +2811,8 @@ type MemberProfile struct {
 	// EmailVerified : Is true if the user's email is verified to be owned by
 	// the user.
 	EmailVerified bool `json:"email_verified"`
+	// SecondaryEmails : Secondary emails of a user.
+	SecondaryEmails []*secondary_emails.SecondaryEmail `json:"secondary_emails,omitempty"`
 	// Status : The user's status as a member of a specific team.
 	Status *TeamMemberStatus `json:"status"`
 	// Name : Representations for a person's name.
@@ -2197,12 +2820,15 @@ type MemberProfile struct {
 	// MembershipType : The user's membership type: full (normal team member) vs
 	// limited (does not use a license; no access to the team's shared quota).
 	MembershipType *TeamMembershipType `json:"membership_type"`
+	// InvitedOn : The date and time the user was invited to the team (contains
+	// value only when the member's status matches `TeamMemberStatus.invited`).
+	InvitedOn time.Time `json:"invited_on,omitempty"`
 	// JoinedOn : The date and time the user joined as a member of a specific
 	// team.
 	JoinedOn time.Time `json:"joined_on,omitempty"`
 	// SuspendedOn : The date and time the user was suspended from the team
 	// (contains value only when the member's status matches
-	// `TeamMemberStatus.suspended`.
+	// `TeamMemberStatus.suspended`).
 	SuspendedOn time.Time `json:"suspended_on,omitempty"`
 	// PersistentId : Persistent ID that a team can attach to the user. The
 	// persistent ID is unique ID to be used for SAML authentication.
@@ -2430,6 +3056,32 @@ const (
 	MembersDeactivateErrorOther         = "other"
 )
 
+// MembersDeleteProfilePhotoArg : has no documentation (yet)
+type MembersDeleteProfilePhotoArg struct {
+	// User : Identity of the user whose profile photo will be deleted.
+	User *UserSelectorArg `json:"user"`
+}
+
+// NewMembersDeleteProfilePhotoArg returns a new MembersDeleteProfilePhotoArg instance
+func NewMembersDeleteProfilePhotoArg(User *UserSelectorArg) *MembersDeleteProfilePhotoArg {
+	s := new(MembersDeleteProfilePhotoArg)
+	s.User = User
+	return s
+}
+
+// MembersDeleteProfilePhotoError : has no documentation (yet)
+type MembersDeleteProfilePhotoError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersDeleteProfilePhotoError
+const (
+	MembersDeleteProfilePhotoErrorUserNotFound         = "user_not_found"
+	MembersDeleteProfilePhotoErrorUserNotInTeam        = "user_not_in_team"
+	MembersDeleteProfilePhotoErrorSetProfileDisallowed = "set_profile_disallowed"
+	MembersDeleteProfilePhotoErrorOther                = "other"
+)
+
 // MembersGetInfoArgs : has no documentation (yet)
 type MembersGetInfoArgs struct {
 	// Members : List of team members.
@@ -2502,6 +3154,23 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 		}
 	}
 	return nil
+}
+
+// MembersInfo : has no documentation (yet)
+type MembersInfo struct {
+	// TeamMemberIds : Team member IDs of the users under this hold.
+	TeamMemberIds []string `json:"team_member_ids"`
+	// PermanentlyDeletedUsers : The number of permanently deleted users that
+	// were under this hold.
+	PermanentlyDeletedUsers uint64 `json:"permanently_deleted_users"`
+}
+
+// NewMembersInfo returns a new MembersInfo instance
+func NewMembersInfo(TeamMemberIds []string, PermanentlyDeletedUsers uint64) *MembersInfo {
+	s := new(MembersInfo)
+	s.TeamMemberIds = TeamMemberIds
+	s.PermanentlyDeletedUsers = PermanentlyDeletedUsers
+	return s
 }
 
 // MembersListArg : has no documentation (yet)
@@ -2617,8 +3286,16 @@ type MembersRemoveArg struct {
 	// KeepAccount : Downgrade the member to a Basic account. The user will
 	// retain the email address associated with their Dropbox  account and data
 	// in their account that is not restricted to team members. In order to keep
-	// the account the argument wipe_data should be set to False.
+	// the account the argument `wipe_data` should be set to false.
 	KeepAccount bool `json:"keep_account"`
+	// RetainTeamShares : If provided, allows removed users to keep access to
+	// Dropbox folders (not Dropbox Paper folders) already explicitly shared
+	// with them (not via a group) when they are downgraded to a Basic account.
+	// Users will not retain access to folders that do not allow external
+	// sharing. In order to keep the sharing relationships, the arguments
+	// `wipe_data` should be set to false and `keep_account` should be set to
+	// true.
+	RetainTeamShares bool `json:"retain_team_shares"`
 }
 
 // NewMembersRemoveArg returns a new MembersRemoveArg instance
@@ -2627,6 +3304,7 @@ func NewMembersRemoveArg(User *UserSelectorArg) *MembersRemoveArg {
 	s.User = User
 	s.WipeData = true
 	s.KeepAccount = false
+	s.RetainTeamShares = false
 	return s
 }
 
@@ -2658,23 +3336,29 @@ type MembersRemoveError struct {
 
 // Valid tag values for MembersRemoveError
 const (
-	MembersRemoveErrorUserNotFound                        = "user_not_found"
-	MembersRemoveErrorUserNotInTeam                       = "user_not_in_team"
-	MembersRemoveErrorOther                               = "other"
-	MembersRemoveErrorRemovedAndTransferDestShouldDiffer  = "removed_and_transfer_dest_should_differ"
-	MembersRemoveErrorRemovedAndTransferAdminShouldDiffer = "removed_and_transfer_admin_should_differ"
-	MembersRemoveErrorTransferDestUserNotFound            = "transfer_dest_user_not_found"
-	MembersRemoveErrorTransferDestUserNotInTeam           = "transfer_dest_user_not_in_team"
-	MembersRemoveErrorTransferAdminUserNotInTeam          = "transfer_admin_user_not_in_team"
-	MembersRemoveErrorTransferAdminUserNotFound           = "transfer_admin_user_not_found"
-	MembersRemoveErrorUnspecifiedTransferAdminId          = "unspecified_transfer_admin_id"
-	MembersRemoveErrorTransferAdminIsNotAdmin             = "transfer_admin_is_not_admin"
-	MembersRemoveErrorRecipientNotVerified                = "recipient_not_verified"
-	MembersRemoveErrorRemoveLastAdmin                     = "remove_last_admin"
-	MembersRemoveErrorCannotKeepAccountAndTransfer        = "cannot_keep_account_and_transfer"
-	MembersRemoveErrorCannotKeepAccountAndDeleteData      = "cannot_keep_account_and_delete_data"
-	MembersRemoveErrorEmailAddressTooLongToBeDisabled     = "email_address_too_long_to_be_disabled"
-	MembersRemoveErrorCannotKeepInvitedUserAccount        = "cannot_keep_invited_user_account"
+	MembersRemoveErrorUserNotFound                                 = "user_not_found"
+	MembersRemoveErrorUserNotInTeam                                = "user_not_in_team"
+	MembersRemoveErrorOther                                        = "other"
+	MembersRemoveErrorRemovedAndTransferDestShouldDiffer           = "removed_and_transfer_dest_should_differ"
+	MembersRemoveErrorRemovedAndTransferAdminShouldDiffer          = "removed_and_transfer_admin_should_differ"
+	MembersRemoveErrorTransferDestUserNotFound                     = "transfer_dest_user_not_found"
+	MembersRemoveErrorTransferDestUserNotInTeam                    = "transfer_dest_user_not_in_team"
+	MembersRemoveErrorTransferAdminUserNotInTeam                   = "transfer_admin_user_not_in_team"
+	MembersRemoveErrorTransferAdminUserNotFound                    = "transfer_admin_user_not_found"
+	MembersRemoveErrorUnspecifiedTransferAdminId                   = "unspecified_transfer_admin_id"
+	MembersRemoveErrorTransferAdminIsNotAdmin                      = "transfer_admin_is_not_admin"
+	MembersRemoveErrorRecipientNotVerified                         = "recipient_not_verified"
+	MembersRemoveErrorRemoveLastAdmin                              = "remove_last_admin"
+	MembersRemoveErrorCannotKeepAccountAndTransfer                 = "cannot_keep_account_and_transfer"
+	MembersRemoveErrorCannotKeepAccountAndDeleteData               = "cannot_keep_account_and_delete_data"
+	MembersRemoveErrorEmailAddressTooLongToBeDisabled              = "email_address_too_long_to_be_disabled"
+	MembersRemoveErrorCannotKeepInvitedUserAccount                 = "cannot_keep_invited_user_account"
+	MembersRemoveErrorCannotRetainSharesWhenDataWiped              = "cannot_retain_shares_when_data_wiped"
+	MembersRemoveErrorCannotRetainSharesWhenNoAccountKept          = "cannot_retain_shares_when_no_account_kept"
+	MembersRemoveErrorCannotRetainSharesWhenTeamExternalSharingOff = "cannot_retain_shares_when_team_external_sharing_off"
+	MembersRemoveErrorCannotKeepAccount                            = "cannot_keep_account"
+	MembersRemoveErrorCannotKeepAccountUnderLegalHold              = "cannot_keep_account_under_legal_hold"
+	MembersRemoveErrorCannotKeepAccountRequiredToSignTos           = "cannot_keep_account_required_to_sign_tos"
 )
 
 // MembersSendWelcomeError :
@@ -2786,6 +3470,62 @@ const (
 	MembersSetProfileErrorDirectoryRestrictedOff           = "directory_restricted_off"
 	MembersSetProfileErrorOther                            = "other"
 )
+
+// MembersSetProfilePhotoArg : has no documentation (yet)
+type MembersSetProfilePhotoArg struct {
+	// User : Identity of the user whose profile photo will be set.
+	User *UserSelectorArg `json:"user"`
+	// Photo : Image to set as the member's new profile photo.
+	Photo *account.PhotoSourceArg `json:"photo"`
+}
+
+// NewMembersSetProfilePhotoArg returns a new MembersSetProfilePhotoArg instance
+func NewMembersSetProfilePhotoArg(User *UserSelectorArg, Photo *account.PhotoSourceArg) *MembersSetProfilePhotoArg {
+	s := new(MembersSetProfilePhotoArg)
+	s.User = User
+	s.Photo = Photo
+	return s
+}
+
+// MembersSetProfilePhotoError : has no documentation (yet)
+type MembersSetProfilePhotoError struct {
+	dropbox.Tagged
+	// PhotoError : has no documentation (yet)
+	PhotoError *account.SetProfilePhotoError `json:"photo_error,omitempty"`
+}
+
+// Valid tag values for MembersSetProfilePhotoError
+const (
+	MembersSetProfilePhotoErrorUserNotFound         = "user_not_found"
+	MembersSetProfilePhotoErrorUserNotInTeam        = "user_not_in_team"
+	MembersSetProfilePhotoErrorSetProfileDisallowed = "set_profile_disallowed"
+	MembersSetProfilePhotoErrorPhotoError           = "photo_error"
+	MembersSetProfilePhotoErrorOther                = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersSetProfilePhotoError instance
+func (u *MembersSetProfilePhotoError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// PhotoError : has no documentation (yet)
+		PhotoError *account.SetProfilePhotoError `json:"photo_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "photo_error":
+		u.PhotoError = w.PhotoError
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 // MembersSuspendError : has no documentation (yet)
 type MembersSuspendError struct {
@@ -2996,6 +3736,100 @@ func NewRemovedStatus(IsRecoverable bool, IsDisconnected bool) *RemovedStatus {
 	return s
 }
 
+// ResendSecondaryEmailResult : Result of trying to resend verification email to
+// a secondary email address. 'success' is the only value indicating that a
+// verification email was successfully sent. The other values explain the type
+// of error that occurred, and include the email for which the error occured.
+type ResendSecondaryEmailResult struct {
+	dropbox.Tagged
+	// Success : A verification email was successfully sent to the secondary
+	// email address.
+	Success string `json:"success,omitempty"`
+	// NotPending : This secondary email address is not pending for the user.
+	NotPending string `json:"not_pending,omitempty"`
+	// RateLimited : Too many emails are being sent to this email address.
+	// Please try again later.
+	RateLimited string `json:"rate_limited,omitempty"`
+}
+
+// Valid tag values for ResendSecondaryEmailResult
+const (
+	ResendSecondaryEmailResultSuccess     = "success"
+	ResendSecondaryEmailResultNotPending  = "not_pending"
+	ResendSecondaryEmailResultRateLimited = "rate_limited"
+	ResendSecondaryEmailResultOther       = "other"
+)
+
+// UnmarshalJSON deserializes into a ResendSecondaryEmailResult instance
+func (u *ResendSecondaryEmailResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Success : A verification email was successfully sent to the secondary
+		// email address.
+		Success string `json:"success,omitempty"`
+		// NotPending : This secondary email address is not pending for the
+		// user.
+		NotPending string `json:"not_pending,omitempty"`
+		// RateLimited : Too many emails are being sent to this email address.
+		// Please try again later.
+		RateLimited string `json:"rate_limited,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		u.Success = w.Success
+
+		if err != nil {
+			return err
+		}
+	case "not_pending":
+		u.NotPending = w.NotPending
+
+		if err != nil {
+			return err
+		}
+	case "rate_limited":
+		u.RateLimited = w.RateLimited
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ResendVerificationEmailArg : has no documentation (yet)
+type ResendVerificationEmailArg struct {
+	// EmailsToResend : List of users and secondary emails to resend
+	// verification emails to.
+	EmailsToResend []*UserSecondaryEmailsArg `json:"emails_to_resend"`
+}
+
+// NewResendVerificationEmailArg returns a new ResendVerificationEmailArg instance
+func NewResendVerificationEmailArg(EmailsToResend []*UserSecondaryEmailsArg) *ResendVerificationEmailArg {
+	s := new(ResendVerificationEmailArg)
+	s.EmailsToResend = EmailsToResend
+	return s
+}
+
+// ResendVerificationEmailResult : List of users and resend results.
+type ResendVerificationEmailResult struct {
+	// Results : has no documentation (yet)
+	Results []*UserResendResult `json:"results"`
+}
+
+// NewResendVerificationEmailResult returns a new ResendVerificationEmailResult instance
+func NewResendVerificationEmailResult(Results []*UserResendResult) *ResendVerificationEmailResult {
+	s := new(ResendVerificationEmailResult)
+	s.Results = Results
+	return s
+}
+
 // RevokeDesktopClientArg : has no documentation (yet)
 type RevokeDesktopClientArg struct {
 	DeviceSessionArg
@@ -3135,8 +3969,8 @@ type RevokeLinkedApiAppArg struct {
 	AppId string `json:"app_id"`
 	// TeamMemberId : The unique id of the member owning the device.
 	TeamMemberId string `json:"team_member_id"`
-	// KeepAppFolder : Whether to keep the application dedicated folder (in case
-	// the application uses  one).
+	// KeepAppFolder : This flag is not longer supported, the application
+	// dedicated folder (in case the application uses  one) will be kept.
 	KeepAppFolder bool `json:"keep_app_folder"`
 }
 
@@ -3193,9 +4027,10 @@ type RevokeLinkedAppError struct {
 
 // Valid tag values for RevokeLinkedAppError
 const (
-	RevokeLinkedAppErrorAppNotFound    = "app_not_found"
-	RevokeLinkedAppErrorMemberNotFound = "member_not_found"
-	RevokeLinkedAppErrorOther          = "other"
+	RevokeLinkedAppErrorAppNotFound                  = "app_not_found"
+	RevokeLinkedAppErrorMemberNotFound               = "member_not_found"
+	RevokeLinkedAppErrorAppFolderRemovalNotSupported = "app_folder_removal_not_supported"
+	RevokeLinkedAppErrorOther                        = "other"
 )
 
 // RevokeLinkedAppStatus : has no documentation (yet)
@@ -4253,6 +5088,81 @@ func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// UserAddResult : Result of trying to add secondary emails to a user. 'success'
+// is the only value indicating that a user was successfully retrieved for
+// adding secondary emails. The other values explain the type of error that
+// occurred, and include the user for which the error occured.
+type UserAddResult struct {
+	dropbox.Tagged
+	// Success : Describes a user and the results for each attempt to add a
+	// secondary email.
+	Success *UserSecondaryEmailsResult `json:"success,omitempty"`
+	// InvalidUser : Specified user is not a valid target for adding secondary
+	// emails.
+	InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+	// Unverified : Secondary emails can only be added to verified users.
+	Unverified *UserSelectorArg `json:"unverified,omitempty"`
+	// PlaceholderUser : Secondary emails cannot be added to placeholder users.
+	PlaceholderUser *UserSelectorArg `json:"placeholder_user,omitempty"`
+}
+
+// Valid tag values for UserAddResult
+const (
+	UserAddResultSuccess         = "success"
+	UserAddResultInvalidUser     = "invalid_user"
+	UserAddResultUnverified      = "unverified"
+	UserAddResultPlaceholderUser = "placeholder_user"
+	UserAddResultOther           = "other"
+)
+
+// UnmarshalJSON deserializes into a UserAddResult instance
+func (u *UserAddResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// InvalidUser : Specified user is not a valid target for adding
+		// secondary emails.
+		InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+		// Unverified : Secondary emails can only be added to verified users.
+		Unverified *UserSelectorArg `json:"unverified,omitempty"`
+		// PlaceholderUser : Secondary emails cannot be added to placeholder
+		// users.
+		PlaceholderUser *UserSelectorArg `json:"placeholder_user,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "invalid_user":
+		u.InvalidUser = w.InvalidUser
+
+		if err != nil {
+			return err
+		}
+	case "unverified":
+		u.Unverified = w.Unverified
+
+		if err != nil {
+			return err
+		}
+	case "placeholder_user":
+		u.PlaceholderUser = w.PlaceholderUser
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // UserCustomQuotaArg : User and their required custom quota in GB (1 TB = 1024
 // GB).
 type UserCustomQuotaArg struct {
@@ -4283,6 +5193,174 @@ type UserCustomQuotaResult struct {
 func NewUserCustomQuotaResult(User *UserSelectorArg) *UserCustomQuotaResult {
 	s := new(UserCustomQuotaResult)
 	s.User = User
+	return s
+}
+
+// UserDeleteEmailsResult : has no documentation (yet)
+type UserDeleteEmailsResult struct {
+	// User : has no documentation (yet)
+	User *UserSelectorArg `json:"user"`
+	// Results : has no documentation (yet)
+	Results []*DeleteSecondaryEmailResult `json:"results"`
+}
+
+// NewUserDeleteEmailsResult returns a new UserDeleteEmailsResult instance
+func NewUserDeleteEmailsResult(User *UserSelectorArg, Results []*DeleteSecondaryEmailResult) *UserDeleteEmailsResult {
+	s := new(UserDeleteEmailsResult)
+	s.User = User
+	s.Results = Results
+	return s
+}
+
+// UserDeleteResult : Result of trying to delete a user's secondary emails.
+// 'success' is the only value indicating that a user was successfully retrieved
+// for deleting secondary emails. The other values explain the type of error
+// that occurred, and include the user for which the error occured.
+type UserDeleteResult struct {
+	dropbox.Tagged
+	// Success : Describes a user and the results for each attempt to delete a
+	// secondary email.
+	Success *UserDeleteEmailsResult `json:"success,omitempty"`
+	// InvalidUser : Specified user is not a valid target for deleting secondary
+	// emails.
+	InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+}
+
+// Valid tag values for UserDeleteResult
+const (
+	UserDeleteResultSuccess     = "success"
+	UserDeleteResultInvalidUser = "invalid_user"
+	UserDeleteResultOther       = "other"
+)
+
+// UnmarshalJSON deserializes into a UserDeleteResult instance
+func (u *UserDeleteResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// InvalidUser : Specified user is not a valid target for deleting
+		// secondary emails.
+		InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "invalid_user":
+		u.InvalidUser = w.InvalidUser
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UserResendEmailsResult : has no documentation (yet)
+type UserResendEmailsResult struct {
+	// User : has no documentation (yet)
+	User *UserSelectorArg `json:"user"`
+	// Results : has no documentation (yet)
+	Results []*ResendSecondaryEmailResult `json:"results"`
+}
+
+// NewUserResendEmailsResult returns a new UserResendEmailsResult instance
+func NewUserResendEmailsResult(User *UserSelectorArg, Results []*ResendSecondaryEmailResult) *UserResendEmailsResult {
+	s := new(UserResendEmailsResult)
+	s.User = User
+	s.Results = Results
+	return s
+}
+
+// UserResendResult : Result of trying to resend verification emails to a user.
+// 'success' is the only value indicating that a user was successfully retrieved
+// for sending verification emails. The other values explain the type of error
+// that occurred, and include the user for which the error occured.
+type UserResendResult struct {
+	dropbox.Tagged
+	// Success : Describes a user and the results for each attempt to resend
+	// verification emails.
+	Success *UserResendEmailsResult `json:"success,omitempty"`
+	// InvalidUser : Specified user is not a valid target for resending
+	// verification emails.
+	InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+}
+
+// Valid tag values for UserResendResult
+const (
+	UserResendResultSuccess     = "success"
+	UserResendResultInvalidUser = "invalid_user"
+	UserResendResultOther       = "other"
+)
+
+// UnmarshalJSON deserializes into a UserResendResult instance
+func (u *UserResendResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// InvalidUser : Specified user is not a valid target for resending
+		// verification emails.
+		InvalidUser *UserSelectorArg `json:"invalid_user,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "invalid_user":
+		u.InvalidUser = w.InvalidUser
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UserSecondaryEmailsArg : User and a list of secondary emails.
+type UserSecondaryEmailsArg struct {
+	// User : has no documentation (yet)
+	User *UserSelectorArg `json:"user"`
+	// SecondaryEmails : has no documentation (yet)
+	SecondaryEmails []string `json:"secondary_emails"`
+}
+
+// NewUserSecondaryEmailsArg returns a new UserSecondaryEmailsArg instance
+func NewUserSecondaryEmailsArg(User *UserSelectorArg, SecondaryEmails []string) *UserSecondaryEmailsArg {
+	s := new(UserSecondaryEmailsArg)
+	s.User = User
+	s.SecondaryEmails = SecondaryEmails
+	return s
+}
+
+// UserSecondaryEmailsResult : has no documentation (yet)
+type UserSecondaryEmailsResult struct {
+	// User : has no documentation (yet)
+	User *UserSelectorArg `json:"user"`
+	// Results : has no documentation (yet)
+	Results []*AddSecondaryEmailResult `json:"results"`
+}
+
+// NewUserSecondaryEmailsResult returns a new UserSecondaryEmailsResult instance
+func NewUserSecondaryEmailsResult(User *UserSelectorArg, Results []*AddSecondaryEmailResult) *UserSecondaryEmailsResult {
+	s := new(UserSecondaryEmailsResult)
+	s.User = User
+	s.Results = Results
 	return s
 }
 

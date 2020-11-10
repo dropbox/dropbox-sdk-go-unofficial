@@ -25,12 +25,6 @@ package sharing
 import (
 	"encoding/json"
 	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/seen_state"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team_common"
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
 )
 
 // AccessInheritance : Information about the inheritance policy of a shared
@@ -208,6 +202,7 @@ const (
 	AddFolderMemberErrorInsufficientPlan      = "insufficient_plan"
 	AddFolderMemberErrorTeamFolder            = "team_folder"
 	AddFolderMemberErrorNoPermission          = "no_permission"
+	AddFolderMemberErrorInvalidSharedFolder   = "invalid_shared_folder"
 	AddFolderMemberErrorOther                 = "other"
 )
 
@@ -287,7 +282,7 @@ type AddMemberSelectorError struct {
 	// InvalidEmail : The value is the e-email address that is malformed.
 	InvalidEmail string `json:"invalid_email,omitempty"`
 	// UnverifiedDropboxId : The value is the ID of the Dropbox user with an
-	// unverified e-mail address.  Invite unverified users by e-mail address
+	// unverified email address. Invite unverified users by email address
 	// instead of by their Dropbox ID.
 	UnverifiedDropboxId string `json:"unverified_dropbox_id,omitempty"`
 }
@@ -312,7 +307,7 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 		// InvalidEmail : The value is the e-email address that is malformed.
 		InvalidEmail string `json:"invalid_email,omitempty"`
 		// UnverifiedDropboxId : The value is the ID of the Dropbox user with an
-		// unverified e-mail address.  Invite unverified users by e-mail address
+		// unverified email address. Invite unverified users by email address
 		// instead of by their Dropbox ID.
 		UnverifiedDropboxId string `json:"unverified_dropbox_id,omitempty"`
 	}
@@ -1599,7 +1594,7 @@ func NewInsufficientQuotaAmounts(SpaceNeeded uint64, SpaceShortage uint64, Space
 // InviteeInfo : Information about the recipient of a shared content invitation.
 type InviteeInfo struct {
 	dropbox.Tagged
-	// Email : E-mail address of invited user.
+	// Email : Email address of invited user.
 	Email string `json:"email,omitempty"`
 }
 
@@ -1613,7 +1608,7 @@ const (
 func (u *InviteeInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Email : E-mail address of invited user.
+		// Email : Email address of invited user.
 		Email string `json:"email,omitempty"`
 	}
 	var w wrap
@@ -2597,7 +2592,7 @@ type MemberSelector struct {
 	dropbox.Tagged
 	// DropboxId : Dropbox account, team member, or group ID of member.
 	DropboxId string `json:"dropbox_id,omitempty"`
-	// Email : E-mail address of member.
+	// Email : Email address of member.
 	Email string `json:"email,omitempty"`
 }
 
@@ -2614,7 +2609,7 @@ func (u *MemberSelector) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// DropboxId : Dropbox account, team member, or group ID of member.
 		DropboxId string `json:"dropbox_id,omitempty"`
-		// Email : E-mail address of member.
+		// Email : Email address of member.
 		Email string `json:"email,omitempty"`
 	}
 	var w wrap
@@ -3558,6 +3553,8 @@ const (
 	SharePathErrorInvalidPath          = "invalid_path"
 	SharePathErrorIsOsxPackage         = "is_osx_package"
 	SharePathErrorInsideOsxPackage     = "inside_osx_package"
+	SharePathErrorIsVault              = "is_vault"
+	SharePathErrorIsFamily             = "is_family"
 	SharePathErrorOther                = "other"
 )
 
@@ -3788,6 +3785,8 @@ type SharedFolderMetadataBase struct {
 	// PathLower : The lower-cased full path of this shared folder. Absent for
 	// unmounted folders.
 	PathLower string `json:"path_lower,omitempty"`
+	// ParentFolderName : Display name for the parent folder.
+	ParentFolderName string `json:"parent_folder_name,omitempty"`
 }
 
 // NewSharedFolderMetadataBase returns a new SharedFolderMetadataBase instance
@@ -3925,7 +3924,7 @@ type SharedLinkSettings struct {
 	// audience type in the `effective_audience` field of `LinkPermissions.
 	Audience *LinkAudience `json:"audience,omitempty"`
 	// Access : Requested access level you want the audience to gain from this
-	// link.
+	// link. Note, modifying access level for an existing link is not supported.
 	Access *RequestedLinkAccessLevel `json:"access,omitempty"`
 }
 

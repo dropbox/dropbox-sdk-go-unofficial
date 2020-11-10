@@ -21,11 +21,7 @@
 // Package async : has no documentation (yet)
 package async
 
-import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-)
+import "encoding/json"
 
 // LaunchResultBase : Result returned by methods that launch an asynchronous
 // job. A method who may either launch an asynchronous job, or complete the

@@ -21,11 +21,7 @@
 // Package team_common : has no documentation (yet)
 package team_common
 
-import (
-	"time"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-)
+import "time"
 
 // GroupManagementType : The group type determines how a group is managed.
 type GroupManagementType struct {

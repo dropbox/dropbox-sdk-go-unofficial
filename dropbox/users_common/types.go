@@ -22,8 +22,6 @@
 // the users namespace.
 package users_common
 
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-
 // AccountType : What type of account this user has.
 type AccountType struct {
 	dropbox.Tagged

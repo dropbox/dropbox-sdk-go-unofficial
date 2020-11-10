@@ -18,22 +18,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package seen_state : has no documentation (yet)
-package seen_state
+// Package check : has no documentation (yet)
+package check
 
-// PlatformType : Possible platforms on which a user may view content.
-type PlatformType struct {
-	dropbox.Tagged
+// EchoArg : EchoArg contains the arguments to be sent to the Dropbox servers.
+type EchoArg struct {
+    // Query : The string that you'd like to be echoed back to you.
+    Query string `json:"query"`
+}
+// NewEchoArg returns a new EchoArg instance
+func NewEchoArg() *EchoArg {
+    s := new(EchoArg)
+    s.Query = 
+    return s
 }
 
-// Valid tag values for PlatformType
-const (
-	PlatformTypeWeb           = "web"
-	PlatformTypeDesktop       = "desktop"
-	PlatformTypeMobileIos     = "mobile_ios"
-	PlatformTypeMobileAndroid = "mobile_android"
-	PlatformTypeApi           = "api"
-	PlatformTypeUnknown       = "unknown"
-	PlatformTypeMobile        = "mobile"
-	PlatformTypeOther         = "other"
-)
+
+// EchoResult : EchoResult contains the result returned from the Dropbox
+// servers.
+type EchoResult struct {
+    // Result : If everything worked correctly, this would be the same as query.
+    Result string `json:"result"`
+}
+// NewEchoResult returns a new EchoResult instance
+func NewEchoResult() *EchoResult {
+    s := new(EchoResult)
+    s.Result = 
+    return s
+}
+
+

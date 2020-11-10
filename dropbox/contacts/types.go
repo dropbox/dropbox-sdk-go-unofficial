@@ -21,11 +21,7 @@
 // Package contacts : has no documentation (yet)
 package contacts
 
-import (
-	"encoding/json"
-
-	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-)
+import "encoding/json"
 
 // DeleteManualContactsArg : has no documentation (yet)
 type DeleteManualContactsArg struct {
