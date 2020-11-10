@@ -45,14 +45,18 @@
 // `files/upload`.
 package file_properties
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
 
 // AddPropertiesArg : has no documentation (yet)
 type AddPropertiesArg struct {
 	// Path : A unique identifier for the file or folder.
 	Path string `json:"path"`
 	// PropertyGroups : The property groups which are to be added to a Dropbox
-	// file. No two groups in the input should  refer to the same template.
+	// file.
 	PropertyGroups []*PropertyGroup `json:"property_groups"`
 }
 
@@ -163,14 +167,13 @@ type InvalidPropertyGroupError struct {
 
 // Valid tag values for InvalidPropertyGroupError
 const (
-	InvalidPropertyGroupErrorTemplateNotFound        = "template_not_found"
-	InvalidPropertyGroupErrorRestrictedContent       = "restricted_content"
-	InvalidPropertyGroupErrorOther                   = "other"
-	InvalidPropertyGroupErrorPath                    = "path"
-	InvalidPropertyGroupErrorUnsupportedFolder       = "unsupported_folder"
-	InvalidPropertyGroupErrorPropertyFieldTooLarge   = "property_field_too_large"
-	InvalidPropertyGroupErrorDoesNotFitTemplate      = "does_not_fit_template"
-	InvalidPropertyGroupErrorDuplicatePropertyGroups = "duplicate_property_groups"
+	InvalidPropertyGroupErrorTemplateNotFound      = "template_not_found"
+	InvalidPropertyGroupErrorRestrictedContent     = "restricted_content"
+	InvalidPropertyGroupErrorOther                 = "other"
+	InvalidPropertyGroupErrorPath                  = "path"
+	InvalidPropertyGroupErrorUnsupportedFolder     = "unsupported_folder"
+	InvalidPropertyGroupErrorPropertyFieldTooLarge = "property_field_too_large"
+	InvalidPropertyGroupErrorDoesNotFitTemplate    = "does_not_fit_template"
 )
 
 // UnmarshalJSON deserializes into a InvalidPropertyGroupError instance
@@ -223,7 +226,6 @@ const (
 	AddPropertiesErrorUnsupportedFolder          = "unsupported_folder"
 	AddPropertiesErrorPropertyFieldTooLarge      = "property_field_too_large"
 	AddPropertiesErrorDoesNotFitTemplate         = "does_not_fit_template"
-	AddPropertiesErrorDuplicatePropertyGroups    = "duplicate_property_groups"
 	AddPropertiesErrorPropertyGroupAlreadyExists = "property_group_already_exists"
 )
 
@@ -461,7 +463,6 @@ type OverwritePropertyGroupArg struct {
 	// Path : A unique identifier for the file or folder.
 	Path string `json:"path"`
 	// PropertyGroups : The property groups "snapshot" updates to force apply.
-	// No two groups in the input should  refer to the same template.
 	PropertyGroups []*PropertyGroup `json:"property_groups"`
 }
 
@@ -951,15 +952,14 @@ type UpdatePropertiesError struct {
 
 // Valid tag values for UpdatePropertiesError
 const (
-	UpdatePropertiesErrorTemplateNotFound        = "template_not_found"
-	UpdatePropertiesErrorRestrictedContent       = "restricted_content"
-	UpdatePropertiesErrorOther                   = "other"
-	UpdatePropertiesErrorPath                    = "path"
-	UpdatePropertiesErrorUnsupportedFolder       = "unsupported_folder"
-	UpdatePropertiesErrorPropertyFieldTooLarge   = "property_field_too_large"
-	UpdatePropertiesErrorDoesNotFitTemplate      = "does_not_fit_template"
-	UpdatePropertiesErrorDuplicatePropertyGroups = "duplicate_property_groups"
-	UpdatePropertiesErrorPropertyGroupLookup     = "property_group_lookup"
+	UpdatePropertiesErrorTemplateNotFound      = "template_not_found"
+	UpdatePropertiesErrorRestrictedContent     = "restricted_content"
+	UpdatePropertiesErrorOther                 = "other"
+	UpdatePropertiesErrorPath                  = "path"
+	UpdatePropertiesErrorUnsupportedFolder     = "unsupported_folder"
+	UpdatePropertiesErrorPropertyFieldTooLarge = "property_field_too_large"
+	UpdatePropertiesErrorDoesNotFitTemplate    = "does_not_fit_template"
+	UpdatePropertiesErrorPropertyGroupLookup   = "property_group_lookup"
 )
 
 // UnmarshalJSON deserializes into a UpdatePropertiesError instance

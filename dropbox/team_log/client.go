@@ -25,18 +25,19 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// GetEvents : Retrieves team events. If the result's
-	// `GetTeamEventsResult.has_more` field is true, call `getEventsContinue`
-	// with the returned cursor to retrieve more entries. If end_time is not
-	// specified in your request, you may use the returned cursor to poll
-	// `getEventsContinue` for new events. Many attributes note 'may be missing
-	// due to historical data gap'. Note that the file_operations category and &
-	// analogous paper events are not available on all Dropbox Business `plans`
-	// </business/plans-comparison>. Use `features/get_values`
+	// GetEvents : Retrieves team events. Events have a lifespan of two years.
+	// Events older than two years will not be returned. Many attributes note
+	// 'may be missing due to historical data gap'. Note that the
+	// file_operations category and & analogous paper events are not available
+	// on all Dropbox Business `plans` </business/plans-comparison>. Use
+	// `features/get_values`
 	// </developers/documentation/http/teams#team-features-get_values> to check
 	// for this feature. Permission : Team Auditing.
 	GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)

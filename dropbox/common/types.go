@@ -21,7 +21,11 @@
 // Package common : has no documentation (yet)
 package common
 
-import "encoding/json"
+import (
+	"encoding/json"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+)
 
 // PathRoot : has no documentation (yet)
 type PathRoot struct {

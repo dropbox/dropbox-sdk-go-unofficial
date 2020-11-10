@@ -21,12 +21,12 @@
 package dropbox
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
-	"strings"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -38,8 +38,8 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "5.0.0"
-	specVersion   = "ed6e389"
+	sdkVersion    = "5.6.0"
+	specVersion   = "0e697d7"
 )
 
 // Version returns the current SDK version and API Spec version
@@ -228,7 +228,7 @@ func HandleCommonAPIErrors(c Config, resp *http.Response, body []byte) error {
 //
 // See: https://www.dropbox.com/developers/reference/json-encoding
 func HTTPHeaderSafeJSON(b []byte) string {
-	var s strings.Builder
+	var s bytes.Buffer
 	s.Grow(len(b))
 	for _, r := range string(b) {
 		if r >= 0x007f {

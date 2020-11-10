@@ -25,207 +25,77 @@ import (
 	"encoding/json"
 	"io"
 	"io/ioutil"
-	"log"
 	"net/http"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// DocsArchive : Marks the given Paper doc as archived. This action can be
-	// performed or undone by anyone with edit permissions to the doc. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. This endpoint will be
-	// retired in September 2020. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for more information.
-	// Deprecated:
+	// DocsArchive : Marks the given Paper doc as archived. Note: This action
+	// can be performed or undone by anyone with edit permissions to the doc.
 	DocsArchive(arg *RefPaperDoc) (err error)
-	// DocsCreate : Creates a new Paper doc with the provided content. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. This endpoint will be
-	// retired in September 2020. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for more information.
-	// Deprecated:
+	// DocsCreate : Creates a new Paper doc with the provided content.
 	DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error)
 	// DocsDownload : Exports and downloads Paper doc either as HTML or
-	// markdown. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// markdown.
 	DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error)
 	// DocsFolderUsersList : Lists the users who are explicitly invited to the
 	// Paper folder in which the Paper doc is contained. For private folders all
 	// users (including owner) shared on the folder are listed and for team
-	// folders all non-team users shared on the folder are returned. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// folders all non-team users shared on the folder are returned.
 	DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error)
 	// DocsFolderUsersListContinue : Once a cursor has been retrieved from
 	// `docsFolderUsersList`, use this to paginate through all users on the
-	// Paper folder. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// Paper folder.
 	DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error)
 	// DocsGetFolderInfo : Retrieves folder information for the given Paper doc.
 	// This includes:   - folder sharing policy; permissions for subfolders are
 	// set by the top-level folder.   - full 'filepath', i.e. the list of
 	// folders (both folderId and folderName) from     the root folder to the
-	// folder directly containing the Paper doc.  If the Paper doc is not in any
-	// folder (aka unfiled) the response will be empty. Note that this endpoint
-	// will continue to work for content created by users on the older version
-	// of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// folder directly containing the Paper doc.  Note: If the Paper doc is not
+	// in any folder (aka unfiled) the response will be empty.
 	DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error)
 	// DocsList : Return the list of all Paper docs according to the argument
 	// specifications. To iterate over through the full pagination, pass the
-	// cursor to `docsListContinue`. Note that this endpoint will continue to
-	// work for content created by users on the older version of Paper. To check
-	// which version of Paper a user is on, use /users/features/get_values. If
-	// the paper_as_files feature is enabled, then the user is running the new
-	// version of Paper. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// cursor to `docsListContinue`.
 	DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error)
 	// DocsListContinue : Once a cursor has been retrieved from `docsList`, use
-	// this to paginate through all Paper doc. Note that this endpoint will
-	// continue to work for content created by users on the older version of
-	// Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// this to paginate through all Paper doc.
 	DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error)
 	// DocsPermanentlyDelete : Permanently deletes the given Paper doc. This
-	// operation is final as the doc cannot be recovered. This action can be
-	// performed only by the doc owner. Note that this endpoint will continue to
-	// work for content created by users on the older version of Paper. To check
-	// which version of Paper a user is on, use /users/features/get_values. If
-	// the paper_as_files feature is enabled, then the user is running the new
-	// version of Paper. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// operation is final as the doc cannot be recovered.  Note: This action can
+	// be performed only by the doc owner.
 	DocsPermanentlyDelete(arg *RefPaperDoc) (err error)
 	// DocsSharingPolicyGet : Gets the default sharing policy for the given
-	// Paper doc. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// Paper doc.
 	DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, err error)
 	// DocsSharingPolicySet : Sets the default sharing policy for the given
 	// Paper doc. The default 'team_sharing_policy' can be changed only by
-	// teams, omit this field for personal accounts. The 'public_sharing_policy'
-	// policy can't be set to the value 'disabled' because this setting can be
-	// changed only via the team admin console. Note that this endpoint will
-	// continue to work for content created by users on the older version of
-	// Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// teams, omit this field for personal accounts.  Note:
+	// 'public_sharing_policy' cannot be set to the value 'disabled' because
+	// this setting can be changed only via the team admin console.
 	DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 	// DocsUpdate : Updates an existing Paper doc with the provided content.
-	// Note that this endpoint will continue to work for content created by
-	// users on the older version of Paper. To check which version of Paper a
-	// user is on, use /users/features/get_values. If the paper_as_files feature
-	// is enabled, then the user is running the new version of Paper. This
-	// endpoint will be retired in September 2020. Refer to the `Paper Migration
-	// Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for more information.
-	// Deprecated:
 	DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error)
 	// DocsUsersAdd : Allows an owner or editor to add users to a Paper doc or
 	// change their permissions using their email address or Dropbox account ID.
-	// The doc owner's permissions cannot be changed. Note that this endpoint
-	// will continue to work for content created by users on the older version
-	// of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// Note: The Doc owner's permissions cannot be changed.
 	DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error)
 	// DocsUsersList : Lists all users who visited the Paper doc or users with
 	// explicit access. This call excludes users who have been removed. The list
 	// is sorted by the date of the visit or the share date. The list will
 	// include both users, the explicitly shared ones as well as those who came
-	// in using the Paper url link. Note that this endpoint will continue to
-	// work for content created by users on the older version of Paper. To check
-	// which version of Paper a user is on, use /users/features/get_values. If
-	// the paper_as_files feature is enabled, then the user is running the new
-	// version of Paper. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// in using the Paper url link.
 	DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error)
 	// DocsUsersListContinue : Once a cursor has been retrieved from
 	// `docsUsersList`, use this to paginate through all users on the Paper doc.
-	// Note that this endpoint will continue to work for content created by
-	// users on the older version of Paper. To check which version of Paper a
-	// user is on, use /users/features/get_values. If the paper_as_files feature
-	// is enabled, then the user is running the new version of Paper. Refer to
-	// the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
 	DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error)
 	// DocsUsersRemove : Allows an owner or editor to remove users from a Paper
-	// doc using their email address or Dropbox account ID. The doc owner cannot
-	// be removed. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
+	// doc using their email address or Dropbox account ID.  Note: Doc owner
+	// cannot be removed.
 	DocsUsersRemove(arg *RemovePaperDocUser) (err error)
-	// FoldersCreate : Create a new Paper folder with the provided info. Note
-	// that this endpoint will continue to work for content created by users on
-	// the older version of Paper. To check which version of Paper a user is on,
-	// use /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
-	FoldersCreate(arg *PaperFolderCreateArg) (res *PaperFolderCreateResult, err error)
 }
 
 type apiImpl dropbox.Context
@@ -237,8 +107,6 @@ type DocsArchiveAPIError struct {
 }
 
 func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
-	log.Printf("WARNING: API `DocsArchive` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -300,8 +168,6 @@ type DocsCreateAPIError struct {
 }
 
 func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
-	log.Printf("WARNING: API `DocsCreate` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -369,8 +235,6 @@ type DocsDownloadAPIError struct {
 }
 
 func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error) {
-	log.Printf("WARNING: API `DocsDownload` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -438,8 +302,6 @@ type DocsFolderUsersListAPIError struct {
 }
 
 func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error) {
-	log.Printf("WARNING: API `DocsFolderUsersList` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -506,8 +368,6 @@ type DocsFolderUsersListContinueAPIError struct {
 }
 
 func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error) {
-	log.Printf("WARNING: API `DocsFolderUsersListContinue` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -574,8 +434,6 @@ type DocsGetFolderInfoAPIError struct {
 }
 
 func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error) {
-	log.Printf("WARNING: API `DocsGetFolderInfo` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -642,8 +500,6 @@ type DocsListAPIError struct {
 }
 
 func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error) {
-	log.Printf("WARNING: API `DocsList` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -710,8 +566,6 @@ type DocsListContinueAPIError struct {
 }
 
 func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error) {
-	log.Printf("WARNING: API `DocsListContinue` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -778,8 +632,6 @@ type DocsPermanentlyDeleteAPIError struct {
 }
 
 func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
-	log.Printf("WARNING: API `DocsPermanentlyDelete` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -841,8 +693,6 @@ type DocsSharingPolicyGetAPIError struct {
 }
 
 func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, err error) {
-	log.Printf("WARNING: API `DocsSharingPolicyGet` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -909,8 +759,6 @@ type DocsSharingPolicySetAPIError struct {
 }
 
 func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error) {
-	log.Printf("WARNING: API `DocsSharingPolicySet` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -972,8 +820,6 @@ type DocsUpdateAPIError struct {
 }
 
 func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
-	log.Printf("WARNING: API `DocsUpdate` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -1041,8 +887,6 @@ type DocsUsersAddAPIError struct {
 }
 
 func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error) {
-	log.Printf("WARNING: API `DocsUsersAdd` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -1109,8 +953,6 @@ type DocsUsersListAPIError struct {
 }
 
 func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error) {
-	log.Printf("WARNING: API `DocsUsersList` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -1177,8 +1019,6 @@ type DocsUsersListContinueAPIError struct {
 }
 
 func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error) {
-	log.Printf("WARNING: API `DocsUsersListContinue` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -1245,8 +1085,6 @@ type DocsUsersRemoveAPIError struct {
 }
 
 func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
-	log.Printf("WARNING: API `DocsUsersRemove` is deprecated")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -1286,74 +1124,6 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError DocsUsersRemoveAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//FoldersCreateAPIError is an error-wrapper for the folders/create route
-type FoldersCreateAPIError struct {
-	dropbox.APIError
-	EndpointError *PaperFolderCreateError `json:"error"`
-}
-
-func (dbx *apiImpl) FoldersCreate(arg *PaperFolderCreateArg) (res *PaperFolderCreateResult, err error) {
-	log.Printf("WARNING: API `FoldersCreate` is deprecated")
-
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "folders/create", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError FoldersCreateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

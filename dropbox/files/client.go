@@ -27,6 +27,11 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/async"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/file_properties"
 )
 
 // Client interface describes all routes in this namespace
@@ -58,9 +63,13 @@ type Client interface {
 	// background. Please use `copyBatchCheck` to check the job status.
 	CopyBatchV2(arg *RelocationBatchArgBase) (res *RelocationBatchV2Launch, err error)
 	// CopyBatch : Copy multiple files or folders to different locations at once
-	// in the user's Dropbox. This route will return job ID immediately and do
-	// the async copy job in background. Please use `copyBatchCheck` to check
-	// the job status.
+	// in the user's Dropbox. If `RelocationBatchArg.allow_shared_folder` is
+	// false, this route is atomic. If one entry fails, the whole transaction
+	// will abort. If `RelocationBatchArg.allow_shared_folder` is true,
+	// atomicity is not guaranteed, but it allows you to copy the contents of
+	// shared folders to new locations. This route will return job ID
+	// immediately and do the async copy job in background. Please use
+	// `copyBatchCheck` to check the job status.
 	// Deprecated: Use `CopyBatchV2` instead
 	CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error)
 	// CopyBatchCheck : Returns the status of an asynchronous job for
@@ -125,8 +134,6 @@ type Client interface {
 	// exporting files that cannot be downloaded directly  and whose
 	// `ExportResult.file_metadata` has `ExportInfo.export_as` populated.
 	Export(arg *ExportArg) (res *ExportResult, content io.ReadCloser, err error)
-	// GetFileLockBatch : Return the lock metadata for the given list of paths.
-	GetFileLockBatch(arg *LockFileBatchArg) (res *LockFileBatchResult, err error)
 	// GetMetadata : Returns the metadata for a file or folder. Note: Metadata
 	// for the root folder is unsupported.
 	GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error)
@@ -158,7 +165,7 @@ type Client interface {
 	// the temporary upload link must have its Content-Type set to
 	// "application/octet-stream".  Example temporary upload link consumption
 	// request:  curl -X POST
-	// https://content.dropboxapi.com/apitul/1/bNi2uIYF51cVBND --header
+	// https://dl.dropboxusercontent.com/apitul/1/bNi2uIYF51cVBND --header
 	// "Content-Type: application/octet-stream" --data-binary @local_file.txt  A
 	// successful temporary upload link consumption request returns the content
 	// hash of the uploaded data in JSON format.  Example succesful temporary
@@ -178,8 +185,6 @@ type Client interface {
 	// tif, gif and bmp. Photos that are larger than 20MB in size won't be
 	// converted to a thumbnail.
 	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error)
-	// GetThumbnail : Get a thumbnail for a file.
-	GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, content io.ReadCloser, err error)
 	// GetThumbnailBatch : Get thumbnails for a list of images. We allow up to
 	// 25 thumbnails in a single batch. This method currently supports files
 	// with the following file extensions: jpg, jpeg, png, tiff, tif, gif and
@@ -236,45 +241,35 @@ type Client interface {
 	// `ListRevisionsMode.id`. The `ListRevisionsMode.id` mode is useful to
 	// retrieve revisions for a given file across moves or renames.
 	ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResult, err error)
-	// LockFileBatch : Lock the files at the given paths. A locked file will be
-	// writable only by the lock holder. A successful response indicates that
-	// the file has been locked. Returns a list of the locked file paths and
-	// their metadata after this operation.
-	LockFileBatch(arg *LockFileBatchArg) (res *LockFileBatchResult, err error)
 	// Move : Move a file or folder to a different location in the user's
 	// Dropbox. If the source path is a folder all its contents will be moved.
-	// Note that we do not currently support case-only renaming.
 	MoveV2(arg *RelocationArg) (res *RelocationResult, err error)
 	// Move : Move a file or folder to a different location in the user's
 	// Dropbox. If the source path is a folder all its contents will be moved.
 	// Deprecated: Use `MoveV2` instead
 	Move(arg *RelocationArg) (res IsMetadata, err error)
 	// MoveBatch : Move multiple files or folders to different locations at once
-	// in the user's Dropbox. Note that we do not currently support case-only
-	// renaming. This route will replace `moveBatch`. The main difference is
-	// this route will return status for each entry, while `moveBatch` raises
-	// failure if any entry fails. This route will either finish synchronously,
-	// or return a job ID and do the async move job in background. Please use
-	// `moveBatchCheck` to check the job status.
+	// in the user's Dropbox. This route will replace `moveBatch`. The main
+	// difference is this route will return status for each entry, while
+	// `moveBatch` raises failure if any entry fails. This route will either
+	// finish synchronously, or return a job ID and do the async move job in
+	// background. Please use `moveBatchCheck` to check the job status.
 	MoveBatchV2(arg *MoveBatchArg) (res *RelocationBatchV2Launch, err error)
 	// MoveBatch : Move multiple files or folders to different locations at once
-	// in the user's Dropbox. This route will return job ID immediately and do
-	// the async moving job in background. Please use `moveBatchCheck` to check
-	// the job status.
-	// Deprecated: Use `MoveBatchV2` instead
+	// in the user's Dropbox. This route is 'all or nothing', which means if one
+	// entry fails, the whole transaction will abort. This route will return job
+	// ID immediately and do the async moving job in background. Please use
+	// `moveBatchCheck` to check the job status.
 	MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error)
 	// MoveBatchCheck : Returns the status of an asynchronous job for
 	// `moveBatch`. It returns list of results for each entry.
 	MoveBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2JobStatus, err error)
 	// MoveBatchCheck : Returns the status of an asynchronous job for
 	// `moveBatch`. If success, it returns list of results for each entry.
-	// Deprecated: Use `MoveBatchCheckV2` instead
 	MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error)
 	// PermanentlyDelete : Permanently delete the file or folder at a given path
-	// (see https://www.dropbox.com/en/help/40). If the given file or folder is
-	// not yet deleted, this route will first delete it. It is possible for this
-	// route to successfully delete, then fail to permanently delete. Note: This
-	// endpoint is only available for Dropbox Business apps.
+	// (see https://www.dropbox.com/en/help/40). Note: This endpoint is only
+	// available for Dropbox Business apps.
 	PermanentlyDelete(arg *DeleteArg) (err error)
 	// PropertiesAdd : has no documentation (yet)
 	// Deprecated:
@@ -304,30 +299,10 @@ type Client interface {
 	SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error)
 	// SaveUrlCheckJobStatus : Check the status of a `saveUrl` job.
 	SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobStatus, err error)
-	// Search : Searches for files and folders. Note: Recent changes will be
-	// reflected in search results within a few seconds and older revisions of
-	// existing files may still match your query for up to a few days.
-	// Deprecated: Use `SearchV2` instead
+	// Search : Searches for files and folders. Note: Recent changes may not
+	// immediately be reflected in search results due to a short delay in
+	// indexing.
 	Search(arg *SearchArg) (res *SearchResult, err error)
-	// Search : Searches for files and folders. Note: `search` along with
-	// `searchContinue` can only be used to retrieve a maximum of 10,000
-	// matches. Recent changes may not immediately be reflected in search
-	// results due to a short delay in indexing. Duplicate results may be
-	// returned across pages. Some results may not be returned.
-	SearchV2(arg *SearchV2Arg) (res *SearchV2Result, err error)
-	// SearchContinue : Fetches the next page of search results returned from
-	// `search`. Note: `search` along with `searchContinue` can only be used to
-	// retrieve a maximum of 10,000 matches. Recent changes may not immediately
-	// be reflected in search results due to a short delay in indexing.
-	// Duplicate results may be returned across pages. Some results may not be
-	// returned.
-	SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Result, err error)
-	// UnlockFileBatch : Unlock the files at the given paths. A locked file can
-	// only be unlocked by the lock holder or, if a business account, a team
-	// admin. A successful response indicates that the file has been unlocked.
-	// Returns a list of the unlocked file paths and their metadata after this
-	// operation.
-	UnlockFileBatch(arg *UnlockFileBatchArg) (res *LockFileBatchResult, err error)
 	// Upload : Create a new file with the contents provided in the request. Do
 	// not use this to upload a file larger than 150 MB. Instead, create an
 	// upload session with `uploadSessionStart`. Calls to this endpoint will
@@ -400,22 +375,7 @@ type Client interface {
 	// as data transport calls for any Dropbox Business teams with a limit on
 	// the number of data transport calls allowed per month. For more
 	// information, see the `Data transport limit page`
-	// <https://www.dropbox.com/developers/reference/data-transport-limit>. By
-	// default, upload sessions require you to send content of the file in
-	// sequential order via consecutive `uploadSessionStart`,
-	// `uploadSessionAppend`, `uploadSessionFinish` calls. For better
-	// performance, you can instead optionally use a
-	// `UploadSessionType.concurrent` upload session. To start a new concurrent
-	// session, set `UploadSessionStartArg.session_type` to
-	// `UploadSessionType.concurrent`. After that, you can send file data in
-	// concurrent `uploadSessionAppend` requests. Finally finish the session
-	// with `uploadSessionFinish`. There are couple of constraints with
-	// concurrent sessions to make them work. You can not send data with
-	// `uploadSessionStart` or `uploadSessionFinish` call, only with
-	// `uploadSessionAppend` call. Also data uploaded in `uploadSessionAppend`
-	// call must be multiple of 4194304 bytes (except for last
-	// `uploadSessionAppend` with `UploadSessionStartArg.close` to true, that
-	// may contain any remaining data).
+	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
 	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
 }
 
@@ -1868,72 +1828,6 @@ func (dbx *apiImpl) Export(arg *ExportArg) (res *ExportResult, content io.ReadCl
 	return
 }
 
-//GetFileLockBatchAPIError is an error-wrapper for the get_file_lock_batch route
-type GetFileLockBatchAPIError struct {
-	dropbox.APIError
-	EndpointError *LockFileError `json:"error"`
-}
-
-func (dbx *apiImpl) GetFileLockBatch(arg *LockFileBatchArg) (res *LockFileBatchResult, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "get_file_lock_batch", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError GetFileLockBatchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
 //GetMetadataAPIError is an error-wrapper for the get_metadata route
 type GetMetadataAPIError struct {
 	dropbox.APIError
@@ -2233,73 +2127,6 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 	}
 
 	req, err := (*dropbox.Context)(dbx).NewRequest("content", "download", true, "files", "get_thumbnail", headers, nil)
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	body := []byte(resp.Header.Get("Dropbox-API-Result"))
-	content = resp.Body
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		defer resp.Body.Close()
-		body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return
-		}
-		var apiError GetThumbnailAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//GetThumbnailV2APIError is an error-wrapper for the get_thumbnail route
-type GetThumbnailV2APIError struct {
-	dropbox.APIError
-	EndpointError *ThumbnailV2Error `json:"error"`
-}
-
-func (dbx *apiImpl) GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, content io.ReadCloser, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("content", "download", true, "files", "get_thumbnail_v2", headers, nil)
 	if err != nil {
 		return
 	}
@@ -2737,72 +2564,6 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 	return
 }
 
-//LockFileBatchAPIError is an error-wrapper for the lock_file_batch route
-type LockFileBatchAPIError struct {
-	dropbox.APIError
-	EndpointError *LockFileError `json:"error"`
-}
-
-func (dbx *apiImpl) LockFileBatch(arg *LockFileBatchArg) (res *LockFileBatchResult, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "lock_file_batch", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError LockFileBatchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
 //MoveV2APIError is an error-wrapper for the move route
 type MoveV2APIError struct {
 	dropbox.APIError
@@ -3022,9 +2783,6 @@ type MoveBatchAPIError struct {
 }
 
 func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
-	log.Printf("WARNING: API `MoveBatch` is deprecated")
-	log.Printf("Use API `MoveBatch` instead")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3157,9 +2915,6 @@ type MoveBatchCheckAPIError struct {
 }
 
 func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
-	log.Printf("WARNING: API `MoveBatchCheck` is deprecated")
-	log.Printf("Use API `MoveBatchCheck` instead")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3865,9 +3620,6 @@ type SearchAPIError struct {
 }
 
 func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
-	log.Printf("WARNING: API `Search` is deprecated")
-	log.Printf("Use API `Search` instead")
-
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3912,204 +3664,6 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError SearchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//SearchV2APIError is an error-wrapper for the search route
-type SearchV2APIError struct {
-	dropbox.APIError
-	EndpointError *SearchError `json:"error"`
-}
-
-func (dbx *apiImpl) SearchV2(arg *SearchV2Arg) (res *SearchV2Result, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "search_v2", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError SearchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//SearchContinueV2APIError is an error-wrapper for the search/continue route
-type SearchContinueV2APIError struct {
-	dropbox.APIError
-	EndpointError *SearchError `json:"error"`
-}
-
-func (dbx *apiImpl) SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Result, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "search/continue_v2", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError SearchContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
-	return
-}
-
-//UnlockFileBatchAPIError is an error-wrapper for the unlock_file_batch route
-type UnlockFileBatchAPIError struct {
-	dropbox.APIError
-	EndpointError *LockFileError `json:"error"`
-}
-
-func (dbx *apiImpl) UnlockFileBatch(arg *UnlockFileBatchArg) (res *LockFileBatchResult, err error) {
-	cli := dbx.Client
-
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
-	if err != nil {
-		return
-	}
-
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "files", "unlock_file_batch", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError UnlockFileBatchAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -4521,7 +4075,7 @@ func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *Uplo
 //UploadSessionStartAPIError is an error-wrapper for the upload_session/start route
 type UploadSessionStartAPIError struct {
 	dropbox.APIError
-	EndpointError *UploadSessionStartError `json:"error"`
+	EndpointError struct{} `json:"error"`
 }
 
 func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error) {

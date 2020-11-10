@@ -21,6 +21,8 @@
 // Package seen_state : has no documentation (yet)
 package seen_state
 
+import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
+
 // PlatformType : Possible platforms on which a user may view content.
 type PlatformType struct {
 	dropbox.Tagged

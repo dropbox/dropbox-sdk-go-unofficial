@@ -92,7 +92,6 @@ const (
 	AuthErrorUserSuspended      = "user_suspended"
 	AuthErrorExpiredAccessToken = "expired_access_token"
 	AuthErrorMissingScope       = "missing_scope"
-	AuthErrorRouteAccessDenied  = "route_access_denied"
 	AuthErrorOther              = "other"
 )
 
