@@ -19,7 +19,12 @@
 // THE SOFTWARE.
 
 // Package paper : This namespace contains endpoints and data types for managing
-// docs and folders in Dropbox Paper.
+// docs and folders in Dropbox Paper. New Paper users will see docs they create
+// in their filesystem as '.paper' files alongside their other Dropbox content.
+// The /paper endpoints are being deprecated and you'll need to use /files and
+// /sharing endpoints to interact with their Paper content. Read more in the
+// `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>.
 package paper
 
 import (
@@ -207,8 +212,8 @@ func NewFolder(Id string, Name string) *Folder {
 	return s
 }
 
-// FolderSharingPolicyType : The sharing policy of a Paper folder.  Note: The
-// sharing policy of subfolders is inherited from the root folder.
+// FolderSharingPolicyType : The sharing policy of a Paper folder. The sharing
+// policy of subfolders is inherited from the root folder.
 type FolderSharingPolicyType struct {
 	dropbox.Tagged
 }
@@ -768,6 +773,56 @@ const (
 	PaperDocUpdatePolicyOverwriteAll = "overwrite_all"
 	PaperDocUpdatePolicyOther        = "other"
 )
+
+// PaperFolderCreateArg : has no documentation (yet)
+type PaperFolderCreateArg struct {
+	// Name : The name of the new Paper folder.
+	Name string `json:"name"`
+	// ParentFolderId : The encrypted Paper folder Id where the new Paper folder
+	// should be created. The API user has to have write access to this folder
+	// or error is thrown. If not supplied, the new folder will be created at
+	// top level.
+	ParentFolderId string `json:"parent_folder_id,omitempty"`
+	// IsTeamFolder : Whether the folder to be created should be a team folder.
+	// This value will be ignored if parent_folder_id is supplied, as the new
+	// folder will inherit the type (private or team folder) from its parent. We
+	// will by default create a top-level private folder if both
+	// parent_folder_id and is_team_folder are not supplied.
+	IsTeamFolder bool `json:"is_team_folder,omitempty"`
+}
+
+// NewPaperFolderCreateArg returns a new PaperFolderCreateArg instance
+func NewPaperFolderCreateArg(Name string) *PaperFolderCreateArg {
+	s := new(PaperFolderCreateArg)
+	s.Name = Name
+	return s
+}
+
+// PaperFolderCreateError : has no documentation (yet)
+type PaperFolderCreateError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperFolderCreateError
+const (
+	PaperFolderCreateErrorInsufficientPermissions = "insufficient_permissions"
+	PaperFolderCreateErrorOther                   = "other"
+	PaperFolderCreateErrorFolderNotFound          = "folder_not_found"
+	PaperFolderCreateErrorInvalidFolderId         = "invalid_folder_id"
+)
+
+// PaperFolderCreateResult : has no documentation (yet)
+type PaperFolderCreateResult struct {
+	// FolderId : Folder ID of the newly created folder.
+	FolderId string `json:"folder_id"`
+}
+
+// NewPaperFolderCreateResult returns a new PaperFolderCreateResult instance
+func NewPaperFolderCreateResult(FolderId string) *PaperFolderCreateResult {
+	s := new(PaperFolderCreateResult)
+	s.FolderId = FolderId
+	return s
+}
 
 // RemovePaperDocUser : has no documentation (yet)
 type RemovePaperDocUser struct {

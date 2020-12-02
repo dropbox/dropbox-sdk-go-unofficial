@@ -39,11 +39,11 @@ type Account struct {
 	AccountId string `json:"account_id"`
 	// Name : Details of a user's name.
 	Name *Name `json:"name"`
-	// Email : The user's e-mail address. Do not rely on this without checking
+	// Email : The user's email address. Do not rely on this without checking
 	// the `email_verified` field. Even then, it's possible that the user has
-	// since lost access to their e-mail.
+	// since lost access to their email.
 	Email string `json:"email"`
-	// EmailVerified : Whether the user has verified their e-mail address.
+	// EmailVerified : Whether the user has verified their email address.
 	EmailVerified bool `json:"email_verified"`
 	// ProfilePhotoUrl : URL for the photo representing the user, if one is set.
 	ProfilePhotoUrl string `json:"profile_photo_url,omitempty"`
@@ -83,6 +83,47 @@ func NewBasicAccount(AccountId string, Name *Name, Email string, EmailVerified b
 	s.Disabled = Disabled
 	s.IsTeammate = IsTeammate
 	return s
+}
+
+// FileLockingValue : The value for `UserFeature.file_locking`.
+type FileLockingValue struct {
+	dropbox.Tagged
+	// Enabled : When this value is True, the user can lock files in shared
+	// directories. When the value is False the user can unlock the files they
+	// have locked or request to unlock files locked by others.
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+// Valid tag values for FileLockingValue
+const (
+	FileLockingValueEnabled = "enabled"
+	FileLockingValueOther   = "other"
+)
+
+// UnmarshalJSON deserializes into a FileLockingValue instance
+func (u *FileLockingValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Enabled : When this value is True, the user can lock files in shared
+		// directories. When the value is False the user can unlock the files
+		// they have locked or request to unlock files locked by others.
+		Enabled bool `json:"enabled,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "enabled":
+		u.Enabled = w.Enabled
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // FullAccount : Detailed information about the current user's account.
@@ -136,11 +177,11 @@ func (u *FullAccount) UnmarshalJSON(b []byte) error {
 		AccountId string `json:"account_id"`
 		// Name : Details of a user's name.
 		Name *Name `json:"name"`
-		// Email : The user's e-mail address. Do not rely on this without
+		// Email : The user's email address. Do not rely on this without
 		// checking the `email_verified` field. Even then, it's possible that
-		// the user has since lost access to their e-mail.
+		// the user has since lost access to their email.
 		Email string `json:"email"`
-		// EmailVerified : Whether the user has verified their e-mail address.
+		// EmailVerified : Whether the user has verified their email address.
 		EmailVerified bool `json:"email_verified"`
 		// Disabled : Whether the user has been disabled.
 		Disabled bool `json:"disabled"`
@@ -353,6 +394,51 @@ func NewName(GivenName string, Surname string, FamiliarName string, DisplayName 
 	return s
 }
 
+// PaperAsFilesValue : The value for `UserFeature.paper_as_files`.
+type PaperAsFilesValue struct {
+	dropbox.Tagged
+	// Enabled : When this value is true, the user's Paper docs are accessible
+	// in Dropbox with the .paper extension and must be accessed via the /files
+	// endpoints.  When this value is false, the user's Paper docs are stored
+	// separate from Dropbox files and folders and should be accessed via the
+	// /paper endpoints.
+	Enabled bool `json:"enabled,omitempty"`
+}
+
+// Valid tag values for PaperAsFilesValue
+const (
+	PaperAsFilesValueEnabled = "enabled"
+	PaperAsFilesValueOther   = "other"
+)
+
+// UnmarshalJSON deserializes into a PaperAsFilesValue instance
+func (u *PaperAsFilesValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Enabled : When this value is true, the user's Paper docs are
+		// accessible in Dropbox with the .paper extension and must be accessed
+		// via the /files endpoints.  When this value is false, the user's Paper
+		// docs are stored separate from Dropbox files and folders and should be
+		// accessed via the /paper endpoints.
+		Enabled bool `json:"enabled,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "enabled":
+		u.Enabled = w.Enabled
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // SpaceAllocation : Space is allocated differently based on the type of
 // account.
 type SpaceAllocation struct {
@@ -428,14 +514,117 @@ type TeamSpaceAllocation struct {
 	// UserWithinTeamSpaceLimitType : The type of the space limit imposed on the
 	// team member (off, alert_only, stop_sync).
 	UserWithinTeamSpaceLimitType *team_common.MemberSpaceLimitType `json:"user_within_team_space_limit_type"`
+	// UserWithinTeamSpaceUsedCached : An accurate cached calculation of a team
+	// member's total space usage (bytes).
+	UserWithinTeamSpaceUsedCached uint64 `json:"user_within_team_space_used_cached"`
 }
 
 // NewTeamSpaceAllocation returns a new TeamSpaceAllocation instance
-func NewTeamSpaceAllocation(Used uint64, Allocated uint64, UserWithinTeamSpaceAllocated uint64, UserWithinTeamSpaceLimitType *team_common.MemberSpaceLimitType) *TeamSpaceAllocation {
+func NewTeamSpaceAllocation(Used uint64, Allocated uint64, UserWithinTeamSpaceAllocated uint64, UserWithinTeamSpaceLimitType *team_common.MemberSpaceLimitType, UserWithinTeamSpaceUsedCached uint64) *TeamSpaceAllocation {
 	s := new(TeamSpaceAllocation)
 	s.Used = Used
 	s.Allocated = Allocated
 	s.UserWithinTeamSpaceAllocated = UserWithinTeamSpaceAllocated
 	s.UserWithinTeamSpaceLimitType = UserWithinTeamSpaceLimitType
+	s.UserWithinTeamSpaceUsedCached = UserWithinTeamSpaceUsedCached
+	return s
+}
+
+// UserFeature : A set of features that a Dropbox User account may have
+// configured.
+type UserFeature struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UserFeature
+const (
+	UserFeaturePaperAsFiles = "paper_as_files"
+	UserFeatureFileLocking  = "file_locking"
+	UserFeatureOther        = "other"
+)
+
+// UserFeatureValue : Values that correspond to entries in `UserFeature`.
+type UserFeatureValue struct {
+	dropbox.Tagged
+	// PaperAsFiles : has no documentation (yet)
+	PaperAsFiles *PaperAsFilesValue `json:"paper_as_files,omitempty"`
+	// FileLocking : has no documentation (yet)
+	FileLocking *FileLockingValue `json:"file_locking,omitempty"`
+}
+
+// Valid tag values for UserFeatureValue
+const (
+	UserFeatureValuePaperAsFiles = "paper_as_files"
+	UserFeatureValueFileLocking  = "file_locking"
+	UserFeatureValueOther        = "other"
+)
+
+// UnmarshalJSON deserializes into a UserFeatureValue instance
+func (u *UserFeatureValue) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// PaperAsFiles : has no documentation (yet)
+		PaperAsFiles *PaperAsFilesValue `json:"paper_as_files,omitempty"`
+		// FileLocking : has no documentation (yet)
+		FileLocking *FileLockingValue `json:"file_locking,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "paper_as_files":
+		u.PaperAsFiles = w.PaperAsFiles
+
+		if err != nil {
+			return err
+		}
+	case "file_locking":
+		u.FileLocking = w.FileLocking
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UserFeaturesGetValuesBatchArg : has no documentation (yet)
+type UserFeaturesGetValuesBatchArg struct {
+	// Features : A list of features in `UserFeature`. If the list is empty,
+	// this route will return `UserFeaturesGetValuesBatchError`.
+	Features []*UserFeature `json:"features"`
+}
+
+// NewUserFeaturesGetValuesBatchArg returns a new UserFeaturesGetValuesBatchArg instance
+func NewUserFeaturesGetValuesBatchArg(Features []*UserFeature) *UserFeaturesGetValuesBatchArg {
+	s := new(UserFeaturesGetValuesBatchArg)
+	s.Features = Features
+	return s
+}
+
+// UserFeaturesGetValuesBatchError : has no documentation (yet)
+type UserFeaturesGetValuesBatchError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UserFeaturesGetValuesBatchError
+const (
+	UserFeaturesGetValuesBatchErrorEmptyFeaturesList = "empty_features_list"
+	UserFeaturesGetValuesBatchErrorOther             = "other"
+)
+
+// UserFeaturesGetValuesBatchResult : has no documentation (yet)
+type UserFeaturesGetValuesBatchResult struct {
+	// Values : has no documentation (yet)
+	Values []*UserFeatureValue `json:"values"`
+}
+
+// NewUserFeaturesGetValuesBatchResult returns a new UserFeaturesGetValuesBatchResult instance
+func NewUserFeaturesGetValuesBatchResult(Values []*UserFeatureValue) *UserFeaturesGetValuesBatchResult {
+	s := new(UserFeaturesGetValuesBatchResult)
+	s.Values = Values
 	return s
 }

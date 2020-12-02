@@ -80,6 +80,8 @@ type CreateFileRequestArgs struct {
 	// request is closed, it will not accept any file submissions, but it can be
 	// opened later.
 	Open bool `json:"open"`
+	// Description : A description of the file request.
+	Description string `json:"description,omitempty"`
 }
 
 // NewCreateFileRequestArgs returns a new CreateFileRequestArgs instance
@@ -225,6 +227,8 @@ type FileRequest struct {
 	IsOpen bool `json:"is_open"`
 	// FileCount : The number of files this file request has received.
 	FileCount int64 `json:"file_count"`
+	// Description : A description of the file request.
+	Description string `json:"description,omitempty"`
 }
 
 // NewFileRequest returns a new FileRequest instance
@@ -405,6 +409,8 @@ type UpdateFileRequestArgs struct {
 	Deadline *UpdateFileRequestDeadline `json:"deadline"`
 	// Open : Whether to set this file request as open or closed.
 	Open bool `json:"open,omitempty"`
+	// Description : The description of the file request.
+	Description string `json:"description,omitempty"`
 }
 
 // NewUpdateFileRequestArgs returns a new UpdateFileRequestArgs instance
