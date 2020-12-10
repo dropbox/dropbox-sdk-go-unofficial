@@ -4631,12 +4631,15 @@ type UploadSessionFinishError struct {
 
 // Valid tag values for UploadSessionFinishError
 const (
-	UploadSessionFinishErrorLookupFailed               = "lookup_failed"
-	UploadSessionFinishErrorPath                       = "path"
-	UploadSessionFinishErrorPropertiesError            = "properties_error"
-	UploadSessionFinishErrorTooManySharedFolderTargets = "too_many_shared_folder_targets"
-	UploadSessionFinishErrorTooManyWriteOperations     = "too_many_write_operations"
-	UploadSessionFinishErrorOther                      = "other"
+	UploadSessionFinishErrorLookupFailed                    = "lookup_failed"
+	UploadSessionFinishErrorPath                            = "path"
+	UploadSessionFinishErrorPropertiesError                 = "properties_error"
+	UploadSessionFinishErrorTooManySharedFolderTargets      = "too_many_shared_folder_targets"
+	UploadSessionFinishErrorTooManyWriteOperations          = "too_many_write_operations"
+	UploadSessionFinishErrorConcurrentSessionDataNotAllowed = "concurrent_session_data_not_allowed"
+	UploadSessionFinishErrorConcurrentSessionNotClosed      = "concurrent_session_not_closed"
+	UploadSessionFinishErrorConcurrentSessionMissingData    = "concurrent_session_missing_data"
+	UploadSessionFinishErrorOther                           = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionFinishError instance
@@ -4695,12 +4698,14 @@ type UploadSessionLookupError struct {
 
 // Valid tag values for UploadSessionLookupError
 const (
-	UploadSessionLookupErrorNotFound        = "not_found"
-	UploadSessionLookupErrorIncorrectOffset = "incorrect_offset"
-	UploadSessionLookupErrorClosed          = "closed"
-	UploadSessionLookupErrorNotClosed       = "not_closed"
-	UploadSessionLookupErrorTooLarge        = "too_large"
-	UploadSessionLookupErrorOther           = "other"
+	UploadSessionLookupErrorNotFound                         = "not_found"
+	UploadSessionLookupErrorIncorrectOffset                  = "incorrect_offset"
+	UploadSessionLookupErrorClosed                           = "closed"
+	UploadSessionLookupErrorNotClosed                        = "not_closed"
+	UploadSessionLookupErrorTooLarge                         = "too_large"
+	UploadSessionLookupErrorConcurrentSessionInvalidOffset   = "concurrent_session_invalid_offset"
+	UploadSessionLookupErrorConcurrentSessionInvalidDataSize = "concurrent_session_invalid_data_size"
+	UploadSessionLookupErrorOther                            = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionLookupError instance
@@ -4744,6 +4749,9 @@ type UploadSessionStartArg struct {
 	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
+	// SessionType : Type of upload session you want to start. If not specified,
+	// default is `UploadSessionType.sequential`.
+	SessionType *UploadSessionType `json:"session_type,omitempty"`
 }
 
 // NewUploadSessionStartArg returns a new UploadSessionStartArg instance
@@ -4752,6 +4760,18 @@ func NewUploadSessionStartArg() *UploadSessionStartArg {
 	s.Close = false
 	return s
 }
+
+// UploadSessionStartError : has no documentation (yet)
+type UploadSessionStartError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UploadSessionStartError
+const (
+	UploadSessionStartErrorConcurrentSessionDataNotAllowed  = "concurrent_session_data_not_allowed"
+	UploadSessionStartErrorConcurrentSessionCloseNotAllowed = "concurrent_session_close_not_allowed"
+	UploadSessionStartErrorOther                            = "other"
+)
 
 // UploadSessionStartResult : has no documentation (yet)
 type UploadSessionStartResult struct {
@@ -4766,6 +4786,18 @@ func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 	s.SessionId = SessionId
 	return s
 }
+
+// UploadSessionType : has no documentation (yet)
+type UploadSessionType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UploadSessionType
+const (
+	UploadSessionTypeSequential = "sequential"
+	UploadSessionTypeConcurrent = "concurrent"
+	UploadSessionTypeOther      = "other"
+)
 
 // UploadWriteFailed : has no documentation (yet)
 type UploadWriteFailed struct {

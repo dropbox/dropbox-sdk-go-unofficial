@@ -88,7 +88,7 @@ func (u *PathRoot) UnmarshalJSON(body []byte) error {
 type PathRootError struct {
 	dropbox.Tagged
 	// InvalidRoot : The root namespace id in Dropbox-API-Path-Root header is
-	// not valid. The value of this error is use's latest root info.
+	// not valid. The value of this error is the user's latest root info.
 	InvalidRoot IsRootInfo `json:"invalid_root,omitempty"`
 }
 
@@ -104,7 +104,7 @@ func (u *PathRootError) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// InvalidRoot : The root namespace id in Dropbox-API-Path-Root header
-		// is not valid. The value of this error is use's latest root info.
+		// is not valid. The value of this error is the user's latest root info.
 		InvalidRoot json.RawMessage `json:"invalid_root,omitempty"`
 	}
 	var w wrap

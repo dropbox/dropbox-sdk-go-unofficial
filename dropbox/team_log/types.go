@@ -465,6 +465,130 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// AdminAlertCategoryEnum : Alert category
+type AdminAlertCategoryEnum struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertCategoryEnum
+const (
+	AdminAlertCategoryEnumAccountTakeover      = "account_takeover"
+	AdminAlertCategoryEnumDataLossProtection   = "data_loss_protection"
+	AdminAlertCategoryEnumMalwareSharing       = "malware_sharing"
+	AdminAlertCategoryEnumMassiveFileOperation = "massive_file_operation"
+	AdminAlertCategoryEnumNa                   = "na"
+	AdminAlertCategoryEnumThreatManagement     = "threat_management"
+	AdminAlertCategoryEnumOther                = "other"
+)
+
+// AdminAlertSeverityEnum : Alert severity
+type AdminAlertSeverityEnum struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertSeverityEnum
+const (
+	AdminAlertSeverityEnumHigh   = "high"
+	AdminAlertSeverityEnumInfo   = "info"
+	AdminAlertSeverityEnumLow    = "low"
+	AdminAlertSeverityEnumMedium = "medium"
+	AdminAlertSeverityEnumNa     = "na"
+	AdminAlertSeverityEnumOther  = "other"
+)
+
+// AdminAlertingAlertConfiguration : Alert configurations
+type AdminAlertingAlertConfiguration struct {
+	// AlertState : Alert state.
+	AlertState *AdminAlertingAlertStatePolicy `json:"alert_state"`
+}
+
+// NewAdminAlertingAlertConfiguration returns a new AdminAlertingAlertConfiguration instance
+func NewAdminAlertingAlertConfiguration(AlertState *AdminAlertingAlertStatePolicy) *AdminAlertingAlertConfiguration {
+	s := new(AdminAlertingAlertConfiguration)
+	s.AlertState = AlertState
+	return s
+}
+
+// AdminAlertingAlertStatePolicy : Policy for controlling whether an alert can
+// be triggered or not
+type AdminAlertingAlertStatePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertingAlertStatePolicy
+const (
+	AdminAlertingAlertStatePolicyOff   = "off"
+	AdminAlertingAlertStatePolicyOn    = "on"
+	AdminAlertingAlertStatePolicyOther = "other"
+)
+
+// AdminAlertingChangedAlertConfigDetails : Changed an alert setting.
+type AdminAlertingChangedAlertConfigDetails struct {
+	// AlertName : Alert Name.
+	AlertName string `json:"alert_name"`
+	// PreviousAlertConfig : Previous alert configuration.
+	PreviousAlertConfig *AdminAlertingAlertConfiguration `json:"previous_alert_config"`
+	// NewAlertConfig : New alert configuration.
+	NewAlertConfig *AdminAlertingAlertConfiguration `json:"new_alert_config"`
+}
+
+// NewAdminAlertingChangedAlertConfigDetails returns a new AdminAlertingChangedAlertConfigDetails instance
+func NewAdminAlertingChangedAlertConfigDetails(AlertName string, PreviousAlertConfig *AdminAlertingAlertConfiguration, NewAlertConfig *AdminAlertingAlertConfiguration) *AdminAlertingChangedAlertConfigDetails {
+	s := new(AdminAlertingChangedAlertConfigDetails)
+	s.AlertName = AlertName
+	s.PreviousAlertConfig = PreviousAlertConfig
+	s.NewAlertConfig = NewAlertConfig
+	return s
+}
+
+// AdminAlertingChangedAlertConfigType : has no documentation (yet)
+type AdminAlertingChangedAlertConfigType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminAlertingChangedAlertConfigType returns a new AdminAlertingChangedAlertConfigType instance
+func NewAdminAlertingChangedAlertConfigType(Description string) *AdminAlertingChangedAlertConfigType {
+	s := new(AdminAlertingChangedAlertConfigType)
+	s.Description = Description
+	return s
+}
+
+// AdminAlertingTriggeredAlertDetails : Triggered security alert.
+type AdminAlertingTriggeredAlertDetails struct {
+	// AlertName : Alert name.
+	AlertName string `json:"alert_name"`
+	// AlertSeverity : Alert severity.
+	AlertSeverity *AdminAlertSeverityEnum `json:"alert_severity"`
+	// AlertCategory : Alert category.
+	AlertCategory *AdminAlertCategoryEnum `json:"alert_category"`
+	// AlertInstanceId : Alert ID.
+	AlertInstanceId string `json:"alert_instance_id"`
+}
+
+// NewAdminAlertingTriggeredAlertDetails returns a new AdminAlertingTriggeredAlertDetails instance
+func NewAdminAlertingTriggeredAlertDetails(AlertName string, AlertSeverity *AdminAlertSeverityEnum, AlertCategory *AdminAlertCategoryEnum, AlertInstanceId string) *AdminAlertingTriggeredAlertDetails {
+	s := new(AdminAlertingTriggeredAlertDetails)
+	s.AlertName = AlertName
+	s.AlertSeverity = AlertSeverity
+	s.AlertCategory = AlertCategory
+	s.AlertInstanceId = AlertInstanceId
+	return s
+}
+
+// AdminAlertingTriggeredAlertType : has no documentation (yet)
+type AdminAlertingTriggeredAlertType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminAlertingTriggeredAlertType returns a new AdminAlertingTriggeredAlertType instance
+func NewAdminAlertingTriggeredAlertType(Description string) *AdminAlertingTriggeredAlertType {
+	s := new(AdminAlertingTriggeredAlertType)
+	s.Description = Description
+	return s
+}
+
 // AdminRole : has no documentation (yet)
 type AdminRole struct {
 	dropbox.Tagged
@@ -1320,6 +1444,56 @@ type ClassificationChangePolicyType struct {
 // NewClassificationChangePolicyType returns a new ClassificationChangePolicyType instance
 func NewClassificationChangePolicyType(Description string) *ClassificationChangePolicyType {
 	s := new(ClassificationChangePolicyType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationCreateReportDetails : Created Classification report.
+type ClassificationCreateReportDetails struct {
+}
+
+// NewClassificationCreateReportDetails returns a new ClassificationCreateReportDetails instance
+func NewClassificationCreateReportDetails() *ClassificationCreateReportDetails {
+	s := new(ClassificationCreateReportDetails)
+	return s
+}
+
+// ClassificationCreateReportFailDetails : Couldn't create Classification
+// report.
+type ClassificationCreateReportFailDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewClassificationCreateReportFailDetails returns a new ClassificationCreateReportFailDetails instance
+func NewClassificationCreateReportFailDetails(FailureReason *team.TeamReportFailureReason) *ClassificationCreateReportFailDetails {
+	s := new(ClassificationCreateReportFailDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// ClassificationCreateReportFailType : has no documentation (yet)
+type ClassificationCreateReportFailType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewClassificationCreateReportFailType returns a new ClassificationCreateReportFailType instance
+func NewClassificationCreateReportFailType(Description string) *ClassificationCreateReportFailType {
+	s := new(ClassificationCreateReportFailType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationCreateReportType : has no documentation (yet)
+type ClassificationCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewClassificationCreateReportType returns a new ClassificationCreateReportType instance
+func NewClassificationCreateReportType(Description string) *ClassificationCreateReportType {
+	s := new(ClassificationCreateReportType)
 	s.Description = Description
 	return s
 }
@@ -3118,6 +3292,7 @@ type EventCategory struct {
 
 // Valid tag values for EventCategory
 const (
+	EventCategoryAdminAlerting  = "admin_alerting"
 	EventCategoryApps           = "apps"
 	EventCategoryComments       = "comments"
 	EventCategoryDataGovernance = "data_governance"
@@ -3145,6 +3320,10 @@ const (
 // EventDetails : Additional fields depending on the event type.
 type EventDetails struct {
 	dropbox.Tagged
+	// AdminAlertingChangedAlertConfigDetails : has no documentation (yet)
+	AdminAlertingChangedAlertConfigDetails *AdminAlertingChangedAlertConfigDetails `json:"admin_alerting_changed_alert_config_details,omitempty"`
+	// AdminAlertingTriggeredAlertDetails : has no documentation (yet)
+	AdminAlertingTriggeredAlertDetails *AdminAlertingTriggeredAlertDetails `json:"admin_alerting_triggered_alert_details,omitempty"`
 	// AppLinkTeamDetails : has no documentation (yet)
 	AppLinkTeamDetails *AppLinkTeamDetails `json:"app_link_team_details,omitempty"`
 	// AppLinkUserDetails : has no documentation (yet)
@@ -3175,6 +3354,8 @@ type EventDetails struct {
 	FileUnresolveCommentDetails *FileUnresolveCommentDetails `json:"file_unresolve_comment_details,omitempty"`
 	// GovernancePolicyAddFoldersDetails : has no documentation (yet)
 	GovernancePolicyAddFoldersDetails *GovernancePolicyAddFoldersDetails `json:"governance_policy_add_folders_details,omitempty"`
+	// GovernancePolicyAddFolderFailedDetails : has no documentation (yet)
+	GovernancePolicyAddFolderFailedDetails *GovernancePolicyAddFolderFailedDetails `json:"governance_policy_add_folder_failed_details,omitempty"`
 	// GovernancePolicyCreateDetails : has no documentation (yet)
 	GovernancePolicyCreateDetails *GovernancePolicyCreateDetails `json:"governance_policy_create_details,omitempty"`
 	// GovernancePolicyDeleteDetails : has no documentation (yet)
@@ -3183,8 +3364,16 @@ type EventDetails struct {
 	GovernancePolicyEditDetailsDetails *GovernancePolicyEditDetailsDetails `json:"governance_policy_edit_details_details,omitempty"`
 	// GovernancePolicyEditDurationDetails : has no documentation (yet)
 	GovernancePolicyEditDurationDetails *GovernancePolicyEditDurationDetails `json:"governance_policy_edit_duration_details,omitempty"`
+	// GovernancePolicyExportCreatedDetails : has no documentation (yet)
+	GovernancePolicyExportCreatedDetails *GovernancePolicyExportCreatedDetails `json:"governance_policy_export_created_details,omitempty"`
+	// GovernancePolicyExportRemovedDetails : has no documentation (yet)
+	GovernancePolicyExportRemovedDetails *GovernancePolicyExportRemovedDetails `json:"governance_policy_export_removed_details,omitempty"`
 	// GovernancePolicyRemoveFoldersDetails : has no documentation (yet)
 	GovernancePolicyRemoveFoldersDetails *GovernancePolicyRemoveFoldersDetails `json:"governance_policy_remove_folders_details,omitempty"`
+	// GovernancePolicyReportCreatedDetails : has no documentation (yet)
+	GovernancePolicyReportCreatedDetails *GovernancePolicyReportCreatedDetails `json:"governance_policy_report_created_details,omitempty"`
+	// GovernancePolicyZipPartDownloadedDetails : has no documentation (yet)
+	GovernancePolicyZipPartDownloadedDetails *GovernancePolicyZipPartDownloadedDetails `json:"governance_policy_zip_part_downloaded_details,omitempty"`
 	// LegalHoldsActivateAHoldDetails : has no documentation (yet)
 	LegalHoldsActivateAHoldDetails *LegalHoldsActivateAHoldDetails `json:"legal_holds_activate_a_hold_details,omitempty"`
 	// LegalHoldsAddMembersDetails : has no documentation (yet)
@@ -3384,6 +3573,8 @@ type EventDetails struct {
 	MemberChangeMembershipTypeDetails *MemberChangeMembershipTypeDetails `json:"member_change_membership_type_details,omitempty"`
 	// MemberChangeNameDetails : has no documentation (yet)
 	MemberChangeNameDetails *MemberChangeNameDetails `json:"member_change_name_details,omitempty"`
+	// MemberChangeResellerRoleDetails : has no documentation (yet)
+	MemberChangeResellerRoleDetails *MemberChangeResellerRoleDetails `json:"member_change_reseller_role_details,omitempty"`
 	// MemberChangeStatusDetails : has no documentation (yet)
 	MemberChangeStatusDetails *MemberChangeStatusDetails `json:"member_change_status_details,omitempty"`
 	// MemberDeleteManualContactsDetails : has no documentation (yet)
@@ -3521,6 +3712,10 @@ type EventDetails struct {
 	PasswordResetDetails *PasswordResetDetails `json:"password_reset_details,omitempty"`
 	// PasswordResetAllDetails : has no documentation (yet)
 	PasswordResetAllDetails *PasswordResetAllDetails `json:"password_reset_all_details,omitempty"`
+	// ClassificationCreateReportDetails : has no documentation (yet)
+	ClassificationCreateReportDetails *ClassificationCreateReportDetails `json:"classification_create_report_details,omitempty"`
+	// ClassificationCreateReportFailDetails : has no documentation (yet)
+	ClassificationCreateReportFailDetails *ClassificationCreateReportFailDetails `json:"classification_create_report_fail_details,omitempty"`
 	// EmmCreateExceptionsReportDetails : has no documentation (yet)
 	EmmCreateExceptionsReportDetails *EmmCreateExceptionsReportDetails `json:"emm_create_exceptions_report_details,omitempty"`
 	// EmmCreateUsageReportDetails : has no documentation (yet)
@@ -3963,14 +4158,20 @@ type EventDetails struct {
 	TeamMergeFromDetails *TeamMergeFromDetails `json:"team_merge_from_details,omitempty"`
 	// TeamMergeToDetails : has no documentation (yet)
 	TeamMergeToDetails *TeamMergeToDetails `json:"team_merge_to_details,omitempty"`
+	// TeamProfileAddBackgroundDetails : has no documentation (yet)
+	TeamProfileAddBackgroundDetails *TeamProfileAddBackgroundDetails `json:"team_profile_add_background_details,omitempty"`
 	// TeamProfileAddLogoDetails : has no documentation (yet)
 	TeamProfileAddLogoDetails *TeamProfileAddLogoDetails `json:"team_profile_add_logo_details,omitempty"`
+	// TeamProfileChangeBackgroundDetails : has no documentation (yet)
+	TeamProfileChangeBackgroundDetails *TeamProfileChangeBackgroundDetails `json:"team_profile_change_background_details,omitempty"`
 	// TeamProfileChangeDefaultLanguageDetails : has no documentation (yet)
 	TeamProfileChangeDefaultLanguageDetails *TeamProfileChangeDefaultLanguageDetails `json:"team_profile_change_default_language_details,omitempty"`
 	// TeamProfileChangeLogoDetails : has no documentation (yet)
 	TeamProfileChangeLogoDetails *TeamProfileChangeLogoDetails `json:"team_profile_change_logo_details,omitempty"`
 	// TeamProfileChangeNameDetails : has no documentation (yet)
 	TeamProfileChangeNameDetails *TeamProfileChangeNameDetails `json:"team_profile_change_name_details,omitempty"`
+	// TeamProfileRemoveBackgroundDetails : has no documentation (yet)
+	TeamProfileRemoveBackgroundDetails *TeamProfileRemoveBackgroundDetails `json:"team_profile_remove_background_details,omitempty"`
 	// TeamProfileRemoveLogoDetails : has no documentation (yet)
 	TeamProfileRemoveLogoDetails *TeamProfileRemoveLogoDetails `json:"team_profile_remove_logo_details,omitempty"`
 	// TfaAddBackupPhoneDetails : has no documentation (yet)
@@ -4056,6 +4257,8 @@ type EventDetails struct {
 
 // Valid tag values for EventDetails
 const (
+	EventDetailsAdminAlertingChangedAlertConfigDetails              = "admin_alerting_changed_alert_config_details"
+	EventDetailsAdminAlertingTriggeredAlertDetails                  = "admin_alerting_triggered_alert_details"
 	EventDetailsAppLinkTeamDetails                                  = "app_link_team_details"
 	EventDetailsAppLinkUserDetails                                  = "app_link_user_details"
 	EventDetailsAppUnlinkTeamDetails                                = "app_unlink_team_details"
@@ -4071,11 +4274,16 @@ const (
 	EventDetailsFileUnlikeCommentDetails                            = "file_unlike_comment_details"
 	EventDetailsFileUnresolveCommentDetails                         = "file_unresolve_comment_details"
 	EventDetailsGovernancePolicyAddFoldersDetails                   = "governance_policy_add_folders_details"
+	EventDetailsGovernancePolicyAddFolderFailedDetails              = "governance_policy_add_folder_failed_details"
 	EventDetailsGovernancePolicyCreateDetails                       = "governance_policy_create_details"
 	EventDetailsGovernancePolicyDeleteDetails                       = "governance_policy_delete_details"
 	EventDetailsGovernancePolicyEditDetailsDetails                  = "governance_policy_edit_details_details"
 	EventDetailsGovernancePolicyEditDurationDetails                 = "governance_policy_edit_duration_details"
+	EventDetailsGovernancePolicyExportCreatedDetails                = "governance_policy_export_created_details"
+	EventDetailsGovernancePolicyExportRemovedDetails                = "governance_policy_export_removed_details"
 	EventDetailsGovernancePolicyRemoveFoldersDetails                = "governance_policy_remove_folders_details"
+	EventDetailsGovernancePolicyReportCreatedDetails                = "governance_policy_report_created_details"
+	EventDetailsGovernancePolicyZipPartDownloadedDetails            = "governance_policy_zip_part_downloaded_details"
 	EventDetailsLegalHoldsActivateAHoldDetails                      = "legal_holds_activate_a_hold_details"
 	EventDetailsLegalHoldsAddMembersDetails                         = "legal_holds_add_members_details"
 	EventDetailsLegalHoldsChangeHoldDetailsDetails                  = "legal_holds_change_hold_details_details"
@@ -4175,6 +4383,7 @@ const (
 	EventDetailsMemberChangeExternalIdDetails                       = "member_change_external_id_details"
 	EventDetailsMemberChangeMembershipTypeDetails                   = "member_change_membership_type_details"
 	EventDetailsMemberChangeNameDetails                             = "member_change_name_details"
+	EventDetailsMemberChangeResellerRoleDetails                     = "member_change_reseller_role_details"
 	EventDetailsMemberChangeStatusDetails                           = "member_change_status_details"
 	EventDetailsMemberDeleteManualContactsDetails                   = "member_delete_manual_contacts_details"
 	EventDetailsMemberDeleteProfilePhotoDetails                     = "member_delete_profile_photo_details"
@@ -4243,6 +4452,8 @@ const (
 	EventDetailsPasswordChangeDetails                               = "password_change_details"
 	EventDetailsPasswordResetDetails                                = "password_reset_details"
 	EventDetailsPasswordResetAllDetails                             = "password_reset_all_details"
+	EventDetailsClassificationCreateReportDetails                   = "classification_create_report_details"
+	EventDetailsClassificationCreateReportFailDetails               = "classification_create_report_fail_details"
 	EventDetailsEmmCreateExceptionsReportDetails                    = "emm_create_exceptions_report_details"
 	EventDetailsEmmCreateUsageReportDetails                         = "emm_create_usage_report_details"
 	EventDetailsExportMembersReportDetails                          = "export_members_report_details"
@@ -4461,10 +4672,13 @@ const (
 	EventDetailsWebSessionsChangeIdleLengthPolicyDetails            = "web_sessions_change_idle_length_policy_details"
 	EventDetailsTeamMergeFromDetails                                = "team_merge_from_details"
 	EventDetailsTeamMergeToDetails                                  = "team_merge_to_details"
+	EventDetailsTeamProfileAddBackgroundDetails                     = "team_profile_add_background_details"
 	EventDetailsTeamProfileAddLogoDetails                           = "team_profile_add_logo_details"
+	EventDetailsTeamProfileChangeBackgroundDetails                  = "team_profile_change_background_details"
 	EventDetailsTeamProfileChangeDefaultLanguageDetails             = "team_profile_change_default_language_details"
 	EventDetailsTeamProfileChangeLogoDetails                        = "team_profile_change_logo_details"
 	EventDetailsTeamProfileChangeNameDetails                        = "team_profile_change_name_details"
+	EventDetailsTeamProfileRemoveBackgroundDetails                  = "team_profile_remove_background_details"
 	EventDetailsTeamProfileRemoveLogoDetails                        = "team_profile_remove_logo_details"
 	EventDetailsTfaAddBackupPhoneDetails                            = "tfa_add_backup_phone_details"
 	EventDetailsTfaAddSecurityKeyDetails                            = "tfa_add_security_key_details"
@@ -4514,6 +4728,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_changed_alert_config_details":
+		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfigDetails)
+
+		if err != nil {
+			return err
+		}
+	case "admin_alerting_triggered_alert_details":
+		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlertDetails)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team_details":
 		err = json.Unmarshal(body, &u.AppLinkTeamDetails)
 
@@ -4604,6 +4830,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_add_folder_failed_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "governance_policy_create_details":
 		err = json.Unmarshal(body, &u.GovernancePolicyCreateDetails)
 
@@ -4628,8 +4860,32 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_export_created_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportCreatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_removed_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportRemovedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "governance_policy_remove_folders_details":
 		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFoldersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_report_created_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyReportCreatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_zip_part_downloaded_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloadedDetails)
 
 		if err != nil {
 			return err
@@ -5228,6 +5484,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_change_reseller_role_details":
+		err = json.Unmarshal(body, &u.MemberChangeResellerRoleDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_status_details":
 		err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
 
@@ -5632,6 +5894,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "password_reset_all_details":
 		err = json.Unmarshal(body, &u.PasswordResetAllDetails)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report_details":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report_fail_details":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportFailDetails)
 
 		if err != nil {
 			return err
@@ -6944,8 +7218,20 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_profile_add_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileAddBackgroundDetails)
+
+		if err != nil {
+			return err
+		}
 	case "team_profile_add_logo_details":
 		err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_change_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileChangeBackgroundDetails)
 
 		if err != nil {
 			return err
@@ -6964,6 +7250,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "team_profile_change_name_details":
 		err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_remove_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileRemoveBackgroundDetails)
 
 		if err != nil {
 			return err
@@ -7179,6 +7471,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 // EventType : The type of the event with description.
 type EventType struct {
 	dropbox.Tagged
+	// AdminAlertingChangedAlertConfig : (admin_alerting) Changed an alert
+	// setting
+	AdminAlertingChangedAlertConfig *AdminAlertingChangedAlertConfigType `json:"admin_alerting_changed_alert_config,omitempty"`
+	// AdminAlertingTriggeredAlert : (admin_alerting) Triggered security alert
+	AdminAlertingTriggeredAlert *AdminAlertingTriggeredAlertType `json:"admin_alerting_triggered_alert,omitempty"`
 	// AppLinkTeam : (apps) Linked app for team
 	AppLinkTeam *AppLinkTeamType `json:"app_link_team,omitempty"`
 	// AppLinkUser : (apps) Linked app for member
@@ -7212,6 +7509,9 @@ type EventType struct {
 	FileUnresolveComment *FileUnresolveCommentType `json:"file_unresolve_comment,omitempty"`
 	// GovernancePolicyAddFolders : (data_governance) Added folders to policy
 	GovernancePolicyAddFolders *GovernancePolicyAddFoldersType `json:"governance_policy_add_folders,omitempty"`
+	// GovernancePolicyAddFolderFailed : (data_governance) Couldn't add a folder
+	// to a policy
+	GovernancePolicyAddFolderFailed *GovernancePolicyAddFolderFailedType `json:"governance_policy_add_folder_failed,omitempty"`
 	// GovernancePolicyCreate : (data_governance) Activated a new policy
 	GovernancePolicyCreate *GovernancePolicyCreateType `json:"governance_policy_create,omitempty"`
 	// GovernancePolicyDelete : (data_governance) Deleted a policy
@@ -7220,9 +7520,21 @@ type EventType struct {
 	GovernancePolicyEditDetails *GovernancePolicyEditDetailsType `json:"governance_policy_edit_details,omitempty"`
 	// GovernancePolicyEditDuration : (data_governance) Changed policy duration
 	GovernancePolicyEditDuration *GovernancePolicyEditDurationType `json:"governance_policy_edit_duration,omitempty"`
+	// GovernancePolicyExportCreated : (data_governance) Created a policy
+	// download
+	GovernancePolicyExportCreated *GovernancePolicyExportCreatedType `json:"governance_policy_export_created,omitempty"`
+	// GovernancePolicyExportRemoved : (data_governance) Removed a policy
+	// download
+	GovernancePolicyExportRemoved *GovernancePolicyExportRemovedType `json:"governance_policy_export_removed,omitempty"`
 	// GovernancePolicyRemoveFolders : (data_governance) Removed folders from
 	// policy
 	GovernancePolicyRemoveFolders *GovernancePolicyRemoveFoldersType `json:"governance_policy_remove_folders,omitempty"`
+	// GovernancePolicyReportCreated : (data_governance) Created a summary
+	// report for a policy
+	GovernancePolicyReportCreated *GovernancePolicyReportCreatedType `json:"governance_policy_report_created,omitempty"`
+	// GovernancePolicyZipPartDownloaded : (data_governance) Downloaded content
+	// from a policy
+	GovernancePolicyZipPartDownloaded *GovernancePolicyZipPartDownloadedType `json:"governance_policy_zip_part_downloaded,omitempty"`
 	// LegalHoldsActivateAHold : (data_governance) Activated a hold
 	LegalHoldsActivateAHold *LegalHoldsActivateAHoldType `json:"legal_holds_activate_a_hold,omitempty"`
 	// LegalHoldsAddMembers : (data_governance) Added members to a hold
@@ -7463,6 +7775,8 @@ type EventType struct {
 	MemberChangeMembershipType *MemberChangeMembershipTypeType `json:"member_change_membership_type,omitempty"`
 	// MemberChangeName : (members) Changed team member name
 	MemberChangeName *MemberChangeNameType `json:"member_change_name,omitempty"`
+	// MemberChangeResellerRole : (members) Changed team member reseller role
+	MemberChangeResellerRole *MemberChangeResellerRoleType `json:"member_change_reseller_role,omitempty"`
 	// MemberChangeStatus : (members) Changed member status (invited, joined,
 	// suspended, etc.)
 	MemberChangeStatus *MemberChangeStatusType `json:"member_change_status,omitempty"`
@@ -7629,6 +7943,11 @@ type EventType struct {
 	PasswordReset *PasswordResetType `json:"password_reset,omitempty"`
 	// PasswordResetAll : (passwords) Reset all team member passwords
 	PasswordResetAll *PasswordResetAllType `json:"password_reset_all,omitempty"`
+	// ClassificationCreateReport : (reports) Created Classification report
+	ClassificationCreateReport *ClassificationCreateReportType `json:"classification_create_report,omitempty"`
+	// ClassificationCreateReportFail : (reports) Couldn't create Classification
+	// report
+	ClassificationCreateReportFail *ClassificationCreateReportFailType `json:"classification_create_report_fail,omitempty"`
 	// EmmCreateExceptionsReport : (reports) Created EMM-excluded users report
 	EmmCreateExceptionsReport *EmmCreateExceptionsReportType `json:"emm_create_exceptions_report,omitempty"`
 	// EmmCreateUsageReport : (reports) Created EMM mobile app usage report
@@ -8211,9 +8530,15 @@ type EventType struct {
 	TeamMergeFrom *TeamMergeFromType `json:"team_merge_from,omitempty"`
 	// TeamMergeTo : (team_profile) Merged this team into another team
 	TeamMergeTo *TeamMergeToType `json:"team_merge_to,omitempty"`
+	// TeamProfileAddBackground : (team_profile) Added team background to
+	// display on shared link headers
+	TeamProfileAddBackground *TeamProfileAddBackgroundType `json:"team_profile_add_background,omitempty"`
 	// TeamProfileAddLogo : (team_profile) Added team logo to display on shared
 	// link headers
 	TeamProfileAddLogo *TeamProfileAddLogoType `json:"team_profile_add_logo,omitempty"`
+	// TeamProfileChangeBackground : (team_profile) Changed team background
+	// displayed on shared link headers
+	TeamProfileChangeBackground *TeamProfileChangeBackgroundType `json:"team_profile_change_background,omitempty"`
 	// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
 	// language for team
 	TeamProfileChangeDefaultLanguage *TeamProfileChangeDefaultLanguageType `json:"team_profile_change_default_language,omitempty"`
@@ -8222,6 +8547,9 @@ type EventType struct {
 	TeamProfileChangeLogo *TeamProfileChangeLogoType `json:"team_profile_change_logo,omitempty"`
 	// TeamProfileChangeName : (team_profile) Changed team name
 	TeamProfileChangeName *TeamProfileChangeNameType `json:"team_profile_change_name,omitempty"`
+	// TeamProfileRemoveBackground : (team_profile) Removed team background
+	// displayed on shared link headers
+	TeamProfileRemoveBackground *TeamProfileRemoveBackgroundType `json:"team_profile_remove_background,omitempty"`
 	// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
 	// shared link headers
 	TeamProfileRemoveLogo *TeamProfileRemoveLogoType `json:"team_profile_remove_logo,omitempty"`
@@ -8323,6 +8651,8 @@ type EventType struct {
 
 // Valid tag values for EventType
 const (
+	EventTypeAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
+	EventTypeAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
 	EventTypeAppLinkTeam                                  = "app_link_team"
 	EventTypeAppLinkUser                                  = "app_link_user"
 	EventTypeAppUnlinkTeam                                = "app_unlink_team"
@@ -8338,11 +8668,16 @@ const (
 	EventTypeFileUnlikeComment                            = "file_unlike_comment"
 	EventTypeFileUnresolveComment                         = "file_unresolve_comment"
 	EventTypeGovernancePolicyAddFolders                   = "governance_policy_add_folders"
+	EventTypeGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
 	EventTypeGovernancePolicyCreate                       = "governance_policy_create"
 	EventTypeGovernancePolicyDelete                       = "governance_policy_delete"
 	EventTypeGovernancePolicyEditDetails                  = "governance_policy_edit_details"
 	EventTypeGovernancePolicyEditDuration                 = "governance_policy_edit_duration"
+	EventTypeGovernancePolicyExportCreated                = "governance_policy_export_created"
+	EventTypeGovernancePolicyExportRemoved                = "governance_policy_export_removed"
 	EventTypeGovernancePolicyRemoveFolders                = "governance_policy_remove_folders"
+	EventTypeGovernancePolicyReportCreated                = "governance_policy_report_created"
+	EventTypeGovernancePolicyZipPartDownloaded            = "governance_policy_zip_part_downloaded"
 	EventTypeLegalHoldsActivateAHold                      = "legal_holds_activate_a_hold"
 	EventTypeLegalHoldsAddMembers                         = "legal_holds_add_members"
 	EventTypeLegalHoldsChangeHoldDetails                  = "legal_holds_change_hold_details"
@@ -8442,6 +8777,7 @@ const (
 	EventTypeMemberChangeExternalId                       = "member_change_external_id"
 	EventTypeMemberChangeMembershipType                   = "member_change_membership_type"
 	EventTypeMemberChangeName                             = "member_change_name"
+	EventTypeMemberChangeResellerRole                     = "member_change_reseller_role"
 	EventTypeMemberChangeStatus                           = "member_change_status"
 	EventTypeMemberDeleteManualContacts                   = "member_delete_manual_contacts"
 	EventTypeMemberDeleteProfilePhoto                     = "member_delete_profile_photo"
@@ -8510,6 +8846,8 @@ const (
 	EventTypePasswordChange                               = "password_change"
 	EventTypePasswordReset                                = "password_reset"
 	EventTypePasswordResetAll                             = "password_reset_all"
+	EventTypeClassificationCreateReport                   = "classification_create_report"
+	EventTypeClassificationCreateReportFail               = "classification_create_report_fail"
 	EventTypeEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
 	EventTypeEmmCreateUsageReport                         = "emm_create_usage_report"
 	EventTypeExportMembersReport                          = "export_members_report"
@@ -8728,10 +9066,13 @@ const (
 	EventTypeWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
 	EventTypeTeamMergeFrom                                = "team_merge_from"
 	EventTypeTeamMergeTo                                  = "team_merge_to"
+	EventTypeTeamProfileAddBackground                     = "team_profile_add_background"
 	EventTypeTeamProfileAddLogo                           = "team_profile_add_logo"
+	EventTypeTeamProfileChangeBackground                  = "team_profile_change_background"
 	EventTypeTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
 	EventTypeTeamProfileChangeLogo                        = "team_profile_change_logo"
 	EventTypeTeamProfileChangeName                        = "team_profile_change_name"
+	EventTypeTeamProfileRemoveBackground                  = "team_profile_remove_background"
 	EventTypeTeamProfileRemoveLogo                        = "team_profile_remove_logo"
 	EventTypeTfaAddBackupPhone                            = "tfa_add_backup_phone"
 	EventTypeTfaAddSecurityKey                            = "tfa_add_security_key"
@@ -8780,6 +9121,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_changed_alert_config":
+		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfig)
+
+		if err != nil {
+			return err
+		}
+	case "admin_alerting_triggered_alert":
+		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlert)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team":
 		err = json.Unmarshal(body, &u.AppLinkTeam)
 
@@ -8870,6 +9223,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_add_folder_failed":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailed)
+
+		if err != nil {
+			return err
+		}
 	case "governance_policy_create":
 		err = json.Unmarshal(body, &u.GovernancePolicyCreate)
 
@@ -8894,8 +9253,32 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_export_created":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportCreated)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_removed":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportRemoved)
+
+		if err != nil {
+			return err
+		}
 	case "governance_policy_remove_folders":
 		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFolders)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_report_created":
+		err = json.Unmarshal(body, &u.GovernancePolicyReportCreated)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_zip_part_downloaded":
+		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloaded)
 
 		if err != nil {
 			return err
@@ -9494,6 +9877,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_change_reseller_role":
+		err = json.Unmarshal(body, &u.MemberChangeResellerRole)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_status":
 		err = json.Unmarshal(body, &u.MemberChangeStatus)
 
@@ -9898,6 +10287,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "password_reset_all":
 		err = json.Unmarshal(body, &u.PasswordResetAll)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report":
+		err = json.Unmarshal(body, &u.ClassificationCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report_fail":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportFail)
 
 		if err != nil {
 			return err
@@ -11210,8 +11611,20 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_profile_add_background":
+		err = json.Unmarshal(body, &u.TeamProfileAddBackground)
+
+		if err != nil {
+			return err
+		}
 	case "team_profile_add_logo":
 		err = json.Unmarshal(body, &u.TeamProfileAddLogo)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_change_background":
+		err = json.Unmarshal(body, &u.TeamProfileChangeBackground)
 
 		if err != nil {
 			return err
@@ -11230,6 +11643,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "team_profile_change_name":
 		err = json.Unmarshal(body, &u.TeamProfileChangeName)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_remove_background":
+		err = json.Unmarshal(body, &u.TeamProfileRemoveBackground)
 
 		if err != nil {
 			return err
@@ -11443,6 +11862,8 @@ type EventTypeArg struct {
 
 // Valid tag values for EventTypeArg
 const (
+	EventTypeArgAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
+	EventTypeArgAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
 	EventTypeArgAppLinkTeam                                  = "app_link_team"
 	EventTypeArgAppLinkUser                                  = "app_link_user"
 	EventTypeArgAppUnlinkTeam                                = "app_unlink_team"
@@ -11458,11 +11879,16 @@ const (
 	EventTypeArgFileUnlikeComment                            = "file_unlike_comment"
 	EventTypeArgFileUnresolveComment                         = "file_unresolve_comment"
 	EventTypeArgGovernancePolicyAddFolders                   = "governance_policy_add_folders"
+	EventTypeArgGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
 	EventTypeArgGovernancePolicyCreate                       = "governance_policy_create"
 	EventTypeArgGovernancePolicyDelete                       = "governance_policy_delete"
 	EventTypeArgGovernancePolicyEditDetails                  = "governance_policy_edit_details"
 	EventTypeArgGovernancePolicyEditDuration                 = "governance_policy_edit_duration"
+	EventTypeArgGovernancePolicyExportCreated                = "governance_policy_export_created"
+	EventTypeArgGovernancePolicyExportRemoved                = "governance_policy_export_removed"
 	EventTypeArgGovernancePolicyRemoveFolders                = "governance_policy_remove_folders"
+	EventTypeArgGovernancePolicyReportCreated                = "governance_policy_report_created"
+	EventTypeArgGovernancePolicyZipPartDownloaded            = "governance_policy_zip_part_downloaded"
 	EventTypeArgLegalHoldsActivateAHold                      = "legal_holds_activate_a_hold"
 	EventTypeArgLegalHoldsAddMembers                         = "legal_holds_add_members"
 	EventTypeArgLegalHoldsChangeHoldDetails                  = "legal_holds_change_hold_details"
@@ -11562,6 +11988,7 @@ const (
 	EventTypeArgMemberChangeExternalId                       = "member_change_external_id"
 	EventTypeArgMemberChangeMembershipType                   = "member_change_membership_type"
 	EventTypeArgMemberChangeName                             = "member_change_name"
+	EventTypeArgMemberChangeResellerRole                     = "member_change_reseller_role"
 	EventTypeArgMemberChangeStatus                           = "member_change_status"
 	EventTypeArgMemberDeleteManualContacts                   = "member_delete_manual_contacts"
 	EventTypeArgMemberDeleteProfilePhoto                     = "member_delete_profile_photo"
@@ -11630,6 +12057,8 @@ const (
 	EventTypeArgPasswordChange                               = "password_change"
 	EventTypeArgPasswordReset                                = "password_reset"
 	EventTypeArgPasswordResetAll                             = "password_reset_all"
+	EventTypeArgClassificationCreateReport                   = "classification_create_report"
+	EventTypeArgClassificationCreateReportFail               = "classification_create_report_fail"
 	EventTypeArgEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
 	EventTypeArgEmmCreateUsageReport                         = "emm_create_usage_report"
 	EventTypeArgExportMembersReport                          = "export_members_report"
@@ -11848,10 +12277,13 @@ const (
 	EventTypeArgWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
 	EventTypeArgTeamMergeFrom                                = "team_merge_from"
 	EventTypeArgTeamMergeTo                                  = "team_merge_to"
+	EventTypeArgTeamProfileAddBackground                     = "team_profile_add_background"
 	EventTypeArgTeamProfileAddLogo                           = "team_profile_add_logo"
+	EventTypeArgTeamProfileChangeBackground                  = "team_profile_change_background"
 	EventTypeArgTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
 	EventTypeArgTeamProfileChangeLogo                        = "team_profile_change_logo"
 	EventTypeArgTeamProfileChangeName                        = "team_profile_change_name"
+	EventTypeArgTeamProfileRemoveBackground                  = "team_profile_remove_background"
 	EventTypeArgTeamProfileRemoveLogo                        = "team_profile_remove_logo"
 	EventTypeArgTfaAddBackupPhone                            = "tfa_add_backup_phone"
 	EventTypeArgTfaAddSecurityKey                            = "tfa_add_security_key"
@@ -13613,6 +14045,42 @@ const (
 	GoogleSsoPolicyOther    = "other"
 )
 
+// GovernancePolicyAddFolderFailedDetails : Couldn't add a folder to a policy.
+type GovernancePolicyAddFolderFailedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Folder : Folder.
+	Folder string `json:"folder"`
+	// Reason : Reason.
+	Reason string `json:"reason,omitempty"`
+}
+
+// NewGovernancePolicyAddFolderFailedDetails returns a new GovernancePolicyAddFolderFailedDetails instance
+func NewGovernancePolicyAddFolderFailedDetails(GovernancePolicyId string, Name string, Folder string) *GovernancePolicyAddFolderFailedDetails {
+	s := new(GovernancePolicyAddFolderFailedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.Folder = Folder
+	return s
+}
+
+// GovernancePolicyAddFolderFailedType : has no documentation (yet)
+type GovernancePolicyAddFolderFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyAddFolderFailedType returns a new GovernancePolicyAddFolderFailedType instance
+func NewGovernancePolicyAddFolderFailedType(Description string) *GovernancePolicyAddFolderFailedType {
+	s := new(GovernancePolicyAddFolderFailedType)
+	s.Description = Description
+	return s
+}
+
 // GovernancePolicyAddFoldersDetails : Added folders to policy.
 type GovernancePolicyAddFoldersDetails struct {
 	// GovernancePolicyId : Policy ID.
@@ -13790,6 +14258,74 @@ func NewGovernancePolicyEditDurationType(Description string) *GovernancePolicyEd
 	return s
 }
 
+// GovernancePolicyExportCreatedDetails : Created a policy download.
+type GovernancePolicyExportCreatedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewGovernancePolicyExportCreatedDetails returns a new GovernancePolicyExportCreatedDetails instance
+func NewGovernancePolicyExportCreatedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyExportCreatedDetails {
+	s := new(GovernancePolicyExportCreatedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyExportCreatedType : has no documentation (yet)
+type GovernancePolicyExportCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyExportCreatedType returns a new GovernancePolicyExportCreatedType instance
+func NewGovernancePolicyExportCreatedType(Description string) *GovernancePolicyExportCreatedType {
+	s := new(GovernancePolicyExportCreatedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyExportRemovedDetails : Removed a policy download.
+type GovernancePolicyExportRemovedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewGovernancePolicyExportRemovedDetails returns a new GovernancePolicyExportRemovedDetails instance
+func NewGovernancePolicyExportRemovedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyExportRemovedDetails {
+	s := new(GovernancePolicyExportRemovedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyExportRemovedType : has no documentation (yet)
+type GovernancePolicyExportRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyExportRemovedType returns a new GovernancePolicyExportRemovedType instance
+func NewGovernancePolicyExportRemovedType(Description string) *GovernancePolicyExportRemovedType {
+	s := new(GovernancePolicyExportRemovedType)
+	s.Description = Description
+	return s
+}
+
 // GovernancePolicyRemoveFoldersDetails : Removed folders from policy.
 type GovernancePolicyRemoveFoldersDetails struct {
 	// GovernancePolicyId : Policy ID.
@@ -13800,6 +14336,8 @@ type GovernancePolicyRemoveFoldersDetails struct {
 	PolicyType *PolicyType `json:"policy_type,omitempty"`
 	// Folders : Folders.
 	Folders []string `json:"folders,omitempty"`
+	// Reason : Reason.
+	Reason string `json:"reason,omitempty"`
 }
 
 // NewGovernancePolicyRemoveFoldersDetails returns a new GovernancePolicyRemoveFoldersDetails instance
@@ -13819,6 +14357,73 @@ type GovernancePolicyRemoveFoldersType struct {
 // NewGovernancePolicyRemoveFoldersType returns a new GovernancePolicyRemoveFoldersType instance
 func NewGovernancePolicyRemoveFoldersType(Description string) *GovernancePolicyRemoveFoldersType {
 	s := new(GovernancePolicyRemoveFoldersType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyReportCreatedDetails : Created a summary report for a policy.
+type GovernancePolicyReportCreatedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+}
+
+// NewGovernancePolicyReportCreatedDetails returns a new GovernancePolicyReportCreatedDetails instance
+func NewGovernancePolicyReportCreatedDetails(GovernancePolicyId string, Name string) *GovernancePolicyReportCreatedDetails {
+	s := new(GovernancePolicyReportCreatedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	return s
+}
+
+// GovernancePolicyReportCreatedType : has no documentation (yet)
+type GovernancePolicyReportCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyReportCreatedType returns a new GovernancePolicyReportCreatedType instance
+func NewGovernancePolicyReportCreatedType(Description string) *GovernancePolicyReportCreatedType {
+	s := new(GovernancePolicyReportCreatedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyZipPartDownloadedDetails : Downloaded content from a policy.
+type GovernancePolicyZipPartDownloadedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+	// Part : Part.
+	Part string `json:"part,omitempty"`
+}
+
+// NewGovernancePolicyZipPartDownloadedDetails returns a new GovernancePolicyZipPartDownloadedDetails instance
+func NewGovernancePolicyZipPartDownloadedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyZipPartDownloadedDetails {
+	s := new(GovernancePolicyZipPartDownloadedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyZipPartDownloadedType : has no documentation (yet)
+type GovernancePolicyZipPartDownloadedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyZipPartDownloadedType returns a new GovernancePolicyZipPartDownloadedType instance
+func NewGovernancePolicyZipPartDownloadedType(Description string) *GovernancePolicyZipPartDownloadedType {
+	s := new(GovernancePolicyZipPartDownloadedType)
 	s.Description = Description
 	return s
 }
@@ -15241,6 +15846,37 @@ type MemberChangeNameType struct {
 // NewMemberChangeNameType returns a new MemberChangeNameType instance
 func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	s := new(MemberChangeNameType)
+	s.Description = Description
+	return s
+}
+
+// MemberChangeResellerRoleDetails : Changed team member reseller role.
+type MemberChangeResellerRoleDetails struct {
+	// NewValue : New reseller role. This field is relevant when the reseller
+	// role is changed.
+	NewValue *ResellerRole `json:"new_value"`
+	// PreviousValue : Previous reseller role. This field is relevant when the
+	// reseller role is changed or when the reseller role is removed.
+	PreviousValue *ResellerRole `json:"previous_value"`
+}
+
+// NewMemberChangeResellerRoleDetails returns a new MemberChangeResellerRoleDetails instance
+func NewMemberChangeResellerRoleDetails(NewValue *ResellerRole, PreviousValue *ResellerRole) *MemberChangeResellerRoleDetails {
+	s := new(MemberChangeResellerRoleDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MemberChangeResellerRoleType : has no documentation (yet)
+type MemberChangeResellerRoleType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberChangeResellerRoleType returns a new MemberChangeResellerRoleType instance
+func NewMemberChangeResellerRoleType(Description string) *MemberChangeResellerRoleType {
+	s := new(MemberChangeResellerRoleType)
 	s.Description = Description
 	return s
 }
@@ -18355,6 +18991,18 @@ func NewResellerLogInfo(ResellerName string, ResellerEmail string) *ResellerLogI
 	s.ResellerEmail = ResellerEmail
 	return s
 }
+
+// ResellerRole : has no documentation (yet)
+type ResellerRole struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ResellerRole
+const (
+	ResellerRoleNotReseller   = "not_reseller"
+	ResellerRoleResellerAdmin = "reseller_admin"
+	ResellerRoleOther         = "other"
+)
 
 // ResellerSupportChangePolicyDetails : Enabled/disabled reseller support.
 type ResellerSupportChangePolicyDetails struct {
@@ -23407,6 +24055,30 @@ func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
 	return s
 }
 
+// TeamProfileAddBackgroundDetails : Added team background to display on shared
+// link headers.
+type TeamProfileAddBackgroundDetails struct {
+}
+
+// NewTeamProfileAddBackgroundDetails returns a new TeamProfileAddBackgroundDetails instance
+func NewTeamProfileAddBackgroundDetails() *TeamProfileAddBackgroundDetails {
+	s := new(TeamProfileAddBackgroundDetails)
+	return s
+}
+
+// TeamProfileAddBackgroundType : has no documentation (yet)
+type TeamProfileAddBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileAddBackgroundType returns a new TeamProfileAddBackgroundType instance
+func NewTeamProfileAddBackgroundType(Description string) *TeamProfileAddBackgroundType {
+	s := new(TeamProfileAddBackgroundType)
+	s.Description = Description
+	return s
+}
+
 // TeamProfileAddLogoDetails : Added team logo to display on shared link
 // headers.
 type TeamProfileAddLogoDetails struct {
@@ -23427,6 +24099,30 @@ type TeamProfileAddLogoType struct {
 // NewTeamProfileAddLogoType returns a new TeamProfileAddLogoType instance
 func NewTeamProfileAddLogoType(Description string) *TeamProfileAddLogoType {
 	s := new(TeamProfileAddLogoType)
+	s.Description = Description
+	return s
+}
+
+// TeamProfileChangeBackgroundDetails : Changed team background displayed on
+// shared link headers.
+type TeamProfileChangeBackgroundDetails struct {
+}
+
+// NewTeamProfileChangeBackgroundDetails returns a new TeamProfileChangeBackgroundDetails instance
+func NewTeamProfileChangeBackgroundDetails() *TeamProfileChangeBackgroundDetails {
+	s := new(TeamProfileChangeBackgroundDetails)
+	return s
+}
+
+// TeamProfileChangeBackgroundType : has no documentation (yet)
+type TeamProfileChangeBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileChangeBackgroundType returns a new TeamProfileChangeBackgroundType instance
+func NewTeamProfileChangeBackgroundType(Description string) *TeamProfileChangeBackgroundType {
+	s := new(TeamProfileChangeBackgroundType)
 	s.Description = Description
 	return s
 }
@@ -23509,6 +24205,30 @@ type TeamProfileChangeNameType struct {
 // NewTeamProfileChangeNameType returns a new TeamProfileChangeNameType instance
 func NewTeamProfileChangeNameType(Description string) *TeamProfileChangeNameType {
 	s := new(TeamProfileChangeNameType)
+	s.Description = Description
+	return s
+}
+
+// TeamProfileRemoveBackgroundDetails : Removed team background displayed on
+// shared link headers.
+type TeamProfileRemoveBackgroundDetails struct {
+}
+
+// NewTeamProfileRemoveBackgroundDetails returns a new TeamProfileRemoveBackgroundDetails instance
+func NewTeamProfileRemoveBackgroundDetails() *TeamProfileRemoveBackgroundDetails {
+	s := new(TeamProfileRemoveBackgroundDetails)
+	return s
+}
+
+// TeamProfileRemoveBackgroundType : has no documentation (yet)
+type TeamProfileRemoveBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileRemoveBackgroundType returns a new TeamProfileRemoveBackgroundType instance
+func NewTeamProfileRemoveBackgroundType(Description string) *TeamProfileRemoveBackgroundType {
+	s := new(TeamProfileRemoveBackgroundType)
 	s.Description = Description
 	return s
 }

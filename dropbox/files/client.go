@@ -405,7 +405,22 @@ type Client interface {
 	// as data transport calls for any Dropbox Business teams with a limit on
 	// the number of data transport calls allowed per month. For more
 	// information, see the `Data transport limit page`
-	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
+	// <https://www.dropbox.com/developers/reference/data-transport-limit>. By
+	// default, upload sessions require you to send content of the file in
+	// sequential order via consecutive `uploadSessionStart`,
+	// `uploadSessionAppend`, `uploadSessionFinish` calls. For better
+	// performance, you can instead optionally use a
+	// `UploadSessionType.concurrent` upload session. To start a new concurrent
+	// session, set `UploadSessionStartArg.session_type` to
+	// `UploadSessionType.concurrent`. After that, you can send file data in
+	// concurrent `uploadSessionAppend` requests. Finally finish the session
+	// with `uploadSessionFinish`. There are couple of constraints with
+	// concurrent sessions to make them work. You can not send data with
+	// `uploadSessionStart` or `uploadSessionFinish` call, only with
+	// `uploadSessionAppend` call. Also data uploaded in `uploadSessionAppend`
+	// call must be multiple of 4194304 bytes (except for last
+	// `uploadSessionAppend` with `UploadSessionStartArg.close` to true, that
+	// may contain any remaining data).
 	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
 }
 
@@ -4511,7 +4526,7 @@ func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *Uplo
 //UploadSessionStartAPIError is an error-wrapper for the upload_session/start route
 type UploadSessionStartAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *UploadSessionStartError `json:"error"`
 }
 
 func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error) {
