@@ -186,7 +186,9 @@ type CommitInfo struct {
 	// StrictConflict : Be more strict about how each `WriteMode` detects
 	// conflict. For example, always return a conflict error when `mode` =
 	// `WriteMode.update` and the given "rev" doesn't match the existing file's
-	// "rev", even if the existing file has been deleted.
+	// "rev", even if the existing file has been deleted. This also forces a
+	// conflict even when the target path refers to a file with identical
+	// contents.
 	StrictConflict bool `json:"strict_conflict"`
 }
 
@@ -1158,6 +1160,7 @@ type ExportError struct {
 const (
 	ExportErrorPath          = "path"
 	ExportErrorNonExportable = "non_exportable"
+	ExportErrorRetryError    = "retry_error"
 	ExportErrorOther         = "other"
 )
 
@@ -1235,6 +1238,93 @@ func NewExportResult(ExportMetadata *ExportMetadata, FileMetadata *FileMetadata)
 	return s
 }
 
+// FileCategory : has no documentation (yet)
+type FileCategory struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileCategory
+const (
+	FileCategoryImage        = "image"
+	FileCategoryDocument     = "document"
+	FileCategoryPdf          = "pdf"
+	FileCategorySpreadsheet  = "spreadsheet"
+	FileCategoryPresentation = "presentation"
+	FileCategoryAudio        = "audio"
+	FileCategoryVideo        = "video"
+	FileCategoryFolder       = "folder"
+	FileCategoryPaper        = "paper"
+	FileCategoryOthers       = "others"
+	FileCategoryOther        = "other"
+)
+
+// FileLock : has no documentation (yet)
+type FileLock struct {
+	// Content : The lock description.
+	Content *FileLockContent `json:"content"`
+}
+
+// NewFileLock returns a new FileLock instance
+func NewFileLock(Content *FileLockContent) *FileLock {
+	s := new(FileLock)
+	s.Content = Content
+	return s
+}
+
+// FileLockContent : has no documentation (yet)
+type FileLockContent struct {
+	dropbox.Tagged
+	// SingleUser : A lock held by a single user.
+	SingleUser *SingleUserLock `json:"single_user,omitempty"`
+}
+
+// Valid tag values for FileLockContent
+const (
+	FileLockContentUnlocked   = "unlocked"
+	FileLockContentSingleUser = "single_user"
+	FileLockContentOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a FileLockContent instance
+func (u *FileLockContent) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "single_user":
+		err = json.Unmarshal(body, &u.SingleUser)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FileLockMetadata : has no documentation (yet)
+type FileLockMetadata struct {
+	// IsLockholder : True if caller holds the file lock.
+	IsLockholder bool `json:"is_lockholder,omitempty"`
+	// LockholderName : The display name of the lock holder.
+	LockholderName string `json:"lockholder_name,omitempty"`
+	// LockholderAccountId : The account ID of the lock holder if known.
+	LockholderAccountId string `json:"lockholder_account_id,omitempty"`
+	// Created : The timestamp of the lock was created.
+	Created time.Time `json:"created,omitempty"`
+}
+
+// NewFileLockMetadata returns a new FileLockMetadata instance
+func NewFileLockMetadata() *FileLockMetadata {
+	s := new(FileLockMetadata)
+	return s
+}
+
 // FileMetadata : has no documentation (yet)
 type FileMetadata struct {
 	Metadata
@@ -1282,6 +1372,9 @@ type FileMetadata struct {
 	// verify data integrity. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
+	// FileLockInfo : If present, the metadata associated with the file's
+	// current lock.
+	FileLockInfo *FileLockMetadata `json:"file_lock_info,omitempty"`
 }
 
 // NewFileMetadata returns a new FileMetadata instance
@@ -1329,6 +1422,18 @@ func NewFileSharingInfo(ReadOnly bool, ParentSharedFolderId string) *FileSharing
 	s.ParentSharedFolderId = ParentSharedFolderId
 	return s
 }
+
+// FileStatus : has no documentation (yet)
+type FileStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileStatus
+const (
+	FileStatusActive  = "active"
+	FileStatusDeleted = "deleted"
+	FileStatusOther   = "other"
+)
 
 // FolderMetadata : has no documentation (yet)
 type FolderMetadata struct {
@@ -1697,6 +1802,23 @@ func NewGpsCoordinates(Latitude float64, Longitude float64) *GpsCoordinates {
 	return s
 }
 
+// HighlightSpan : has no documentation (yet)
+type HighlightSpan struct {
+	// HighlightStr : String to be determined whether it should be highlighted
+	// or not.
+	HighlightStr string `json:"highlight_str"`
+	// IsHighlighted : The string should be highlighted or not.
+	IsHighlighted bool `json:"is_highlighted"`
+}
+
+// NewHighlightSpan returns a new HighlightSpan instance
+func NewHighlightSpan(HighlightStr string, IsHighlighted bool) *HighlightSpan {
+	s := new(HighlightSpan)
+	s.HighlightStr = HighlightStr
+	s.IsHighlighted = IsHighlighted
+	return s
+}
+
 // ListFolderArg : has no documentation (yet)
 type ListFolderArg struct {
 	// Path : A unique identifier for the file.
@@ -1807,12 +1929,15 @@ type ListFolderError struct {
 	dropbox.Tagged
 	// Path : has no documentation (yet)
 	Path *LookupError `json:"path,omitempty"`
+	// TemplateError : has no documentation (yet)
+	TemplateError *file_properties.TemplateError `json:"template_error,omitempty"`
 }
 
 // Valid tag values for ListFolderError
 const (
-	ListFolderErrorPath  = "path"
-	ListFolderErrorOther = "other"
+	ListFolderErrorPath          = "path"
+	ListFolderErrorTemplateError = "template_error"
+	ListFolderErrorOther         = "other"
 )
 
 // UnmarshalJSON deserializes into a ListFolderError instance
@@ -1821,6 +1946,8 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
 		Path *LookupError `json:"path,omitempty"`
+		// TemplateError : has no documentation (yet)
+		TemplateError *file_properties.TemplateError `json:"template_error,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -1831,6 +1958,12 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "path":
 		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	case "template_error":
+		u.TemplateError = w.TemplateError
 
 		if err != nil {
 			return err
@@ -2041,6 +2174,198 @@ func NewListRevisionsResult(IsDeleted bool, Entries []*FileMetadata) *ListRevisi
 	return s
 }
 
+// LockConflictError : has no documentation (yet)
+type LockConflictError struct {
+	// Lock : The lock that caused the conflict.
+	Lock *FileLock `json:"lock"`
+}
+
+// NewLockConflictError returns a new LockConflictError instance
+func NewLockConflictError(Lock *FileLock) *LockConflictError {
+	s := new(LockConflictError)
+	s.Lock = Lock
+	return s
+}
+
+// LockFileArg : has no documentation (yet)
+type LockFileArg struct {
+	// Path : Path in the user's Dropbox to a file.
+	Path string `json:"path"`
+}
+
+// NewLockFileArg returns a new LockFileArg instance
+func NewLockFileArg(Path string) *LockFileArg {
+	s := new(LockFileArg)
+	s.Path = Path
+	return s
+}
+
+// LockFileBatchArg : has no documentation (yet)
+type LockFileBatchArg struct {
+	// Entries : List of 'entries'. Each 'entry' contains a path of the file
+	// which will be locked or queried. Duplicate path arguments in the batch
+	// are considered only once.
+	Entries []*LockFileArg `json:"entries"`
+}
+
+// NewLockFileBatchArg returns a new LockFileBatchArg instance
+func NewLockFileBatchArg(Entries []*LockFileArg) *LockFileBatchArg {
+	s := new(LockFileBatchArg)
+	s.Entries = Entries
+	return s
+}
+
+// LockFileBatchResult : has no documentation (yet)
+type LockFileBatchResult struct {
+	FileOpsResult
+	// Entries : Each Entry in the 'entries' will have '.tag' with the operation
+	// status (e.g. success), the metadata for the file and the lock state after
+	// the operation.
+	Entries []*LockFileResultEntry `json:"entries"`
+}
+
+// NewLockFileBatchResult returns a new LockFileBatchResult instance
+func NewLockFileBatchResult(Entries []*LockFileResultEntry) *LockFileBatchResult {
+	s := new(LockFileBatchResult)
+	s.Entries = Entries
+	return s
+}
+
+// LockFileError : has no documentation (yet)
+type LockFileError struct {
+	dropbox.Tagged
+	// PathLookup : Could not find the specified resource.
+	PathLookup *LookupError `json:"path_lookup,omitempty"`
+	// LockConflict : The user action conflicts with an existing lock on the
+	// file.
+	LockConflict *LockConflictError `json:"lock_conflict,omitempty"`
+}
+
+// Valid tag values for LockFileError
+const (
+	LockFileErrorPathLookup             = "path_lookup"
+	LockFileErrorTooManyWriteOperations = "too_many_write_operations"
+	LockFileErrorTooManyFiles           = "too_many_files"
+	LockFileErrorNoWritePermission      = "no_write_permission"
+	LockFileErrorCannotBeLocked         = "cannot_be_locked"
+	LockFileErrorFileNotShared          = "file_not_shared"
+	LockFileErrorLockConflict           = "lock_conflict"
+	LockFileErrorInternalError          = "internal_error"
+	LockFileErrorOther                  = "other"
+)
+
+// UnmarshalJSON deserializes into a LockFileError instance
+func (u *LockFileError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// PathLookup : Could not find the specified resource.
+		PathLookup *LookupError `json:"path_lookup,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path_lookup":
+		u.PathLookup = w.PathLookup
+
+		if err != nil {
+			return err
+		}
+	case "lock_conflict":
+		err = json.Unmarshal(body, &u.LockConflict)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// LockFileResult : has no documentation (yet)
+type LockFileResult struct {
+	// Metadata : Metadata of the file.
+	Metadata IsMetadata `json:"metadata"`
+	// Lock : The file lock state after the operation.
+	Lock *FileLock `json:"lock"`
+}
+
+// NewLockFileResult returns a new LockFileResult instance
+func NewLockFileResult(Metadata IsMetadata, Lock *FileLock) *LockFileResult {
+	s := new(LockFileResult)
+	s.Metadata = Metadata
+	s.Lock = Lock
+	return s
+}
+
+// UnmarshalJSON deserializes into a LockFileResult instance
+func (u *LockFileResult) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// Metadata : Metadata of the file.
+		Metadata json.RawMessage `json:"metadata"`
+		// Lock : The file lock state after the operation.
+		Lock *FileLock `json:"lock"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	Metadata, err := IsMetadataFromJSON(w.Metadata)
+	if err != nil {
+		return err
+	}
+	u.Metadata = Metadata
+	u.Lock = w.Lock
+	return nil
+}
+
+// LockFileResultEntry : has no documentation (yet)
+type LockFileResultEntry struct {
+	dropbox.Tagged
+	// Success : has no documentation (yet)
+	Success *LockFileResult `json:"success,omitempty"`
+	// Failure : has no documentation (yet)
+	Failure *LockFileError `json:"failure,omitempty"`
+}
+
+// Valid tag values for LockFileResultEntry
+const (
+	LockFileResultEntrySuccess = "success"
+	LockFileResultEntryFailure = "failure"
+)
+
+// UnmarshalJSON deserializes into a LockFileResultEntry instance
+func (u *LockFileResultEntry) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failure : has no documentation (yet)
+		Failure *LockFileError `json:"failure,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	case "failure":
+		u.Failure = w.Failure
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // LookupError : has no documentation (yet)
 type LookupError struct {
 	dropbox.Tagged
@@ -2059,6 +2384,7 @@ const (
 	LookupErrorNotFolder              = "not_folder"
 	LookupErrorRestrictedContent      = "restricted_content"
 	LookupErrorUnsupportedContentType = "unsupported_content_type"
+	LookupErrorLocked                 = "locked"
 	LookupErrorOther                  = "other"
 )
 
@@ -2209,6 +2535,67 @@ func IsMediaMetadataFromJSON(data []byte) (IsMediaMetadata, error) {
 	return nil, nil
 }
 
+// MetadataV2 : Metadata for a file, folder or other resource types.
+type MetadataV2 struct {
+	dropbox.Tagged
+	// Metadata : has no documentation (yet)
+	Metadata IsMetadata `json:"metadata,omitempty"`
+}
+
+// Valid tag values for MetadataV2
+const (
+	MetadataV2Metadata = "metadata"
+	MetadataV2Other    = "other"
+)
+
+// UnmarshalJSON deserializes into a MetadataV2 instance
+func (u *MetadataV2) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Metadata : has no documentation (yet)
+		Metadata json.RawMessage `json:"metadata,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "metadata":
+		u.Metadata, err = IsMetadataFromJSON(w.Metadata)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MinimalFileLinkMetadata : has no documentation (yet)
+type MinimalFileLinkMetadata struct {
+	// Url : URL of the shared link.
+	Url string `json:"url"`
+	// Id : Unique identifier for the linked file.
+	Id string `json:"id,omitempty"`
+	// Path : Full path in the user's Dropbox. This always starts with a slash.
+	// This field will only be present only if the linked file is in the
+	// authenticated user's Dropbox.
+	Path string `json:"path,omitempty"`
+	// Rev : A unique identifier for the current revision of a file. This field
+	// is the same rev as elsewhere in the API and can be used to detect changes
+	// and avoid conflicts.
+	Rev string `json:"rev"`
+}
+
+// NewMinimalFileLinkMetadata returns a new MinimalFileLinkMetadata instance
+func NewMinimalFileLinkMetadata(Url string, Rev string) *MinimalFileLinkMetadata {
+	s := new(MinimalFileLinkMetadata)
+	s.Url = Url
+	s.Rev = Rev
+	return s
+}
+
 // RelocationBatchArgBase : has no documentation (yet)
 type RelocationBatchArgBase struct {
 	// Entries : List of entries to be moved or copied. Each entry is
@@ -2243,6 +2630,63 @@ func NewMoveBatchArg(Entries []*RelocationPath) *MoveBatchArg {
 	s.Autorename = false
 	s.AllowOwnershipTransfer = false
 	return s
+}
+
+// MoveIntoVaultError : has no documentation (yet)
+type MoveIntoVaultError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MoveIntoVaultError
+const (
+	MoveIntoVaultErrorIsSharedFolder = "is_shared_folder"
+	MoveIntoVaultErrorOther          = "other"
+)
+
+// PathOrLink : has no documentation (yet)
+type PathOrLink struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path string `json:"path,omitempty"`
+	// Link : has no documentation (yet)
+	Link *SharedLinkFileInfo `json:"link,omitempty"`
+}
+
+// Valid tag values for PathOrLink
+const (
+	PathOrLinkPath  = "path"
+	PathOrLinkLink  = "link"
+	PathOrLinkOther = "other"
+)
+
+// UnmarshalJSON deserializes into a PathOrLink instance
+func (u *PathOrLink) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path string `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	case "link":
+		err = json.Unmarshal(body, &u.Link)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // PhotoMetadata : Metadata for a photo.
@@ -2310,6 +2754,24 @@ func (u *PreviewError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// PreviewResult : has no documentation (yet)
+type PreviewResult struct {
+	// FileMetadata : Metadata corresponding to the file received as an
+	// argument. Will be populated if the endpoint is called with a path
+	// (ReadPath).
+	FileMetadata *FileMetadata `json:"file_metadata,omitempty"`
+	// LinkMetadata : Minimal metadata corresponding to the file received as an
+	// argument. Will be populated if the endpoint is called using a shared link
+	// (SharedLinkFileInfo).
+	LinkMetadata *MinimalFileLinkMetadata `json:"link_metadata,omitempty"`
+}
+
+// NewPreviewResult returns a new PreviewResult instance
+func NewPreviewResult() *PreviewResult {
+	s := new(PreviewResult)
+	return s
+}
+
 // RelocationPath : has no documentation (yet)
 type RelocationPath struct {
 	// FromPath : Path in the user's Dropbox to be copied or moved.
@@ -2329,9 +2791,7 @@ func NewRelocationPath(FromPath string, ToPath string) *RelocationPath {
 // RelocationArg : has no documentation (yet)
 type RelocationArg struct {
 	RelocationPath
-	// AllowSharedFolder : If true, `copy` will copy contents in shared folder,
-	// otherwise `RelocationError.cant_copy_shared_folder` will be returned if
-	// `from_path` contains shared folder. This field is always true for `move`.
+	// AllowSharedFolder : This flag has no effect.
 	AllowSharedFolder bool `json:"allow_shared_folder"`
 	// Autorename : If there's a conflict, have the Dropbox server try to
 	// autorename the file to avoid the conflict.
@@ -2356,10 +2816,7 @@ func NewRelocationArg(FromPath string, ToPath string) *RelocationArg {
 // RelocationBatchArg : has no documentation (yet)
 type RelocationBatchArg struct {
 	RelocationBatchArgBase
-	// AllowSharedFolder : If true, `copyBatch` will copy contents in shared
-	// folder, otherwise `RelocationError.cant_copy_shared_folder` will be
-	// returned if `RelocationPath.from_path` contains shared folder. This field
-	// is always true for `moveBatch`.
+	// AllowSharedFolder : This flag has no effect.
 	AllowSharedFolder bool `json:"allow_shared_folder"`
 	// AllowOwnershipTransfer : Allow moves by owner even if it would result in
 	// an ownership transfer for the content being moved. This does not apply to
@@ -2386,6 +2843,9 @@ type RelocationError struct {
 	FromWrite *WriteError `json:"from_write,omitempty"`
 	// To : has no documentation (yet)
 	To *WriteError `json:"to,omitempty"`
+	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
+	// circumstances, see detailed error.
+	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 }
 
 // Valid tag values for RelocationError
@@ -2402,6 +2862,7 @@ const (
 	RelocationErrorInsufficientQuota        = "insufficient_quota"
 	RelocationErrorInternalError            = "internal_error"
 	RelocationErrorCantMoveSharedFolder     = "cant_move_shared_folder"
+	RelocationErrorCantMoveIntoVault        = "cant_move_into_vault"
 	RelocationErrorOther                    = "other"
 )
 
@@ -2415,6 +2876,9 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
 		To *WriteError `json:"to,omitempty"`
+		// CantMoveIntoVault : Some content cannot be moved into Vault under
+		// certain circumstances, see detailed error.
+		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2437,6 +2901,12 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 		}
 	case "to":
 		u.To = w.To
+
+		if err != nil {
+			return err
+		}
+	case "cant_move_into_vault":
+		u.CantMoveIntoVault = w.CantMoveIntoVault
 
 		if err != nil {
 			return err
@@ -2454,6 +2924,9 @@ type RelocationBatchError struct {
 	FromWrite *WriteError `json:"from_write,omitempty"`
 	// To : has no documentation (yet)
 	To *WriteError `json:"to,omitempty"`
+	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
+	// circumstances, see detailed error.
+	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 }
 
 // Valid tag values for RelocationBatchError
@@ -2470,6 +2943,7 @@ const (
 	RelocationBatchErrorInsufficientQuota        = "insufficient_quota"
 	RelocationBatchErrorInternalError            = "internal_error"
 	RelocationBatchErrorCantMoveSharedFolder     = "cant_move_shared_folder"
+	RelocationBatchErrorCantMoveIntoVault        = "cant_move_into_vault"
 	RelocationBatchErrorOther                    = "other"
 	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
 )
@@ -2484,6 +2958,9 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
 		To *WriteError `json:"to,omitempty"`
+		// CantMoveIntoVault : Some content cannot be moved into Vault under
+		// certain circumstances, see detailed error.
+		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2506,6 +2983,12 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 		}
 	case "to":
 		u.To = w.To
+
+		if err != nil {
+			return err
+		}
+	case "cant_move_into_vault":
+		u.CantMoveIntoVault = w.CantMoveIntoVault
 
 		if err != nil {
 			return err
@@ -2908,6 +3391,7 @@ const (
 	RestoreErrorPathLookup      = "path_lookup"
 	RestoreErrorPathWrite       = "path_write"
 	RestoreErrorInvalidRevision = "invalid_revision"
+	RestoreErrorInProgress      = "in_progress"
 	RestoreErrorOther           = "other"
 )
 
@@ -3190,9 +3674,10 @@ type SearchArg struct {
 	// Path : The path in the user's Dropbox to search. Should probably be a
 	// folder.
 	Path string `json:"path"`
-	// Query : The string to search for. The search string is split on spaces
-	// into multiple tokens. For file name searching, the last token is used for
-	// prefix matching (i.e. "bat c" matches "bat cave" but not "batman car").
+	// Query : The string to search for. Query string may be rewritten to
+	// improve relevance of results. The string is split on spaces into multiple
+	// tokens. For file name searching, the last token is used for prefix
+	// matching (i.e. "bat c" matches "bat cave" but not "batman car").
 	Query string `json:"query"`
 	// Start : The starting index within the search results (used for paging).
 	Start uint64 `json:"start"`
@@ -3220,12 +3705,16 @@ type SearchError struct {
 	dropbox.Tagged
 	// Path : has no documentation (yet)
 	Path *LookupError `json:"path,omitempty"`
+	// InvalidArgument : has no documentation (yet)
+	InvalidArgument string `json:"invalid_argument,omitempty"`
 }
 
 // Valid tag values for SearchError
 const (
-	SearchErrorPath  = "path"
-	SearchErrorOther = "other"
+	SearchErrorPath            = "path"
+	SearchErrorInvalidArgument = "invalid_argument"
+	SearchErrorInternalError   = "internal_error"
+	SearchErrorOther           = "other"
 )
 
 // UnmarshalJSON deserializes into a SearchError instance
@@ -3234,6 +3723,8 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// Path : has no documentation (yet)
 		Path *LookupError `json:"path,omitempty"`
+		// InvalidArgument : has no documentation (yet)
+		InvalidArgument string `json:"invalid_argument,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3244,6 +3735,12 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "path":
 		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	case "invalid_argument":
+		u.InvalidArgument = w.InvalidArgument
 
 		if err != nil {
 			return err
@@ -3289,6 +3786,19 @@ func (u *SearchMatch) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// SearchMatchFieldOptions : has no documentation (yet)
+type SearchMatchFieldOptions struct {
+	// IncludeHighlights : Whether to include highlight span from file title.
+	IncludeHighlights bool `json:"include_highlights"`
+}
+
+// NewSearchMatchFieldOptions returns a new SearchMatchFieldOptions instance
+func NewSearchMatchFieldOptions() *SearchMatchFieldOptions {
+	s := new(SearchMatchFieldOptions)
+	s.IncludeHighlights = false
+	return s
+}
+
 // SearchMatchType : Indicates what type of match was found for a given item.
 type SearchMatchType struct {
 	dropbox.Tagged
@@ -3301,6 +3811,38 @@ const (
 	SearchMatchTypeBoth     = "both"
 )
 
+// SearchMatchTypeV2 : Indicates what type of match was found for a given item.
+type SearchMatchTypeV2 struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SearchMatchTypeV2
+const (
+	SearchMatchTypeV2Filename           = "filename"
+	SearchMatchTypeV2FileContent        = "file_content"
+	SearchMatchTypeV2FilenameAndContent = "filename_and_content"
+	SearchMatchTypeV2ImageContent       = "image_content"
+	SearchMatchTypeV2Other              = "other"
+)
+
+// SearchMatchV2 : has no documentation (yet)
+type SearchMatchV2 struct {
+	// Metadata : The metadata for the matched file or folder.
+	Metadata *MetadataV2 `json:"metadata"`
+	// MatchType : The type of the match.
+	MatchType *SearchMatchTypeV2 `json:"match_type,omitempty"`
+	// HighlightSpans : The list of HighlightSpan determines which parts of the
+	// file title should be highlighted.
+	HighlightSpans []*HighlightSpan `json:"highlight_spans,omitempty"`
+}
+
+// NewSearchMatchV2 returns a new SearchMatchV2 instance
+func NewSearchMatchV2(Metadata *MetadataV2) *SearchMatchV2 {
+	s := new(SearchMatchV2)
+	s.Metadata = Metadata
+	return s
+}
+
 // SearchMode : has no documentation (yet)
 type SearchMode struct {
 	dropbox.Tagged
@@ -3311,6 +3853,49 @@ const (
 	SearchModeFilename           = "filename"
 	SearchModeFilenameAndContent = "filename_and_content"
 	SearchModeDeletedFilename    = "deleted_filename"
+)
+
+// SearchOptions : has no documentation (yet)
+type SearchOptions struct {
+	// Path : Scopes the search to a path in the user's Dropbox. Searches the
+	// entire Dropbox if not specified.
+	Path string `json:"path,omitempty"`
+	// MaxResults : The maximum number of search results to return.
+	MaxResults uint64 `json:"max_results"`
+	// OrderBy : Specified property of the order of search results. By default,
+	// results are sorted by relevance.
+	OrderBy *SearchOrderBy `json:"order_by,omitempty"`
+	// FileStatus : Restricts search to the given file status.
+	FileStatus *FileStatus `json:"file_status"`
+	// FilenameOnly : Restricts search to only match on filenames.
+	FilenameOnly bool `json:"filename_only"`
+	// FileExtensions : Restricts search to only the extensions specified. Only
+	// supported for active file search.
+	FileExtensions []string `json:"file_extensions,omitempty"`
+	// FileCategories : Restricts search to only the file categories specified.
+	// Only supported for active file search.
+	FileCategories []*FileCategory `json:"file_categories,omitempty"`
+}
+
+// NewSearchOptions returns a new SearchOptions instance
+func NewSearchOptions() *SearchOptions {
+	s := new(SearchOptions)
+	s.MaxResults = 100
+	s.FileStatus = &FileStatus{Tagged: dropbox.Tagged{"active"}}
+	s.FilenameOnly = false
+	return s
+}
+
+// SearchOrderBy : has no documentation (yet)
+type SearchOrderBy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SearchOrderBy
+const (
+	SearchOrderByRelevance        = "relevance"
+	SearchOrderByLastModifiedTime = "last_modified_time"
+	SearchOrderByOther            = "other"
 )
 
 // SearchResult : has no documentation (yet)
@@ -3334,6 +3919,63 @@ func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchRes
 	return s
 }
 
+// SearchV2Arg : has no documentation (yet)
+type SearchV2Arg struct {
+	// Query : The string to search for. May match across multiple fields based
+	// on the request arguments. Query string may be rewritten to improve
+	// relevance of results.
+	Query string `json:"query"`
+	// Options : Options for more targeted search results.
+	Options *SearchOptions `json:"options,omitempty"`
+	// MatchFieldOptions : Options for search results match fields.
+	MatchFieldOptions *SearchMatchFieldOptions `json:"match_field_options,omitempty"`
+	// IncludeHighlights : Deprecated and moved this option to
+	// SearchMatchFieldOptions.
+	IncludeHighlights bool `json:"include_highlights,omitempty"`
+}
+
+// NewSearchV2Arg returns a new SearchV2Arg instance
+func NewSearchV2Arg(Query string) *SearchV2Arg {
+	s := new(SearchV2Arg)
+	s.Query = Query
+	return s
+}
+
+// SearchV2ContinueArg : has no documentation (yet)
+type SearchV2ContinueArg struct {
+	// Cursor : The cursor returned by your last call to `search`. Used to fetch
+	// the next page of results.
+	Cursor string `json:"cursor"`
+}
+
+// NewSearchV2ContinueArg returns a new SearchV2ContinueArg instance
+func NewSearchV2ContinueArg(Cursor string) *SearchV2ContinueArg {
+	s := new(SearchV2ContinueArg)
+	s.Cursor = Cursor
+	return s
+}
+
+// SearchV2Result : has no documentation (yet)
+type SearchV2Result struct {
+	// Matches : A list (possibly empty) of matches for the query.
+	Matches []*SearchMatchV2 `json:"matches"`
+	// HasMore : Used for paging. If true, indicates there is another page of
+	// results available that can be fetched by calling `searchContinue` with
+	// the cursor.
+	HasMore bool `json:"has_more"`
+	// Cursor : Pass the cursor into `searchContinue` to fetch the next page of
+	// results.
+	Cursor string `json:"cursor,omitempty"`
+}
+
+// NewSearchV2Result returns a new SearchV2Result instance
+func NewSearchV2Result(Matches []*SearchMatchV2, HasMore bool) *SearchV2Result {
+	s := new(SearchV2Result)
+	s.Matches = Matches
+	s.HasMore = HasMore
+	return s
+}
+
 // SharedLink : has no documentation (yet)
 type SharedLink struct {
 	// Url : Shared link url.
@@ -3346,6 +3988,45 @@ type SharedLink struct {
 func NewSharedLink(Url string) *SharedLink {
 	s := new(SharedLink)
 	s.Url = Url
+	return s
+}
+
+// SharedLinkFileInfo : has no documentation (yet)
+type SharedLinkFileInfo struct {
+	// Url : The shared link corresponding to either a file or shared link to a
+	// folder. If it is for a folder shared link, we use the path param to
+	// determine for which file in the folder the view is for.
+	Url string `json:"url"`
+	// Path : The path corresponding to a file in a shared link to a folder.
+	// Required for shared links to folders.
+	Path string `json:"path,omitempty"`
+	// Password : Password for the shared link. Required for password-protected
+	// shared links to files  unless it can be read from a cookie.
+	Password string `json:"password,omitempty"`
+}
+
+// NewSharedLinkFileInfo returns a new SharedLinkFileInfo instance
+func NewSharedLinkFileInfo(Url string) *SharedLinkFileInfo {
+	s := new(SharedLinkFileInfo)
+	s.Url = Url
+	return s
+}
+
+// SingleUserLock : has no documentation (yet)
+type SingleUserLock struct {
+	// Created : The time the lock was created.
+	Created time.Time `json:"created"`
+	// LockHolderAccountId : The account ID of the lock holder if known.
+	LockHolderAccountId string `json:"lock_holder_account_id"`
+	// LockHolderTeamId : The id of the team of the account holder if it exists.
+	LockHolderTeamId string `json:"lock_holder_team_id,omitempty"`
+}
+
+// NewSingleUserLock returns a new SingleUserLock instance
+func NewSingleUserLock(Created time.Time, LockHolderAccountId string) *SingleUserLock {
+	s := new(SingleUserLock)
+	s.Created = Created
+	s.LockHolderAccountId = LockHolderAccountId
 	return s
 }
 
@@ -3529,6 +4210,102 @@ const (
 	ThumbnailSizeW1024h768  = "w1024h768"
 	ThumbnailSizeW2048h1536 = "w2048h1536"
 )
+
+// ThumbnailV2Arg : has no documentation (yet)
+type ThumbnailV2Arg struct {
+	// Resource : Information specifying which file to preview. This could be a
+	// path to a file, a shared link pointing to a file, or a shared link
+	// pointing to a folder, with a relative path.
+	Resource *PathOrLink `json:"resource"`
+	// Format : The format for the thumbnail image, jpeg (default) or png. For
+	// images that are photos, jpeg should be preferred, while png is  better
+	// for screenshots and digital arts.
+	Format *ThumbnailFormat `json:"format"`
+	// Size : The size for the thumbnail image.
+	Size *ThumbnailSize `json:"size"`
+	// Mode : How to resize and crop the image to achieve the desired size.
+	Mode *ThumbnailMode `json:"mode"`
+}
+
+// NewThumbnailV2Arg returns a new ThumbnailV2Arg instance
+func NewThumbnailV2Arg(Resource *PathOrLink) *ThumbnailV2Arg {
+	s := new(ThumbnailV2Arg)
+	s.Resource = Resource
+	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{"jpeg"}}
+	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{"w64h64"}}
+	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{"strict"}}
+	return s
+}
+
+// ThumbnailV2Error : has no documentation (yet)
+type ThumbnailV2Error struct {
+	dropbox.Tagged
+	// Path : An error occurred when downloading metadata for the image.
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for ThumbnailV2Error
+const (
+	ThumbnailV2ErrorPath                 = "path"
+	ThumbnailV2ErrorUnsupportedExtension = "unsupported_extension"
+	ThumbnailV2ErrorUnsupportedImage     = "unsupported_image"
+	ThumbnailV2ErrorConversionError      = "conversion_error"
+	ThumbnailV2ErrorAccessDenied         = "access_denied"
+	ThumbnailV2ErrorNotFound             = "not_found"
+	ThumbnailV2ErrorOther                = "other"
+)
+
+// UnmarshalJSON deserializes into a ThumbnailV2Error instance
+func (u *ThumbnailV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : An error occurred when downloading metadata for the image.
+		Path *LookupError `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// UnlockFileArg : has no documentation (yet)
+type UnlockFileArg struct {
+	// Path : Path in the user's Dropbox to a file.
+	Path string `json:"path"`
+}
+
+// NewUnlockFileArg returns a new UnlockFileArg instance
+func NewUnlockFileArg(Path string) *UnlockFileArg {
+	s := new(UnlockFileArg)
+	s.Path = Path
+	return s
+}
+
+// UnlockFileBatchArg : has no documentation (yet)
+type UnlockFileBatchArg struct {
+	// Entries : List of 'entries'. Each 'entry' contains a path of the file
+	// which will be unlocked. Duplicate path arguments in the batch are
+	// considered only once.
+	Entries []*UnlockFileArg `json:"entries"`
+}
+
+// NewUnlockFileBatchArg returns a new UnlockFileBatchArg instance
+func NewUnlockFileBatchArg(Entries []*UnlockFileArg) *UnlockFileBatchArg {
+	s := new(UnlockFileBatchArg)
+	s.Entries = Entries
+	return s
+}
 
 // UploadError : has no documentation (yet)
 type UploadError struct {
@@ -3854,12 +4631,15 @@ type UploadSessionFinishError struct {
 
 // Valid tag values for UploadSessionFinishError
 const (
-	UploadSessionFinishErrorLookupFailed               = "lookup_failed"
-	UploadSessionFinishErrorPath                       = "path"
-	UploadSessionFinishErrorPropertiesError            = "properties_error"
-	UploadSessionFinishErrorTooManySharedFolderTargets = "too_many_shared_folder_targets"
-	UploadSessionFinishErrorTooManyWriteOperations     = "too_many_write_operations"
-	UploadSessionFinishErrorOther                      = "other"
+	UploadSessionFinishErrorLookupFailed                    = "lookup_failed"
+	UploadSessionFinishErrorPath                            = "path"
+	UploadSessionFinishErrorPropertiesError                 = "properties_error"
+	UploadSessionFinishErrorTooManySharedFolderTargets      = "too_many_shared_folder_targets"
+	UploadSessionFinishErrorTooManyWriteOperations          = "too_many_write_operations"
+	UploadSessionFinishErrorConcurrentSessionDataNotAllowed = "concurrent_session_data_not_allowed"
+	UploadSessionFinishErrorConcurrentSessionNotClosed      = "concurrent_session_not_closed"
+	UploadSessionFinishErrorConcurrentSessionMissingData    = "concurrent_session_missing_data"
+	UploadSessionFinishErrorOther                           = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionFinishError instance
@@ -3918,12 +4698,14 @@ type UploadSessionLookupError struct {
 
 // Valid tag values for UploadSessionLookupError
 const (
-	UploadSessionLookupErrorNotFound        = "not_found"
-	UploadSessionLookupErrorIncorrectOffset = "incorrect_offset"
-	UploadSessionLookupErrorClosed          = "closed"
-	UploadSessionLookupErrorNotClosed       = "not_closed"
-	UploadSessionLookupErrorTooLarge        = "too_large"
-	UploadSessionLookupErrorOther           = "other"
+	UploadSessionLookupErrorNotFound                         = "not_found"
+	UploadSessionLookupErrorIncorrectOffset                  = "incorrect_offset"
+	UploadSessionLookupErrorClosed                           = "closed"
+	UploadSessionLookupErrorNotClosed                        = "not_closed"
+	UploadSessionLookupErrorTooLarge                         = "too_large"
+	UploadSessionLookupErrorConcurrentSessionInvalidOffset   = "concurrent_session_invalid_offset"
+	UploadSessionLookupErrorConcurrentSessionInvalidDataSize = "concurrent_session_invalid_data_size"
+	UploadSessionLookupErrorOther                            = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadSessionLookupError instance
@@ -3967,6 +4749,9 @@ type UploadSessionStartArg struct {
 	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
+	// SessionType : Type of upload session you want to start. If not specified,
+	// default is `UploadSessionType.sequential`.
+	SessionType *UploadSessionType `json:"session_type,omitempty"`
 }
 
 // NewUploadSessionStartArg returns a new UploadSessionStartArg instance
@@ -3975,6 +4760,18 @@ func NewUploadSessionStartArg() *UploadSessionStartArg {
 	s.Close = false
 	return s
 }
+
+// UploadSessionStartError : has no documentation (yet)
+type UploadSessionStartError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UploadSessionStartError
+const (
+	UploadSessionStartErrorConcurrentSessionDataNotAllowed  = "concurrent_session_data_not_allowed"
+	UploadSessionStartErrorConcurrentSessionCloseNotAllowed = "concurrent_session_close_not_allowed"
+	UploadSessionStartErrorOther                            = "other"
+)
 
 // UploadSessionStartResult : has no documentation (yet)
 type UploadSessionStartResult struct {
@@ -3989,6 +4786,18 @@ func NewUploadSessionStartResult(SessionId string) *UploadSessionStartResult {
 	s.SessionId = SessionId
 	return s
 }
+
+// UploadSessionType : has no documentation (yet)
+type UploadSessionType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for UploadSessionType
+const (
+	UploadSessionTypeSequential = "sequential"
+	UploadSessionTypeConcurrent = "concurrent"
+	UploadSessionTypeOther      = "other"
+)
 
 // UploadWriteFailed : has no documentation (yet)
 type UploadWriteFailed struct {
@@ -4055,6 +4864,7 @@ const (
 	WriteErrorInsufficientSpace      = "insufficient_space"
 	WriteErrorDisallowedName         = "disallowed_name"
 	WriteErrorTeamFolder             = "team_folder"
+	WriteErrorOperationSuppressed    = "operation_suppressed"
 	WriteErrorTooManyWriteOperations = "too_many_write_operations"
 	WriteErrorOther                  = "other"
 )

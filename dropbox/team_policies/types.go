@@ -35,6 +35,19 @@ const (
 	CameraUploadsPolicyStateOther    = "other"
 )
 
+// ComputerBackupPolicyState : has no documentation (yet)
+type ComputerBackupPolicyState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ComputerBackupPolicyState
+const (
+	ComputerBackupPolicyStateDisabled = "disabled"
+	ComputerBackupPolicyStateEnabled  = "enabled"
+	ComputerBackupPolicyStateDefault  = "default"
+	ComputerBackupPolicyStateOther    = "other"
+)
+
 // EmmState : has no documentation (yet)
 type EmmState struct {
 	dropbox.Tagged
@@ -46,6 +59,18 @@ const (
 	EmmStateOptional = "optional"
 	EmmStateRequired = "required"
 	EmmStateOther    = "other"
+)
+
+// FileLockingPolicyState : has no documentation (yet)
+type FileLockingPolicyState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileLockingPolicyState
+const (
+	FileLockingPolicyStateDisabled = "disabled"
+	FileLockingPolicyStateEnabled  = "enabled"
+	FileLockingPolicyStateOther    = "other"
 )
 
 // GroupCreation : has no documentation (yet)
@@ -118,6 +143,18 @@ const (
 	PaperEnabledPolicyEnabled     = "enabled"
 	PaperEnabledPolicyUnspecified = "unspecified"
 	PaperEnabledPolicyOther       = "other"
+)
+
+// PasswordControlMode : has no documentation (yet)
+type PasswordControlMode struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PasswordControlMode
+const (
+	PasswordControlModeDisabled = "disabled"
+	PasswordControlModeEnabled  = "enabled"
+	PasswordControlModeOther    = "other"
 )
 
 // PasswordStrengthPolicy : has no documentation (yet)
@@ -233,6 +270,18 @@ const (
 	SmartSyncPolicyOther    = "other"
 )
 
+// SmarterSmartSyncPolicyState : has no documentation (yet)
+type SmarterSmartSyncPolicyState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SmarterSmartSyncPolicyState
+const (
+	SmarterSmartSyncPolicyStateDisabled = "disabled"
+	SmarterSmartSyncPolicyStateEnabled  = "enabled"
+	SmarterSmartSyncPolicyStateOther    = "other"
+)
+
 // SsoPolicy : has no documentation (yet)
 type SsoPolicy struct {
 	dropbox.Tagged
@@ -244,6 +293,18 @@ const (
 	SsoPolicyOptional = "optional"
 	SsoPolicyRequired = "required"
 	SsoPolicyOther    = "other"
+)
+
+// SuggestMembersPolicy : has no documentation (yet)
+type SuggestMembersPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SuggestMembersPolicy
+const (
+	SuggestMembersPolicyDisabled = "disabled"
+	SuggestMembersPolicyEnabled  = "enabled"
+	SuggestMembersPolicyOther    = "other"
 )
 
 // TeamMemberPolicies : Policies governing team members.
@@ -260,14 +321,18 @@ type TeamMemberPolicies struct {
 	// OfficeAddin : The admin policy around the Dropbox Office Add-In for this
 	// team.
 	OfficeAddin *OfficeAddInPolicy `json:"office_addin"`
+	// SuggestMembersPolicy : The team policy on if teammembers are allowed to
+	// suggest users for admins to invite to the team.
+	SuggestMembersPolicy *SuggestMembersPolicy `json:"suggest_members_policy"`
 }
 
 // NewTeamMemberPolicies returns a new TeamMemberPolicies instance
-func NewTeamMemberPolicies(Sharing *TeamSharingPolicies, EmmState *EmmState, OfficeAddin *OfficeAddInPolicy) *TeamMemberPolicies {
+func NewTeamMemberPolicies(Sharing *TeamSharingPolicies, EmmState *EmmState, OfficeAddin *OfficeAddInPolicy, SuggestMembersPolicy *SuggestMembersPolicy) *TeamMemberPolicies {
 	s := new(TeamMemberPolicies)
 	s.Sharing = Sharing
 	s.EmmState = EmmState
 	s.OfficeAddin = OfficeAddin
+	s.SuggestMembersPolicy = SuggestMembersPolicy
 	return s
 }
 
@@ -312,5 +377,6 @@ type TwoStepVerificationState struct {
 const (
 	TwoStepVerificationStateRequired = "required"
 	TwoStepVerificationStateOptional = "optional"
+	TwoStepVerificationStateDisabled = "disabled"
 	TwoStepVerificationStateOther    = "other"
 )

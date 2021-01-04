@@ -103,6 +103,34 @@ type Client interface {
 	// GroupsUpdate : Updates a group's name and/or external ID. Permission :
 	// Team member management.
 	GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err error)
+	// LegalHoldsCreatePolicy : Creates new legal hold policy. Note: Legal Holds
+	// is a paid add-on. Not all teams have the feature. Permission : Team
+	// member file access.
+	LegalHoldsCreatePolicy(arg *LegalHoldsPolicyCreateArg) (res *LegalHoldPolicy, err error)
+	// LegalHoldsGetPolicy : Gets a legal hold by Id. Note: Legal Holds is a
+	// paid add-on. Not all teams have the feature. Permission : Team member
+	// file access.
+	LegalHoldsGetPolicy(arg *LegalHoldsGetPolicyArg) (res *LegalHoldPolicy, err error)
+	// LegalHoldsListHeldRevisions : List the file metadata that's under the
+	// hold. Note: Legal Holds is a paid add-on. Not all teams have the feature.
+	// Permission : Team member file access.
+	LegalHoldsListHeldRevisions(arg *LegalHoldsListHeldRevisionsArg) (res *LegalHoldsListHeldRevisionResult, err error)
+	// LegalHoldsListHeldRevisionsContinue : Continue listing the file metadata
+	// that's under the hold. Note: Legal Holds is a paid add-on. Not all teams
+	// have the feature. Permission : Team member file access.
+	LegalHoldsListHeldRevisionsContinue(arg *LegalHoldsListHeldRevisionsContinueArg) (res *LegalHoldsListHeldRevisionResult, err error)
+	// LegalHoldsListPolicies : Lists legal holds on a team. Note: Legal Holds
+	// is a paid add-on. Not all teams have the feature. Permission : Team
+	// member file access.
+	LegalHoldsListPolicies(arg *LegalHoldsListPoliciesArg) (res *LegalHoldsListPoliciesResult, err error)
+	// LegalHoldsReleasePolicy : Releases a legal hold by Id. Note: Legal Holds
+	// is a paid add-on. Not all teams have the feature. Permission : Team
+	// member file access.
+	LegalHoldsReleasePolicy(arg *LegalHoldsPolicyReleaseArg) (err error)
+	// LegalHoldsUpdatePolicy : Updates a legal hold. Note: Legal Holds is a
+	// paid add-on. Not all teams have the feature. Permission : Team member
+	// file access.
+	LegalHoldsUpdatePolicy(arg *LegalHoldsPolicyUpdateArg) (res *LegalHoldPolicy, err error)
 	// LinkedAppsListMemberLinkedApps : List all linked applications of the team
 	// member. Note, this endpoint does not list any team-linked applications.
 	LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res *ListMemberAppsResult, err error)
@@ -160,6 +188,9 @@ type Client interface {
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error)
+	// MembersDeleteProfilePhoto : Deletes a team member's profile photo.
+	// Permission : Team member management.
+	MembersDeleteProfilePhoto(arg *MembersDeleteProfilePhotoArg) (res *TeamMemberInfo, err error)
 	// MembersGetInfo : Returns information about multiple team members.
 	// Permission : Team information This endpoint will return
 	// `MembersGetInfoItem.id_not_found`, for IDs (or emails) that cannot be
@@ -193,7 +224,7 @@ type Client interface {
 	// first). Calling `membersAdd` while a user is still recoverable on your
 	// team will return with `MemberAddResult.user_already_on_team`. Accounts
 	// can have their files transferred via the admin console for a limited
-	// time, based on the version history length associated with the team (120
+	// time, based on the version history length associated with the team (180
 	// days for most teams). This endpoint may initiate an asynchronous job. To
 	// obtain the final result of the job, the client should periodically poll
 	// `membersRemoveJobStatusGet`.
@@ -202,6 +233,19 @@ type Client interface {
 	// `membersRemove` , use this to poll the status of the asynchronous
 	// request. Permission : Team member management.
 	MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.PollEmptyResult, err error)
+	// MembersSecondaryEmailsAdd : Add secondary emails to users. Permission :
+	// Team member management. Emails that are on verified domains will be
+	// verified automatically. For each email address not on a verified domain a
+	// verification email will be sent.
+	MembersSecondaryEmailsAdd(arg *AddSecondaryEmailsArg) (res *AddSecondaryEmailsResult, err error)
+	// MembersSecondaryEmailsDelete : Delete secondary emails from users
+	// Permission : Team member management. Users will be notified of deletions
+	// of verified secondary emails at both the secondary email and their
+	// primary email.
+	MembersSecondaryEmailsDelete(arg *DeleteSecondaryEmailsArg) (res *DeleteSecondaryEmailsResult, err error)
+	// MembersSecondaryEmailsResendVerificationEmails : Resend secondary email
+	// verification emails. Permission : Team member management.
+	MembersSecondaryEmailsResendVerificationEmails(arg *ResendVerificationEmailArg) (res *ResendVerificationEmailResult, err error)
 	// MembersSendWelcomeEmail : Sends welcome email to pending team member.
 	// Permission : Team member management Exactly one of team_member_id, email,
 	// or external_id must be provided to identify the user account. No-op if
@@ -213,6 +257,9 @@ type Client interface {
 	// MembersSetProfile : Updates a team member's profile. Permission : Team
 	// member management.
 	MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMemberInfo, err error)
+	// MembersSetProfilePhoto : Updates a team member's profile photo.
+	// Permission : Team member management.
+	MembersSetProfilePhoto(arg *MembersSetProfilePhotoArg) (res *TeamMemberInfo, err error)
 	// MembersSuspend : Suspend a member from a team. Permission : Team member
 	// management Exactly one of team_member_id, email, or external_id must be
 	// provided to identify the user account.
@@ -246,15 +293,19 @@ type Client interface {
 	PropertiesTemplateUpdate(arg *file_properties.UpdateTemplateArg) (res *file_properties.UpdateTemplateResult, err error)
 	// ReportsGetActivity : Retrieves reporting data about a team's user
 	// activity.
+	// Deprecated:
 	ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error)
 	// ReportsGetDevices : Retrieves reporting data about a team's linked
 	// devices.
+	// Deprecated:
 	ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, err error)
 	// ReportsGetMembership : Retrieves reporting data about a team's
 	// membership.
+	// Deprecated:
 	ReportsGetMembership(arg *DateRange) (res *GetMembershipReport, err error)
 	// ReportsGetStorage : Retrieves reporting data about a team's storage
 	// usage.
+	// Deprecated:
 	ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error)
 	// TeamFolderActivate : Sets an archived team folder's status to active.
 	// Permission : Team member file access.
@@ -1483,6 +1534,442 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 	return
 }
 
+//LegalHoldsCreatePolicyAPIError is an error-wrapper for the legal_holds/create_policy route
+type LegalHoldsCreatePolicyAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsPolicyCreateError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsCreatePolicy(arg *LegalHoldsPolicyCreateArg) (res *LegalHoldPolicy, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/create_policy", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsCreatePolicyAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsGetPolicyAPIError is an error-wrapper for the legal_holds/get_policy route
+type LegalHoldsGetPolicyAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsGetPolicyError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsGetPolicy(arg *LegalHoldsGetPolicyArg) (res *LegalHoldPolicy, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/get_policy", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsGetPolicyAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsListHeldRevisionsAPIError is an error-wrapper for the legal_holds/list_held_revisions route
+type LegalHoldsListHeldRevisionsAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsListHeldRevisionsError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsListHeldRevisions(arg *LegalHoldsListHeldRevisionsArg) (res *LegalHoldsListHeldRevisionResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/list_held_revisions", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsListHeldRevisionsAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsListHeldRevisionsContinueAPIError is an error-wrapper for the legal_holds/list_held_revisions_continue route
+type LegalHoldsListHeldRevisionsContinueAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsListHeldRevisionsError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsListHeldRevisionsContinue(arg *LegalHoldsListHeldRevisionsContinueArg) (res *LegalHoldsListHeldRevisionResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/list_held_revisions_continue", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsListHeldRevisionsContinueAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsListPoliciesAPIError is an error-wrapper for the legal_holds/list_policies route
+type LegalHoldsListPoliciesAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsListPoliciesError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsListPolicies(arg *LegalHoldsListPoliciesArg) (res *LegalHoldsListPoliciesResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/list_policies", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsListPoliciesAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsReleasePolicyAPIError is an error-wrapper for the legal_holds/release_policy route
+type LegalHoldsReleasePolicyAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsPolicyReleaseError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsReleasePolicy(arg *LegalHoldsPolicyReleaseArg) (err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/release_policy", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsReleasePolicyAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//LegalHoldsUpdatePolicyAPIError is an error-wrapper for the legal_holds/update_policy route
+type LegalHoldsUpdatePolicyAPIError struct {
+	dropbox.APIError
+	EndpointError *LegalHoldsPolicyUpdateError `json:"error"`
+}
+
+func (dbx *apiImpl) LegalHoldsUpdatePolicy(arg *LegalHoldsPolicyUpdateArg) (res *LegalHoldPolicy, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "legal_holds/update_policy", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError LegalHoldsUpdatePolicyAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //LinkedAppsListMemberLinkedAppsAPIError is an error-wrapper for the linked_apps/list_member_linked_apps route
 type LinkedAppsListMemberLinkedAppsAPIError struct {
 	dropbox.APIError
@@ -2363,6 +2850,69 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 	return
 }
 
+//MembersDeleteProfilePhotoAPIError is an error-wrapper for the members/delete_profile_photo route
+type MembersDeleteProfilePhotoAPIError struct {
+	dropbox.APIError
+	EndpointError *MembersDeleteProfilePhotoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersDeleteProfilePhoto(arg *MembersDeleteProfilePhotoArg) (res *TeamMemberInfo, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/delete_profile_photo", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersDeleteProfilePhotoAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersGetInfoAPIError is an error-wrapper for the members/get_info route
 type MembersGetInfoAPIError struct {
 	dropbox.APIError
@@ -2862,6 +3412,195 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	return
 }
 
+//MembersSecondaryEmailsAddAPIError is an error-wrapper for the members/secondary_emails/add route
+type MembersSecondaryEmailsAddAPIError struct {
+	dropbox.APIError
+	EndpointError *AddSecondaryEmailsError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSecondaryEmailsAdd(arg *AddSecondaryEmailsArg) (res *AddSecondaryEmailsResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/secondary_emails/add", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSecondaryEmailsAddAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersSecondaryEmailsDeleteAPIError is an error-wrapper for the members/secondary_emails/delete route
+type MembersSecondaryEmailsDeleteAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSecondaryEmailsDelete(arg *DeleteSecondaryEmailsArg) (res *DeleteSecondaryEmailsResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/secondary_emails/delete", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSecondaryEmailsDeleteAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersSecondaryEmailsResendVerificationEmailsAPIError is an error-wrapper for the members/secondary_emails/resend_verification_emails route
+type MembersSecondaryEmailsResendVerificationEmailsAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSecondaryEmailsResendVerificationEmails(arg *ResendVerificationEmailArg) (res *ResendVerificationEmailResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/secondary_emails/resend_verification_emails", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSecondaryEmailsResendVerificationEmailsAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersSendWelcomeEmailAPIError is an error-wrapper for the members/send_welcome_email route
 type MembersSendWelcomeEmailAPIError struct {
 	dropbox.APIError
@@ -3031,6 +3770,69 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersSetProfileAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersSetProfilePhotoAPIError is an error-wrapper for the members/set_profile_photo route
+type MembersSetProfilePhotoAPIError struct {
+	dropbox.APIError
+	EndpointError *MembersSetProfilePhotoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetProfilePhoto(arg *MembersSetProfilePhotoArg) (res *TeamMemberInfo, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_profile_photo", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetProfilePhotoAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3547,6 +4349,8 @@ type ReportsGetActivityAPIError struct {
 }
 
 func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error) {
+	log.Printf("WARNING: API `ReportsGetActivity` is deprecated")
+
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3610,6 +4414,8 @@ type ReportsGetDevicesAPIError struct {
 }
 
 func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, err error) {
+	log.Printf("WARNING: API `ReportsGetDevices` is deprecated")
+
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3673,6 +4479,8 @@ type ReportsGetMembershipAPIError struct {
 }
 
 func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipReport, err error) {
+	log.Printf("WARNING: API `ReportsGetMembership` is deprecated")
+
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -3736,6 +4544,8 @@ type ReportsGetStorageAPIError struct {
 }
 
 func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error) {
+	log.Printf("WARNING: API `ReportsGetStorage` is deprecated")
+
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)

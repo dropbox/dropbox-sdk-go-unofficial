@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package team_log
+package check
 
 import (
 	"bytes"
@@ -32,31 +32,31 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// GetEvents : Retrieves team events. If the result's
-	// `GetTeamEventsResult.has_more` field is true, call `getEventsContinue`
-	// with the returned cursor to retrieve more entries. If end_time is not
-	// specified in your request, you may use the returned cursor to poll
-	// `getEventsContinue` for new events. Many attributes note 'may be missing
-	// due to historical data gap'. Note that the file_operations category and &
-	// analogous paper events are not available on all Dropbox Business `plans`
-	// </business/plans-comparison>. Use `features/get_values`
-	// </developers/documentation/http/teams#team-features-get_values> to check
-	// for this feature. Permission : Team Auditing.
-	GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)
-	// GetEventsContinue : Once a cursor has been retrieved from `getEvents`,
-	// use this to paginate through all events. Permission : Team Auditing.
-	GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error)
+	// App : This endpoint performs App Authentication, validating the supplied
+	// app key and secret, and returns the supplied string, to allow you to test
+	// your code and connection to the Dropbox API. It has no other effect. If
+	// you receive an HTTP 200 response with the supplied query, it indicates at
+	// least part of the Dropbox API infrastructure is working and that the app
+	// key and secret valid.
+	App(arg *EchoArg) (res *EchoResult, err error)
+	// User : This endpoint performs User Authentication, validating the
+	// supplied access token, and returns the supplied string, to allow you to
+	// test your code and connection to the Dropbox API. It has no other effect.
+	// If you receive an HTTP 200 response with the supplied query, it indicates
+	// at least part of the Dropbox API infrastructure is working and that the
+	// access token is valid.
+	User(arg *EchoArg) (res *EchoResult, err error)
 }
 
 type apiImpl dropbox.Context
 
-//GetEventsAPIError is an error-wrapper for the get_events route
-type GetEventsAPIError struct {
+//AppAPIError is an error-wrapper for the app route
+type AppAPIError struct {
 	dropbox.APIError
-	EndpointError *GetTeamEventsError `json:"error"`
+	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error) {
+func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -68,8 +68,11 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 	headers := map[string]string{
 		"Content-Type": "application/json",
 	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events", headers, bytes.NewReader(b))
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "check", "app", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -97,7 +100,7 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError GetEventsAPIError
+		var apiError AppAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -113,13 +116,13 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 	return
 }
 
-//GetEventsContinueAPIError is an error-wrapper for the get_events/continue route
-type GetEventsContinueAPIError struct {
+//UserAPIError is an error-wrapper for the user route
+type UserAPIError struct {
 	dropbox.APIError
-	EndpointError *GetTeamEventsContinueError `json:"error"`
+	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error) {
+func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
 	cli := dbx.Client
 
 	dbx.Config.LogDebug("arg: %v", arg)
@@ -131,8 +134,11 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 	headers := map[string]string{
 		"Content-Type": "application/json",
 	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team_log", "get_events/continue", headers, bytes.NewReader(b))
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "check", "user", headers, bytes.NewReader(b))
 	if err != nil {
 		return
 	}
@@ -160,7 +166,7 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError GetEventsContinueAPIError
+		var apiError UserAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

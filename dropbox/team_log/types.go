@@ -36,26 +36,29 @@ import (
 // AccessMethodLogInfo : Indicates the method in which the action was performed.
 type AccessMethodLogInfo struct {
 	dropbox.Tagged
-	// EndUser : End user session details.
-	EndUser IsSessionLogInfo `json:"end_user,omitempty"`
-	// SignInAs : Sign in as session details.
-	SignInAs *WebSessionLogInfo `json:"sign_in_as,omitempty"`
-	// ContentManager : Content manager session details.
-	ContentManager *WebSessionLogInfo `json:"content_manager,omitempty"`
 	// AdminConsole : Admin console session details.
 	AdminConsole *WebSessionLogInfo `json:"admin_console,omitempty"`
 	// Api : Api session details.
 	Api *ApiSessionLogInfo `json:"api,omitempty"`
+	// ContentManager : Content manager session details.
+	ContentManager *WebSessionLogInfo `json:"content_manager,omitempty"`
+	// EndUser : End user session details.
+	EndUser IsSessionLogInfo `json:"end_user,omitempty"`
+	// EnterpriseConsole : Enterprise console session details.
+	EnterpriseConsole *WebSessionLogInfo `json:"enterprise_console,omitempty"`
+	// SignInAs : Sign in as session details.
+	SignInAs *WebSessionLogInfo `json:"sign_in_as,omitempty"`
 }
 
 // Valid tag values for AccessMethodLogInfo
 const (
-	AccessMethodLogInfoEndUser        = "end_user"
-	AccessMethodLogInfoSignInAs       = "sign_in_as"
-	AccessMethodLogInfoContentManager = "content_manager"
-	AccessMethodLogInfoAdminConsole   = "admin_console"
-	AccessMethodLogInfoApi            = "api"
-	AccessMethodLogInfoOther          = "other"
+	AccessMethodLogInfoAdminConsole      = "admin_console"
+	AccessMethodLogInfoApi               = "api"
+	AccessMethodLogInfoContentManager    = "content_manager"
+	AccessMethodLogInfoEndUser           = "end_user"
+	AccessMethodLogInfoEnterpriseConsole = "enterprise_console"
+	AccessMethodLogInfoSignInAs          = "sign_in_as"
+	AccessMethodLogInfoOther             = "other"
 )
 
 // UnmarshalJSON deserializes into a AccessMethodLogInfo instance
@@ -72,14 +75,14 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "end_user":
-		u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
+	case "admin_console":
+		err = json.Unmarshal(body, &u.AdminConsole)
 
 		if err != nil {
 			return err
 		}
-	case "sign_in_as":
-		err = json.Unmarshal(body, &u.SignInAs)
+	case "api":
+		err = json.Unmarshal(body, &u.Api)
 
 		if err != nil {
 			return err
@@ -90,14 +93,20 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
-	case "admin_console":
-		err = json.Unmarshal(body, &u.AdminConsole)
+	case "end_user":
+		u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
 
 		if err != nil {
 			return err
 		}
-	case "api":
-		err = json.Unmarshal(body, &u.Api)
+	case "enterprise_console":
+		err = json.Unmarshal(body, &u.EnterpriseConsole)
+
+		if err != nil {
+			return err
+		}
+	case "sign_in_as":
+		err = json.Unmarshal(body, &u.SignInAs)
 
 		if err != nil {
 			return err
@@ -113,8 +122,8 @@ type AccountCaptureAvailability struct {
 
 // Valid tag values for AccountCaptureAvailability
 const (
-	AccountCaptureAvailabilityUnavailable = "unavailable"
 	AccountCaptureAvailabilityAvailable   = "available"
+	AccountCaptureAvailabilityUnavailable = "unavailable"
 	AccountCaptureAvailabilityOther       = "other"
 )
 
@@ -205,11 +214,13 @@ func NewAccountCaptureMigrateAccountType(Description string) *AccountCaptureMigr
 	return s
 }
 
-// AccountCaptureNotificationEmailsSentDetails : Sent proactive account capture
-// email to all unmanaged members.
+// AccountCaptureNotificationEmailsSentDetails : Sent account capture email to
+// all unmanaged members.
 type AccountCaptureNotificationEmailsSentDetails struct {
 	// DomainName : Domain name.
 	DomainName string `json:"domain_name"`
+	// NotificationType : Account-capture email notification type.
+	NotificationType *AccountCaptureNotificationType `json:"notification_type,omitempty"`
 }
 
 // NewAccountCaptureNotificationEmailsSentDetails returns a new AccountCaptureNotificationEmailsSentDetails instance
@@ -232,6 +243,18 @@ func NewAccountCaptureNotificationEmailsSentType(Description string) *AccountCap
 	return s
 }
 
+// AccountCaptureNotificationType : has no documentation (yet)
+type AccountCaptureNotificationType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AccountCaptureNotificationType
+const (
+	AccountCaptureNotificationTypeActionableNotification       = "actionable_notification"
+	AccountCaptureNotificationTypeProactiveWarningNotification = "proactive_warning_notification"
+	AccountCaptureNotificationTypeOther                        = "other"
+)
+
 // AccountCapturePolicy : has no documentation (yet)
 type AccountCapturePolicy struct {
 	dropbox.Tagged
@@ -239,9 +262,9 @@ type AccountCapturePolicy struct {
 
 // Valid tag values for AccountCapturePolicy
 const (
+	AccountCapturePolicyAllUsers     = "all_users"
 	AccountCapturePolicyDisabled     = "disabled"
 	AccountCapturePolicyInvitedUsers = "invited_users"
-	AccountCapturePolicyAllUsers     = "all_users"
 	AccountCapturePolicyOther        = "other"
 )
 
@@ -272,22 +295,68 @@ func NewAccountCaptureRelinquishAccountType(Description string) *AccountCaptureR
 	return s
 }
 
+// AccountLockOrUnlockedDetails : Unlocked/locked account after failed sign in
+// attempts.
+type AccountLockOrUnlockedDetails struct {
+	// PreviousValue : The previous account status.
+	PreviousValue *AccountState `json:"previous_value"`
+	// NewValue : The new account status.
+	NewValue *AccountState `json:"new_value"`
+}
+
+// NewAccountLockOrUnlockedDetails returns a new AccountLockOrUnlockedDetails instance
+func NewAccountLockOrUnlockedDetails(PreviousValue *AccountState, NewValue *AccountState) *AccountLockOrUnlockedDetails {
+	s := new(AccountLockOrUnlockedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// AccountLockOrUnlockedType : has no documentation (yet)
+type AccountLockOrUnlockedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAccountLockOrUnlockedType returns a new AccountLockOrUnlockedType instance
+func NewAccountLockOrUnlockedType(Description string) *AccountLockOrUnlockedType {
+	s := new(AccountLockOrUnlockedType)
+	s.Description = Description
+	return s
+}
+
+// AccountState : has no documentation (yet)
+type AccountState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AccountState
+const (
+	AccountStateLocked   = "locked"
+	AccountStateUnlocked = "unlocked"
+	AccountStateOther    = "other"
+)
+
 // ActionDetails : Additional information indicating the action taken that
 // caused status change.
 type ActionDetails struct {
 	dropbox.Tagged
+	// RemoveAction : Define how the user was removed from the team.
+	RemoveAction *MemberRemoveActionType `json:"remove_action,omitempty"`
+	// TeamInviteDetails : Additional information relevant when someone is
+	// invited to the team.
+	TeamInviteDetails *TeamInviteDetails `json:"team_invite_details,omitempty"`
 	// TeamJoinDetails : Additional information relevant when a new member joins
 	// the team.
 	TeamJoinDetails *JoinTeamDetails `json:"team_join_details,omitempty"`
-	// RemoveAction : Define how the user was removed from the team.
-	RemoveAction *MemberRemoveActionType `json:"remove_action,omitempty"`
 }
 
 // Valid tag values for ActionDetails
 const (
-	ActionDetailsTeamJoinDetails = "team_join_details"
-	ActionDetailsRemoveAction    = "remove_action"
-	ActionDetailsOther           = "other"
+	ActionDetailsRemoveAction      = "remove_action"
+	ActionDetailsTeamInviteDetails = "team_invite_details"
+	ActionDetailsTeamJoinDetails   = "team_join_details"
+	ActionDetailsOther             = "other"
 )
 
 // UnmarshalJSON deserializes into a ActionDetails instance
@@ -304,14 +373,20 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "team_join_details":
-		err = json.Unmarshal(body, &u.TeamJoinDetails)
+	case "remove_action":
+		u.RemoveAction = w.RemoveAction
 
 		if err != nil {
 			return err
 		}
-	case "remove_action":
-		u.RemoveAction = w.RemoveAction
+	case "team_invite_details":
+		err = json.Unmarshal(body, &u.TeamInviteDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_join_details":
+		err = json.Unmarshal(body, &u.TeamJoinDetails)
 
 		if err != nil {
 			return err
@@ -323,24 +398,24 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 // ActorLogInfo : The entity who performed the action.
 type ActorLogInfo struct {
 	dropbox.Tagged
-	// User : The user who did the action.
-	User IsUserLogInfo `json:"user,omitempty"`
 	// Admin : The admin who did the action.
 	Admin IsUserLogInfo `json:"admin,omitempty"`
 	// App : The application who did the action.
 	App IsAppLogInfo `json:"app,omitempty"`
 	// Reseller : Action done by reseller.
 	Reseller *ResellerLogInfo `json:"reseller,omitempty"`
+	// User : The user who did the action.
+	User IsUserLogInfo `json:"user,omitempty"`
 }
 
 // Valid tag values for ActorLogInfo
 const (
-	ActorLogInfoUser      = "user"
 	ActorLogInfoAdmin     = "admin"
-	ActorLogInfoApp       = "app"
-	ActorLogInfoReseller  = "reseller"
-	ActorLogInfoDropbox   = "dropbox"
 	ActorLogInfoAnonymous = "anonymous"
+	ActorLogInfoApp       = "app"
+	ActorLogInfoDropbox   = "dropbox"
+	ActorLogInfoReseller  = "reseller"
+	ActorLogInfoUser      = "user"
 	ActorLogInfoOther     = "other"
 )
 
@@ -348,12 +423,12 @@ const (
 func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// User : The user who did the action.
-		User json.RawMessage `json:"user,omitempty"`
 		// Admin : The admin who did the action.
 		Admin json.RawMessage `json:"admin,omitempty"`
 		// App : The application who did the action.
 		App json.RawMessage `json:"app,omitempty"`
+		// User : The user who did the action.
+		User json.RawMessage `json:"user,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -362,12 +437,6 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
-
-		if err != nil {
-			return err
-		}
 	case "admin":
 		u.Admin, err = IsUserLogInfoFromJSON(w.Admin)
 
@@ -386,8 +455,138 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "user":
+		u.User, err = IsUserLogInfoFromJSON(w.User)
+
+		if err != nil {
+			return err
+		}
 	}
 	return nil
+}
+
+// AdminAlertCategoryEnum : Alert category
+type AdminAlertCategoryEnum struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertCategoryEnum
+const (
+	AdminAlertCategoryEnumAccountTakeover      = "account_takeover"
+	AdminAlertCategoryEnumDataLossProtection   = "data_loss_protection"
+	AdminAlertCategoryEnumMalwareSharing       = "malware_sharing"
+	AdminAlertCategoryEnumMassiveFileOperation = "massive_file_operation"
+	AdminAlertCategoryEnumNa                   = "na"
+	AdminAlertCategoryEnumThreatManagement     = "threat_management"
+	AdminAlertCategoryEnumOther                = "other"
+)
+
+// AdminAlertSeverityEnum : Alert severity
+type AdminAlertSeverityEnum struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertSeverityEnum
+const (
+	AdminAlertSeverityEnumHigh   = "high"
+	AdminAlertSeverityEnumInfo   = "info"
+	AdminAlertSeverityEnumLow    = "low"
+	AdminAlertSeverityEnumMedium = "medium"
+	AdminAlertSeverityEnumNa     = "na"
+	AdminAlertSeverityEnumOther  = "other"
+)
+
+// AdminAlertingAlertConfiguration : Alert configurations
+type AdminAlertingAlertConfiguration struct {
+	// AlertState : Alert state.
+	AlertState *AdminAlertingAlertStatePolicy `json:"alert_state"`
+}
+
+// NewAdminAlertingAlertConfiguration returns a new AdminAlertingAlertConfiguration instance
+func NewAdminAlertingAlertConfiguration(AlertState *AdminAlertingAlertStatePolicy) *AdminAlertingAlertConfiguration {
+	s := new(AdminAlertingAlertConfiguration)
+	s.AlertState = AlertState
+	return s
+}
+
+// AdminAlertingAlertStatePolicy : Policy for controlling whether an alert can
+// be triggered or not
+type AdminAlertingAlertStatePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertingAlertStatePolicy
+const (
+	AdminAlertingAlertStatePolicyOff   = "off"
+	AdminAlertingAlertStatePolicyOn    = "on"
+	AdminAlertingAlertStatePolicyOther = "other"
+)
+
+// AdminAlertingChangedAlertConfigDetails : Changed an alert setting.
+type AdminAlertingChangedAlertConfigDetails struct {
+	// AlertName : Alert Name.
+	AlertName string `json:"alert_name"`
+	// PreviousAlertConfig : Previous alert configuration.
+	PreviousAlertConfig *AdminAlertingAlertConfiguration `json:"previous_alert_config"`
+	// NewAlertConfig : New alert configuration.
+	NewAlertConfig *AdminAlertingAlertConfiguration `json:"new_alert_config"`
+}
+
+// NewAdminAlertingChangedAlertConfigDetails returns a new AdminAlertingChangedAlertConfigDetails instance
+func NewAdminAlertingChangedAlertConfigDetails(AlertName string, PreviousAlertConfig *AdminAlertingAlertConfiguration, NewAlertConfig *AdminAlertingAlertConfiguration) *AdminAlertingChangedAlertConfigDetails {
+	s := new(AdminAlertingChangedAlertConfigDetails)
+	s.AlertName = AlertName
+	s.PreviousAlertConfig = PreviousAlertConfig
+	s.NewAlertConfig = NewAlertConfig
+	return s
+}
+
+// AdminAlertingChangedAlertConfigType : has no documentation (yet)
+type AdminAlertingChangedAlertConfigType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminAlertingChangedAlertConfigType returns a new AdminAlertingChangedAlertConfigType instance
+func NewAdminAlertingChangedAlertConfigType(Description string) *AdminAlertingChangedAlertConfigType {
+	s := new(AdminAlertingChangedAlertConfigType)
+	s.Description = Description
+	return s
+}
+
+// AdminAlertingTriggeredAlertDetails : Triggered security alert.
+type AdminAlertingTriggeredAlertDetails struct {
+	// AlertName : Alert name.
+	AlertName string `json:"alert_name"`
+	// AlertSeverity : Alert severity.
+	AlertSeverity *AdminAlertSeverityEnum `json:"alert_severity"`
+	// AlertCategory : Alert category.
+	AlertCategory *AdminAlertCategoryEnum `json:"alert_category"`
+	// AlertInstanceId : Alert ID.
+	AlertInstanceId string `json:"alert_instance_id"`
+}
+
+// NewAdminAlertingTriggeredAlertDetails returns a new AdminAlertingTriggeredAlertDetails instance
+func NewAdminAlertingTriggeredAlertDetails(AlertName string, AlertSeverity *AdminAlertSeverityEnum, AlertCategory *AdminAlertCategoryEnum, AlertInstanceId string) *AdminAlertingTriggeredAlertDetails {
+	s := new(AdminAlertingTriggeredAlertDetails)
+	s.AlertName = AlertName
+	s.AlertSeverity = AlertSeverity
+	s.AlertCategory = AlertCategory
+	s.AlertInstanceId = AlertInstanceId
+	return s
+}
+
+// AdminAlertingTriggeredAlertType : has no documentation (yet)
+type AdminAlertingTriggeredAlertType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminAlertingTriggeredAlertType returns a new AdminAlertingTriggeredAlertType instance
+func NewAdminAlertingTriggeredAlertType(Description string) *AdminAlertingTriggeredAlertType {
+	s := new(AdminAlertingTriggeredAlertType)
+	s.Description = Description
+	return s
 }
 
 // AdminRole : has no documentation (yet)
@@ -397,11 +596,11 @@ type AdminRole struct {
 
 // Valid tag values for AdminRole
 const (
-	AdminRoleTeamAdmin           = "team_admin"
-	AdminRoleUserManagementAdmin = "user_management_admin"
-	AdminRoleSupportAdmin        = "support_admin"
 	AdminRoleLimitedAdmin        = "limited_admin"
 	AdminRoleMemberOnly          = "member_only"
+	AdminRoleSupportAdmin        = "support_admin"
+	AdminRoleTeamAdmin           = "team_admin"
+	AdminRoleUserManagementAdmin = "user_management_admin"
 	AdminRoleOther               = "other"
 )
 
@@ -805,6 +1004,278 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// BackupStatus : Backup status
+type BackupStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for BackupStatus
+const (
+	BackupStatusDisabled = "disabled"
+	BackupStatusEnabled  = "enabled"
+	BackupStatusOther    = "other"
+)
+
+// BinderAddPageDetails : Added Binder page.
+type BinderAddPageDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderAddPageDetails returns a new BinderAddPageDetails instance
+func NewBinderAddPageDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderAddPageDetails {
+	s := new(BinderAddPageDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderAddPageType : has no documentation (yet)
+type BinderAddPageType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderAddPageType returns a new BinderAddPageType instance
+func NewBinderAddPageType(Description string) *BinderAddPageType {
+	s := new(BinderAddPageType)
+	s.Description = Description
+	return s
+}
+
+// BinderAddSectionDetails : Added Binder section.
+type BinderAddSectionDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderAddSectionDetails returns a new BinderAddSectionDetails instance
+func NewBinderAddSectionDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderAddSectionDetails {
+	s := new(BinderAddSectionDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderAddSectionType : has no documentation (yet)
+type BinderAddSectionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderAddSectionType returns a new BinderAddSectionType instance
+func NewBinderAddSectionType(Description string) *BinderAddSectionType {
+	s := new(BinderAddSectionType)
+	s.Description = Description
+	return s
+}
+
+// BinderRemovePageDetails : Removed Binder page.
+type BinderRemovePageDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderRemovePageDetails returns a new BinderRemovePageDetails instance
+func NewBinderRemovePageDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderRemovePageDetails {
+	s := new(BinderRemovePageDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderRemovePageType : has no documentation (yet)
+type BinderRemovePageType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderRemovePageType returns a new BinderRemovePageType instance
+func NewBinderRemovePageType(Description string) *BinderRemovePageType {
+	s := new(BinderRemovePageType)
+	s.Description = Description
+	return s
+}
+
+// BinderRemoveSectionDetails : Removed Binder section.
+type BinderRemoveSectionDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderRemoveSectionDetails returns a new BinderRemoveSectionDetails instance
+func NewBinderRemoveSectionDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderRemoveSectionDetails {
+	s := new(BinderRemoveSectionDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderRemoveSectionType : has no documentation (yet)
+type BinderRemoveSectionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderRemoveSectionType returns a new BinderRemoveSectionType instance
+func NewBinderRemoveSectionType(Description string) *BinderRemoveSectionType {
+	s := new(BinderRemoveSectionType)
+	s.Description = Description
+	return s
+}
+
+// BinderRenamePageDetails : Renamed Binder page.
+type BinderRenamePageDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+	// PreviousBinderItemName : Previous name of the Binder page/section.
+	PreviousBinderItemName string `json:"previous_binder_item_name,omitempty"`
+}
+
+// NewBinderRenamePageDetails returns a new BinderRenamePageDetails instance
+func NewBinderRenamePageDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderRenamePageDetails {
+	s := new(BinderRenamePageDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderRenamePageType : has no documentation (yet)
+type BinderRenamePageType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderRenamePageType returns a new BinderRenamePageType instance
+func NewBinderRenamePageType(Description string) *BinderRenamePageType {
+	s := new(BinderRenamePageType)
+	s.Description = Description
+	return s
+}
+
+// BinderRenameSectionDetails : Renamed Binder section.
+type BinderRenameSectionDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+	// PreviousBinderItemName : Previous name of the Binder page/section.
+	PreviousBinderItemName string `json:"previous_binder_item_name,omitempty"`
+}
+
+// NewBinderRenameSectionDetails returns a new BinderRenameSectionDetails instance
+func NewBinderRenameSectionDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderRenameSectionDetails {
+	s := new(BinderRenameSectionDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderRenameSectionType : has no documentation (yet)
+type BinderRenameSectionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderRenameSectionType returns a new BinderRenameSectionType instance
+func NewBinderRenameSectionType(Description string) *BinderRenameSectionType {
+	s := new(BinderRenameSectionType)
+	s.Description = Description
+	return s
+}
+
+// BinderReorderPageDetails : Reordered Binder page.
+type BinderReorderPageDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderReorderPageDetails returns a new BinderReorderPageDetails instance
+func NewBinderReorderPageDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderReorderPageDetails {
+	s := new(BinderReorderPageDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderReorderPageType : has no documentation (yet)
+type BinderReorderPageType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderReorderPageType returns a new BinderReorderPageType instance
+func NewBinderReorderPageType(Description string) *BinderReorderPageType {
+	s := new(BinderReorderPageType)
+	s.Description = Description
+	return s
+}
+
+// BinderReorderSectionDetails : Reordered Binder section.
+type BinderReorderSectionDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// DocTitle : Title of the Binder doc.
+	DocTitle string `json:"doc_title"`
+	// BinderItemName : Name of the Binder page/section.
+	BinderItemName string `json:"binder_item_name"`
+}
+
+// NewBinderReorderSectionDetails returns a new BinderReorderSectionDetails instance
+func NewBinderReorderSectionDetails(EventUuid string, DocTitle string, BinderItemName string) *BinderReorderSectionDetails {
+	s := new(BinderReorderSectionDetails)
+	s.EventUuid = EventUuid
+	s.DocTitle = DocTitle
+	s.BinderItemName = BinderItemName
+	return s
+}
+
+// BinderReorderSectionType : has no documentation (yet)
+type BinderReorderSectionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewBinderReorderSectionType returns a new BinderReorderSectionType instance
+func NewBinderReorderSectionType(Description string) *BinderReorderSectionType {
+	s := new(BinderReorderSectionType)
+	s.Description = Description
+	return s
+}
+
 // CameraUploadsPolicy : Policy for controlling if team members can activate
 // camera uploads
 type CameraUploadsPolicy struct {
@@ -877,6 +1348,180 @@ func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationD
 	return s
 }
 
+// ChangedEnterpriseAdminRoleDetails : Changed enterprise admin role.
+type ChangedEnterpriseAdminRoleDetails struct {
+	// PreviousValue : The member&#x2019s previous enterprise admin role.
+	PreviousValue *FedAdminRole `json:"previous_value"`
+	// NewValue : The member&#x2019s new enterprise admin role.
+	NewValue *FedAdminRole `json:"new_value"`
+	// TeamName : The name of the member&#x2019s team.
+	TeamName string `json:"team_name"`
+}
+
+// NewChangedEnterpriseAdminRoleDetails returns a new ChangedEnterpriseAdminRoleDetails instance
+func NewChangedEnterpriseAdminRoleDetails(PreviousValue *FedAdminRole, NewValue *FedAdminRole, TeamName string) *ChangedEnterpriseAdminRoleDetails {
+	s := new(ChangedEnterpriseAdminRoleDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	s.TeamName = TeamName
+	return s
+}
+
+// ChangedEnterpriseAdminRoleType : has no documentation (yet)
+type ChangedEnterpriseAdminRoleType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewChangedEnterpriseAdminRoleType returns a new ChangedEnterpriseAdminRoleType instance
+func NewChangedEnterpriseAdminRoleType(Description string) *ChangedEnterpriseAdminRoleType {
+	s := new(ChangedEnterpriseAdminRoleType)
+	s.Description = Description
+	return s
+}
+
+// ChangedEnterpriseConnectedTeamStatusDetails : Changed enterprise-connected
+// team status.
+type ChangedEnterpriseConnectedTeamStatusDetails struct {
+	// Action : The preformed change in the team&#x2019s connection status.
+	Action *FedHandshakeAction `json:"action"`
+	// AdditionalInfo : Additional information about the organization or team.
+	AdditionalInfo *FederationStatusChangeAdditionalInfo `json:"additional_info"`
+	// PreviousValue : Previous request state.
+	PreviousValue *TrustedTeamsRequestState `json:"previous_value"`
+	// NewValue : New request state.
+	NewValue *TrustedTeamsRequestState `json:"new_value"`
+}
+
+// NewChangedEnterpriseConnectedTeamStatusDetails returns a new ChangedEnterpriseConnectedTeamStatusDetails instance
+func NewChangedEnterpriseConnectedTeamStatusDetails(Action *FedHandshakeAction, AdditionalInfo *FederationStatusChangeAdditionalInfo, PreviousValue *TrustedTeamsRequestState, NewValue *TrustedTeamsRequestState) *ChangedEnterpriseConnectedTeamStatusDetails {
+	s := new(ChangedEnterpriseConnectedTeamStatusDetails)
+	s.Action = Action
+	s.AdditionalInfo = AdditionalInfo
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// ChangedEnterpriseConnectedTeamStatusType : has no documentation (yet)
+type ChangedEnterpriseConnectedTeamStatusType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewChangedEnterpriseConnectedTeamStatusType returns a new ChangedEnterpriseConnectedTeamStatusType instance
+func NewChangedEnterpriseConnectedTeamStatusType(Description string) *ChangedEnterpriseConnectedTeamStatusType {
+	s := new(ChangedEnterpriseConnectedTeamStatusType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationChangePolicyDetails : Changed classification policy for team.
+type ClassificationChangePolicyDetails struct {
+	// PreviousValue : Previous classification policy.
+	PreviousValue *ClassificationPolicyEnumWrapper `json:"previous_value"`
+	// NewValue : New classification policy.
+	NewValue *ClassificationPolicyEnumWrapper `json:"new_value"`
+	// ClassificationType : Policy type.
+	ClassificationType *ClassificationType `json:"classification_type"`
+}
+
+// NewClassificationChangePolicyDetails returns a new ClassificationChangePolicyDetails instance
+func NewClassificationChangePolicyDetails(PreviousValue *ClassificationPolicyEnumWrapper, NewValue *ClassificationPolicyEnumWrapper, ClassificationType *ClassificationType) *ClassificationChangePolicyDetails {
+	s := new(ClassificationChangePolicyDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	s.ClassificationType = ClassificationType
+	return s
+}
+
+// ClassificationChangePolicyType : has no documentation (yet)
+type ClassificationChangePolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewClassificationChangePolicyType returns a new ClassificationChangePolicyType instance
+func NewClassificationChangePolicyType(Description string) *ClassificationChangePolicyType {
+	s := new(ClassificationChangePolicyType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationCreateReportDetails : Created Classification report.
+type ClassificationCreateReportDetails struct {
+}
+
+// NewClassificationCreateReportDetails returns a new ClassificationCreateReportDetails instance
+func NewClassificationCreateReportDetails() *ClassificationCreateReportDetails {
+	s := new(ClassificationCreateReportDetails)
+	return s
+}
+
+// ClassificationCreateReportFailDetails : Couldn't create Classification
+// report.
+type ClassificationCreateReportFailDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewClassificationCreateReportFailDetails returns a new ClassificationCreateReportFailDetails instance
+func NewClassificationCreateReportFailDetails(FailureReason *team.TeamReportFailureReason) *ClassificationCreateReportFailDetails {
+	s := new(ClassificationCreateReportFailDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// ClassificationCreateReportFailType : has no documentation (yet)
+type ClassificationCreateReportFailType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewClassificationCreateReportFailType returns a new ClassificationCreateReportFailType instance
+func NewClassificationCreateReportFailType(Description string) *ClassificationCreateReportFailType {
+	s := new(ClassificationCreateReportFailType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationCreateReportType : has no documentation (yet)
+type ClassificationCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewClassificationCreateReportType returns a new ClassificationCreateReportType instance
+func NewClassificationCreateReportType(Description string) *ClassificationCreateReportType {
+	s := new(ClassificationCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// ClassificationPolicyEnumWrapper : Policy for controlling team access to the
+// classification feature
+type ClassificationPolicyEnumWrapper struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ClassificationPolicyEnumWrapper
+const (
+	ClassificationPolicyEnumWrapperDisabled = "disabled"
+	ClassificationPolicyEnumWrapperEnabled  = "enabled"
+	ClassificationPolicyEnumWrapperOther    = "other"
+)
+
+// ClassificationType : The type of classification (currently only PII)
+type ClassificationType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ClassificationType
+const (
+	ClassificationTypePii   = "pii"
+	ClassificationTypeOther = "other"
+)
+
 // CollectionShareDetails : Shared album.
 type CollectionShareDetails struct {
 	// AlbumName : Album name.
@@ -903,6 +1548,92 @@ func NewCollectionShareType(Description string) *CollectionShareType {
 	return s
 }
 
+// ComputerBackupPolicy : Policy for controlling team access to computer backup
+// feature
+type ComputerBackupPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ComputerBackupPolicy
+const (
+	ComputerBackupPolicyDefault  = "default"
+	ComputerBackupPolicyDisabled = "disabled"
+	ComputerBackupPolicyEnabled  = "enabled"
+	ComputerBackupPolicyOther    = "other"
+)
+
+// ComputerBackupPolicyChangedDetails : Changed computer backup policy for team.
+type ComputerBackupPolicyChangedDetails struct {
+	// NewValue : New computer backup policy.
+	NewValue *ComputerBackupPolicy `json:"new_value"`
+	// PreviousValue : Previous computer backup policy.
+	PreviousValue *ComputerBackupPolicy `json:"previous_value"`
+}
+
+// NewComputerBackupPolicyChangedDetails returns a new ComputerBackupPolicyChangedDetails instance
+func NewComputerBackupPolicyChangedDetails(NewValue *ComputerBackupPolicy, PreviousValue *ComputerBackupPolicy) *ComputerBackupPolicyChangedDetails {
+	s := new(ComputerBackupPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ComputerBackupPolicyChangedType : has no documentation (yet)
+type ComputerBackupPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewComputerBackupPolicyChangedType returns a new ComputerBackupPolicyChangedType instance
+func NewComputerBackupPolicyChangedType(Description string) *ComputerBackupPolicyChangedType {
+	s := new(ComputerBackupPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// ConnectedTeamName : The name of the team
+type ConnectedTeamName struct {
+	// Team : The name of the team.
+	Team string `json:"team"`
+}
+
+// NewConnectedTeamName returns a new ConnectedTeamName instance
+func NewConnectedTeamName(Team string) *ConnectedTeamName {
+	s := new(ConnectedTeamName)
+	s.Team = Team
+	return s
+}
+
+// ContentAdministrationPolicyChangedDetails : Changed content management
+// setting.
+type ContentAdministrationPolicyChangedDetails struct {
+	// NewValue : New content administration policy.
+	NewValue string `json:"new_value"`
+	// PreviousValue : Previous content administration policy.
+	PreviousValue string `json:"previous_value"`
+}
+
+// NewContentAdministrationPolicyChangedDetails returns a new ContentAdministrationPolicyChangedDetails instance
+func NewContentAdministrationPolicyChangedDetails(NewValue string, PreviousValue string) *ContentAdministrationPolicyChangedDetails {
+	s := new(ContentAdministrationPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ContentAdministrationPolicyChangedType : has no documentation (yet)
+type ContentAdministrationPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewContentAdministrationPolicyChangedType returns a new ContentAdministrationPolicyChangedType instance
+func NewContentAdministrationPolicyChangedType(Description string) *ContentAdministrationPolicyChangedType {
+	s := new(ContentAdministrationPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // ContentPermanentDeletePolicy : Policy for pemanent content deletion
 type ContentPermanentDeletePolicy struct {
 	dropbox.Tagged
@@ -918,10 +1649,13 @@ const (
 // ContextLogInfo : The primary entity on which the action was done.
 type ContextLogInfo struct {
 	dropbox.Tagged
-	// TeamMember : Action was done on behalf of a team member.
-	TeamMember *TeamMemberLogInfo `json:"team_member,omitempty"`
 	// NonTeamMember : Action was done on behalf of a non team member.
 	NonTeamMember *NonTeamMemberLogInfo `json:"non_team_member,omitempty"`
+	// OrganizationTeam : Action was done on behalf of a team that's part of an
+	// organization.
+	OrganizationTeam *TeamLogInfo `json:"organization_team,omitempty"`
+	// TeamMember : Action was done on behalf of a team member.
+	TeamMember *TeamMemberLogInfo `json:"team_member,omitempty"`
 	// TrustedNonTeamMember : Action was done on behalf of a trusted non team
 	// member.
 	TrustedNonTeamMember *TrustedNonTeamMemberLogInfo `json:"trusted_non_team_member,omitempty"`
@@ -929,10 +1663,11 @@ type ContextLogInfo struct {
 
 // Valid tag values for ContextLogInfo
 const (
-	ContextLogInfoTeamMember           = "team_member"
-	ContextLogInfoNonTeamMember        = "non_team_member"
 	ContextLogInfoAnonymous            = "anonymous"
+	ContextLogInfoNonTeamMember        = "non_team_member"
+	ContextLogInfoOrganizationTeam     = "organization_team"
 	ContextLogInfoTeam                 = "team"
+	ContextLogInfoTeamMember           = "team_member"
 	ContextLogInfoTrustedNonTeamMember = "trusted_non_team_member"
 	ContextLogInfoOther                = "other"
 )
@@ -949,14 +1684,20 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "team_member":
-		err = json.Unmarshal(body, &u.TeamMember)
+	case "non_team_member":
+		err = json.Unmarshal(body, &u.NonTeamMember)
 
 		if err != nil {
 			return err
 		}
-	case "non_team_member":
-		err = json.Unmarshal(body, &u.NonTeamMember)
+	case "organization_team":
+		err = json.Unmarshal(body, &u.OrganizationTeam)
+
+		if err != nil {
+			return err
+		}
+	case "team_member":
+		err = json.Unmarshal(body, &u.TeamMember)
 
 		if err != nil {
 			return err
@@ -990,6 +1731,35 @@ type CreateFolderType struct {
 // NewCreateFolderType returns a new CreateFolderType instance
 func NewCreateFolderType(Description string) *CreateFolderType {
 	s := new(CreateFolderType)
+	s.Description = Description
+	return s
+}
+
+// CreateTeamInviteLinkDetails : Created team invite link.
+type CreateTeamInviteLinkDetails struct {
+	// LinkUrl : The invite link url that was created.
+	LinkUrl string `json:"link_url"`
+	// ExpiryDate : The expiration date of the invite link.
+	ExpiryDate string `json:"expiry_date"`
+}
+
+// NewCreateTeamInviteLinkDetails returns a new CreateTeamInviteLinkDetails instance
+func NewCreateTeamInviteLinkDetails(LinkUrl string, ExpiryDate string) *CreateTeamInviteLinkDetails {
+	s := new(CreateTeamInviteLinkDetails)
+	s.LinkUrl = LinkUrl
+	s.ExpiryDate = ExpiryDate
+	return s
+}
+
+// CreateTeamInviteLinkType : has no documentation (yet)
+type CreateTeamInviteLinkType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewCreateTeamInviteLinkType returns a new CreateTeamInviteLinkType instance
+func NewCreateTeamInviteLinkType(Description string) *CreateTeamInviteLinkType {
+	s := new(CreateTeamInviteLinkType)
 	s.Description = Description
 	return s
 }
@@ -1047,6 +1817,32 @@ type DataPlacementRestrictionSatisfyPolicyType struct {
 // NewDataPlacementRestrictionSatisfyPolicyType returns a new DataPlacementRestrictionSatisfyPolicyType instance
 func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlacementRestrictionSatisfyPolicyType {
 	s := new(DataPlacementRestrictionSatisfyPolicyType)
+	s.Description = Description
+	return s
+}
+
+// DeleteTeamInviteLinkDetails : Deleted team invite link.
+type DeleteTeamInviteLinkDetails struct {
+	// LinkUrl : The invite link url that was deleted.
+	LinkUrl string `json:"link_url"`
+}
+
+// NewDeleteTeamInviteLinkDetails returns a new DeleteTeamInviteLinkDetails instance
+func NewDeleteTeamInviteLinkDetails(LinkUrl string) *DeleteTeamInviteLinkDetails {
+	s := new(DeleteTeamInviteLinkDetails)
+	s.LinkUrl = LinkUrl
+	return s
+}
+
+// DeleteTeamInviteLinkType : has no documentation (yet)
+type DeleteTeamInviteLinkType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDeleteTeamInviteLinkType returns a new DeleteTeamInviteLinkType instance
+func NewDeleteTeamInviteLinkType(Description string) *DeleteTeamInviteLinkType {
+	s := new(DeleteTeamInviteLinkType)
 	s.Description = Description
 	return s
 }
@@ -1293,6 +2089,30 @@ func NewDesktopSessionLogInfo() *DesktopSessionLogInfo {
 	return s
 }
 
+// DeviceApprovalsAddExceptionDetails : Added members to device approvals
+// exception list.
+type DeviceApprovalsAddExceptionDetails struct {
+}
+
+// NewDeviceApprovalsAddExceptionDetails returns a new DeviceApprovalsAddExceptionDetails instance
+func NewDeviceApprovalsAddExceptionDetails() *DeviceApprovalsAddExceptionDetails {
+	s := new(DeviceApprovalsAddExceptionDetails)
+	return s
+}
+
+// DeviceApprovalsAddExceptionType : has no documentation (yet)
+type DeviceApprovalsAddExceptionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDeviceApprovalsAddExceptionType returns a new DeviceApprovalsAddExceptionType instance
+func NewDeviceApprovalsAddExceptionType(Description string) *DeviceApprovalsAddExceptionType {
+	s := new(DeviceApprovalsAddExceptionType)
+	s.Description = Description
+	return s
+}
+
 // DeviceApprovalsChangeDesktopPolicyDetails : Set/removed limit on number of
 // computers member can link to team Dropbox account.
 type DeviceApprovalsChangeDesktopPolicyDetails struct {
@@ -1420,10 +2240,34 @@ type DeviceApprovalsPolicy struct {
 
 // Valid tag values for DeviceApprovalsPolicy
 const (
-	DeviceApprovalsPolicyUnlimited = "unlimited"
 	DeviceApprovalsPolicyLimited   = "limited"
+	DeviceApprovalsPolicyUnlimited = "unlimited"
 	DeviceApprovalsPolicyOther     = "other"
 )
+
+// DeviceApprovalsRemoveExceptionDetails : Removed members from device approvals
+// exception list.
+type DeviceApprovalsRemoveExceptionDetails struct {
+}
+
+// NewDeviceApprovalsRemoveExceptionDetails returns a new DeviceApprovalsRemoveExceptionDetails instance
+func NewDeviceApprovalsRemoveExceptionDetails() *DeviceApprovalsRemoveExceptionDetails {
+	s := new(DeviceApprovalsRemoveExceptionDetails)
+	return s
+}
+
+// DeviceApprovalsRemoveExceptionType : has no documentation (yet)
+type DeviceApprovalsRemoveExceptionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDeviceApprovalsRemoveExceptionType returns a new DeviceApprovalsRemoveExceptionType instance
+func NewDeviceApprovalsRemoveExceptionType(Description string) *DeviceApprovalsRemoveExceptionType {
+	s := new(DeviceApprovalsRemoveExceptionType)
+	s.Description = Description
+	return s
+}
 
 // DeviceChangeIpDesktopDetails : Changed IP address associated with active
 // desktop session.
@@ -1685,6 +2529,38 @@ func NewDeviceManagementEnabledType(Description string) *DeviceManagementEnabled
 	return s
 }
 
+// DeviceSyncBackupStatusChangedDetails : Enabled/disabled backup for computer.
+type DeviceSyncBackupStatusChangedDetails struct {
+	// DesktopDeviceSessionInfo : Device's session logged information.
+	DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo `json:"desktop_device_session_info"`
+	// PreviousValue : Previous status of computer backup on the device.
+	PreviousValue *BackupStatus `json:"previous_value"`
+	// NewValue : Next status of computer backup on the device.
+	NewValue *BackupStatus `json:"new_value"`
+}
+
+// NewDeviceSyncBackupStatusChangedDetails returns a new DeviceSyncBackupStatusChangedDetails instance
+func NewDeviceSyncBackupStatusChangedDetails(DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo, PreviousValue *BackupStatus, NewValue *BackupStatus) *DeviceSyncBackupStatusChangedDetails {
+	s := new(DeviceSyncBackupStatusChangedDetails)
+	s.DesktopDeviceSessionInfo = DesktopDeviceSessionInfo
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// DeviceSyncBackupStatusChangedType : has no documentation (yet)
+type DeviceSyncBackupStatusChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDeviceSyncBackupStatusChangedType returns a new DeviceSyncBackupStatusChangedType instance
+func NewDeviceSyncBackupStatusChangedType(Description string) *DeviceSyncBackupStatusChangedType {
+	s := new(DeviceSyncBackupStatusChangedType)
+	s.Description = Description
+	return s
+}
+
 // DeviceType : has no documentation (yet)
 type DeviceType struct {
 	dropbox.Tagged
@@ -1723,8 +2599,8 @@ type DeviceUnlinkPolicy struct {
 
 // Valid tag values for DeviceUnlinkPolicy
 const (
-	DeviceUnlinkPolicyRemove = "remove"
 	DeviceUnlinkPolicyKeep   = "keep"
+	DeviceUnlinkPolicyRemove = "remove"
 	DeviceUnlinkPolicyOther  = "other"
 )
 
@@ -2058,6 +2934,62 @@ const (
 	DownloadPolicyTypeOther    = "other"
 )
 
+// DropboxPasswordsExportedDetails : Exported passwords.
+type DropboxPasswordsExportedDetails struct {
+	// Platform : The platform the device runs export.
+	Platform string `json:"platform"`
+}
+
+// NewDropboxPasswordsExportedDetails returns a new DropboxPasswordsExportedDetails instance
+func NewDropboxPasswordsExportedDetails(Platform string) *DropboxPasswordsExportedDetails {
+	s := new(DropboxPasswordsExportedDetails)
+	s.Platform = Platform
+	return s
+}
+
+// DropboxPasswordsExportedType : has no documentation (yet)
+type DropboxPasswordsExportedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDropboxPasswordsExportedType returns a new DropboxPasswordsExportedType instance
+func NewDropboxPasswordsExportedType(Description string) *DropboxPasswordsExportedType {
+	s := new(DropboxPasswordsExportedType)
+	s.Description = Description
+	return s
+}
+
+// DropboxPasswordsNewDeviceEnrolledDetails : Enrolled new Dropbox Passwords
+// device.
+type DropboxPasswordsNewDeviceEnrolledDetails struct {
+	// IsFirstDevice : Whether it's a first device enrolled.
+	IsFirstDevice bool `json:"is_first_device"`
+	// Platform : The platform the device is enrolled.
+	Platform string `json:"platform"`
+}
+
+// NewDropboxPasswordsNewDeviceEnrolledDetails returns a new DropboxPasswordsNewDeviceEnrolledDetails instance
+func NewDropboxPasswordsNewDeviceEnrolledDetails(IsFirstDevice bool, Platform string) *DropboxPasswordsNewDeviceEnrolledDetails {
+	s := new(DropboxPasswordsNewDeviceEnrolledDetails)
+	s.IsFirstDevice = IsFirstDevice
+	s.Platform = Platform
+	return s
+}
+
+// DropboxPasswordsNewDeviceEnrolledType : has no documentation (yet)
+type DropboxPasswordsNewDeviceEnrolledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDropboxPasswordsNewDeviceEnrolledType returns a new DropboxPasswordsNewDeviceEnrolledType instance
+func NewDropboxPasswordsNewDeviceEnrolledType(Description string) *DropboxPasswordsNewDeviceEnrolledType {
+	s := new(DropboxPasswordsNewDeviceEnrolledType)
+	s.Description = Description
+	return s
+}
+
 // DurationLogInfo : Represents a time duration: unit and amount
 type DurationLogInfo struct {
 	// Unit : Time unit.
@@ -2268,6 +3200,91 @@ func NewEnabledDomainInvitesType(Description string) *EnabledDomainInvitesType {
 	return s
 }
 
+// EndedEnterpriseAdminSessionDeprecatedDetails : Ended enterprise admin
+// session.
+type EndedEnterpriseAdminSessionDeprecatedDetails struct {
+	// FederationExtraDetails : More information about the organization or team.
+	FederationExtraDetails *FedExtraDetails `json:"federation_extra_details"`
+}
+
+// NewEndedEnterpriseAdminSessionDeprecatedDetails returns a new EndedEnterpriseAdminSessionDeprecatedDetails instance
+func NewEndedEnterpriseAdminSessionDeprecatedDetails(FederationExtraDetails *FedExtraDetails) *EndedEnterpriseAdminSessionDeprecatedDetails {
+	s := new(EndedEnterpriseAdminSessionDeprecatedDetails)
+	s.FederationExtraDetails = FederationExtraDetails
+	return s
+}
+
+// EndedEnterpriseAdminSessionDeprecatedType : has no documentation (yet)
+type EndedEnterpriseAdminSessionDeprecatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEndedEnterpriseAdminSessionDeprecatedType returns a new EndedEnterpriseAdminSessionDeprecatedType instance
+func NewEndedEnterpriseAdminSessionDeprecatedType(Description string) *EndedEnterpriseAdminSessionDeprecatedType {
+	s := new(EndedEnterpriseAdminSessionDeprecatedType)
+	s.Description = Description
+	return s
+}
+
+// EndedEnterpriseAdminSessionDetails : Ended enterprise admin session.
+type EndedEnterpriseAdminSessionDetails struct {
+}
+
+// NewEndedEnterpriseAdminSessionDetails returns a new EndedEnterpriseAdminSessionDetails instance
+func NewEndedEnterpriseAdminSessionDetails() *EndedEnterpriseAdminSessionDetails {
+	s := new(EndedEnterpriseAdminSessionDetails)
+	return s
+}
+
+// EndedEnterpriseAdminSessionType : has no documentation (yet)
+type EndedEnterpriseAdminSessionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEndedEnterpriseAdminSessionType returns a new EndedEnterpriseAdminSessionType instance
+func NewEndedEnterpriseAdminSessionType(Description string) *EndedEnterpriseAdminSessionType {
+	s := new(EndedEnterpriseAdminSessionType)
+	s.Description = Description
+	return s
+}
+
+// EnterpriseSettingsLockingDetails : Changed who can update a setting.
+type EnterpriseSettingsLockingDetails struct {
+	// TeamName : The secondary team name.
+	TeamName string `json:"team_name"`
+	// SettingsPageName : Settings page name.
+	SettingsPageName string `json:"settings_page_name"`
+	// PreviousSettingsPageLockingState : Previous locked settings page state.
+	PreviousSettingsPageLockingState string `json:"previous_settings_page_locking_state"`
+	// NewSettingsPageLockingState : New locked settings page state.
+	NewSettingsPageLockingState string `json:"new_settings_page_locking_state"`
+}
+
+// NewEnterpriseSettingsLockingDetails returns a new EnterpriseSettingsLockingDetails instance
+func NewEnterpriseSettingsLockingDetails(TeamName string, SettingsPageName string, PreviousSettingsPageLockingState string, NewSettingsPageLockingState string) *EnterpriseSettingsLockingDetails {
+	s := new(EnterpriseSettingsLockingDetails)
+	s.TeamName = TeamName
+	s.SettingsPageName = SettingsPageName
+	s.PreviousSettingsPageLockingState = PreviousSettingsPageLockingState
+	s.NewSettingsPageLockingState = NewSettingsPageLockingState
+	return s
+}
+
+// EnterpriseSettingsLockingType : has no documentation (yet)
+type EnterpriseSettingsLockingType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEnterpriseSettingsLockingType returns a new EnterpriseSettingsLockingType instance
+func NewEnterpriseSettingsLockingType(Description string) *EnterpriseSettingsLockingType {
+	s := new(EnterpriseSettingsLockingType)
+	s.Description = Description
+	return s
+}
+
 // EventCategory : Category of events in event audit log.
 type EventCategory struct {
 	dropbox.Tagged
@@ -2275,8 +3292,10 @@ type EventCategory struct {
 
 // Valid tag values for EventCategory
 const (
+	EventCategoryAdminAlerting  = "admin_alerting"
 	EventCategoryApps           = "apps"
 	EventCategoryComments       = "comments"
+	EventCategoryDataGovernance = "data_governance"
 	EventCategoryDevices        = "devices"
 	EventCategoryDomains        = "domains"
 	EventCategoryFileOperations = "file_operations"
@@ -2301,6 +3320,10 @@ const (
 // EventDetails : Additional fields depending on the event type.
 type EventDetails struct {
 	dropbox.Tagged
+	// AdminAlertingChangedAlertConfigDetails : has no documentation (yet)
+	AdminAlertingChangedAlertConfigDetails *AdminAlertingChangedAlertConfigDetails `json:"admin_alerting_changed_alert_config_details,omitempty"`
+	// AdminAlertingTriggeredAlertDetails : has no documentation (yet)
+	AdminAlertingTriggeredAlertDetails *AdminAlertingTriggeredAlertDetails `json:"admin_alerting_triggered_alert_details,omitempty"`
 	// AppLinkTeamDetails : has no documentation (yet)
 	AppLinkTeamDetails *AppLinkTeamDetails `json:"app_link_team_details,omitempty"`
 	// AppLinkUserDetails : has no documentation (yet)
@@ -2329,6 +3352,50 @@ type EventDetails struct {
 	FileUnlikeCommentDetails *FileUnlikeCommentDetails `json:"file_unlike_comment_details,omitempty"`
 	// FileUnresolveCommentDetails : has no documentation (yet)
 	FileUnresolveCommentDetails *FileUnresolveCommentDetails `json:"file_unresolve_comment_details,omitempty"`
+	// GovernancePolicyAddFoldersDetails : has no documentation (yet)
+	GovernancePolicyAddFoldersDetails *GovernancePolicyAddFoldersDetails `json:"governance_policy_add_folders_details,omitempty"`
+	// GovernancePolicyAddFolderFailedDetails : has no documentation (yet)
+	GovernancePolicyAddFolderFailedDetails *GovernancePolicyAddFolderFailedDetails `json:"governance_policy_add_folder_failed_details,omitempty"`
+	// GovernancePolicyCreateDetails : has no documentation (yet)
+	GovernancePolicyCreateDetails *GovernancePolicyCreateDetails `json:"governance_policy_create_details,omitempty"`
+	// GovernancePolicyDeleteDetails : has no documentation (yet)
+	GovernancePolicyDeleteDetails *GovernancePolicyDeleteDetails `json:"governance_policy_delete_details,omitempty"`
+	// GovernancePolicyEditDetailsDetails : has no documentation (yet)
+	GovernancePolicyEditDetailsDetails *GovernancePolicyEditDetailsDetails `json:"governance_policy_edit_details_details,omitempty"`
+	// GovernancePolicyEditDurationDetails : has no documentation (yet)
+	GovernancePolicyEditDurationDetails *GovernancePolicyEditDurationDetails `json:"governance_policy_edit_duration_details,omitempty"`
+	// GovernancePolicyExportCreatedDetails : has no documentation (yet)
+	GovernancePolicyExportCreatedDetails *GovernancePolicyExportCreatedDetails `json:"governance_policy_export_created_details,omitempty"`
+	// GovernancePolicyExportRemovedDetails : has no documentation (yet)
+	GovernancePolicyExportRemovedDetails *GovernancePolicyExportRemovedDetails `json:"governance_policy_export_removed_details,omitempty"`
+	// GovernancePolicyRemoveFoldersDetails : has no documentation (yet)
+	GovernancePolicyRemoveFoldersDetails *GovernancePolicyRemoveFoldersDetails `json:"governance_policy_remove_folders_details,omitempty"`
+	// GovernancePolicyReportCreatedDetails : has no documentation (yet)
+	GovernancePolicyReportCreatedDetails *GovernancePolicyReportCreatedDetails `json:"governance_policy_report_created_details,omitempty"`
+	// GovernancePolicyZipPartDownloadedDetails : has no documentation (yet)
+	GovernancePolicyZipPartDownloadedDetails *GovernancePolicyZipPartDownloadedDetails `json:"governance_policy_zip_part_downloaded_details,omitempty"`
+	// LegalHoldsActivateAHoldDetails : has no documentation (yet)
+	LegalHoldsActivateAHoldDetails *LegalHoldsActivateAHoldDetails `json:"legal_holds_activate_a_hold_details,omitempty"`
+	// LegalHoldsAddMembersDetails : has no documentation (yet)
+	LegalHoldsAddMembersDetails *LegalHoldsAddMembersDetails `json:"legal_holds_add_members_details,omitempty"`
+	// LegalHoldsChangeHoldDetailsDetails : has no documentation (yet)
+	LegalHoldsChangeHoldDetailsDetails *LegalHoldsChangeHoldDetailsDetails `json:"legal_holds_change_hold_details_details,omitempty"`
+	// LegalHoldsChangeHoldNameDetails : has no documentation (yet)
+	LegalHoldsChangeHoldNameDetails *LegalHoldsChangeHoldNameDetails `json:"legal_holds_change_hold_name_details,omitempty"`
+	// LegalHoldsExportAHoldDetails : has no documentation (yet)
+	LegalHoldsExportAHoldDetails *LegalHoldsExportAHoldDetails `json:"legal_holds_export_a_hold_details,omitempty"`
+	// LegalHoldsExportCancelledDetails : has no documentation (yet)
+	LegalHoldsExportCancelledDetails *LegalHoldsExportCancelledDetails `json:"legal_holds_export_cancelled_details,omitempty"`
+	// LegalHoldsExportDownloadedDetails : has no documentation (yet)
+	LegalHoldsExportDownloadedDetails *LegalHoldsExportDownloadedDetails `json:"legal_holds_export_downloaded_details,omitempty"`
+	// LegalHoldsExportRemovedDetails : has no documentation (yet)
+	LegalHoldsExportRemovedDetails *LegalHoldsExportRemovedDetails `json:"legal_holds_export_removed_details,omitempty"`
+	// LegalHoldsReleaseAHoldDetails : has no documentation (yet)
+	LegalHoldsReleaseAHoldDetails *LegalHoldsReleaseAHoldDetails `json:"legal_holds_release_a_hold_details,omitempty"`
+	// LegalHoldsRemoveMembersDetails : has no documentation (yet)
+	LegalHoldsRemoveMembersDetails *LegalHoldsRemoveMembersDetails `json:"legal_holds_remove_members_details,omitempty"`
+	// LegalHoldsReportAHoldDetails : has no documentation (yet)
+	LegalHoldsReportAHoldDetails *LegalHoldsReportAHoldDetails `json:"legal_holds_report_a_hold_details,omitempty"`
 	// DeviceChangeIpDesktopDetails : has no documentation (yet)
 	DeviceChangeIpDesktopDetails *DeviceChangeIpDesktopDetails `json:"device_change_ip_desktop_details,omitempty"`
 	// DeviceChangeIpMobileDetails : has no documentation (yet)
@@ -2347,8 +3414,14 @@ type EventDetails struct {
 	DeviceManagementDisabledDetails *DeviceManagementDisabledDetails `json:"device_management_disabled_details,omitempty"`
 	// DeviceManagementEnabledDetails : has no documentation (yet)
 	DeviceManagementEnabledDetails *DeviceManagementEnabledDetails `json:"device_management_enabled_details,omitempty"`
+	// DeviceSyncBackupStatusChangedDetails : has no documentation (yet)
+	DeviceSyncBackupStatusChangedDetails *DeviceSyncBackupStatusChangedDetails `json:"device_sync_backup_status_changed_details,omitempty"`
 	// DeviceUnlinkDetails : has no documentation (yet)
 	DeviceUnlinkDetails *DeviceUnlinkDetails `json:"device_unlink_details,omitempty"`
+	// DropboxPasswordsExportedDetails : has no documentation (yet)
+	DropboxPasswordsExportedDetails *DropboxPasswordsExportedDetails `json:"dropbox_passwords_exported_details,omitempty"`
+	// DropboxPasswordsNewDeviceEnrolledDetails : has no documentation (yet)
+	DropboxPasswordsNewDeviceEnrolledDetails *DropboxPasswordsNewDeviceEnrolledDetails `json:"dropbox_passwords_new_device_enrolled_details,omitempty"`
 	// EmmRefreshAuthTokenDetails : has no documentation (yet)
 	EmmRefreshAuthTokenDetails *EmmRefreshAuthTokenDetails `json:"emm_refresh_auth_token_details,omitempty"`
 	// AccountCaptureChangeAvailabilityDetails : has no documentation (yet)
@@ -2396,6 +3469,8 @@ type EventDetails struct {
 	FileEditDetails *FileEditDetails `json:"file_edit_details,omitempty"`
 	// FileGetCopyReferenceDetails : has no documentation (yet)
 	FileGetCopyReferenceDetails *FileGetCopyReferenceDetails `json:"file_get_copy_reference_details,omitempty"`
+	// FileLockingLockStatusChangedDetails : has no documentation (yet)
+	FileLockingLockStatusChangedDetails *FileLockingLockStatusChangedDetails `json:"file_locking_lock_status_changed_details,omitempty"`
 	// FileMoveDetails : has no documentation (yet)
 	FileMoveDetails *FileMoveDetails `json:"file_move_details,omitempty"`
 	// FilePermanentlyDeleteDetails : has no documentation (yet)
@@ -2412,6 +3487,14 @@ type EventDetails struct {
 	FileRollbackChangesDetails *FileRollbackChangesDetails `json:"file_rollback_changes_details,omitempty"`
 	// FileSaveCopyReferenceDetails : has no documentation (yet)
 	FileSaveCopyReferenceDetails *FileSaveCopyReferenceDetails `json:"file_save_copy_reference_details,omitempty"`
+	// FolderOverviewDescriptionChangedDetails : has no documentation (yet)
+	FolderOverviewDescriptionChangedDetails *FolderOverviewDescriptionChangedDetails `json:"folder_overview_description_changed_details,omitempty"`
+	// FolderOverviewItemPinnedDetails : has no documentation (yet)
+	FolderOverviewItemPinnedDetails *FolderOverviewItemPinnedDetails `json:"folder_overview_item_pinned_details,omitempty"`
+	// FolderOverviewItemUnpinnedDetails : has no documentation (yet)
+	FolderOverviewItemUnpinnedDetails *FolderOverviewItemUnpinnedDetails `json:"folder_overview_item_unpinned_details,omitempty"`
+	// RewindFolderDetails : has no documentation (yet)
+	RewindFolderDetails *RewindFolderDetails `json:"rewind_folder_details,omitempty"`
 	// FileRequestChangeDetails : has no documentation (yet)
 	FileRequestChangeDetails *FileRequestChangeDetails `json:"file_request_change_details,omitempty"`
 	// FileRequestCloseDetails : has no documentation (yet)
@@ -2448,6 +3531,8 @@ type EventDetails struct {
 	GroupRemoveMemberDetails *GroupRemoveMemberDetails `json:"group_remove_member_details,omitempty"`
 	// GroupRenameDetails : has no documentation (yet)
 	GroupRenameDetails *GroupRenameDetails `json:"group_rename_details,omitempty"`
+	// AccountLockOrUnlockedDetails : has no documentation (yet)
+	AccountLockOrUnlockedDetails *AccountLockOrUnlockedDetails `json:"account_lock_or_unlocked_details,omitempty"`
 	// EmmErrorDetails : has no documentation (yet)
 	EmmErrorDetails *EmmErrorDetails `json:"emm_error_details,omitempty"`
 	// GuestAdminSignedInViaTrustedTeamsDetails : has no documentation (yet)
@@ -2470,6 +3555,10 @@ type EventDetails struct {
 	SignInAsSessionStartDetails *SignInAsSessionStartDetails `json:"sign_in_as_session_start_details,omitempty"`
 	// SsoErrorDetails : has no documentation (yet)
 	SsoErrorDetails *SsoErrorDetails `json:"sso_error_details,omitempty"`
+	// CreateTeamInviteLinkDetails : has no documentation (yet)
+	CreateTeamInviteLinkDetails *CreateTeamInviteLinkDetails `json:"create_team_invite_link_details,omitempty"`
+	// DeleteTeamInviteLinkDetails : has no documentation (yet)
+	DeleteTeamInviteLinkDetails *DeleteTeamInviteLinkDetails `json:"delete_team_invite_link_details,omitempty"`
 	// MemberAddExternalIdDetails : has no documentation (yet)
 	MemberAddExternalIdDetails *MemberAddExternalIdDetails `json:"member_add_external_id_details,omitempty"`
 	// MemberAddNameDetails : has no documentation (yet)
@@ -2484,15 +3573,21 @@ type EventDetails struct {
 	MemberChangeMembershipTypeDetails *MemberChangeMembershipTypeDetails `json:"member_change_membership_type_details,omitempty"`
 	// MemberChangeNameDetails : has no documentation (yet)
 	MemberChangeNameDetails *MemberChangeNameDetails `json:"member_change_name_details,omitempty"`
+	// MemberChangeResellerRoleDetails : has no documentation (yet)
+	MemberChangeResellerRoleDetails *MemberChangeResellerRoleDetails `json:"member_change_reseller_role_details,omitempty"`
 	// MemberChangeStatusDetails : has no documentation (yet)
 	MemberChangeStatusDetails *MemberChangeStatusDetails `json:"member_change_status_details,omitempty"`
 	// MemberDeleteManualContactsDetails : has no documentation (yet)
 	MemberDeleteManualContactsDetails *MemberDeleteManualContactsDetails `json:"member_delete_manual_contacts_details,omitempty"`
+	// MemberDeleteProfilePhotoDetails : has no documentation (yet)
+	MemberDeleteProfilePhotoDetails *MemberDeleteProfilePhotoDetails `json:"member_delete_profile_photo_details,omitempty"`
 	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
 	// (yet)
 	MemberPermanentlyDeleteAccountContentsDetails *MemberPermanentlyDeleteAccountContentsDetails `json:"member_permanently_delete_account_contents_details,omitempty"`
 	// MemberRemoveExternalIdDetails : has no documentation (yet)
 	MemberRemoveExternalIdDetails *MemberRemoveExternalIdDetails `json:"member_remove_external_id_details,omitempty"`
+	// MemberSetProfilePhotoDetails : has no documentation (yet)
+	MemberSetProfilePhotoDetails *MemberSetProfilePhotoDetails `json:"member_set_profile_photo_details,omitempty"`
 	// MemberSpaceLimitsAddCustomQuotaDetails : has no documentation (yet)
 	MemberSpaceLimitsAddCustomQuotaDetails *MemberSpaceLimitsAddCustomQuotaDetails `json:"member_space_limits_add_custom_quota_details,omitempty"`
 	// MemberSpaceLimitsChangeCustomQuotaDetails : has no documentation (yet)
@@ -2505,8 +3600,30 @@ type EventDetails struct {
 	MemberSuggestDetails *MemberSuggestDetails `json:"member_suggest_details,omitempty"`
 	// MemberTransferAccountContentsDetails : has no documentation (yet)
 	MemberTransferAccountContentsDetails *MemberTransferAccountContentsDetails `json:"member_transfer_account_contents_details,omitempty"`
+	// PendingSecondaryEmailAddedDetails : has no documentation (yet)
+	PendingSecondaryEmailAddedDetails *PendingSecondaryEmailAddedDetails `json:"pending_secondary_email_added_details,omitempty"`
+	// SecondaryEmailDeletedDetails : has no documentation (yet)
+	SecondaryEmailDeletedDetails *SecondaryEmailDeletedDetails `json:"secondary_email_deleted_details,omitempty"`
+	// SecondaryEmailVerifiedDetails : has no documentation (yet)
+	SecondaryEmailVerifiedDetails *SecondaryEmailVerifiedDetails `json:"secondary_email_verified_details,omitempty"`
 	// SecondaryMailsPolicyChangedDetails : has no documentation (yet)
 	SecondaryMailsPolicyChangedDetails *SecondaryMailsPolicyChangedDetails `json:"secondary_mails_policy_changed_details,omitempty"`
+	// BinderAddPageDetails : has no documentation (yet)
+	BinderAddPageDetails *BinderAddPageDetails `json:"binder_add_page_details,omitempty"`
+	// BinderAddSectionDetails : has no documentation (yet)
+	BinderAddSectionDetails *BinderAddSectionDetails `json:"binder_add_section_details,omitempty"`
+	// BinderRemovePageDetails : has no documentation (yet)
+	BinderRemovePageDetails *BinderRemovePageDetails `json:"binder_remove_page_details,omitempty"`
+	// BinderRemoveSectionDetails : has no documentation (yet)
+	BinderRemoveSectionDetails *BinderRemoveSectionDetails `json:"binder_remove_section_details,omitempty"`
+	// BinderRenamePageDetails : has no documentation (yet)
+	BinderRenamePageDetails *BinderRenamePageDetails `json:"binder_rename_page_details,omitempty"`
+	// BinderRenameSectionDetails : has no documentation (yet)
+	BinderRenameSectionDetails *BinderRenameSectionDetails `json:"binder_rename_section_details,omitempty"`
+	// BinderReorderPageDetails : has no documentation (yet)
+	BinderReorderPageDetails *BinderReorderPageDetails `json:"binder_reorder_page_details,omitempty"`
+	// BinderReorderSectionDetails : has no documentation (yet)
+	BinderReorderSectionDetails *BinderReorderSectionDetails `json:"binder_reorder_section_details,omitempty"`
 	// PaperContentAddMemberDetails : has no documentation (yet)
 	PaperContentAddMemberDetails *PaperContentAddMemberDetails `json:"paper_content_add_member_details,omitempty"`
 	// PaperContentAddToFolderDetails : has no documentation (yet)
@@ -2581,6 +3698,8 @@ type EventDetails struct {
 	PaperFolderFollowedDetails *PaperFolderFollowedDetails `json:"paper_folder_followed_details,omitempty"`
 	// PaperFolderTeamInviteDetails : has no documentation (yet)
 	PaperFolderTeamInviteDetails *PaperFolderTeamInviteDetails `json:"paper_folder_team_invite_details,omitempty"`
+	// PaperPublishedLinkChangePermissionDetails : has no documentation (yet)
+	PaperPublishedLinkChangePermissionDetails *PaperPublishedLinkChangePermissionDetails `json:"paper_published_link_change_permission_details,omitempty"`
 	// PaperPublishedLinkCreateDetails : has no documentation (yet)
 	PaperPublishedLinkCreateDetails *PaperPublishedLinkCreateDetails `json:"paper_published_link_create_details,omitempty"`
 	// PaperPublishedLinkDisabledDetails : has no documentation (yet)
@@ -2593,12 +3712,38 @@ type EventDetails struct {
 	PasswordResetDetails *PasswordResetDetails `json:"password_reset_details,omitempty"`
 	// PasswordResetAllDetails : has no documentation (yet)
 	PasswordResetAllDetails *PasswordResetAllDetails `json:"password_reset_all_details,omitempty"`
+	// ClassificationCreateReportDetails : has no documentation (yet)
+	ClassificationCreateReportDetails *ClassificationCreateReportDetails `json:"classification_create_report_details,omitempty"`
+	// ClassificationCreateReportFailDetails : has no documentation (yet)
+	ClassificationCreateReportFailDetails *ClassificationCreateReportFailDetails `json:"classification_create_report_fail_details,omitempty"`
 	// EmmCreateExceptionsReportDetails : has no documentation (yet)
 	EmmCreateExceptionsReportDetails *EmmCreateExceptionsReportDetails `json:"emm_create_exceptions_report_details,omitempty"`
 	// EmmCreateUsageReportDetails : has no documentation (yet)
 	EmmCreateUsageReportDetails *EmmCreateUsageReportDetails `json:"emm_create_usage_report_details,omitempty"`
 	// ExportMembersReportDetails : has no documentation (yet)
 	ExportMembersReportDetails *ExportMembersReportDetails `json:"export_members_report_details,omitempty"`
+	// ExportMembersReportFailDetails : has no documentation (yet)
+	ExportMembersReportFailDetails *ExportMembersReportFailDetails `json:"export_members_report_fail_details,omitempty"`
+	// ExternalSharingCreateReportDetails : has no documentation (yet)
+	ExternalSharingCreateReportDetails *ExternalSharingCreateReportDetails `json:"external_sharing_create_report_details,omitempty"`
+	// ExternalSharingReportFailedDetails : has no documentation (yet)
+	ExternalSharingReportFailedDetails *ExternalSharingReportFailedDetails `json:"external_sharing_report_failed_details,omitempty"`
+	// NoExpirationLinkGenCreateReportDetails : has no documentation (yet)
+	NoExpirationLinkGenCreateReportDetails *NoExpirationLinkGenCreateReportDetails `json:"no_expiration_link_gen_create_report_details,omitempty"`
+	// NoExpirationLinkGenReportFailedDetails : has no documentation (yet)
+	NoExpirationLinkGenReportFailedDetails *NoExpirationLinkGenReportFailedDetails `json:"no_expiration_link_gen_report_failed_details,omitempty"`
+	// NoPasswordLinkGenCreateReportDetails : has no documentation (yet)
+	NoPasswordLinkGenCreateReportDetails *NoPasswordLinkGenCreateReportDetails `json:"no_password_link_gen_create_report_details,omitempty"`
+	// NoPasswordLinkGenReportFailedDetails : has no documentation (yet)
+	NoPasswordLinkGenReportFailedDetails *NoPasswordLinkGenReportFailedDetails `json:"no_password_link_gen_report_failed_details,omitempty"`
+	// NoPasswordLinkViewCreateReportDetails : has no documentation (yet)
+	NoPasswordLinkViewCreateReportDetails *NoPasswordLinkViewCreateReportDetails `json:"no_password_link_view_create_report_details,omitempty"`
+	// NoPasswordLinkViewReportFailedDetails : has no documentation (yet)
+	NoPasswordLinkViewReportFailedDetails *NoPasswordLinkViewReportFailedDetails `json:"no_password_link_view_report_failed_details,omitempty"`
+	// OutdatedLinkViewCreateReportDetails : has no documentation (yet)
+	OutdatedLinkViewCreateReportDetails *OutdatedLinkViewCreateReportDetails `json:"outdated_link_view_create_report_details,omitempty"`
+	// OutdatedLinkViewReportFailedDetails : has no documentation (yet)
+	OutdatedLinkViewReportFailedDetails *OutdatedLinkViewReportFailedDetails `json:"outdated_link_view_report_failed_details,omitempty"`
 	// PaperAdminExportStartDetails : has no documentation (yet)
 	PaperAdminExportStartDetails *PaperAdminExportStartDetails `json:"paper_admin_export_start_details,omitempty"`
 	// SmartSyncCreateAdminPrivilegeReportDetails : has no documentation (yet)
@@ -2609,6 +3754,16 @@ type EventDetails struct {
 	TeamActivityCreateReportFailDetails *TeamActivityCreateReportFailDetails `json:"team_activity_create_report_fail_details,omitempty"`
 	// CollectionShareDetails : has no documentation (yet)
 	CollectionShareDetails *CollectionShareDetails `json:"collection_share_details,omitempty"`
+	// FileTransfersFileAddDetails : has no documentation (yet)
+	FileTransfersFileAddDetails *FileTransfersFileAddDetails `json:"file_transfers_file_add_details,omitempty"`
+	// FileTransfersTransferDeleteDetails : has no documentation (yet)
+	FileTransfersTransferDeleteDetails *FileTransfersTransferDeleteDetails `json:"file_transfers_transfer_delete_details,omitempty"`
+	// FileTransfersTransferDownloadDetails : has no documentation (yet)
+	FileTransfersTransferDownloadDetails *FileTransfersTransferDownloadDetails `json:"file_transfers_transfer_download_details,omitempty"`
+	// FileTransfersTransferSendDetails : has no documentation (yet)
+	FileTransfersTransferSendDetails *FileTransfersTransferSendDetails `json:"file_transfers_transfer_send_details,omitempty"`
+	// FileTransfersTransferViewDetails : has no documentation (yet)
+	FileTransfersTransferViewDetails *FileTransfersTransferViewDetails `json:"file_transfers_transfer_view_details,omitempty"`
 	// NoteAclInviteOnlyDetails : has no documentation (yet)
 	NoteAclInviteOnlyDetails *NoteAclInviteOnlyDetails `json:"note_acl_invite_only_details,omitempty"`
 	// NoteAclLinkDetails : has no documentation (yet)
@@ -2687,6 +3842,10 @@ type EventDetails struct {
 	SharedContentRemoveMemberDetails *SharedContentRemoveMemberDetails `json:"shared_content_remove_member_details,omitempty"`
 	// SharedContentRequestAccessDetails : has no documentation (yet)
 	SharedContentRequestAccessDetails *SharedContentRequestAccessDetails `json:"shared_content_request_access_details,omitempty"`
+	// SharedContentRestoreInviteesDetails : has no documentation (yet)
+	SharedContentRestoreInviteesDetails *SharedContentRestoreInviteesDetails `json:"shared_content_restore_invitees_details,omitempty"`
+	// SharedContentRestoreMemberDetails : has no documentation (yet)
+	SharedContentRestoreMemberDetails *SharedContentRestoreMemberDetails `json:"shared_content_restore_member_details,omitempty"`
 	// SharedContentUnshareDetails : has no documentation (yet)
 	SharedContentUnshareDetails *SharedContentUnshareDetails `json:"shared_content_unshare_details,omitempty"`
 	// SharedContentViewDetails : has no documentation (yet)
@@ -2729,12 +3888,36 @@ type EventDetails struct {
 	SharedLinkDownloadDetails *SharedLinkDownloadDetails `json:"shared_link_download_details,omitempty"`
 	// SharedLinkRemoveExpiryDetails : has no documentation (yet)
 	SharedLinkRemoveExpiryDetails *SharedLinkRemoveExpiryDetails `json:"shared_link_remove_expiry_details,omitempty"`
+	// SharedLinkSettingsAddExpirationDetails : has no documentation (yet)
+	SharedLinkSettingsAddExpirationDetails *SharedLinkSettingsAddExpirationDetails `json:"shared_link_settings_add_expiration_details,omitempty"`
+	// SharedLinkSettingsAddPasswordDetails : has no documentation (yet)
+	SharedLinkSettingsAddPasswordDetails *SharedLinkSettingsAddPasswordDetails `json:"shared_link_settings_add_password_details,omitempty"`
+	// SharedLinkSettingsAllowDownloadDisabledDetails : has no documentation
+	// (yet)
+	SharedLinkSettingsAllowDownloadDisabledDetails *SharedLinkSettingsAllowDownloadDisabledDetails `json:"shared_link_settings_allow_download_disabled_details,omitempty"`
+	// SharedLinkSettingsAllowDownloadEnabledDetails : has no documentation
+	// (yet)
+	SharedLinkSettingsAllowDownloadEnabledDetails *SharedLinkSettingsAllowDownloadEnabledDetails `json:"shared_link_settings_allow_download_enabled_details,omitempty"`
+	// SharedLinkSettingsChangeAudienceDetails : has no documentation (yet)
+	SharedLinkSettingsChangeAudienceDetails *SharedLinkSettingsChangeAudienceDetails `json:"shared_link_settings_change_audience_details,omitempty"`
+	// SharedLinkSettingsChangeExpirationDetails : has no documentation (yet)
+	SharedLinkSettingsChangeExpirationDetails *SharedLinkSettingsChangeExpirationDetails `json:"shared_link_settings_change_expiration_details,omitempty"`
+	// SharedLinkSettingsChangePasswordDetails : has no documentation (yet)
+	SharedLinkSettingsChangePasswordDetails *SharedLinkSettingsChangePasswordDetails `json:"shared_link_settings_change_password_details,omitempty"`
+	// SharedLinkSettingsRemoveExpirationDetails : has no documentation (yet)
+	SharedLinkSettingsRemoveExpirationDetails *SharedLinkSettingsRemoveExpirationDetails `json:"shared_link_settings_remove_expiration_details,omitempty"`
+	// SharedLinkSettingsRemovePasswordDetails : has no documentation (yet)
+	SharedLinkSettingsRemovePasswordDetails *SharedLinkSettingsRemovePasswordDetails `json:"shared_link_settings_remove_password_details,omitempty"`
 	// SharedLinkShareDetails : has no documentation (yet)
 	SharedLinkShareDetails *SharedLinkShareDetails `json:"shared_link_share_details,omitempty"`
 	// SharedLinkViewDetails : has no documentation (yet)
 	SharedLinkViewDetails *SharedLinkViewDetails `json:"shared_link_view_details,omitempty"`
 	// SharedNoteOpenedDetails : has no documentation (yet)
 	SharedNoteOpenedDetails *SharedNoteOpenedDetails `json:"shared_note_opened_details,omitempty"`
+	// ShmodelDisableDownloadsDetails : has no documentation (yet)
+	ShmodelDisableDownloadsDetails *ShmodelDisableDownloadsDetails `json:"shmodel_disable_downloads_details,omitempty"`
+	// ShmodelEnableDownloadsDetails : has no documentation (yet)
+	ShmodelEnableDownloadsDetails *ShmodelEnableDownloadsDetails `json:"shmodel_enable_downloads_details,omitempty"`
 	// ShmodelGroupShareDetails : has no documentation (yet)
 	ShmodelGroupShareDetails *ShmodelGroupShareDetails `json:"shmodel_group_share_details,omitempty"`
 	// ShowcaseAccessGrantedDetails : has no documentation (yet)
@@ -2825,10 +4008,18 @@ type EventDetails struct {
 	AllowDownloadEnabledDetails *AllowDownloadEnabledDetails `json:"allow_download_enabled_details,omitempty"`
 	// CameraUploadsPolicyChangedDetails : has no documentation (yet)
 	CameraUploadsPolicyChangedDetails *CameraUploadsPolicyChangedDetails `json:"camera_uploads_policy_changed_details,omitempty"`
+	// ClassificationChangePolicyDetails : has no documentation (yet)
+	ClassificationChangePolicyDetails *ClassificationChangePolicyDetails `json:"classification_change_policy_details,omitempty"`
+	// ComputerBackupPolicyChangedDetails : has no documentation (yet)
+	ComputerBackupPolicyChangedDetails *ComputerBackupPolicyChangedDetails `json:"computer_backup_policy_changed_details,omitempty"`
+	// ContentAdministrationPolicyChangedDetails : has no documentation (yet)
+	ContentAdministrationPolicyChangedDetails *ContentAdministrationPolicyChangedDetails `json:"content_administration_policy_changed_details,omitempty"`
 	// DataPlacementRestrictionChangePolicyDetails : has no documentation (yet)
 	DataPlacementRestrictionChangePolicyDetails *DataPlacementRestrictionChangePolicyDetails `json:"data_placement_restriction_change_policy_details,omitempty"`
 	// DataPlacementRestrictionSatisfyPolicyDetails : has no documentation (yet)
 	DataPlacementRestrictionSatisfyPolicyDetails *DataPlacementRestrictionSatisfyPolicyDetails `json:"data_placement_restriction_satisfy_policy_details,omitempty"`
+	// DeviceApprovalsAddExceptionDetails : has no documentation (yet)
+	DeviceApprovalsAddExceptionDetails *DeviceApprovalsAddExceptionDetails `json:"device_approvals_add_exception_details,omitempty"`
 	// DeviceApprovalsChangeDesktopPolicyDetails : has no documentation (yet)
 	DeviceApprovalsChangeDesktopPolicyDetails *DeviceApprovalsChangeDesktopPolicyDetails `json:"device_approvals_change_desktop_policy_details,omitempty"`
 	// DeviceApprovalsChangeMobilePolicyDetails : has no documentation (yet)
@@ -2837,6 +4028,8 @@ type EventDetails struct {
 	DeviceApprovalsChangeOverageActionDetails *DeviceApprovalsChangeOverageActionDetails `json:"device_approvals_change_overage_action_details,omitempty"`
 	// DeviceApprovalsChangeUnlinkActionDetails : has no documentation (yet)
 	DeviceApprovalsChangeUnlinkActionDetails *DeviceApprovalsChangeUnlinkActionDetails `json:"device_approvals_change_unlink_action_details,omitempty"`
+	// DeviceApprovalsRemoveExceptionDetails : has no documentation (yet)
+	DeviceApprovalsRemoveExceptionDetails *DeviceApprovalsRemoveExceptionDetails `json:"device_approvals_remove_exception_details,omitempty"`
 	// DirectoryRestrictionsAddMembersDetails : has no documentation (yet)
 	DirectoryRestrictionsAddMembersDetails *DirectoryRestrictionsAddMembersDetails `json:"directory_restrictions_add_members_details,omitempty"`
 	// DirectoryRestrictionsRemoveMembersDetails : has no documentation (yet)
@@ -2851,6 +4044,8 @@ type EventDetails struct {
 	ExtendedVersionHistoryChangePolicyDetails *ExtendedVersionHistoryChangePolicyDetails `json:"extended_version_history_change_policy_details,omitempty"`
 	// FileCommentsChangePolicyDetails : has no documentation (yet)
 	FileCommentsChangePolicyDetails *FileCommentsChangePolicyDetails `json:"file_comments_change_policy_details,omitempty"`
+	// FileLockingPolicyChangedDetails : has no documentation (yet)
+	FileLockingPolicyChangedDetails *FileLockingPolicyChangedDetails `json:"file_locking_policy_changed_details,omitempty"`
 	// FileRequestsChangePolicyDetails : has no documentation (yet)
 	FileRequestsChangePolicyDetails *FileRequestsChangePolicyDetails `json:"file_requests_change_policy_details,omitempty"`
 	// FileRequestsEmailsEnabledDetails : has no documentation (yet)
@@ -2858,6 +4053,8 @@ type EventDetails struct {
 	// FileRequestsEmailsRestrictedToTeamOnlyDetails : has no documentation
 	// (yet)
 	FileRequestsEmailsRestrictedToTeamOnlyDetails *FileRequestsEmailsRestrictedToTeamOnlyDetails `json:"file_requests_emails_restricted_to_team_only_details,omitempty"`
+	// FileTransfersPolicyChangedDetails : has no documentation (yet)
+	FileTransfersPolicyChangedDetails *FileTransfersPolicyChangedDetails `json:"file_transfers_policy_changed_details,omitempty"`
 	// GoogleSsoChangePolicyDetails : has no documentation (yet)
 	GoogleSsoChangePolicyDetails *GoogleSsoChangePolicyDetails `json:"google_sso_change_policy_details,omitempty"`
 	// GroupUserManagementChangePolicyDetails : has no documentation (yet)
@@ -2866,6 +4063,8 @@ type EventDetails struct {
 	IntegrationPolicyChangedDetails *IntegrationPolicyChangedDetails `json:"integration_policy_changed_details,omitempty"`
 	// MemberRequestsChangePolicyDetails : has no documentation (yet)
 	MemberRequestsChangePolicyDetails *MemberRequestsChangePolicyDetails `json:"member_requests_change_policy_details,omitempty"`
+	// MemberSendInvitePolicyChangedDetails : has no documentation (yet)
+	MemberSendInvitePolicyChangedDetails *MemberSendInvitePolicyChangedDetails `json:"member_send_invite_policy_changed_details,omitempty"`
 	// MemberSpaceLimitsAddExceptionDetails : has no documentation (yet)
 	MemberSpaceLimitsAddExceptionDetails *MemberSpaceLimitsAddExceptionDetails `json:"member_space_limits_add_exception_details,omitempty"`
 	// MemberSpaceLimitsChangeCapsTypePolicyDetails : has no documentation (yet)
@@ -2896,10 +4095,17 @@ type EventDetails struct {
 	PaperEnabledUsersGroupAdditionDetails *PaperEnabledUsersGroupAdditionDetails `json:"paper_enabled_users_group_addition_details,omitempty"`
 	// PaperEnabledUsersGroupRemovalDetails : has no documentation (yet)
 	PaperEnabledUsersGroupRemovalDetails *PaperEnabledUsersGroupRemovalDetails `json:"paper_enabled_users_group_removal_details,omitempty"`
+	// PasswordStrengthRequirementsChangePolicyDetails : has no documentation
+	// (yet)
+	PasswordStrengthRequirementsChangePolicyDetails *PasswordStrengthRequirementsChangePolicyDetails `json:"password_strength_requirements_change_policy_details,omitempty"`
 	// PermanentDeleteChangePolicyDetails : has no documentation (yet)
 	PermanentDeleteChangePolicyDetails *PermanentDeleteChangePolicyDetails `json:"permanent_delete_change_policy_details,omitempty"`
 	// ResellerSupportChangePolicyDetails : has no documentation (yet)
 	ResellerSupportChangePolicyDetails *ResellerSupportChangePolicyDetails `json:"reseller_support_change_policy_details,omitempty"`
+	// RewindPolicyChangedDetails : has no documentation (yet)
+	RewindPolicyChangedDetails *RewindPolicyChangedDetails `json:"rewind_policy_changed_details,omitempty"`
+	// SendForSignaturePolicyChangedDetails : has no documentation (yet)
+	SendForSignaturePolicyChangedDetails *SendForSignaturePolicyChangedDetails `json:"send_for_signature_policy_changed_details,omitempty"`
 	// SharingChangeFolderJoinPolicyDetails : has no documentation (yet)
 	SharingChangeFolderJoinPolicyDetails *SharingChangeFolderJoinPolicyDetails `json:"sharing_change_folder_join_policy_details,omitempty"`
 	// SharingChangeLinkPolicyDetails : has no documentation (yet)
@@ -2912,6 +4118,8 @@ type EventDetails struct {
 	ShowcaseChangeEnabledPolicyDetails *ShowcaseChangeEnabledPolicyDetails `json:"showcase_change_enabled_policy_details,omitempty"`
 	// ShowcaseChangeExternalSharingPolicyDetails : has no documentation (yet)
 	ShowcaseChangeExternalSharingPolicyDetails *ShowcaseChangeExternalSharingPolicyDetails `json:"showcase_change_external_sharing_policy_details,omitempty"`
+	// SmarterSmartSyncPolicyChangedDetails : has no documentation (yet)
+	SmarterSmartSyncPolicyChangedDetails *SmarterSmartSyncPolicyChangedDetails `json:"smarter_smart_sync_policy_changed_details,omitempty"`
 	// SmartSyncChangePolicyDetails : has no documentation (yet)
 	SmartSyncChangePolicyDetails *SmartSyncChangePolicyDetails `json:"smart_sync_change_policy_details,omitempty"`
 	// SmartSyncNotOptOutDetails : has no documentation (yet)
@@ -2920,16 +4128,28 @@ type EventDetails struct {
 	SmartSyncOptOutDetails *SmartSyncOptOutDetails `json:"smart_sync_opt_out_details,omitempty"`
 	// SsoChangePolicyDetails : has no documentation (yet)
 	SsoChangePolicyDetails *SsoChangePolicyDetails `json:"sso_change_policy_details,omitempty"`
+	// TeamBrandingPolicyChangedDetails : has no documentation (yet)
+	TeamBrandingPolicyChangedDetails *TeamBrandingPolicyChangedDetails `json:"team_branding_policy_changed_details,omitempty"`
 	// TeamExtensionsPolicyChangedDetails : has no documentation (yet)
 	TeamExtensionsPolicyChangedDetails *TeamExtensionsPolicyChangedDetails `json:"team_extensions_policy_changed_details,omitempty"`
 	// TeamSelectiveSyncPolicyChangedDetails : has no documentation (yet)
 	TeamSelectiveSyncPolicyChangedDetails *TeamSelectiveSyncPolicyChangedDetails `json:"team_selective_sync_policy_changed_details,omitempty"`
+	// TeamSharingWhitelistSubjectsChangedDetails : has no documentation (yet)
+	TeamSharingWhitelistSubjectsChangedDetails *TeamSharingWhitelistSubjectsChangedDetails `json:"team_sharing_whitelist_subjects_changed_details,omitempty"`
+	// TfaAddExceptionDetails : has no documentation (yet)
+	TfaAddExceptionDetails *TfaAddExceptionDetails `json:"tfa_add_exception_details,omitempty"`
 	// TfaChangePolicyDetails : has no documentation (yet)
 	TfaChangePolicyDetails *TfaChangePolicyDetails `json:"tfa_change_policy_details,omitempty"`
+	// TfaRemoveExceptionDetails : has no documentation (yet)
+	TfaRemoveExceptionDetails *TfaRemoveExceptionDetails `json:"tfa_remove_exception_details,omitempty"`
 	// TwoAccountChangePolicyDetails : has no documentation (yet)
 	TwoAccountChangePolicyDetails *TwoAccountChangePolicyDetails `json:"two_account_change_policy_details,omitempty"`
 	// ViewerInfoPolicyChangedDetails : has no documentation (yet)
 	ViewerInfoPolicyChangedDetails *ViewerInfoPolicyChangedDetails `json:"viewer_info_policy_changed_details,omitempty"`
+	// WatermarkingPolicyChangedDetails : has no documentation (yet)
+	WatermarkingPolicyChangedDetails *WatermarkingPolicyChangedDetails `json:"watermarking_policy_changed_details,omitempty"`
+	// WebSessionsChangeActiveSessionLimitDetails : has no documentation (yet)
+	WebSessionsChangeActiveSessionLimitDetails *WebSessionsChangeActiveSessionLimitDetails `json:"web_sessions_change_active_session_limit_details,omitempty"`
 	// WebSessionsChangeFixedLengthPolicyDetails : has no documentation (yet)
 	WebSessionsChangeFixedLengthPolicyDetails *WebSessionsChangeFixedLengthPolicyDetails `json:"web_sessions_change_fixed_length_policy_details,omitempty"`
 	// WebSessionsChangeIdleLengthPolicyDetails : has no documentation (yet)
@@ -2938,14 +4158,20 @@ type EventDetails struct {
 	TeamMergeFromDetails *TeamMergeFromDetails `json:"team_merge_from_details,omitempty"`
 	// TeamMergeToDetails : has no documentation (yet)
 	TeamMergeToDetails *TeamMergeToDetails `json:"team_merge_to_details,omitempty"`
+	// TeamProfileAddBackgroundDetails : has no documentation (yet)
+	TeamProfileAddBackgroundDetails *TeamProfileAddBackgroundDetails `json:"team_profile_add_background_details,omitempty"`
 	// TeamProfileAddLogoDetails : has no documentation (yet)
 	TeamProfileAddLogoDetails *TeamProfileAddLogoDetails `json:"team_profile_add_logo_details,omitempty"`
+	// TeamProfileChangeBackgroundDetails : has no documentation (yet)
+	TeamProfileChangeBackgroundDetails *TeamProfileChangeBackgroundDetails `json:"team_profile_change_background_details,omitempty"`
 	// TeamProfileChangeDefaultLanguageDetails : has no documentation (yet)
 	TeamProfileChangeDefaultLanguageDetails *TeamProfileChangeDefaultLanguageDetails `json:"team_profile_change_default_language_details,omitempty"`
 	// TeamProfileChangeLogoDetails : has no documentation (yet)
 	TeamProfileChangeLogoDetails *TeamProfileChangeLogoDetails `json:"team_profile_change_logo_details,omitempty"`
 	// TeamProfileChangeNameDetails : has no documentation (yet)
 	TeamProfileChangeNameDetails *TeamProfileChangeNameDetails `json:"team_profile_change_name_details,omitempty"`
+	// TeamProfileRemoveBackgroundDetails : has no documentation (yet)
+	TeamProfileRemoveBackgroundDetails *TeamProfileRemoveBackgroundDetails `json:"team_profile_remove_background_details,omitempty"`
 	// TeamProfileRemoveLogoDetails : has no documentation (yet)
 	TeamProfileRemoveLogoDetails *TeamProfileRemoveLogoDetails `json:"team_profile_remove_logo_details,omitempty"`
 	// TfaAddBackupPhoneDetails : has no documentation (yet)
@@ -2962,8 +4188,20 @@ type EventDetails struct {
 	TfaRemoveSecurityKeyDetails *TfaRemoveSecurityKeyDetails `json:"tfa_remove_security_key_details,omitempty"`
 	// TfaResetDetails : has no documentation (yet)
 	TfaResetDetails *TfaResetDetails `json:"tfa_reset_details,omitempty"`
+	// ChangedEnterpriseAdminRoleDetails : has no documentation (yet)
+	ChangedEnterpriseAdminRoleDetails *ChangedEnterpriseAdminRoleDetails `json:"changed_enterprise_admin_role_details,omitempty"`
+	// ChangedEnterpriseConnectedTeamStatusDetails : has no documentation (yet)
+	ChangedEnterpriseConnectedTeamStatusDetails *ChangedEnterpriseConnectedTeamStatusDetails `json:"changed_enterprise_connected_team_status_details,omitempty"`
+	// EndedEnterpriseAdminSessionDetails : has no documentation (yet)
+	EndedEnterpriseAdminSessionDetails *EndedEnterpriseAdminSessionDetails `json:"ended_enterprise_admin_session_details,omitempty"`
+	// EndedEnterpriseAdminSessionDeprecatedDetails : has no documentation (yet)
+	EndedEnterpriseAdminSessionDeprecatedDetails *EndedEnterpriseAdminSessionDeprecatedDetails `json:"ended_enterprise_admin_session_deprecated_details,omitempty"`
+	// EnterpriseSettingsLockingDetails : has no documentation (yet)
+	EnterpriseSettingsLockingDetails *EnterpriseSettingsLockingDetails `json:"enterprise_settings_locking_details,omitempty"`
 	// GuestAdminChangeStatusDetails : has no documentation (yet)
 	GuestAdminChangeStatusDetails *GuestAdminChangeStatusDetails `json:"guest_admin_change_status_details,omitempty"`
+	// StartedEnterpriseAdminSessionDetails : has no documentation (yet)
+	StartedEnterpriseAdminSessionDetails *StartedEnterpriseAdminSessionDetails `json:"started_enterprise_admin_session_details,omitempty"`
 	// TeamMergeRequestAcceptedDetails : has no documentation (yet)
 	TeamMergeRequestAcceptedDetails *TeamMergeRequestAcceptedDetails `json:"team_merge_request_accepted_details,omitempty"`
 	// TeamMergeRequestAcceptedShownToPrimaryTeamDetails : has no documentation
@@ -3019,6 +4257,8 @@ type EventDetails struct {
 
 // Valid tag values for EventDetails
 const (
+	EventDetailsAdminAlertingChangedAlertConfigDetails              = "admin_alerting_changed_alert_config_details"
+	EventDetailsAdminAlertingTriggeredAlertDetails                  = "admin_alerting_triggered_alert_details"
 	EventDetailsAppLinkTeamDetails                                  = "app_link_team_details"
 	EventDetailsAppLinkUserDetails                                  = "app_link_user_details"
 	EventDetailsAppUnlinkTeamDetails                                = "app_unlink_team_details"
@@ -3033,6 +4273,28 @@ const (
 	EventDetailsFileResolveCommentDetails                           = "file_resolve_comment_details"
 	EventDetailsFileUnlikeCommentDetails                            = "file_unlike_comment_details"
 	EventDetailsFileUnresolveCommentDetails                         = "file_unresolve_comment_details"
+	EventDetailsGovernancePolicyAddFoldersDetails                   = "governance_policy_add_folders_details"
+	EventDetailsGovernancePolicyAddFolderFailedDetails              = "governance_policy_add_folder_failed_details"
+	EventDetailsGovernancePolicyCreateDetails                       = "governance_policy_create_details"
+	EventDetailsGovernancePolicyDeleteDetails                       = "governance_policy_delete_details"
+	EventDetailsGovernancePolicyEditDetailsDetails                  = "governance_policy_edit_details_details"
+	EventDetailsGovernancePolicyEditDurationDetails                 = "governance_policy_edit_duration_details"
+	EventDetailsGovernancePolicyExportCreatedDetails                = "governance_policy_export_created_details"
+	EventDetailsGovernancePolicyExportRemovedDetails                = "governance_policy_export_removed_details"
+	EventDetailsGovernancePolicyRemoveFoldersDetails                = "governance_policy_remove_folders_details"
+	EventDetailsGovernancePolicyReportCreatedDetails                = "governance_policy_report_created_details"
+	EventDetailsGovernancePolicyZipPartDownloadedDetails            = "governance_policy_zip_part_downloaded_details"
+	EventDetailsLegalHoldsActivateAHoldDetails                      = "legal_holds_activate_a_hold_details"
+	EventDetailsLegalHoldsAddMembersDetails                         = "legal_holds_add_members_details"
+	EventDetailsLegalHoldsChangeHoldDetailsDetails                  = "legal_holds_change_hold_details_details"
+	EventDetailsLegalHoldsChangeHoldNameDetails                     = "legal_holds_change_hold_name_details"
+	EventDetailsLegalHoldsExportAHoldDetails                        = "legal_holds_export_a_hold_details"
+	EventDetailsLegalHoldsExportCancelledDetails                    = "legal_holds_export_cancelled_details"
+	EventDetailsLegalHoldsExportDownloadedDetails                   = "legal_holds_export_downloaded_details"
+	EventDetailsLegalHoldsExportRemovedDetails                      = "legal_holds_export_removed_details"
+	EventDetailsLegalHoldsReleaseAHoldDetails                       = "legal_holds_release_a_hold_details"
+	EventDetailsLegalHoldsRemoveMembersDetails                      = "legal_holds_remove_members_details"
+	EventDetailsLegalHoldsReportAHoldDetails                        = "legal_holds_report_a_hold_details"
 	EventDetailsDeviceChangeIpDesktopDetails                        = "device_change_ip_desktop_details"
 	EventDetailsDeviceChangeIpMobileDetails                         = "device_change_ip_mobile_details"
 	EventDetailsDeviceChangeIpWebDetails                            = "device_change_ip_web_details"
@@ -3042,7 +4304,10 @@ const (
 	EventDetailsDeviceLinkSuccessDetails                            = "device_link_success_details"
 	EventDetailsDeviceManagementDisabledDetails                     = "device_management_disabled_details"
 	EventDetailsDeviceManagementEnabledDetails                      = "device_management_enabled_details"
+	EventDetailsDeviceSyncBackupStatusChangedDetails                = "device_sync_backup_status_changed_details"
 	EventDetailsDeviceUnlinkDetails                                 = "device_unlink_details"
+	EventDetailsDropboxPasswordsExportedDetails                     = "dropbox_passwords_exported_details"
+	EventDetailsDropboxPasswordsNewDeviceEnrolledDetails            = "dropbox_passwords_new_device_enrolled_details"
 	EventDetailsEmmRefreshAuthTokenDetails                          = "emm_refresh_auth_token_details"
 	EventDetailsAccountCaptureChangeAvailabilityDetails             = "account_capture_change_availability_details"
 	EventDetailsAccountCaptureMigrateAccountDetails                 = "account_capture_migrate_account_details"
@@ -3066,6 +4331,7 @@ const (
 	EventDetailsFileDownloadDetails                                 = "file_download_details"
 	EventDetailsFileEditDetails                                     = "file_edit_details"
 	EventDetailsFileGetCopyReferenceDetails                         = "file_get_copy_reference_details"
+	EventDetailsFileLockingLockStatusChangedDetails                 = "file_locking_lock_status_changed_details"
 	EventDetailsFileMoveDetails                                     = "file_move_details"
 	EventDetailsFilePermanentlyDeleteDetails                        = "file_permanently_delete_details"
 	EventDetailsFilePreviewDetails                                  = "file_preview_details"
@@ -3074,6 +4340,10 @@ const (
 	EventDetailsFileRevertDetails                                   = "file_revert_details"
 	EventDetailsFileRollbackChangesDetails                          = "file_rollback_changes_details"
 	EventDetailsFileSaveCopyReferenceDetails                        = "file_save_copy_reference_details"
+	EventDetailsFolderOverviewDescriptionChangedDetails             = "folder_overview_description_changed_details"
+	EventDetailsFolderOverviewItemPinnedDetails                     = "folder_overview_item_pinned_details"
+	EventDetailsFolderOverviewItemUnpinnedDetails                   = "folder_overview_item_unpinned_details"
+	EventDetailsRewindFolderDetails                                 = "rewind_folder_details"
 	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
 	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
 	EventDetailsFileRequestCreateDetails                            = "file_request_create_details"
@@ -3092,6 +4362,7 @@ const (
 	EventDetailsGroupRemoveExternalIdDetails                        = "group_remove_external_id_details"
 	EventDetailsGroupRemoveMemberDetails                            = "group_remove_member_details"
 	EventDetailsGroupRenameDetails                                  = "group_rename_details"
+	EventDetailsAccountLockOrUnlockedDetails                        = "account_lock_or_unlocked_details"
 	EventDetailsEmmErrorDetails                                     = "emm_error_details"
 	EventDetailsGuestAdminSignedInViaTrustedTeamsDetails            = "guest_admin_signed_in_via_trusted_teams_details"
 	EventDetailsGuestAdminSignedOutViaTrustedTeamsDetails           = "guest_admin_signed_out_via_trusted_teams_details"
@@ -3103,6 +4374,8 @@ const (
 	EventDetailsSignInAsSessionEndDetails                           = "sign_in_as_session_end_details"
 	EventDetailsSignInAsSessionStartDetails                         = "sign_in_as_session_start_details"
 	EventDetailsSsoErrorDetails                                     = "sso_error_details"
+	EventDetailsCreateTeamInviteLinkDetails                         = "create_team_invite_link_details"
+	EventDetailsDeleteTeamInviteLinkDetails                         = "delete_team_invite_link_details"
 	EventDetailsMemberAddExternalIdDetails                          = "member_add_external_id_details"
 	EventDetailsMemberAddNameDetails                                = "member_add_name_details"
 	EventDetailsMemberChangeAdminRoleDetails                        = "member_change_admin_role_details"
@@ -3110,17 +4383,31 @@ const (
 	EventDetailsMemberChangeExternalIdDetails                       = "member_change_external_id_details"
 	EventDetailsMemberChangeMembershipTypeDetails                   = "member_change_membership_type_details"
 	EventDetailsMemberChangeNameDetails                             = "member_change_name_details"
+	EventDetailsMemberChangeResellerRoleDetails                     = "member_change_reseller_role_details"
 	EventDetailsMemberChangeStatusDetails                           = "member_change_status_details"
 	EventDetailsMemberDeleteManualContactsDetails                   = "member_delete_manual_contacts_details"
+	EventDetailsMemberDeleteProfilePhotoDetails                     = "member_delete_profile_photo_details"
 	EventDetailsMemberPermanentlyDeleteAccountContentsDetails       = "member_permanently_delete_account_contents_details"
 	EventDetailsMemberRemoveExternalIdDetails                       = "member_remove_external_id_details"
+	EventDetailsMemberSetProfilePhotoDetails                        = "member_set_profile_photo_details"
 	EventDetailsMemberSpaceLimitsAddCustomQuotaDetails              = "member_space_limits_add_custom_quota_details"
 	EventDetailsMemberSpaceLimitsChangeCustomQuotaDetails           = "member_space_limits_change_custom_quota_details"
 	EventDetailsMemberSpaceLimitsChangeStatusDetails                = "member_space_limits_change_status_details"
 	EventDetailsMemberSpaceLimitsRemoveCustomQuotaDetails           = "member_space_limits_remove_custom_quota_details"
 	EventDetailsMemberSuggestDetails                                = "member_suggest_details"
 	EventDetailsMemberTransferAccountContentsDetails                = "member_transfer_account_contents_details"
+	EventDetailsPendingSecondaryEmailAddedDetails                   = "pending_secondary_email_added_details"
+	EventDetailsSecondaryEmailDeletedDetails                        = "secondary_email_deleted_details"
+	EventDetailsSecondaryEmailVerifiedDetails                       = "secondary_email_verified_details"
 	EventDetailsSecondaryMailsPolicyChangedDetails                  = "secondary_mails_policy_changed_details"
+	EventDetailsBinderAddPageDetails                                = "binder_add_page_details"
+	EventDetailsBinderAddSectionDetails                             = "binder_add_section_details"
+	EventDetailsBinderRemovePageDetails                             = "binder_remove_page_details"
+	EventDetailsBinderRemoveSectionDetails                          = "binder_remove_section_details"
+	EventDetailsBinderRenamePageDetails                             = "binder_rename_page_details"
+	EventDetailsBinderRenameSectionDetails                          = "binder_rename_section_details"
+	EventDetailsBinderReorderPageDetails                            = "binder_reorder_page_details"
+	EventDetailsBinderReorderSectionDetails                         = "binder_reorder_section_details"
 	EventDetailsPaperContentAddMemberDetails                        = "paper_content_add_member_details"
 	EventDetailsPaperContentAddToFolderDetails                      = "paper_content_add_to_folder_details"
 	EventDetailsPaperContentArchiveDetails                          = "paper_content_archive_details"
@@ -3158,20 +4445,39 @@ const (
 	EventDetailsPaperFolderDeletedDetails                           = "paper_folder_deleted_details"
 	EventDetailsPaperFolderFollowedDetails                          = "paper_folder_followed_details"
 	EventDetailsPaperFolderTeamInviteDetails                        = "paper_folder_team_invite_details"
+	EventDetailsPaperPublishedLinkChangePermissionDetails           = "paper_published_link_change_permission_details"
 	EventDetailsPaperPublishedLinkCreateDetails                     = "paper_published_link_create_details"
 	EventDetailsPaperPublishedLinkDisabledDetails                   = "paper_published_link_disabled_details"
 	EventDetailsPaperPublishedLinkViewDetails                       = "paper_published_link_view_details"
 	EventDetailsPasswordChangeDetails                               = "password_change_details"
 	EventDetailsPasswordResetDetails                                = "password_reset_details"
 	EventDetailsPasswordResetAllDetails                             = "password_reset_all_details"
+	EventDetailsClassificationCreateReportDetails                   = "classification_create_report_details"
+	EventDetailsClassificationCreateReportFailDetails               = "classification_create_report_fail_details"
 	EventDetailsEmmCreateExceptionsReportDetails                    = "emm_create_exceptions_report_details"
 	EventDetailsEmmCreateUsageReportDetails                         = "emm_create_usage_report_details"
 	EventDetailsExportMembersReportDetails                          = "export_members_report_details"
+	EventDetailsExportMembersReportFailDetails                      = "export_members_report_fail_details"
+	EventDetailsExternalSharingCreateReportDetails                  = "external_sharing_create_report_details"
+	EventDetailsExternalSharingReportFailedDetails                  = "external_sharing_report_failed_details"
+	EventDetailsNoExpirationLinkGenCreateReportDetails              = "no_expiration_link_gen_create_report_details"
+	EventDetailsNoExpirationLinkGenReportFailedDetails              = "no_expiration_link_gen_report_failed_details"
+	EventDetailsNoPasswordLinkGenCreateReportDetails                = "no_password_link_gen_create_report_details"
+	EventDetailsNoPasswordLinkGenReportFailedDetails                = "no_password_link_gen_report_failed_details"
+	EventDetailsNoPasswordLinkViewCreateReportDetails               = "no_password_link_view_create_report_details"
+	EventDetailsNoPasswordLinkViewReportFailedDetails               = "no_password_link_view_report_failed_details"
+	EventDetailsOutdatedLinkViewCreateReportDetails                 = "outdated_link_view_create_report_details"
+	EventDetailsOutdatedLinkViewReportFailedDetails                 = "outdated_link_view_report_failed_details"
 	EventDetailsPaperAdminExportStartDetails                        = "paper_admin_export_start_details"
 	EventDetailsSmartSyncCreateAdminPrivilegeReportDetails          = "smart_sync_create_admin_privilege_report_details"
 	EventDetailsTeamActivityCreateReportDetails                     = "team_activity_create_report_details"
 	EventDetailsTeamActivityCreateReportFailDetails                 = "team_activity_create_report_fail_details"
 	EventDetailsCollectionShareDetails                              = "collection_share_details"
+	EventDetailsFileTransfersFileAddDetails                         = "file_transfers_file_add_details"
+	EventDetailsFileTransfersTransferDeleteDetails                  = "file_transfers_transfer_delete_details"
+	EventDetailsFileTransfersTransferDownloadDetails                = "file_transfers_transfer_download_details"
+	EventDetailsFileTransfersTransferSendDetails                    = "file_transfers_transfer_send_details"
+	EventDetailsFileTransfersTransferViewDetails                    = "file_transfers_transfer_view_details"
 	EventDetailsNoteAclInviteOnlyDetails                            = "note_acl_invite_only_details"
 	EventDetailsNoteAclLinkDetails                                  = "note_acl_link_details"
 	EventDetailsNoteAclTeamLinkDetails                              = "note_acl_team_link_details"
@@ -3211,6 +4517,8 @@ const (
 	EventDetailsSharedContentRemoveLinkPasswordDetails              = "shared_content_remove_link_password_details"
 	EventDetailsSharedContentRemoveMemberDetails                    = "shared_content_remove_member_details"
 	EventDetailsSharedContentRequestAccessDetails                   = "shared_content_request_access_details"
+	EventDetailsSharedContentRestoreInviteesDetails                 = "shared_content_restore_invitees_details"
+	EventDetailsSharedContentRestoreMemberDetails                   = "shared_content_restore_member_details"
 	EventDetailsSharedContentUnshareDetails                         = "shared_content_unshare_details"
 	EventDetailsSharedContentViewDetails                            = "shared_content_view_details"
 	EventDetailsSharedFolderChangeLinkPolicyDetails                 = "shared_folder_change_link_policy_details"
@@ -3231,9 +4539,20 @@ const (
 	EventDetailsSharedLinkDisableDetails                            = "shared_link_disable_details"
 	EventDetailsSharedLinkDownloadDetails                           = "shared_link_download_details"
 	EventDetailsSharedLinkRemoveExpiryDetails                       = "shared_link_remove_expiry_details"
+	EventDetailsSharedLinkSettingsAddExpirationDetails              = "shared_link_settings_add_expiration_details"
+	EventDetailsSharedLinkSettingsAddPasswordDetails                = "shared_link_settings_add_password_details"
+	EventDetailsSharedLinkSettingsAllowDownloadDisabledDetails      = "shared_link_settings_allow_download_disabled_details"
+	EventDetailsSharedLinkSettingsAllowDownloadEnabledDetails       = "shared_link_settings_allow_download_enabled_details"
+	EventDetailsSharedLinkSettingsChangeAudienceDetails             = "shared_link_settings_change_audience_details"
+	EventDetailsSharedLinkSettingsChangeExpirationDetails           = "shared_link_settings_change_expiration_details"
+	EventDetailsSharedLinkSettingsChangePasswordDetails             = "shared_link_settings_change_password_details"
+	EventDetailsSharedLinkSettingsRemoveExpirationDetails           = "shared_link_settings_remove_expiration_details"
+	EventDetailsSharedLinkSettingsRemovePasswordDetails             = "shared_link_settings_remove_password_details"
 	EventDetailsSharedLinkShareDetails                              = "shared_link_share_details"
 	EventDetailsSharedLinkViewDetails                               = "shared_link_view_details"
 	EventDetailsSharedNoteOpenedDetails                             = "shared_note_opened_details"
+	EventDetailsShmodelDisableDownloadsDetails                      = "shmodel_disable_downloads_details"
+	EventDetailsShmodelEnableDownloadsDetails                       = "shmodel_enable_downloads_details"
 	EventDetailsShmodelGroupShareDetails                            = "shmodel_group_share_details"
 	EventDetailsShowcaseAccessGrantedDetails                        = "showcase_access_granted_details"
 	EventDetailsShowcaseAddMemberDetails                            = "showcase_add_member_details"
@@ -3279,12 +4598,17 @@ const (
 	EventDetailsAllowDownloadDisabledDetails                        = "allow_download_disabled_details"
 	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
 	EventDetailsCameraUploadsPolicyChangedDetails                   = "camera_uploads_policy_changed_details"
+	EventDetailsClassificationChangePolicyDetails                   = "classification_change_policy_details"
+	EventDetailsComputerBackupPolicyChangedDetails                  = "computer_backup_policy_changed_details"
+	EventDetailsContentAdministrationPolicyChangedDetails           = "content_administration_policy_changed_details"
 	EventDetailsDataPlacementRestrictionChangePolicyDetails         = "data_placement_restriction_change_policy_details"
 	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails        = "data_placement_restriction_satisfy_policy_details"
+	EventDetailsDeviceApprovalsAddExceptionDetails                  = "device_approvals_add_exception_details"
 	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails           = "device_approvals_change_desktop_policy_details"
 	EventDetailsDeviceApprovalsChangeMobilePolicyDetails            = "device_approvals_change_mobile_policy_details"
 	EventDetailsDeviceApprovalsChangeOverageActionDetails           = "device_approvals_change_overage_action_details"
 	EventDetailsDeviceApprovalsChangeUnlinkActionDetails            = "device_approvals_change_unlink_action_details"
+	EventDetailsDeviceApprovalsRemoveExceptionDetails               = "device_approvals_remove_exception_details"
 	EventDetailsDirectoryRestrictionsAddMembersDetails              = "directory_restrictions_add_members_details"
 	EventDetailsDirectoryRestrictionsRemoveMembersDetails           = "directory_restrictions_remove_members_details"
 	EventDetailsEmmAddExceptionDetails                              = "emm_add_exception_details"
@@ -3292,13 +4616,16 @@ const (
 	EventDetailsEmmRemoveExceptionDetails                           = "emm_remove_exception_details"
 	EventDetailsExtendedVersionHistoryChangePolicyDetails           = "extended_version_history_change_policy_details"
 	EventDetailsFileCommentsChangePolicyDetails                     = "file_comments_change_policy_details"
+	EventDetailsFileLockingPolicyChangedDetails                     = "file_locking_policy_changed_details"
 	EventDetailsFileRequestsChangePolicyDetails                     = "file_requests_change_policy_details"
 	EventDetailsFileRequestsEmailsEnabledDetails                    = "file_requests_emails_enabled_details"
 	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails       = "file_requests_emails_restricted_to_team_only_details"
+	EventDetailsFileTransfersPolicyChangedDetails                   = "file_transfers_policy_changed_details"
 	EventDetailsGoogleSsoChangePolicyDetails                        = "google_sso_change_policy_details"
 	EventDetailsGroupUserManagementChangePolicyDetails              = "group_user_management_change_policy_details"
 	EventDetailsIntegrationPolicyChangedDetails                     = "integration_policy_changed_details"
 	EventDetailsMemberRequestsChangePolicyDetails                   = "member_requests_change_policy_details"
+	EventDetailsMemberSendInvitePolicyChangedDetails                = "member_send_invite_policy_changed_details"
 	EventDetailsMemberSpaceLimitsAddExceptionDetails                = "member_space_limits_add_exception_details"
 	EventDetailsMemberSpaceLimitsChangeCapsTypePolicyDetails        = "member_space_limits_change_caps_type_policy_details"
 	EventDetailsMemberSpaceLimitsChangePolicyDetails                = "member_space_limits_change_policy_details"
@@ -3314,31 +4641,44 @@ const (
 	EventDetailsPaperDesktopPolicyChangedDetails                    = "paper_desktop_policy_changed_details"
 	EventDetailsPaperEnabledUsersGroupAdditionDetails               = "paper_enabled_users_group_addition_details"
 	EventDetailsPaperEnabledUsersGroupRemovalDetails                = "paper_enabled_users_group_removal_details"
+	EventDetailsPasswordStrengthRequirementsChangePolicyDetails     = "password_strength_requirements_change_policy_details"
 	EventDetailsPermanentDeleteChangePolicyDetails                  = "permanent_delete_change_policy_details"
 	EventDetailsResellerSupportChangePolicyDetails                  = "reseller_support_change_policy_details"
+	EventDetailsRewindPolicyChangedDetails                          = "rewind_policy_changed_details"
+	EventDetailsSendForSignaturePolicyChangedDetails                = "send_for_signature_policy_changed_details"
 	EventDetailsSharingChangeFolderJoinPolicyDetails                = "sharing_change_folder_join_policy_details"
 	EventDetailsSharingChangeLinkPolicyDetails                      = "sharing_change_link_policy_details"
 	EventDetailsSharingChangeMemberPolicyDetails                    = "sharing_change_member_policy_details"
 	EventDetailsShowcaseChangeDownloadPolicyDetails                 = "showcase_change_download_policy_details"
 	EventDetailsShowcaseChangeEnabledPolicyDetails                  = "showcase_change_enabled_policy_details"
 	EventDetailsShowcaseChangeExternalSharingPolicyDetails          = "showcase_change_external_sharing_policy_details"
+	EventDetailsSmarterSmartSyncPolicyChangedDetails                = "smarter_smart_sync_policy_changed_details"
 	EventDetailsSmartSyncChangePolicyDetails                        = "smart_sync_change_policy_details"
 	EventDetailsSmartSyncNotOptOutDetails                           = "smart_sync_not_opt_out_details"
 	EventDetailsSmartSyncOptOutDetails                              = "smart_sync_opt_out_details"
 	EventDetailsSsoChangePolicyDetails                              = "sso_change_policy_details"
+	EventDetailsTeamBrandingPolicyChangedDetails                    = "team_branding_policy_changed_details"
 	EventDetailsTeamExtensionsPolicyChangedDetails                  = "team_extensions_policy_changed_details"
 	EventDetailsTeamSelectiveSyncPolicyChangedDetails               = "team_selective_sync_policy_changed_details"
+	EventDetailsTeamSharingWhitelistSubjectsChangedDetails          = "team_sharing_whitelist_subjects_changed_details"
+	EventDetailsTfaAddExceptionDetails                              = "tfa_add_exception_details"
 	EventDetailsTfaChangePolicyDetails                              = "tfa_change_policy_details"
+	EventDetailsTfaRemoveExceptionDetails                           = "tfa_remove_exception_details"
 	EventDetailsTwoAccountChangePolicyDetails                       = "two_account_change_policy_details"
 	EventDetailsViewerInfoPolicyChangedDetails                      = "viewer_info_policy_changed_details"
+	EventDetailsWatermarkingPolicyChangedDetails                    = "watermarking_policy_changed_details"
+	EventDetailsWebSessionsChangeActiveSessionLimitDetails          = "web_sessions_change_active_session_limit_details"
 	EventDetailsWebSessionsChangeFixedLengthPolicyDetails           = "web_sessions_change_fixed_length_policy_details"
 	EventDetailsWebSessionsChangeIdleLengthPolicyDetails            = "web_sessions_change_idle_length_policy_details"
 	EventDetailsTeamMergeFromDetails                                = "team_merge_from_details"
 	EventDetailsTeamMergeToDetails                                  = "team_merge_to_details"
+	EventDetailsTeamProfileAddBackgroundDetails                     = "team_profile_add_background_details"
 	EventDetailsTeamProfileAddLogoDetails                           = "team_profile_add_logo_details"
+	EventDetailsTeamProfileChangeBackgroundDetails                  = "team_profile_change_background_details"
 	EventDetailsTeamProfileChangeDefaultLanguageDetails             = "team_profile_change_default_language_details"
 	EventDetailsTeamProfileChangeLogoDetails                        = "team_profile_change_logo_details"
 	EventDetailsTeamProfileChangeNameDetails                        = "team_profile_change_name_details"
+	EventDetailsTeamProfileRemoveBackgroundDetails                  = "team_profile_remove_background_details"
 	EventDetailsTeamProfileRemoveLogoDetails                        = "team_profile_remove_logo_details"
 	EventDetailsTfaAddBackupPhoneDetails                            = "tfa_add_backup_phone_details"
 	EventDetailsTfaAddSecurityKeyDetails                            = "tfa_add_security_key_details"
@@ -3347,7 +4687,13 @@ const (
 	EventDetailsTfaRemoveBackupPhoneDetails                         = "tfa_remove_backup_phone_details"
 	EventDetailsTfaRemoveSecurityKeyDetails                         = "tfa_remove_security_key_details"
 	EventDetailsTfaResetDetails                                     = "tfa_reset_details"
+	EventDetailsChangedEnterpriseAdminRoleDetails                   = "changed_enterprise_admin_role_details"
+	EventDetailsChangedEnterpriseConnectedTeamStatusDetails         = "changed_enterprise_connected_team_status_details"
+	EventDetailsEndedEnterpriseAdminSessionDetails                  = "ended_enterprise_admin_session_details"
+	EventDetailsEndedEnterpriseAdminSessionDeprecatedDetails        = "ended_enterprise_admin_session_deprecated_details"
+	EventDetailsEnterpriseSettingsLockingDetails                    = "enterprise_settings_locking_details"
 	EventDetailsGuestAdminChangeStatusDetails                       = "guest_admin_change_status_details"
+	EventDetailsStartedEnterpriseAdminSessionDetails                = "started_enterprise_admin_session_details"
 	EventDetailsTeamMergeRequestAcceptedDetails                     = "team_merge_request_accepted_details"
 	EventDetailsTeamMergeRequestAcceptedShownToPrimaryTeamDetails   = "team_merge_request_accepted_shown_to_primary_team_details"
 	EventDetailsTeamMergeRequestAcceptedShownToSecondaryTeamDetails = "team_merge_request_accepted_shown_to_secondary_team_details"
@@ -3382,6 +4728,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_changed_alert_config_details":
+		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfigDetails)
+
+		if err != nil {
+			return err
+		}
+	case "admin_alerting_triggered_alert_details":
+		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlertDetails)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team_details":
 		err = json.Unmarshal(body, &u.AppLinkTeamDetails)
 
@@ -3466,6 +4824,138 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_add_folders_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFoldersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_add_folder_failed_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_create_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyCreateDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_delete_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyDeleteDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_edit_details_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyEditDetailsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_edit_duration_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyEditDurationDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_created_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportCreatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_removed_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportRemovedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_remove_folders_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFoldersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_report_created_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyReportCreatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_zip_part_downloaded_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloadedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_activate_a_hold_details":
+		err = json.Unmarshal(body, &u.LegalHoldsActivateAHoldDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_add_members_details":
+		err = json.Unmarshal(body, &u.LegalHoldsAddMembersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_change_hold_details_details":
+		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetailsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_change_hold_name_details":
+		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldNameDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_a_hold_details":
+		err = json.Unmarshal(body, &u.LegalHoldsExportAHoldDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_cancelled_details":
+		err = json.Unmarshal(body, &u.LegalHoldsExportCancelledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_downloaded_details":
+		err = json.Unmarshal(body, &u.LegalHoldsExportDownloadedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_removed_details":
+		err = json.Unmarshal(body, &u.LegalHoldsExportRemovedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_release_a_hold_details":
+		err = json.Unmarshal(body, &u.LegalHoldsReleaseAHoldDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_remove_members_details":
+		err = json.Unmarshal(body, &u.LegalHoldsRemoveMembersDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_report_a_hold_details":
+		err = json.Unmarshal(body, &u.LegalHoldsReportAHoldDetails)
+
+		if err != nil {
+			return err
+		}
 	case "device_change_ip_desktop_details":
 		err = json.Unmarshal(body, &u.DeviceChangeIpDesktopDetails)
 
@@ -3520,8 +5010,26 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "device_sync_backup_status_changed_details":
+		err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "device_unlink_details":
 		err = json.Unmarshal(body, &u.DeviceUnlinkDetails)
+
+		if err != nil {
+			return err
+		}
+	case "dropbox_passwords_exported_details":
+		err = json.Unmarshal(body, &u.DropboxPasswordsExportedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "dropbox_passwords_new_device_enrolled_details":
+		err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolledDetails)
 
 		if err != nil {
 			return err
@@ -3664,6 +5172,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_locking_lock_status_changed_details":
+		err = json.Unmarshal(body, &u.FileLockingLockStatusChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "file_move_details":
 		err = json.Unmarshal(body, &u.FileMoveDetails)
 
@@ -3708,6 +5222,30 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "file_save_copy_reference_details":
 		err = json.Unmarshal(body, &u.FileSaveCopyReferenceDetails)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_description_changed_details":
+		err = json.Unmarshal(body, &u.FolderOverviewDescriptionChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_item_pinned_details":
+		err = json.Unmarshal(body, &u.FolderOverviewItemPinnedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_item_unpinned_details":
+		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinnedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "rewind_folder_details":
+		err = json.Unmarshal(body, &u.RewindFolderDetails)
 
 		if err != nil {
 			return err
@@ -3820,6 +5358,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "account_lock_or_unlocked_details":
+		err = json.Unmarshal(body, &u.AccountLockOrUnlockedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "emm_error_details":
 		err = json.Unmarshal(body, &u.EmmErrorDetails)
 
@@ -3886,6 +5430,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "create_team_invite_link_details":
+		err = json.Unmarshal(body, &u.CreateTeamInviteLinkDetails)
+
+		if err != nil {
+			return err
+		}
+	case "delete_team_invite_link_details":
+		err = json.Unmarshal(body, &u.DeleteTeamInviteLinkDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_add_external_id_details":
 		err = json.Unmarshal(body, &u.MemberAddExternalIdDetails)
 
@@ -3928,6 +5484,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_change_reseller_role_details":
+		err = json.Unmarshal(body, &u.MemberChangeResellerRoleDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_status_details":
 		err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
 
@@ -3940,6 +5502,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_delete_profile_photo_details":
+		err = json.Unmarshal(body, &u.MemberDeleteProfilePhotoDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_permanently_delete_account_contents_details":
 		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails)
 
@@ -3948,6 +5516,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_remove_external_id_details":
 		err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_set_profile_photo_details":
+		err = json.Unmarshal(body, &u.MemberSetProfilePhotoDetails)
 
 		if err != nil {
 			return err
@@ -3988,8 +5562,74 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "pending_secondary_email_added_details":
+		err = json.Unmarshal(body, &u.PendingSecondaryEmailAddedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_email_deleted_details":
+		err = json.Unmarshal(body, &u.SecondaryEmailDeletedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_email_verified_details":
+		err = json.Unmarshal(body, &u.SecondaryEmailVerifiedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "secondary_mails_policy_changed_details":
 		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_add_page_details":
+		err = json.Unmarshal(body, &u.BinderAddPageDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_add_section_details":
+		err = json.Unmarshal(body, &u.BinderAddSectionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_remove_page_details":
+		err = json.Unmarshal(body, &u.BinderRemovePageDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_remove_section_details":
+		err = json.Unmarshal(body, &u.BinderRemoveSectionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_rename_page_details":
+		err = json.Unmarshal(body, &u.BinderRenamePageDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_rename_section_details":
+		err = json.Unmarshal(body, &u.BinderRenameSectionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_reorder_page_details":
+		err = json.Unmarshal(body, &u.BinderReorderPageDetails)
+
+		if err != nil {
+			return err
+		}
+	case "binder_reorder_section_details":
+		err = json.Unmarshal(body, &u.BinderReorderSectionDetails)
 
 		if err != nil {
 			return err
@@ -4216,6 +5856,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_published_link_change_permission_details":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermissionDetails)
+
+		if err != nil {
+			return err
+		}
 	case "paper_published_link_create_details":
 		err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails)
 
@@ -4252,6 +5898,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "classification_create_report_details":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report_fail_details":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportFailDetails)
+
+		if err != nil {
+			return err
+		}
 	case "emm_create_exceptions_report_details":
 		err = json.Unmarshal(body, &u.EmmCreateExceptionsReportDetails)
 
@@ -4266,6 +5924,72 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "export_members_report_details":
 		err = json.Unmarshal(body, &u.ExportMembersReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "export_members_report_fail_details":
+		err = json.Unmarshal(body, &u.ExportMembersReportFailDetails)
+
+		if err != nil {
+			return err
+		}
+	case "external_sharing_create_report_details":
+		err = json.Unmarshal(body, &u.ExternalSharingCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "external_sharing_report_failed_details":
+		err = json.Unmarshal(body, &u.ExternalSharingReportFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_expiration_link_gen_create_report_details":
+		err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_expiration_link_gen_report_failed_details":
+		err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_gen_create_report_details":
+		err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_gen_report_failed_details":
+		err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_view_create_report_details":
+		err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_view_report_failed_details":
+		err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "outdated_link_view_create_report_details":
+		err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReportDetails)
+
+		if err != nil {
+			return err
+		}
+	case "outdated_link_view_report_failed_details":
+		err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailedDetails)
 
 		if err != nil {
 			return err
@@ -4296,6 +6020,36 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "collection_share_details":
 		err = json.Unmarshal(body, &u.CollectionShareDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_file_add_details":
+		err = json.Unmarshal(body, &u.FileTransfersFileAddDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_delete_details":
+		err = json.Unmarshal(body, &u.FileTransfersTransferDeleteDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_download_details":
+		err = json.Unmarshal(body, &u.FileTransfersTransferDownloadDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_send_details":
+		err = json.Unmarshal(body, &u.FileTransfersTransferSendDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_view_details":
+		err = json.Unmarshal(body, &u.FileTransfersTransferViewDetails)
 
 		if err != nil {
 			return err
@@ -4534,6 +6288,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "shared_content_restore_invitees_details":
+		err = json.Unmarshal(body, &u.SharedContentRestoreInviteesDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_content_restore_member_details":
+		err = json.Unmarshal(body, &u.SharedContentRestoreMemberDetails)
+
+		if err != nil {
+			return err
+		}
 	case "shared_content_unshare_details":
 		err = json.Unmarshal(body, &u.SharedContentUnshareDetails)
 
@@ -4654,6 +6420,60 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "shared_link_settings_add_expiration_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpirationDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_add_password_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAddPasswordDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_allow_download_disabled_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_allow_download_enabled_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabledDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_audience_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudienceDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_expiration_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpirationDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_password_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangePasswordDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_remove_expiration_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpirationDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_remove_password_details":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePasswordDetails)
+
+		if err != nil {
+			return err
+		}
 	case "shared_link_share_details":
 		err = json.Unmarshal(body, &u.SharedLinkShareDetails)
 
@@ -4668,6 +6488,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "shared_note_opened_details":
 		err = json.Unmarshal(body, &u.SharedNoteOpenedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shmodel_disable_downloads_details":
+		err = json.Unmarshal(body, &u.ShmodelDisableDownloadsDetails)
+
+		if err != nil {
+			return err
+		}
+	case "shmodel_enable_downloads_details":
+		err = json.Unmarshal(body, &u.ShmodelEnableDownloadsDetails)
 
 		if err != nil {
 			return err
@@ -4942,6 +6774,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "classification_change_policy_details":
+		err = json.Unmarshal(body, &u.ClassificationChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "computer_backup_policy_changed_details":
+		err = json.Unmarshal(body, &u.ComputerBackupPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "content_administration_policy_changed_details":
+		err = json.Unmarshal(body, &u.ContentAdministrationPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "data_placement_restriction_change_policy_details":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails)
 
@@ -4950,6 +6800,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "data_placement_restriction_satisfy_policy_details":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "device_approvals_add_exception_details":
+		err = json.Unmarshal(body, &u.DeviceApprovalsAddExceptionDetails)
 
 		if err != nil {
 			return err
@@ -4974,6 +6830,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "device_approvals_change_unlink_action_details":
 		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "device_approvals_remove_exception_details":
+		err = json.Unmarshal(body, &u.DeviceApprovalsRemoveExceptionDetails)
 
 		if err != nil {
 			return err
@@ -5020,6 +6882,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_locking_policy_changed_details":
+		err = json.Unmarshal(body, &u.FileLockingPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "file_requests_change_policy_details":
 		err = json.Unmarshal(body, &u.FileRequestsChangePolicyDetails)
 
@@ -5034,6 +6902,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "file_requests_emails_restricted_to_team_only_details":
 		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnlyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_policy_changed_details":
+		err = json.Unmarshal(body, &u.FileTransfersPolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -5058,6 +6932,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "member_requests_change_policy_details":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "member_send_invite_policy_changed_details":
+		err = json.Unmarshal(body, &u.MemberSendInvitePolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -5152,6 +7032,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "password_strength_requirements_change_policy_details":
+		err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
 	case "permanent_delete_change_policy_details":
 		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails)
 
@@ -5160,6 +7046,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "reseller_support_change_policy_details":
 		err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "rewind_policy_changed_details":
+		err = json.Unmarshal(body, &u.RewindPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "send_for_signature_policy_changed_details":
+		err = json.Unmarshal(body, &u.SendForSignaturePolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -5200,6 +7098,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "smarter_smart_sync_policy_changed_details":
+		err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "smart_sync_change_policy_details":
 		err = json.Unmarshal(body, &u.SmartSyncChangePolicyDetails)
 
@@ -5224,6 +7128,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_branding_policy_changed_details":
+		err = json.Unmarshal(body, &u.TeamBrandingPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "team_extensions_policy_changed_details":
 		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails)
 
@@ -5236,8 +7146,26 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_sharing_whitelist_subjects_changed_details":
+		err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "tfa_add_exception_details":
+		err = json.Unmarshal(body, &u.TfaAddExceptionDetails)
+
+		if err != nil {
+			return err
+		}
 	case "tfa_change_policy_details":
 		err = json.Unmarshal(body, &u.TfaChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "tfa_remove_exception_details":
+		err = json.Unmarshal(body, &u.TfaRemoveExceptionDetails)
 
 		if err != nil {
 			return err
@@ -5250,6 +7178,18 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "viewer_info_policy_changed_details":
 		err = json.Unmarshal(body, &u.ViewerInfoPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "watermarking_policy_changed_details":
+		err = json.Unmarshal(body, &u.WatermarkingPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "web_sessions_change_active_session_limit_details":
+		err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimitDetails)
 
 		if err != nil {
 			return err
@@ -5278,8 +7218,20 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_profile_add_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileAddBackgroundDetails)
+
+		if err != nil {
+			return err
+		}
 	case "team_profile_add_logo_details":
 		err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_change_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileChangeBackgroundDetails)
 
 		if err != nil {
 			return err
@@ -5298,6 +7250,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "team_profile_change_name_details":
 		err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_remove_background_details":
+		err = json.Unmarshal(body, &u.TeamProfileRemoveBackgroundDetails)
 
 		if err != nil {
 			return err
@@ -5350,8 +7308,44 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "changed_enterprise_admin_role_details":
+		err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRoleDetails)
+
+		if err != nil {
+			return err
+		}
+	case "changed_enterprise_connected_team_status_details":
+		err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatusDetails)
+
+		if err != nil {
+			return err
+		}
+	case "ended_enterprise_admin_session_details":
+		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDetails)
+
+		if err != nil {
+			return err
+		}
+	case "ended_enterprise_admin_session_deprecated_details":
+		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecatedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "enterprise_settings_locking_details":
+		err = json.Unmarshal(body, &u.EnterpriseSettingsLockingDetails)
+
+		if err != nil {
+			return err
+		}
 	case "guest_admin_change_status_details":
 		err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails)
+
+		if err != nil {
+			return err
+		}
+	case "started_enterprise_admin_session_details":
+		err = json.Unmarshal(body, &u.StartedEnterpriseAdminSessionDetails)
 
 		if err != nil {
 			return err
@@ -5474,9 +7468,14 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// EventType : The type of the event.
+// EventType : The type of the event with description.
 type EventType struct {
 	dropbox.Tagged
+	// AdminAlertingChangedAlertConfig : (admin_alerting) Changed an alert
+	// setting
+	AdminAlertingChangedAlertConfig *AdminAlertingChangedAlertConfigType `json:"admin_alerting_changed_alert_config,omitempty"`
+	// AdminAlertingTriggeredAlert : (admin_alerting) Triggered security alert
+	AdminAlertingTriggeredAlert *AdminAlertingTriggeredAlertType `json:"admin_alerting_triggered_alert,omitempty"`
 	// AppLinkTeam : (apps) Linked app for team
 	AppLinkTeam *AppLinkTeamType `json:"app_link_team,omitempty"`
 	// AppLinkUser : (apps) Linked app for member
@@ -5508,6 +7507,58 @@ type EventType struct {
 	FileUnlikeComment *FileUnlikeCommentType `json:"file_unlike_comment,omitempty"`
 	// FileUnresolveComment : (comments) Unresolved file comment
 	FileUnresolveComment *FileUnresolveCommentType `json:"file_unresolve_comment,omitempty"`
+	// GovernancePolicyAddFolders : (data_governance) Added folders to policy
+	GovernancePolicyAddFolders *GovernancePolicyAddFoldersType `json:"governance_policy_add_folders,omitempty"`
+	// GovernancePolicyAddFolderFailed : (data_governance) Couldn't add a folder
+	// to a policy
+	GovernancePolicyAddFolderFailed *GovernancePolicyAddFolderFailedType `json:"governance_policy_add_folder_failed,omitempty"`
+	// GovernancePolicyCreate : (data_governance) Activated a new policy
+	GovernancePolicyCreate *GovernancePolicyCreateType `json:"governance_policy_create,omitempty"`
+	// GovernancePolicyDelete : (data_governance) Deleted a policy
+	GovernancePolicyDelete *GovernancePolicyDeleteType `json:"governance_policy_delete,omitempty"`
+	// GovernancePolicyEditDetails : (data_governance) Edited policy
+	GovernancePolicyEditDetails *GovernancePolicyEditDetailsType `json:"governance_policy_edit_details,omitempty"`
+	// GovernancePolicyEditDuration : (data_governance) Changed policy duration
+	GovernancePolicyEditDuration *GovernancePolicyEditDurationType `json:"governance_policy_edit_duration,omitempty"`
+	// GovernancePolicyExportCreated : (data_governance) Created a policy
+	// download
+	GovernancePolicyExportCreated *GovernancePolicyExportCreatedType `json:"governance_policy_export_created,omitempty"`
+	// GovernancePolicyExportRemoved : (data_governance) Removed a policy
+	// download
+	GovernancePolicyExportRemoved *GovernancePolicyExportRemovedType `json:"governance_policy_export_removed,omitempty"`
+	// GovernancePolicyRemoveFolders : (data_governance) Removed folders from
+	// policy
+	GovernancePolicyRemoveFolders *GovernancePolicyRemoveFoldersType `json:"governance_policy_remove_folders,omitempty"`
+	// GovernancePolicyReportCreated : (data_governance) Created a summary
+	// report for a policy
+	GovernancePolicyReportCreated *GovernancePolicyReportCreatedType `json:"governance_policy_report_created,omitempty"`
+	// GovernancePolicyZipPartDownloaded : (data_governance) Downloaded content
+	// from a policy
+	GovernancePolicyZipPartDownloaded *GovernancePolicyZipPartDownloadedType `json:"governance_policy_zip_part_downloaded,omitempty"`
+	// LegalHoldsActivateAHold : (data_governance) Activated a hold
+	LegalHoldsActivateAHold *LegalHoldsActivateAHoldType `json:"legal_holds_activate_a_hold,omitempty"`
+	// LegalHoldsAddMembers : (data_governance) Added members to a hold
+	LegalHoldsAddMembers *LegalHoldsAddMembersType `json:"legal_holds_add_members,omitempty"`
+	// LegalHoldsChangeHoldDetails : (data_governance) Edited details for a hold
+	LegalHoldsChangeHoldDetails *LegalHoldsChangeHoldDetailsType `json:"legal_holds_change_hold_details,omitempty"`
+	// LegalHoldsChangeHoldName : (data_governance) Renamed a hold
+	LegalHoldsChangeHoldName *LegalHoldsChangeHoldNameType `json:"legal_holds_change_hold_name,omitempty"`
+	// LegalHoldsExportAHold : (data_governance) Exported hold
+	LegalHoldsExportAHold *LegalHoldsExportAHoldType `json:"legal_holds_export_a_hold,omitempty"`
+	// LegalHoldsExportCancelled : (data_governance) Canceled export for a hold
+	LegalHoldsExportCancelled *LegalHoldsExportCancelledType `json:"legal_holds_export_cancelled,omitempty"`
+	// LegalHoldsExportDownloaded : (data_governance) Downloaded export for a
+	// hold
+	LegalHoldsExportDownloaded *LegalHoldsExportDownloadedType `json:"legal_holds_export_downloaded,omitempty"`
+	// LegalHoldsExportRemoved : (data_governance) Removed export for a hold
+	LegalHoldsExportRemoved *LegalHoldsExportRemovedType `json:"legal_holds_export_removed,omitempty"`
+	// LegalHoldsReleaseAHold : (data_governance) Released a hold
+	LegalHoldsReleaseAHold *LegalHoldsReleaseAHoldType `json:"legal_holds_release_a_hold,omitempty"`
+	// LegalHoldsRemoveMembers : (data_governance) Removed members from a hold
+	LegalHoldsRemoveMembers *LegalHoldsRemoveMembersType `json:"legal_holds_remove_members,omitempty"`
+	// LegalHoldsReportAHold : (data_governance) Created a summary report for a
+	// hold
+	LegalHoldsReportAHold *LegalHoldsReportAHoldType `json:"legal_holds_report_a_hold,omitempty"`
 	// DeviceChangeIpDesktop : (devices) Changed IP address associated with
 	// active desktop session
 	DeviceChangeIpDesktop *DeviceChangeIpDesktopType `json:"device_change_ip_desktop,omitempty"`
@@ -5533,8 +7584,16 @@ type EventType struct {
 	// DeviceManagementEnabled : (devices) Enabled device management
 	// (deprecated, no longer logged)
 	DeviceManagementEnabled *DeviceManagementEnabledType `json:"device_management_enabled,omitempty"`
+	// DeviceSyncBackupStatusChanged : (devices) Enabled/disabled backup for
+	// computer
+	DeviceSyncBackupStatusChanged *DeviceSyncBackupStatusChangedType `json:"device_sync_backup_status_changed,omitempty"`
 	// DeviceUnlink : (devices) Disconnected device
 	DeviceUnlink *DeviceUnlinkType `json:"device_unlink,omitempty"`
+	// DropboxPasswordsExported : (devices) Exported passwords
+	DropboxPasswordsExported *DropboxPasswordsExportedType `json:"dropbox_passwords_exported,omitempty"`
+	// DropboxPasswordsNewDeviceEnrolled : (devices) Enrolled new Dropbox
+	// Passwords device
+	DropboxPasswordsNewDeviceEnrolled *DropboxPasswordsNewDeviceEnrolledType `json:"dropbox_passwords_new_device_enrolled,omitempty"`
 	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up
 	// EMM
 	EmmRefreshAuthToken *EmmRefreshAuthTokenType `json:"emm_refresh_auth_token,omitempty"`
@@ -5544,8 +7603,8 @@ type EventType struct {
 	// AccountCaptureMigrateAccount : (domains) Account-captured user migrated
 	// account to team
 	AccountCaptureMigrateAccount *AccountCaptureMigrateAccountType `json:"account_capture_migrate_account,omitempty"`
-	// AccountCaptureNotificationEmailsSent : (domains) Sent proactive account
-	// capture email to all unmanaged members
+	// AccountCaptureNotificationEmailsSent : (domains) Sent account capture
+	// email to all unmanaged members
 	AccountCaptureNotificationEmailsSent *AccountCaptureNotificationEmailsSentType `json:"account_capture_notification_emails_sent,omitempty"`
 	// AccountCaptureRelinquishAccount : (domains) Account-captured user changed
 	// account email to personal email
@@ -5596,6 +7655,9 @@ type EventType struct {
 	// FileGetCopyReference : (file_operations) Created copy reference to
 	// file/folder
 	FileGetCopyReference *FileGetCopyReferenceType `json:"file_get_copy_reference,omitempty"`
+	// FileLockingLockStatusChanged : (file_operations) Locked/unlocked editing
+	// for a file
+	FileLockingLockStatusChanged *FileLockingLockStatusChangedType `json:"file_locking_lock_status_changed,omitempty"`
 	// FileMove : (file_operations) Moved files and/or folders
 	FileMove *FileMoveType `json:"file_move,omitempty"`
 	// FilePermanentlyDelete : (file_operations) Permanently deleted files
@@ -5614,6 +7676,17 @@ type EventType struct {
 	// FileSaveCopyReference : (file_operations) Saved file/folder using copy
 	// reference
 	FileSaveCopyReference *FileSaveCopyReferenceType `json:"file_save_copy_reference,omitempty"`
+	// FolderOverviewDescriptionChanged : (file_operations) Updated folder
+	// overview
+	FolderOverviewDescriptionChanged *FolderOverviewDescriptionChangedType `json:"folder_overview_description_changed,omitempty"`
+	// FolderOverviewItemPinned : (file_operations) Pinned item to folder
+	// overview
+	FolderOverviewItemPinned *FolderOverviewItemPinnedType `json:"folder_overview_item_pinned,omitempty"`
+	// FolderOverviewItemUnpinned : (file_operations) Unpinned item from folder
+	// overview
+	FolderOverviewItemUnpinned *FolderOverviewItemUnpinnedType `json:"folder_overview_item_unpinned,omitempty"`
+	// RewindFolder : (file_operations) Rewound a folder
+	RewindFolder *RewindFolderType `json:"rewind_folder,omitempty"`
 	// FileRequestChange : (file_requests) Changed file request
 	FileRequestChange *FileRequestChangeType `json:"file_request_change,omitempty"`
 	// FileRequestClose : (file_requests) Closed file request
@@ -5653,6 +7726,9 @@ type EventType struct {
 	GroupRemoveMember *GroupRemoveMemberType `json:"group_remove_member,omitempty"`
 	// GroupRename : (groups) Renamed group
 	GroupRename *GroupRenameType `json:"group_rename,omitempty"`
+	// AccountLockOrUnlocked : (logins) Unlocked/locked account after failed
+	// sign in attempts
+	AccountLockOrUnlocked *AccountLockOrUnlockedType `json:"account_lock_or_unlocked,omitempty"`
 	// EmmError : (logins) Failed to sign in via EMM (deprecated, replaced by
 	// 'Failed to sign in')
 	EmmError *EmmErrorType `json:"emm_error,omitempty"`
@@ -5679,6 +7755,10 @@ type EventType struct {
 	// SsoError : (logins) Failed to sign in via SSO (deprecated, replaced by
 	// 'Failed to sign in')
 	SsoError *SsoErrorType `json:"sso_error,omitempty"`
+	// CreateTeamInviteLink : (members) Created team invite link
+	CreateTeamInviteLink *CreateTeamInviteLinkType `json:"create_team_invite_link,omitempty"`
+	// DeleteTeamInviteLink : (members) Deleted team invite link
+	DeleteTeamInviteLink *DeleteTeamInviteLinkType `json:"delete_team_invite_link,omitempty"`
 	// MemberAddExternalId : (members) Added an external ID for team member
 	MemberAddExternalId *MemberAddExternalIdType `json:"member_add_external_id,omitempty"`
 	// MemberAddName : (members) Added team member name
@@ -5695,17 +7775,23 @@ type EventType struct {
 	MemberChangeMembershipType *MemberChangeMembershipTypeType `json:"member_change_membership_type,omitempty"`
 	// MemberChangeName : (members) Changed team member name
 	MemberChangeName *MemberChangeNameType `json:"member_change_name,omitempty"`
+	// MemberChangeResellerRole : (members) Changed team member reseller role
+	MemberChangeResellerRole *MemberChangeResellerRoleType `json:"member_change_reseller_role,omitempty"`
 	// MemberChangeStatus : (members) Changed member status (invited, joined,
 	// suspended, etc.)
 	MemberChangeStatus *MemberChangeStatusType `json:"member_change_status,omitempty"`
 	// MemberDeleteManualContacts : (members) Cleared manually added contacts
 	MemberDeleteManualContacts *MemberDeleteManualContactsType `json:"member_delete_manual_contacts,omitempty"`
+	// MemberDeleteProfilePhoto : (members) Deleted team member profile photo
+	MemberDeleteProfilePhoto *MemberDeleteProfilePhotoType `json:"member_delete_profile_photo,omitempty"`
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
 	MemberPermanentlyDeleteAccountContents *MemberPermanentlyDeleteAccountContentsType `json:"member_permanently_delete_account_contents,omitempty"`
 	// MemberRemoveExternalId : (members) Removed the external ID for team
 	// member
 	MemberRemoveExternalId *MemberRemoveExternalIdType `json:"member_remove_external_id,omitempty"`
+	// MemberSetProfilePhoto : (members) Set team member profile photo
+	MemberSetProfilePhoto *MemberSetProfilePhotoType `json:"member_set_profile_photo,omitempty"`
 	// MemberSpaceLimitsAddCustomQuota : (members) Set custom member space limit
 	MemberSpaceLimitsAddCustomQuota *MemberSpaceLimitsAddCustomQuotaType `json:"member_space_limits_add_custom_quota,omitempty"`
 	// MemberSpaceLimitsChangeCustomQuota : (members) Changed custom member
@@ -5721,9 +7807,40 @@ type EventType struct {
 	// MemberTransferAccountContents : (members) Transferred contents of deleted
 	// member account to another member
 	MemberTransferAccountContents *MemberTransferAccountContentsType `json:"member_transfer_account_contents,omitempty"`
+	// PendingSecondaryEmailAdded : (members) Added pending secondary email
+	PendingSecondaryEmailAdded *PendingSecondaryEmailAddedType `json:"pending_secondary_email_added,omitempty"`
+	// SecondaryEmailDeleted : (members) Deleted secondary email
+	SecondaryEmailDeleted *SecondaryEmailDeletedType `json:"secondary_email_deleted,omitempty"`
+	// SecondaryEmailVerified : (members) Verified secondary email
+	SecondaryEmailVerified *SecondaryEmailVerifiedType `json:"secondary_email_verified,omitempty"`
 	// SecondaryMailsPolicyChanged : (members) Secondary mails policy changed
 	SecondaryMailsPolicyChanged *SecondaryMailsPolicyChangedType `json:"secondary_mails_policy_changed,omitempty"`
-	// PaperContentAddMember : (paper) Added team member to Paper doc/folder
+	// BinderAddPage : (paper) Added Binder page (deprecated, replaced by
+	// 'Edited files')
+	BinderAddPage *BinderAddPageType `json:"binder_add_page,omitempty"`
+	// BinderAddSection : (paper) Added Binder section (deprecated, replaced by
+	// 'Edited files')
+	BinderAddSection *BinderAddSectionType `json:"binder_add_section,omitempty"`
+	// BinderRemovePage : (paper) Removed Binder page (deprecated, replaced by
+	// 'Edited files')
+	BinderRemovePage *BinderRemovePageType `json:"binder_remove_page,omitempty"`
+	// BinderRemoveSection : (paper) Removed Binder section (deprecated,
+	// replaced by 'Edited files')
+	BinderRemoveSection *BinderRemoveSectionType `json:"binder_remove_section,omitempty"`
+	// BinderRenamePage : (paper) Renamed Binder page (deprecated, replaced by
+	// 'Edited files')
+	BinderRenamePage *BinderRenamePageType `json:"binder_rename_page,omitempty"`
+	// BinderRenameSection : (paper) Renamed Binder section (deprecated,
+	// replaced by 'Edited files')
+	BinderRenameSection *BinderRenameSectionType `json:"binder_rename_section,omitempty"`
+	// BinderReorderPage : (paper) Reordered Binder page (deprecated, replaced
+	// by 'Edited files')
+	BinderReorderPage *BinderReorderPageType `json:"binder_reorder_page,omitempty"`
+	// BinderReorderSection : (paper) Reordered Binder section (deprecated,
+	// replaced by 'Edited files')
+	BinderReorderSection *BinderReorderSectionType `json:"binder_reorder_section,omitempty"`
+	// PaperContentAddMember : (paper) Added users and/or groups to Paper
+	// doc/folder
 	PaperContentAddMember *PaperContentAddMemberType `json:"paper_content_add_member,omitempty"`
 	// PaperContentAddToFolder : (paper) Added Paper doc/folder to folder
 	PaperContentAddToFolder *PaperContentAddToFolderType `json:"paper_content_add_to_folder,omitempty"`
@@ -5737,7 +7854,7 @@ type EventType struct {
 	// PaperContentRemoveFromFolder : (paper) Removed Paper doc/folder from
 	// folder
 	PaperContentRemoveFromFolder *PaperContentRemoveFromFolderType `json:"paper_content_remove_from_folder,omitempty"`
-	// PaperContentRemoveMember : (paper) Removed team member from Paper
+	// PaperContentRemoveMember : (paper) Removed users and/or groups from Paper
 	// doc/folder
 	PaperContentRemoveMember *PaperContentRemoveMemberType `json:"paper_content_remove_member,omitempty"`
 	// PaperContentRename : (paper) Renamed Paper doc/folder
@@ -5746,8 +7863,8 @@ type EventType struct {
 	PaperContentRestore *PaperContentRestoreType `json:"paper_content_restore,omitempty"`
 	// PaperDocAddComment : (paper) Added Paper doc comment
 	PaperDocAddComment *PaperDocAddCommentType `json:"paper_doc_add_comment,omitempty"`
-	// PaperDocChangeMemberRole : (paper) Changed team member permissions for
-	// Paper doc
+	// PaperDocChangeMemberRole : (paper) Changed member permissions for Paper
+	// doc
 	PaperDocChangeMemberRole *PaperDocChangeMemberRoleType `json:"paper_doc_change_member_role,omitempty"`
 	// PaperDocChangeSharingPolicy : (paper) Changed sharing setting for Paper
 	// doc
@@ -5768,7 +7885,7 @@ type EventType struct {
 	// PaperDocFollowed : (paper) Followed Paper doc (deprecated, replaced by
 	// 'Followed/unfollowed Paper doc')
 	PaperDocFollowed *PaperDocFollowedType `json:"paper_doc_followed,omitempty"`
-	// PaperDocMention : (paper) Mentioned team member in Paper doc
+	// PaperDocMention : (paper) Mentioned user in Paper doc
 	PaperDocMention *PaperDocMentionType `json:"paper_doc_mention,omitempty"`
 	// PaperDocOwnershipChanged : (paper) Transferred ownership of Paper doc
 	PaperDocOwnershipChanged *PaperDocOwnershipChangedType `json:"paper_doc_ownership_changed,omitempty"`
@@ -5780,7 +7897,7 @@ type EventType struct {
 	PaperDocRevert *PaperDocRevertType `json:"paper_doc_revert,omitempty"`
 	// PaperDocSlackShare : (paper) Shared Paper doc via Slack
 	PaperDocSlackShare *PaperDocSlackShareType `json:"paper_doc_slack_share,omitempty"`
-	// PaperDocTeamInvite : (paper) Shared Paper doc with team member
+	// PaperDocTeamInvite : (paper) Shared Paper doc with users and/or groups
 	// (deprecated, no longer logged)
 	PaperDocTeamInvite *PaperDocTeamInviteType `json:"paper_doc_team_invite,omitempty"`
 	// PaperDocTrashed : (paper) Deleted Paper doc
@@ -5808,9 +7925,12 @@ type EventType struct {
 	// PaperFolderFollowed : (paper) Followed Paper folder (deprecated, replaced
 	// by 'Followed/unfollowed Paper folder')
 	PaperFolderFollowed *PaperFolderFollowedType `json:"paper_folder_followed,omitempty"`
-	// PaperFolderTeamInvite : (paper) Shared Paper folder with member
-	// (deprecated, no longer logged)
+	// PaperFolderTeamInvite : (paper) Shared Paper folder with users and/or
+	// groups (deprecated, no longer logged)
 	PaperFolderTeamInvite *PaperFolderTeamInviteType `json:"paper_folder_team_invite,omitempty"`
+	// PaperPublishedLinkChangePermission : (paper) Changed permissions for
+	// published doc
+	PaperPublishedLinkChangePermission *PaperPublishedLinkChangePermissionType `json:"paper_published_link_change_permission,omitempty"`
 	// PaperPublishedLinkCreate : (paper) Published doc
 	PaperPublishedLinkCreate *PaperPublishedLinkCreateType `json:"paper_published_link_create,omitempty"`
 	// PaperPublishedLinkDisabled : (paper) Unpublished doc
@@ -5823,12 +7943,48 @@ type EventType struct {
 	PasswordReset *PasswordResetType `json:"password_reset,omitempty"`
 	// PasswordResetAll : (passwords) Reset all team member passwords
 	PasswordResetAll *PasswordResetAllType `json:"password_reset_all,omitempty"`
+	// ClassificationCreateReport : (reports) Created Classification report
+	ClassificationCreateReport *ClassificationCreateReportType `json:"classification_create_report,omitempty"`
+	// ClassificationCreateReportFail : (reports) Couldn't create Classification
+	// report
+	ClassificationCreateReportFail *ClassificationCreateReportFailType `json:"classification_create_report_fail,omitempty"`
 	// EmmCreateExceptionsReport : (reports) Created EMM-excluded users report
 	EmmCreateExceptionsReport *EmmCreateExceptionsReportType `json:"emm_create_exceptions_report,omitempty"`
 	// EmmCreateUsageReport : (reports) Created EMM mobile app usage report
 	EmmCreateUsageReport *EmmCreateUsageReportType `json:"emm_create_usage_report,omitempty"`
 	// ExportMembersReport : (reports) Created member data report
 	ExportMembersReport *ExportMembersReportType `json:"export_members_report,omitempty"`
+	// ExportMembersReportFail : (reports) Failed to create members data report
+	ExportMembersReportFail *ExportMembersReportFailType `json:"export_members_report_fail,omitempty"`
+	// ExternalSharingCreateReport : (reports) Created External sharing report
+	ExternalSharingCreateReport *ExternalSharingCreateReportType `json:"external_sharing_create_report,omitempty"`
+	// ExternalSharingReportFailed : (reports) Couldn't create External sharing
+	// report
+	ExternalSharingReportFailed *ExternalSharingReportFailedType `json:"external_sharing_report_failed,omitempty"`
+	// NoExpirationLinkGenCreateReport : (reports) Report created: Links created
+	// with no expiration
+	NoExpirationLinkGenCreateReport *NoExpirationLinkGenCreateReportType `json:"no_expiration_link_gen_create_report,omitempty"`
+	// NoExpirationLinkGenReportFailed : (reports) Couldn't create report: Links
+	// created with no expiration
+	NoExpirationLinkGenReportFailed *NoExpirationLinkGenReportFailedType `json:"no_expiration_link_gen_report_failed,omitempty"`
+	// NoPasswordLinkGenCreateReport : (reports) Report created: Links created
+	// without passwords
+	NoPasswordLinkGenCreateReport *NoPasswordLinkGenCreateReportType `json:"no_password_link_gen_create_report,omitempty"`
+	// NoPasswordLinkGenReportFailed : (reports) Couldn't create report: Links
+	// created without passwords
+	NoPasswordLinkGenReportFailed *NoPasswordLinkGenReportFailedType `json:"no_password_link_gen_report_failed,omitempty"`
+	// NoPasswordLinkViewCreateReport : (reports) Report created: Views of links
+	// without passwords
+	NoPasswordLinkViewCreateReport *NoPasswordLinkViewCreateReportType `json:"no_password_link_view_create_report,omitempty"`
+	// NoPasswordLinkViewReportFailed : (reports) Couldn't create report: Views
+	// of links without passwords
+	NoPasswordLinkViewReportFailed *NoPasswordLinkViewReportFailedType `json:"no_password_link_view_report_failed,omitempty"`
+	// OutdatedLinkViewCreateReport : (reports) Report created: Views of old
+	// links
+	OutdatedLinkViewCreateReport *OutdatedLinkViewCreateReportType `json:"outdated_link_view_create_report,omitempty"`
+	// OutdatedLinkViewReportFailed : (reports) Couldn't create report: Views of
+	// old links
+	OutdatedLinkViewReportFailed *OutdatedLinkViewReportFailedType `json:"outdated_link_view_report_failed,omitempty"`
 	// PaperAdminExportStart : (reports) Exported all team Paper docs
 	PaperAdminExportStart *PaperAdminExportStartType `json:"paper_admin_export_start,omitempty"`
 	// SmartSyncCreateAdminPrivilegeReport : (reports) Created Smart Sync
@@ -5841,6 +7997,16 @@ type EventType struct {
 	TeamActivityCreateReportFail *TeamActivityCreateReportFailType `json:"team_activity_create_report_fail,omitempty"`
 	// CollectionShare : (sharing) Shared album
 	CollectionShare *CollectionShareType `json:"collection_share,omitempty"`
+	// FileTransfersFileAdd : (sharing) Transfer files added
+	FileTransfersFileAdd *FileTransfersFileAddType `json:"file_transfers_file_add,omitempty"`
+	// FileTransfersTransferDelete : (sharing) Deleted transfer
+	FileTransfersTransferDelete *FileTransfersTransferDeleteType `json:"file_transfers_transfer_delete,omitempty"`
+	// FileTransfersTransferDownload : (sharing) Transfer downloaded
+	FileTransfersTransferDownload *FileTransfersTransferDownloadType `json:"file_transfers_transfer_download,omitempty"`
+	// FileTransfersTransferSend : (sharing) Sent transfer
+	FileTransfersTransferSend *FileTransfersTransferSendType `json:"file_transfers_transfer_send,omitempty"`
+	// FileTransfersTransferView : (sharing) Viewed transfer
+	FileTransfersTransferView *FileTransfersTransferViewType `json:"file_transfers_transfer_view,omitempty"`
 	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
 	// (deprecated, no longer logged)
 	NoteAclInviteOnly *NoteAclInviteOnlyType `json:"note_acl_invite_only,omitempty"`
@@ -5903,28 +8069,28 @@ type EventType struct {
 	// them to shared file/folder
 	SharedContentAddInvitees *SharedContentAddInviteesType `json:"shared_content_add_invitees,omitempty"`
 	// SharedContentAddLinkExpiry : (sharing) Added expiration date to link for
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentAddLinkExpiry *SharedContentAddLinkExpiryType `json:"shared_content_add_link_expiry,omitempty"`
 	// SharedContentAddLinkPassword : (sharing) Added password to link for
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentAddLinkPassword *SharedContentAddLinkPasswordType `json:"shared_content_add_link_password,omitempty"`
 	// SharedContentAddMember : (sharing) Added users and/or groups to shared
 	// file/folder
 	SharedContentAddMember *SharedContentAddMemberType `json:"shared_content_add_member,omitempty"`
 	// SharedContentChangeDownloadsPolicy : (sharing) Changed whether members
-	// can download shared file/folder
+	// can download shared file/folder (deprecated, no longer logged)
 	SharedContentChangeDownloadsPolicy *SharedContentChangeDownloadsPolicyType `json:"shared_content_change_downloads_policy,omitempty"`
 	// SharedContentChangeInviteeRole : (sharing) Changed access type of invitee
 	// to shared file/folder before invite was accepted
 	SharedContentChangeInviteeRole *SharedContentChangeInviteeRoleType `json:"shared_content_change_invitee_role,omitempty"`
 	// SharedContentChangeLinkAudience : (sharing) Changed link audience of
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentChangeLinkAudience *SharedContentChangeLinkAudienceType `json:"shared_content_change_link_audience,omitempty"`
 	// SharedContentChangeLinkExpiry : (sharing) Changed link expiration of
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentChangeLinkExpiry *SharedContentChangeLinkExpiryType `json:"shared_content_change_link_expiry,omitempty"`
 	// SharedContentChangeLinkPassword : (sharing) Changed link password of
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentChangeLinkPassword *SharedContentChangeLinkPasswordType `json:"shared_content_change_link_password,omitempty"`
 	// SharedContentChangeMemberRole : (sharing) Changed access type of shared
 	// file/folder member
@@ -5945,10 +8111,10 @@ type EventType struct {
 	// file/folder before invite was accepted
 	SharedContentRemoveInvitees *SharedContentRemoveInviteesType `json:"shared_content_remove_invitees,omitempty"`
 	// SharedContentRemoveLinkExpiry : (sharing) Removed link expiration date of
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentRemoveLinkExpiry *SharedContentRemoveLinkExpiryType `json:"shared_content_remove_link_expiry,omitempty"`
 	// SharedContentRemoveLinkPassword : (sharing) Removed link password of
-	// shared file/folder
+	// shared file/folder (deprecated, no longer logged)
 	SharedContentRemoveLinkPassword *SharedContentRemoveLinkPasswordType `json:"shared_content_remove_link_password,omitempty"`
 	// SharedContentRemoveMember : (sharing) Removed user/group from shared
 	// file/folder
@@ -5956,8 +8122,14 @@ type EventType struct {
 	// SharedContentRequestAccess : (sharing) Requested access to shared
 	// file/folder
 	SharedContentRequestAccess *SharedContentRequestAccessType `json:"shared_content_request_access,omitempty"`
+	// SharedContentRestoreInvitees : (sharing) Restored shared file/folder
+	// invitees
+	SharedContentRestoreInvitees *SharedContentRestoreInviteesType `json:"shared_content_restore_invitees,omitempty"`
+	// SharedContentRestoreMember : (sharing) Restored users and/or groups to
+	// membership of shared file/folder
+	SharedContentRestoreMember *SharedContentRestoreMemberType `json:"shared_content_restore_member,omitempty"`
 	// SharedContentUnshare : (sharing) Unshared file/folder by clearing
-	// membership and turning off link
+	// membership
 	SharedContentUnshare *SharedContentUnshareType `json:"shared_content_unshare,omitempty"`
 	// SharedContentView : (sharing) Previewed shared file/folder
 	SharedContentView *SharedContentViewType `json:"shared_content_view,omitempty"`
@@ -6003,6 +8175,31 @@ type EventType struct {
 	SharedLinkDownload *SharedLinkDownloadType `json:"shared_link_download,omitempty"`
 	// SharedLinkRemoveExpiry : (sharing) Removed shared link expiration date
 	SharedLinkRemoveExpiry *SharedLinkRemoveExpiryType `json:"shared_link_remove_expiry,omitempty"`
+	// SharedLinkSettingsAddExpiration : (sharing) Added an expiration date to
+	// the shared link
+	SharedLinkSettingsAddExpiration *SharedLinkSettingsAddExpirationType `json:"shared_link_settings_add_expiration,omitempty"`
+	// SharedLinkSettingsAddPassword : (sharing) Added a password to the shared
+	// link
+	SharedLinkSettingsAddPassword *SharedLinkSettingsAddPasswordType `json:"shared_link_settings_add_password,omitempty"`
+	// SharedLinkSettingsAllowDownloadDisabled : (sharing) Disabled downloads
+	SharedLinkSettingsAllowDownloadDisabled *SharedLinkSettingsAllowDownloadDisabledType `json:"shared_link_settings_allow_download_disabled,omitempty"`
+	// SharedLinkSettingsAllowDownloadEnabled : (sharing) Enabled downloads
+	SharedLinkSettingsAllowDownloadEnabled *SharedLinkSettingsAllowDownloadEnabledType `json:"shared_link_settings_allow_download_enabled,omitempty"`
+	// SharedLinkSettingsChangeAudience : (sharing) Changed the audience of the
+	// shared link
+	SharedLinkSettingsChangeAudience *SharedLinkSettingsChangeAudienceType `json:"shared_link_settings_change_audience,omitempty"`
+	// SharedLinkSettingsChangeExpiration : (sharing) Changed the expiration
+	// date of the shared link
+	SharedLinkSettingsChangeExpiration *SharedLinkSettingsChangeExpirationType `json:"shared_link_settings_change_expiration,omitempty"`
+	// SharedLinkSettingsChangePassword : (sharing) Changed the password of the
+	// shared link
+	SharedLinkSettingsChangePassword *SharedLinkSettingsChangePasswordType `json:"shared_link_settings_change_password,omitempty"`
+	// SharedLinkSettingsRemoveExpiration : (sharing) Removed the expiration
+	// date from the shared link
+	SharedLinkSettingsRemoveExpiration *SharedLinkSettingsRemoveExpirationType `json:"shared_link_settings_remove_expiration,omitempty"`
+	// SharedLinkSettingsRemovePassword : (sharing) Removed the password from
+	// the shared link
+	SharedLinkSettingsRemovePassword *SharedLinkSettingsRemovePasswordType `json:"shared_link_settings_remove_password,omitempty"`
 	// SharedLinkShare : (sharing) Added members as audience of shared link
 	SharedLinkShare *SharedLinkShareType `json:"shared_link_share,omitempty"`
 	// SharedLinkView : (sharing) Opened shared link
@@ -6010,6 +8207,12 @@ type EventType struct {
 	// SharedNoteOpened : (sharing) Opened shared Paper doc (deprecated, no
 	// longer logged)
 	SharedNoteOpened *SharedNoteOpenedType `json:"shared_note_opened,omitempty"`
+	// ShmodelDisableDownloads : (sharing) Disabled downloads for link
+	// (deprecated, no longer logged)
+	ShmodelDisableDownloads *ShmodelDisableDownloadsType `json:"shmodel_disable_downloads,omitempty"`
+	// ShmodelEnableDownloads : (sharing) Enabled downloads for link
+	// (deprecated, no longer logged)
+	ShmodelEnableDownloads *ShmodelEnableDownloadsType `json:"shmodel_enable_downloads,omitempty"`
 	// ShmodelGroupShare : (sharing) Shared link with group (deprecated, no
 	// longer logged)
 	ShmodelGroupShare *ShmodelGroupShareType `json:"shmodel_group_share,omitempty"`
@@ -6110,12 +8313,24 @@ type EventType struct {
 	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
 	// setting for team
 	CameraUploadsPolicyChanged *CameraUploadsPolicyChangedType `json:"camera_uploads_policy_changed,omitempty"`
+	// ClassificationChangePolicy : (team_policies) Changed classification
+	// policy for team
+	ClassificationChangePolicy *ClassificationChangePolicyType `json:"classification_change_policy,omitempty"`
+	// ComputerBackupPolicyChanged : (team_policies) Changed computer backup
+	// policy for team
+	ComputerBackupPolicyChanged *ComputerBackupPolicyChangedType `json:"computer_backup_policy_changed,omitempty"`
+	// ContentAdministrationPolicyChanged : (team_policies) Changed content
+	// management setting
+	ContentAdministrationPolicyChanged *ContentAdministrationPolicyChangedType `json:"content_administration_policy_changed,omitempty"`
 	// DataPlacementRestrictionChangePolicy : (team_policies) Set restrictions
 	// on data center locations where team data resides
 	DataPlacementRestrictionChangePolicy *DataPlacementRestrictionChangePolicyType `json:"data_placement_restriction_change_policy,omitempty"`
 	// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
 	// restrictions on data center locations where team data resides
 	DataPlacementRestrictionSatisfyPolicy *DataPlacementRestrictionSatisfyPolicyType `json:"data_placement_restriction_satisfy_policy,omitempty"`
+	// DeviceApprovalsAddException : (team_policies) Added members to device
+	// approvals exception list
+	DeviceApprovalsAddException *DeviceApprovalsAddExceptionType `json:"device_approvals_add_exception,omitempty"`
 	// DeviceApprovalsChangeDesktopPolicy : (team_policies) Set/removed limit on
 	// number of computers member can link to team Dropbox account
 	DeviceApprovalsChangeDesktopPolicy *DeviceApprovalsChangeDesktopPolicyType `json:"device_approvals_change_desktop_policy,omitempty"`
@@ -6128,6 +8343,9 @@ type EventType struct {
 	// DeviceApprovalsChangeUnlinkAction : (team_policies) Changed device
 	// approvals setting when member unlinks approved device
 	DeviceApprovalsChangeUnlinkAction *DeviceApprovalsChangeUnlinkActionType `json:"device_approvals_change_unlink_action,omitempty"`
+	// DeviceApprovalsRemoveException : (team_policies) Removed members from
+	// device approvals exception list
+	DeviceApprovalsRemoveException *DeviceApprovalsRemoveExceptionType `json:"device_approvals_remove_exception,omitempty"`
 	// DirectoryRestrictionsAddMembers : (team_policies) Added members to
 	// directory restrictions list
 	DirectoryRestrictionsAddMembers *DirectoryRestrictionsAddMembersType `json:"directory_restrictions_add_members,omitempty"`
@@ -6148,6 +8366,9 @@ type EventType struct {
 	// FileCommentsChangePolicy : (team_policies) Enabled/disabled commenting on
 	// team files
 	FileCommentsChangePolicy *FileCommentsChangePolicyType `json:"file_comments_change_policy,omitempty"`
+	// FileLockingPolicyChanged : (team_policies) Changed file locking policy
+	// for team
+	FileLockingPolicyChanged *FileLockingPolicyChangedType `json:"file_locking_policy_changed,omitempty"`
 	// FileRequestsChangePolicy : (team_policies) Enabled/disabled file requests
 	FileRequestsChangePolicy *FileRequestsChangePolicyType `json:"file_requests_change_policy,omitempty"`
 	// FileRequestsEmailsEnabled : (team_policies) Enabled file request emails
@@ -6156,6 +8377,9 @@ type EventType struct {
 	// FileRequestsEmailsRestrictedToTeamOnly : (team_policies) Enabled file
 	// request emails for team (deprecated, no longer logged)
 	FileRequestsEmailsRestrictedToTeamOnly *FileRequestsEmailsRestrictedToTeamOnlyType `json:"file_requests_emails_restricted_to_team_only,omitempty"`
+	// FileTransfersPolicyChanged : (team_policies) Changed file transfers
+	// policy for team
+	FileTransfersPolicyChanged *FileTransfersPolicyChangedType `json:"file_transfers_policy_changed,omitempty"`
 	// GoogleSsoChangePolicy : (team_policies) Enabled/disabled Google single
 	// sign-on for team
 	GoogleSsoChangePolicy *GoogleSsoChangePolicyType `json:"google_sso_change_policy,omitempty"`
@@ -6168,6 +8392,9 @@ type EventType struct {
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
 	// find team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
+	// MemberSendInvitePolicyChanged : (team_policies) Changed member send
+	// invite policy for team
+	MemberSendInvitePolicyChanged *MemberSendInvitePolicyChangedType `json:"member_send_invite_policy_changed,omitempty"`
 	// MemberSpaceLimitsAddException : (team_policies) Added members to member
 	// space limit exception list
 	MemberSpaceLimitsAddException *MemberSpaceLimitsAddExceptionType `json:"member_space_limits_add_exception,omitempty"`
@@ -6214,12 +8441,20 @@ type EventType struct {
 	// PaperEnabledUsersGroupRemoval : (team_policies) Removed users from
 	// Paper-enabled users list
 	PaperEnabledUsersGroupRemoval *PaperEnabledUsersGroupRemovalType `json:"paper_enabled_users_group_removal,omitempty"`
+	// PasswordStrengthRequirementsChangePolicy : (team_policies) Changed team
+	// password strength requirements
+	PasswordStrengthRequirementsChangePolicy *PasswordStrengthRequirementsChangePolicyType `json:"password_strength_requirements_change_policy,omitempty"`
 	// PermanentDeleteChangePolicy : (team_policies) Enabled/disabled ability of
 	// team members to permanently delete content
 	PermanentDeleteChangePolicy *PermanentDeleteChangePolicyType `json:"permanent_delete_change_policy,omitempty"`
 	// ResellerSupportChangePolicy : (team_policies) Enabled/disabled reseller
 	// support
 	ResellerSupportChangePolicy *ResellerSupportChangePolicyType `json:"reseller_support_change_policy,omitempty"`
+	// RewindPolicyChanged : (team_policies) Changed Rewind policy for team
+	RewindPolicyChanged *RewindPolicyChangedType `json:"rewind_policy_changed,omitempty"`
+	// SendForSignaturePolicyChanged : (team_policies) Changed send for
+	// signature policy for team
+	SendForSignaturePolicyChanged *SendForSignaturePolicyChangedType `json:"send_for_signature_policy_changed,omitempty"`
 	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
 	// members can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
@@ -6239,6 +8474,9 @@ type EventType struct {
 	// ShowcaseChangeExternalSharingPolicy : (team_policies) Enabled/disabled
 	// sharing Dropbox Showcase externally for team
 	ShowcaseChangeExternalSharingPolicy *ShowcaseChangeExternalSharingPolicyType `json:"showcase_change_external_sharing_policy,omitempty"`
+	// SmarterSmartSyncPolicyChanged : (team_policies) Changed automatic Smart
+	// Sync setting for team
+	SmarterSmartSyncPolicyChanged *SmarterSmartSyncPolicyChangedType `json:"smarter_smart_sync_policy_changed,omitempty"`
 	// SmartSyncChangePolicy : (team_policies) Changed default Smart Sync
 	// setting for team members
 	SmartSyncChangePolicy *SmartSyncChangePolicyType `json:"smart_sync_change_policy,omitempty"`
@@ -6248,15 +8486,27 @@ type EventType struct {
 	SmartSyncOptOut *SmartSyncOptOutType `json:"smart_sync_opt_out,omitempty"`
 	// SsoChangePolicy : (team_policies) Changed single sign-on setting for team
 	SsoChangePolicy *SsoChangePolicyType `json:"sso_change_policy,omitempty"`
+	// TeamBrandingPolicyChanged : (team_policies) Changed team branding policy
+	// for team
+	TeamBrandingPolicyChanged *TeamBrandingPolicyChangedType `json:"team_branding_policy_changed,omitempty"`
 	// TeamExtensionsPolicyChanged : (team_policies) Changed App Integrations
 	// setting for team
 	TeamExtensionsPolicyChanged *TeamExtensionsPolicyChangedType `json:"team_extensions_policy_changed,omitempty"`
 	// TeamSelectiveSyncPolicyChanged : (team_policies) Enabled/disabled Team
 	// Selective Sync for team
 	TeamSelectiveSyncPolicyChanged *TeamSelectiveSyncPolicyChangedType `json:"team_selective_sync_policy_changed,omitempty"`
+	// TeamSharingWhitelistSubjectsChanged : (team_policies) Edited the approved
+	// list for sharing externally
+	TeamSharingWhitelistSubjectsChanged *TeamSharingWhitelistSubjectsChangedType `json:"team_sharing_whitelist_subjects_changed,omitempty"`
+	// TfaAddException : (team_policies) Added members to two factor
+	// authentication exception list
+	TfaAddException *TfaAddExceptionType `json:"tfa_add_exception,omitempty"`
 	// TfaChangePolicy : (team_policies) Changed two-step verification setting
 	// for team
 	TfaChangePolicy *TfaChangePolicyType `json:"tfa_change_policy,omitempty"`
+	// TfaRemoveException : (team_policies) Removed members from two factor
+	// authentication exception list
+	TfaRemoveException *TfaRemoveExceptionType `json:"tfa_remove_exception,omitempty"`
 	// TwoAccountChangePolicy : (team_policies) Enabled/disabled option for
 	// members to link personal Dropbox account and team account to same
 	// computer
@@ -6264,6 +8514,12 @@ type EventType struct {
 	// ViewerInfoPolicyChanged : (team_policies) Changed team policy for viewer
 	// info
 	ViewerInfoPolicyChanged *ViewerInfoPolicyChangedType `json:"viewer_info_policy_changed,omitempty"`
+	// WatermarkingPolicyChanged : (team_policies) Changed watermarking policy
+	// for team
+	WatermarkingPolicyChanged *WatermarkingPolicyChangedType `json:"watermarking_policy_changed,omitempty"`
+	// WebSessionsChangeActiveSessionLimit : (team_policies) Changed limit on
+	// active sessions per member
+	WebSessionsChangeActiveSessionLimit *WebSessionsChangeActiveSessionLimitType `json:"web_sessions_change_active_session_limit,omitempty"`
 	// WebSessionsChangeFixedLengthPolicy : (team_policies) Changed how long
 	// members can stay signed in to Dropbox.com
 	WebSessionsChangeFixedLengthPolicy *WebSessionsChangeFixedLengthPolicyType `json:"web_sessions_change_fixed_length_policy,omitempty"`
@@ -6274,9 +8530,15 @@ type EventType struct {
 	TeamMergeFrom *TeamMergeFromType `json:"team_merge_from,omitempty"`
 	// TeamMergeTo : (team_profile) Merged this team into another team
 	TeamMergeTo *TeamMergeToType `json:"team_merge_to,omitempty"`
+	// TeamProfileAddBackground : (team_profile) Added team background to
+	// display on shared link headers
+	TeamProfileAddBackground *TeamProfileAddBackgroundType `json:"team_profile_add_background,omitempty"`
 	// TeamProfileAddLogo : (team_profile) Added team logo to display on shared
 	// link headers
 	TeamProfileAddLogo *TeamProfileAddLogoType `json:"team_profile_add_logo,omitempty"`
+	// TeamProfileChangeBackground : (team_profile) Changed team background
+	// displayed on shared link headers
+	TeamProfileChangeBackground *TeamProfileChangeBackgroundType `json:"team_profile_change_background,omitempty"`
 	// TeamProfileChangeDefaultLanguage : (team_profile) Changed default
 	// language for team
 	TeamProfileChangeDefaultLanguage *TeamProfileChangeDefaultLanguageType `json:"team_profile_change_default_language,omitempty"`
@@ -6285,6 +8547,9 @@ type EventType struct {
 	TeamProfileChangeLogo *TeamProfileChangeLogoType `json:"team_profile_change_logo,omitempty"`
 	// TeamProfileChangeName : (team_profile) Changed team name
 	TeamProfileChangeName *TeamProfileChangeNameType `json:"team_profile_change_name,omitempty"`
+	// TeamProfileRemoveBackground : (team_profile) Removed team background
+	// displayed on shared link headers
+	TeamProfileRemoveBackground *TeamProfileRemoveBackgroundType `json:"team_profile_remove_background,omitempty"`
 	// TeamProfileRemoveLogo : (team_profile) Removed team logo displayed on
 	// shared link headers
 	TeamProfileRemoveLogo *TeamProfileRemoveLogoType `json:"team_profile_remove_logo,omitempty"`
@@ -6306,8 +8571,26 @@ type EventType struct {
 	TfaRemoveSecurityKey *TfaRemoveSecurityKeyType `json:"tfa_remove_security_key,omitempty"`
 	// TfaReset : (tfa) Reset two-step verification for team member
 	TfaReset *TfaResetType `json:"tfa_reset,omitempty"`
+	// ChangedEnterpriseAdminRole : (trusted_teams) Changed enterprise admin
+	// role
+	ChangedEnterpriseAdminRole *ChangedEnterpriseAdminRoleType `json:"changed_enterprise_admin_role,omitempty"`
+	// ChangedEnterpriseConnectedTeamStatus : (trusted_teams) Changed
+	// enterprise-connected team status
+	ChangedEnterpriseConnectedTeamStatus *ChangedEnterpriseConnectedTeamStatusType `json:"changed_enterprise_connected_team_status,omitempty"`
+	// EndedEnterpriseAdminSession : (trusted_teams) Ended enterprise admin
+	// session
+	EndedEnterpriseAdminSession *EndedEnterpriseAdminSessionType `json:"ended_enterprise_admin_session,omitempty"`
+	// EndedEnterpriseAdminSessionDeprecated : (trusted_teams) Ended enterprise
+	// admin session (deprecated, replaced by 'Ended enterprise admin session')
+	EndedEnterpriseAdminSessionDeprecated *EndedEnterpriseAdminSessionDeprecatedType `json:"ended_enterprise_admin_session_deprecated,omitempty"`
+	// EnterpriseSettingsLocking : (trusted_teams) Changed who can update a
+	// setting
+	EnterpriseSettingsLocking *EnterpriseSettingsLockingType `json:"enterprise_settings_locking,omitempty"`
 	// GuestAdminChangeStatus : (trusted_teams) Changed guest team admin status
 	GuestAdminChangeStatus *GuestAdminChangeStatusType `json:"guest_admin_change_status,omitempty"`
+	// StartedEnterpriseAdminSession : (trusted_teams) Started enterprise admin
+	// session
+	StartedEnterpriseAdminSession *StartedEnterpriseAdminSessionType `json:"started_enterprise_admin_session,omitempty"`
 	// TeamMergeRequestAccepted : (trusted_teams) Accepted a team merge request
 	TeamMergeRequestAccepted *TeamMergeRequestAcceptedType `json:"team_merge_request_accepted,omitempty"`
 	// TeamMergeRequestAcceptedShownToPrimaryTeam : (trusted_teams) Accepted a
@@ -6368,6 +8651,8 @@ type EventType struct {
 
 // Valid tag values for EventType
 const (
+	EventTypeAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
+	EventTypeAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
 	EventTypeAppLinkTeam                                  = "app_link_team"
 	EventTypeAppLinkUser                                  = "app_link_user"
 	EventTypeAppUnlinkTeam                                = "app_unlink_team"
@@ -6382,6 +8667,28 @@ const (
 	EventTypeFileResolveComment                           = "file_resolve_comment"
 	EventTypeFileUnlikeComment                            = "file_unlike_comment"
 	EventTypeFileUnresolveComment                         = "file_unresolve_comment"
+	EventTypeGovernancePolicyAddFolders                   = "governance_policy_add_folders"
+	EventTypeGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
+	EventTypeGovernancePolicyCreate                       = "governance_policy_create"
+	EventTypeGovernancePolicyDelete                       = "governance_policy_delete"
+	EventTypeGovernancePolicyEditDetails                  = "governance_policy_edit_details"
+	EventTypeGovernancePolicyEditDuration                 = "governance_policy_edit_duration"
+	EventTypeGovernancePolicyExportCreated                = "governance_policy_export_created"
+	EventTypeGovernancePolicyExportRemoved                = "governance_policy_export_removed"
+	EventTypeGovernancePolicyRemoveFolders                = "governance_policy_remove_folders"
+	EventTypeGovernancePolicyReportCreated                = "governance_policy_report_created"
+	EventTypeGovernancePolicyZipPartDownloaded            = "governance_policy_zip_part_downloaded"
+	EventTypeLegalHoldsActivateAHold                      = "legal_holds_activate_a_hold"
+	EventTypeLegalHoldsAddMembers                         = "legal_holds_add_members"
+	EventTypeLegalHoldsChangeHoldDetails                  = "legal_holds_change_hold_details"
+	EventTypeLegalHoldsChangeHoldName                     = "legal_holds_change_hold_name"
+	EventTypeLegalHoldsExportAHold                        = "legal_holds_export_a_hold"
+	EventTypeLegalHoldsExportCancelled                    = "legal_holds_export_cancelled"
+	EventTypeLegalHoldsExportDownloaded                   = "legal_holds_export_downloaded"
+	EventTypeLegalHoldsExportRemoved                      = "legal_holds_export_removed"
+	EventTypeLegalHoldsReleaseAHold                       = "legal_holds_release_a_hold"
+	EventTypeLegalHoldsRemoveMembers                      = "legal_holds_remove_members"
+	EventTypeLegalHoldsReportAHold                        = "legal_holds_report_a_hold"
 	EventTypeDeviceChangeIpDesktop                        = "device_change_ip_desktop"
 	EventTypeDeviceChangeIpMobile                         = "device_change_ip_mobile"
 	EventTypeDeviceChangeIpWeb                            = "device_change_ip_web"
@@ -6391,7 +8698,10 @@ const (
 	EventTypeDeviceLinkSuccess                            = "device_link_success"
 	EventTypeDeviceManagementDisabled                     = "device_management_disabled"
 	EventTypeDeviceManagementEnabled                      = "device_management_enabled"
+	EventTypeDeviceSyncBackupStatusChanged                = "device_sync_backup_status_changed"
 	EventTypeDeviceUnlink                                 = "device_unlink"
+	EventTypeDropboxPasswordsExported                     = "dropbox_passwords_exported"
+	EventTypeDropboxPasswordsNewDeviceEnrolled            = "dropbox_passwords_new_device_enrolled"
 	EventTypeEmmRefreshAuthToken                          = "emm_refresh_auth_token"
 	EventTypeAccountCaptureChangeAvailability             = "account_capture_change_availability"
 	EventTypeAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
@@ -6415,6 +8725,7 @@ const (
 	EventTypeFileDownload                                 = "file_download"
 	EventTypeFileEdit                                     = "file_edit"
 	EventTypeFileGetCopyReference                         = "file_get_copy_reference"
+	EventTypeFileLockingLockStatusChanged                 = "file_locking_lock_status_changed"
 	EventTypeFileMove                                     = "file_move"
 	EventTypeFilePermanentlyDelete                        = "file_permanently_delete"
 	EventTypeFilePreview                                  = "file_preview"
@@ -6423,6 +8734,10 @@ const (
 	EventTypeFileRevert                                   = "file_revert"
 	EventTypeFileRollbackChanges                          = "file_rollback_changes"
 	EventTypeFileSaveCopyReference                        = "file_save_copy_reference"
+	EventTypeFolderOverviewDescriptionChanged             = "folder_overview_description_changed"
+	EventTypeFolderOverviewItemPinned                     = "folder_overview_item_pinned"
+	EventTypeFolderOverviewItemUnpinned                   = "folder_overview_item_unpinned"
+	EventTypeRewindFolder                                 = "rewind_folder"
 	EventTypeFileRequestChange                            = "file_request_change"
 	EventTypeFileRequestClose                             = "file_request_close"
 	EventTypeFileRequestCreate                            = "file_request_create"
@@ -6441,6 +8756,7 @@ const (
 	EventTypeGroupRemoveExternalId                        = "group_remove_external_id"
 	EventTypeGroupRemoveMember                            = "group_remove_member"
 	EventTypeGroupRename                                  = "group_rename"
+	EventTypeAccountLockOrUnlocked                        = "account_lock_or_unlocked"
 	EventTypeEmmError                                     = "emm_error"
 	EventTypeGuestAdminSignedInViaTrustedTeams            = "guest_admin_signed_in_via_trusted_teams"
 	EventTypeGuestAdminSignedOutViaTrustedTeams           = "guest_admin_signed_out_via_trusted_teams"
@@ -6452,6 +8768,8 @@ const (
 	EventTypeSignInAsSessionEnd                           = "sign_in_as_session_end"
 	EventTypeSignInAsSessionStart                         = "sign_in_as_session_start"
 	EventTypeSsoError                                     = "sso_error"
+	EventTypeCreateTeamInviteLink                         = "create_team_invite_link"
+	EventTypeDeleteTeamInviteLink                         = "delete_team_invite_link"
 	EventTypeMemberAddExternalId                          = "member_add_external_id"
 	EventTypeMemberAddName                                = "member_add_name"
 	EventTypeMemberChangeAdminRole                        = "member_change_admin_role"
@@ -6459,17 +8777,31 @@ const (
 	EventTypeMemberChangeExternalId                       = "member_change_external_id"
 	EventTypeMemberChangeMembershipType                   = "member_change_membership_type"
 	EventTypeMemberChangeName                             = "member_change_name"
+	EventTypeMemberChangeResellerRole                     = "member_change_reseller_role"
 	EventTypeMemberChangeStatus                           = "member_change_status"
 	EventTypeMemberDeleteManualContacts                   = "member_delete_manual_contacts"
+	EventTypeMemberDeleteProfilePhoto                     = "member_delete_profile_photo"
 	EventTypeMemberPermanentlyDeleteAccountContents       = "member_permanently_delete_account_contents"
 	EventTypeMemberRemoveExternalId                       = "member_remove_external_id"
+	EventTypeMemberSetProfilePhoto                        = "member_set_profile_photo"
 	EventTypeMemberSpaceLimitsAddCustomQuota              = "member_space_limits_add_custom_quota"
 	EventTypeMemberSpaceLimitsChangeCustomQuota           = "member_space_limits_change_custom_quota"
 	EventTypeMemberSpaceLimitsChangeStatus                = "member_space_limits_change_status"
 	EventTypeMemberSpaceLimitsRemoveCustomQuota           = "member_space_limits_remove_custom_quota"
 	EventTypeMemberSuggest                                = "member_suggest"
 	EventTypeMemberTransferAccountContents                = "member_transfer_account_contents"
+	EventTypePendingSecondaryEmailAdded                   = "pending_secondary_email_added"
+	EventTypeSecondaryEmailDeleted                        = "secondary_email_deleted"
+	EventTypeSecondaryEmailVerified                       = "secondary_email_verified"
 	EventTypeSecondaryMailsPolicyChanged                  = "secondary_mails_policy_changed"
+	EventTypeBinderAddPage                                = "binder_add_page"
+	EventTypeBinderAddSection                             = "binder_add_section"
+	EventTypeBinderRemovePage                             = "binder_remove_page"
+	EventTypeBinderRemoveSection                          = "binder_remove_section"
+	EventTypeBinderRenamePage                             = "binder_rename_page"
+	EventTypeBinderRenameSection                          = "binder_rename_section"
+	EventTypeBinderReorderPage                            = "binder_reorder_page"
+	EventTypeBinderReorderSection                         = "binder_reorder_section"
 	EventTypePaperContentAddMember                        = "paper_content_add_member"
 	EventTypePaperContentAddToFolder                      = "paper_content_add_to_folder"
 	EventTypePaperContentArchive                          = "paper_content_archive"
@@ -6507,20 +8839,39 @@ const (
 	EventTypePaperFolderDeleted                           = "paper_folder_deleted"
 	EventTypePaperFolderFollowed                          = "paper_folder_followed"
 	EventTypePaperFolderTeamInvite                        = "paper_folder_team_invite"
+	EventTypePaperPublishedLinkChangePermission           = "paper_published_link_change_permission"
 	EventTypePaperPublishedLinkCreate                     = "paper_published_link_create"
 	EventTypePaperPublishedLinkDisabled                   = "paper_published_link_disabled"
 	EventTypePaperPublishedLinkView                       = "paper_published_link_view"
 	EventTypePasswordChange                               = "password_change"
 	EventTypePasswordReset                                = "password_reset"
 	EventTypePasswordResetAll                             = "password_reset_all"
+	EventTypeClassificationCreateReport                   = "classification_create_report"
+	EventTypeClassificationCreateReportFail               = "classification_create_report_fail"
 	EventTypeEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
 	EventTypeEmmCreateUsageReport                         = "emm_create_usage_report"
 	EventTypeExportMembersReport                          = "export_members_report"
+	EventTypeExportMembersReportFail                      = "export_members_report_fail"
+	EventTypeExternalSharingCreateReport                  = "external_sharing_create_report"
+	EventTypeExternalSharingReportFailed                  = "external_sharing_report_failed"
+	EventTypeNoExpirationLinkGenCreateReport              = "no_expiration_link_gen_create_report"
+	EventTypeNoExpirationLinkGenReportFailed              = "no_expiration_link_gen_report_failed"
+	EventTypeNoPasswordLinkGenCreateReport                = "no_password_link_gen_create_report"
+	EventTypeNoPasswordLinkGenReportFailed                = "no_password_link_gen_report_failed"
+	EventTypeNoPasswordLinkViewCreateReport               = "no_password_link_view_create_report"
+	EventTypeNoPasswordLinkViewReportFailed               = "no_password_link_view_report_failed"
+	EventTypeOutdatedLinkViewCreateReport                 = "outdated_link_view_create_report"
+	EventTypeOutdatedLinkViewReportFailed                 = "outdated_link_view_report_failed"
 	EventTypePaperAdminExportStart                        = "paper_admin_export_start"
 	EventTypeSmartSyncCreateAdminPrivilegeReport          = "smart_sync_create_admin_privilege_report"
 	EventTypeTeamActivityCreateReport                     = "team_activity_create_report"
 	EventTypeTeamActivityCreateReportFail                 = "team_activity_create_report_fail"
 	EventTypeCollectionShare                              = "collection_share"
+	EventTypeFileTransfersFileAdd                         = "file_transfers_file_add"
+	EventTypeFileTransfersTransferDelete                  = "file_transfers_transfer_delete"
+	EventTypeFileTransfersTransferDownload                = "file_transfers_transfer_download"
+	EventTypeFileTransfersTransferSend                    = "file_transfers_transfer_send"
+	EventTypeFileTransfersTransferView                    = "file_transfers_transfer_view"
 	EventTypeNoteAclInviteOnly                            = "note_acl_invite_only"
 	EventTypeNoteAclLink                                  = "note_acl_link"
 	EventTypeNoteAclTeamLink                              = "note_acl_team_link"
@@ -6560,6 +8911,8 @@ const (
 	EventTypeSharedContentRemoveLinkPassword              = "shared_content_remove_link_password"
 	EventTypeSharedContentRemoveMember                    = "shared_content_remove_member"
 	EventTypeSharedContentRequestAccess                   = "shared_content_request_access"
+	EventTypeSharedContentRestoreInvitees                 = "shared_content_restore_invitees"
+	EventTypeSharedContentRestoreMember                   = "shared_content_restore_member"
 	EventTypeSharedContentUnshare                         = "shared_content_unshare"
 	EventTypeSharedContentView                            = "shared_content_view"
 	EventTypeSharedFolderChangeLinkPolicy                 = "shared_folder_change_link_policy"
@@ -6580,9 +8933,20 @@ const (
 	EventTypeSharedLinkDisable                            = "shared_link_disable"
 	EventTypeSharedLinkDownload                           = "shared_link_download"
 	EventTypeSharedLinkRemoveExpiry                       = "shared_link_remove_expiry"
+	EventTypeSharedLinkSettingsAddExpiration              = "shared_link_settings_add_expiration"
+	EventTypeSharedLinkSettingsAddPassword                = "shared_link_settings_add_password"
+	EventTypeSharedLinkSettingsAllowDownloadDisabled      = "shared_link_settings_allow_download_disabled"
+	EventTypeSharedLinkSettingsAllowDownloadEnabled       = "shared_link_settings_allow_download_enabled"
+	EventTypeSharedLinkSettingsChangeAudience             = "shared_link_settings_change_audience"
+	EventTypeSharedLinkSettingsChangeExpiration           = "shared_link_settings_change_expiration"
+	EventTypeSharedLinkSettingsChangePassword             = "shared_link_settings_change_password"
+	EventTypeSharedLinkSettingsRemoveExpiration           = "shared_link_settings_remove_expiration"
+	EventTypeSharedLinkSettingsRemovePassword             = "shared_link_settings_remove_password"
 	EventTypeSharedLinkShare                              = "shared_link_share"
 	EventTypeSharedLinkView                               = "shared_link_view"
 	EventTypeSharedNoteOpened                             = "shared_note_opened"
+	EventTypeShmodelDisableDownloads                      = "shmodel_disable_downloads"
+	EventTypeShmodelEnableDownloads                       = "shmodel_enable_downloads"
 	EventTypeShmodelGroupShare                            = "shmodel_group_share"
 	EventTypeShowcaseAccessGranted                        = "showcase_access_granted"
 	EventTypeShowcaseAddMember                            = "showcase_add_member"
@@ -6628,12 +8992,17 @@ const (
 	EventTypeAllowDownloadDisabled                        = "allow_download_disabled"
 	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
 	EventTypeCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
+	EventTypeClassificationChangePolicy                   = "classification_change_policy"
+	EventTypeComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
+	EventTypeContentAdministrationPolicyChanged           = "content_administration_policy_changed"
 	EventTypeDataPlacementRestrictionChangePolicy         = "data_placement_restriction_change_policy"
 	EventTypeDataPlacementRestrictionSatisfyPolicy        = "data_placement_restriction_satisfy_policy"
+	EventTypeDeviceApprovalsAddException                  = "device_approvals_add_exception"
 	EventTypeDeviceApprovalsChangeDesktopPolicy           = "device_approvals_change_desktop_policy"
 	EventTypeDeviceApprovalsChangeMobilePolicy            = "device_approvals_change_mobile_policy"
 	EventTypeDeviceApprovalsChangeOverageAction           = "device_approvals_change_overage_action"
 	EventTypeDeviceApprovalsChangeUnlinkAction            = "device_approvals_change_unlink_action"
+	EventTypeDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
 	EventTypeDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
 	EventTypeDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
 	EventTypeEmmAddException                              = "emm_add_exception"
@@ -6641,13 +9010,16 @@ const (
 	EventTypeEmmRemoveException                           = "emm_remove_exception"
 	EventTypeExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
 	EventTypeFileCommentsChangePolicy                     = "file_comments_change_policy"
+	EventTypeFileLockingPolicyChanged                     = "file_locking_policy_changed"
 	EventTypeFileRequestsChangePolicy                     = "file_requests_change_policy"
 	EventTypeFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
 	EventTypeFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
+	EventTypeFileTransfersPolicyChanged                   = "file_transfers_policy_changed"
 	EventTypeGoogleSsoChangePolicy                        = "google_sso_change_policy"
 	EventTypeGroupUserManagementChangePolicy              = "group_user_management_change_policy"
 	EventTypeIntegrationPolicyChanged                     = "integration_policy_changed"
 	EventTypeMemberRequestsChangePolicy                   = "member_requests_change_policy"
+	EventTypeMemberSendInvitePolicyChanged                = "member_send_invite_policy_changed"
 	EventTypeMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
 	EventTypeMemberSpaceLimitsChangeCapsTypePolicy        = "member_space_limits_change_caps_type_policy"
 	EventTypeMemberSpaceLimitsChangePolicy                = "member_space_limits_change_policy"
@@ -6663,31 +9035,44 @@ const (
 	EventTypePaperDesktopPolicyChanged                    = "paper_desktop_policy_changed"
 	EventTypePaperEnabledUsersGroupAddition               = "paper_enabled_users_group_addition"
 	EventTypePaperEnabledUsersGroupRemoval                = "paper_enabled_users_group_removal"
+	EventTypePasswordStrengthRequirementsChangePolicy     = "password_strength_requirements_change_policy"
 	EventTypePermanentDeleteChangePolicy                  = "permanent_delete_change_policy"
 	EventTypeResellerSupportChangePolicy                  = "reseller_support_change_policy"
+	EventTypeRewindPolicyChanged                          = "rewind_policy_changed"
+	EventTypeSendForSignaturePolicyChanged                = "send_for_signature_policy_changed"
 	EventTypeSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
 	EventTypeSharingChangeLinkPolicy                      = "sharing_change_link_policy"
 	EventTypeSharingChangeMemberPolicy                    = "sharing_change_member_policy"
 	EventTypeShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
 	EventTypeShowcaseChangeEnabledPolicy                  = "showcase_change_enabled_policy"
 	EventTypeShowcaseChangeExternalSharingPolicy          = "showcase_change_external_sharing_policy"
+	EventTypeSmarterSmartSyncPolicyChanged                = "smarter_smart_sync_policy_changed"
 	EventTypeSmartSyncChangePolicy                        = "smart_sync_change_policy"
 	EventTypeSmartSyncNotOptOut                           = "smart_sync_not_opt_out"
 	EventTypeSmartSyncOptOut                              = "smart_sync_opt_out"
 	EventTypeSsoChangePolicy                              = "sso_change_policy"
+	EventTypeTeamBrandingPolicyChanged                    = "team_branding_policy_changed"
 	EventTypeTeamExtensionsPolicyChanged                  = "team_extensions_policy_changed"
 	EventTypeTeamSelectiveSyncPolicyChanged               = "team_selective_sync_policy_changed"
+	EventTypeTeamSharingWhitelistSubjectsChanged          = "team_sharing_whitelist_subjects_changed"
+	EventTypeTfaAddException                              = "tfa_add_exception"
 	EventTypeTfaChangePolicy                              = "tfa_change_policy"
+	EventTypeTfaRemoveException                           = "tfa_remove_exception"
 	EventTypeTwoAccountChangePolicy                       = "two_account_change_policy"
 	EventTypeViewerInfoPolicyChanged                      = "viewer_info_policy_changed"
+	EventTypeWatermarkingPolicyChanged                    = "watermarking_policy_changed"
+	EventTypeWebSessionsChangeActiveSessionLimit          = "web_sessions_change_active_session_limit"
 	EventTypeWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
 	EventTypeWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
 	EventTypeTeamMergeFrom                                = "team_merge_from"
 	EventTypeTeamMergeTo                                  = "team_merge_to"
+	EventTypeTeamProfileAddBackground                     = "team_profile_add_background"
 	EventTypeTeamProfileAddLogo                           = "team_profile_add_logo"
+	EventTypeTeamProfileChangeBackground                  = "team_profile_change_background"
 	EventTypeTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
 	EventTypeTeamProfileChangeLogo                        = "team_profile_change_logo"
 	EventTypeTeamProfileChangeName                        = "team_profile_change_name"
+	EventTypeTeamProfileRemoveBackground                  = "team_profile_remove_background"
 	EventTypeTeamProfileRemoveLogo                        = "team_profile_remove_logo"
 	EventTypeTfaAddBackupPhone                            = "tfa_add_backup_phone"
 	EventTypeTfaAddSecurityKey                            = "tfa_add_security_key"
@@ -6696,7 +9081,13 @@ const (
 	EventTypeTfaRemoveBackupPhone                         = "tfa_remove_backup_phone"
 	EventTypeTfaRemoveSecurityKey                         = "tfa_remove_security_key"
 	EventTypeTfaReset                                     = "tfa_reset"
+	EventTypeChangedEnterpriseAdminRole                   = "changed_enterprise_admin_role"
+	EventTypeChangedEnterpriseConnectedTeamStatus         = "changed_enterprise_connected_team_status"
+	EventTypeEndedEnterpriseAdminSession                  = "ended_enterprise_admin_session"
+	EventTypeEndedEnterpriseAdminSessionDeprecated        = "ended_enterprise_admin_session_deprecated"
+	EventTypeEnterpriseSettingsLocking                    = "enterprise_settings_locking"
 	EventTypeGuestAdminChangeStatus                       = "guest_admin_change_status"
+	EventTypeStartedEnterpriseAdminSession                = "started_enterprise_admin_session"
 	EventTypeTeamMergeRequestAccepted                     = "team_merge_request_accepted"
 	EventTypeTeamMergeRequestAcceptedShownToPrimaryTeam   = "team_merge_request_accepted_shown_to_primary_team"
 	EventTypeTeamMergeRequestAcceptedShownToSecondaryTeam = "team_merge_request_accepted_shown_to_secondary_team"
@@ -6730,6 +9121,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_changed_alert_config":
+		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfig)
+
+		if err != nil {
+			return err
+		}
+	case "admin_alerting_triggered_alert":
+		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlert)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team":
 		err = json.Unmarshal(body, &u.AppLinkTeam)
 
@@ -6814,6 +9217,138 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "governance_policy_add_folders":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFolders)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_add_folder_failed":
+		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailed)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_create":
+		err = json.Unmarshal(body, &u.GovernancePolicyCreate)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_delete":
+		err = json.Unmarshal(body, &u.GovernancePolicyDelete)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_edit_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyEditDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_edit_duration":
+		err = json.Unmarshal(body, &u.GovernancePolicyEditDuration)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_created":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportCreated)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_export_removed":
+		err = json.Unmarshal(body, &u.GovernancePolicyExportRemoved)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_remove_folders":
+		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFolders)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_report_created":
+		err = json.Unmarshal(body, &u.GovernancePolicyReportCreated)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_zip_part_downloaded":
+		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloaded)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_activate_a_hold":
+		err = json.Unmarshal(body, &u.LegalHoldsActivateAHold)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_add_members":
+		err = json.Unmarshal(body, &u.LegalHoldsAddMembers)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_change_hold_details":
+		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetails)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_change_hold_name":
+		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldName)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_a_hold":
+		err = json.Unmarshal(body, &u.LegalHoldsExportAHold)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_cancelled":
+		err = json.Unmarshal(body, &u.LegalHoldsExportCancelled)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_downloaded":
+		err = json.Unmarshal(body, &u.LegalHoldsExportDownloaded)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_export_removed":
+		err = json.Unmarshal(body, &u.LegalHoldsExportRemoved)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_release_a_hold":
+		err = json.Unmarshal(body, &u.LegalHoldsReleaseAHold)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_remove_members":
+		err = json.Unmarshal(body, &u.LegalHoldsRemoveMembers)
+
+		if err != nil {
+			return err
+		}
+	case "legal_holds_report_a_hold":
+		err = json.Unmarshal(body, &u.LegalHoldsReportAHold)
+
+		if err != nil {
+			return err
+		}
 	case "device_change_ip_desktop":
 		err = json.Unmarshal(body, &u.DeviceChangeIpDesktop)
 
@@ -6868,8 +9403,26 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "device_sync_backup_status_changed":
+		err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChanged)
+
+		if err != nil {
+			return err
+		}
 	case "device_unlink":
 		err = json.Unmarshal(body, &u.DeviceUnlink)
+
+		if err != nil {
+			return err
+		}
+	case "dropbox_passwords_exported":
+		err = json.Unmarshal(body, &u.DropboxPasswordsExported)
+
+		if err != nil {
+			return err
+		}
+	case "dropbox_passwords_new_device_enrolled":
+		err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolled)
 
 		if err != nil {
 			return err
@@ -7012,6 +9565,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_locking_lock_status_changed":
+		err = json.Unmarshal(body, &u.FileLockingLockStatusChanged)
+
+		if err != nil {
+			return err
+		}
 	case "file_move":
 		err = json.Unmarshal(body, &u.FileMove)
 
@@ -7056,6 +9615,30 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "file_save_copy_reference":
 		err = json.Unmarshal(body, &u.FileSaveCopyReference)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_description_changed":
+		err = json.Unmarshal(body, &u.FolderOverviewDescriptionChanged)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_item_pinned":
+		err = json.Unmarshal(body, &u.FolderOverviewItemPinned)
+
+		if err != nil {
+			return err
+		}
+	case "folder_overview_item_unpinned":
+		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinned)
+
+		if err != nil {
+			return err
+		}
+	case "rewind_folder":
+		err = json.Unmarshal(body, &u.RewindFolder)
 
 		if err != nil {
 			return err
@@ -7168,6 +9751,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "account_lock_or_unlocked":
+		err = json.Unmarshal(body, &u.AccountLockOrUnlocked)
+
+		if err != nil {
+			return err
+		}
 	case "emm_error":
 		err = json.Unmarshal(body, &u.EmmError)
 
@@ -7234,6 +9823,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "create_team_invite_link":
+		err = json.Unmarshal(body, &u.CreateTeamInviteLink)
+
+		if err != nil {
+			return err
+		}
+	case "delete_team_invite_link":
+		err = json.Unmarshal(body, &u.DeleteTeamInviteLink)
+
+		if err != nil {
+			return err
+		}
 	case "member_add_external_id":
 		err = json.Unmarshal(body, &u.MemberAddExternalId)
 
@@ -7276,6 +9877,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_change_reseller_role":
+		err = json.Unmarshal(body, &u.MemberChangeResellerRole)
+
+		if err != nil {
+			return err
+		}
 	case "member_change_status":
 		err = json.Unmarshal(body, &u.MemberChangeStatus)
 
@@ -7288,6 +9895,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "member_delete_profile_photo":
+		err = json.Unmarshal(body, &u.MemberDeleteProfilePhoto)
+
+		if err != nil {
+			return err
+		}
 	case "member_permanently_delete_account_contents":
 		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents)
 
@@ -7296,6 +9909,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_remove_external_id":
 		err = json.Unmarshal(body, &u.MemberRemoveExternalId)
+
+		if err != nil {
+			return err
+		}
+	case "member_set_profile_photo":
+		err = json.Unmarshal(body, &u.MemberSetProfilePhoto)
 
 		if err != nil {
 			return err
@@ -7336,8 +9955,74 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "pending_secondary_email_added":
+		err = json.Unmarshal(body, &u.PendingSecondaryEmailAdded)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_email_deleted":
+		err = json.Unmarshal(body, &u.SecondaryEmailDeleted)
+
+		if err != nil {
+			return err
+		}
+	case "secondary_email_verified":
+		err = json.Unmarshal(body, &u.SecondaryEmailVerified)
+
+		if err != nil {
+			return err
+		}
 	case "secondary_mails_policy_changed":
 		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "binder_add_page":
+		err = json.Unmarshal(body, &u.BinderAddPage)
+
+		if err != nil {
+			return err
+		}
+	case "binder_add_section":
+		err = json.Unmarshal(body, &u.BinderAddSection)
+
+		if err != nil {
+			return err
+		}
+	case "binder_remove_page":
+		err = json.Unmarshal(body, &u.BinderRemovePage)
+
+		if err != nil {
+			return err
+		}
+	case "binder_remove_section":
+		err = json.Unmarshal(body, &u.BinderRemoveSection)
+
+		if err != nil {
+			return err
+		}
+	case "binder_rename_page":
+		err = json.Unmarshal(body, &u.BinderRenamePage)
+
+		if err != nil {
+			return err
+		}
+	case "binder_rename_section":
+		err = json.Unmarshal(body, &u.BinderRenameSection)
+
+		if err != nil {
+			return err
+		}
+	case "binder_reorder_page":
+		err = json.Unmarshal(body, &u.BinderReorderPage)
+
+		if err != nil {
+			return err
+		}
+	case "binder_reorder_section":
+		err = json.Unmarshal(body, &u.BinderReorderSection)
 
 		if err != nil {
 			return err
@@ -7564,6 +10249,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "paper_published_link_change_permission":
+		err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermission)
+
+		if err != nil {
+			return err
+		}
 	case "paper_published_link_create":
 		err = json.Unmarshal(body, &u.PaperPublishedLinkCreate)
 
@@ -7600,6 +10291,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "classification_create_report":
+		err = json.Unmarshal(body, &u.ClassificationCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "classification_create_report_fail":
+		err = json.Unmarshal(body, &u.ClassificationCreateReportFail)
+
+		if err != nil {
+			return err
+		}
 	case "emm_create_exceptions_report":
 		err = json.Unmarshal(body, &u.EmmCreateExceptionsReport)
 
@@ -7614,6 +10317,72 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "export_members_report":
 		err = json.Unmarshal(body, &u.ExportMembersReport)
+
+		if err != nil {
+			return err
+		}
+	case "export_members_report_fail":
+		err = json.Unmarshal(body, &u.ExportMembersReportFail)
+
+		if err != nil {
+			return err
+		}
+	case "external_sharing_create_report":
+		err = json.Unmarshal(body, &u.ExternalSharingCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "external_sharing_report_failed":
+		err = json.Unmarshal(body, &u.ExternalSharingReportFailed)
+
+		if err != nil {
+			return err
+		}
+	case "no_expiration_link_gen_create_report":
+		err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "no_expiration_link_gen_report_failed":
+		err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailed)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_gen_create_report":
+		err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_gen_report_failed":
+		err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailed)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_view_create_report":
+		err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "no_password_link_view_report_failed":
+		err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailed)
+
+		if err != nil {
+			return err
+		}
+	case "outdated_link_view_create_report":
+		err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReport)
+
+		if err != nil {
+			return err
+		}
+	case "outdated_link_view_report_failed":
+		err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailed)
 
 		if err != nil {
 			return err
@@ -7644,6 +10413,36 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "collection_share":
 		err = json.Unmarshal(body, &u.CollectionShare)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_file_add":
+		err = json.Unmarshal(body, &u.FileTransfersFileAdd)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_delete":
+		err = json.Unmarshal(body, &u.FileTransfersTransferDelete)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_download":
+		err = json.Unmarshal(body, &u.FileTransfersTransferDownload)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_send":
+		err = json.Unmarshal(body, &u.FileTransfersTransferSend)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_transfer_view":
+		err = json.Unmarshal(body, &u.FileTransfersTransferView)
 
 		if err != nil {
 			return err
@@ -7882,6 +10681,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "shared_content_restore_invitees":
+		err = json.Unmarshal(body, &u.SharedContentRestoreInvitees)
+
+		if err != nil {
+			return err
+		}
+	case "shared_content_restore_member":
+		err = json.Unmarshal(body, &u.SharedContentRestoreMember)
+
+		if err != nil {
+			return err
+		}
 	case "shared_content_unshare":
 		err = json.Unmarshal(body, &u.SharedContentUnshare)
 
@@ -8002,6 +10813,60 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "shared_link_settings_add_expiration":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpiration)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_add_password":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAddPassword)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_allow_download_disabled":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabled)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_allow_download_enabled":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabled)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_audience":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudience)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_expiration":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpiration)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_change_password":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsChangePassword)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_remove_expiration":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpiration)
+
+		if err != nil {
+			return err
+		}
+	case "shared_link_settings_remove_password":
+		err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePassword)
+
+		if err != nil {
+			return err
+		}
 	case "shared_link_share":
 		err = json.Unmarshal(body, &u.SharedLinkShare)
 
@@ -8016,6 +10881,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "shared_note_opened":
 		err = json.Unmarshal(body, &u.SharedNoteOpened)
+
+		if err != nil {
+			return err
+		}
+	case "shmodel_disable_downloads":
+		err = json.Unmarshal(body, &u.ShmodelDisableDownloads)
+
+		if err != nil {
+			return err
+		}
+	case "shmodel_enable_downloads":
+		err = json.Unmarshal(body, &u.ShmodelEnableDownloads)
 
 		if err != nil {
 			return err
@@ -8290,6 +11167,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "classification_change_policy":
+		err = json.Unmarshal(body, &u.ClassificationChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "computer_backup_policy_changed":
+		err = json.Unmarshal(body, &u.ComputerBackupPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "content_administration_policy_changed":
+		err = json.Unmarshal(body, &u.ContentAdministrationPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "data_placement_restriction_change_policy":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy)
 
@@ -8298,6 +11193,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "data_placement_restriction_satisfy_policy":
 		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "device_approvals_add_exception":
+		err = json.Unmarshal(body, &u.DeviceApprovalsAddException)
 
 		if err != nil {
 			return err
@@ -8322,6 +11223,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "device_approvals_change_unlink_action":
 		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction)
+
+		if err != nil {
+			return err
+		}
+	case "device_approvals_remove_exception":
+		err = json.Unmarshal(body, &u.DeviceApprovalsRemoveException)
 
 		if err != nil {
 			return err
@@ -8368,6 +11275,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "file_locking_policy_changed":
+		err = json.Unmarshal(body, &u.FileLockingPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "file_requests_change_policy":
 		err = json.Unmarshal(body, &u.FileRequestsChangePolicy)
 
@@ -8382,6 +11295,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "file_requests_emails_restricted_to_team_only":
 		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnly)
+
+		if err != nil {
+			return err
+		}
+	case "file_transfers_policy_changed":
+		err = json.Unmarshal(body, &u.FileTransfersPolicyChanged)
 
 		if err != nil {
 			return err
@@ -8406,6 +11325,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "member_requests_change_policy":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "member_send_invite_policy_changed":
+		err = json.Unmarshal(body, &u.MemberSendInvitePolicyChanged)
 
 		if err != nil {
 			return err
@@ -8500,6 +11425,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "password_strength_requirements_change_policy":
+		err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicy)
+
+		if err != nil {
+			return err
+		}
 	case "permanent_delete_change_policy":
 		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy)
 
@@ -8508,6 +11439,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "reseller_support_change_policy":
 		err = json.Unmarshal(body, &u.ResellerSupportChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "rewind_policy_changed":
+		err = json.Unmarshal(body, &u.RewindPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "send_for_signature_policy_changed":
+		err = json.Unmarshal(body, &u.SendForSignaturePolicyChanged)
 
 		if err != nil {
 			return err
@@ -8548,6 +11491,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "smarter_smart_sync_policy_changed":
+		err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "smart_sync_change_policy":
 		err = json.Unmarshal(body, &u.SmartSyncChangePolicy)
 
@@ -8572,6 +11521,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_branding_policy_changed":
+		err = json.Unmarshal(body, &u.TeamBrandingPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "team_extensions_policy_changed":
 		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged)
 
@@ -8584,8 +11539,26 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_sharing_whitelist_subjects_changed":
+		err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChanged)
+
+		if err != nil {
+			return err
+		}
+	case "tfa_add_exception":
+		err = json.Unmarshal(body, &u.TfaAddException)
+
+		if err != nil {
+			return err
+		}
 	case "tfa_change_policy":
 		err = json.Unmarshal(body, &u.TfaChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "tfa_remove_exception":
+		err = json.Unmarshal(body, &u.TfaRemoveException)
 
 		if err != nil {
 			return err
@@ -8598,6 +11571,18 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "viewer_info_policy_changed":
 		err = json.Unmarshal(body, &u.ViewerInfoPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "watermarking_policy_changed":
+		err = json.Unmarshal(body, &u.WatermarkingPolicyChanged)
+
+		if err != nil {
+			return err
+		}
+	case "web_sessions_change_active_session_limit":
+		err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimit)
 
 		if err != nil {
 			return err
@@ -8626,8 +11611,20 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "team_profile_add_background":
+		err = json.Unmarshal(body, &u.TeamProfileAddBackground)
+
+		if err != nil {
+			return err
+		}
 	case "team_profile_add_logo":
 		err = json.Unmarshal(body, &u.TeamProfileAddLogo)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_change_background":
+		err = json.Unmarshal(body, &u.TeamProfileChangeBackground)
 
 		if err != nil {
 			return err
@@ -8646,6 +11643,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "team_profile_change_name":
 		err = json.Unmarshal(body, &u.TeamProfileChangeName)
+
+		if err != nil {
+			return err
+		}
+	case "team_profile_remove_background":
+		err = json.Unmarshal(body, &u.TeamProfileRemoveBackground)
 
 		if err != nil {
 			return err
@@ -8698,8 +11701,44 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "changed_enterprise_admin_role":
+		err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRole)
+
+		if err != nil {
+			return err
+		}
+	case "changed_enterprise_connected_team_status":
+		err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatus)
+
+		if err != nil {
+			return err
+		}
+	case "ended_enterprise_admin_session":
+		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSession)
+
+		if err != nil {
+			return err
+		}
+	case "ended_enterprise_admin_session_deprecated":
+		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecated)
+
+		if err != nil {
+			return err
+		}
+	case "enterprise_settings_locking":
+		err = json.Unmarshal(body, &u.EnterpriseSettingsLocking)
+
+		if err != nil {
+			return err
+		}
 	case "guest_admin_change_status":
 		err = json.Unmarshal(body, &u.GuestAdminChangeStatus)
+
+		if err != nil {
+			return err
+		}
+	case "started_enterprise_admin_session":
+		err = json.Unmarshal(body, &u.StartedEnterpriseAdminSession)
 
 		if err != nil {
 			return err
@@ -8816,6 +11855,471 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// EventTypeArg : The type of the event.
+type EventTypeArg struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for EventTypeArg
+const (
+	EventTypeArgAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
+	EventTypeArgAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
+	EventTypeArgAppLinkTeam                                  = "app_link_team"
+	EventTypeArgAppLinkUser                                  = "app_link_user"
+	EventTypeArgAppUnlinkTeam                                = "app_unlink_team"
+	EventTypeArgAppUnlinkUser                                = "app_unlink_user"
+	EventTypeArgIntegrationConnected                         = "integration_connected"
+	EventTypeArgIntegrationDisconnected                      = "integration_disconnected"
+	EventTypeArgFileAddComment                               = "file_add_comment"
+	EventTypeArgFileChangeCommentSubscription                = "file_change_comment_subscription"
+	EventTypeArgFileDeleteComment                            = "file_delete_comment"
+	EventTypeArgFileEditComment                              = "file_edit_comment"
+	EventTypeArgFileLikeComment                              = "file_like_comment"
+	EventTypeArgFileResolveComment                           = "file_resolve_comment"
+	EventTypeArgFileUnlikeComment                            = "file_unlike_comment"
+	EventTypeArgFileUnresolveComment                         = "file_unresolve_comment"
+	EventTypeArgGovernancePolicyAddFolders                   = "governance_policy_add_folders"
+	EventTypeArgGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
+	EventTypeArgGovernancePolicyCreate                       = "governance_policy_create"
+	EventTypeArgGovernancePolicyDelete                       = "governance_policy_delete"
+	EventTypeArgGovernancePolicyEditDetails                  = "governance_policy_edit_details"
+	EventTypeArgGovernancePolicyEditDuration                 = "governance_policy_edit_duration"
+	EventTypeArgGovernancePolicyExportCreated                = "governance_policy_export_created"
+	EventTypeArgGovernancePolicyExportRemoved                = "governance_policy_export_removed"
+	EventTypeArgGovernancePolicyRemoveFolders                = "governance_policy_remove_folders"
+	EventTypeArgGovernancePolicyReportCreated                = "governance_policy_report_created"
+	EventTypeArgGovernancePolicyZipPartDownloaded            = "governance_policy_zip_part_downloaded"
+	EventTypeArgLegalHoldsActivateAHold                      = "legal_holds_activate_a_hold"
+	EventTypeArgLegalHoldsAddMembers                         = "legal_holds_add_members"
+	EventTypeArgLegalHoldsChangeHoldDetails                  = "legal_holds_change_hold_details"
+	EventTypeArgLegalHoldsChangeHoldName                     = "legal_holds_change_hold_name"
+	EventTypeArgLegalHoldsExportAHold                        = "legal_holds_export_a_hold"
+	EventTypeArgLegalHoldsExportCancelled                    = "legal_holds_export_cancelled"
+	EventTypeArgLegalHoldsExportDownloaded                   = "legal_holds_export_downloaded"
+	EventTypeArgLegalHoldsExportRemoved                      = "legal_holds_export_removed"
+	EventTypeArgLegalHoldsReleaseAHold                       = "legal_holds_release_a_hold"
+	EventTypeArgLegalHoldsRemoveMembers                      = "legal_holds_remove_members"
+	EventTypeArgLegalHoldsReportAHold                        = "legal_holds_report_a_hold"
+	EventTypeArgDeviceChangeIpDesktop                        = "device_change_ip_desktop"
+	EventTypeArgDeviceChangeIpMobile                         = "device_change_ip_mobile"
+	EventTypeArgDeviceChangeIpWeb                            = "device_change_ip_web"
+	EventTypeArgDeviceDeleteOnUnlinkFail                     = "device_delete_on_unlink_fail"
+	EventTypeArgDeviceDeleteOnUnlinkSuccess                  = "device_delete_on_unlink_success"
+	EventTypeArgDeviceLinkFail                               = "device_link_fail"
+	EventTypeArgDeviceLinkSuccess                            = "device_link_success"
+	EventTypeArgDeviceManagementDisabled                     = "device_management_disabled"
+	EventTypeArgDeviceManagementEnabled                      = "device_management_enabled"
+	EventTypeArgDeviceSyncBackupStatusChanged                = "device_sync_backup_status_changed"
+	EventTypeArgDeviceUnlink                                 = "device_unlink"
+	EventTypeArgDropboxPasswordsExported                     = "dropbox_passwords_exported"
+	EventTypeArgDropboxPasswordsNewDeviceEnrolled            = "dropbox_passwords_new_device_enrolled"
+	EventTypeArgEmmRefreshAuthToken                          = "emm_refresh_auth_token"
+	EventTypeArgAccountCaptureChangeAvailability             = "account_capture_change_availability"
+	EventTypeArgAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
+	EventTypeArgAccountCaptureNotificationEmailsSent         = "account_capture_notification_emails_sent"
+	EventTypeArgAccountCaptureRelinquishAccount              = "account_capture_relinquish_account"
+	EventTypeArgDisabledDomainInvites                        = "disabled_domain_invites"
+	EventTypeArgDomainInvitesApproveRequestToJoinTeam        = "domain_invites_approve_request_to_join_team"
+	EventTypeArgDomainInvitesDeclineRequestToJoinTeam        = "domain_invites_decline_request_to_join_team"
+	EventTypeArgDomainInvitesEmailExistingUsers              = "domain_invites_email_existing_users"
+	EventTypeArgDomainInvitesRequestToJoinTeam               = "domain_invites_request_to_join_team"
+	EventTypeArgDomainInvitesSetInviteNewUserPrefToNo        = "domain_invites_set_invite_new_user_pref_to_no"
+	EventTypeArgDomainInvitesSetInviteNewUserPrefToYes       = "domain_invites_set_invite_new_user_pref_to_yes"
+	EventTypeArgDomainVerificationAddDomainFail              = "domain_verification_add_domain_fail"
+	EventTypeArgDomainVerificationAddDomainSuccess           = "domain_verification_add_domain_success"
+	EventTypeArgDomainVerificationRemoveDomain               = "domain_verification_remove_domain"
+	EventTypeArgEnabledDomainInvites                         = "enabled_domain_invites"
+	EventTypeArgCreateFolder                                 = "create_folder"
+	EventTypeArgFileAdd                                      = "file_add"
+	EventTypeArgFileCopy                                     = "file_copy"
+	EventTypeArgFileDelete                                   = "file_delete"
+	EventTypeArgFileDownload                                 = "file_download"
+	EventTypeArgFileEdit                                     = "file_edit"
+	EventTypeArgFileGetCopyReference                         = "file_get_copy_reference"
+	EventTypeArgFileLockingLockStatusChanged                 = "file_locking_lock_status_changed"
+	EventTypeArgFileMove                                     = "file_move"
+	EventTypeArgFilePermanentlyDelete                        = "file_permanently_delete"
+	EventTypeArgFilePreview                                  = "file_preview"
+	EventTypeArgFileRename                                   = "file_rename"
+	EventTypeArgFileRestore                                  = "file_restore"
+	EventTypeArgFileRevert                                   = "file_revert"
+	EventTypeArgFileRollbackChanges                          = "file_rollback_changes"
+	EventTypeArgFileSaveCopyReference                        = "file_save_copy_reference"
+	EventTypeArgFolderOverviewDescriptionChanged             = "folder_overview_description_changed"
+	EventTypeArgFolderOverviewItemPinned                     = "folder_overview_item_pinned"
+	EventTypeArgFolderOverviewItemUnpinned                   = "folder_overview_item_unpinned"
+	EventTypeArgRewindFolder                                 = "rewind_folder"
+	EventTypeArgFileRequestChange                            = "file_request_change"
+	EventTypeArgFileRequestClose                             = "file_request_close"
+	EventTypeArgFileRequestCreate                            = "file_request_create"
+	EventTypeArgFileRequestDelete                            = "file_request_delete"
+	EventTypeArgFileRequestReceiveFile                       = "file_request_receive_file"
+	EventTypeArgGroupAddExternalId                           = "group_add_external_id"
+	EventTypeArgGroupAddMember                               = "group_add_member"
+	EventTypeArgGroupChangeExternalId                        = "group_change_external_id"
+	EventTypeArgGroupChangeManagementType                    = "group_change_management_type"
+	EventTypeArgGroupChangeMemberRole                        = "group_change_member_role"
+	EventTypeArgGroupCreate                                  = "group_create"
+	EventTypeArgGroupDelete                                  = "group_delete"
+	EventTypeArgGroupDescriptionUpdated                      = "group_description_updated"
+	EventTypeArgGroupJoinPolicyUpdated                       = "group_join_policy_updated"
+	EventTypeArgGroupMoved                                   = "group_moved"
+	EventTypeArgGroupRemoveExternalId                        = "group_remove_external_id"
+	EventTypeArgGroupRemoveMember                            = "group_remove_member"
+	EventTypeArgGroupRename                                  = "group_rename"
+	EventTypeArgAccountLockOrUnlocked                        = "account_lock_or_unlocked"
+	EventTypeArgEmmError                                     = "emm_error"
+	EventTypeArgGuestAdminSignedInViaTrustedTeams            = "guest_admin_signed_in_via_trusted_teams"
+	EventTypeArgGuestAdminSignedOutViaTrustedTeams           = "guest_admin_signed_out_via_trusted_teams"
+	EventTypeArgLoginFail                                    = "login_fail"
+	EventTypeArgLoginSuccess                                 = "login_success"
+	EventTypeArgLogout                                       = "logout"
+	EventTypeArgResellerSupportSessionEnd                    = "reseller_support_session_end"
+	EventTypeArgResellerSupportSessionStart                  = "reseller_support_session_start"
+	EventTypeArgSignInAsSessionEnd                           = "sign_in_as_session_end"
+	EventTypeArgSignInAsSessionStart                         = "sign_in_as_session_start"
+	EventTypeArgSsoError                                     = "sso_error"
+	EventTypeArgCreateTeamInviteLink                         = "create_team_invite_link"
+	EventTypeArgDeleteTeamInviteLink                         = "delete_team_invite_link"
+	EventTypeArgMemberAddExternalId                          = "member_add_external_id"
+	EventTypeArgMemberAddName                                = "member_add_name"
+	EventTypeArgMemberChangeAdminRole                        = "member_change_admin_role"
+	EventTypeArgMemberChangeEmail                            = "member_change_email"
+	EventTypeArgMemberChangeExternalId                       = "member_change_external_id"
+	EventTypeArgMemberChangeMembershipType                   = "member_change_membership_type"
+	EventTypeArgMemberChangeName                             = "member_change_name"
+	EventTypeArgMemberChangeResellerRole                     = "member_change_reseller_role"
+	EventTypeArgMemberChangeStatus                           = "member_change_status"
+	EventTypeArgMemberDeleteManualContacts                   = "member_delete_manual_contacts"
+	EventTypeArgMemberDeleteProfilePhoto                     = "member_delete_profile_photo"
+	EventTypeArgMemberPermanentlyDeleteAccountContents       = "member_permanently_delete_account_contents"
+	EventTypeArgMemberRemoveExternalId                       = "member_remove_external_id"
+	EventTypeArgMemberSetProfilePhoto                        = "member_set_profile_photo"
+	EventTypeArgMemberSpaceLimitsAddCustomQuota              = "member_space_limits_add_custom_quota"
+	EventTypeArgMemberSpaceLimitsChangeCustomQuota           = "member_space_limits_change_custom_quota"
+	EventTypeArgMemberSpaceLimitsChangeStatus                = "member_space_limits_change_status"
+	EventTypeArgMemberSpaceLimitsRemoveCustomQuota           = "member_space_limits_remove_custom_quota"
+	EventTypeArgMemberSuggest                                = "member_suggest"
+	EventTypeArgMemberTransferAccountContents                = "member_transfer_account_contents"
+	EventTypeArgPendingSecondaryEmailAdded                   = "pending_secondary_email_added"
+	EventTypeArgSecondaryEmailDeleted                        = "secondary_email_deleted"
+	EventTypeArgSecondaryEmailVerified                       = "secondary_email_verified"
+	EventTypeArgSecondaryMailsPolicyChanged                  = "secondary_mails_policy_changed"
+	EventTypeArgBinderAddPage                                = "binder_add_page"
+	EventTypeArgBinderAddSection                             = "binder_add_section"
+	EventTypeArgBinderRemovePage                             = "binder_remove_page"
+	EventTypeArgBinderRemoveSection                          = "binder_remove_section"
+	EventTypeArgBinderRenamePage                             = "binder_rename_page"
+	EventTypeArgBinderRenameSection                          = "binder_rename_section"
+	EventTypeArgBinderReorderPage                            = "binder_reorder_page"
+	EventTypeArgBinderReorderSection                         = "binder_reorder_section"
+	EventTypeArgPaperContentAddMember                        = "paper_content_add_member"
+	EventTypeArgPaperContentAddToFolder                      = "paper_content_add_to_folder"
+	EventTypeArgPaperContentArchive                          = "paper_content_archive"
+	EventTypeArgPaperContentCreate                           = "paper_content_create"
+	EventTypeArgPaperContentPermanentlyDelete                = "paper_content_permanently_delete"
+	EventTypeArgPaperContentRemoveFromFolder                 = "paper_content_remove_from_folder"
+	EventTypeArgPaperContentRemoveMember                     = "paper_content_remove_member"
+	EventTypeArgPaperContentRename                           = "paper_content_rename"
+	EventTypeArgPaperContentRestore                          = "paper_content_restore"
+	EventTypeArgPaperDocAddComment                           = "paper_doc_add_comment"
+	EventTypeArgPaperDocChangeMemberRole                     = "paper_doc_change_member_role"
+	EventTypeArgPaperDocChangeSharingPolicy                  = "paper_doc_change_sharing_policy"
+	EventTypeArgPaperDocChangeSubscription                   = "paper_doc_change_subscription"
+	EventTypeArgPaperDocDeleted                              = "paper_doc_deleted"
+	EventTypeArgPaperDocDeleteComment                        = "paper_doc_delete_comment"
+	EventTypeArgPaperDocDownload                             = "paper_doc_download"
+	EventTypeArgPaperDocEdit                                 = "paper_doc_edit"
+	EventTypeArgPaperDocEditComment                          = "paper_doc_edit_comment"
+	EventTypeArgPaperDocFollowed                             = "paper_doc_followed"
+	EventTypeArgPaperDocMention                              = "paper_doc_mention"
+	EventTypeArgPaperDocOwnershipChanged                     = "paper_doc_ownership_changed"
+	EventTypeArgPaperDocRequestAccess                        = "paper_doc_request_access"
+	EventTypeArgPaperDocResolveComment                       = "paper_doc_resolve_comment"
+	EventTypeArgPaperDocRevert                               = "paper_doc_revert"
+	EventTypeArgPaperDocSlackShare                           = "paper_doc_slack_share"
+	EventTypeArgPaperDocTeamInvite                           = "paper_doc_team_invite"
+	EventTypeArgPaperDocTrashed                              = "paper_doc_trashed"
+	EventTypeArgPaperDocUnresolveComment                     = "paper_doc_unresolve_comment"
+	EventTypeArgPaperDocUntrashed                            = "paper_doc_untrashed"
+	EventTypeArgPaperDocView                                 = "paper_doc_view"
+	EventTypeArgPaperExternalViewAllow                       = "paper_external_view_allow"
+	EventTypeArgPaperExternalViewDefaultTeam                 = "paper_external_view_default_team"
+	EventTypeArgPaperExternalViewForbid                      = "paper_external_view_forbid"
+	EventTypeArgPaperFolderChangeSubscription                = "paper_folder_change_subscription"
+	EventTypeArgPaperFolderDeleted                           = "paper_folder_deleted"
+	EventTypeArgPaperFolderFollowed                          = "paper_folder_followed"
+	EventTypeArgPaperFolderTeamInvite                        = "paper_folder_team_invite"
+	EventTypeArgPaperPublishedLinkChangePermission           = "paper_published_link_change_permission"
+	EventTypeArgPaperPublishedLinkCreate                     = "paper_published_link_create"
+	EventTypeArgPaperPublishedLinkDisabled                   = "paper_published_link_disabled"
+	EventTypeArgPaperPublishedLinkView                       = "paper_published_link_view"
+	EventTypeArgPasswordChange                               = "password_change"
+	EventTypeArgPasswordReset                                = "password_reset"
+	EventTypeArgPasswordResetAll                             = "password_reset_all"
+	EventTypeArgClassificationCreateReport                   = "classification_create_report"
+	EventTypeArgClassificationCreateReportFail               = "classification_create_report_fail"
+	EventTypeArgEmmCreateExceptionsReport                    = "emm_create_exceptions_report"
+	EventTypeArgEmmCreateUsageReport                         = "emm_create_usage_report"
+	EventTypeArgExportMembersReport                          = "export_members_report"
+	EventTypeArgExportMembersReportFail                      = "export_members_report_fail"
+	EventTypeArgExternalSharingCreateReport                  = "external_sharing_create_report"
+	EventTypeArgExternalSharingReportFailed                  = "external_sharing_report_failed"
+	EventTypeArgNoExpirationLinkGenCreateReport              = "no_expiration_link_gen_create_report"
+	EventTypeArgNoExpirationLinkGenReportFailed              = "no_expiration_link_gen_report_failed"
+	EventTypeArgNoPasswordLinkGenCreateReport                = "no_password_link_gen_create_report"
+	EventTypeArgNoPasswordLinkGenReportFailed                = "no_password_link_gen_report_failed"
+	EventTypeArgNoPasswordLinkViewCreateReport               = "no_password_link_view_create_report"
+	EventTypeArgNoPasswordLinkViewReportFailed               = "no_password_link_view_report_failed"
+	EventTypeArgOutdatedLinkViewCreateReport                 = "outdated_link_view_create_report"
+	EventTypeArgOutdatedLinkViewReportFailed                 = "outdated_link_view_report_failed"
+	EventTypeArgPaperAdminExportStart                        = "paper_admin_export_start"
+	EventTypeArgSmartSyncCreateAdminPrivilegeReport          = "smart_sync_create_admin_privilege_report"
+	EventTypeArgTeamActivityCreateReport                     = "team_activity_create_report"
+	EventTypeArgTeamActivityCreateReportFail                 = "team_activity_create_report_fail"
+	EventTypeArgCollectionShare                              = "collection_share"
+	EventTypeArgFileTransfersFileAdd                         = "file_transfers_file_add"
+	EventTypeArgFileTransfersTransferDelete                  = "file_transfers_transfer_delete"
+	EventTypeArgFileTransfersTransferDownload                = "file_transfers_transfer_download"
+	EventTypeArgFileTransfersTransferSend                    = "file_transfers_transfer_send"
+	EventTypeArgFileTransfersTransferView                    = "file_transfers_transfer_view"
+	EventTypeArgNoteAclInviteOnly                            = "note_acl_invite_only"
+	EventTypeArgNoteAclLink                                  = "note_acl_link"
+	EventTypeArgNoteAclTeamLink                              = "note_acl_team_link"
+	EventTypeArgNoteShared                                   = "note_shared"
+	EventTypeArgNoteShareReceive                             = "note_share_receive"
+	EventTypeArgOpenNoteShared                               = "open_note_shared"
+	EventTypeArgSfAddGroup                                   = "sf_add_group"
+	EventTypeArgSfAllowNonMembersToViewSharedLinks           = "sf_allow_non_members_to_view_shared_links"
+	EventTypeArgSfExternalInviteWarn                         = "sf_external_invite_warn"
+	EventTypeArgSfFbInvite                                   = "sf_fb_invite"
+	EventTypeArgSfFbInviteChangeRole                         = "sf_fb_invite_change_role"
+	EventTypeArgSfFbUninvite                                 = "sf_fb_uninvite"
+	EventTypeArgSfInviteGroup                                = "sf_invite_group"
+	EventTypeArgSfTeamGrantAccess                            = "sf_team_grant_access"
+	EventTypeArgSfTeamInvite                                 = "sf_team_invite"
+	EventTypeArgSfTeamInviteChangeRole                       = "sf_team_invite_change_role"
+	EventTypeArgSfTeamJoin                                   = "sf_team_join"
+	EventTypeArgSfTeamJoinFromOobLink                        = "sf_team_join_from_oob_link"
+	EventTypeArgSfTeamUninvite                               = "sf_team_uninvite"
+	EventTypeArgSharedContentAddInvitees                     = "shared_content_add_invitees"
+	EventTypeArgSharedContentAddLinkExpiry                   = "shared_content_add_link_expiry"
+	EventTypeArgSharedContentAddLinkPassword                 = "shared_content_add_link_password"
+	EventTypeArgSharedContentAddMember                       = "shared_content_add_member"
+	EventTypeArgSharedContentChangeDownloadsPolicy           = "shared_content_change_downloads_policy"
+	EventTypeArgSharedContentChangeInviteeRole               = "shared_content_change_invitee_role"
+	EventTypeArgSharedContentChangeLinkAudience              = "shared_content_change_link_audience"
+	EventTypeArgSharedContentChangeLinkExpiry                = "shared_content_change_link_expiry"
+	EventTypeArgSharedContentChangeLinkPassword              = "shared_content_change_link_password"
+	EventTypeArgSharedContentChangeMemberRole                = "shared_content_change_member_role"
+	EventTypeArgSharedContentChangeViewerInfoPolicy          = "shared_content_change_viewer_info_policy"
+	EventTypeArgSharedContentClaimInvitation                 = "shared_content_claim_invitation"
+	EventTypeArgSharedContentCopy                            = "shared_content_copy"
+	EventTypeArgSharedContentDownload                        = "shared_content_download"
+	EventTypeArgSharedContentRelinquishMembership            = "shared_content_relinquish_membership"
+	EventTypeArgSharedContentRemoveInvitees                  = "shared_content_remove_invitees"
+	EventTypeArgSharedContentRemoveLinkExpiry                = "shared_content_remove_link_expiry"
+	EventTypeArgSharedContentRemoveLinkPassword              = "shared_content_remove_link_password"
+	EventTypeArgSharedContentRemoveMember                    = "shared_content_remove_member"
+	EventTypeArgSharedContentRequestAccess                   = "shared_content_request_access"
+	EventTypeArgSharedContentRestoreInvitees                 = "shared_content_restore_invitees"
+	EventTypeArgSharedContentRestoreMember                   = "shared_content_restore_member"
+	EventTypeArgSharedContentUnshare                         = "shared_content_unshare"
+	EventTypeArgSharedContentView                            = "shared_content_view"
+	EventTypeArgSharedFolderChangeLinkPolicy                 = "shared_folder_change_link_policy"
+	EventTypeArgSharedFolderChangeMembersInheritancePolicy   = "shared_folder_change_members_inheritance_policy"
+	EventTypeArgSharedFolderChangeMembersManagementPolicy    = "shared_folder_change_members_management_policy"
+	EventTypeArgSharedFolderChangeMembersPolicy              = "shared_folder_change_members_policy"
+	EventTypeArgSharedFolderCreate                           = "shared_folder_create"
+	EventTypeArgSharedFolderDeclineInvitation                = "shared_folder_decline_invitation"
+	EventTypeArgSharedFolderMount                            = "shared_folder_mount"
+	EventTypeArgSharedFolderNest                             = "shared_folder_nest"
+	EventTypeArgSharedFolderTransferOwnership                = "shared_folder_transfer_ownership"
+	EventTypeArgSharedFolderUnmount                          = "shared_folder_unmount"
+	EventTypeArgSharedLinkAddExpiry                          = "shared_link_add_expiry"
+	EventTypeArgSharedLinkChangeExpiry                       = "shared_link_change_expiry"
+	EventTypeArgSharedLinkChangeVisibility                   = "shared_link_change_visibility"
+	EventTypeArgSharedLinkCopy                               = "shared_link_copy"
+	EventTypeArgSharedLinkCreate                             = "shared_link_create"
+	EventTypeArgSharedLinkDisable                            = "shared_link_disable"
+	EventTypeArgSharedLinkDownload                           = "shared_link_download"
+	EventTypeArgSharedLinkRemoveExpiry                       = "shared_link_remove_expiry"
+	EventTypeArgSharedLinkSettingsAddExpiration              = "shared_link_settings_add_expiration"
+	EventTypeArgSharedLinkSettingsAddPassword                = "shared_link_settings_add_password"
+	EventTypeArgSharedLinkSettingsAllowDownloadDisabled      = "shared_link_settings_allow_download_disabled"
+	EventTypeArgSharedLinkSettingsAllowDownloadEnabled       = "shared_link_settings_allow_download_enabled"
+	EventTypeArgSharedLinkSettingsChangeAudience             = "shared_link_settings_change_audience"
+	EventTypeArgSharedLinkSettingsChangeExpiration           = "shared_link_settings_change_expiration"
+	EventTypeArgSharedLinkSettingsChangePassword             = "shared_link_settings_change_password"
+	EventTypeArgSharedLinkSettingsRemoveExpiration           = "shared_link_settings_remove_expiration"
+	EventTypeArgSharedLinkSettingsRemovePassword             = "shared_link_settings_remove_password"
+	EventTypeArgSharedLinkShare                              = "shared_link_share"
+	EventTypeArgSharedLinkView                               = "shared_link_view"
+	EventTypeArgSharedNoteOpened                             = "shared_note_opened"
+	EventTypeArgShmodelDisableDownloads                      = "shmodel_disable_downloads"
+	EventTypeArgShmodelEnableDownloads                       = "shmodel_enable_downloads"
+	EventTypeArgShmodelGroupShare                            = "shmodel_group_share"
+	EventTypeArgShowcaseAccessGranted                        = "showcase_access_granted"
+	EventTypeArgShowcaseAddMember                            = "showcase_add_member"
+	EventTypeArgShowcaseArchived                             = "showcase_archived"
+	EventTypeArgShowcaseCreated                              = "showcase_created"
+	EventTypeArgShowcaseDeleteComment                        = "showcase_delete_comment"
+	EventTypeArgShowcaseEdited                               = "showcase_edited"
+	EventTypeArgShowcaseEditComment                          = "showcase_edit_comment"
+	EventTypeArgShowcaseFileAdded                            = "showcase_file_added"
+	EventTypeArgShowcaseFileDownload                         = "showcase_file_download"
+	EventTypeArgShowcaseFileRemoved                          = "showcase_file_removed"
+	EventTypeArgShowcaseFileView                             = "showcase_file_view"
+	EventTypeArgShowcasePermanentlyDeleted                   = "showcase_permanently_deleted"
+	EventTypeArgShowcasePostComment                          = "showcase_post_comment"
+	EventTypeArgShowcaseRemoveMember                         = "showcase_remove_member"
+	EventTypeArgShowcaseRenamed                              = "showcase_renamed"
+	EventTypeArgShowcaseRequestAccess                        = "showcase_request_access"
+	EventTypeArgShowcaseResolveComment                       = "showcase_resolve_comment"
+	EventTypeArgShowcaseRestored                             = "showcase_restored"
+	EventTypeArgShowcaseTrashed                              = "showcase_trashed"
+	EventTypeArgShowcaseTrashedDeprecated                    = "showcase_trashed_deprecated"
+	EventTypeArgShowcaseUnresolveComment                     = "showcase_unresolve_comment"
+	EventTypeArgShowcaseUntrashed                            = "showcase_untrashed"
+	EventTypeArgShowcaseUntrashedDeprecated                  = "showcase_untrashed_deprecated"
+	EventTypeArgShowcaseView                                 = "showcase_view"
+	EventTypeArgSsoAddCert                                   = "sso_add_cert"
+	EventTypeArgSsoAddLoginUrl                               = "sso_add_login_url"
+	EventTypeArgSsoAddLogoutUrl                              = "sso_add_logout_url"
+	EventTypeArgSsoChangeCert                                = "sso_change_cert"
+	EventTypeArgSsoChangeLoginUrl                            = "sso_change_login_url"
+	EventTypeArgSsoChangeLogoutUrl                           = "sso_change_logout_url"
+	EventTypeArgSsoChangeSamlIdentityMode                    = "sso_change_saml_identity_mode"
+	EventTypeArgSsoRemoveCert                                = "sso_remove_cert"
+	EventTypeArgSsoRemoveLoginUrl                            = "sso_remove_login_url"
+	EventTypeArgSsoRemoveLogoutUrl                           = "sso_remove_logout_url"
+	EventTypeArgTeamFolderChangeStatus                       = "team_folder_change_status"
+	EventTypeArgTeamFolderCreate                             = "team_folder_create"
+	EventTypeArgTeamFolderDowngrade                          = "team_folder_downgrade"
+	EventTypeArgTeamFolderPermanentlyDelete                  = "team_folder_permanently_delete"
+	EventTypeArgTeamFolderRename                             = "team_folder_rename"
+	EventTypeArgTeamSelectiveSyncSettingsChanged             = "team_selective_sync_settings_changed"
+	EventTypeArgAccountCaptureChangePolicy                   = "account_capture_change_policy"
+	EventTypeArgAllowDownloadDisabled                        = "allow_download_disabled"
+	EventTypeArgAllowDownloadEnabled                         = "allow_download_enabled"
+	EventTypeArgCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
+	EventTypeArgClassificationChangePolicy                   = "classification_change_policy"
+	EventTypeArgComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
+	EventTypeArgContentAdministrationPolicyChanged           = "content_administration_policy_changed"
+	EventTypeArgDataPlacementRestrictionChangePolicy         = "data_placement_restriction_change_policy"
+	EventTypeArgDataPlacementRestrictionSatisfyPolicy        = "data_placement_restriction_satisfy_policy"
+	EventTypeArgDeviceApprovalsAddException                  = "device_approvals_add_exception"
+	EventTypeArgDeviceApprovalsChangeDesktopPolicy           = "device_approvals_change_desktop_policy"
+	EventTypeArgDeviceApprovalsChangeMobilePolicy            = "device_approvals_change_mobile_policy"
+	EventTypeArgDeviceApprovalsChangeOverageAction           = "device_approvals_change_overage_action"
+	EventTypeArgDeviceApprovalsChangeUnlinkAction            = "device_approvals_change_unlink_action"
+	EventTypeArgDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
+	EventTypeArgDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
+	EventTypeArgDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeArgEmmAddException                              = "emm_add_exception"
+	EventTypeArgEmmChangePolicy                              = "emm_change_policy"
+	EventTypeArgEmmRemoveException                           = "emm_remove_exception"
+	EventTypeArgExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
+	EventTypeArgFileCommentsChangePolicy                     = "file_comments_change_policy"
+	EventTypeArgFileLockingPolicyChanged                     = "file_locking_policy_changed"
+	EventTypeArgFileRequestsChangePolicy                     = "file_requests_change_policy"
+	EventTypeArgFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
+	EventTypeArgFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
+	EventTypeArgFileTransfersPolicyChanged                   = "file_transfers_policy_changed"
+	EventTypeArgGoogleSsoChangePolicy                        = "google_sso_change_policy"
+	EventTypeArgGroupUserManagementChangePolicy              = "group_user_management_change_policy"
+	EventTypeArgIntegrationPolicyChanged                     = "integration_policy_changed"
+	EventTypeArgMemberRequestsChangePolicy                   = "member_requests_change_policy"
+	EventTypeArgMemberSendInvitePolicyChanged                = "member_send_invite_policy_changed"
+	EventTypeArgMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
+	EventTypeArgMemberSpaceLimitsChangeCapsTypePolicy        = "member_space_limits_change_caps_type_policy"
+	EventTypeArgMemberSpaceLimitsChangePolicy                = "member_space_limits_change_policy"
+	EventTypeArgMemberSpaceLimitsRemoveException             = "member_space_limits_remove_exception"
+	EventTypeArgMemberSuggestionsChangePolicy                = "member_suggestions_change_policy"
+	EventTypeArgMicrosoftOfficeAddinChangePolicy             = "microsoft_office_addin_change_policy"
+	EventTypeArgNetworkControlChangePolicy                   = "network_control_change_policy"
+	EventTypeArgPaperChangeDeploymentPolicy                  = "paper_change_deployment_policy"
+	EventTypeArgPaperChangeMemberLinkPolicy                  = "paper_change_member_link_policy"
+	EventTypeArgPaperChangeMemberPolicy                      = "paper_change_member_policy"
+	EventTypeArgPaperChangePolicy                            = "paper_change_policy"
+	EventTypeArgPaperDefaultFolderPolicyChanged              = "paper_default_folder_policy_changed"
+	EventTypeArgPaperDesktopPolicyChanged                    = "paper_desktop_policy_changed"
+	EventTypeArgPaperEnabledUsersGroupAddition               = "paper_enabled_users_group_addition"
+	EventTypeArgPaperEnabledUsersGroupRemoval                = "paper_enabled_users_group_removal"
+	EventTypeArgPasswordStrengthRequirementsChangePolicy     = "password_strength_requirements_change_policy"
+	EventTypeArgPermanentDeleteChangePolicy                  = "permanent_delete_change_policy"
+	EventTypeArgResellerSupportChangePolicy                  = "reseller_support_change_policy"
+	EventTypeArgRewindPolicyChanged                          = "rewind_policy_changed"
+	EventTypeArgSendForSignaturePolicyChanged                = "send_for_signature_policy_changed"
+	EventTypeArgSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
+	EventTypeArgSharingChangeLinkPolicy                      = "sharing_change_link_policy"
+	EventTypeArgSharingChangeMemberPolicy                    = "sharing_change_member_policy"
+	EventTypeArgShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
+	EventTypeArgShowcaseChangeEnabledPolicy                  = "showcase_change_enabled_policy"
+	EventTypeArgShowcaseChangeExternalSharingPolicy          = "showcase_change_external_sharing_policy"
+	EventTypeArgSmarterSmartSyncPolicyChanged                = "smarter_smart_sync_policy_changed"
+	EventTypeArgSmartSyncChangePolicy                        = "smart_sync_change_policy"
+	EventTypeArgSmartSyncNotOptOut                           = "smart_sync_not_opt_out"
+	EventTypeArgSmartSyncOptOut                              = "smart_sync_opt_out"
+	EventTypeArgSsoChangePolicy                              = "sso_change_policy"
+	EventTypeArgTeamBrandingPolicyChanged                    = "team_branding_policy_changed"
+	EventTypeArgTeamExtensionsPolicyChanged                  = "team_extensions_policy_changed"
+	EventTypeArgTeamSelectiveSyncPolicyChanged               = "team_selective_sync_policy_changed"
+	EventTypeArgTeamSharingWhitelistSubjectsChanged          = "team_sharing_whitelist_subjects_changed"
+	EventTypeArgTfaAddException                              = "tfa_add_exception"
+	EventTypeArgTfaChangePolicy                              = "tfa_change_policy"
+	EventTypeArgTfaRemoveException                           = "tfa_remove_exception"
+	EventTypeArgTwoAccountChangePolicy                       = "two_account_change_policy"
+	EventTypeArgViewerInfoPolicyChanged                      = "viewer_info_policy_changed"
+	EventTypeArgWatermarkingPolicyChanged                    = "watermarking_policy_changed"
+	EventTypeArgWebSessionsChangeActiveSessionLimit          = "web_sessions_change_active_session_limit"
+	EventTypeArgWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
+	EventTypeArgWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
+	EventTypeArgTeamMergeFrom                                = "team_merge_from"
+	EventTypeArgTeamMergeTo                                  = "team_merge_to"
+	EventTypeArgTeamProfileAddBackground                     = "team_profile_add_background"
+	EventTypeArgTeamProfileAddLogo                           = "team_profile_add_logo"
+	EventTypeArgTeamProfileChangeBackground                  = "team_profile_change_background"
+	EventTypeArgTeamProfileChangeDefaultLanguage             = "team_profile_change_default_language"
+	EventTypeArgTeamProfileChangeLogo                        = "team_profile_change_logo"
+	EventTypeArgTeamProfileChangeName                        = "team_profile_change_name"
+	EventTypeArgTeamProfileRemoveBackground                  = "team_profile_remove_background"
+	EventTypeArgTeamProfileRemoveLogo                        = "team_profile_remove_logo"
+	EventTypeArgTfaAddBackupPhone                            = "tfa_add_backup_phone"
+	EventTypeArgTfaAddSecurityKey                            = "tfa_add_security_key"
+	EventTypeArgTfaChangeBackupPhone                         = "tfa_change_backup_phone"
+	EventTypeArgTfaChangeStatus                              = "tfa_change_status"
+	EventTypeArgTfaRemoveBackupPhone                         = "tfa_remove_backup_phone"
+	EventTypeArgTfaRemoveSecurityKey                         = "tfa_remove_security_key"
+	EventTypeArgTfaReset                                     = "tfa_reset"
+	EventTypeArgChangedEnterpriseAdminRole                   = "changed_enterprise_admin_role"
+	EventTypeArgChangedEnterpriseConnectedTeamStatus         = "changed_enterprise_connected_team_status"
+	EventTypeArgEndedEnterpriseAdminSession                  = "ended_enterprise_admin_session"
+	EventTypeArgEndedEnterpriseAdminSessionDeprecated        = "ended_enterprise_admin_session_deprecated"
+	EventTypeArgEnterpriseSettingsLocking                    = "enterprise_settings_locking"
+	EventTypeArgGuestAdminChangeStatus                       = "guest_admin_change_status"
+	EventTypeArgStartedEnterpriseAdminSession                = "started_enterprise_admin_session"
+	EventTypeArgTeamMergeRequestAccepted                     = "team_merge_request_accepted"
+	EventTypeArgTeamMergeRequestAcceptedShownToPrimaryTeam   = "team_merge_request_accepted_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestAcceptedShownToSecondaryTeam = "team_merge_request_accepted_shown_to_secondary_team"
+	EventTypeArgTeamMergeRequestAutoCanceled                 = "team_merge_request_auto_canceled"
+	EventTypeArgTeamMergeRequestCanceled                     = "team_merge_request_canceled"
+	EventTypeArgTeamMergeRequestCanceledShownToPrimaryTeam   = "team_merge_request_canceled_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestCanceledShownToSecondaryTeam = "team_merge_request_canceled_shown_to_secondary_team"
+	EventTypeArgTeamMergeRequestExpired                      = "team_merge_request_expired"
+	EventTypeArgTeamMergeRequestExpiredShownToPrimaryTeam    = "team_merge_request_expired_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestExpiredShownToSecondaryTeam  = "team_merge_request_expired_shown_to_secondary_team"
+	EventTypeArgTeamMergeRequestRejectedShownToPrimaryTeam   = "team_merge_request_rejected_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestRejectedShownToSecondaryTeam = "team_merge_request_rejected_shown_to_secondary_team"
+	EventTypeArgTeamMergeRequestReminder                     = "team_merge_request_reminder"
+	EventTypeArgTeamMergeRequestReminderShownToPrimaryTeam   = "team_merge_request_reminder_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestReminderShownToSecondaryTeam = "team_merge_request_reminder_shown_to_secondary_team"
+	EventTypeArgTeamMergeRequestRevoked                      = "team_merge_request_revoked"
+	EventTypeArgTeamMergeRequestSentShownToPrimaryTeam       = "team_merge_request_sent_shown_to_primary_team"
+	EventTypeArgTeamMergeRequestSentShownToSecondaryTeam     = "team_merge_request_sent_shown_to_secondary_team"
+	EventTypeArgOther                                        = "other"
+)
+
 // ExportMembersReportDetails : Created member data report.
 type ExportMembersReportDetails struct {
 }
@@ -8823,6 +12327,32 @@ type ExportMembersReportDetails struct {
 // NewExportMembersReportDetails returns a new ExportMembersReportDetails instance
 func NewExportMembersReportDetails() *ExportMembersReportDetails {
 	s := new(ExportMembersReportDetails)
+	return s
+}
+
+// ExportMembersReportFailDetails : Failed to create members data report.
+type ExportMembersReportFailDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewExportMembersReportFailDetails returns a new ExportMembersReportFailDetails instance
+func NewExportMembersReportFailDetails(FailureReason *team.TeamReportFailureReason) *ExportMembersReportFailDetails {
+	s := new(ExportMembersReportFailDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// ExportMembersReportFailType : has no documentation (yet)
+type ExportMembersReportFailType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExportMembersReportFailType returns a new ExportMembersReportFailType instance
+func NewExportMembersReportFailType(Description string) *ExportMembersReportFailType {
+	s := new(ExportMembersReportFailType)
+	s.Description = Description
 	return s
 }
 
@@ -8883,6 +12413,55 @@ const (
 	ExtendedVersionHistoryPolicyOther               = "other"
 )
 
+// ExternalSharingCreateReportDetails : Created External sharing report.
+type ExternalSharingCreateReportDetails struct {
+}
+
+// NewExternalSharingCreateReportDetails returns a new ExternalSharingCreateReportDetails instance
+func NewExternalSharingCreateReportDetails() *ExternalSharingCreateReportDetails {
+	s := new(ExternalSharingCreateReportDetails)
+	return s
+}
+
+// ExternalSharingCreateReportType : has no documentation (yet)
+type ExternalSharingCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExternalSharingCreateReportType returns a new ExternalSharingCreateReportType instance
+func NewExternalSharingCreateReportType(Description string) *ExternalSharingCreateReportType {
+	s := new(ExternalSharingCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// ExternalSharingReportFailedDetails : Couldn't create External sharing report.
+type ExternalSharingReportFailedDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewExternalSharingReportFailedDetails returns a new ExternalSharingReportFailedDetails instance
+func NewExternalSharingReportFailedDetails(FailureReason *team.TeamReportFailureReason) *ExternalSharingReportFailedDetails {
+	s := new(ExternalSharingReportFailedDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// ExternalSharingReportFailedType : has no documentation (yet)
+type ExternalSharingReportFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExternalSharingReportFailedType returns a new ExternalSharingReportFailedType instance
+func NewExternalSharingReportFailedType(Description string) *ExternalSharingReportFailedType {
+	s := new(ExternalSharingReportFailedType)
+	s.Description = Description
+	return s
+}
+
 // ExternalUserLogInfo : A user without a Dropbox account.
 type ExternalUserLogInfo struct {
 	// UserIdentifier : An external user identifier.
@@ -8913,6 +12492,132 @@ type FailureDetailsLogInfo struct {
 func NewFailureDetailsLogInfo() *FailureDetailsLogInfo {
 	s := new(FailureDetailsLogInfo)
 	return s
+}
+
+// FedAdminRole : has no documentation (yet)
+type FedAdminRole struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FedAdminRole
+const (
+	FedAdminRoleEnterpriseAdmin    = "enterprise_admin"
+	FedAdminRoleNotEnterpriseAdmin = "not_enterprise_admin"
+	FedAdminRoleOther              = "other"
+)
+
+// FedExtraDetails : More details about the organization or team.
+type FedExtraDetails struct {
+	dropbox.Tagged
+	// Organization : More details about the organization.
+	Organization *OrganizationDetails `json:"organization,omitempty"`
+	// Team : More details about the team.
+	Team *TeamDetails `json:"team,omitempty"`
+}
+
+// Valid tag values for FedExtraDetails
+const (
+	FedExtraDetailsOrganization = "organization"
+	FedExtraDetailsTeam         = "team"
+	FedExtraDetailsOther        = "other"
+)
+
+// UnmarshalJSON deserializes into a FedExtraDetails instance
+func (u *FedExtraDetails) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "organization":
+		err = json.Unmarshal(body, &u.Organization)
+
+		if err != nil {
+			return err
+		}
+	case "team":
+		err = json.Unmarshal(body, &u.Team)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// FedHandshakeAction : has no documentation (yet)
+type FedHandshakeAction struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FedHandshakeAction
+const (
+	FedHandshakeActionAcceptedInvite = "accepted_invite"
+	FedHandshakeActionCanceledInvite = "canceled_invite"
+	FedHandshakeActionInviteExpired  = "invite_expired"
+	FedHandshakeActionInvited        = "invited"
+	FedHandshakeActionRejectedInvite = "rejected_invite"
+	FedHandshakeActionRemovedTeam    = "removed_team"
+	FedHandshakeActionOther          = "other"
+)
+
+// FederationStatusChangeAdditionalInfo : Additional information about the
+// organization or connected team
+type FederationStatusChangeAdditionalInfo struct {
+	dropbox.Tagged
+	// ConnectedTeamName : The name of the team.
+	ConnectedTeamName *ConnectedTeamName `json:"connected_team_name,omitempty"`
+	// NonTrustedTeamDetails : The email to which the request was sent.
+	NonTrustedTeamDetails *NonTrustedTeamDetails `json:"non_trusted_team_details,omitempty"`
+	// OrganizationName : The name of the organization.
+	OrganizationName *OrganizationName `json:"organization_name,omitempty"`
+}
+
+// Valid tag values for FederationStatusChangeAdditionalInfo
+const (
+	FederationStatusChangeAdditionalInfoConnectedTeamName     = "connected_team_name"
+	FederationStatusChangeAdditionalInfoNonTrustedTeamDetails = "non_trusted_team_details"
+	FederationStatusChangeAdditionalInfoOrganizationName      = "organization_name"
+	FederationStatusChangeAdditionalInfoOther                 = "other"
+)
+
+// UnmarshalJSON deserializes into a FederationStatusChangeAdditionalInfo instance
+func (u *FederationStatusChangeAdditionalInfo) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "connected_team_name":
+		err = json.Unmarshal(body, &u.ConnectedTeamName)
+
+		if err != nil {
+			return err
+		}
+	case "non_trusted_team_details":
+		err = json.Unmarshal(body, &u.NonTrustedTeamDetails)
+
+		if err != nil {
+			return err
+		}
+	case "organization_name":
+		err = json.Unmarshal(body, &u.OrganizationName)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // FileAddCommentDetails : Added file comment.
@@ -9242,6 +12947,64 @@ func NewFileLikeCommentType(Description string) *FileLikeCommentType {
 	return s
 }
 
+// FileLockingLockStatusChangedDetails : Locked/unlocked editing for a file.
+type FileLockingLockStatusChangedDetails struct {
+	// PreviousValue : Previous lock status of the file.
+	PreviousValue *LockStatus `json:"previous_value"`
+	// NewValue : New lock status of the file.
+	NewValue *LockStatus `json:"new_value"`
+}
+
+// NewFileLockingLockStatusChangedDetails returns a new FileLockingLockStatusChangedDetails instance
+func NewFileLockingLockStatusChangedDetails(PreviousValue *LockStatus, NewValue *LockStatus) *FileLockingLockStatusChangedDetails {
+	s := new(FileLockingLockStatusChangedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// FileLockingLockStatusChangedType : has no documentation (yet)
+type FileLockingLockStatusChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileLockingLockStatusChangedType returns a new FileLockingLockStatusChangedType instance
+func NewFileLockingLockStatusChangedType(Description string) *FileLockingLockStatusChangedType {
+	s := new(FileLockingLockStatusChangedType)
+	s.Description = Description
+	return s
+}
+
+// FileLockingPolicyChangedDetails : Changed file locking policy for team.
+type FileLockingPolicyChangedDetails struct {
+	// NewValue : New file locking policy.
+	NewValue *team_policies.FileLockingPolicyState `json:"new_value"`
+	// PreviousValue : Previous file locking policy.
+	PreviousValue *team_policies.FileLockingPolicyState `json:"previous_value"`
+}
+
+// NewFileLockingPolicyChangedDetails returns a new FileLockingPolicyChangedDetails instance
+func NewFileLockingPolicyChangedDetails(NewValue *team_policies.FileLockingPolicyState, PreviousValue *team_policies.FileLockingPolicyState) *FileLockingPolicyChangedDetails {
+	s := new(FileLockingPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// FileLockingPolicyChangedType : has no documentation (yet)
+type FileLockingPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileLockingPolicyChangedType returns a new FileLockingPolicyChangedType instance
+func NewFileLockingPolicyChangedType(Description string) *FileLockingPolicyChangedType {
+	s := new(FileLockingPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // FileOrFolderLogInfo : Generic information relevant both for files and folders
 type FileOrFolderLogInfo struct {
 	// Path : Path relative to event context.
@@ -9250,6 +13013,8 @@ type FileOrFolderLogInfo struct {
 	DisplayName string `json:"display_name,omitempty"`
 	// FileId : Unique ID. Might be missing due to historical data gap.
 	FileId string `json:"file_id,omitempty"`
+	// FileSize : File or folder size in bytes.
+	FileSize uint64 `json:"file_size,omitempty"`
 }
 
 // NewFileOrFolderLogInfo returns a new FileOrFolderLogInfo instance
@@ -9766,6 +13531,177 @@ func NewFileSaveCopyReferenceType(Description string) *FileSaveCopyReferenceType
 	return s
 }
 
+// FileTransfersFileAddDetails : Transfer files added.
+type FileTransfersFileAddDetails struct {
+	// FileTransferId : Transfer id.
+	FileTransferId string `json:"file_transfer_id"`
+}
+
+// NewFileTransfersFileAddDetails returns a new FileTransfersFileAddDetails instance
+func NewFileTransfersFileAddDetails(FileTransferId string) *FileTransfersFileAddDetails {
+	s := new(FileTransfersFileAddDetails)
+	s.FileTransferId = FileTransferId
+	return s
+}
+
+// FileTransfersFileAddType : has no documentation (yet)
+type FileTransfersFileAddType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersFileAddType returns a new FileTransfersFileAddType instance
+func NewFileTransfersFileAddType(Description string) *FileTransfersFileAddType {
+	s := new(FileTransfersFileAddType)
+	s.Description = Description
+	return s
+}
+
+// FileTransfersPolicy : File transfers policy
+type FileTransfersPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileTransfersPolicy
+const (
+	FileTransfersPolicyDisabled = "disabled"
+	FileTransfersPolicyEnabled  = "enabled"
+	FileTransfersPolicyOther    = "other"
+)
+
+// FileTransfersPolicyChangedDetails : Changed file transfers policy for team.
+type FileTransfersPolicyChangedDetails struct {
+	// NewValue : New file transfers policy.
+	NewValue *FileTransfersPolicy `json:"new_value"`
+	// PreviousValue : Previous file transfers policy.
+	PreviousValue *FileTransfersPolicy `json:"previous_value"`
+}
+
+// NewFileTransfersPolicyChangedDetails returns a new FileTransfersPolicyChangedDetails instance
+func NewFileTransfersPolicyChangedDetails(NewValue *FileTransfersPolicy, PreviousValue *FileTransfersPolicy) *FileTransfersPolicyChangedDetails {
+	s := new(FileTransfersPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// FileTransfersPolicyChangedType : has no documentation (yet)
+type FileTransfersPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersPolicyChangedType returns a new FileTransfersPolicyChangedType instance
+func NewFileTransfersPolicyChangedType(Description string) *FileTransfersPolicyChangedType {
+	s := new(FileTransfersPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// FileTransfersTransferDeleteDetails : Deleted transfer.
+type FileTransfersTransferDeleteDetails struct {
+	// FileTransferId : Transfer id.
+	FileTransferId string `json:"file_transfer_id"`
+}
+
+// NewFileTransfersTransferDeleteDetails returns a new FileTransfersTransferDeleteDetails instance
+func NewFileTransfersTransferDeleteDetails(FileTransferId string) *FileTransfersTransferDeleteDetails {
+	s := new(FileTransfersTransferDeleteDetails)
+	s.FileTransferId = FileTransferId
+	return s
+}
+
+// FileTransfersTransferDeleteType : has no documentation (yet)
+type FileTransfersTransferDeleteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersTransferDeleteType returns a new FileTransfersTransferDeleteType instance
+func NewFileTransfersTransferDeleteType(Description string) *FileTransfersTransferDeleteType {
+	s := new(FileTransfersTransferDeleteType)
+	s.Description = Description
+	return s
+}
+
+// FileTransfersTransferDownloadDetails : Transfer downloaded.
+type FileTransfersTransferDownloadDetails struct {
+	// FileTransferId : Transfer id.
+	FileTransferId string `json:"file_transfer_id"`
+}
+
+// NewFileTransfersTransferDownloadDetails returns a new FileTransfersTransferDownloadDetails instance
+func NewFileTransfersTransferDownloadDetails(FileTransferId string) *FileTransfersTransferDownloadDetails {
+	s := new(FileTransfersTransferDownloadDetails)
+	s.FileTransferId = FileTransferId
+	return s
+}
+
+// FileTransfersTransferDownloadType : has no documentation (yet)
+type FileTransfersTransferDownloadType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersTransferDownloadType returns a new FileTransfersTransferDownloadType instance
+func NewFileTransfersTransferDownloadType(Description string) *FileTransfersTransferDownloadType {
+	s := new(FileTransfersTransferDownloadType)
+	s.Description = Description
+	return s
+}
+
+// FileTransfersTransferSendDetails : Sent transfer.
+type FileTransfersTransferSendDetails struct {
+	// FileTransferId : Transfer id.
+	FileTransferId string `json:"file_transfer_id"`
+}
+
+// NewFileTransfersTransferSendDetails returns a new FileTransfersTransferSendDetails instance
+func NewFileTransfersTransferSendDetails(FileTransferId string) *FileTransfersTransferSendDetails {
+	s := new(FileTransfersTransferSendDetails)
+	s.FileTransferId = FileTransferId
+	return s
+}
+
+// FileTransfersTransferSendType : has no documentation (yet)
+type FileTransfersTransferSendType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersTransferSendType returns a new FileTransfersTransferSendType instance
+func NewFileTransfersTransferSendType(Description string) *FileTransfersTransferSendType {
+	s := new(FileTransfersTransferSendType)
+	s.Description = Description
+	return s
+}
+
+// FileTransfersTransferViewDetails : Viewed transfer.
+type FileTransfersTransferViewDetails struct {
+	// FileTransferId : Transfer id.
+	FileTransferId string `json:"file_transfer_id"`
+}
+
+// NewFileTransfersTransferViewDetails returns a new FileTransfersTransferViewDetails instance
+func NewFileTransfersTransferViewDetails(FileTransferId string) *FileTransfersTransferViewDetails {
+	s := new(FileTransfersTransferViewDetails)
+	s.FileTransferId = FileTransferId
+	return s
+}
+
+// FileTransfersTransferViewType : has no documentation (yet)
+type FileTransfersTransferViewType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileTransfersTransferViewType returns a new FileTransfersTransferViewType instance
+func NewFileTransfersTransferViewType(Description string) *FileTransfersTransferViewType {
+	s := new(FileTransfersTransferViewType)
+	s.Description = Description
+	return s
+}
+
 // FileUnlikeCommentDetails : Unliked file comment.
 type FileUnlikeCommentDetails struct {
 	// CommentText : Comment text. Might be missing due to historical data gap.
@@ -9819,12 +13755,101 @@ func NewFileUnresolveCommentType(Description string) *FileUnresolveCommentType {
 // FolderLogInfo : Folder's logged information.
 type FolderLogInfo struct {
 	FileOrFolderLogInfo
+	// FileCount : Number of files within the folder.
+	FileCount uint64 `json:"file_count,omitempty"`
 }
 
 // NewFolderLogInfo returns a new FolderLogInfo instance
 func NewFolderLogInfo(Path *PathLogInfo) *FolderLogInfo {
 	s := new(FolderLogInfo)
 	s.Path = Path
+	return s
+}
+
+// FolderOverviewDescriptionChangedDetails : Updated folder overview.
+type FolderOverviewDescriptionChangedDetails struct {
+	// FolderOverviewLocationAsset : Folder Overview location position in the
+	// Assets list.
+	FolderOverviewLocationAsset uint64 `json:"folder_overview_location_asset"`
+}
+
+// NewFolderOverviewDescriptionChangedDetails returns a new FolderOverviewDescriptionChangedDetails instance
+func NewFolderOverviewDescriptionChangedDetails(FolderOverviewLocationAsset uint64) *FolderOverviewDescriptionChangedDetails {
+	s := new(FolderOverviewDescriptionChangedDetails)
+	s.FolderOverviewLocationAsset = FolderOverviewLocationAsset
+	return s
+}
+
+// FolderOverviewDescriptionChangedType : has no documentation (yet)
+type FolderOverviewDescriptionChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFolderOverviewDescriptionChangedType returns a new FolderOverviewDescriptionChangedType instance
+func NewFolderOverviewDescriptionChangedType(Description string) *FolderOverviewDescriptionChangedType {
+	s := new(FolderOverviewDescriptionChangedType)
+	s.Description = Description
+	return s
+}
+
+// FolderOverviewItemPinnedDetails : Pinned item to folder overview.
+type FolderOverviewItemPinnedDetails struct {
+	// FolderOverviewLocationAsset : Folder Overview location position in the
+	// Assets list.
+	FolderOverviewLocationAsset uint64 `json:"folder_overview_location_asset"`
+	// PinnedItemsAssetIndices : Pinned items positions in the Assets list.
+	PinnedItemsAssetIndices []uint64 `json:"pinned_items_asset_indices"`
+}
+
+// NewFolderOverviewItemPinnedDetails returns a new FolderOverviewItemPinnedDetails instance
+func NewFolderOverviewItemPinnedDetails(FolderOverviewLocationAsset uint64, PinnedItemsAssetIndices []uint64) *FolderOverviewItemPinnedDetails {
+	s := new(FolderOverviewItemPinnedDetails)
+	s.FolderOverviewLocationAsset = FolderOverviewLocationAsset
+	s.PinnedItemsAssetIndices = PinnedItemsAssetIndices
+	return s
+}
+
+// FolderOverviewItemPinnedType : has no documentation (yet)
+type FolderOverviewItemPinnedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFolderOverviewItemPinnedType returns a new FolderOverviewItemPinnedType instance
+func NewFolderOverviewItemPinnedType(Description string) *FolderOverviewItemPinnedType {
+	s := new(FolderOverviewItemPinnedType)
+	s.Description = Description
+	return s
+}
+
+// FolderOverviewItemUnpinnedDetails : Unpinned item from folder overview.
+type FolderOverviewItemUnpinnedDetails struct {
+	// FolderOverviewLocationAsset : Folder Overview location position in the
+	// Assets list.
+	FolderOverviewLocationAsset uint64 `json:"folder_overview_location_asset"`
+	// PinnedItemsAssetIndices : Pinned items positions in the Assets list.
+	PinnedItemsAssetIndices []uint64 `json:"pinned_items_asset_indices"`
+}
+
+// NewFolderOverviewItemUnpinnedDetails returns a new FolderOverviewItemUnpinnedDetails instance
+func NewFolderOverviewItemUnpinnedDetails(FolderOverviewLocationAsset uint64, PinnedItemsAssetIndices []uint64) *FolderOverviewItemUnpinnedDetails {
+	s := new(FolderOverviewItemUnpinnedDetails)
+	s.FolderOverviewLocationAsset = FolderOverviewLocationAsset
+	s.PinnedItemsAssetIndices = PinnedItemsAssetIndices
+	return s
+}
+
+// FolderOverviewItemUnpinnedType : has no documentation (yet)
+type FolderOverviewItemUnpinnedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFolderOverviewItemUnpinnedType returns a new FolderOverviewItemUnpinnedType instance
+func NewFolderOverviewItemUnpinnedType(Description string) *FolderOverviewItemUnpinnedType {
+	s := new(FolderOverviewItemUnpinnedType)
+	s.Description = Description
 	return s
 }
 
@@ -9854,13 +13879,17 @@ type GetTeamEventsArg struct {
 	// events, even with `has_more` set to true. In this case, callers should
 	// fetch again using `getEventsContinue`.
 	Limit uint32 `json:"limit"`
-	// AccountId : Filter the events by account ID. Return ony events with this
+	// AccountId : Filter the events by account ID. Return only events with this
 	// account_id as either Actor, Context, or Participants.
 	AccountId string `json:"account_id,omitempty"`
 	// Time : Filter by time range.
 	Time *team_common.TimeRange `json:"time,omitempty"`
-	// Category : Filter the returned events to a single category.
+	// Category : Filter the returned events to a single category. Note that
+	// category shouldn't be provided together with event_type.
 	Category *EventCategory `json:"category,omitempty"`
+	// EventType : Filter the returned events to a single event type. Note that
+	// event_type shouldn't be provided together with category.
+	EventType *EventTypeArg `json:"event_type,omitempty"`
 }
 
 // NewGetTeamEventsArg returns a new GetTeamEventsArg instance
@@ -9942,6 +13971,7 @@ type GetTeamEventsError struct {
 const (
 	GetTeamEventsErrorAccountIdNotFound = "account_id_not_found"
 	GetTeamEventsErrorInvalidTimeRange  = "invalid_time_range"
+	GetTeamEventsErrorInvalidFilters    = "invalid_filters"
 	GetTeamEventsErrorOther             = "other"
 )
 
@@ -10014,6 +14044,389 @@ const (
 	GoogleSsoPolicyEnabled  = "enabled"
 	GoogleSsoPolicyOther    = "other"
 )
+
+// GovernancePolicyAddFolderFailedDetails : Couldn't add a folder to a policy.
+type GovernancePolicyAddFolderFailedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Folder : Folder.
+	Folder string `json:"folder"`
+	// Reason : Reason.
+	Reason string `json:"reason,omitempty"`
+}
+
+// NewGovernancePolicyAddFolderFailedDetails returns a new GovernancePolicyAddFolderFailedDetails instance
+func NewGovernancePolicyAddFolderFailedDetails(GovernancePolicyId string, Name string, Folder string) *GovernancePolicyAddFolderFailedDetails {
+	s := new(GovernancePolicyAddFolderFailedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.Folder = Folder
+	return s
+}
+
+// GovernancePolicyAddFolderFailedType : has no documentation (yet)
+type GovernancePolicyAddFolderFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyAddFolderFailedType returns a new GovernancePolicyAddFolderFailedType instance
+func NewGovernancePolicyAddFolderFailedType(Description string) *GovernancePolicyAddFolderFailedType {
+	s := new(GovernancePolicyAddFolderFailedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyAddFoldersDetails : Added folders to policy.
+type GovernancePolicyAddFoldersDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Folders : Folders.
+	Folders []string `json:"folders,omitempty"`
+}
+
+// NewGovernancePolicyAddFoldersDetails returns a new GovernancePolicyAddFoldersDetails instance
+func NewGovernancePolicyAddFoldersDetails(GovernancePolicyId string, Name string) *GovernancePolicyAddFoldersDetails {
+	s := new(GovernancePolicyAddFoldersDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	return s
+}
+
+// GovernancePolicyAddFoldersType : has no documentation (yet)
+type GovernancePolicyAddFoldersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyAddFoldersType returns a new GovernancePolicyAddFoldersType instance
+func NewGovernancePolicyAddFoldersType(Description string) *GovernancePolicyAddFoldersType {
+	s := new(GovernancePolicyAddFoldersType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyCreateDetails : Activated a new policy.
+type GovernancePolicyCreateDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Duration : Duration in days.
+	Duration *DurationLogInfo `json:"duration"`
+	// Folders : Folders.
+	Folders []string `json:"folders,omitempty"`
+}
+
+// NewGovernancePolicyCreateDetails returns a new GovernancePolicyCreateDetails instance
+func NewGovernancePolicyCreateDetails(GovernancePolicyId string, Name string, Duration *DurationLogInfo) *GovernancePolicyCreateDetails {
+	s := new(GovernancePolicyCreateDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.Duration = Duration
+	return s
+}
+
+// GovernancePolicyCreateType : has no documentation (yet)
+type GovernancePolicyCreateType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyCreateType returns a new GovernancePolicyCreateType instance
+func NewGovernancePolicyCreateType(Description string) *GovernancePolicyCreateType {
+	s := new(GovernancePolicyCreateType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyDeleteDetails : Deleted a policy.
+type GovernancePolicyDeleteDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+}
+
+// NewGovernancePolicyDeleteDetails returns a new GovernancePolicyDeleteDetails instance
+func NewGovernancePolicyDeleteDetails(GovernancePolicyId string, Name string) *GovernancePolicyDeleteDetails {
+	s := new(GovernancePolicyDeleteDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	return s
+}
+
+// GovernancePolicyDeleteType : has no documentation (yet)
+type GovernancePolicyDeleteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyDeleteType returns a new GovernancePolicyDeleteType instance
+func NewGovernancePolicyDeleteType(Description string) *GovernancePolicyDeleteType {
+	s := new(GovernancePolicyDeleteType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyEditDetailsDetails : Edited policy.
+type GovernancePolicyEditDetailsDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Attribute : Attribute.
+	Attribute string `json:"attribute"`
+	// PreviousValue : From.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : To.
+	NewValue string `json:"new_value"`
+}
+
+// NewGovernancePolicyEditDetailsDetails returns a new GovernancePolicyEditDetailsDetails instance
+func NewGovernancePolicyEditDetailsDetails(GovernancePolicyId string, Name string, Attribute string, PreviousValue string, NewValue string) *GovernancePolicyEditDetailsDetails {
+	s := new(GovernancePolicyEditDetailsDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.Attribute = Attribute
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// GovernancePolicyEditDetailsType : has no documentation (yet)
+type GovernancePolicyEditDetailsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyEditDetailsType returns a new GovernancePolicyEditDetailsType instance
+func NewGovernancePolicyEditDetailsType(Description string) *GovernancePolicyEditDetailsType {
+	s := new(GovernancePolicyEditDetailsType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyEditDurationDetails : Changed policy duration.
+type GovernancePolicyEditDurationDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// PreviousValue : From.
+	PreviousValue *DurationLogInfo `json:"previous_value"`
+	// NewValue : To.
+	NewValue *DurationLogInfo `json:"new_value"`
+}
+
+// NewGovernancePolicyEditDurationDetails returns a new GovernancePolicyEditDurationDetails instance
+func NewGovernancePolicyEditDurationDetails(GovernancePolicyId string, Name string, PreviousValue *DurationLogInfo, NewValue *DurationLogInfo) *GovernancePolicyEditDurationDetails {
+	s := new(GovernancePolicyEditDurationDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// GovernancePolicyEditDurationType : has no documentation (yet)
+type GovernancePolicyEditDurationType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyEditDurationType returns a new GovernancePolicyEditDurationType instance
+func NewGovernancePolicyEditDurationType(Description string) *GovernancePolicyEditDurationType {
+	s := new(GovernancePolicyEditDurationType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyExportCreatedDetails : Created a policy download.
+type GovernancePolicyExportCreatedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewGovernancePolicyExportCreatedDetails returns a new GovernancePolicyExportCreatedDetails instance
+func NewGovernancePolicyExportCreatedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyExportCreatedDetails {
+	s := new(GovernancePolicyExportCreatedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyExportCreatedType : has no documentation (yet)
+type GovernancePolicyExportCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyExportCreatedType returns a new GovernancePolicyExportCreatedType instance
+func NewGovernancePolicyExportCreatedType(Description string) *GovernancePolicyExportCreatedType {
+	s := new(GovernancePolicyExportCreatedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyExportRemovedDetails : Removed a policy download.
+type GovernancePolicyExportRemovedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewGovernancePolicyExportRemovedDetails returns a new GovernancePolicyExportRemovedDetails instance
+func NewGovernancePolicyExportRemovedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyExportRemovedDetails {
+	s := new(GovernancePolicyExportRemovedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyExportRemovedType : has no documentation (yet)
+type GovernancePolicyExportRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyExportRemovedType returns a new GovernancePolicyExportRemovedType instance
+func NewGovernancePolicyExportRemovedType(Description string) *GovernancePolicyExportRemovedType {
+	s := new(GovernancePolicyExportRemovedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyRemoveFoldersDetails : Removed folders from policy.
+type GovernancePolicyRemoveFoldersDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// Folders : Folders.
+	Folders []string `json:"folders,omitempty"`
+	// Reason : Reason.
+	Reason string `json:"reason,omitempty"`
+}
+
+// NewGovernancePolicyRemoveFoldersDetails returns a new GovernancePolicyRemoveFoldersDetails instance
+func NewGovernancePolicyRemoveFoldersDetails(GovernancePolicyId string, Name string) *GovernancePolicyRemoveFoldersDetails {
+	s := new(GovernancePolicyRemoveFoldersDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	return s
+}
+
+// GovernancePolicyRemoveFoldersType : has no documentation (yet)
+type GovernancePolicyRemoveFoldersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyRemoveFoldersType returns a new GovernancePolicyRemoveFoldersType instance
+func NewGovernancePolicyRemoveFoldersType(Description string) *GovernancePolicyRemoveFoldersType {
+	s := new(GovernancePolicyRemoveFoldersType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyReportCreatedDetails : Created a summary report for a policy.
+type GovernancePolicyReportCreatedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+}
+
+// NewGovernancePolicyReportCreatedDetails returns a new GovernancePolicyReportCreatedDetails instance
+func NewGovernancePolicyReportCreatedDetails(GovernancePolicyId string, Name string) *GovernancePolicyReportCreatedDetails {
+	s := new(GovernancePolicyReportCreatedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	return s
+}
+
+// GovernancePolicyReportCreatedType : has no documentation (yet)
+type GovernancePolicyReportCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyReportCreatedType returns a new GovernancePolicyReportCreatedType instance
+func NewGovernancePolicyReportCreatedType(Description string) *GovernancePolicyReportCreatedType {
+	s := new(GovernancePolicyReportCreatedType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyZipPartDownloadedDetails : Downloaded content from a policy.
+type GovernancePolicyZipPartDownloadedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+	// Part : Part.
+	Part string `json:"part,omitempty"`
+}
+
+// NewGovernancePolicyZipPartDownloadedDetails returns a new GovernancePolicyZipPartDownloadedDetails instance
+func NewGovernancePolicyZipPartDownloadedDetails(GovernancePolicyId string, Name string, ExportName string) *GovernancePolicyZipPartDownloadedDetails {
+	s := new(GovernancePolicyZipPartDownloadedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// GovernancePolicyZipPartDownloadedType : has no documentation (yet)
+type GovernancePolicyZipPartDownloadedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyZipPartDownloadedType returns a new GovernancePolicyZipPartDownloadedType instance
+func NewGovernancePolicyZipPartDownloadedType(Description string) *GovernancePolicyZipPartDownloadedType {
+	s := new(GovernancePolicyZipPartDownloadedType)
+	s.Description = Description
+	return s
+}
 
 // GroupAddExternalIdDetails : Added external ID for group.
 type GroupAddExternalIdDetails struct {
@@ -10620,15 +15033,49 @@ func NewIntegrationPolicyChangedType(Description string) *IntegrationPolicyChang
 	return s
 }
 
+// InviteMethod : has no documentation (yet)
+type InviteMethod struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for InviteMethod
+const (
+	InviteMethodAutoApprove          = "auto_approve"
+	InviteMethodInviteLink           = "invite_link"
+	InviteMethodMemberInvite         = "member_invite"
+	InviteMethodMovedFromAnotherTeam = "moved_from_another_team"
+	InviteMethodOther                = "other"
+)
+
 // JoinTeamDetails : Additional information relevant when a new member joins the
 // team.
 type JoinTeamDetails struct {
-	// LinkedApps : Linked applications.
+	// LinkedApps : Linked applications. (Deprecated) Please use has_linked_apps
+	// boolean field instead.
 	LinkedApps []*UserLinkedAppLogInfo `json:"linked_apps"`
-	// LinkedDevices : Linked devices.
+	// LinkedDevices : Linked devices. (Deprecated) Please use
+	// has_linked_devices boolean field instead.
 	LinkedDevices []*LinkedDeviceLogInfo `json:"linked_devices"`
-	// LinkedSharedFolders : Linked shared folders.
+	// LinkedSharedFolders : Linked shared folders. (Deprecated) Please use
+	// has_linked_shared_folders boolean field instead.
 	LinkedSharedFolders []*FolderLogInfo `json:"linked_shared_folders"`
+	// WasLinkedAppsTruncated : (Deprecated) True if the linked_apps list was
+	// truncated to the maximum supported length (50).
+	WasLinkedAppsTruncated bool `json:"was_linked_apps_truncated,omitempty"`
+	// WasLinkedDevicesTruncated : (Deprecated) True if the linked_devices list
+	// was truncated to the maximum supported length (50).
+	WasLinkedDevicesTruncated bool `json:"was_linked_devices_truncated,omitempty"`
+	// WasLinkedSharedFoldersTruncated : (Deprecated) True if the
+	// linked_shared_folders list was truncated to the maximum supported length
+	// (50).
+	WasLinkedSharedFoldersTruncated bool `json:"was_linked_shared_folders_truncated,omitempty"`
+	// HasLinkedApps : True if the user had linked apps at event time.
+	HasLinkedApps bool `json:"has_linked_apps,omitempty"`
+	// HasLinkedDevices : True if the user had linked apps at event time.
+	HasLinkedDevices bool `json:"has_linked_devices,omitempty"`
+	// HasLinkedSharedFolders : True if the user had linked shared folders at
+	// event time.
+	HasLinkedSharedFolders bool `json:"has_linked_shared_folders,omitempty"`
 }
 
 // NewJoinTeamDetails returns a new JoinTeamDetails instance
@@ -10678,25 +15125,373 @@ func NewLegacyDeviceSessionLogInfo() *LegacyDeviceSessionLogInfo {
 	return s
 }
 
+// LegalHoldsActivateAHoldDetails : Activated a hold.
+type LegalHoldsActivateAHoldDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// StartDate : Hold start date.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : Hold end date.
+	EndDate time.Time `json:"end_date,omitempty"`
+}
+
+// NewLegalHoldsActivateAHoldDetails returns a new LegalHoldsActivateAHoldDetails instance
+func NewLegalHoldsActivateAHoldDetails(LegalHoldId string, Name string, StartDate time.Time) *LegalHoldsActivateAHoldDetails {
+	s := new(LegalHoldsActivateAHoldDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	s.StartDate = StartDate
+	return s
+}
+
+// LegalHoldsActivateAHoldType : has no documentation (yet)
+type LegalHoldsActivateAHoldType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsActivateAHoldType returns a new LegalHoldsActivateAHoldType instance
+func NewLegalHoldsActivateAHoldType(Description string) *LegalHoldsActivateAHoldType {
+	s := new(LegalHoldsActivateAHoldType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsAddMembersDetails : Added members to a hold.
+type LegalHoldsAddMembersDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+}
+
+// NewLegalHoldsAddMembersDetails returns a new LegalHoldsAddMembersDetails instance
+func NewLegalHoldsAddMembersDetails(LegalHoldId string, Name string) *LegalHoldsAddMembersDetails {
+	s := new(LegalHoldsAddMembersDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	return s
+}
+
+// LegalHoldsAddMembersType : has no documentation (yet)
+type LegalHoldsAddMembersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsAddMembersType returns a new LegalHoldsAddMembersType instance
+func NewLegalHoldsAddMembersType(Description string) *LegalHoldsAddMembersType {
+	s := new(LegalHoldsAddMembersType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsChangeHoldDetailsDetails : Edited details for a hold.
+type LegalHoldsChangeHoldDetailsDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// PreviousValue : Previous details.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New details.
+	NewValue string `json:"new_value"`
+}
+
+// NewLegalHoldsChangeHoldDetailsDetails returns a new LegalHoldsChangeHoldDetailsDetails instance
+func NewLegalHoldsChangeHoldDetailsDetails(LegalHoldId string, Name string, PreviousValue string, NewValue string) *LegalHoldsChangeHoldDetailsDetails {
+	s := new(LegalHoldsChangeHoldDetailsDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// LegalHoldsChangeHoldDetailsType : has no documentation (yet)
+type LegalHoldsChangeHoldDetailsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsChangeHoldDetailsType returns a new LegalHoldsChangeHoldDetailsType instance
+func NewLegalHoldsChangeHoldDetailsType(Description string) *LegalHoldsChangeHoldDetailsType {
+	s := new(LegalHoldsChangeHoldDetailsType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsChangeHoldNameDetails : Renamed a hold.
+type LegalHoldsChangeHoldNameDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// PreviousValue : Previous Name.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New Name.
+	NewValue string `json:"new_value"`
+}
+
+// NewLegalHoldsChangeHoldNameDetails returns a new LegalHoldsChangeHoldNameDetails instance
+func NewLegalHoldsChangeHoldNameDetails(LegalHoldId string, PreviousValue string, NewValue string) *LegalHoldsChangeHoldNameDetails {
+	s := new(LegalHoldsChangeHoldNameDetails)
+	s.LegalHoldId = LegalHoldId
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// LegalHoldsChangeHoldNameType : has no documentation (yet)
+type LegalHoldsChangeHoldNameType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsChangeHoldNameType returns a new LegalHoldsChangeHoldNameType instance
+func NewLegalHoldsChangeHoldNameType(Description string) *LegalHoldsChangeHoldNameType {
+	s := new(LegalHoldsChangeHoldNameType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsExportAHoldDetails : Exported hold.
+type LegalHoldsExportAHoldDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name,omitempty"`
+}
+
+// NewLegalHoldsExportAHoldDetails returns a new LegalHoldsExportAHoldDetails instance
+func NewLegalHoldsExportAHoldDetails(LegalHoldId string, Name string) *LegalHoldsExportAHoldDetails {
+	s := new(LegalHoldsExportAHoldDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	return s
+}
+
+// LegalHoldsExportAHoldType : has no documentation (yet)
+type LegalHoldsExportAHoldType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsExportAHoldType returns a new LegalHoldsExportAHoldType instance
+func NewLegalHoldsExportAHoldType(Description string) *LegalHoldsExportAHoldType {
+	s := new(LegalHoldsExportAHoldType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsExportCancelledDetails : Canceled export for a hold.
+type LegalHoldsExportCancelledDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewLegalHoldsExportCancelledDetails returns a new LegalHoldsExportCancelledDetails instance
+func NewLegalHoldsExportCancelledDetails(LegalHoldId string, Name string, ExportName string) *LegalHoldsExportCancelledDetails {
+	s := new(LegalHoldsExportCancelledDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// LegalHoldsExportCancelledType : has no documentation (yet)
+type LegalHoldsExportCancelledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsExportCancelledType returns a new LegalHoldsExportCancelledType instance
+func NewLegalHoldsExportCancelledType(Description string) *LegalHoldsExportCancelledType {
+	s := new(LegalHoldsExportCancelledType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsExportDownloadedDetails : Downloaded export for a hold.
+type LegalHoldsExportDownloadedDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+	// Part : Part.
+	Part string `json:"part,omitempty"`
+	// FileName : Filename.
+	FileName string `json:"file_name,omitempty"`
+}
+
+// NewLegalHoldsExportDownloadedDetails returns a new LegalHoldsExportDownloadedDetails instance
+func NewLegalHoldsExportDownloadedDetails(LegalHoldId string, Name string, ExportName string) *LegalHoldsExportDownloadedDetails {
+	s := new(LegalHoldsExportDownloadedDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// LegalHoldsExportDownloadedType : has no documentation (yet)
+type LegalHoldsExportDownloadedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsExportDownloadedType returns a new LegalHoldsExportDownloadedType instance
+func NewLegalHoldsExportDownloadedType(Description string) *LegalHoldsExportDownloadedType {
+	s := new(LegalHoldsExportDownloadedType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsExportRemovedDetails : Removed export for a hold.
+type LegalHoldsExportRemovedDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+	// ExportName : Export name.
+	ExportName string `json:"export_name"`
+}
+
+// NewLegalHoldsExportRemovedDetails returns a new LegalHoldsExportRemovedDetails instance
+func NewLegalHoldsExportRemovedDetails(LegalHoldId string, Name string, ExportName string) *LegalHoldsExportRemovedDetails {
+	s := new(LegalHoldsExportRemovedDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	s.ExportName = ExportName
+	return s
+}
+
+// LegalHoldsExportRemovedType : has no documentation (yet)
+type LegalHoldsExportRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsExportRemovedType returns a new LegalHoldsExportRemovedType instance
+func NewLegalHoldsExportRemovedType(Description string) *LegalHoldsExportRemovedType {
+	s := new(LegalHoldsExportRemovedType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsReleaseAHoldDetails : Released a hold.
+type LegalHoldsReleaseAHoldDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+}
+
+// NewLegalHoldsReleaseAHoldDetails returns a new LegalHoldsReleaseAHoldDetails instance
+func NewLegalHoldsReleaseAHoldDetails(LegalHoldId string, Name string) *LegalHoldsReleaseAHoldDetails {
+	s := new(LegalHoldsReleaseAHoldDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	return s
+}
+
+// LegalHoldsReleaseAHoldType : has no documentation (yet)
+type LegalHoldsReleaseAHoldType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsReleaseAHoldType returns a new LegalHoldsReleaseAHoldType instance
+func NewLegalHoldsReleaseAHoldType(Description string) *LegalHoldsReleaseAHoldType {
+	s := new(LegalHoldsReleaseAHoldType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsRemoveMembersDetails : Removed members from a hold.
+type LegalHoldsRemoveMembersDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+}
+
+// NewLegalHoldsRemoveMembersDetails returns a new LegalHoldsRemoveMembersDetails instance
+func NewLegalHoldsRemoveMembersDetails(LegalHoldId string, Name string) *LegalHoldsRemoveMembersDetails {
+	s := new(LegalHoldsRemoveMembersDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	return s
+}
+
+// LegalHoldsRemoveMembersType : has no documentation (yet)
+type LegalHoldsRemoveMembersType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsRemoveMembersType returns a new LegalHoldsRemoveMembersType instance
+func NewLegalHoldsRemoveMembersType(Description string) *LegalHoldsRemoveMembersType {
+	s := new(LegalHoldsRemoveMembersType)
+	s.Description = Description
+	return s
+}
+
+// LegalHoldsReportAHoldDetails : Created a summary report for a hold.
+type LegalHoldsReportAHoldDetails struct {
+	// LegalHoldId : Hold ID.
+	LegalHoldId string `json:"legal_hold_id"`
+	// Name : Hold name.
+	Name string `json:"name"`
+}
+
+// NewLegalHoldsReportAHoldDetails returns a new LegalHoldsReportAHoldDetails instance
+func NewLegalHoldsReportAHoldDetails(LegalHoldId string, Name string) *LegalHoldsReportAHoldDetails {
+	s := new(LegalHoldsReportAHoldDetails)
+	s.LegalHoldId = LegalHoldId
+	s.Name = Name
+	return s
+}
+
+// LegalHoldsReportAHoldType : has no documentation (yet)
+type LegalHoldsReportAHoldType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewLegalHoldsReportAHoldType returns a new LegalHoldsReportAHoldType instance
+func NewLegalHoldsReportAHoldType(Description string) *LegalHoldsReportAHoldType {
+	s := new(LegalHoldsReportAHoldType)
+	s.Description = Description
+	return s
+}
+
 // LinkedDeviceLogInfo : The device sessions that user is linked to.
 type LinkedDeviceLogInfo struct {
 	dropbox.Tagged
-	// MobileDeviceSession : mobile device session's details.
-	MobileDeviceSession *MobileDeviceSessionLogInfo `json:"mobile_device_session,omitempty"`
 	// DesktopDeviceSession : desktop device session's details.
 	DesktopDeviceSession *DesktopDeviceSessionLogInfo `json:"desktop_device_session,omitempty"`
-	// WebDeviceSession : web device session's details.
-	WebDeviceSession *WebDeviceSessionLogInfo `json:"web_device_session,omitempty"`
 	// LegacyDeviceSession : legacy device session's details.
 	LegacyDeviceSession *LegacyDeviceSessionLogInfo `json:"legacy_device_session,omitempty"`
+	// MobileDeviceSession : mobile device session's details.
+	MobileDeviceSession *MobileDeviceSessionLogInfo `json:"mobile_device_session,omitempty"`
+	// WebDeviceSession : web device session's details.
+	WebDeviceSession *WebDeviceSessionLogInfo `json:"web_device_session,omitempty"`
 }
 
 // Valid tag values for LinkedDeviceLogInfo
 const (
-	LinkedDeviceLogInfoMobileDeviceSession  = "mobile_device_session"
 	LinkedDeviceLogInfoDesktopDeviceSession = "desktop_device_session"
-	LinkedDeviceLogInfoWebDeviceSession     = "web_device_session"
 	LinkedDeviceLogInfoLegacyDeviceSession  = "legacy_device_session"
+	LinkedDeviceLogInfoMobileDeviceSession  = "mobile_device_session"
+	LinkedDeviceLogInfoWebDeviceSession     = "web_device_session"
 	LinkedDeviceLogInfoOther                = "other"
 )
 
@@ -10712,20 +15507,8 @@ func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "mobile_device_session":
-		err = json.Unmarshal(body, &u.MobileDeviceSession)
-
-		if err != nil {
-			return err
-		}
 	case "desktop_device_session":
 		err = json.Unmarshal(body, &u.DesktopDeviceSession)
-
-		if err != nil {
-			return err
-		}
-	case "web_device_session":
-		err = json.Unmarshal(body, &u.WebDeviceSession)
 
 		if err != nil {
 			return err
@@ -10736,9 +15519,33 @@ func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "mobile_device_session":
+		err = json.Unmarshal(body, &u.MobileDeviceSession)
+
+		if err != nil {
+			return err
+		}
+	case "web_device_session":
+		err = json.Unmarshal(body, &u.WebDeviceSession)
+
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
+
+// LockStatus : File lock status
+type LockStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LockStatus
+const (
+	LockStatusLocked   = "locked"
+	LockStatusUnlocked = "unlocked"
+	LockStatusOther    = "other"
+)
 
 // LoginFailDetails : Failed to sign in.
 type LoginFailDetails struct {
@@ -10779,10 +15586,14 @@ type LoginMethod struct {
 
 // Valid tag values for LoginMethod
 const (
-	LoginMethodPassword                = "password"
-	LoginMethodTwoFactorAuthentication = "two_factor_authentication"
-	LoginMethodSaml                    = "saml"
+	LoginMethodAppleOauth              = "apple_oauth"
+	LoginMethodFirstPartyTokenExchange = "first_party_token_exchange"
 	LoginMethodGoogleOauth             = "google_oauth"
+	LoginMethodPassword                = "password"
+	LoginMethodQrCode                  = "qr_code"
+	LoginMethodSaml                    = "saml"
+	LoginMethodTwoFactorAuthentication = "two_factor_authentication"
+	LoginMethodWebSession              = "web_session"
 	LoginMethodOther                   = "other"
 )
 
@@ -10817,6 +15628,8 @@ func NewLoginSuccessType(Description string) *LoginSuccessType {
 
 // LogoutDetails : Signed out.
 type LogoutDetails struct {
+	// LoginId : Login session id.
+	LoginId string `json:"login_id,omitempty"`
 }
 
 // NewLogoutDetails returns a new LogoutDetails instance
@@ -11037,6 +15850,37 @@ func NewMemberChangeNameType(Description string) *MemberChangeNameType {
 	return s
 }
 
+// MemberChangeResellerRoleDetails : Changed team member reseller role.
+type MemberChangeResellerRoleDetails struct {
+	// NewValue : New reseller role. This field is relevant when the reseller
+	// role is changed.
+	NewValue *ResellerRole `json:"new_value"`
+	// PreviousValue : Previous reseller role. This field is relevant when the
+	// reseller role is changed or when the reseller role is removed.
+	PreviousValue *ResellerRole `json:"previous_value"`
+}
+
+// NewMemberChangeResellerRoleDetails returns a new MemberChangeResellerRoleDetails instance
+func NewMemberChangeResellerRoleDetails(NewValue *ResellerRole, PreviousValue *ResellerRole) *MemberChangeResellerRoleDetails {
+	s := new(MemberChangeResellerRoleDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MemberChangeResellerRoleType : has no documentation (yet)
+type MemberChangeResellerRoleType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberChangeResellerRoleType returns a new MemberChangeResellerRoleType instance
+func NewMemberChangeResellerRoleType(Description string) *MemberChangeResellerRoleType {
+	s := new(MemberChangeResellerRoleType)
+	s.Description = Description
+	return s
+}
+
 // MemberChangeStatusDetails : Changed member status (invited, joined,
 // suspended, etc.).
 type MemberChangeStatusDetails struct {
@@ -11048,6 +15892,12 @@ type MemberChangeStatusDetails struct {
 	// Action : Additional information indicating the action taken that caused
 	// status change.
 	Action *ActionDetails `json:"action,omitempty"`
+	// NewTeam : The user's new team name. This field is relevant when the user
+	// is transferred off the team.
+	NewTeam string `json:"new_team,omitempty"`
+	// PreviousTeam : The user's previous team name. This field is relevant when
+	// the user is transferred onto the team.
+	PreviousTeam string `json:"previous_team,omitempty"`
 }
 
 // NewMemberChangeStatusDetails returns a new MemberChangeStatusDetails instance
@@ -11093,6 +15943,29 @@ func NewMemberDeleteManualContactsType(Description string) *MemberDeleteManualCo
 	return s
 }
 
+// MemberDeleteProfilePhotoDetails : Deleted team member profile photo.
+type MemberDeleteProfilePhotoDetails struct {
+}
+
+// NewMemberDeleteProfilePhotoDetails returns a new MemberDeleteProfilePhotoDetails instance
+func NewMemberDeleteProfilePhotoDetails() *MemberDeleteProfilePhotoDetails {
+	s := new(MemberDeleteProfilePhotoDetails)
+	return s
+}
+
+// MemberDeleteProfilePhotoType : has no documentation (yet)
+type MemberDeleteProfilePhotoType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberDeleteProfilePhotoType returns a new MemberDeleteProfilePhotoType instance
+func NewMemberDeleteProfilePhotoType(Description string) *MemberDeleteProfilePhotoType {
+	s := new(MemberDeleteProfilePhotoType)
+	s.Description = Description
+	return s
+}
+
 // MemberPermanentlyDeleteAccountContentsDetails : Permanently deleted contents
 // of deleted team member account.
 type MemberPermanentlyDeleteAccountContentsDetails struct {
@@ -11125,8 +15998,8 @@ type MemberRemoveActionType struct {
 // Valid tag values for MemberRemoveActionType
 const (
 	MemberRemoveActionTypeDelete                       = "delete"
-	MemberRemoveActionTypeOffboard                     = "offboard"
 	MemberRemoveActionTypeLeave                        = "leave"
+	MemberRemoveActionTypeOffboard                     = "offboard"
 	MemberRemoveActionTypeOffboardAndRetainTeamFolders = "offboard_and_retain_team_folders"
 	MemberRemoveActionTypeOther                        = "other"
 )
@@ -11199,6 +16072,73 @@ const (
 	MemberRequestsPolicyRequireApproval = "require_approval"
 	MemberRequestsPolicyOther           = "other"
 )
+
+// MemberSendInvitePolicy : Policy for controlling whether team members can send
+// team invites
+type MemberSendInvitePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MemberSendInvitePolicy
+const (
+	MemberSendInvitePolicyDisabled        = "disabled"
+	MemberSendInvitePolicyEveryone        = "everyone"
+	MemberSendInvitePolicySpecificMembers = "specific_members"
+	MemberSendInvitePolicyOther           = "other"
+)
+
+// MemberSendInvitePolicyChangedDetails : Changed member send invite policy for
+// team.
+type MemberSendInvitePolicyChangedDetails struct {
+	// NewValue : New team member send invite policy.
+	NewValue *MemberSendInvitePolicy `json:"new_value"`
+	// PreviousValue : Previous team member send invite policy.
+	PreviousValue *MemberSendInvitePolicy `json:"previous_value"`
+}
+
+// NewMemberSendInvitePolicyChangedDetails returns a new MemberSendInvitePolicyChangedDetails instance
+func NewMemberSendInvitePolicyChangedDetails(NewValue *MemberSendInvitePolicy, PreviousValue *MemberSendInvitePolicy) *MemberSendInvitePolicyChangedDetails {
+	s := new(MemberSendInvitePolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MemberSendInvitePolicyChangedType : has no documentation (yet)
+type MemberSendInvitePolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSendInvitePolicyChangedType returns a new MemberSendInvitePolicyChangedType instance
+func NewMemberSendInvitePolicyChangedType(Description string) *MemberSendInvitePolicyChangedType {
+	s := new(MemberSendInvitePolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// MemberSetProfilePhotoDetails : Set team member profile photo.
+type MemberSetProfilePhotoDetails struct {
+}
+
+// NewMemberSetProfilePhotoDetails returns a new MemberSetProfilePhotoDetails instance
+func NewMemberSetProfilePhotoDetails() *MemberSetProfilePhotoDetails {
+	s := new(MemberSetProfilePhotoDetails)
+	return s
+}
+
+// MemberSetProfilePhotoType : has no documentation (yet)
+type MemberSetProfilePhotoType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberSetProfilePhotoType returns a new MemberSetProfilePhotoType instance
+func NewMemberSetProfilePhotoType(Description string) *MemberSetProfilePhotoType {
+	s := new(MemberSetProfilePhotoType)
+	s.Description = Description
+	return s
+}
 
 // MemberSpaceLimitsAddCustomQuotaDetails : Set custom member space limit.
 type MemberSpaceLimitsAddCustomQuotaDetails struct {
@@ -11424,12 +16364,13 @@ type MemberStatus struct {
 
 // Valid tag values for MemberStatus
 const (
-	MemberStatusNotJoined = "not_joined"
-	MemberStatusInvited   = "invited"
-	MemberStatusActive    = "active"
-	MemberStatusSuspended = "suspended"
-	MemberStatusRemoved   = "removed"
-	MemberStatusOther     = "other"
+	MemberStatusActive             = "active"
+	MemberStatusInvited            = "invited"
+	MemberStatusMovedToAnotherTeam = "moved_to_another_team"
+	MemberStatusNotJoined          = "not_joined"
+	MemberStatusRemoved            = "removed"
+	MemberStatusSuspended          = "suspended"
+	MemberStatusOther              = "other"
 )
 
 // MemberSuggestDetails : Suggested person to add to team.
@@ -11625,6 +16566,9 @@ type NamespaceRelativePathLogInfo struct {
 	// RelativePath : A path relative to the specified namespace ID. Might be
 	// missing due to historical data gap.
 	RelativePath string `json:"relative_path,omitempty"`
+	// IsSharedNamespace : True if the namespace is shared. Might be missing due
+	// to historical data gap.
+	IsSharedNamespace bool `json:"is_shared_namespace,omitempty"`
 }
 
 // NewNamespaceRelativePathLogInfo returns a new NamespaceRelativePathLogInfo instance
@@ -11673,6 +16617,177 @@ const (
 	NetworkControlPolicyEnabled  = "enabled"
 	NetworkControlPolicyOther    = "other"
 )
+
+// NoExpirationLinkGenCreateReportDetails : Report created: Links created with
+// no expiration.
+type NoExpirationLinkGenCreateReportDetails struct {
+	// StartDate : Report start date.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : Report end date.
+	EndDate time.Time `json:"end_date"`
+}
+
+// NewNoExpirationLinkGenCreateReportDetails returns a new NoExpirationLinkGenCreateReportDetails instance
+func NewNoExpirationLinkGenCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoExpirationLinkGenCreateReportDetails {
+	s := new(NoExpirationLinkGenCreateReportDetails)
+	s.StartDate = StartDate
+	s.EndDate = EndDate
+	return s
+}
+
+// NoExpirationLinkGenCreateReportType : has no documentation (yet)
+type NoExpirationLinkGenCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoExpirationLinkGenCreateReportType returns a new NoExpirationLinkGenCreateReportType instance
+func NewNoExpirationLinkGenCreateReportType(Description string) *NoExpirationLinkGenCreateReportType {
+	s := new(NoExpirationLinkGenCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// NoExpirationLinkGenReportFailedDetails : Couldn't create report: Links
+// created with no expiration.
+type NoExpirationLinkGenReportFailedDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewNoExpirationLinkGenReportFailedDetails returns a new NoExpirationLinkGenReportFailedDetails instance
+func NewNoExpirationLinkGenReportFailedDetails(FailureReason *team.TeamReportFailureReason) *NoExpirationLinkGenReportFailedDetails {
+	s := new(NoExpirationLinkGenReportFailedDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// NoExpirationLinkGenReportFailedType : has no documentation (yet)
+type NoExpirationLinkGenReportFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoExpirationLinkGenReportFailedType returns a new NoExpirationLinkGenReportFailedType instance
+func NewNoExpirationLinkGenReportFailedType(Description string) *NoExpirationLinkGenReportFailedType {
+	s := new(NoExpirationLinkGenReportFailedType)
+	s.Description = Description
+	return s
+}
+
+// NoPasswordLinkGenCreateReportDetails : Report created: Links created without
+// passwords.
+type NoPasswordLinkGenCreateReportDetails struct {
+	// StartDate : Report start date.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : Report end date.
+	EndDate time.Time `json:"end_date"`
+}
+
+// NewNoPasswordLinkGenCreateReportDetails returns a new NoPasswordLinkGenCreateReportDetails instance
+func NewNoPasswordLinkGenCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoPasswordLinkGenCreateReportDetails {
+	s := new(NoPasswordLinkGenCreateReportDetails)
+	s.StartDate = StartDate
+	s.EndDate = EndDate
+	return s
+}
+
+// NoPasswordLinkGenCreateReportType : has no documentation (yet)
+type NoPasswordLinkGenCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoPasswordLinkGenCreateReportType returns a new NoPasswordLinkGenCreateReportType instance
+func NewNoPasswordLinkGenCreateReportType(Description string) *NoPasswordLinkGenCreateReportType {
+	s := new(NoPasswordLinkGenCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// NoPasswordLinkGenReportFailedDetails : Couldn't create report: Links created
+// without passwords.
+type NoPasswordLinkGenReportFailedDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewNoPasswordLinkGenReportFailedDetails returns a new NoPasswordLinkGenReportFailedDetails instance
+func NewNoPasswordLinkGenReportFailedDetails(FailureReason *team.TeamReportFailureReason) *NoPasswordLinkGenReportFailedDetails {
+	s := new(NoPasswordLinkGenReportFailedDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// NoPasswordLinkGenReportFailedType : has no documentation (yet)
+type NoPasswordLinkGenReportFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoPasswordLinkGenReportFailedType returns a new NoPasswordLinkGenReportFailedType instance
+func NewNoPasswordLinkGenReportFailedType(Description string) *NoPasswordLinkGenReportFailedType {
+	s := new(NoPasswordLinkGenReportFailedType)
+	s.Description = Description
+	return s
+}
+
+// NoPasswordLinkViewCreateReportDetails : Report created: Views of links
+// without passwords.
+type NoPasswordLinkViewCreateReportDetails struct {
+	// StartDate : Report start date.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : Report end date.
+	EndDate time.Time `json:"end_date"`
+}
+
+// NewNoPasswordLinkViewCreateReportDetails returns a new NoPasswordLinkViewCreateReportDetails instance
+func NewNoPasswordLinkViewCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoPasswordLinkViewCreateReportDetails {
+	s := new(NoPasswordLinkViewCreateReportDetails)
+	s.StartDate = StartDate
+	s.EndDate = EndDate
+	return s
+}
+
+// NoPasswordLinkViewCreateReportType : has no documentation (yet)
+type NoPasswordLinkViewCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoPasswordLinkViewCreateReportType returns a new NoPasswordLinkViewCreateReportType instance
+func NewNoPasswordLinkViewCreateReportType(Description string) *NoPasswordLinkViewCreateReportType {
+	s := new(NoPasswordLinkViewCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// NoPasswordLinkViewReportFailedDetails : Couldn't create report: Views of
+// links without passwords.
+type NoPasswordLinkViewReportFailedDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewNoPasswordLinkViewReportFailedDetails returns a new NoPasswordLinkViewReportFailedDetails instance
+func NewNoPasswordLinkViewReportFailedDetails(FailureReason *team.TeamReportFailureReason) *NoPasswordLinkViewReportFailedDetails {
+	s := new(NoPasswordLinkViewReportFailedDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// NoPasswordLinkViewReportFailedType : has no documentation (yet)
+type NoPasswordLinkViewReportFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewNoPasswordLinkViewReportFailedType returns a new NoPasswordLinkViewReportFailedType instance
+func NewNoPasswordLinkViewReportFailedType(Description string) *NoPasswordLinkViewReportFailedType {
+	s := new(NoPasswordLinkViewReportFailedType)
+	s.Description = Description
+	return s
+}
 
 // UserLogInfo : User's logged information.
 type UserLogInfo struct {
@@ -11778,6 +16893,19 @@ type NonTeamMemberLogInfo struct {
 // NewNonTeamMemberLogInfo returns a new NonTeamMemberLogInfo instance
 func NewNonTeamMemberLogInfo() *NonTeamMemberLogInfo {
 	s := new(NonTeamMemberLogInfo)
+	return s
+}
+
+// NonTrustedTeamDetails : The email to which the request was sent
+type NonTrustedTeamDetails struct {
+	// Team : The email to which the request was sent.
+	Team string `json:"team"`
+}
+
+// NewNonTrustedTeamDetails returns a new NonTrustedTeamDetails instance
+func NewNonTrustedTeamDetails(Team string) *NonTrustedTeamDetails {
+	s := new(NonTrustedTeamDetails)
+	s.Team = Team
 	return s
 }
 
@@ -11919,6 +17047,32 @@ func NewOpenNoteSharedType(Description string) *OpenNoteSharedType {
 	return s
 }
 
+// OrganizationDetails : More details about the organization.
+type OrganizationDetails struct {
+	// Organization : The name of the organization.
+	Organization string `json:"organization"`
+}
+
+// NewOrganizationDetails returns a new OrganizationDetails instance
+func NewOrganizationDetails(Organization string) *OrganizationDetails {
+	s := new(OrganizationDetails)
+	s.Organization = Organization
+	return s
+}
+
+// OrganizationName : The name of the organization
+type OrganizationName struct {
+	// Organization : The name of the organization.
+	Organization string `json:"organization"`
+}
+
+// NewOrganizationName returns a new OrganizationName instance
+func NewOrganizationName(Organization string) *OrganizationName {
+	s := new(OrganizationName)
+	s.Organization = Organization
+	return s
+}
+
 // OriginLogInfo : The origin from which the actor performed the action.
 type OriginLogInfo struct {
 	// GeoLocation : Geographic location details.
@@ -11934,6 +17088,62 @@ func NewOriginLogInfo(AccessMethod *AccessMethodLogInfo) *OriginLogInfo {
 	return s
 }
 
+// OutdatedLinkViewCreateReportDetails : Report created: Views of old links.
+type OutdatedLinkViewCreateReportDetails struct {
+	// StartDate : Report start date.
+	StartDate time.Time `json:"start_date"`
+	// EndDate : Report end date.
+	EndDate time.Time `json:"end_date"`
+}
+
+// NewOutdatedLinkViewCreateReportDetails returns a new OutdatedLinkViewCreateReportDetails instance
+func NewOutdatedLinkViewCreateReportDetails(StartDate time.Time, EndDate time.Time) *OutdatedLinkViewCreateReportDetails {
+	s := new(OutdatedLinkViewCreateReportDetails)
+	s.StartDate = StartDate
+	s.EndDate = EndDate
+	return s
+}
+
+// OutdatedLinkViewCreateReportType : has no documentation (yet)
+type OutdatedLinkViewCreateReportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewOutdatedLinkViewCreateReportType returns a new OutdatedLinkViewCreateReportType instance
+func NewOutdatedLinkViewCreateReportType(Description string) *OutdatedLinkViewCreateReportType {
+	s := new(OutdatedLinkViewCreateReportType)
+	s.Description = Description
+	return s
+}
+
+// OutdatedLinkViewReportFailedDetails : Couldn't create report: Views of old
+// links.
+type OutdatedLinkViewReportFailedDetails struct {
+	// FailureReason : Failure reason.
+	FailureReason *team.TeamReportFailureReason `json:"failure_reason"`
+}
+
+// NewOutdatedLinkViewReportFailedDetails returns a new OutdatedLinkViewReportFailedDetails instance
+func NewOutdatedLinkViewReportFailedDetails(FailureReason *team.TeamReportFailureReason) *OutdatedLinkViewReportFailedDetails {
+	s := new(OutdatedLinkViewReportFailedDetails)
+	s.FailureReason = FailureReason
+	return s
+}
+
+// OutdatedLinkViewReportFailedType : has no documentation (yet)
+type OutdatedLinkViewReportFailedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewOutdatedLinkViewReportFailedType returns a new OutdatedLinkViewReportFailedType instance
+func NewOutdatedLinkViewReportFailedType(Description string) *OutdatedLinkViewReportFailedType {
+	s := new(OutdatedLinkViewReportFailedType)
+	s.Description = Description
+	return s
+}
+
 // PaperAccessType : has no documentation (yet)
 type PaperAccessType struct {
 	dropbox.Tagged
@@ -11941,9 +17151,9 @@ type PaperAccessType struct {
 
 // Valid tag values for PaperAccessType
 const (
-	PaperAccessTypeViewer    = "viewer"
 	PaperAccessTypeCommenter = "commenter"
 	PaperAccessTypeEditor    = "editor"
+	PaperAccessTypeViewer    = "viewer"
 	PaperAccessTypeOther     = "other"
 )
 
@@ -12087,7 +17297,7 @@ func NewPaperChangePolicyType(Description string) *PaperChangePolicyType {
 	return s
 }
 
-// PaperContentAddMemberDetails : Added team member to Paper doc/folder.
+// PaperContentAddMemberDetails : Added users and/or groups to Paper doc/folder.
 type PaperContentAddMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12228,17 +17438,15 @@ type PaperContentRemoveFromFolderDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
 	// TargetAssetIndex : Target asset position in the Assets list.
-	TargetAssetIndex uint64 `json:"target_asset_index"`
+	TargetAssetIndex uint64 `json:"target_asset_index,omitempty"`
 	// ParentAssetIndex : Parent asset position in the Assets list.
-	ParentAssetIndex uint64 `json:"parent_asset_index"`
+	ParentAssetIndex uint64 `json:"parent_asset_index,omitempty"`
 }
 
 // NewPaperContentRemoveFromFolderDetails returns a new PaperContentRemoveFromFolderDetails instance
-func NewPaperContentRemoveFromFolderDetails(EventUuid string, TargetAssetIndex uint64, ParentAssetIndex uint64) *PaperContentRemoveFromFolderDetails {
+func NewPaperContentRemoveFromFolderDetails(EventUuid string) *PaperContentRemoveFromFolderDetails {
 	s := new(PaperContentRemoveFromFolderDetails)
 	s.EventUuid = EventUuid
-	s.TargetAssetIndex = TargetAssetIndex
-	s.ParentAssetIndex = ParentAssetIndex
 	return s
 }
 
@@ -12255,7 +17463,8 @@ func NewPaperContentRemoveFromFolderType(Description string) *PaperContentRemove
 	return s
 }
 
-// PaperContentRemoveMemberDetails : Removed team member from Paper doc/folder.
+// PaperContentRemoveMemberDetails : Removed users and/or groups from Paper
+// doc/folder.
 type PaperContentRemoveMemberDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12446,8 +17655,7 @@ func NewPaperDocAddCommentType(Description string) *PaperDocAddCommentType {
 	return s
 }
 
-// PaperDocChangeMemberRoleDetails : Changed team member permissions for Paper
-// doc.
+// PaperDocChangeMemberRoleDetails : Changed member permissions for Paper doc.
 type PaperDocChangeMemberRoleDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12703,7 +17911,7 @@ func NewPaperDocFollowedType(Description string) *PaperDocFollowedType {
 	return s
 }
 
-// PaperDocMentionDetails : Mentioned team member in Paper doc.
+// PaperDocMentionDetails : Mentioned user in Paper doc.
 type PaperDocMentionDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -12866,7 +18074,7 @@ func NewPaperDocSlackShareType(Description string) *PaperDocSlackShareType {
 	return s
 }
 
-// PaperDocTeamInviteDetails : Shared Paper doc with team member.
+// PaperDocTeamInviteDetails : Shared Paper doc with users and/or groups.
 type PaperDocTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -13257,7 +18465,7 @@ func NewPaperFolderLogInfo(FolderId string, FolderName string) *PaperFolderLogIn
 	return s
 }
 
-// PaperFolderTeamInviteDetails : Shared Paper folder with member.
+// PaperFolderTeamInviteDetails : Shared Paper folder with users and/or groups.
 type PaperFolderTeamInviteDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
@@ -13296,6 +18504,39 @@ const (
 	PaperMemberPolicyTeamAndExplicitlyShared = "team_and_explicitly_shared"
 	PaperMemberPolicyOther                   = "other"
 )
+
+// PaperPublishedLinkChangePermissionDetails : Changed permissions for published
+// doc.
+type PaperPublishedLinkChangePermissionDetails struct {
+	// EventUuid : Event unique identifier.
+	EventUuid string `json:"event_uuid"`
+	// NewPermissionLevel : New permission level.
+	NewPermissionLevel string `json:"new_permission_level"`
+	// PreviousPermissionLevel : Previous permission level.
+	PreviousPermissionLevel string `json:"previous_permission_level"`
+}
+
+// NewPaperPublishedLinkChangePermissionDetails returns a new PaperPublishedLinkChangePermissionDetails instance
+func NewPaperPublishedLinkChangePermissionDetails(EventUuid string, NewPermissionLevel string, PreviousPermissionLevel string) *PaperPublishedLinkChangePermissionDetails {
+	s := new(PaperPublishedLinkChangePermissionDetails)
+	s.EventUuid = EventUuid
+	s.NewPermissionLevel = NewPermissionLevel
+	s.PreviousPermissionLevel = PreviousPermissionLevel
+	return s
+}
+
+// PaperPublishedLinkChangePermissionType : has no documentation (yet)
+type PaperPublishedLinkChangePermissionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperPublishedLinkChangePermissionType returns a new PaperPublishedLinkChangePermissionType instance
+func NewPaperPublishedLinkChangePermissionType(Description string) *PaperPublishedLinkChangePermissionType {
+	s := new(PaperPublishedLinkChangePermissionType)
+	s.Description = Description
+	return s
+}
 
 // PaperPublishedLinkCreateDetails : Published doc.
 type PaperPublishedLinkCreateDetails struct {
@@ -13378,16 +18619,16 @@ func NewPaperPublishedLinkViewType(Description string) *PaperPublishedLinkViewTy
 // ParticipantLogInfo : A user or group
 type ParticipantLogInfo struct {
 	dropbox.Tagged
-	// User : A user with a Dropbox account.
-	User IsUserLogInfo `json:"user,omitempty"`
 	// Group : Group details.
 	Group *GroupLogInfo `json:"group,omitempty"`
+	// User : A user with a Dropbox account.
+	User IsUserLogInfo `json:"user,omitempty"`
 }
 
 // Valid tag values for ParticipantLogInfo
 const (
-	ParticipantLogInfoUser  = "user"
 	ParticipantLogInfoGroup = "group"
+	ParticipantLogInfoUser  = "user"
 	ParticipantLogInfoOther = "other"
 )
 
@@ -13405,14 +18646,14 @@ func (u *ParticipantLogInfo) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
+	case "group":
+		err = json.Unmarshal(body, &u.Group)
 
 		if err != nil {
 			return err
 		}
-	case "group":
-		err = json.Unmarshal(body, &u.Group)
+	case "user":
+		u.User, err = IsUserLogInfoFromJSON(w.User)
 
 		if err != nil {
 			return err
@@ -13428,9 +18669,9 @@ type PassPolicy struct {
 
 // Valid tag values for PassPolicy
 const (
-	PassPolicyEnabled  = "enabled"
 	PassPolicyAllow    = "allow"
 	PassPolicyDisabled = "disabled"
+	PassPolicyEnabled  = "enabled"
 	PassPolicyOther    = "other"
 )
 
@@ -13503,6 +18744,36 @@ func NewPasswordResetType(Description string) *PasswordResetType {
 	return s
 }
 
+// PasswordStrengthRequirementsChangePolicyDetails : Changed team password
+// strength requirements.
+type PasswordStrengthRequirementsChangePolicyDetails struct {
+	// PreviousValue : Old password strength policy.
+	PreviousValue *team_policies.PasswordStrengthPolicy `json:"previous_value"`
+	// NewValue : New password strength policy.
+	NewValue *team_policies.PasswordStrengthPolicy `json:"new_value"`
+}
+
+// NewPasswordStrengthRequirementsChangePolicyDetails returns a new PasswordStrengthRequirementsChangePolicyDetails instance
+func NewPasswordStrengthRequirementsChangePolicyDetails(PreviousValue *team_policies.PasswordStrengthPolicy, NewValue *team_policies.PasswordStrengthPolicy) *PasswordStrengthRequirementsChangePolicyDetails {
+	s := new(PasswordStrengthRequirementsChangePolicyDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// PasswordStrengthRequirementsChangePolicyType : has no documentation (yet)
+type PasswordStrengthRequirementsChangePolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPasswordStrengthRequirementsChangePolicyType returns a new PasswordStrengthRequirementsChangePolicyType instance
+func NewPasswordStrengthRequirementsChangePolicyType(Description string) *PasswordStrengthRequirementsChangePolicyType {
+	s := new(PasswordStrengthRequirementsChangePolicyType)
+	s.Description = Description
+	return s
+}
+
 // PathLogInfo : Path's details.
 type PathLogInfo struct {
 	// Contextual : Fully qualified path relative to event's context. Might be
@@ -13517,6 +18788,32 @@ type PathLogInfo struct {
 func NewPathLogInfo(NamespaceRelative *NamespaceRelativePathLogInfo) *PathLogInfo {
 	s := new(PathLogInfo)
 	s.NamespaceRelative = NamespaceRelative
+	return s
+}
+
+// PendingSecondaryEmailAddedDetails : Added pending secondary email.
+type PendingSecondaryEmailAddedDetails struct {
+	// SecondaryEmail : New pending secondary email.
+	SecondaryEmail string `json:"secondary_email"`
+}
+
+// NewPendingSecondaryEmailAddedDetails returns a new PendingSecondaryEmailAddedDetails instance
+func NewPendingSecondaryEmailAddedDetails(SecondaryEmail string) *PendingSecondaryEmailAddedDetails {
+	s := new(PendingSecondaryEmailAddedDetails)
+	s.SecondaryEmail = SecondaryEmail
+	return s
+}
+
+// PendingSecondaryEmailAddedType : has no documentation (yet)
+type PendingSecondaryEmailAddedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPendingSecondaryEmailAddedType returns a new PendingSecondaryEmailAddedType instance
+func NewPendingSecondaryEmailAddedType(Description string) *PendingSecondaryEmailAddedType {
+	s := new(PendingSecondaryEmailAddedType)
+	s.Description = Description
 	return s
 }
 
@@ -13562,6 +18859,17 @@ const (
 	PlacementRestrictionJapanOnly     = "japan_only"
 	PlacementRestrictionNone          = "none"
 	PlacementRestrictionOther         = "other"
+)
+
+// PolicyType : has no documentation (yet)
+type PolicyType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PolicyType
+const (
+	PolicyTypeRetention = "retention"
+	PolicyTypeOther     = "other"
 )
 
 // PrimaryTeamRequestAcceptedDetails : Team merge request acceptance details
@@ -13646,6 +18954,7 @@ const (
 	QuickActionTypeResetPassword       = "reset_password"
 	QuickActionTypeRestoreFileOrFolder = "restore_file_or_folder"
 	QuickActionTypeUnlinkApp           = "unlink_app"
+	QuickActionTypeUnlinkDevice        = "unlink_device"
 	QuickActionTypeUnlinkSession       = "unlink_session"
 	QuickActionTypeOther               = "other"
 )
@@ -13682,6 +18991,18 @@ func NewResellerLogInfo(ResellerName string, ResellerEmail string) *ResellerLogI
 	s.ResellerEmail = ResellerEmail
 	return s
 }
+
+// ResellerRole : has no documentation (yet)
+type ResellerRole struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ResellerRole
+const (
+	ResellerRoleNotReseller   = "not_reseller"
+	ResellerRoleResellerAdmin = "reseller_admin"
+	ResellerRoleOther         = "other"
+)
 
 // ResellerSupportChangePolicyDetails : Enabled/disabled reseller support.
 type ResellerSupportChangePolicyDetails struct {
@@ -13767,6 +19088,125 @@ type ResellerSupportSessionStartType struct {
 // NewResellerSupportSessionStartType returns a new ResellerSupportSessionStartType instance
 func NewResellerSupportSessionStartType(Description string) *ResellerSupportSessionStartType {
 	s := new(ResellerSupportSessionStartType)
+	s.Description = Description
+	return s
+}
+
+// RewindFolderDetails : Rewound a folder.
+type RewindFolderDetails struct {
+	// RewindFolderTargetTsMs : Folder was Rewound to this date.
+	RewindFolderTargetTsMs time.Time `json:"rewind_folder_target_ts_ms"`
+}
+
+// NewRewindFolderDetails returns a new RewindFolderDetails instance
+func NewRewindFolderDetails(RewindFolderTargetTsMs time.Time) *RewindFolderDetails {
+	s := new(RewindFolderDetails)
+	s.RewindFolderTargetTsMs = RewindFolderTargetTsMs
+	return s
+}
+
+// RewindFolderType : has no documentation (yet)
+type RewindFolderType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewRewindFolderType returns a new RewindFolderType instance
+func NewRewindFolderType(Description string) *RewindFolderType {
+	s := new(RewindFolderType)
+	s.Description = Description
+	return s
+}
+
+// RewindPolicy : Policy for controlling whether team members can rewind
+type RewindPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for RewindPolicy
+const (
+	RewindPolicyAdminsOnly = "admins_only"
+	RewindPolicyEveryone   = "everyone"
+	RewindPolicyOther      = "other"
+)
+
+// RewindPolicyChangedDetails : Changed Rewind policy for team.
+type RewindPolicyChangedDetails struct {
+	// NewValue : New Dropbox Rewind policy.
+	NewValue *RewindPolicy `json:"new_value"`
+	// PreviousValue : Previous Dropbox Rewind policy.
+	PreviousValue *RewindPolicy `json:"previous_value"`
+}
+
+// NewRewindPolicyChangedDetails returns a new RewindPolicyChangedDetails instance
+func NewRewindPolicyChangedDetails(NewValue *RewindPolicy, PreviousValue *RewindPolicy) *RewindPolicyChangedDetails {
+	s := new(RewindPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// RewindPolicyChangedType : has no documentation (yet)
+type RewindPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewRewindPolicyChangedType returns a new RewindPolicyChangedType instance
+func NewRewindPolicyChangedType(Description string) *RewindPolicyChangedType {
+	s := new(RewindPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// SecondaryEmailDeletedDetails : Deleted secondary email.
+type SecondaryEmailDeletedDetails struct {
+	// SecondaryEmail : Deleted secondary email.
+	SecondaryEmail string `json:"secondary_email"`
+}
+
+// NewSecondaryEmailDeletedDetails returns a new SecondaryEmailDeletedDetails instance
+func NewSecondaryEmailDeletedDetails(SecondaryEmail string) *SecondaryEmailDeletedDetails {
+	s := new(SecondaryEmailDeletedDetails)
+	s.SecondaryEmail = SecondaryEmail
+	return s
+}
+
+// SecondaryEmailDeletedType : has no documentation (yet)
+type SecondaryEmailDeletedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSecondaryEmailDeletedType returns a new SecondaryEmailDeletedType instance
+func NewSecondaryEmailDeletedType(Description string) *SecondaryEmailDeletedType {
+	s := new(SecondaryEmailDeletedType)
+	s.Description = Description
+	return s
+}
+
+// SecondaryEmailVerifiedDetails : Verified secondary email.
+type SecondaryEmailVerifiedDetails struct {
+	// SecondaryEmail : Verified secondary email.
+	SecondaryEmail string `json:"secondary_email"`
+}
+
+// NewSecondaryEmailVerifiedDetails returns a new SecondaryEmailVerifiedDetails instance
+func NewSecondaryEmailVerifiedDetails(SecondaryEmail string) *SecondaryEmailVerifiedDetails {
+	s := new(SecondaryEmailVerifiedDetails)
+	s.SecondaryEmail = SecondaryEmail
+	return s
+}
+
+// SecondaryEmailVerifiedType : has no documentation (yet)
+type SecondaryEmailVerifiedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSecondaryEmailVerifiedType returns a new SecondaryEmailVerifiedType instance
+func NewSecondaryEmailVerifiedType(Description string) *SecondaryEmailVerifiedType {
+	s := new(SecondaryEmailVerifiedType)
 	s.Description = Description
 	return s
 }
@@ -13874,6 +19314,49 @@ type SecondaryTeamRequestReminderDetails struct {
 func NewSecondaryTeamRequestReminderDetails(SentTo string) *SecondaryTeamRequestReminderDetails {
 	s := new(SecondaryTeamRequestReminderDetails)
 	s.SentTo = SentTo
+	return s
+}
+
+// SendForSignaturePolicy : Policy for controlling team access to send for
+// signature feature
+type SendForSignaturePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for SendForSignaturePolicy
+const (
+	SendForSignaturePolicyDisabled = "disabled"
+	SendForSignaturePolicyEnabled  = "enabled"
+	SendForSignaturePolicyOther    = "other"
+)
+
+// SendForSignaturePolicyChangedDetails : Changed send for signature policy for
+// team.
+type SendForSignaturePolicyChangedDetails struct {
+	// NewValue : New send for signature policy.
+	NewValue *SendForSignaturePolicy `json:"new_value"`
+	// PreviousValue : Previous send for signature policy.
+	PreviousValue *SendForSignaturePolicy `json:"previous_value"`
+}
+
+// NewSendForSignaturePolicyChangedDetails returns a new SendForSignaturePolicyChangedDetails instance
+func NewSendForSignaturePolicyChangedDetails(NewValue *SendForSignaturePolicy, PreviousValue *SendForSignaturePolicy) *SendForSignaturePolicyChangedDetails {
+	s := new(SendForSignaturePolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// SendForSignaturePolicyChangedType : has no documentation (yet)
+type SendForSignaturePolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSendForSignaturePolicyChangedType returns a new SendForSignaturePolicyChangedType instance
+func NewSendForSignaturePolicyChangedType(Description string) *SendForSignaturePolicyChangedType {
+	s := new(SendForSignaturePolicyChangedType)
+	s.Description = Description
 	return s
 }
 
@@ -14848,8 +20331,63 @@ func NewSharedContentRequestAccessType(Description string) *SharedContentRequest
 	return s
 }
 
-// SharedContentUnshareDetails : Unshared file/folder by clearing membership and
-// turning off link.
+// SharedContentRestoreInviteesDetails : Restored shared file/folder invitees.
+type SharedContentRestoreInviteesDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// Invitees : A list of invitees.
+	Invitees []string `json:"invitees"`
+}
+
+// NewSharedContentRestoreInviteesDetails returns a new SharedContentRestoreInviteesDetails instance
+func NewSharedContentRestoreInviteesDetails(SharedContentAccessLevel *sharing.AccessLevel, Invitees []string) *SharedContentRestoreInviteesDetails {
+	s := new(SharedContentRestoreInviteesDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	s.Invitees = Invitees
+	return s
+}
+
+// SharedContentRestoreInviteesType : has no documentation (yet)
+type SharedContentRestoreInviteesType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedContentRestoreInviteesType returns a new SharedContentRestoreInviteesType instance
+func NewSharedContentRestoreInviteesType(Description string) *SharedContentRestoreInviteesType {
+	s := new(SharedContentRestoreInviteesType)
+	s.Description = Description
+	return s
+}
+
+// SharedContentRestoreMemberDetails : Restored users and/or groups to
+// membership of shared file/folder.
+type SharedContentRestoreMemberDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+}
+
+// NewSharedContentRestoreMemberDetails returns a new SharedContentRestoreMemberDetails instance
+func NewSharedContentRestoreMemberDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedContentRestoreMemberDetails {
+	s := new(SharedContentRestoreMemberDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedContentRestoreMemberType : has no documentation (yet)
+type SharedContentRestoreMemberType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedContentRestoreMemberType returns a new SharedContentRestoreMemberType instance
+func NewSharedContentRestoreMemberType(Description string) *SharedContentRestoreMemberType {
+	s := new(SharedContentRestoreMemberType)
+	s.Description = Description
+	return s
+}
+
+// SharedContentUnshareDetails : Unshared file/folder by clearing membership.
 type SharedContentUnshareDetails struct {
 }
 
@@ -15081,8 +20619,8 @@ type SharedFolderMembersInheritancePolicy struct {
 
 // Valid tag values for SharedFolderMembersInheritancePolicy
 const (
-	SharedFolderMembersInheritancePolicyInheritMembers     = "inherit_members"
 	SharedFolderMembersInheritancePolicyDontInheritMembers = "dont_inherit_members"
+	SharedFolderMembersInheritancePolicyInheritMembers     = "inherit_members"
 	SharedFolderMembersInheritancePolicyOther              = "other"
 )
 
@@ -15424,6 +20962,281 @@ func NewSharedLinkRemoveExpiryType(Description string) *SharedLinkRemoveExpiryTy
 	return s
 }
 
+// SharedLinkSettingsAddExpirationDetails : Added an expiration date to the
+// shared link.
+type SharedLinkSettingsAddExpirationDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+	// NewValue : New shared content link expiration date. Might be missing due
+	// to historical data gap.
+	NewValue time.Time `json:"new_value,omitempty"`
+}
+
+// NewSharedLinkSettingsAddExpirationDetails returns a new SharedLinkSettingsAddExpirationDetails instance
+func NewSharedLinkSettingsAddExpirationDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsAddExpirationDetails {
+	s := new(SharedLinkSettingsAddExpirationDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsAddExpirationType : has no documentation (yet)
+type SharedLinkSettingsAddExpirationType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsAddExpirationType returns a new SharedLinkSettingsAddExpirationType instance
+func NewSharedLinkSettingsAddExpirationType(Description string) *SharedLinkSettingsAddExpirationType {
+	s := new(SharedLinkSettingsAddExpirationType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsAddPasswordDetails : Added a password to the shared link.
+type SharedLinkSettingsAddPasswordDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+}
+
+// NewSharedLinkSettingsAddPasswordDetails returns a new SharedLinkSettingsAddPasswordDetails instance
+func NewSharedLinkSettingsAddPasswordDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsAddPasswordDetails {
+	s := new(SharedLinkSettingsAddPasswordDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsAddPasswordType : has no documentation (yet)
+type SharedLinkSettingsAddPasswordType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsAddPasswordType returns a new SharedLinkSettingsAddPasswordType instance
+func NewSharedLinkSettingsAddPasswordType(Description string) *SharedLinkSettingsAddPasswordType {
+	s := new(SharedLinkSettingsAddPasswordType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsAllowDownloadDisabledDetails : Disabled downloads.
+type SharedLinkSettingsAllowDownloadDisabledDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+}
+
+// NewSharedLinkSettingsAllowDownloadDisabledDetails returns a new SharedLinkSettingsAllowDownloadDisabledDetails instance
+func NewSharedLinkSettingsAllowDownloadDisabledDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsAllowDownloadDisabledDetails {
+	s := new(SharedLinkSettingsAllowDownloadDisabledDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsAllowDownloadDisabledType : has no documentation (yet)
+type SharedLinkSettingsAllowDownloadDisabledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsAllowDownloadDisabledType returns a new SharedLinkSettingsAllowDownloadDisabledType instance
+func NewSharedLinkSettingsAllowDownloadDisabledType(Description string) *SharedLinkSettingsAllowDownloadDisabledType {
+	s := new(SharedLinkSettingsAllowDownloadDisabledType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsAllowDownloadEnabledDetails : Enabled downloads.
+type SharedLinkSettingsAllowDownloadEnabledDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+}
+
+// NewSharedLinkSettingsAllowDownloadEnabledDetails returns a new SharedLinkSettingsAllowDownloadEnabledDetails instance
+func NewSharedLinkSettingsAllowDownloadEnabledDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsAllowDownloadEnabledDetails {
+	s := new(SharedLinkSettingsAllowDownloadEnabledDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsAllowDownloadEnabledType : has no documentation (yet)
+type SharedLinkSettingsAllowDownloadEnabledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsAllowDownloadEnabledType returns a new SharedLinkSettingsAllowDownloadEnabledType instance
+func NewSharedLinkSettingsAllowDownloadEnabledType(Description string) *SharedLinkSettingsAllowDownloadEnabledType {
+	s := new(SharedLinkSettingsAllowDownloadEnabledType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsChangeAudienceDetails : Changed the audience of the shared
+// link.
+type SharedLinkSettingsChangeAudienceDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+	// NewValue : New link audience value.
+	NewValue *sharing.LinkAudience `json:"new_value"`
+	// PreviousValue : Previous link audience value.
+	PreviousValue *sharing.LinkAudience `json:"previous_value,omitempty"`
+}
+
+// NewSharedLinkSettingsChangeAudienceDetails returns a new SharedLinkSettingsChangeAudienceDetails instance
+func NewSharedLinkSettingsChangeAudienceDetails(SharedContentAccessLevel *sharing.AccessLevel, NewValue *sharing.LinkAudience) *SharedLinkSettingsChangeAudienceDetails {
+	s := new(SharedLinkSettingsChangeAudienceDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	s.NewValue = NewValue
+	return s
+}
+
+// SharedLinkSettingsChangeAudienceType : has no documentation (yet)
+type SharedLinkSettingsChangeAudienceType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsChangeAudienceType returns a new SharedLinkSettingsChangeAudienceType instance
+func NewSharedLinkSettingsChangeAudienceType(Description string) *SharedLinkSettingsChangeAudienceType {
+	s := new(SharedLinkSettingsChangeAudienceType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsChangeExpirationDetails : Changed the expiration date of
+// the shared link.
+type SharedLinkSettingsChangeExpirationDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+	// NewValue : New shared content link expiration date. Might be missing due
+	// to historical data gap.
+	NewValue time.Time `json:"new_value,omitempty"`
+	// PreviousValue : Previous shared content link expiration date. Might be
+	// missing due to historical data gap.
+	PreviousValue time.Time `json:"previous_value,omitempty"`
+}
+
+// NewSharedLinkSettingsChangeExpirationDetails returns a new SharedLinkSettingsChangeExpirationDetails instance
+func NewSharedLinkSettingsChangeExpirationDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsChangeExpirationDetails {
+	s := new(SharedLinkSettingsChangeExpirationDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsChangeExpirationType : has no documentation (yet)
+type SharedLinkSettingsChangeExpirationType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsChangeExpirationType returns a new SharedLinkSettingsChangeExpirationType instance
+func NewSharedLinkSettingsChangeExpirationType(Description string) *SharedLinkSettingsChangeExpirationType {
+	s := new(SharedLinkSettingsChangeExpirationType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsChangePasswordDetails : Changed the password of the shared
+// link.
+type SharedLinkSettingsChangePasswordDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+}
+
+// NewSharedLinkSettingsChangePasswordDetails returns a new SharedLinkSettingsChangePasswordDetails instance
+func NewSharedLinkSettingsChangePasswordDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsChangePasswordDetails {
+	s := new(SharedLinkSettingsChangePasswordDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsChangePasswordType : has no documentation (yet)
+type SharedLinkSettingsChangePasswordType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsChangePasswordType returns a new SharedLinkSettingsChangePasswordType instance
+func NewSharedLinkSettingsChangePasswordType(Description string) *SharedLinkSettingsChangePasswordType {
+	s := new(SharedLinkSettingsChangePasswordType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsRemoveExpirationDetails : Removed the expiration date from
+// the shared link.
+type SharedLinkSettingsRemoveExpirationDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+	// PreviousValue : Previous shared link expiration date. Might be missing
+	// due to historical data gap.
+	PreviousValue time.Time `json:"previous_value,omitempty"`
+}
+
+// NewSharedLinkSettingsRemoveExpirationDetails returns a new SharedLinkSettingsRemoveExpirationDetails instance
+func NewSharedLinkSettingsRemoveExpirationDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsRemoveExpirationDetails {
+	s := new(SharedLinkSettingsRemoveExpirationDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsRemoveExpirationType : has no documentation (yet)
+type SharedLinkSettingsRemoveExpirationType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsRemoveExpirationType returns a new SharedLinkSettingsRemoveExpirationType instance
+func NewSharedLinkSettingsRemoveExpirationType(Description string) *SharedLinkSettingsRemoveExpirationType {
+	s := new(SharedLinkSettingsRemoveExpirationType)
+	s.Description = Description
+	return s
+}
+
+// SharedLinkSettingsRemovePasswordDetails : Removed the password from the
+// shared link.
+type SharedLinkSettingsRemovePasswordDetails struct {
+	// SharedContentAccessLevel : Shared content access level.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+	// SharedContentLink : Shared content link.
+	SharedContentLink string `json:"shared_content_link,omitempty"`
+}
+
+// NewSharedLinkSettingsRemovePasswordDetails returns a new SharedLinkSettingsRemovePasswordDetails instance
+func NewSharedLinkSettingsRemovePasswordDetails(SharedContentAccessLevel *sharing.AccessLevel) *SharedLinkSettingsRemovePasswordDetails {
+	s := new(SharedLinkSettingsRemovePasswordDetails)
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedLinkSettingsRemovePasswordType : has no documentation (yet)
+type SharedLinkSettingsRemovePasswordType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedLinkSettingsRemovePasswordType returns a new SharedLinkSettingsRemovePasswordType instance
+func NewSharedLinkSettingsRemovePasswordType(Description string) *SharedLinkSettingsRemovePasswordType {
+	s := new(SharedLinkSettingsRemovePasswordType)
+	s.Description = Description
+	return s
+}
+
 // SharedLinkShareDetails : Added members as audience of shared link.
 type SharedLinkShareDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
@@ -15486,6 +21299,7 @@ type SharedLinkVisibility struct {
 
 // Valid tag values for SharedLinkVisibility
 const (
+	SharedLinkVisibilityNoOne    = "no_one"
 	SharedLinkVisibilityPassword = "password"
 	SharedLinkVisibilityPublic   = "public"
 	SharedLinkVisibilityTeamOnly = "team_only"
@@ -15640,10 +21454,63 @@ type SharingMemberPolicy struct {
 
 // Valid tag values for SharingMemberPolicy
 const (
-	SharingMemberPolicyAllow  = "allow"
-	SharingMemberPolicyForbid = "forbid"
-	SharingMemberPolicyOther  = "other"
+	SharingMemberPolicyAllow                = "allow"
+	SharingMemberPolicyForbid               = "forbid"
+	SharingMemberPolicyForbidWithExclusions = "forbid_with_exclusions"
+	SharingMemberPolicyOther                = "other"
 )
+
+// ShmodelDisableDownloadsDetails : Disabled downloads for link.
+type ShmodelDisableDownloadsDetails struct {
+	// SharedLinkOwner : Shared link owner details. Might be missing due to
+	// historical data gap.
+	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
+}
+
+// NewShmodelDisableDownloadsDetails returns a new ShmodelDisableDownloadsDetails instance
+func NewShmodelDisableDownloadsDetails() *ShmodelDisableDownloadsDetails {
+	s := new(ShmodelDisableDownloadsDetails)
+	return s
+}
+
+// ShmodelDisableDownloadsType : has no documentation (yet)
+type ShmodelDisableDownloadsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShmodelDisableDownloadsType returns a new ShmodelDisableDownloadsType instance
+func NewShmodelDisableDownloadsType(Description string) *ShmodelDisableDownloadsType {
+	s := new(ShmodelDisableDownloadsType)
+	s.Description = Description
+	return s
+}
+
+// ShmodelEnableDownloadsDetails : Enabled downloads for link.
+type ShmodelEnableDownloadsDetails struct {
+	// SharedLinkOwner : Shared link owner details. Might be missing due to
+	// historical data gap.
+	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
+}
+
+// NewShmodelEnableDownloadsDetails returns a new ShmodelEnableDownloadsDetails instance
+func NewShmodelEnableDownloadsDetails() *ShmodelEnableDownloadsDetails {
+	s := new(ShmodelEnableDownloadsDetails)
+	return s
+}
+
+// ShmodelEnableDownloadsType : has no documentation (yet)
+type ShmodelEnableDownloadsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewShmodelEnableDownloadsType returns a new ShmodelEnableDownloadsType instance
+func NewShmodelEnableDownloadsType(Description string) *ShmodelEnableDownloadsType {
+	s := new(ShmodelEnableDownloadsType)
+	s.Description = Description
+	return s
+}
 
 // ShmodelGroupShareDetails : Shared link with group.
 type ShmodelGroupShareDetails struct {
@@ -16617,6 +22484,36 @@ func NewSmartSyncOptOutType(Description string) *SmartSyncOptOutType {
 	return s
 }
 
+// SmarterSmartSyncPolicyChangedDetails : Changed automatic Smart Sync setting
+// for team.
+type SmarterSmartSyncPolicyChangedDetails struct {
+	// PreviousValue : Previous automatic Smart Sync setting.
+	PreviousValue *team_policies.SmarterSmartSyncPolicyState `json:"previous_value"`
+	// NewValue : New automatic Smart Sync setting.
+	NewValue *team_policies.SmarterSmartSyncPolicyState `json:"new_value"`
+}
+
+// NewSmarterSmartSyncPolicyChangedDetails returns a new SmarterSmartSyncPolicyChangedDetails instance
+func NewSmarterSmartSyncPolicyChangedDetails(PreviousValue *team_policies.SmarterSmartSyncPolicyState, NewValue *team_policies.SmarterSmartSyncPolicyState) *SmarterSmartSyncPolicyChangedDetails {
+	s := new(SmarterSmartSyncPolicyChangedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// SmarterSmartSyncPolicyChangedType : has no documentation (yet)
+type SmarterSmartSyncPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSmarterSmartSyncPolicyChangedType returns a new SmarterSmartSyncPolicyChangedType instance
+func NewSmarterSmartSyncPolicyChangedType(Description string) *SmarterSmartSyncPolicyChangedType {
+	s := new(SmarterSmartSyncPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // SpaceCapsType : Space limit alert policy
 type SpaceCapsType struct {
 	dropbox.Tagged
@@ -16637,9 +22534,9 @@ type SpaceLimitsStatus struct {
 
 // Valid tag values for SpaceLimitsStatus
 const (
-	SpaceLimitsStatusWithinQuota = "within_quota"
 	SpaceLimitsStatusNearQuota   = "near_quota"
 	SpaceLimitsStatusOverQuota   = "over_quota"
+	SpaceLimitsStatusWithinQuota = "within_quota"
 	SpaceLimitsStatusOther       = "other"
 )
 
@@ -16967,6 +22864,32 @@ func NewSsoRemoveLogoutUrlType(Description string) *SsoRemoveLogoutUrlType {
 	return s
 }
 
+// StartedEnterpriseAdminSessionDetails : Started enterprise admin session.
+type StartedEnterpriseAdminSessionDetails struct {
+	// FederationExtraDetails : More information about the organization or team.
+	FederationExtraDetails *FedExtraDetails `json:"federation_extra_details"`
+}
+
+// NewStartedEnterpriseAdminSessionDetails returns a new StartedEnterpriseAdminSessionDetails instance
+func NewStartedEnterpriseAdminSessionDetails(FederationExtraDetails *FedExtraDetails) *StartedEnterpriseAdminSessionDetails {
+	s := new(StartedEnterpriseAdminSessionDetails)
+	s.FederationExtraDetails = FederationExtraDetails
+	return s
+}
+
+// StartedEnterpriseAdminSessionType : has no documentation (yet)
+type StartedEnterpriseAdminSessionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewStartedEnterpriseAdminSessionType returns a new StartedEnterpriseAdminSessionType instance
+func NewStartedEnterpriseAdminSessionType(Description string) *StartedEnterpriseAdminSessionType {
+	s := new(StartedEnterpriseAdminSessionType)
+	s.Description = Description
+	return s
+}
+
 // TeamActivityCreateReportDetails : Created team activity report.
 type TeamActivityCreateReportDetails struct {
 	// StartDate : Report start date.
@@ -17019,6 +22942,61 @@ type TeamActivityCreateReportType struct {
 func NewTeamActivityCreateReportType(Description string) *TeamActivityCreateReportType {
 	s := new(TeamActivityCreateReportType)
 	s.Description = Description
+	return s
+}
+
+// TeamBrandingPolicy : Policy for controlling team access to setting up
+// branding feature
+type TeamBrandingPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamBrandingPolicy
+const (
+	TeamBrandingPolicyDisabled = "disabled"
+	TeamBrandingPolicyEnabled  = "enabled"
+	TeamBrandingPolicyOther    = "other"
+)
+
+// TeamBrandingPolicyChangedDetails : Changed team branding policy for team.
+type TeamBrandingPolicyChangedDetails struct {
+	// NewValue : New team branding policy.
+	NewValue *TeamBrandingPolicy `json:"new_value"`
+	// PreviousValue : Previous team branding policy.
+	PreviousValue *TeamBrandingPolicy `json:"previous_value"`
+}
+
+// NewTeamBrandingPolicyChangedDetails returns a new TeamBrandingPolicyChangedDetails instance
+func NewTeamBrandingPolicyChangedDetails(NewValue *TeamBrandingPolicy, PreviousValue *TeamBrandingPolicy) *TeamBrandingPolicyChangedDetails {
+	s := new(TeamBrandingPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// TeamBrandingPolicyChangedType : has no documentation (yet)
+type TeamBrandingPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamBrandingPolicyChangedType returns a new TeamBrandingPolicyChangedType instance
+func NewTeamBrandingPolicyChangedType(Description string) *TeamBrandingPolicyChangedType {
+	s := new(TeamBrandingPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// TeamDetails : More details about the team.
+type TeamDetails struct {
+	// Team : The name of the team.
+	Team string `json:"team"`
+}
+
+// NewTeamDetails returns a new TeamDetails instance
+func NewTeamDetails(Team string) *TeamDetails {
+	s := new(TeamDetails)
+	s.Team = Team
 	return s
 }
 
@@ -17242,6 +23220,22 @@ func NewTeamFolderRenameType(Description string) *TeamFolderRenameType {
 	return s
 }
 
+// TeamInviteDetails : Details about team invites
+type TeamInviteDetails struct {
+	// InviteMethod : How the user was invited to the team.
+	InviteMethod *InviteMethod `json:"invite_method"`
+	// AdditionalLicensePurchase : True if the invitation incurred an additional
+	// license purchase.
+	AdditionalLicensePurchase bool `json:"additional_license_purchase,omitempty"`
+}
+
+// NewTeamInviteDetails returns a new TeamInviteDetails instance
+func NewTeamInviteDetails(InviteMethod *InviteMethod) *TeamInviteDetails {
+	s := new(TeamInviteDetails)
+	s.InviteMethod = InviteMethod
+	return s
+}
+
 // TeamLinkedAppLogInfo : Team linked app
 type TeamLinkedAppLogInfo struct {
 	AppLogInfo
@@ -17253,6 +23247,19 @@ func NewTeamLinkedAppLogInfo() *TeamLinkedAppLogInfo {
 	return s
 }
 
+// TeamLogInfo : Team's logged information.
+type TeamLogInfo struct {
+	// DisplayName : Team display name.
+	DisplayName string `json:"display_name"`
+}
+
+// NewTeamLogInfo returns a new TeamLogInfo instance
+func NewTeamLogInfo(DisplayName string) *TeamLogInfo {
+	s := new(TeamLogInfo)
+	s.DisplayName = DisplayName
+	return s
+}
+
 // TeamMemberLogInfo : Team member's logged information.
 type TeamMemberLogInfo struct {
 	UserLogInfo
@@ -17261,6 +23268,8 @@ type TeamMemberLogInfo struct {
 	TeamMemberId string `json:"team_member_id,omitempty"`
 	// MemberExternalId : Team member external ID.
 	MemberExternalId string `json:"member_external_id,omitempty"`
+	// Team : Details about this user&#x2019s team for enterprise event.
+	Team *TeamLogInfo `json:"team,omitempty"`
 }
 
 // NewTeamMemberLogInfo returns a new TeamMemberLogInfo instance
@@ -18046,6 +24055,30 @@ func NewTeamName(TeamDisplayName string, TeamLegalName string) *TeamName {
 	return s
 }
 
+// TeamProfileAddBackgroundDetails : Added team background to display on shared
+// link headers.
+type TeamProfileAddBackgroundDetails struct {
+}
+
+// NewTeamProfileAddBackgroundDetails returns a new TeamProfileAddBackgroundDetails instance
+func NewTeamProfileAddBackgroundDetails() *TeamProfileAddBackgroundDetails {
+	s := new(TeamProfileAddBackgroundDetails)
+	return s
+}
+
+// TeamProfileAddBackgroundType : has no documentation (yet)
+type TeamProfileAddBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileAddBackgroundType returns a new TeamProfileAddBackgroundType instance
+func NewTeamProfileAddBackgroundType(Description string) *TeamProfileAddBackgroundType {
+	s := new(TeamProfileAddBackgroundType)
+	s.Description = Description
+	return s
+}
+
 // TeamProfileAddLogoDetails : Added team logo to display on shared link
 // headers.
 type TeamProfileAddLogoDetails struct {
@@ -18066,6 +24099,30 @@ type TeamProfileAddLogoType struct {
 // NewTeamProfileAddLogoType returns a new TeamProfileAddLogoType instance
 func NewTeamProfileAddLogoType(Description string) *TeamProfileAddLogoType {
 	s := new(TeamProfileAddLogoType)
+	s.Description = Description
+	return s
+}
+
+// TeamProfileChangeBackgroundDetails : Changed team background displayed on
+// shared link headers.
+type TeamProfileChangeBackgroundDetails struct {
+}
+
+// NewTeamProfileChangeBackgroundDetails returns a new TeamProfileChangeBackgroundDetails instance
+func NewTeamProfileChangeBackgroundDetails() *TeamProfileChangeBackgroundDetails {
+	s := new(TeamProfileChangeBackgroundDetails)
+	return s
+}
+
+// TeamProfileChangeBackgroundType : has no documentation (yet)
+type TeamProfileChangeBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileChangeBackgroundType returns a new TeamProfileChangeBackgroundType instance
+func NewTeamProfileChangeBackgroundType(Description string) *TeamProfileChangeBackgroundType {
+	s := new(TeamProfileChangeBackgroundType)
 	s.Description = Description
 	return s
 }
@@ -18148,6 +24205,30 @@ type TeamProfileChangeNameType struct {
 // NewTeamProfileChangeNameType returns a new TeamProfileChangeNameType instance
 func NewTeamProfileChangeNameType(Description string) *TeamProfileChangeNameType {
 	s := new(TeamProfileChangeNameType)
+	s.Description = Description
+	return s
+}
+
+// TeamProfileRemoveBackgroundDetails : Removed team background displayed on
+// shared link headers.
+type TeamProfileRemoveBackgroundDetails struct {
+}
+
+// NewTeamProfileRemoveBackgroundDetails returns a new TeamProfileRemoveBackgroundDetails instance
+func NewTeamProfileRemoveBackgroundDetails() *TeamProfileRemoveBackgroundDetails {
+	s := new(TeamProfileRemoveBackgroundDetails)
+	return s
+}
+
+// TeamProfileRemoveBackgroundType : has no documentation (yet)
+type TeamProfileRemoveBackgroundType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamProfileRemoveBackgroundType returns a new TeamProfileRemoveBackgroundType instance
+func NewTeamProfileRemoveBackgroundType(Description string) *TeamProfileRemoveBackgroundType {
+	s := new(TeamProfileRemoveBackgroundType)
 	s.Description = Description
 	return s
 }
@@ -18248,6 +24329,38 @@ func NewTeamSelectiveSyncSettingsChangedType(Description string) *TeamSelectiveS
 	return s
 }
 
+// TeamSharingWhitelistSubjectsChangedDetails : Edited the approved list for
+// sharing externally.
+type TeamSharingWhitelistSubjectsChangedDetails struct {
+	// AddedWhitelistSubjects : Domains or emails added to the approved list for
+	// sharing externally.
+	AddedWhitelistSubjects []string `json:"added_whitelist_subjects"`
+	// RemovedWhitelistSubjects : Domains or emails removed from the approved
+	// list for sharing externally.
+	RemovedWhitelistSubjects []string `json:"removed_whitelist_subjects"`
+}
+
+// NewTeamSharingWhitelistSubjectsChangedDetails returns a new TeamSharingWhitelistSubjectsChangedDetails instance
+func NewTeamSharingWhitelistSubjectsChangedDetails(AddedWhitelistSubjects []string, RemovedWhitelistSubjects []string) *TeamSharingWhitelistSubjectsChangedDetails {
+	s := new(TeamSharingWhitelistSubjectsChangedDetails)
+	s.AddedWhitelistSubjects = AddedWhitelistSubjects
+	s.RemovedWhitelistSubjects = RemovedWhitelistSubjects
+	return s
+}
+
+// TeamSharingWhitelistSubjectsChangedType : has no documentation (yet)
+type TeamSharingWhitelistSubjectsChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTeamSharingWhitelistSubjectsChangedType returns a new TeamSharingWhitelistSubjectsChangedType instance
+func NewTeamSharingWhitelistSubjectsChangedType(Description string) *TeamSharingWhitelistSubjectsChangedType {
+	s := new(TeamSharingWhitelistSubjectsChangedType)
+	s.Description = Description
+	return s
+}
+
 // TfaAddBackupPhoneDetails : Added backup phone for two-step verification.
 type TfaAddBackupPhoneDetails struct {
 }
@@ -18267,6 +24380,30 @@ type TfaAddBackupPhoneType struct {
 // NewTfaAddBackupPhoneType returns a new TfaAddBackupPhoneType instance
 func NewTfaAddBackupPhoneType(Description string) *TfaAddBackupPhoneType {
 	s := new(TfaAddBackupPhoneType)
+	s.Description = Description
+	return s
+}
+
+// TfaAddExceptionDetails : Added members to two factor authentication exception
+// list.
+type TfaAddExceptionDetails struct {
+}
+
+// NewTfaAddExceptionDetails returns a new TfaAddExceptionDetails instance
+func NewTfaAddExceptionDetails() *TfaAddExceptionDetails {
+	s := new(TfaAddExceptionDetails)
+	return s
+}
+
+// TfaAddExceptionType : has no documentation (yet)
+type TfaAddExceptionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTfaAddExceptionType returns a new TfaAddExceptionType instance
+func NewTfaAddExceptionType(Description string) *TfaAddExceptionType {
+	s := new(TfaAddExceptionType)
 	s.Description = Description
 	return s
 }
@@ -18387,10 +24524,10 @@ type TfaConfiguration struct {
 
 // Valid tag values for TfaConfiguration
 const (
+	TfaConfigurationAuthenticator = "authenticator"
 	TfaConfigurationDisabled      = "disabled"
 	TfaConfigurationEnabled       = "enabled"
 	TfaConfigurationSms           = "sms"
-	TfaConfigurationAuthenticator = "authenticator"
 	TfaConfigurationOther         = "other"
 )
 
@@ -18413,6 +24550,30 @@ type TfaRemoveBackupPhoneType struct {
 // NewTfaRemoveBackupPhoneType returns a new TfaRemoveBackupPhoneType instance
 func NewTfaRemoveBackupPhoneType(Description string) *TfaRemoveBackupPhoneType {
 	s := new(TfaRemoveBackupPhoneType)
+	s.Description = Description
+	return s
+}
+
+// TfaRemoveExceptionDetails : Removed members from two factor authentication
+// exception list.
+type TfaRemoveExceptionDetails struct {
+}
+
+// NewTfaRemoveExceptionDetails returns a new TfaRemoveExceptionDetails instance
+func NewTfaRemoveExceptionDetails() *TfaRemoveExceptionDetails {
+	s := new(TfaRemoveExceptionDetails)
+	return s
+}
+
+// TfaRemoveExceptionType : has no documentation (yet)
+type TfaRemoveExceptionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewTfaRemoveExceptionType returns a new TfaRemoveExceptionType instance
+func NewTfaRemoveExceptionType(Description string) *TfaRemoveExceptionType {
+	s := new(TfaRemoveExceptionType)
 	s.Description = Description
 	return s
 }
@@ -18470,13 +24631,13 @@ type TimeUnit struct {
 
 // Valid tag values for TimeUnit
 const (
-	TimeUnitMilliseconds = "milliseconds"
-	TimeUnitSeconds      = "seconds"
-	TimeUnitMinutes      = "minutes"
-	TimeUnitHours        = "hours"
 	TimeUnitDays         = "days"
-	TimeUnitWeeks        = "weeks"
+	TimeUnitHours        = "hours"
+	TimeUnitMilliseconds = "milliseconds"
+	TimeUnitMinutes      = "minutes"
 	TimeUnitMonths       = "months"
+	TimeUnitSeconds      = "seconds"
+	TimeUnitWeeks        = "weeks"
 	TimeUnitYears        = "years"
 	TimeUnitOther        = "other"
 )
@@ -18485,9 +24646,11 @@ const (
 // considered trusted.
 type TrustedNonTeamMemberLogInfo struct {
 	UserLogInfo
-	// TrustedNonTeamMemberType : Indicates the type of the trusted non team
-	// member user.
+	// TrustedNonTeamMemberType : Indicates the type of the member of a trusted
+	// team.
 	TrustedNonTeamMemberType *TrustedNonTeamMemberType `json:"trusted_non_team_member_type"`
+	// Team : Details about this user's trusted team.
+	Team *TeamLogInfo `json:"team,omitempty"`
 }
 
 // NewTrustedNonTeamMemberLogInfo returns a new TrustedNonTeamMemberLogInfo instance
@@ -18504,6 +24667,7 @@ type TrustedNonTeamMemberType struct {
 
 // Valid tag values for TrustedNonTeamMemberType
 const (
+	TrustedNonTeamMemberTypeEnterpriseAdmin    = "enterprise_admin"
 	TrustedNonTeamMemberTypeMultiInstanceAdmin = "multi_instance_admin"
 	TrustedNonTeamMemberTypeOther              = "other"
 )
@@ -18515,11 +24679,11 @@ type TrustedTeamsRequestAction struct {
 
 // Valid tag values for TrustedTeamsRequestAction
 const (
-	TrustedTeamsRequestActionInvited  = "invited"
-	TrustedTeamsRequestActionExpired  = "expired"
-	TrustedTeamsRequestActionRevoked  = "revoked"
 	TrustedTeamsRequestActionAccepted = "accepted"
 	TrustedTeamsRequestActionDeclined = "declined"
+	TrustedTeamsRequestActionExpired  = "expired"
+	TrustedTeamsRequestActionInvited  = "invited"
+	TrustedTeamsRequestActionRevoked  = "revoked"
 	TrustedTeamsRequestActionOther    = "other"
 )
 
@@ -18648,6 +24812,48 @@ func NewViewerInfoPolicyChangedType(Description string) *ViewerInfoPolicyChanged
 	return s
 }
 
+// WatermarkingPolicy : Policy for controlling team access to watermarking
+// feature
+type WatermarkingPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for WatermarkingPolicy
+const (
+	WatermarkingPolicyDisabled = "disabled"
+	WatermarkingPolicyEnabled  = "enabled"
+	WatermarkingPolicyOther    = "other"
+)
+
+// WatermarkingPolicyChangedDetails : Changed watermarking policy for team.
+type WatermarkingPolicyChangedDetails struct {
+	// NewValue : New watermarking policy.
+	NewValue *WatermarkingPolicy `json:"new_value"`
+	// PreviousValue : Previous watermarking policy.
+	PreviousValue *WatermarkingPolicy `json:"previous_value"`
+}
+
+// NewWatermarkingPolicyChangedDetails returns a new WatermarkingPolicyChangedDetails instance
+func NewWatermarkingPolicyChangedDetails(NewValue *WatermarkingPolicy, PreviousValue *WatermarkingPolicy) *WatermarkingPolicyChangedDetails {
+	s := new(WatermarkingPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// WatermarkingPolicyChangedType : has no documentation (yet)
+type WatermarkingPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewWatermarkingPolicyChangedType returns a new WatermarkingPolicyChangedType instance
+func NewWatermarkingPolicyChangedType(Description string) *WatermarkingPolicyChangedType {
+	s := new(WatermarkingPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // WebDeviceSessionLogInfo : Information on active web sessions
 type WebDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
@@ -18679,6 +24885,36 @@ type WebSessionLogInfo struct {
 // NewWebSessionLogInfo returns a new WebSessionLogInfo instance
 func NewWebSessionLogInfo() *WebSessionLogInfo {
 	s := new(WebSessionLogInfo)
+	return s
+}
+
+// WebSessionsChangeActiveSessionLimitDetails : Changed limit on active sessions
+// per member.
+type WebSessionsChangeActiveSessionLimitDetails struct {
+	// PreviousValue : Previous max number of concurrent active sessions policy.
+	PreviousValue string `json:"previous_value"`
+	// NewValue : New max number of concurrent active sessions policy.
+	NewValue string `json:"new_value"`
+}
+
+// NewWebSessionsChangeActiveSessionLimitDetails returns a new WebSessionsChangeActiveSessionLimitDetails instance
+func NewWebSessionsChangeActiveSessionLimitDetails(PreviousValue string, NewValue string) *WebSessionsChangeActiveSessionLimitDetails {
+	s := new(WebSessionsChangeActiveSessionLimitDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// WebSessionsChangeActiveSessionLimitType : has no documentation (yet)
+type WebSessionsChangeActiveSessionLimitType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewWebSessionsChangeActiveSessionLimitType returns a new WebSessionsChangeActiveSessionLimitType instance
+func NewWebSessionsChangeActiveSessionLimitType(Description string) *WebSessionsChangeActiveSessionLimitType {
+	s := new(WebSessionsChangeActiveSessionLimitType)
+	s.Description = Description
 	return s
 }
 

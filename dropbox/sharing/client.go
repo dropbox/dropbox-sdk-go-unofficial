@@ -132,11 +132,16 @@ type Client interface {
 	// `listReceivedFiles`.
 	ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *ListFilesResult, err error)
 	// ListSharedLinks : List shared links of this user. If no path is given,
-	// returns a list of all shared links for the current user. If a non-empty
-	// path is given, returns a list of all shared links that allow access to
-	// the given path - direct links to the given path and links to parent
-	// folders of the given path. Links to parent folders can be suppressed by
-	// setting direct_only to true.
+	// returns a list of all shared links for the current user. For members of
+	// business teams using team space and member folders, returns all shared
+	// links in the team member's home folder unless the team space ID is
+	// specified in the request header. For more information, refer to the
+	// `Namespace Guide`
+	// <https://www.dropbox.com/developers/reference/namespace-guide>. If a
+	// non-empty path is given, returns a list of all shared links that allow
+	// access to the given path - direct links to the given path and links to
+	// parent folders of the given path. Links to parent folders can be
+	// suppressed by setting direct_only to true.
 	ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error)
 	// ModifySharedLinkSettings : Modify the shared link's settings. If the
 	// requested visibility conflict with the shared links policy of the team or
