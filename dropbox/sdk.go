@@ -110,6 +110,7 @@ func (c *Config) LogInfo(format string, v ...interface{}) {
 type Context struct {
 	Config          Config
 	Client          *http.Client
+	NoAuthClient    *http.Client
 	HeaderGenerator func(hostType string, style string, namespace string, route string) map[string]string
 	URLGenerator    func(hostType string, style string, namespace string, route string) string
 }
@@ -158,6 +159,11 @@ func NewContext(c Config) Context {
 		client = conf.Client(context.Background(), tok)
 	}
 
+	noAuthClient := c.Client
+	if noAuthClient == nil {
+		noAuthClient = &http.Client{}
+	}
+
 	headerGenerator := c.HeaderGenerator
 	if headerGenerator == nil {
 		headerGenerator = func(hostType string, style string, namespace string, route string) map[string]string {
@@ -178,7 +184,7 @@ func NewContext(c Config) Context {
 		}
 	}
 
-	return Context{c, client, headerGenerator, urlGenerator}
+	return Context{c, client, noAuthClient, headerGenerator, urlGenerator}
 }
 
 // OAuthEndpoint constructs an `oauth2.Endpoint` for the given domain

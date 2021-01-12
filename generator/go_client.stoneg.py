@@ -88,7 +88,10 @@ class GoClientBackend(CodeBackend):
                     out('log.Printf("Use API `%s` instead")' % fmt_var(route.deprecated.by.name))
                 out()
 
-            out('cli := dbx.Client')
+            if route.attrs.get('auth', '') == 'noauth':
+                out('cli := dbx.NoAuthClient')
+            else:
+                out('cli := dbx.Client')
             out()
 
             self._generate_request(namespace, route)
