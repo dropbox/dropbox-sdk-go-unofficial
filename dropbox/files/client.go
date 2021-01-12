@@ -2620,7 +2620,7 @@ type ListFolderLongpollAPIError struct {
 }
 
 func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFolderLongpollResult, err error) {
-	cli := dbx.Client
+	cli := dbx.NoAuthClient
 
 	dbx.Config.LogDebug("arg: %v", arg)
 	b, err := json.Marshal(arg)
