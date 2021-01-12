@@ -626,7 +626,7 @@ func (dbx *apiImpl) CopyV2(arg *RelocationArg) (res *RelocationResult, err error
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError CopyAPIError
+		var apiError CopyV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -772,7 +772,7 @@ func (dbx *apiImpl) CopyBatchV2(arg *RelocationBatchArgBase) (res *RelocationBat
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError CopyBatchAPIError
+		var apiError CopyBatchV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -907,7 +907,7 @@ func (dbx *apiImpl) CopyBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError CopyBatchCheckAPIError
+		var apiError CopyBatchCheckV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1174,7 +1174,7 @@ func (dbx *apiImpl) CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResul
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError CreateFolderAPIError
+		var apiError CreateFolderV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -1441,7 +1441,7 @@ func (dbx *apiImpl) DeleteV2(arg *DeleteArg) (res *DeleteResult, err error) {
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError DeleteAPIError
+		var apiError DeleteV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2333,7 +2333,7 @@ func (dbx *apiImpl) GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, con
 		if err != nil {
 			return
 		}
-		var apiError GetThumbnailAPIError
+		var apiError GetThumbnailV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2858,7 +2858,7 @@ func (dbx *apiImpl) MoveV2(arg *RelocationArg) (res *RelocationResult, err error
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError MoveAPIError
+		var apiError MoveV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3004,7 +3004,7 @@ func (dbx *apiImpl) MoveBatchV2(arg *MoveBatchArg) (res *RelocationBatchV2Launch
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError MoveBatchAPIError
+		var apiError MoveBatchV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3139,7 +3139,7 @@ func (dbx *apiImpl) MoveBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError MoveBatchCheckAPIError
+		var apiError MoveBatchCheckV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3982,7 +3982,7 @@ func (dbx *apiImpl) SearchV2(arg *SearchV2Arg) (res *SearchV2Result, err error) 
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError SearchAPIError
+		var apiError SearchV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -4243,7 +4243,7 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError UploadSessionAppendAPIError
+		var apiError UploadSessionAppendV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

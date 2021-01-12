@@ -7,6 +7,7 @@ from stone.ir import (
     is_list_type,
     is_nullable_type,
     is_primitive_type,
+    is_string_type,
     is_struct_type,
     is_union_type,
     is_void_type,
@@ -142,6 +143,8 @@ class GoTypesBackend(CodeBackend):
                         default = field.default
                         if is_boolean_type(field.data_type):
                             default = str(default).lower()
+                        if is_string_type(field.data_type):
+                            default = '"{}"'.format(default)
                         self.emit('s.{0} = {1}'.format(fmt_var(field.name), default))
                     elif is_union_type(field.data_type):
                         self.emit('s.%s = &%s{Tagged:dropbox.Tagged{"%s"}}' %
