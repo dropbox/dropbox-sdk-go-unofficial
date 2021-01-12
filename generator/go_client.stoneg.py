@@ -192,7 +192,10 @@ class GoClientBackend(CodeBackend):
                 with self.block('body, err = ioutil.ReadAll(resp.Body);'
                                 'if err != nil'):
                     out('return')
-            out('var apiError %sAPIError' % fmt_var(route.name))
+            err_type = fmt_var(route.name) + 'APIError'
+            if route.version != 1:
+                err_type = '%sV%dAPIError' % (fmt_var(route.name), route.version)
+            out('var apiError %s' % err_type)
             with self.block('err = json.Unmarshal(body, &apiError);'
                             'if err != nil'):
                 out('return')

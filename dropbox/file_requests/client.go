@@ -425,7 +425,7 @@ func (dbx *apiImpl) ListV2(arg *ListFileRequestsArg) (res *ListFileRequestsV2Res
 		return
 	}
 	if resp.StatusCode == http.StatusConflict {
-		var apiError ListAPIError
+		var apiError ListV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
