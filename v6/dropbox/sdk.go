@@ -21,10 +21,14 @@
 package dropbox
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
+	"mime"
 	"net/http"
 	"strings"
 
@@ -38,13 +42,35 @@ const (
 	hostAPI       = "api"
 	hostContent   = "content"
 	hostNotify    = "notify"
-	sdkVersion    = "6.0.0"
+	sdkVersion    = "6.0.2"
 	specVersion   = "85f2eff"
 )
 
 // Version returns the current SDK version and API Spec version
 func Version() (string, string) {
 	return sdkVersion, specVersion
+}
+
+// Tagged is used for tagged unions.
+type Tagged struct {
+	Tag string `json:".tag"`
+}
+
+// APIError is the base type for endpoint-specific errors.
+type APIError struct {
+	ErrorSummary string `json:"error_summary"`
+}
+
+func (e APIError) Error() string {
+	return e.ErrorSummary
+}
+
+type SDKInternalError struct {
+	error
+
+	StatusCode  int
+	ContentType string
+	Content     string
 }
 
 // Config contains parameters for configuring the SDK.
@@ -62,9 +88,9 @@ type Config struct {
 	// No need to set -- for testing only
 	Client *http.Client
 	// No need to set -- for testing only
-	HeaderGenerator func(hostType string, style string, namespace string, route string) map[string]string
+	HeaderGenerator func(hostType string, namespace string, route string) map[string]string
 	// No need to set -- for testing only
-	URLGenerator func(hostType string, style string, namespace string, route string) string
+	URLGenerator func(hostType string, namespace string, route string) string
 }
 
 // LogLevel defines a type that can set the desired level of logging the SDK will generate.
@@ -111,38 +137,107 @@ type Context struct {
 	Config          Config
 	Client          *http.Client
 	NoAuthClient    *http.Client
-	HeaderGenerator func(hostType string, style string, namespace string, route string) map[string]string
-	URLGenerator    func(hostType string, style string, namespace string, route string) string
+	HeaderGenerator func(hostType string, namespace string, route string) map[string]string
+	URLGenerator    func(hostType string, namespace string, route string) string
 }
 
-// NewRequest returns an appropriate Request object for the given namespace/route.
-func (c *Context) NewRequest(
-	hostType string,
-	style string,
-	authed bool,
-	namespace string,
-	route string,
-	headers map[string]string,
-	body io.Reader,
-) (*http.Request, error) {
-	url := c.URLGenerator(hostType, style, namespace, route)
-	req, err := http.NewRequest("POST", url, body)
+type Request struct {
+	Host      string
+	Namespace string
+	Route     string
+	Style     string
+	Auth      string
+
+	Arg          interface{}
+	ExtraHeaders map[string]string
+}
+
+func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, error) {
+	url := c.URLGenerator(req.Host, req.Namespace, req.Route)
+	httpReq, err := http.NewRequest("POST", url, nil)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	for k, v := range headers {
-		req.Header.Add(k, v)
+
+	for k, v := range req.ExtraHeaders {
+		httpReq.Header.Add(k, v)
 	}
-	for k, v := range c.HeaderGenerator(hostType, style, namespace, route) {
-		req.Header.Add(k, v)
+
+	for k, v := range c.HeaderGenerator(req.Host, req.Namespace, req.Route) {
+		httpReq.Header.Add(k, v)
 	}
-	if req.Header.Get("Host") != "" {
-		req.Host = req.Header.Get("Host")
+
+	if httpReq.Header.Get("Host") != "" {
+		httpReq.Host = httpReq.Header.Get("Host")
 	}
-	if !authed {
-		req.Header.Del("Authorization")
+
+	if req.Auth == "noauth" {
+		httpReq.Header.Del("Authorization")
 	}
-	return req, nil
+
+	if req.Arg != nil {
+		serializedArg, err := json.Marshal(req.Arg)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		switch req.Style {
+		case "rpc":
+			if body != nil {
+				return nil, nil, errors.New("RPC style requests can not have body")
+			}
+
+			httpReq.Header.Set("Content-Type", "application/json")
+			httpReq.Body = ioutil.NopCloser(bytes.NewReader(serializedArg))
+		case "upload", "download":
+			httpReq.Header.Set("Dropbox-API-Arg", string(serializedArg))
+			httpReq.Header.Set("Content-Type", "application/octet-stream")
+			httpReq.Body = ioutil.NopCloser(body)
+		}
+	}
+
+	client := c.Client
+	if req.Auth == "noauth" {
+		client = c.NoAuthClient
+	}
+
+	resp, err := client.Do(httpReq)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
+		switch req.Style {
+		case "rpc", "upload":
+			if resp.Body == nil {
+				return nil, nil, errors.New("Expected body in RPC response, got nil")
+			}
+
+			b, err := ioutil.ReadAll(resp.Body)
+			resp.Body.Close()
+			if err != nil {
+				return nil, nil, err
+			}
+
+			return b, nil, nil
+		case "download":
+			b := []byte(resp.Header.Get("Dropbox-API-Result"))
+			return b, resp.Body, nil
+		}
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		return nil, nil, err
+	}
+
+	contentType, _, _ := mime.ParseMediaType(resp.Header.Get("content-type"))
+	return nil, nil, SDKInternalError{
+		StatusCode:  resp.StatusCode,
+		ContentType: contentType,
+		Content:     string(b),
+	}
 }
 
 // NewContext returns a new Context with the given Config.
@@ -166,7 +261,7 @@ func NewContext(c Config) Context {
 
 	headerGenerator := c.HeaderGenerator
 	if headerGenerator == nil {
-		headerGenerator = func(hostType string, style string, namespace string, route string) map[string]string {
+		headerGenerator = func(hostType string, namespace string, route string) map[string]string {
 			return map[string]string{}
 		}
 	}
@@ -178,7 +273,7 @@ func NewContext(c Config) Context {
 			hostContent: hostContent + domain,
 			hostNotify:  hostNotify + domain,
 		}
-		urlGenerator = func(hostType string, style string, namespace string, route string) string {
+		urlGenerator = func(hostType string, namespace string, route string) string {
 			fqHost := hostMap[hostType]
 			return fmt.Sprintf("https://%s/%d/%s/%s", fqHost, apiVersion, namespace, route)
 		}
@@ -198,35 +293,6 @@ func OAuthEndpoint(domain string) oauth2.Endpoint {
 		authURL = "https://www.dropbox.com/1/oauth2/authorize"
 	}
 	return oauth2.Endpoint{AuthURL: authURL, TokenURL: tokenURL}
-}
-
-// Tagged is used for tagged unions.
-type Tagged struct {
-	Tag string `json:".tag"`
-}
-
-// APIError is the base type for endpoint-specific errors.
-type APIError struct {
-	ErrorSummary string `json:"error_summary"`
-}
-
-func (e APIError) Error() string {
-	return e.ErrorSummary
-}
-
-// HandleCommonAPIErrors handles common API errors
-func HandleCommonAPIErrors(c Config, resp *http.Response, body []byte) error {
-	var apiError APIError
-	if resp.StatusCode == http.StatusBadRequest || resp.StatusCode == http.StatusInternalServerError {
-		apiError.ErrorSummary = string(body)
-		return apiError
-	}
-	e := json.Unmarshal(body, &apiError)
-	if e != nil {
-		c.LogDebug("%v", e)
-		return e
-	}
-	return apiError
 }
 
 // HTTPHeaderSafeJSON encode the JSON passed in b []byte passed in in
