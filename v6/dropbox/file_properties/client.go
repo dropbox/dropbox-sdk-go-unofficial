@@ -21,10 +21,8 @@
 package file_properties
 
 import (
-	"bytes"
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth"
@@ -110,57 +108,26 @@ type PropertiesAddAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesAdd(arg *AddPropertiesArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/add",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &PropertiesAddAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/add", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesAddAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -171,57 +138,26 @@ type PropertiesOverwriteAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/overwrite",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &PropertiesOverwriteAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/overwrite", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesOverwriteAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -232,57 +168,26 @@ type PropertiesRemoveAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/remove",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &PropertiesRemoveAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/remove", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesRemoveAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -293,62 +198,30 @@ type PropertiesSearchAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesSearch(arg *PropertiesSearchArg) (res *PropertiesSearchResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/search",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &PropertiesSearchAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/search", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesSearchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -359,62 +232,30 @@ type PropertiesSearchContinueAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesSearchContinue(arg *PropertiesSearchContinueArg) (res *PropertiesSearchResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/search/continue",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &PropertiesSearchContinueAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/search/continue", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesSearchContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -425,57 +266,26 @@ type PropertiesUpdateAPIError struct {
 }
 
 func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertiesArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "properties/update",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &PropertiesUpdateAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "properties/update", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError PropertiesUpdateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -486,59 +296,30 @@ type TemplatesAddForTeamAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/add_for_team",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesAddForTeamAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/add_for_team", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesAddForTeamAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -549,62 +330,30 @@ type TemplatesAddForUserAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/add_for_user",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesAddForUserAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/add_for_user", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesAddForUserAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -615,59 +364,30 @@ type TemplatesGetForTeamAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/get_for_team",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesGetForTeamAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/get_for_team", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesGetForTeamAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -678,62 +398,30 @@ type TemplatesGetForUserAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/get_for_user",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesGetForUserAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/get_for_user", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesGetForUserAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -744,51 +432,30 @@ type TemplatesListForTeamAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesListForTeam() (res *ListTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/list_for_team",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          nil,
+		ExtraHeaders: nil,
+	}
 
-	headers := map[string]string{}
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesListForTeamAPIError{})
+		return
+	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/list_for_team", headers, nil)
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesListForTeamAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -799,54 +466,30 @@ type TemplatesListForUserAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesListForUser() (res *ListTemplateResult, err error) {
-	cli := dbx.Client
-
-	headers := map[string]string{}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/list_for_user",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          nil,
+		ExtraHeaders: nil,
 	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/list_for_user", headers, nil)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesListForUserAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
-	dbx.Config.LogInfo("req: %v", req)
 
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesListForUserAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -857,54 +500,26 @@ type TemplatesRemoveForTeamAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesRemoveForTeam(arg *RemoveTemplateArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/remove_for_team",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &TemplatesRemoveForTeamAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/remove_for_team", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesRemoveForTeamAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -915,57 +530,26 @@ type TemplatesRemoveForUserAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesRemoveForUser(arg *RemoveTemplateArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/remove_for_user",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &TemplatesRemoveForUserAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/remove_for_user", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesRemoveForUserAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -976,59 +560,30 @@ type TemplatesUpdateForTeamAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/update_for_team",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesUpdateForTeamAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/update_for_team", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesUpdateForTeamAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -1039,62 +594,30 @@ type TemplatesUpdateForUserAPIError struct {
 }
 
 func (dbx *apiImpl) TemplatesUpdateForUser(arg *UpdateTemplateArg) (res *UpdateTemplateResult, err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "file_properties",
+		Route:        "templates/update_for_user",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &TemplatesUpdateForUserAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "file_properties", "templates/update_for_user", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError TemplatesUpdateForUserAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 

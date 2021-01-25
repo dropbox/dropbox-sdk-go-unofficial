@@ -21,12 +21,9 @@
 package paper
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
-	"io/ioutil"
 	"log"
-	"net/http"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth"
@@ -242,57 +239,26 @@ type DocsArchiveAPIError struct {
 func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
 	log.Printf("WARNING: API `DocsArchive` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/archive",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &DocsArchiveAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/archive", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsArchiveAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -305,63 +271,30 @@ type DocsCreateAPIError struct {
 func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
 	log.Printf("WARNING: API `DocsCreate` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/create",
+		Auth:         "user",
+		Style:        "upload",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
+	if err != nil {
+		err = auth.ParseError(err, &DocsCreateAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "upload", true, "paper", "docs/create", headers, content)
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsCreateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -374,63 +307,30 @@ type DocsDownloadAPIError struct {
 func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error) {
 	log.Printf("WARNING: API `DocsDownload` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/download",
+		Auth:         "user",
+		Style:        "download",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsDownloadAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "download", true, "paper", "docs/download", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	body := []byte(resp.Header.Get("Dropbox-API-Result"))
-	content = resp.Body
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		defer resp.Body.Close()
-		body, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return
-		}
-		var apiError DocsDownloadAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -443,62 +343,30 @@ type DocsFolderUsersListAPIError struct {
 func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error) {
 	log.Printf("WARNING: API `DocsFolderUsersList` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/folder_users/list",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsFolderUsersListAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/folder_users/list", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsFolderUsersListAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -511,62 +379,30 @@ type DocsFolderUsersListContinueAPIError struct {
 func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error) {
 	log.Printf("WARNING: API `DocsFolderUsersListContinue` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/folder_users/list/continue",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsFolderUsersListContinueAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/folder_users/list/continue", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsFolderUsersListContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -579,62 +415,30 @@ type DocsGetFolderInfoAPIError struct {
 func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error) {
 	log.Printf("WARNING: API `DocsGetFolderInfo` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/get_folder_info",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsGetFolderInfoAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/get_folder_info", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsGetFolderInfoAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -647,62 +451,30 @@ type DocsListAPIError struct {
 func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error) {
 	log.Printf("WARNING: API `DocsList` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/list",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsListAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/list", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsListAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -715,62 +487,30 @@ type DocsListContinueAPIError struct {
 func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error) {
 	log.Printf("WARNING: API `DocsListContinue` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/list/continue",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsListContinueAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/list/continue", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsListContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -783,57 +523,26 @@ type DocsPermanentlyDeleteAPIError struct {
 func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 	log.Printf("WARNING: API `DocsPermanentlyDelete` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/permanently_delete",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &DocsPermanentlyDeleteAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/permanently_delete", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsPermanentlyDeleteAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -846,62 +555,30 @@ type DocsSharingPolicyGetAPIError struct {
 func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, err error) {
 	log.Printf("WARNING: API `DocsSharingPolicyGet` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/sharing_policy/get",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsSharingPolicyGetAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/sharing_policy/get", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsSharingPolicyGetAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -914,57 +591,26 @@ type DocsSharingPolicySetAPIError struct {
 func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error) {
 	log.Printf("WARNING: API `DocsSharingPolicySet` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/sharing_policy/set",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &DocsSharingPolicySetAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/sharing_policy/set", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsSharingPolicySetAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -977,63 +623,30 @@ type DocsUpdateAPIError struct {
 func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
 	log.Printf("WARNING: API `DocsUpdate` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/update",
+		Auth:         "user",
+		Style:        "upload",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
+	if err != nil {
+		err = auth.ParseError(err, &DocsUpdateAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type":    "application/octet-stream",
-		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "upload", true, "paper", "docs/update", headers, content)
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsUpdateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -1046,62 +659,30 @@ type DocsUsersAddAPIError struct {
 func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error) {
 	log.Printf("WARNING: API `DocsUsersAdd` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/users/add",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsUsersAddAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/users/add", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsUsersAddAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -1114,62 +695,30 @@ type DocsUsersListAPIError struct {
 func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	log.Printf("WARNING: API `DocsUsersList` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/users/list",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsUsersListAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/users/list", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsUsersListAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -1182,62 +731,30 @@ type DocsUsersListContinueAPIError struct {
 func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	log.Printf("WARNING: API `DocsUsersListContinue` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/users/list/continue",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &DocsUsersListContinueAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/users/list/continue", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsUsersListContinueAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
@@ -1250,57 +767,26 @@ type DocsUsersRemoveAPIError struct {
 func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 	log.Printf("WARNING: API `DocsUsersRemove` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "docs/users/remove",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &DocsUsersRemoveAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "docs/users/remove", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DocsUsersRemoveAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -1313,62 +799,30 @@ type FoldersCreateAPIError struct {
 func (dbx *apiImpl) FoldersCreate(arg *PaperFolderCreateArg) (res *PaperFolderCreateResult, err error) {
 	log.Printf("WARNING: API `FoldersCreate` is deprecated")
 
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "paper",
+		Route:        "folders/create",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		err = auth.ParseError(err, &FoldersCreateAPIError{})
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
 	if err != nil {
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "paper", "folders/create", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		err = json.Unmarshal(body, &res)
-		if err != nil {
-			return
-		}
-
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError FoldersCreateAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = respBody
 	return
 }
 
