@@ -21,10 +21,7 @@
 package contacts
 
 import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth"
@@ -50,49 +47,26 @@ type DeleteManualContactsAPIError struct {
 }
 
 func (dbx *apiImpl) DeleteManualContacts() (err error) {
-	cli := dbx.Client
-
-	headers := map[string]string{}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "contacts",
+		Route:        "delete_manual_contacts",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          nil,
+		ExtraHeaders: nil,
 	}
 
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "contacts", "delete_manual_contacts", headers, nil)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
+		err = auth.ParseError(err, &DeleteManualContactsAPIError{})
 		return
 	}
 
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DeleteManualContactsAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
@@ -103,57 +77,26 @@ type DeleteManualContactsBatchAPIError struct {
 }
 
 func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err error) {
-	cli := dbx.Client
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "contacts",
+		Route:        "delete_manual_contacts_batch",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
 
-	dbx.Config.LogDebug("arg: %v", arg)
-	b, err := json.Marshal(arg)
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
+		err = auth.ParseError(err, &DeleteManualContactsBatchAPIError{})
 		return
 	}
 
-	headers := map[string]string{
-		"Content-Type": "application/json",
-	}
-	if dbx.Config.AsMemberID != "" {
-		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
-	}
-
-	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "contacts", "delete_manual_contacts_batch", headers, bytes.NewReader(b))
-	if err != nil {
-		return
-	}
-	dbx.Config.LogInfo("req: %v", req)
-
-	resp, err := cli.Do(req)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogInfo("resp: %v", resp)
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return
-	}
-
-	dbx.Config.LogDebug("body: %s", body)
-	if resp.StatusCode == http.StatusOK {
-		return
-	}
-	if resp.StatusCode == http.StatusConflict {
-		var apiError DeleteManualContactsBatchAPIError
-		err = json.Unmarshal(body, &apiError)
-		if err != nil {
-			return
-		}
-		err = apiError
-		return
-	}
-	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
-	if err != nil {
-		return
-	}
-	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	_ = resp
+	_ = respBody
 	return
 }
 
