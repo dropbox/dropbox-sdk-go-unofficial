@@ -92,9 +92,9 @@ const (
 // TimeRange : Time range.
 type TimeRange struct {
 	// StartTime : Optional starting time (inclusive).
-	StartTime time.Time `json:"start_time,omitempty"`
+	StartTime *time.Time `json:"start_time,omitempty"`
 	// EndTime : Optional ending time (exclusive).
-	EndTime time.Time `json:"end_time,omitempty"`
+	EndTime *time.Time `json:"end_time,omitempty"`
 }
 
 // NewTimeRange returns a new TimeRange instance

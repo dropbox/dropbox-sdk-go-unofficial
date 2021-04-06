@@ -44,9 +44,9 @@ type DeviceSession struct {
 	// made.
 	Country string `json:"country,omitempty"`
 	// Created : The time this session was created.
-	Created time.Time `json:"created,omitempty"`
+	Created *time.Time `json:"created,omitempty"`
 	// Updated : The time of the last activity from this session.
-	Updated time.Time `json:"updated,omitempty"`
+	Updated *time.Time `json:"updated,omitempty"`
 }
 
 // NewDeviceSession returns a new DeviceSession instance
@@ -66,7 +66,7 @@ type ActiveWebSession struct {
 	// Browser : Information on the browser used for this web session.
 	Browser string `json:"browser"`
 	// Expires : The time this session expires.
-	Expires time.Time `json:"expires,omitempty"`
+	Expires *time.Time `json:"expires,omitempty"`
 }
 
 // NewActiveWebSession returns a new ActiveWebSession instance
@@ -278,7 +278,7 @@ type ApiApp struct {
 	// PublisherUrl : The publisher's URL.
 	PublisherUrl string `json:"publisher_url,omitempty"`
 	// Linked : The time this application was linked.
-	Linked time.Time `json:"linked,omitempty"`
+	Linked *time.Time `json:"linked,omitempty"`
 	// IsAppFolder : Whether the linked application uses a dedicated folder.
 	IsAppFolder bool `json:"is_app_folder"`
 }
@@ -439,9 +439,9 @@ func NewCustomQuotaUsersArg(Users []*UserSelectorArg) *CustomQuotaUsersArg {
 type DateRange struct {
 	// StartDate : Optional starting date (inclusive). If start_date is None or
 	// too long ago, this field will  be set to 6 months ago.
-	StartDate time.Time `json:"start_date,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
 	// EndDate : Optional ending date (exclusive).
-	EndDate time.Time `json:"end_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty"`
 }
 
 // NewDateRange returns a new DateRange instance
@@ -1950,7 +1950,7 @@ type LegalHoldPolicy struct {
 	// Description : A description of the legal hold policy.
 	Description string `json:"description,omitempty"`
 	// ActivationTime : The time at which the legal hold was activated.
-	ActivationTime time.Time `json:"activation_time,omitempty"`
+	ActivationTime *time.Time `json:"activation_time,omitempty"`
 	// Members : Team members IDs and number of permanetly deleted members under
 	// hold.
 	Members *MembersInfo `json:"members"`
@@ -1959,7 +1959,7 @@ type LegalHoldPolicy struct {
 	// StartDate : Start date of the legal hold policy.
 	StartDate time.Time `json:"start_date"`
 	// EndDate : End date of the legal hold policy.
-	EndDate time.Time `json:"end_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldPolicy returns a new LegalHoldPolicy instance
@@ -2156,9 +2156,9 @@ type LegalHoldsPolicyCreateArg struct {
 	// Members : List of team member IDs added to the hold.
 	Members []string `json:"members"`
 	// StartDate : start date of the legal hold policy.
-	StartDate time.Time `json:"start_date,omitempty"`
+	StartDate *time.Time `json:"start_date,omitempty"`
 	// EndDate : end date of the legal hold policy.
-	EndDate time.Time `json:"end_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldsPolicyCreateArg returns a new LegalHoldsPolicyCreateArg instance
@@ -2830,14 +2830,14 @@ type MemberProfile struct {
 	MembershipType *TeamMembershipType `json:"membership_type"`
 	// InvitedOn : The date and time the user was invited to the team (contains
 	// value only when the member's status matches `TeamMemberStatus.invited`).
-	InvitedOn time.Time `json:"invited_on,omitempty"`
+	InvitedOn *time.Time `json:"invited_on,omitempty"`
 	// JoinedOn : The date and time the user joined as a member of a specific
 	// team.
-	JoinedOn time.Time `json:"joined_on,omitempty"`
+	JoinedOn *time.Time `json:"joined_on,omitempty"`
 	// SuspendedOn : The date and time the user was suspended from the team
 	// (contains value only when the member's status matches
 	// `TeamMemberStatus.suspended`).
-	SuspendedOn time.Time `json:"suspended_on,omitempty"`
+	SuspendedOn *time.Time `json:"suspended_on,omitempty"`
 	// PersistentId : Persistent ID that a team can attach to the user. The
 	// persistent ID is unique ID to be used for SAML authentication.
 	PersistentId string `json:"persistent_id,omitempty"`

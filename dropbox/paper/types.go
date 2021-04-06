@@ -138,7 +138,7 @@ type Cursor struct {
 	// time will have a very short expiration as docs do get modified very often
 	// and the modified time can be changed while the iteration is happening
 	// thus altering the results.
-	Expiration time.Time `json:"expiration,omitempty"`
+	Expiration *time.Time `json:"expiration,omitempty"`
 }
 
 // NewCursor returns a new Cursor instance

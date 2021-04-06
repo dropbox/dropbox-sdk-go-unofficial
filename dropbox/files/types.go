@@ -175,7 +175,7 @@ type CommitInfo struct {
 	// the Dropbox servers. It can also record an additional timestamp, provided
 	// by Dropbox desktop clients, mobile clients, and API apps of when the file
 	// was actually created or modified.
-	ClientModified time.Time `json:"client_modified,omitempty"`
+	ClientModified *time.Time `json:"client_modified,omitempty"`
 	// Mute : Normally, users are made aware of any file modifications in their
 	// Dropbox account via notifications in the client software. If true, this
 	// tells the clients that this modification shouldn't result in a user
@@ -1316,7 +1316,7 @@ type FileLockMetadata struct {
 	// LockholderAccountId : The account ID of the lock holder if known.
 	LockholderAccountId string `json:"lockholder_account_id,omitempty"`
 	// Created : The timestamp of the lock was created.
-	Created time.Time `json:"created,omitempty"`
+	Created *time.Time `json:"created,omitempty"`
 }
 
 // NewFileLockMetadata returns a new FileLockMetadata instance
@@ -2160,7 +2160,7 @@ type ListRevisionsResult struct {
 	// is either deleted or moved.
 	IsDeleted bool `json:"is_deleted"`
 	// ServerDeleted : The time of deletion if the file was deleted.
-	ServerDeleted time.Time `json:"server_deleted,omitempty"`
+	ServerDeleted *time.Time `json:"server_deleted,omitempty"`
 	// Entries : The revisions for the file. Only revisions that are not deleted
 	// will show up here.
 	Entries []*FileMetadata `json:"entries"`
@@ -2459,7 +2459,7 @@ type MediaMetadata struct {
 	// Location : The GPS coordinate of the photo/video.
 	Location *GpsCoordinates `json:"location,omitempty"`
 	// TimeTaken : The timestamp when the photo/video is taken.
-	TimeTaken time.Time `json:"time_taken,omitempty"`
+	TimeTaken *time.Time `json:"time_taken,omitempty"`
 }
 
 // NewMediaMetadata returns a new MediaMetadata instance

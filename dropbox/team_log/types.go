@@ -1854,10 +1854,10 @@ type DeviceSessionLogInfo struct {
 	IpAddress string `json:"ip_address,omitempty"`
 	// Created : The time this session was created. Might be missing due to
 	// historical data gap.
-	Created time.Time `json:"created,omitempty"`
+	Created *time.Time `json:"created,omitempty"`
 	// Updated : The time of the last activity from this session. Might be
 	// missing due to historical data gap.
-	Updated time.Time `json:"updated,omitempty"`
+	Updated *time.Time `json:"updated,omitempty"`
 }
 
 // NewDeviceSessionLogInfo returns a new DeviceSessionLogInfo instance
@@ -13228,7 +13228,7 @@ func NewFileRequestCreateType(Description string) *FileRequestCreateType {
 type FileRequestDeadline struct {
 	// Deadline : The deadline for this file request. Might be missing due to
 	// historical data gap.
-	Deadline time.Time `json:"deadline,omitempty"`
+	Deadline *time.Time `json:"deadline,omitempty"`
 	// AllowLateUploads : If set, allow uploads after the deadline has passed.
 	// Might be missing due to historical data gap.
 	AllowLateUploads string `json:"allow_late_uploads,omitempty"`
@@ -15134,7 +15134,7 @@ type LegalHoldsActivateAHoldDetails struct {
 	// StartDate : Hold start date.
 	StartDate time.Time `json:"start_date"`
 	// EndDate : Hold end date.
-	EndDate time.Time `json:"end_date,omitempty"`
+	EndDate *time.Time `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldsActivateAHoldDetails returns a new LegalHoldsActivateAHoldDetails instance
@@ -19809,7 +19809,7 @@ func NewSharedContentAddInviteesType(Description string) *SharedContentAddInvite
 type SharedContentAddLinkExpiryDetails struct {
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue time.Time `json:"new_value,omitempty"`
+	NewValue *time.Time `json:"new_value,omitempty"`
 }
 
 // NewSharedContentAddLinkExpiryDetails returns a new SharedContentAddLinkExpiryDetails instance
@@ -19979,10 +19979,10 @@ func NewSharedContentChangeLinkAudienceType(Description string) *SharedContentCh
 type SharedContentChangeLinkExpiryDetails struct {
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue time.Time `json:"new_value,omitempty"`
+	NewValue *time.Time `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeLinkExpiryDetails returns a new SharedContentChangeLinkExpiryDetails instance
@@ -20234,7 +20234,7 @@ func NewSharedContentRemoveInviteesType(Description string) *SharedContentRemove
 type SharedContentRemoveLinkExpiryDetails struct {
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentRemoveLinkExpiryDetails returns a new SharedContentRemoveLinkExpiryDetails instance
@@ -20778,10 +20778,10 @@ func NewSharedLinkAddExpiryType(Description string) *SharedLinkAddExpiryType {
 type SharedLinkChangeExpiryDetails struct {
 	// NewValue : New shared link expiration date. Might be missing due to
 	// historical data gap.
-	NewValue time.Time `json:"new_value,omitempty"`
+	NewValue *time.Time `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkChangeExpiryDetails returns a new SharedLinkChangeExpiryDetails instance
@@ -20940,7 +20940,7 @@ func NewSharedLinkDownloadType(Description string) *SharedLinkDownloadType {
 type SharedLinkRemoveExpiryDetails struct {
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkRemoveExpiryDetails returns a new SharedLinkRemoveExpiryDetails instance
@@ -20971,7 +20971,7 @@ type SharedLinkSettingsAddExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue time.Time `json:"new_value,omitempty"`
+	NewValue *time.Time `json:"new_value,omitempty"`
 }
 
 // NewSharedLinkSettingsAddExpirationDetails returns a new SharedLinkSettingsAddExpirationDetails instance
@@ -21121,10 +21121,10 @@ type SharedLinkSettingsChangeExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue time.Time `json:"new_value,omitempty"`
+	NewValue *time.Time `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkSettingsChangeExpirationDetails returns a new SharedLinkSettingsChangeExpirationDetails instance
@@ -21185,7 +21185,7 @@ type SharedLinkSettingsRemoveExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue time.Time `json:"previous_value,omitempty"`
+	PreviousValue *time.Time `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkSettingsRemoveExpirationDetails returns a new SharedLinkSettingsRemoveExpirationDetails instance
