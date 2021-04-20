@@ -85,7 +85,12 @@ def fmt_type(data_type, namespace=None, use_interface=False, raw=False):
     if use_interface and _needs_base_type(data_type):
         return _type_table.get(data_type.__class__, type_name)
     else:
-        return _type_table.get(data_type.__class__, '*' + type_name)
+        if data_type.__class__ not in _type_table:
+            return '*' + type_name
+        if data_type.__class__ == Timestamp:
+            # For other primitive types, `omitempty` does the job.
+            return ('*' if nullable else '') + _type_table[data_type.__class__]
+        return _type_table[data_type.__class__]
 
 
 def fmt_var(name, export=True, check_reserved=False):

@@ -427,7 +427,7 @@ type LinkMetadata struct {
 	// Visibility : Who can access the link.
 	Visibility *Visibility `json:"visibility"`
 	// Expires : Expiration time, if set. By default the link won't expire.
-	Expires time.Time `json:"expires,omitempty"`
+	Expires *time.Time `json:"expires,omitempty"`
 }
 
 // NewLinkMetadata returns a new LinkMetadata instance
@@ -671,7 +671,7 @@ type SharedContentLinkMetadataBase struct {
 	CurrentAudience *LinkAudience `json:"current_audience"`
 	// Expiry : Whether the link has an expiry set on it. A link with an expiry
 	// will have its  audience changed to members when the expiry is reached.
-	Expiry time.Time `json:"expiry,omitempty"`
+	Expiry *time.Time `json:"expiry,omitempty"`
 	// LinkPermissions : A list of permissions for actions you can perform on
 	// the link.
 	LinkPermissions []*LinkPermission `json:"link_permissions"`
@@ -801,7 +801,7 @@ type SharedLinkMetadata struct {
 	// slash.
 	Name string `json:"name"`
 	// Expires : Expiration time, if set. By default the link won't expire.
-	Expires time.Time `json:"expires,omitempty"`
+	Expires *time.Time `json:"expires,omitempty"`
 	// PathLower : The lowercased full path in the user's Dropbox. This always
 	// starts with a slash. This field will only be present only if the linked
 	// file is in the authenticated user's  dropbox.
@@ -3680,7 +3680,7 @@ type SharedFileMetadata struct {
 	// this shared file. If the user was not invited to the shared file, the
 	// timestamp will indicate when the user was invited to the parent shared
 	// folder. This value may be absent.
-	TimeInvited time.Time `json:"time_invited,omitempty"`
+	TimeInvited *time.Time `json:"time_invited,omitempty"`
 }
 
 // NewSharedFileMetadata returns a new SharedFileMetadata instance
@@ -3922,7 +3922,7 @@ type SharedLinkSettings struct {
 	LinkPassword string `json:"link_password,omitempty"`
 	// Expires : Expiration time of the shared link. By default the link won't
 	// expire.
-	Expires time.Time `json:"expires,omitempty"`
+	Expires *time.Time `json:"expires,omitempty"`
 	// Audience : The new audience who can benefit from the access level
 	// specified by the link's access level specified in the `link_access_level`
 	// field of `LinkPermissions`. This is used in conjunction with team
@@ -4424,7 +4424,7 @@ type UserFileMembershipInfo struct {
 	UserMembershipInfo
 	// TimeLastSeen : The UTC timestamp of when the user has last seen the
 	// content, if they have.
-	TimeLastSeen time.Time `json:"time_last_seen,omitempty"`
+	TimeLastSeen *time.Time `json:"time_last_seen,omitempty"`
 	// PlatformType : The platform on which the user has last seen the content,
 	// or unknown.
 	PlatformType *seen_state.PlatformType `json:"platform_type,omitempty"`
