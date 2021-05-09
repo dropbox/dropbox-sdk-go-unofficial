@@ -183,21 +183,55 @@ type Client interface {
 	// member management apps are required to set an initial given_name and
 	// surname for a user to use in the team invitation and for 'Perform as team
 	// member' actions taken on the user before they become 'active'.
+	MembersAddV2(arg *MembersAddV2Arg) (res *MembersAddLaunchV2Result, err error)
+	// MembersAdd : Adds members to a team. Permission : Team member management
+	// A maximum of 20 members can be specified in a single call. If no Dropbox
+	// account exists with the email address specified, a new Dropbox account
+	// will be created with the given email address, and that account will be
+	// invited to the team. If a personal Dropbox account exists with the email
+	// address specified in the call, this call will create a placeholder
+	// Dropbox account for the user on the team and send an email inviting the
+	// user to migrate their existing personal account onto the team. Team
+	// member management apps are required to set an initial given_name and
+	// surname for a user to use in the team invitation and for 'Perform as team
+	// member' actions taken on the user before they become 'active'.
 	MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err error)
+	// MembersAddJobStatusGet : Once an async_job_id is returned from
+	// `membersAdd` , use this to poll the status of the asynchronous request.
+	// Permission : Team member management.
+	MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error)
 	// MembersAddJobStatusGet : Once an async_job_id is returned from
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJobStatus, err error)
 	// MembersDeleteProfilePhoto : Deletes a team member's profile photo.
 	// Permission : Team member management.
+	MembersDeleteProfilePhotoV2(arg *MembersDeleteProfilePhotoArg) (res *TeamMemberInfoV2Result, err error)
+	// MembersDeleteProfilePhoto : Deletes a team member's profile photo.
+	// Permission : Team member management.
 	MembersDeleteProfilePhoto(arg *MembersDeleteProfilePhotoArg) (res *TeamMemberInfo, err error)
+	// MembersGetAvailableTeamMemberRoles : Get available TeamMemberRoles for
+	// the connected team. To be used with `membersSetAdminPermissions`.
+	// Permission : Team member management.
+	MembersGetAvailableTeamMemberRoles() (res *MembersGetAvailableTeamMemberRolesResult, err error)
+	// MembersGetInfo : Returns information about multiple team members.
+	// Permission : Team information This endpoint will return
+	// `MembersGetInfoItem.id_not_found`, for IDs (or emails) that cannot be
+	// matched to a valid team member.
+	MembersGetInfoV2(arg *MembersGetInfoV2Arg) (res *MembersGetInfoV2Result, err error)
 	// MembersGetInfo : Returns information about multiple team members.
 	// Permission : Team information This endpoint will return
 	// `MembersGetInfoItem.id_not_found`, for IDs (or emails) that cannot be
 	// matched to a valid team member.
 	MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetInfoItem, err error)
 	// MembersList : Lists members of a team. Permission : Team information.
+	MembersListV2(arg *MembersListArg) (res *MembersListV2Result, err error)
+	// MembersList : Lists members of a team. Permission : Team information.
 	MembersList(arg *MembersListArg) (res *MembersListResult, err error)
+	// MembersListContinue : Once a cursor has been retrieved from
+	// `membersList`, use this to paginate through all team members. Permission
+	// : Team information.
+	MembersListContinueV2(arg *MembersListContinueArg) (res *MembersListV2Result, err error)
 	// MembersListContinue : Once a cursor has been retrieved from
 	// `membersList`, use this to paginate through all team members. Permission
 	// : Team information.
@@ -253,10 +287,19 @@ type Client interface {
 	MembersSendWelcomeEmail(arg *UserSelectorArg) (err error)
 	// MembersSetAdminPermissions : Updates a team member's permissions.
 	// Permission : Team member management.
+	MembersSetAdminPermissionsV2(arg *MembersSetPermissions2Arg) (res *MembersSetPermissions2Result, err error)
+	// MembersSetAdminPermissions : Updates a team member's permissions.
+	// Permission : Team member management.
 	MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (res *MembersSetPermissionsResult, err error)
 	// MembersSetProfile : Updates a team member's profile. Permission : Team
 	// member management.
+	MembersSetProfileV2(arg *MembersSetProfileArg) (res *TeamMemberInfoV2Result, err error)
+	// MembersSetProfile : Updates a team member's profile. Permission : Team
+	// member management.
 	MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMemberInfo, err error)
+	// MembersSetProfilePhoto : Updates a team member's profile photo.
+	// Permission : Team member management.
+	MembersSetProfilePhotoV2(arg *MembersSetProfilePhotoArg) (res *TeamMemberInfoV2Result, err error)
 	// MembersSetProfilePhoto : Updates a team member's profile photo.
 	// Permission : Team member management.
 	MembersSetProfilePhoto(arg *MembersSetProfilePhotoArg) (res *TeamMemberInfo, err error)
@@ -282,29 +325,31 @@ type Client interface {
 	// PropertiesTemplateAdd : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (res *file_properties.AddTemplateResult, err error)
-	// PropertiesTemplateGet : Permission : Team member file access.
+	// PropertiesTemplateGet : Permission : Team member file access. The scope
+	// for the route is files.team_metadata.write.
 	// Deprecated:
 	PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (res *file_properties.GetTemplateResult, err error)
-	// PropertiesTemplateList : Permission : Team member file access.
+	// PropertiesTemplateList : Permission : Team member file access. The scope
+	// for the route is files.team_metadata.write.
 	// Deprecated:
 	PropertiesTemplateList() (res *file_properties.ListTemplateResult, err error)
 	// PropertiesTemplateUpdate : Permission : Team member file access.
 	// Deprecated:
 	PropertiesTemplateUpdate(arg *file_properties.UpdateTemplateArg) (res *file_properties.UpdateTemplateResult, err error)
 	// ReportsGetActivity : Retrieves reporting data about a team's user
-	// activity.
+	// activity. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetActivity(arg *DateRange) (res *GetActivityReport, err error)
 	// ReportsGetDevices : Retrieves reporting data about a team's linked
-	// devices.
+	// devices. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, err error)
 	// ReportsGetMembership : Retrieves reporting data about a team's
-	// membership.
+	// membership. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetMembership(arg *DateRange) (res *GetMembershipReport, err error)
 	// ReportsGetStorage : Retrieves reporting data about a team's storage
-	// usage.
+	// usage. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error)
 	// TeamFolderActivate : Sets an archived team folder's status to active.
@@ -2724,6 +2769,69 @@ func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res
 	return
 }
 
+//MembersAddV2APIError is an error-wrapper for the members/add route
+type MembersAddV2APIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MembersAddV2(arg *MembersAddV2Arg) (res *MembersAddLaunchV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/add_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersAddV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersAddAPIError is an error-wrapper for the members/add route
 type MembersAddAPIError struct {
 	dropbox.APIError
@@ -2772,6 +2880,69 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersAddAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersAddJobStatusGetV2APIError is an error-wrapper for the members/add/job_status/get route
+type MembersAddJobStatusGetV2APIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/add/job_status/get_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersAddJobStatusGetV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2850,6 +3021,69 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 	return
 }
 
+//MembersDeleteProfilePhotoV2APIError is an error-wrapper for the members/delete_profile_photo route
+type MembersDeleteProfilePhotoV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersDeleteProfilePhotoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersDeleteProfilePhotoV2(arg *MembersDeleteProfilePhotoArg) (res *TeamMemberInfoV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/delete_profile_photo_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersDeleteProfilePhotoV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersDeleteProfilePhotoAPIError is an error-wrapper for the members/delete_profile_photo route
 type MembersDeleteProfilePhotoAPIError struct {
 	dropbox.APIError
@@ -2898,6 +3132,124 @@ func (dbx *apiImpl) MembersDeleteProfilePhoto(arg *MembersDeleteProfilePhotoArg)
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersDeleteProfilePhotoAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersGetAvailableTeamMemberRolesAPIError is an error-wrapper for the members/get_available_team_member_roles route
+type MembersGetAvailableTeamMemberRolesAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) MembersGetAvailableTeamMemberRoles() (res *MembersGetAvailableTeamMemberRolesResult, err error) {
+	cli := dbx.Client
+
+	headers := map[string]string{}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/get_available_team_member_roles", headers, nil)
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersGetAvailableTeamMemberRolesAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersGetInfoV2APIError is an error-wrapper for the members/get_info route
+type MembersGetInfoV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersGetInfoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersGetInfoV2(arg *MembersGetInfoV2Arg) (res *MembersGetInfoV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/get_info_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersGetInfoV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -2976,6 +3328,69 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 	return
 }
 
+//MembersListV2APIError is an error-wrapper for the members/list route
+type MembersListV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersListError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersListV2(arg *MembersListArg) (res *MembersListV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/list_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersListV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersListAPIError is an error-wrapper for the members/list route
 type MembersListAPIError struct {
 	dropbox.APIError
@@ -3024,6 +3439,69 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersListAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersListContinueV2APIError is an error-wrapper for the members/list/continue route
+type MembersListContinueV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersListContinueError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersListContinueV2(arg *MembersListContinueArg) (res *MembersListV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/list/continue_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersListContinueV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return
@@ -3659,6 +4137,69 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 	return
 }
 
+//MembersSetAdminPermissionsV2APIError is an error-wrapper for the members/set_admin_permissions route
+type MembersSetAdminPermissionsV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersSetPermissions2Error `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetAdminPermissionsV2(arg *MembersSetPermissions2Arg) (res *MembersSetPermissions2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_admin_permissions_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetAdminPermissionsV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersSetAdminPermissionsAPIError is an error-wrapper for the members/set_admin_permissions route
 type MembersSetAdminPermissionsAPIError struct {
 	dropbox.APIError
@@ -3722,6 +4263,69 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 	return
 }
 
+//MembersSetProfileV2APIError is an error-wrapper for the members/set_profile route
+type MembersSetProfileV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersSetProfileError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetProfileV2(arg *MembersSetProfileArg) (res *TeamMemberInfoV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_profile_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetProfileV2APIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
 //MembersSetProfileAPIError is an error-wrapper for the members/set_profile route
 type MembersSetProfileAPIError struct {
 	dropbox.APIError
@@ -3770,6 +4374,69 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MembersSetProfileAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//MembersSetProfilePhotoV2APIError is an error-wrapper for the members/set_profile_photo route
+type MembersSetProfilePhotoV2APIError struct {
+	dropbox.APIError
+	EndpointError *MembersSetProfilePhotoError `json:"error"`
+}
+
+func (dbx *apiImpl) MembersSetProfilePhotoV2(arg *MembersSetProfilePhotoArg) (res *TeamMemberInfoV2Result, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type": "application/json",
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "rpc", true, "team", "members/set_profile_photo_v2", headers, bytes.NewReader(b))
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError MembersSetProfilePhotoV2APIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

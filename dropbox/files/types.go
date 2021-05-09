@@ -1140,6 +1140,11 @@ func NewDownloadZipResult(Metadata *FolderMetadata) *DownloadZipResult {
 type ExportArg struct {
 	// Path : The path of the file to be exported.
 	Path string `json:"path"`
+	// ExportFormat : The file format to which the file should be exported. This
+	// must be one of the formats listed in the file's export_options returned
+	// by `getMetadata`. If none is specified, the default format (specified in
+	// export_as in file metadata) will be used.
+	ExportFormat string `json:"export_format,omitempty"`
 }
 
 // NewExportArg returns a new ExportArg instance
@@ -1158,10 +1163,11 @@ type ExportError struct {
 
 // Valid tag values for ExportError
 const (
-	ExportErrorPath          = "path"
-	ExportErrorNonExportable = "non_exportable"
-	ExportErrorRetryError    = "retry_error"
-	ExportErrorOther         = "other"
+	ExportErrorPath                = "path"
+	ExportErrorNonExportable       = "non_exportable"
+	ExportErrorInvalidExportFormat = "invalid_export_format"
+	ExportErrorRetryError          = "retry_error"
+	ExportErrorOther               = "other"
 )
 
 // UnmarshalJSON deserializes into a ExportError instance
@@ -1192,6 +1198,9 @@ func (u *ExportError) UnmarshalJSON(body []byte) error {
 type ExportInfo struct {
 	// ExportAs : Format to which the file can be exported to.
 	ExportAs string `json:"export_as,omitempty"`
+	// ExportOptions : Additional formats to which the file can be exported.
+	// These values can be specified as the export_format in /files/export.
+	ExportOptions []string `json:"export_options,omitempty"`
 }
 
 // NewExportInfo returns a new ExportInfo instance
@@ -1212,6 +1221,9 @@ type ExportMetadata struct {
 	// information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ExportHash string `json:"export_hash,omitempty"`
+	// PaperRevision : If the file is a Paper doc, this gives the latest doc
+	// revision which can be used in `paperUpdate`.
+	PaperRevision int64 `json:"paper_revision,omitempty"`
 }
 
 // NewExportMetadata returns a new ExportMetadata instance
@@ -1610,6 +1622,7 @@ const (
 	GetTemporaryLinkErrorPath             = "path"
 	GetTemporaryLinkErrorEmailNotVerified = "email_not_verified"
 	GetTemporaryLinkErrorUnsupportedFile  = "unsupported_file"
+	GetTemporaryLinkErrorNotAllowed       = "not_allowed"
 	GetTemporaryLinkErrorOther            = "other"
 )
 
@@ -1818,6 +1831,19 @@ func NewHighlightSpan(HighlightStr string, IsHighlighted bool) *HighlightSpan {
 	s.IsHighlighted = IsHighlighted
 	return s
 }
+
+// ImportFormat : The import format of the incoming Paper doc content.
+type ImportFormat struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ImportFormat
+const (
+	ImportFormatHtml      = "html"
+	ImportFormatMarkdown  = "markdown"
+	ImportFormatPlainText = "plain_text"
+	ImportFormatOther     = "other"
+)
 
 // ListFolderArg : has no documentation (yet)
 type ListFolderArg struct {
@@ -2642,6 +2668,174 @@ const (
 	MoveIntoVaultErrorIsSharedFolder = "is_shared_folder"
 	MoveIntoVaultErrorOther          = "other"
 )
+
+// PaperContentError : has no documentation (yet)
+type PaperContentError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperContentError
+const (
+	PaperContentErrorInsufficientPermissions = "insufficient_permissions"
+	PaperContentErrorContentMalformed        = "content_malformed"
+	PaperContentErrorDocLengthExceeded       = "doc_length_exceeded"
+	PaperContentErrorImageSizeExceeded       = "image_size_exceeded"
+	PaperContentErrorOther                   = "other"
+)
+
+// PaperCreateArg : has no documentation (yet)
+type PaperCreateArg struct {
+	// Path : The fully qualified path to the location in the user's Dropbox
+	// where the Paper Doc should be created. This should include the document's
+	// title and end with .paper.
+	Path string `json:"path"`
+	// ImportFormat : The format of the provided data.
+	ImportFormat *ImportFormat `json:"import_format"`
+}
+
+// NewPaperCreateArg returns a new PaperCreateArg instance
+func NewPaperCreateArg(Path string, ImportFormat *ImportFormat) *PaperCreateArg {
+	s := new(PaperCreateArg)
+	s.Path = Path
+	s.ImportFormat = ImportFormat
+	return s
+}
+
+// PaperCreateError : has no documentation (yet)
+type PaperCreateError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperCreateError
+const (
+	PaperCreateErrorInsufficientPermissions = "insufficient_permissions"
+	PaperCreateErrorContentMalformed        = "content_malformed"
+	PaperCreateErrorDocLengthExceeded       = "doc_length_exceeded"
+	PaperCreateErrorImageSizeExceeded       = "image_size_exceeded"
+	PaperCreateErrorOther                   = "other"
+	PaperCreateErrorInvalidPath             = "invalid_path"
+	PaperCreateErrorEmailUnverified         = "email_unverified"
+	PaperCreateErrorInvalidFileExtension    = "invalid_file_extension"
+	PaperCreateErrorPaperDisabled           = "paper_disabled"
+)
+
+// PaperCreateResult : has no documentation (yet)
+type PaperCreateResult struct {
+	// Url : URL to open the Paper Doc.
+	Url string `json:"url"`
+	// ResultPath : The fully qualified path the Paper Doc was actually created
+	// at.
+	ResultPath string `json:"result_path"`
+	// FileId : The id to use in Dropbox APIs when referencing the Paper Doc.
+	FileId string `json:"file_id"`
+	// PaperRevision : The current doc revision.
+	PaperRevision int64 `json:"paper_revision"`
+}
+
+// NewPaperCreateResult returns a new PaperCreateResult instance
+func NewPaperCreateResult(Url string, ResultPath string, FileId string, PaperRevision int64) *PaperCreateResult {
+	s := new(PaperCreateResult)
+	s.Url = Url
+	s.ResultPath = ResultPath
+	s.FileId = FileId
+	s.PaperRevision = PaperRevision
+	return s
+}
+
+// PaperDocUpdatePolicy : has no documentation (yet)
+type PaperDocUpdatePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperDocUpdatePolicy
+const (
+	PaperDocUpdatePolicyUpdate    = "update"
+	PaperDocUpdatePolicyOverwrite = "overwrite"
+	PaperDocUpdatePolicyPrepend   = "prepend"
+	PaperDocUpdatePolicyAppend    = "append"
+	PaperDocUpdatePolicyOther     = "other"
+)
+
+// PaperUpdateArg : has no documentation (yet)
+type PaperUpdateArg struct {
+	// Path : Path in the user's Dropbox to update. The path must correspond to
+	// a Paper doc or an error will be returned.
+	Path string `json:"path"`
+	// ImportFormat : The format of the provided data.
+	ImportFormat *ImportFormat `json:"import_format"`
+	// DocUpdatePolicy : How the provided content should be applied to the doc.
+	DocUpdatePolicy *PaperDocUpdatePolicy `json:"doc_update_policy"`
+	// PaperRevision : The latest doc revision. Required when doc_update_policy
+	// is update. This value must match the current revision of the doc or error
+	// revision_mismatch will be returned.
+	PaperRevision int64 `json:"paper_revision,omitempty"`
+}
+
+// NewPaperUpdateArg returns a new PaperUpdateArg instance
+func NewPaperUpdateArg(Path string, ImportFormat *ImportFormat, DocUpdatePolicy *PaperDocUpdatePolicy) *PaperUpdateArg {
+	s := new(PaperUpdateArg)
+	s.Path = Path
+	s.ImportFormat = ImportFormat
+	s.DocUpdatePolicy = DocUpdatePolicy
+	return s
+}
+
+// PaperUpdateError : has no documentation (yet)
+type PaperUpdateError struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for PaperUpdateError
+const (
+	PaperUpdateErrorInsufficientPermissions = "insufficient_permissions"
+	PaperUpdateErrorContentMalformed        = "content_malformed"
+	PaperUpdateErrorDocLengthExceeded       = "doc_length_exceeded"
+	PaperUpdateErrorImageSizeExceeded       = "image_size_exceeded"
+	PaperUpdateErrorOther                   = "other"
+	PaperUpdateErrorPath                    = "path"
+	PaperUpdateErrorRevisionMismatch        = "revision_mismatch"
+	PaperUpdateErrorDocArchived             = "doc_archived"
+	PaperUpdateErrorDocDeleted              = "doc_deleted"
+)
+
+// UnmarshalJSON deserializes into a PaperUpdateError instance
+func (u *PaperUpdateError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path *LookupError `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// PaperUpdateResult : has no documentation (yet)
+type PaperUpdateResult struct {
+	// PaperRevision : The current doc revision.
+	PaperRevision int64 `json:"paper_revision"`
+}
+
+// NewPaperUpdateResult returns a new PaperUpdateResult instance
+func NewPaperUpdateResult(PaperRevision int64) *PaperUpdateResult {
+	s := new(PaperUpdateResult)
+	s.PaperRevision = PaperRevision
+	return s
+}
 
 // PathOrLink : has no documentation (yet)
 type PathOrLink struct {
@@ -3922,8 +4116,7 @@ func NewSearchResult(Matches []*SearchMatch, More bool, Start uint64) *SearchRes
 // SearchV2Arg : has no documentation (yet)
 type SearchV2Arg struct {
 	// Query : The string to search for. May match across multiple fields based
-	// on the request arguments. Query string may be rewritten to improve
-	// relevance of results.
+	// on the request arguments.
 	Query string `json:"query"`
 	// Options : Options for more targeted search results.
 	Options *SearchOptions `json:"options,omitempty"`
@@ -4425,7 +4618,7 @@ func NewUploadSessionAppendArg(Cursor *UploadSessionCursor) *UploadSessionAppend
 type UploadSessionCursor struct {
 	// SessionId : The upload session ID (returned by `uploadSessionStart`).
 	SessionId string `json:"session_id"`
-	// Offset : The amount of data that has been uploaded so far. We use this to
+	// Offset : Offset in bytes at which data should be appended. We use this to
 	// make sure upload data isn't lost or duplicated in the event of a network
 	// error.
 	Offset uint64 `json:"offset"`

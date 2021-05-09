@@ -122,9 +122,10 @@ type Client interface {
 	// Download : Download a file from a user's Dropbox.
 	Download(arg *DownloadArg) (res *FileMetadata, content io.ReadCloser, err error)
 	// DownloadZip : Download a folder from the user's Dropbox, as a zip file.
-	// The folder must be less than 20 GB in size and have fewer than 10,000
-	// total files. The input cannot be a single file. Any single file must be
-	// less than 4GB in size.
+	// The folder must be less than 20 GB in size and any single file within
+	// must be less than 4 GB in size. The resulting zip must have fewer than
+	// 10,000 total file and folder entries, including the top level folder. The
+	// input cannot be a single file.
 	DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, content io.ReadCloser, err error)
 	// Export : Export a file from a user's Dropbox. This route only supports
 	// exporting files that cannot be downloaded directly  and whose
@@ -180,16 +181,19 @@ type Client interface {
 	GetTemporaryUploadLink(arg *GetTemporaryUploadLinkArg) (res *GetTemporaryUploadLinkResult, err error)
 	// GetThumbnail : Get a thumbnail for an image. This method currently
 	// supports files with the following file extensions: jpg, jpeg, png, tiff,
-	// tif, gif and bmp. Photos that are larger than 20MB in size won't be
-	// converted to a thumbnail.
+	// tif, gif, webp, ppm and bmp. Photos that are larger than 20MB in size
+	// won't be converted to a thumbnail.
 	GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content io.ReadCloser, err error)
-	// GetThumbnail : Get a thumbnail for a file.
+	// GetThumbnail : Get a thumbnail for an image. This method currently
+	// supports files with the following file extensions: jpg, jpeg, png, tiff,
+	// tif, gif, webp, ppm and bmp. Photos that are larger than 20MB in size
+	// won't be converted to a thumbnail.
 	GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, content io.ReadCloser, err error)
 	// GetThumbnailBatch : Get thumbnails for a list of images. We allow up to
 	// 25 thumbnails in a single batch. This method currently supports files
-	// with the following file extensions: jpg, jpeg, png, tiff, tif, gif and
-	// bmp. Photos that are larger than 20MB in size won't be converted to a
-	// thumbnail.
+	// with the following file extensions: jpg, jpeg, png, tiff, tif, gif, webp,
+	// ppm and bmp. Photos that are larger than 20MB in size won't be converted
+	// to a thumbnail.
 	GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbnailBatchResult, err error)
 	// ListFolder : Starts returning the contents of a folder. If the result's
 	// `ListFolderResult.has_more` field is true, call `listFolderContinue` with
@@ -275,6 +279,10 @@ type Client interface {
 	// `moveBatch`. If success, it returns list of results for each entry.
 	// Deprecated: Use `MoveBatchCheckV2` instead
 	MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error)
+	// PaperCreate : Creates a new Paper doc with the provided content.
+	PaperCreate(arg *PaperCreateArg, content io.Reader) (res *PaperCreateResult, err error)
+	// PaperUpdate : Updates an existing Paper doc with the provided content.
+	PaperUpdate(arg *PaperUpdateArg, content io.Reader) (res *PaperUpdateResult, err error)
 	// PermanentlyDelete : Permanently delete the file or folder at a given path
 	// (see https://www.dropbox.com/en/help/40). If the given file or folder is
 	// not yet deleted, this route will first delete it. It is possible for this
@@ -398,9 +406,9 @@ type Client interface {
 	// `uploadSessionFinish` to save all the data to a file in Dropbox. A single
 	// request should not upload more than 150 MB. The maximum size of a file
 	// one can upload to an upload session is 350 GB. An upload session can be
-	// used for a maximum of 48 hours. Attempting to use an
+	// used for a maximum of 7 days. Attempting to use an
 	// `UploadSessionStartResult.session_id` with `uploadSessionAppend` or
-	// `uploadSessionFinish` more than 48 hours after its creation will return a
+	// `uploadSessionFinish` more than 7 days after its creation will return a
 	// `UploadSessionLookupError.not_found`. Calls to this endpoint will count
 	// as data transport calls for any Dropbox Business teams with a limit on
 	// the number of data transport calls allowed per month. For more
@@ -3209,6 +3217,140 @@ func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 	}
 	if resp.StatusCode == http.StatusConflict {
 		var apiError MoveBatchCheckAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//PaperCreateAPIError is an error-wrapper for the paper/create route
+type PaperCreateAPIError struct {
+	dropbox.APIError
+	EndpointError *PaperCreateError `json:"error"`
+}
+
+func (dbx *apiImpl) PaperCreate(arg *PaperCreateArg, content io.Reader) (res *PaperCreateResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type":    "application/octet-stream",
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "upload", true, "files", "paper/create", headers, content)
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PaperCreateAPIError
+		err = json.Unmarshal(body, &apiError)
+		if err != nil {
+			return
+		}
+		err = apiError
+		return
+	}
+	err = auth.HandleCommonAuthErrors(dbx.Config, resp, body)
+	if err != nil {
+		return
+	}
+	err = dropbox.HandleCommonAPIErrors(dbx.Config, resp, body)
+	return
+}
+
+//PaperUpdateAPIError is an error-wrapper for the paper/update route
+type PaperUpdateAPIError struct {
+	dropbox.APIError
+	EndpointError *PaperUpdateError `json:"error"`
+}
+
+func (dbx *apiImpl) PaperUpdate(arg *PaperUpdateArg, content io.Reader) (res *PaperUpdateResult, err error) {
+	cli := dbx.Client
+
+	dbx.Config.LogDebug("arg: %v", arg)
+	b, err := json.Marshal(arg)
+	if err != nil {
+		return
+	}
+
+	headers := map[string]string{
+		"Content-Type":    "application/octet-stream",
+		"Dropbox-API-Arg": dropbox.HTTPHeaderSafeJSON(b),
+	}
+	if dbx.Config.AsMemberID != "" {
+		headers["Dropbox-API-Select-User"] = dbx.Config.AsMemberID
+	}
+
+	req, err := (*dropbox.Context)(dbx).NewRequest("api", "upload", true, "files", "paper/update", headers, content)
+	if err != nil {
+		return
+	}
+	dbx.Config.LogInfo("req: %v", req)
+
+	resp, err := cli.Do(req)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogInfo("resp: %v", resp)
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+
+	dbx.Config.LogDebug("body: %s", body)
+	if resp.StatusCode == http.StatusOK {
+		err = json.Unmarshal(body, &res)
+		if err != nil {
+			return
+		}
+
+		return
+	}
+	if resp.StatusCode == http.StatusConflict {
+		var apiError PaperUpdateAPIError
 		err = json.Unmarshal(body, &apiError)
 		if err != nil {
 			return

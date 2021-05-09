@@ -2246,6 +2246,7 @@ const (
 	LegalHoldsPolicyUpdateErrorUnknownLegalHoldError                          = "unknown_legal_hold_error"
 	LegalHoldsPolicyUpdateErrorInsufficientPermissions                        = "insufficient_permissions"
 	LegalHoldsPolicyUpdateErrorOther                                          = "other"
+	LegalHoldsPolicyUpdateErrorTransientError                                 = "transient_error"
 	LegalHoldsPolicyUpdateErrorInactiveLegalHold                              = "inactive_legal_hold"
 	LegalHoldsPolicyUpdateErrorLegalHoldPerformingAnotherOperation            = "legal_hold_performing_another_operation"
 	LegalHoldsPolicyUpdateErrorInvalidMembers                                 = "invalid_members"
@@ -2568,8 +2569,8 @@ func NewMemberAccess(User *UserSelectorArg, AccessType *GroupAccessType) *Member
 	return s
 }
 
-// MemberAddArg : has no documentation (yet)
-type MemberAddArg struct {
+// MemberAddArgBase : has no documentation (yet)
+type MemberAddArgBase struct {
 	// MemberEmail : has no documentation (yet)
 	MemberEmail string `json:"member_email"`
 	// MemberGivenName : Member's first name.
@@ -2586,10 +2587,23 @@ type MemberAddArg struct {
 	// user. This may be useful for apps using single sign-on (SSO) flows for
 	// onboarding that want to handle announcements themselves.
 	SendWelcomeEmail bool `json:"send_welcome_email"`
-	// Role : has no documentation (yet)
-	Role *AdminTier `json:"role"`
 	// IsDirectoryRestricted : Whether a user is directory restricted.
 	IsDirectoryRestricted bool `json:"is_directory_restricted,omitempty"`
+}
+
+// NewMemberAddArgBase returns a new MemberAddArgBase instance
+func NewMemberAddArgBase(MemberEmail string) *MemberAddArgBase {
+	s := new(MemberAddArgBase)
+	s.MemberEmail = MemberEmail
+	s.SendWelcomeEmail = true
+	return s
+}
+
+// MemberAddArg : has no documentation (yet)
+type MemberAddArg struct {
+	MemberAddArgBase
+	// Role : has no documentation (yet)
+	Role *AdminTier `json:"role"`
 }
 
 // NewMemberAddArg returns a new MemberAddArg instance
@@ -2601,14 +2615,9 @@ func NewMemberAddArg(MemberEmail string) *MemberAddArg {
 	return s
 }
 
-// MemberAddResult : Describes the result of attempting to add a single user to
-// the team. 'success' is the only value indicating that a user was indeed added
-// to the team - the other values explain the type of failure that occurred, and
-// include the email of the user for which the operation has failed.
-type MemberAddResult struct {
+// MemberAddResultBase : has no documentation (yet)
+type MemberAddResultBase struct {
 	dropbox.Tagged
-	// Success : Describes a user that was successfully added to the team.
-	Success *TeamMemberInfo `json:"success,omitempty"`
 	// TeamLicenseLimit : Team is already full. The organization has no
 	// available licenses.
 	TeamLicenseLimit string `json:"team_license_limit,omitempty"`
@@ -2641,23 +2650,22 @@ type MemberAddResult struct {
 	UserCreationFailed string `json:"user_creation_failed,omitempty"`
 }
 
-// Valid tag values for MemberAddResult
+// Valid tag values for MemberAddResultBase
 const (
-	MemberAddResultSuccess                     = "success"
-	MemberAddResultTeamLicenseLimit            = "team_license_limit"
-	MemberAddResultFreeTeamMemberLimitReached  = "free_team_member_limit_reached"
-	MemberAddResultUserAlreadyOnTeam           = "user_already_on_team"
-	MemberAddResultUserOnAnotherTeam           = "user_on_another_team"
-	MemberAddResultUserAlreadyPaired           = "user_already_paired"
-	MemberAddResultUserMigrationFailed         = "user_migration_failed"
-	MemberAddResultDuplicateExternalMemberId   = "duplicate_external_member_id"
-	MemberAddResultDuplicateMemberPersistentId = "duplicate_member_persistent_id"
-	MemberAddResultPersistentIdDisabled        = "persistent_id_disabled"
-	MemberAddResultUserCreationFailed          = "user_creation_failed"
+	MemberAddResultBaseTeamLicenseLimit            = "team_license_limit"
+	MemberAddResultBaseFreeTeamMemberLimitReached  = "free_team_member_limit_reached"
+	MemberAddResultBaseUserAlreadyOnTeam           = "user_already_on_team"
+	MemberAddResultBaseUserOnAnotherTeam           = "user_on_another_team"
+	MemberAddResultBaseUserAlreadyPaired           = "user_already_paired"
+	MemberAddResultBaseUserMigrationFailed         = "user_migration_failed"
+	MemberAddResultBaseDuplicateExternalMemberId   = "duplicate_external_member_id"
+	MemberAddResultBaseDuplicateMemberPersistentId = "duplicate_member_persistent_id"
+	MemberAddResultBasePersistentIdDisabled        = "persistent_id_disabled"
+	MemberAddResultBaseUserCreationFailed          = "user_creation_failed"
 )
 
-// UnmarshalJSON deserializes into a MemberAddResult instance
-func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
+// UnmarshalJSON deserializes into a MemberAddResultBase instance
+func (u *MemberAddResultBase) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// TeamLicenseLimit : Team is already full. The organization has no
@@ -2698,12 +2706,6 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
-	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
-			return err
-		}
 	case "team_license_limit":
 		u.TeamLicenseLimit = w.TeamLicenseLimit
 
@@ -2760,6 +2762,357 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 		}
 	case "user_creation_failed":
 		u.UserCreationFailed = w.UserCreationFailed
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MemberAddResult : Describes the result of attempting to add a single user to
+// the team. 'success' is the only value indicating that a user was indeed added
+// to the team - the other values explain the type of failure that occurred, and
+// include the email of the user for which the operation has failed.
+type MemberAddResult struct {
+	dropbox.Tagged
+	// TeamLicenseLimit : Team is already full. The organization has no
+	// available licenses.
+	TeamLicenseLimit string `json:"team_license_limit,omitempty"`
+	// FreeTeamMemberLimitReached : Team is already full. The free team member
+	// limit has been reached.
+	FreeTeamMemberLimitReached string `json:"free_team_member_limit_reached,omitempty"`
+	// UserAlreadyOnTeam : User is already on this team. The provided email
+	// address is associated with a user who is already a member of (including
+	// in recoverable state) or invited to the team.
+	UserAlreadyOnTeam string `json:"user_already_on_team,omitempty"`
+	// UserOnAnotherTeam : User is already on another team. The provided email
+	// address is associated with a user that is already a member or invited to
+	// another team.
+	UserOnAnotherTeam string `json:"user_on_another_team,omitempty"`
+	// UserAlreadyPaired : User is already paired.
+	UserAlreadyPaired string `json:"user_already_paired,omitempty"`
+	// UserMigrationFailed : User migration has failed.
+	UserMigrationFailed string `json:"user_migration_failed,omitempty"`
+	// DuplicateExternalMemberId : A user with the given external member ID
+	// already exists on the team (including in recoverable state).
+	DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
+	// DuplicateMemberPersistentId : A user with the given persistent ID already
+	// exists on the team (including in recoverable state).
+	DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
+	// PersistentIdDisabled : Persistent ID is only available to teams with
+	// persistent ID SAML configuration. Please contact Dropbox for more
+	// information.
+	PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
+	// UserCreationFailed : User creation has failed.
+	UserCreationFailed string `json:"user_creation_failed,omitempty"`
+	// Success : Describes a user that was successfully added to the team.
+	Success *TeamMemberInfo `json:"success,omitempty"`
+}
+
+// Valid tag values for MemberAddResult
+const (
+	MemberAddResultTeamLicenseLimit            = "team_license_limit"
+	MemberAddResultFreeTeamMemberLimitReached  = "free_team_member_limit_reached"
+	MemberAddResultUserAlreadyOnTeam           = "user_already_on_team"
+	MemberAddResultUserOnAnotherTeam           = "user_on_another_team"
+	MemberAddResultUserAlreadyPaired           = "user_already_paired"
+	MemberAddResultUserMigrationFailed         = "user_migration_failed"
+	MemberAddResultDuplicateExternalMemberId   = "duplicate_external_member_id"
+	MemberAddResultDuplicateMemberPersistentId = "duplicate_member_persistent_id"
+	MemberAddResultPersistentIdDisabled        = "persistent_id_disabled"
+	MemberAddResultUserCreationFailed          = "user_creation_failed"
+	MemberAddResultSuccess                     = "success"
+)
+
+// UnmarshalJSON deserializes into a MemberAddResult instance
+func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// TeamLicenseLimit : Team is already full. The organization has no
+		// available licenses.
+		TeamLicenseLimit string `json:"team_license_limit,omitempty"`
+		// FreeTeamMemberLimitReached : Team is already full. The free team
+		// member limit has been reached.
+		FreeTeamMemberLimitReached string `json:"free_team_member_limit_reached,omitempty"`
+		// UserAlreadyOnTeam : User is already on this team. The provided email
+		// address is associated with a user who is already a member of
+		// (including in recoverable state) or invited to the team.
+		UserAlreadyOnTeam string `json:"user_already_on_team,omitempty"`
+		// UserOnAnotherTeam : User is already on another team. The provided
+		// email address is associated with a user that is already a member or
+		// invited to another team.
+		UserOnAnotherTeam string `json:"user_on_another_team,omitempty"`
+		// UserAlreadyPaired : User is already paired.
+		UserAlreadyPaired string `json:"user_already_paired,omitempty"`
+		// UserMigrationFailed : User migration has failed.
+		UserMigrationFailed string `json:"user_migration_failed,omitempty"`
+		// DuplicateExternalMemberId : A user with the given external member ID
+		// already exists on the team (including in recoverable state).
+		DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
+		// DuplicateMemberPersistentId : A user with the given persistent ID
+		// already exists on the team (including in recoverable state).
+		DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
+		// PersistentIdDisabled : Persistent ID is only available to teams with
+		// persistent ID SAML configuration. Please contact Dropbox for more
+		// information.
+		PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
+		// UserCreationFailed : User creation has failed.
+		UserCreationFailed string `json:"user_creation_failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "team_license_limit":
+		u.TeamLicenseLimit = w.TeamLicenseLimit
+
+		if err != nil {
+			return err
+		}
+	case "free_team_member_limit_reached":
+		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
+
+		if err != nil {
+			return err
+		}
+	case "user_already_on_team":
+		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
+
+		if err != nil {
+			return err
+		}
+	case "user_on_another_team":
+		u.UserOnAnotherTeam = w.UserOnAnotherTeam
+
+		if err != nil {
+			return err
+		}
+	case "user_already_paired":
+		u.UserAlreadyPaired = w.UserAlreadyPaired
+
+		if err != nil {
+			return err
+		}
+	case "user_migration_failed":
+		u.UserMigrationFailed = w.UserMigrationFailed
+
+		if err != nil {
+			return err
+		}
+	case "duplicate_external_member_id":
+		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
+
+		if err != nil {
+			return err
+		}
+	case "duplicate_member_persistent_id":
+		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
+
+		if err != nil {
+			return err
+		}
+	case "persistent_id_disabled":
+		u.PersistentIdDisabled = w.PersistentIdDisabled
+
+		if err != nil {
+			return err
+		}
+	case "user_creation_failed":
+		u.UserCreationFailed = w.UserCreationFailed
+
+		if err != nil {
+			return err
+		}
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MemberAddV2Arg : has no documentation (yet)
+type MemberAddV2Arg struct {
+	MemberAddArgBase
+	// RoleIds : has no documentation (yet)
+	RoleIds []string `json:"role_ids,omitempty"`
+}
+
+// NewMemberAddV2Arg returns a new MemberAddV2Arg instance
+func NewMemberAddV2Arg(MemberEmail string) *MemberAddV2Arg {
+	s := new(MemberAddV2Arg)
+	s.MemberEmail = MemberEmail
+	s.SendWelcomeEmail = true
+	return s
+}
+
+// MemberAddV2Result : Describes the result of attempting to add a single user
+// to the team. 'success' is the only value indicating that a user was indeed
+// added to the team - the other values explain the type of failure that
+// occurred, and include the email of the user for which the operation has
+// failed.
+type MemberAddV2Result struct {
+	dropbox.Tagged
+	// TeamLicenseLimit : Team is already full. The organization has no
+	// available licenses.
+	TeamLicenseLimit string `json:"team_license_limit,omitempty"`
+	// FreeTeamMemberLimitReached : Team is already full. The free team member
+	// limit has been reached.
+	FreeTeamMemberLimitReached string `json:"free_team_member_limit_reached,omitempty"`
+	// UserAlreadyOnTeam : User is already on this team. The provided email
+	// address is associated with a user who is already a member of (including
+	// in recoverable state) or invited to the team.
+	UserAlreadyOnTeam string `json:"user_already_on_team,omitempty"`
+	// UserOnAnotherTeam : User is already on another team. The provided email
+	// address is associated with a user that is already a member or invited to
+	// another team.
+	UserOnAnotherTeam string `json:"user_on_another_team,omitempty"`
+	// UserAlreadyPaired : User is already paired.
+	UserAlreadyPaired string `json:"user_already_paired,omitempty"`
+	// UserMigrationFailed : User migration has failed.
+	UserMigrationFailed string `json:"user_migration_failed,omitempty"`
+	// DuplicateExternalMemberId : A user with the given external member ID
+	// already exists on the team (including in recoverable state).
+	DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
+	// DuplicateMemberPersistentId : A user with the given persistent ID already
+	// exists on the team (including in recoverable state).
+	DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
+	// PersistentIdDisabled : Persistent ID is only available to teams with
+	// persistent ID SAML configuration. Please contact Dropbox for more
+	// information.
+	PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
+	// UserCreationFailed : User creation has failed.
+	UserCreationFailed string `json:"user_creation_failed,omitempty"`
+	// Success : Describes a user that was successfully added to the team.
+	Success *TeamMemberInfoV2 `json:"success,omitempty"`
+}
+
+// Valid tag values for MemberAddV2Result
+const (
+	MemberAddV2ResultTeamLicenseLimit            = "team_license_limit"
+	MemberAddV2ResultFreeTeamMemberLimitReached  = "free_team_member_limit_reached"
+	MemberAddV2ResultUserAlreadyOnTeam           = "user_already_on_team"
+	MemberAddV2ResultUserOnAnotherTeam           = "user_on_another_team"
+	MemberAddV2ResultUserAlreadyPaired           = "user_already_paired"
+	MemberAddV2ResultUserMigrationFailed         = "user_migration_failed"
+	MemberAddV2ResultDuplicateExternalMemberId   = "duplicate_external_member_id"
+	MemberAddV2ResultDuplicateMemberPersistentId = "duplicate_member_persistent_id"
+	MemberAddV2ResultPersistentIdDisabled        = "persistent_id_disabled"
+	MemberAddV2ResultUserCreationFailed          = "user_creation_failed"
+	MemberAddV2ResultSuccess                     = "success"
+	MemberAddV2ResultOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a MemberAddV2Result instance
+func (u *MemberAddV2Result) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// TeamLicenseLimit : Team is already full. The organization has no
+		// available licenses.
+		TeamLicenseLimit string `json:"team_license_limit,omitempty"`
+		// FreeTeamMemberLimitReached : Team is already full. The free team
+		// member limit has been reached.
+		FreeTeamMemberLimitReached string `json:"free_team_member_limit_reached,omitempty"`
+		// UserAlreadyOnTeam : User is already on this team. The provided email
+		// address is associated with a user who is already a member of
+		// (including in recoverable state) or invited to the team.
+		UserAlreadyOnTeam string `json:"user_already_on_team,omitempty"`
+		// UserOnAnotherTeam : User is already on another team. The provided
+		// email address is associated with a user that is already a member or
+		// invited to another team.
+		UserOnAnotherTeam string `json:"user_on_another_team,omitempty"`
+		// UserAlreadyPaired : User is already paired.
+		UserAlreadyPaired string `json:"user_already_paired,omitempty"`
+		// UserMigrationFailed : User migration has failed.
+		UserMigrationFailed string `json:"user_migration_failed,omitempty"`
+		// DuplicateExternalMemberId : A user with the given external member ID
+		// already exists on the team (including in recoverable state).
+		DuplicateExternalMemberId string `json:"duplicate_external_member_id,omitempty"`
+		// DuplicateMemberPersistentId : A user with the given persistent ID
+		// already exists on the team (including in recoverable state).
+		DuplicateMemberPersistentId string `json:"duplicate_member_persistent_id,omitempty"`
+		// PersistentIdDisabled : Persistent ID is only available to teams with
+		// persistent ID SAML configuration. Please contact Dropbox for more
+		// information.
+		PersistentIdDisabled string `json:"persistent_id_disabled,omitempty"`
+		// UserCreationFailed : User creation has failed.
+		UserCreationFailed string `json:"user_creation_failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "team_license_limit":
+		u.TeamLicenseLimit = w.TeamLicenseLimit
+
+		if err != nil {
+			return err
+		}
+	case "free_team_member_limit_reached":
+		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
+
+		if err != nil {
+			return err
+		}
+	case "user_already_on_team":
+		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
+
+		if err != nil {
+			return err
+		}
+	case "user_on_another_team":
+		u.UserOnAnotherTeam = w.UserOnAnotherTeam
+
+		if err != nil {
+			return err
+		}
+	case "user_already_paired":
+		u.UserAlreadyPaired = w.UserAlreadyPaired
+
+		if err != nil {
+			return err
+		}
+	case "user_migration_failed":
+		u.UserMigrationFailed = w.UserMigrationFailed
+
+		if err != nil {
+			return err
+		}
+	case "duplicate_external_member_id":
+		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
+
+		if err != nil {
+			return err
+		}
+	case "duplicate_member_persistent_id":
+		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
+
+		if err != nil {
+			return err
+		}
+	case "persistent_id_disabled":
+		u.PersistentIdDisabled = w.PersistentIdDisabled
+
+		if err != nil {
+			return err
+		}
+	case "user_creation_failed":
+		u.UserCreationFailed = w.UserCreationFailed
+
+		if err != nil {
+			return err
+		}
+	case "success":
+		err = json.Unmarshal(body, &u.Success)
 
 		if err != nil {
 			return err
@@ -2881,12 +3234,24 @@ const (
 	MemberSelectorErrorUserNotInTeam = "user_not_in_team"
 )
 
-// MembersAddArg : has no documentation (yet)
-type MembersAddArg struct {
-	// NewMembers : Details of new members to be added to the team.
-	NewMembers []*MemberAddArg `json:"new_members"`
+// MembersAddArgBase : has no documentation (yet)
+type MembersAddArgBase struct {
 	// ForceAsync : Whether to force the add to happen asynchronously.
 	ForceAsync bool `json:"force_async"`
+}
+
+// NewMembersAddArgBase returns a new MembersAddArgBase instance
+func NewMembersAddArgBase() *MembersAddArgBase {
+	s := new(MembersAddArgBase)
+	s.ForceAsync = false
+	return s
+}
+
+// MembersAddArg : has no documentation (yet)
+type MembersAddArg struct {
+	MembersAddArgBase
+	// NewMembers : Details of new members to be added to the team.
+	NewMembers []*MemberAddArg `json:"new_members"`
 }
 
 // NewMembersAddArg returns a new MembersAddArg instance
@@ -2924,6 +3289,61 @@ func (u *MembersAddJobStatus) UnmarshalJSON(body []byte) error {
 		// was specified in the parameter `MembersAddArg` that was provided to
 		// `membersAdd`, a corresponding item is returned in this list.
 		Complete []*MemberAddResult `json:"complete,omitempty"`
+		// Failed : The asynchronous job returned an error. The string contains
+		// an error message.
+		Failed string `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		u.Complete = w.Complete
+
+		if err != nil {
+			return err
+		}
+	case "failed":
+		u.Failed = w.Failed
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MembersAddJobStatusV2Result : has no documentation (yet)
+type MembersAddJobStatusV2Result struct {
+	dropbox.Tagged
+	// Complete : The asynchronous job has finished. For each member that was
+	// specified in the parameter `MembersAddArg` that was provided to
+	// `membersAdd`, a corresponding item is returned in this list.
+	Complete []*MemberAddV2Result `json:"complete,omitempty"`
+	// Failed : The asynchronous job returned an error. The string contains an
+	// error message.
+	Failed string `json:"failed,omitempty"`
+}
+
+// Valid tag values for MembersAddJobStatusV2Result
+const (
+	MembersAddJobStatusV2ResultInProgress = "in_progress"
+	MembersAddJobStatusV2ResultComplete   = "complete"
+	MembersAddJobStatusV2ResultFailed     = "failed"
+	MembersAddJobStatusV2ResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersAddJobStatusV2Result instance
+func (u *MembersAddJobStatusV2Result) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Complete : The asynchronous job has finished. For each member that
+		// was specified in the parameter `MembersAddArg` that was provided to
+		// `membersAdd`, a corresponding item is returned in this list.
+		Complete []*MemberAddV2Result `json:"complete,omitempty"`
 		// Failed : The asynchronous job returned an error. The string contains
 		// an error message.
 		Failed string `json:"failed,omitempty"`
@@ -3000,6 +3420,73 @@ func (u *MembersAddLaunch) UnmarshalJSON(body []byte) error {
 		}
 	}
 	return nil
+}
+
+// MembersAddLaunchV2Result : has no documentation (yet)
+type MembersAddLaunchV2Result struct {
+	dropbox.Tagged
+	// AsyncJobId : This response indicates that the processing is asynchronous.
+	// The string is an id that can be used to obtain the status of the
+	// asynchronous job.
+	AsyncJobId string `json:"async_job_id,omitempty"`
+	// Complete : has no documentation (yet)
+	Complete []*MemberAddV2Result `json:"complete,omitempty"`
+}
+
+// Valid tag values for MembersAddLaunchV2Result
+const (
+	MembersAddLaunchV2ResultAsyncJobId = "async_job_id"
+	MembersAddLaunchV2ResultComplete   = "complete"
+	MembersAddLaunchV2ResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersAddLaunchV2Result instance
+func (u *MembersAddLaunchV2Result) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// AsyncJobId : This response indicates that the processing is
+		// asynchronous. The string is an id that can be used to obtain the
+		// status of the asynchronous job.
+		AsyncJobId string `json:"async_job_id,omitempty"`
+		// Complete : has no documentation (yet)
+		Complete []*MemberAddV2Result `json:"complete,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "async_job_id":
+		u.AsyncJobId = w.AsyncJobId
+
+		if err != nil {
+			return err
+		}
+	case "complete":
+		u.Complete = w.Complete
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MembersAddV2Arg : has no documentation (yet)
+type MembersAddV2Arg struct {
+	MembersAddArgBase
+	// NewMembers : Details of new members to be added to the team.
+	NewMembers []*MemberAddV2Arg `json:"new_members"`
+}
+
+// NewMembersAddV2Arg returns a new MembersAddV2Arg instance
+func NewMembersAddV2Arg(NewMembers []*MemberAddV2Arg) *MembersAddV2Arg {
+	s := new(MembersAddV2Arg)
+	s.NewMembers = NewMembers
+	s.ForceAsync = false
+	return s
 }
 
 // MembersDeactivateBaseArg : Exactly one of team_member_id, email, or
@@ -3090,6 +3577,20 @@ const (
 	MembersDeleteProfilePhotoErrorOther                = "other"
 )
 
+// MembersGetAvailableTeamMemberRolesResult : Available TeamMemberRole for the
+// connected team. To be used with `membersSetAdminPermissions`.
+type MembersGetAvailableTeamMemberRolesResult struct {
+	// Roles : Available roles.
+	Roles []*TeamMemberRole `json:"roles"`
+}
+
+// NewMembersGetAvailableTeamMemberRolesResult returns a new MembersGetAvailableTeamMemberRolesResult instance
+func NewMembersGetAvailableTeamMemberRolesResult(Roles []*TeamMemberRole) *MembersGetAvailableTeamMemberRolesResult {
+	s := new(MembersGetAvailableTeamMemberRolesResult)
+	s.Roles = Roles
+	return s
+}
+
 // MembersGetInfoArgs : has no documentation (yet)
 type MembersGetInfoArgs struct {
 	// Members : List of team members.
@@ -3113,13 +3614,56 @@ const (
 	MembersGetInfoErrorOther = "other"
 )
 
+// MembersGetInfoItemBase : has no documentation (yet)
+type MembersGetInfoItemBase struct {
+	dropbox.Tagged
+	// IdNotFound : An ID that was provided as a parameter to `membersGetInfo`
+	// or `membersGetInfo`, and did not match a corresponding user. This might
+	// be a team_member_id, an email, or an external ID, depending on how the
+	// method was called.
+	IdNotFound string `json:"id_not_found,omitempty"`
+}
+
+// Valid tag values for MembersGetInfoItemBase
+const (
+	MembersGetInfoItemBaseIdNotFound = "id_not_found"
+)
+
+// UnmarshalJSON deserializes into a MembersGetInfoItemBase instance
+func (u *MembersGetInfoItemBase) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// IdNotFound : An ID that was provided as a parameter to
+		// `membersGetInfo` or `membersGetInfo`, and did not match a
+		// corresponding user. This might be a team_member_id, an email, or an
+		// external ID, depending on how the method was called.
+		IdNotFound string `json:"id_not_found,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "id_not_found":
+		u.IdNotFound = w.IdNotFound
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // MembersGetInfoItem : Describes a result obtained for a single user whose id
 // was specified in the parameter of `membersGetInfo`.
 type MembersGetInfoItem struct {
 	dropbox.Tagged
-	// IdNotFound : An ID that was provided as a parameter to `membersGetInfo`,
-	// and did not match a corresponding user. This might be a team_member_id,
-	// an email, or an external ID, depending on how the method was called.
+	// IdNotFound : An ID that was provided as a parameter to `membersGetInfo`
+	// or `membersGetInfo`, and did not match a corresponding user. This might
+	// be a team_member_id, an email, or an external ID, depending on how the
+	// method was called.
 	IdNotFound string `json:"id_not_found,omitempty"`
 	// MemberInfo : Info about a team member.
 	MemberInfo *TeamMemberInfo `json:"member_info,omitempty"`
@@ -3136,9 +3680,9 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// IdNotFound : An ID that was provided as a parameter to
-		// `membersGetInfo`, and did not match a corresponding user. This might
-		// be a team_member_id, an email, or an external ID, depending on how
-		// the method was called.
+		// `membersGetInfo` or `membersGetInfo`, and did not match a
+		// corresponding user. This might be a team_member_id, an email, or an
+		// external ID, depending on how the method was called.
 		IdNotFound string `json:"id_not_found,omitempty"`
 	}
 	var w wrap
@@ -3162,6 +3706,85 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 		}
 	}
 	return nil
+}
+
+// MembersGetInfoItemV2 : Describes a result obtained for a single user whose id
+// was specified in the parameter of `membersGetInfo`.
+type MembersGetInfoItemV2 struct {
+	dropbox.Tagged
+	// IdNotFound : An ID that was provided as a parameter to `membersGetInfo`
+	// or `membersGetInfo`, and did not match a corresponding user. This might
+	// be a team_member_id, an email, or an external ID, depending on how the
+	// method was called.
+	IdNotFound string `json:"id_not_found,omitempty"`
+	// MemberInfo : Info about a team member.
+	MemberInfo *TeamMemberInfoV2 `json:"member_info,omitempty"`
+}
+
+// Valid tag values for MembersGetInfoItemV2
+const (
+	MembersGetInfoItemV2IdNotFound = "id_not_found"
+	MembersGetInfoItemV2MemberInfo = "member_info"
+	MembersGetInfoItemV2Other      = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersGetInfoItemV2 instance
+func (u *MembersGetInfoItemV2) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// IdNotFound : An ID that was provided as a parameter to
+		// `membersGetInfo` or `membersGetInfo`, and did not match a
+		// corresponding user. This might be a team_member_id, an email, or an
+		// external ID, depending on how the method was called.
+		IdNotFound string `json:"id_not_found,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "id_not_found":
+		u.IdNotFound = w.IdNotFound
+
+		if err != nil {
+			return err
+		}
+	case "member_info":
+		err = json.Unmarshal(body, &u.MemberInfo)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// MembersGetInfoV2Arg : has no documentation (yet)
+type MembersGetInfoV2Arg struct {
+	// Members : List of team members.
+	Members []*UserSelectorArg `json:"members"`
+}
+
+// NewMembersGetInfoV2Arg returns a new MembersGetInfoV2Arg instance
+func NewMembersGetInfoV2Arg(Members []*UserSelectorArg) *MembersGetInfoV2Arg {
+	s := new(MembersGetInfoV2Arg)
+	s.Members = Members
+	return s
+}
+
+// MembersGetInfoV2Result : has no documentation (yet)
+type MembersGetInfoV2Result struct {
+	// MembersInfo : List of team members info.
+	MembersInfo []*MembersGetInfoItemV2 `json:"members_info"`
+}
+
+// NewMembersGetInfoV2Result returns a new MembersGetInfoV2Result instance
+func NewMembersGetInfoV2Result(MembersInfo []*MembersGetInfoItemV2) *MembersGetInfoV2Result {
+	s := new(MembersGetInfoV2Result)
+	s.MembersInfo = MembersInfo
+	return s
 }
 
 // MembersInfo : has no documentation (yet)
@@ -3247,6 +3870,28 @@ type MembersListResult struct {
 // NewMembersListResult returns a new MembersListResult instance
 func NewMembersListResult(Members []*TeamMemberInfo, Cursor string, HasMore bool) *MembersListResult {
 	s := new(MembersListResult)
+	s.Members = Members
+	s.Cursor = Cursor
+	s.HasMore = HasMore
+	return s
+}
+
+// MembersListV2Result : has no documentation (yet)
+type MembersListV2Result struct {
+	// Members : List of team members.
+	Members []*TeamMemberInfoV2 `json:"members"`
+	// Cursor : Pass the cursor into `membersListContinue` to obtain the
+	// additional members.
+	Cursor string `json:"cursor"`
+	// HasMore : Is true if there are additional team members that have not been
+	// returned yet. An additional call to `membersListContinue` can retrieve
+	// them.
+	HasMore bool `json:"has_more"`
+}
+
+// NewMembersListV2Result returns a new MembersListV2Result instance
+func NewMembersListV2Result(Members []*TeamMemberInfoV2, Cursor string, HasMore bool) *MembersListV2Result {
+	s := new(MembersListV2Result)
 	s.Members = Members
 	s.Cursor = Cursor
 	s.HasMore = HasMore
@@ -3380,6 +4025,54 @@ const (
 	MembersSendWelcomeErrorUserNotInTeam = "user_not_in_team"
 	MembersSendWelcomeErrorOther         = "other"
 )
+
+// MembersSetPermissions2Arg : Exactly one of team_member_id, email, or
+// external_id must be provided to identify the user account.
+type MembersSetPermissions2Arg struct {
+	// User : Identity of user whose role will be set.
+	User *UserSelectorArg `json:"user"`
+	// NewRoles : The new roles for the member. Send empty list to make user
+	// member only. For now, only up to one role is allowed.
+	NewRoles []string `json:"new_roles,omitempty"`
+}
+
+// NewMembersSetPermissions2Arg returns a new MembersSetPermissions2Arg instance
+func NewMembersSetPermissions2Arg(User *UserSelectorArg) *MembersSetPermissions2Arg {
+	s := new(MembersSetPermissions2Arg)
+	s.User = User
+	return s
+}
+
+// MembersSetPermissions2Error : has no documentation (yet)
+type MembersSetPermissions2Error struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersSetPermissions2Error
+const (
+	MembersSetPermissions2ErrorUserNotFound         = "user_not_found"
+	MembersSetPermissions2ErrorLastAdmin            = "last_admin"
+	MembersSetPermissions2ErrorUserNotInTeam        = "user_not_in_team"
+	MembersSetPermissions2ErrorCannotSetPermissions = "cannot_set_permissions"
+	MembersSetPermissions2ErrorRoleNotFound         = "role_not_found"
+	MembersSetPermissions2ErrorOther                = "other"
+)
+
+// MembersSetPermissions2Result : has no documentation (yet)
+type MembersSetPermissions2Result struct {
+	// TeamMemberId : The member ID of the user to which the change was applied.
+	TeamMemberId string `json:"team_member_id"`
+	// Roles : The roles after the change. Empty in case the user become a
+	// non-admin.
+	Roles []*TeamMemberRole `json:"roles,omitempty"`
+}
+
+// NewMembersSetPermissions2Result returns a new MembersSetPermissions2Result instance
+func NewMembersSetPermissions2Result(TeamMemberId string) *MembersSetPermissions2Result {
+	s := new(MembersSetPermissions2Result)
+	s.TeamMemberId = TeamMemberId
+	return s
+}
 
 // MembersSetPermissionsArg : Exactly one of team_member_id, email, or
 // external_id must be provided to identify the user account.
@@ -4876,6 +5569,35 @@ func NewTeamMemberInfo(Profile *TeamMemberProfile, Role *AdminTier) *TeamMemberI
 	return s
 }
 
+// TeamMemberInfoV2 : Information about a team member.
+type TeamMemberInfoV2 struct {
+	// Profile : Profile of a user as a member of a team.
+	Profile *TeamMemberProfile `json:"profile"`
+	// Roles : The user's roles in the team.
+	Roles []*TeamMemberRole `json:"roles,omitempty"`
+}
+
+// NewTeamMemberInfoV2 returns a new TeamMemberInfoV2 instance
+func NewTeamMemberInfoV2(Profile *TeamMemberProfile) *TeamMemberInfoV2 {
+	s := new(TeamMemberInfoV2)
+	s.Profile = Profile
+	return s
+}
+
+// TeamMemberInfoV2Result : Information about a team member, after the change,
+// like at `membersSetProfile`.
+type TeamMemberInfoV2Result struct {
+	// MemberInfo : Member info, after the change.
+	MemberInfo *TeamMemberInfoV2 `json:"member_info"`
+}
+
+// NewTeamMemberInfoV2Result returns a new TeamMemberInfoV2Result instance
+func NewTeamMemberInfoV2Result(MemberInfo *TeamMemberInfoV2) *TeamMemberInfoV2Result {
+	s := new(TeamMemberInfoV2Result)
+	s.MemberInfo = MemberInfo
+	return s
+}
+
 // TeamMemberProfile : Profile of a user as a member of a team.
 type TeamMemberProfile struct {
 	MemberProfile
@@ -4896,6 +5618,29 @@ func NewTeamMemberProfile(TeamMemberId string, Email string, EmailVerified bool,
 	s.MembershipType = MembershipType
 	s.Groups = Groups
 	s.MemberFolderId = MemberFolderId
+	return s
+}
+
+// TeamMemberRole : A role which can be attached to a team member. This replaces
+// AdminTier; each AdminTier corresponds to a new TeamMemberRole with a matching
+// name.
+type TeamMemberRole struct {
+	// RoleId : A string containing encoded role ID. For roles defined by
+	// Dropbox, this is the same across all teams.
+	RoleId string `json:"role_id"`
+	// Name : The role display name.
+	Name string `json:"name"`
+	// Description : Role description. Describes which permissions come with
+	// this role.
+	Description string `json:"description"`
+}
+
+// NewTeamMemberRole returns a new TeamMemberRole instance
+func NewTeamMemberRole(RoleId string, Name string, Description string) *TeamMemberRole {
+	s := new(TeamMemberRole)
+	s.RoleId = RoleId
+	s.Name = Name
+	s.Description = Description
 	return s
 }
 
