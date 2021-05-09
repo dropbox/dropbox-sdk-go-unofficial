@@ -2467,6 +2467,24 @@ func NewDeviceChangeIpMobileDetails() *DeviceChangeIpMobileDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a DeviceChangeIpMobileDetails instance
+func (u *DeviceChangeIpMobileDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeviceSessionInfo : Device's session logged information.
+		DeviceSessionInfo json.RawMessage `json:"device_session_info,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	DeviceSessionInfo, err := IsDeviceSessionLogInfoFromJSON(w.DeviceSessionInfo)
+	if err != nil {
+		return err
+	}
+	u.DeviceSessionInfo = DeviceSessionInfo
+	return nil
+}
+
 // DeviceChangeIpMobileType : has no documentation (yet)
 type DeviceChangeIpMobileType struct {
 	// Description : has no documentation (yet)
@@ -2526,6 +2544,32 @@ func NewDeviceDeleteOnUnlinkFailDetails(NumFailures int64) *DeviceDeleteOnUnlink
 	return s
 }
 
+// UnmarshalJSON deserializes into a DeviceDeleteOnUnlinkFailDetails instance
+func (u *DeviceDeleteOnUnlinkFailDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// NumFailures : The number of times that remote file deletion failed.
+		NumFailures int64 `json:"num_failures"`
+		// SessionInfo : Session unique id. Might be missing due to historical
+		// data gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical
+		// data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.NumFailures = w.NumFailures
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
+}
+
 // DeviceDeleteOnUnlinkFailType : has no documentation (yet)
 type DeviceDeleteOnUnlinkFailType struct {
 	// Description : has no documentation (yet)
@@ -2552,6 +2596,29 @@ type DeviceDeleteOnUnlinkSuccessDetails struct {
 func NewDeviceDeleteOnUnlinkSuccessDetails() *DeviceDeleteOnUnlinkSuccessDetails {
 	s := new(DeviceDeleteOnUnlinkSuccessDetails)
 	return s
+}
+
+// UnmarshalJSON deserializes into a DeviceDeleteOnUnlinkSuccessDetails instance
+func (u *DeviceDeleteOnUnlinkSuccessDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SessionInfo : Session unique id. Might be missing due to historical
+		// data gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical
+		// data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
 }
 
 // DeviceDeleteOnUnlinkSuccessType : has no documentation (yet)
@@ -2606,6 +2673,24 @@ type DeviceLinkSuccessDetails struct {
 func NewDeviceLinkSuccessDetails() *DeviceLinkSuccessDetails {
 	s := new(DeviceLinkSuccessDetails)
 	return s
+}
+
+// UnmarshalJSON deserializes into a DeviceLinkSuccessDetails instance
+func (u *DeviceLinkSuccessDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeviceSessionInfo : Device's session logged information.
+		DeviceSessionInfo json.RawMessage `json:"device_session_info,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	DeviceSessionInfo, err := IsDeviceSessionLogInfoFromJSON(w.DeviceSessionInfo)
+	if err != nil {
+		return err
+	}
+	u.DeviceSessionInfo = DeviceSessionInfo
+	return nil
 }
 
 // DeviceLinkSuccessType : has no documentation (yet)
@@ -2728,6 +2813,32 @@ func NewDeviceUnlinkDetails(DeleteData bool) *DeviceUnlinkDetails {
 	s := new(DeviceUnlinkDetails)
 	s.DeleteData = DeleteData
 	return s
+}
+
+// UnmarshalJSON deserializes into a DeviceUnlinkDetails instance
+func (u *DeviceUnlinkDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// DeleteData : True if the user requested to delete data after device
+		// unlink, false otherwise.
+		DeleteData bool `json:"delete_data"`
+		// SessionInfo : Session unique id.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical
+		// data gap.
+		DisplayName string `json:"display_name,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.DeleteData = w.DeleteData
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	return nil
 }
 
 // DeviceUnlinkPolicy : has no documentation (yet)
@@ -15771,6 +15882,69 @@ func NewLegalHoldsReportAHoldType(Description string) *LegalHoldsReportAHoldType
 	return s
 }
 
+// UnmarshalJSON deserializes into a LegacyDeviceSessionLogInfo instance
+func (u *LegacyDeviceSessionLogInfo) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// IpAddress : The IP address of the last activity from this session.
+		// Might be missing due to historical data gap.
+		IpAddress string `json:"ip_address,omitempty"`
+		// Created : The time this session was created. Might be missing due to
+		// historical data gap.
+		Created time.Time `json:"created,omitempty"`
+		// Updated : The time of the last activity from this session. Might be
+		// missing due to historical data gap.
+		Updated time.Time `json:"updated,omitempty"`
+		// SessionInfo : Session unique id. Might be missing due to historical
+		// data gap.
+		SessionInfo json.RawMessage `json:"session_info,omitempty"`
+		// DisplayName : The device name. Might be missing due to historical
+		// data gap.
+		DisplayName string `json:"display_name,omitempty"`
+		// IsEmmManaged : Is device managed by emm. Might be missing due to
+		// historical data gap.
+		IsEmmManaged bool `json:"is_emm_managed,omitempty"`
+		// Platform : Information on the hosting platform. Might be missing due
+		// to historical data gap.
+		Platform string `json:"platform,omitempty"`
+		// MacAddress : The mac address of the last activity from this session.
+		// Might be missing due to historical data gap.
+		MacAddress string `json:"mac_address,omitempty"`
+		// OsVersion : The hosting OS version. Might be missing due to
+		// historical data gap.
+		OsVersion string `json:"os_version,omitempty"`
+		// DeviceType : Information on the hosting device type. Might be missing
+		// due to historical data gap.
+		DeviceType string `json:"device_type,omitempty"`
+		// ClientVersion : The Dropbox client version. Might be missing due to
+		// historical data gap.
+		ClientVersion string `json:"client_version,omitempty"`
+		// LegacyUniqId : Alternative unique device session id, instead of
+		// session id field. Might be missing due to historical data gap.
+		LegacyUniqId string `json:"legacy_uniq_id,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.IpAddress = w.IpAddress
+	u.Created = w.Created
+	u.Updated = w.Updated
+	SessionInfo, err := IsSessionLogInfoFromJSON(w.SessionInfo)
+	if err != nil {
+		return err
+	}
+	u.SessionInfo = SessionInfo
+	u.DisplayName = w.DisplayName
+	u.IsEmmManaged = w.IsEmmManaged
+	u.Platform = w.Platform
+	u.MacAddress = w.MacAddress
+	u.OsVersion = w.OsVersion
+	u.DeviceType = w.DeviceType
+	u.ClientVersion = w.ClientVersion
+	u.LegacyUniqId = w.LegacyUniqId
+	return nil
+}
+
 // LinkedDeviceLogInfo : The device sessions that user is linked to.
 type LinkedDeviceLogInfo struct {
 	dropbox.Tagged
@@ -20527,6 +20701,33 @@ func NewSharedContentCopyDetails(SharedContentLink string, SharedContentAccessLe
 	return s
 }
 
+// UnmarshalJSON deserializes into a SharedContentCopyDetails instance
+func (u *SharedContentCopyDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// DestinationPath : The path where the member saved the content.
+		DestinationPath string `json:"destination_path"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	u.DestinationPath = w.DestinationPath
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
+}
+
 // SharedContentCopyType : has no documentation (yet)
 type SharedContentCopyType struct {
 	// Description : has no documentation (yet)
@@ -20556,6 +20757,30 @@ func NewSharedContentDownloadDetails(SharedContentLink string, SharedContentAcce
 	s.SharedContentLink = SharedContentLink
 	s.SharedContentAccessLevel = SharedContentAccessLevel
 	return s
+}
+
+// UnmarshalJSON deserializes into a SharedContentDownloadDetails instance
+func (u *SharedContentDownloadDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
 }
 
 // SharedContentDownloadType : has no documentation (yet)
@@ -20818,6 +21043,30 @@ func NewSharedContentViewDetails(SharedContentLink string, SharedContentAccessLe
 	s.SharedContentLink = SharedContentLink
 	s.SharedContentAccessLevel = SharedContentAccessLevel
 	return s
+}
+
+// UnmarshalJSON deserializes into a SharedContentViewDetails instance
+func (u *SharedContentViewDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedContentLink : Shared content link.
+		SharedContentLink string `json:"shared_content_link"`
+		// SharedContentAccessLevel : Shared content access level.
+		SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+		// SharedContentOwner : The shared content owner.
+		SharedContentOwner json.RawMessage `json:"shared_content_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	u.SharedContentLink = w.SharedContentLink
+	u.SharedContentAccessLevel = w.SharedContentAccessLevel
+	SharedContentOwner, err := IsUserLogInfoFromJSON(w.SharedContentOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedContentOwner = SharedContentOwner
+	return nil
 }
 
 // SharedContentViewType : has no documentation (yet)
@@ -21232,6 +21481,25 @@ func NewSharedLinkCopyDetails() *SharedLinkCopyDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a SharedLinkCopyDetails instance
+func (u *SharedLinkCopyDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
+
 // SharedLinkCopyType : has no documentation (yet)
 type SharedLinkCopyType struct {
 	// Description : has no documentation (yet)
@@ -21284,6 +21552,25 @@ func NewSharedLinkDisableDetails() *SharedLinkDisableDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a SharedLinkDisableDetails instance
+func (u *SharedLinkDisableDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
+}
+
 // SharedLinkDisableType : has no documentation (yet)
 type SharedLinkDisableType struct {
 	// Description : has no documentation (yet)
@@ -21308,6 +21595,25 @@ type SharedLinkDownloadDetails struct {
 func NewSharedLinkDownloadDetails() *SharedLinkDownloadDetails {
 	s := new(SharedLinkDownloadDetails)
 	return s
+}
+
+// UnmarshalJSON deserializes into a SharedLinkDownloadDetails instance
+func (u *SharedLinkDownloadDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
 }
 
 // SharedLinkDownloadType : has no documentation (yet)
@@ -21640,6 +21946,29 @@ func NewSharedLinkShareDetails() *SharedLinkShareDetails {
 	return s
 }
 
+// UnmarshalJSON deserializes into a SharedLinkShareDetails instance
+func (u *SharedLinkShareDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+		// ExternalUsers : Users without a Dropbox account that were added as
+		// shared link audience.
+		ExternalUsers []*ExternalUserLogInfo `json:"external_users,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	u.ExternalUsers = w.ExternalUsers
+	return nil
+}
+
 // SharedLinkShareType : has no documentation (yet)
 type SharedLinkShareType struct {
 	// Description : has no documentation (yet)
@@ -21664,6 +21993,25 @@ type SharedLinkViewDetails struct {
 func NewSharedLinkViewDetails() *SharedLinkViewDetails {
 	s := new(SharedLinkViewDetails)
 	return s
+}
+
+// UnmarshalJSON deserializes into a SharedLinkViewDetails instance
+func (u *SharedLinkViewDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// SharedLinkOwner : Shared link owner details. Might be missing due to
+		// historical data gap.
+		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	SharedLinkOwner, err := IsUserLogInfoFromJSON(w.SharedLinkOwner)
+	if err != nil {
+		return err
+	}
+	u.SharedLinkOwner = SharedLinkOwner
+	return nil
 }
 
 // SharedLinkViewType : has no documentation (yet)
