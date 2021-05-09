@@ -472,13 +472,14 @@ type AdminAlertCategoryEnum struct {
 
 // Valid tag values for AdminAlertCategoryEnum
 const (
-	AdminAlertCategoryEnumAccountTakeover      = "account_takeover"
-	AdminAlertCategoryEnumDataLossProtection   = "data_loss_protection"
-	AdminAlertCategoryEnumMalwareSharing       = "malware_sharing"
-	AdminAlertCategoryEnumMassiveFileOperation = "massive_file_operation"
-	AdminAlertCategoryEnumNa                   = "na"
-	AdminAlertCategoryEnumThreatManagement     = "threat_management"
-	AdminAlertCategoryEnumOther                = "other"
+	AdminAlertCategoryEnumAccountTakeover       = "account_takeover"
+	AdminAlertCategoryEnumDataLossProtection    = "data_loss_protection"
+	AdminAlertCategoryEnumInformationGovernance = "information_governance"
+	AdminAlertCategoryEnumMalwareSharing        = "malware_sharing"
+	AdminAlertCategoryEnumMassiveFileOperation  = "massive_file_operation"
+	AdminAlertCategoryEnumNa                    = "na"
+	AdminAlertCategoryEnumThreatManagement      = "threat_management"
+	AdminAlertCategoryEnumOther                 = "other"
 )
 
 // AdminAlertSeverityEnum : Alert severity
@@ -499,15 +500,34 @@ const (
 // AdminAlertingAlertConfiguration : Alert configurations
 type AdminAlertingAlertConfiguration struct {
 	// AlertState : Alert state.
-	AlertState *AdminAlertingAlertStatePolicy `json:"alert_state"`
+	AlertState *AdminAlertingAlertStatePolicy `json:"alert_state,omitempty"`
+	// SensitivityLevel : Sensitivity level.
+	SensitivityLevel *AdminAlertingAlertSensitivity `json:"sensitivity_level,omitempty"`
+	// RecipientsSettings : Recipient settings.
+	RecipientsSettings *RecipientsConfiguration `json:"recipients_settings,omitempty"`
 }
 
 // NewAdminAlertingAlertConfiguration returns a new AdminAlertingAlertConfiguration instance
-func NewAdminAlertingAlertConfiguration(AlertState *AdminAlertingAlertStatePolicy) *AdminAlertingAlertConfiguration {
+func NewAdminAlertingAlertConfiguration() *AdminAlertingAlertConfiguration {
 	s := new(AdminAlertingAlertConfiguration)
-	s.AlertState = AlertState
 	return s
 }
+
+// AdminAlertingAlertSensitivity : Alert sensitivity
+type AdminAlertingAlertSensitivity struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertingAlertSensitivity
+const (
+	AdminAlertingAlertSensitivityHigh    = "high"
+	AdminAlertingAlertSensitivityHighest = "highest"
+	AdminAlertingAlertSensitivityInvalid = "invalid"
+	AdminAlertingAlertSensitivityLow     = "low"
+	AdminAlertingAlertSensitivityLowest  = "lowest"
+	AdminAlertingAlertSensitivityMedium  = "medium"
+	AdminAlertingAlertSensitivityOther   = "other"
+)
 
 // AdminAlertingAlertStatePolicy : Policy for controlling whether an alert can
 // be triggered or not
@@ -589,6 +609,31 @@ func NewAdminAlertingTriggeredAlertType(Description string) *AdminAlertingTrigge
 	return s
 }
 
+// AdminConsoleAppPermission : has no documentation (yet)
+type AdminConsoleAppPermission struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminConsoleAppPermission
+const (
+	AdminConsoleAppPermissionDefaultForListedApps   = "default_for_listed_apps"
+	AdminConsoleAppPermissionDefaultForUnlistedApps = "default_for_unlisted_apps"
+	AdminConsoleAppPermissionOther                  = "other"
+)
+
+// AdminConsoleAppPolicy : has no documentation (yet)
+type AdminConsoleAppPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminConsoleAppPolicy
+const (
+	AdminConsoleAppPolicyAllow   = "allow"
+	AdminConsoleAppPolicyBlock   = "block"
+	AdminConsoleAppPolicyDefault = "default"
+	AdminConsoleAppPolicyOther   = "other"
+)
+
 // AdminRole : has no documentation (yet)
 type AdminRole struct {
 	dropbox.Tagged
@@ -596,12 +641,31 @@ type AdminRole struct {
 
 // Valid tag values for AdminRole
 const (
+	AdminRoleBillingAdmin        = "billing_admin"
+	AdminRoleComplianceAdmin     = "compliance_admin"
+	AdminRoleContentAdmin        = "content_admin"
 	AdminRoleLimitedAdmin        = "limited_admin"
 	AdminRoleMemberOnly          = "member_only"
+	AdminRoleReportingAdmin      = "reporting_admin"
+	AdminRoleSecurityAdmin       = "security_admin"
 	AdminRoleSupportAdmin        = "support_admin"
 	AdminRoleTeamAdmin           = "team_admin"
 	AdminRoleUserManagementAdmin = "user_management_admin"
 	AdminRoleOther               = "other"
+)
+
+// AlertRecipientsSettingType : Alert recipients setting type
+type AlertRecipientsSettingType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AlertRecipientsSettingType
+const (
+	AlertRecipientsSettingTypeCustomList = "custom_list"
+	AlertRecipientsSettingTypeInvalid    = "invalid"
+	AlertRecipientsSettingTypeNone       = "none"
+	AlertRecipientsSettingTypeTeamAdmins = "team_admins"
+	AlertRecipientsSettingTypeOther      = "other"
 )
 
 // AllowDownloadDisabledDetails : Disabled downloads.
@@ -660,6 +724,50 @@ type ApiSessionLogInfo struct {
 func NewApiSessionLogInfo(RequestId string) *ApiSessionLogInfo {
 	s := new(ApiSessionLogInfo)
 	s.RequestId = RequestId
+	return s
+}
+
+// AppBlockedByPermissionsDetails : Failed to connect app for member.
+type AppBlockedByPermissionsDetails struct {
+	// AppInfo : Relevant application details.
+	AppInfo IsAppLogInfo `json:"app_info"`
+}
+
+// NewAppBlockedByPermissionsDetails returns a new AppBlockedByPermissionsDetails instance
+func NewAppBlockedByPermissionsDetails(AppInfo IsAppLogInfo) *AppBlockedByPermissionsDetails {
+	s := new(AppBlockedByPermissionsDetails)
+	s.AppInfo = AppInfo
+	return s
+}
+
+// UnmarshalJSON deserializes into a AppBlockedByPermissionsDetails instance
+func (u *AppBlockedByPermissionsDetails) UnmarshalJSON(b []byte) error {
+	type wrap struct {
+		// AppInfo : Relevant application details.
+		AppInfo json.RawMessage `json:"app_info"`
+	}
+	var w wrap
+	if err := json.Unmarshal(b, &w); err != nil {
+		return err
+	}
+	AppInfo, err := IsAppLogInfoFromJSON(w.AppInfo)
+	if err != nil {
+		return err
+	}
+	u.AppInfo = AppInfo
+	return nil
+}
+
+// AppBlockedByPermissionsType : has no documentation (yet)
+type AppBlockedByPermissionsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAppBlockedByPermissionsType returns a new AppBlockedByPermissionsType instance
+func NewAppBlockedByPermissionsType(Description string) *AppBlockedByPermissionsType {
+	s := new(AppBlockedByPermissionsType)
+	s.Description = Description
 	return s
 }
 
@@ -753,10 +861,9 @@ func NewAppLinkUserType(Description string) *AppLinkUserType {
 
 // AppLogInfo : App's logged information.
 type AppLogInfo struct {
-	// AppId : App unique ID. Might be missing due to historical data gap.
+	// AppId : App unique ID.
 	AppId string `json:"app_id,omitempty"`
-	// DisplayName : App display name. Might be missing due to historical data
-	// gap.
+	// DisplayName : App display name.
 	DisplayName string `json:"display_name,omitempty"`
 }
 
@@ -843,6 +950,39 @@ func IsAppLogInfoFromJSON(data []byte) (IsAppLogInfo, error) {
 
 	}
 	return nil, nil
+}
+
+// AppPermissionsChangedDetails : Changed app permissions.
+type AppPermissionsChangedDetails struct {
+	// AppName : Name of the app.
+	AppName string `json:"app_name,omitempty"`
+	// Permission : Permission that was changed.
+	Permission *AdminConsoleAppPermission `json:"permission,omitempty"`
+	// PreviousValue : Previous policy.
+	PreviousValue *AdminConsoleAppPolicy `json:"previous_value"`
+	// NewValue : New policy.
+	NewValue *AdminConsoleAppPolicy `json:"new_value"`
+}
+
+// NewAppPermissionsChangedDetails returns a new AppPermissionsChangedDetails instance
+func NewAppPermissionsChangedDetails(PreviousValue *AdminConsoleAppPolicy, NewValue *AdminConsoleAppPolicy) *AppPermissionsChangedDetails {
+	s := new(AppPermissionsChangedDetails)
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// AppPermissionsChangedType : has no documentation (yet)
+type AppPermissionsChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAppPermissionsChangedType returns a new AppPermissionsChangedType instance
+func NewAppPermissionsChangedType(Description string) *AppPermissionsChangedType {
+	s := new(AppPermissionsChangedType)
+	s.Description = Description
+	return s
 }
 
 // AppUnlinkTeamDetails : Unlinked app for team.
@@ -1506,20 +1646,24 @@ type ClassificationPolicyEnumWrapper struct {
 
 // Valid tag values for ClassificationPolicyEnumWrapper
 const (
-	ClassificationPolicyEnumWrapperDisabled = "disabled"
-	ClassificationPolicyEnumWrapperEnabled  = "enabled"
-	ClassificationPolicyEnumWrapperOther    = "other"
+	ClassificationPolicyEnumWrapperDisabled             = "disabled"
+	ClassificationPolicyEnumWrapperEnabled              = "enabled"
+	ClassificationPolicyEnumWrapperMemberAndTeamFolders = "member_and_team_folders"
+	ClassificationPolicyEnumWrapperTeamFolders          = "team_folders"
+	ClassificationPolicyEnumWrapperOther                = "other"
 )
 
-// ClassificationType : The type of classification (currently only PII)
+// ClassificationType : The type of classification (currently only personal
+// information)
 type ClassificationType struct {
 	dropbox.Tagged
 }
 
 // Valid tag values for ClassificationType
 const (
-	ClassificationTypePii   = "pii"
-	ClassificationTypeOther = "other"
+	ClassificationTypePersonalInformation = "personal_information"
+	ClassificationTypePii                 = "pii"
+	ClassificationTypeOther               = "other"
 )
 
 // CollectionShareDetails : Shared album.
@@ -1849,14 +1993,11 @@ func NewDeleteTeamInviteLinkType(Description string) *DeleteTeamInviteLinkType {
 
 // DeviceSessionLogInfo : Device's session logged information.
 type DeviceSessionLogInfo struct {
-	// IpAddress : The IP address of the last activity from this session. Might
-	// be missing due to historical data gap.
+	// IpAddress : The IP address of the last activity from this session.
 	IpAddress string `json:"ip_address,omitempty"`
-	// Created : The time this session was created. Might be missing due to
-	// historical data gap.
+	// Created : The time this session was created.
 	Created *time.Time `json:"created,omitempty"`
-	// Updated : The time of the last activity from this session. Might be
-	// missing due to historical data gap.
+	// Updated : The time of the last activity from this session.
 	Updated *time.Time `json:"updated,omitempty"`
 }
 
@@ -1961,8 +2102,7 @@ func IsDeviceSessionLogInfoFromJSON(data []byte) (IsDeviceSessionLogInfo, error)
 // sessions
 type DesktopDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Desktop session unique id. Might be missing due to
-	// historical data gap.
+	// SessionInfo : Desktop session unique id.
 	SessionInfo *DesktopSessionLogInfo `json:"session_info,omitempty"`
 	// HostName : Name of the hosting desktop.
 	HostName string `json:"host_name"`
@@ -1989,7 +2129,7 @@ func NewDesktopDeviceSessionLogInfo(HostName string, ClientType *team.DesktopPla
 
 // SessionLogInfo : Session's logged information.
 type SessionLogInfo struct {
-	// SessionId : Session ID. Might be missing due to historical data gap.
+	// SessionId : Session ID.
 	SessionId string `json:"session_id,omitempty"`
 }
 
@@ -2370,8 +2510,7 @@ func NewDeviceChangeIpWebType(Description string) *DeviceChangeIpWebType {
 // DeviceDeleteOnUnlinkFailDetails : Failed to delete all files from unlinked
 // device.
 type DeviceDeleteOnUnlinkFailDetails struct {
-	// SessionInfo : Session unique id. Might be missing due to historical data
-	// gap.
+	// SessionInfo : Session unique id.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
 	// DisplayName : The device name. Might be missing due to historical data
 	// gap.
@@ -2402,8 +2541,7 @@ func NewDeviceDeleteOnUnlinkFailType(Description string) *DeviceDeleteOnUnlinkFa
 
 // DeviceDeleteOnUnlinkSuccessDetails : Deleted all files from unlinked device.
 type DeviceDeleteOnUnlinkSuccessDetails struct {
-	// SessionInfo : Session unique id. Might be missing due to historical data
-	// gap.
+	// SessionInfo : Session unique id.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
 	// DisplayName : The device name. Might be missing due to historical data
 	// gap.
@@ -2687,6 +2825,18 @@ func NewDisabledDomainInvitesType(Description string) *DisabledDomainInvitesType
 	s.Description = Description
 	return s
 }
+
+// DispositionActionType : has no documentation (yet)
+type DispositionActionType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DispositionActionType
+const (
+	DispositionActionTypeAutomaticDelete            = "automatic_delete"
+	DispositionActionTypeAutomaticPermanentlyDelete = "automatic_permanently_delete"
+	DispositionActionTypeOther                      = "other"
+)
 
 // DomainInvitesApproveRequestToJoinTeamDetails : Approved user's request to
 // join team.
@@ -3324,6 +3474,8 @@ type EventDetails struct {
 	AdminAlertingChangedAlertConfigDetails *AdminAlertingChangedAlertConfigDetails `json:"admin_alerting_changed_alert_config_details,omitempty"`
 	// AdminAlertingTriggeredAlertDetails : has no documentation (yet)
 	AdminAlertingTriggeredAlertDetails *AdminAlertingTriggeredAlertDetails `json:"admin_alerting_triggered_alert_details,omitempty"`
+	// AppBlockedByPermissionsDetails : has no documentation (yet)
+	AppBlockedByPermissionsDetails *AppBlockedByPermissionsDetails `json:"app_blocked_by_permissions_details,omitempty"`
 	// AppLinkTeamDetails : has no documentation (yet)
 	AppLinkTeamDetails *AppLinkTeamDetails `json:"app_link_team_details,omitempty"`
 	// AppLinkUserDetails : has no documentation (yet)
@@ -3356,6 +3508,8 @@ type EventDetails struct {
 	GovernancePolicyAddFoldersDetails *GovernancePolicyAddFoldersDetails `json:"governance_policy_add_folders_details,omitempty"`
 	// GovernancePolicyAddFolderFailedDetails : has no documentation (yet)
 	GovernancePolicyAddFolderFailedDetails *GovernancePolicyAddFolderFailedDetails `json:"governance_policy_add_folder_failed_details,omitempty"`
+	// GovernancePolicyContentDisposedDetails : has no documentation (yet)
+	GovernancePolicyContentDisposedDetails *GovernancePolicyContentDisposedDetails `json:"governance_policy_content_disposed_details,omitempty"`
 	// GovernancePolicyCreateDetails : has no documentation (yet)
 	GovernancePolicyCreateDetails *GovernancePolicyCreateDetails `json:"governance_policy_create_details,omitempty"`
 	// GovernancePolicyDeleteDetails : has no documentation (yet)
@@ -3493,6 +3647,12 @@ type EventDetails struct {
 	FolderOverviewItemPinnedDetails *FolderOverviewItemPinnedDetails `json:"folder_overview_item_pinned_details,omitempty"`
 	// FolderOverviewItemUnpinnedDetails : has no documentation (yet)
 	FolderOverviewItemUnpinnedDetails *FolderOverviewItemUnpinnedDetails `json:"folder_overview_item_unpinned_details,omitempty"`
+	// ObjectLabelAddedDetails : has no documentation (yet)
+	ObjectLabelAddedDetails *ObjectLabelAddedDetails `json:"object_label_added_details,omitempty"`
+	// ObjectLabelRemovedDetails : has no documentation (yet)
+	ObjectLabelRemovedDetails *ObjectLabelRemovedDetails `json:"object_label_removed_details,omitempty"`
+	// ObjectLabelUpdatedValueDetails : has no documentation (yet)
+	ObjectLabelUpdatedValueDetails *ObjectLabelUpdatedValueDetails `json:"object_label_updated_value_details,omitempty"`
 	// RewindFolderDetails : has no documentation (yet)
 	RewindFolderDetails *RewindFolderDetails `json:"rewind_folder_details,omitempty"`
 	// FileRequestChangeDetails : has no documentation (yet)
@@ -4006,6 +4166,8 @@ type EventDetails struct {
 	AllowDownloadDisabledDetails *AllowDownloadDisabledDetails `json:"allow_download_disabled_details,omitempty"`
 	// AllowDownloadEnabledDetails : has no documentation (yet)
 	AllowDownloadEnabledDetails *AllowDownloadEnabledDetails `json:"allow_download_enabled_details,omitempty"`
+	// AppPermissionsChangedDetails : has no documentation (yet)
+	AppPermissionsChangedDetails *AppPermissionsChangedDetails `json:"app_permissions_changed_details,omitempty"`
 	// CameraUploadsPolicyChangedDetails : has no documentation (yet)
 	CameraUploadsPolicyChangedDetails *CameraUploadsPolicyChangedDetails `json:"camera_uploads_policy_changed_details,omitempty"`
 	// ClassificationChangePolicyDetails : has no documentation (yet)
@@ -4259,6 +4421,7 @@ type EventDetails struct {
 const (
 	EventDetailsAdminAlertingChangedAlertConfigDetails              = "admin_alerting_changed_alert_config_details"
 	EventDetailsAdminAlertingTriggeredAlertDetails                  = "admin_alerting_triggered_alert_details"
+	EventDetailsAppBlockedByPermissionsDetails                      = "app_blocked_by_permissions_details"
 	EventDetailsAppLinkTeamDetails                                  = "app_link_team_details"
 	EventDetailsAppLinkUserDetails                                  = "app_link_user_details"
 	EventDetailsAppUnlinkTeamDetails                                = "app_unlink_team_details"
@@ -4275,6 +4438,7 @@ const (
 	EventDetailsFileUnresolveCommentDetails                         = "file_unresolve_comment_details"
 	EventDetailsGovernancePolicyAddFoldersDetails                   = "governance_policy_add_folders_details"
 	EventDetailsGovernancePolicyAddFolderFailedDetails              = "governance_policy_add_folder_failed_details"
+	EventDetailsGovernancePolicyContentDisposedDetails              = "governance_policy_content_disposed_details"
 	EventDetailsGovernancePolicyCreateDetails                       = "governance_policy_create_details"
 	EventDetailsGovernancePolicyDeleteDetails                       = "governance_policy_delete_details"
 	EventDetailsGovernancePolicyEditDetailsDetails                  = "governance_policy_edit_details_details"
@@ -4343,6 +4507,9 @@ const (
 	EventDetailsFolderOverviewDescriptionChangedDetails             = "folder_overview_description_changed_details"
 	EventDetailsFolderOverviewItemPinnedDetails                     = "folder_overview_item_pinned_details"
 	EventDetailsFolderOverviewItemUnpinnedDetails                   = "folder_overview_item_unpinned_details"
+	EventDetailsObjectLabelAddedDetails                             = "object_label_added_details"
+	EventDetailsObjectLabelRemovedDetails                           = "object_label_removed_details"
+	EventDetailsObjectLabelUpdatedValueDetails                      = "object_label_updated_value_details"
 	EventDetailsRewindFolderDetails                                 = "rewind_folder_details"
 	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
 	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
@@ -4597,6 +4764,7 @@ const (
 	EventDetailsAccountCaptureChangePolicyDetails                   = "account_capture_change_policy_details"
 	EventDetailsAllowDownloadDisabledDetails                        = "allow_download_disabled_details"
 	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
+	EventDetailsAppPermissionsChangedDetails                        = "app_permissions_changed_details"
 	EventDetailsCameraUploadsPolicyChangedDetails                   = "camera_uploads_policy_changed_details"
 	EventDetailsClassificationChangePolicyDetails                   = "classification_change_policy_details"
 	EventDetailsComputerBackupPolicyChangedDetails                  = "computer_backup_policy_changed_details"
@@ -4740,6 +4908,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "app_blocked_by_permissions_details":
+		err = json.Unmarshal(body, &u.AppBlockedByPermissionsDetails)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team_details":
 		err = json.Unmarshal(body, &u.AppLinkTeamDetails)
 
@@ -4832,6 +5006,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "governance_policy_add_folder_failed_details":
 		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_content_disposed_details":
+		err = json.Unmarshal(body, &u.GovernancePolicyContentDisposedDetails)
 
 		if err != nil {
 			return err
@@ -5240,6 +5420,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "folder_overview_item_unpinned_details":
 		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinnedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_added_details":
+		err = json.Unmarshal(body, &u.ObjectLabelAddedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_removed_details":
+		err = json.Unmarshal(body, &u.ObjectLabelRemovedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_updated_value_details":
+		err = json.Unmarshal(body, &u.ObjectLabelUpdatedValueDetails)
 
 		if err != nil {
 			return err
@@ -6768,6 +6966,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "app_permissions_changed_details":
+		err = json.Unmarshal(body, &u.AppPermissionsChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "camera_uploads_policy_changed_details":
 		err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails)
 
@@ -7476,6 +7680,8 @@ type EventType struct {
 	AdminAlertingChangedAlertConfig *AdminAlertingChangedAlertConfigType `json:"admin_alerting_changed_alert_config,omitempty"`
 	// AdminAlertingTriggeredAlert : (admin_alerting) Triggered security alert
 	AdminAlertingTriggeredAlert *AdminAlertingTriggeredAlertType `json:"admin_alerting_triggered_alert,omitempty"`
+	// AppBlockedByPermissions : (apps) Failed to connect app for member
+	AppBlockedByPermissions *AppBlockedByPermissionsType `json:"app_blocked_by_permissions,omitempty"`
 	// AppLinkTeam : (apps) Linked app for team
 	AppLinkTeam *AppLinkTeamType `json:"app_link_team,omitempty"`
 	// AppLinkUser : (apps) Linked app for member
@@ -7512,6 +7718,8 @@ type EventType struct {
 	// GovernancePolicyAddFolderFailed : (data_governance) Couldn't add a folder
 	// to a policy
 	GovernancePolicyAddFolderFailed *GovernancePolicyAddFolderFailedType `json:"governance_policy_add_folder_failed,omitempty"`
+	// GovernancePolicyContentDisposed : (data_governance) Content disposed
+	GovernancePolicyContentDisposed *GovernancePolicyContentDisposedType `json:"governance_policy_content_disposed,omitempty"`
 	// GovernancePolicyCreate : (data_governance) Activated a new policy
 	GovernancePolicyCreate *GovernancePolicyCreateType `json:"governance_policy_create,omitempty"`
 	// GovernancePolicyDelete : (data_governance) Deleted a policy
@@ -7685,6 +7893,12 @@ type EventType struct {
 	// FolderOverviewItemUnpinned : (file_operations) Unpinned item from folder
 	// overview
 	FolderOverviewItemUnpinned *FolderOverviewItemUnpinnedType `json:"folder_overview_item_unpinned,omitempty"`
+	// ObjectLabelAdded : (file_operations) Added a label
+	ObjectLabelAdded *ObjectLabelAddedType `json:"object_label_added,omitempty"`
+	// ObjectLabelRemoved : (file_operations) Removed a label
+	ObjectLabelRemoved *ObjectLabelRemovedType `json:"object_label_removed,omitempty"`
+	// ObjectLabelUpdatedValue : (file_operations) Updated a label's value
+	ObjectLabelUpdatedValue *ObjectLabelUpdatedValueType `json:"object_label_updated_value,omitempty"`
 	// RewindFolder : (file_operations) Rewound a folder
 	RewindFolder *RewindFolderType `json:"rewind_folder,omitempty"`
 	// FileRequestChange : (file_requests) Changed file request
@@ -8310,6 +8524,8 @@ type EventType struct {
 	// AllowDownloadEnabled : (team_policies) Enabled downloads (deprecated, no
 	// longer logged)
 	AllowDownloadEnabled *AllowDownloadEnabledType `json:"allow_download_enabled,omitempty"`
+	// AppPermissionsChanged : (team_policies) Changed app permissions
+	AppPermissionsChanged *AppPermissionsChangedType `json:"app_permissions_changed,omitempty"`
 	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
 	// setting for team
 	CameraUploadsPolicyChanged *CameraUploadsPolicyChangedType `json:"camera_uploads_policy_changed,omitempty"`
@@ -8653,6 +8869,7 @@ type EventType struct {
 const (
 	EventTypeAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
 	EventTypeAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
+	EventTypeAppBlockedByPermissions                      = "app_blocked_by_permissions"
 	EventTypeAppLinkTeam                                  = "app_link_team"
 	EventTypeAppLinkUser                                  = "app_link_user"
 	EventTypeAppUnlinkTeam                                = "app_unlink_team"
@@ -8669,6 +8886,7 @@ const (
 	EventTypeFileUnresolveComment                         = "file_unresolve_comment"
 	EventTypeGovernancePolicyAddFolders                   = "governance_policy_add_folders"
 	EventTypeGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
+	EventTypeGovernancePolicyContentDisposed              = "governance_policy_content_disposed"
 	EventTypeGovernancePolicyCreate                       = "governance_policy_create"
 	EventTypeGovernancePolicyDelete                       = "governance_policy_delete"
 	EventTypeGovernancePolicyEditDetails                  = "governance_policy_edit_details"
@@ -8737,6 +8955,9 @@ const (
 	EventTypeFolderOverviewDescriptionChanged             = "folder_overview_description_changed"
 	EventTypeFolderOverviewItemPinned                     = "folder_overview_item_pinned"
 	EventTypeFolderOverviewItemUnpinned                   = "folder_overview_item_unpinned"
+	EventTypeObjectLabelAdded                             = "object_label_added"
+	EventTypeObjectLabelRemoved                           = "object_label_removed"
+	EventTypeObjectLabelUpdatedValue                      = "object_label_updated_value"
 	EventTypeRewindFolder                                 = "rewind_folder"
 	EventTypeFileRequestChange                            = "file_request_change"
 	EventTypeFileRequestClose                             = "file_request_close"
@@ -8991,6 +9212,7 @@ const (
 	EventTypeAccountCaptureChangePolicy                   = "account_capture_change_policy"
 	EventTypeAllowDownloadDisabled                        = "allow_download_disabled"
 	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
+	EventTypeAppPermissionsChanged                        = "app_permissions_changed"
 	EventTypeCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
 	EventTypeClassificationChangePolicy                   = "classification_change_policy"
 	EventTypeComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
@@ -9133,6 +9355,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "app_blocked_by_permissions":
+		err = json.Unmarshal(body, &u.AppBlockedByPermissions)
+
+		if err != nil {
+			return err
+		}
 	case "app_link_team":
 		err = json.Unmarshal(body, &u.AppLinkTeam)
 
@@ -9225,6 +9453,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "governance_policy_add_folder_failed":
 		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailed)
+
+		if err != nil {
+			return err
+		}
+	case "governance_policy_content_disposed":
+		err = json.Unmarshal(body, &u.GovernancePolicyContentDisposed)
 
 		if err != nil {
 			return err
@@ -9633,6 +9867,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "folder_overview_item_unpinned":
 		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinned)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_added":
+		err = json.Unmarshal(body, &u.ObjectLabelAdded)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_removed":
+		err = json.Unmarshal(body, &u.ObjectLabelRemoved)
+
+		if err != nil {
+			return err
+		}
+	case "object_label_updated_value":
+		err = json.Unmarshal(body, &u.ObjectLabelUpdatedValue)
 
 		if err != nil {
 			return err
@@ -11161,6 +11413,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "app_permissions_changed":
+		err = json.Unmarshal(body, &u.AppPermissionsChanged)
+
+		if err != nil {
+			return err
+		}
 	case "camera_uploads_policy_changed":
 		err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged)
 
@@ -11864,6 +12122,7 @@ type EventTypeArg struct {
 const (
 	EventTypeArgAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
 	EventTypeArgAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
+	EventTypeArgAppBlockedByPermissions                      = "app_blocked_by_permissions"
 	EventTypeArgAppLinkTeam                                  = "app_link_team"
 	EventTypeArgAppLinkUser                                  = "app_link_user"
 	EventTypeArgAppUnlinkTeam                                = "app_unlink_team"
@@ -11880,6 +12139,7 @@ const (
 	EventTypeArgFileUnresolveComment                         = "file_unresolve_comment"
 	EventTypeArgGovernancePolicyAddFolders                   = "governance_policy_add_folders"
 	EventTypeArgGovernancePolicyAddFolderFailed              = "governance_policy_add_folder_failed"
+	EventTypeArgGovernancePolicyContentDisposed              = "governance_policy_content_disposed"
 	EventTypeArgGovernancePolicyCreate                       = "governance_policy_create"
 	EventTypeArgGovernancePolicyDelete                       = "governance_policy_delete"
 	EventTypeArgGovernancePolicyEditDetails                  = "governance_policy_edit_details"
@@ -11948,6 +12208,9 @@ const (
 	EventTypeArgFolderOverviewDescriptionChanged             = "folder_overview_description_changed"
 	EventTypeArgFolderOverviewItemPinned                     = "folder_overview_item_pinned"
 	EventTypeArgFolderOverviewItemUnpinned                   = "folder_overview_item_unpinned"
+	EventTypeArgObjectLabelAdded                             = "object_label_added"
+	EventTypeArgObjectLabelRemoved                           = "object_label_removed"
+	EventTypeArgObjectLabelUpdatedValue                      = "object_label_updated_value"
 	EventTypeArgRewindFolder                                 = "rewind_folder"
 	EventTypeArgFileRequestChange                            = "file_request_change"
 	EventTypeArgFileRequestClose                             = "file_request_close"
@@ -12202,6 +12465,7 @@ const (
 	EventTypeArgAccountCaptureChangePolicy                   = "account_capture_change_policy"
 	EventTypeArgAllowDownloadDisabled                        = "allow_download_disabled"
 	EventTypeArgAllowDownloadEnabled                         = "allow_download_enabled"
+	EventTypeArgAppPermissionsChanged                        = "app_permissions_changed"
 	EventTypeArgCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
 	EventTypeArgClassificationChangePolicy                   = "classification_change_policy"
 	EventTypeArgComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
@@ -12480,8 +12744,7 @@ func NewExternalUserLogInfo(UserIdentifier string, IdentifierType *IdentifierTyp
 
 // FailureDetailsLogInfo : Provides details about a failure
 type FailureDetailsLogInfo struct {
-	// UserFriendlyMessage : A user friendly explanation of the error. Might be
-	// missing due to historical data gap.
+	// UserFriendlyMessage : A user friendly explanation of the error.
 	UserFriendlyMessage string `json:"user_friendly_message,omitempty"`
 	// TechnicalErrorMessage : A technical explanation of the error. This is
 	// relevant for some errors.
@@ -12622,7 +12885,7 @@ func (u *FederationStatusChangeAdditionalInfo) UnmarshalJSON(body []byte) error 
 
 // FileAddCommentDetails : Added file comment.
 type FileAddCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -12779,7 +13042,7 @@ func NewFileCopyType(Description string) *FileCopyType {
 
 // FileDeleteCommentDetails : Deleted file comment.
 type FileDeleteCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -12850,7 +13113,7 @@ func NewFileDownloadType(Description string) *FileDownloadType {
 
 // FileEditCommentDetails : Edited file comment.
 type FileEditCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 	// PreviousCommentText : Previous comment text.
 	PreviousCommentText string `json:"previous_comment_text"`
@@ -12924,7 +13187,7 @@ func NewFileGetCopyReferenceType(Description string) *FileGetCopyReferenceType {
 
 // FileLikeCommentDetails : Liked file comment.
 type FileLikeCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -13009,9 +13272,9 @@ func NewFileLockingPolicyChangedType(Description string) *FileLockingPolicyChang
 type FileOrFolderLogInfo struct {
 	// Path : Path relative to event context.
 	Path *PathLogInfo `json:"path"`
-	// DisplayName : Display name. Might be missing due to historical data gap.
+	// DisplayName : Display name.
 	DisplayName string `json:"display_name,omitempty"`
-	// FileId : Unique ID. Might be missing due to historical data gap.
+	// FileId : Unique ID.
 	FileId string `json:"file_id,omitempty"`
 	// FileSize : File or folder size in bytes.
 	FileSize uint64 `json:"file_size,omitempty"`
@@ -13230,7 +13493,6 @@ type FileRequestDeadline struct {
 	// historical data gap.
 	Deadline *time.Time `json:"deadline,omitempty"`
 	// AllowLateUploads : If set, allow uploads after the deadline has passed.
-	// Might be missing due to historical data gap.
 	AllowLateUploads string `json:"allow_late_uploads,omitempty"`
 }
 
@@ -13273,8 +13535,7 @@ func NewFileRequestDeleteType(Description string) *FileRequestDeleteType {
 type FileRequestDetails struct {
 	// AssetIndex : Asset position in the Assets list.
 	AssetIndex uint64 `json:"asset_index"`
-	// Deadline : File request deadline. Might be missing due to historical data
-	// gap.
+	// Deadline : File request deadline.
 	Deadline *FileRequestDeadline `json:"deadline,omitempty"`
 }
 
@@ -13295,11 +13556,9 @@ type FileRequestReceiveFileDetails struct {
 	FileRequestDetails *FileRequestDetails `json:"file_request_details,omitempty"`
 	// SubmittedFileNames : Submitted file names.
 	SubmittedFileNames []string `json:"submitted_file_names"`
-	// SubmitterName : The name as provided by the submitter. Might be missing
-	// due to historical data gap.
+	// SubmitterName : The name as provided by the submitter.
 	SubmitterName string `json:"submitter_name,omitempty"`
-	// SubmitterEmail : The email as provided by the submitter. Might be missing
-	// due to historical data gap.
+	// SubmitterEmail : The email as provided by the submitter.
 	SubmitterEmail string `json:"submitter_email,omitempty"`
 }
 
@@ -13413,7 +13672,7 @@ const (
 
 // FileResolveCommentDetails : Resolved file comment.
 type FileResolveCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -13704,7 +13963,7 @@ func NewFileTransfersTransferViewType(Description string) *FileTransfersTransfer
 
 // FileUnlikeCommentDetails : Unliked file comment.
 type FileUnlikeCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -13729,7 +13988,7 @@ func NewFileUnlikeCommentType(Description string) *FileUnlikeCommentType {
 
 // FileUnresolveCommentDetails : Unresolved file comment.
 type FileUnresolveCommentDetails struct {
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -14110,6 +14369,40 @@ type GovernancePolicyAddFoldersType struct {
 // NewGovernancePolicyAddFoldersType returns a new GovernancePolicyAddFoldersType instance
 func NewGovernancePolicyAddFoldersType(Description string) *GovernancePolicyAddFoldersType {
 	s := new(GovernancePolicyAddFoldersType)
+	s.Description = Description
+	return s
+}
+
+// GovernancePolicyContentDisposedDetails : Content disposed.
+type GovernancePolicyContentDisposedDetails struct {
+	// GovernancePolicyId : Policy ID.
+	GovernancePolicyId string `json:"governance_policy_id"`
+	// Name : Policy name.
+	Name string `json:"name"`
+	// PolicyType : Policy type.
+	PolicyType *PolicyType `json:"policy_type,omitempty"`
+	// DispositionType : Disposition type.
+	DispositionType *DispositionActionType `json:"disposition_type"`
+}
+
+// NewGovernancePolicyContentDisposedDetails returns a new GovernancePolicyContentDisposedDetails instance
+func NewGovernancePolicyContentDisposedDetails(GovernancePolicyId string, Name string, DispositionType *DispositionActionType) *GovernancePolicyContentDisposedDetails {
+	s := new(GovernancePolicyContentDisposedDetails)
+	s.GovernancePolicyId = GovernancePolicyId
+	s.Name = Name
+	s.DispositionType = DispositionType
+	return s
+}
+
+// GovernancePolicyContentDisposedType : has no documentation (yet)
+type GovernancePolicyContentDisposedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewGovernancePolicyContentDisposedType returns a new GovernancePolicyContentDisposedType instance
+func NewGovernancePolicyContentDisposedType(Description string) *GovernancePolicyContentDisposedType {
+	s := new(GovernancePolicyContentDisposedType)
 	s.Description = Description
 	return s
 }
@@ -14566,8 +14859,7 @@ func NewGroupChangeMemberRoleType(Description string) *GroupChangeMemberRoleType
 
 // GroupCreateDetails : Created group.
 type GroupCreateDetails struct {
-	// IsCompanyManaged : Is company managed group. Might be missing due to
-	// historical data gap.
+	// IsCompanyManaged : Is company managed group.
 	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
 	// JoinPolicy : Group join policy.
 	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
@@ -14594,8 +14886,7 @@ func NewGroupCreateType(Description string) *GroupCreateType {
 
 // GroupDeleteDetails : Deleted group.
 type GroupDeleteDetails struct {
-	// IsCompanyManaged : Is company managed group. Might be missing due to
-	// historical data gap.
+	// IsCompanyManaged : Is company managed group.
 	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
 }
 
@@ -14655,8 +14946,7 @@ const (
 
 // GroupJoinPolicyUpdatedDetails : Updated group join policy.
 type GroupJoinPolicyUpdatedDetails struct {
-	// IsCompanyManaged : Is company managed group. Might be missing due to
-	// historical data gap.
+	// IsCompanyManaged : Is company managed group.
 	IsCompanyManaged bool `json:"is_company_managed,omitempty"`
 	// JoinPolicy : Group join policy.
 	JoinPolicy *GroupJoinPolicy `json:"join_policy,omitempty"`
@@ -14683,13 +14973,11 @@ func NewGroupJoinPolicyUpdatedType(Description string) *GroupJoinPolicyUpdatedTy
 
 // GroupLogInfo : Group's logged information.
 type GroupLogInfo struct {
-	// GroupId : The unique id of this group. Might be missing due to historical
-	// data gap.
+	// GroupId : The unique id of this group.
 	GroupId string `json:"group_id,omitempty"`
 	// DisplayName : The name of this group.
 	DisplayName string `json:"display_name"`
-	// ExternalId : External group ID. Might be missing due to historical data
-	// gap.
+	// ExternalId : External group ID.
 	ExternalId string `json:"external_id,omitempty"`
 }
 
@@ -15087,11 +15375,21 @@ func NewJoinTeamDetails(LinkedApps []*UserLinkedAppLogInfo, LinkedDevices []*Lin
 	return s
 }
 
+// LabelType : Label type
+type LabelType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LabelType
+const (
+	LabelTypePersonalInformation = "personal_information"
+	LabelTypeOther               = "other"
+)
+
 // LegacyDeviceSessionLogInfo : Information on sessions, in legacy format
 type LegacyDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Session unique id. Might be missing due to historical data
-	// gap.
+	// SessionInfo : Session unique id.
 	SessionInfo IsSessionLogInfo `json:"session_info,omitempty"`
 	// DisplayName : The device name. Might be missing due to historical data
 	// gap.
@@ -16465,6 +16763,23 @@ func NewMemberTransferAccountContentsType(Description string) *MemberTransferAcc
 	return s
 }
 
+// MemberTransferredInternalFields : Internal only - fields for target team
+// computations
+type MemberTransferredInternalFields struct {
+	// SourceTeamId : Internal only - team user was moved from.
+	SourceTeamId string `json:"source_team_id"`
+	// TargetTeamId : Internal only - team user was moved to.
+	TargetTeamId string `json:"target_team_id"`
+}
+
+// NewMemberTransferredInternalFields returns a new MemberTransferredInternalFields instance
+func NewMemberTransferredInternalFields(SourceTeamId string, TargetTeamId string) *MemberTransferredInternalFields {
+	s := new(MemberTransferredInternalFields)
+	s.SourceTeamId = SourceTeamId
+	s.TargetTeamId = TargetTeamId
+	return s
+}
+
 // MicrosoftOfficeAddinChangePolicyDetails : Enabled/disabled Microsoft Office
 // add-in.
 type MicrosoftOfficeAddinChangePolicyDetails struct {
@@ -16525,8 +16840,7 @@ func NewMissingDetails() *MissingDetails {
 // sessions
 type MobileDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Mobile session unique id. Might be missing due to
-	// historical data gap.
+	// SessionInfo : Mobile session unique id.
 	SessionInfo *MobileSessionLogInfo `json:"session_info,omitempty"`
 	// DeviceName : The device name.
 	DeviceName string `json:"device_name"`
@@ -16561,13 +16875,11 @@ func NewMobileSessionLogInfo() *MobileSessionLogInfo {
 
 // NamespaceRelativePathLogInfo : Namespace relative path details.
 type NamespaceRelativePathLogInfo struct {
-	// NsId : Namespace ID. Might be missing due to historical data gap.
+	// NsId : Namespace ID.
 	NsId string `json:"ns_id,omitempty"`
-	// RelativePath : A path relative to the specified namespace ID. Might be
-	// missing due to historical data gap.
+	// RelativePath : A path relative to the specified namespace ID.
 	RelativePath string `json:"relative_path,omitempty"`
-	// IsSharedNamespace : True if the namespace is shared. Might be missing due
-	// to historical data gap.
+	// IsSharedNamespace : True if the namespace is shared.
 	IsSharedNamespace bool `json:"is_shared_namespace,omitempty"`
 }
 
@@ -16791,12 +17103,11 @@ func NewNoPasswordLinkViewReportFailedType(Description string) *NoPasswordLinkVi
 
 // UserLogInfo : User's logged information.
 type UserLogInfo struct {
-	// AccountId : User unique ID. Might be missing due to historical data gap.
+	// AccountId : User unique ID.
 	AccountId string `json:"account_id,omitempty"`
-	// DisplayName : User display name. Might be missing due to historical data
-	// gap.
+	// DisplayName : User display name.
 	DisplayName string `json:"display_name,omitempty"`
-	// Email : User email address. Might be missing due to historical data gap.
+	// Email : User email address.
 	Email string `json:"email,omitempty"`
 }
 
@@ -17020,6 +17331,84 @@ type NoteSharedType struct {
 // NewNoteSharedType returns a new NoteSharedType instance
 func NewNoteSharedType(Description string) *NoteSharedType {
 	s := new(NoteSharedType)
+	s.Description = Description
+	return s
+}
+
+// ObjectLabelAddedDetails : Added a label.
+type ObjectLabelAddedDetails struct {
+	// LabelType : Labels mark a file or folder.
+	LabelType *LabelType `json:"label_type"`
+}
+
+// NewObjectLabelAddedDetails returns a new ObjectLabelAddedDetails instance
+func NewObjectLabelAddedDetails(LabelType *LabelType) *ObjectLabelAddedDetails {
+	s := new(ObjectLabelAddedDetails)
+	s.LabelType = LabelType
+	return s
+}
+
+// ObjectLabelAddedType : has no documentation (yet)
+type ObjectLabelAddedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewObjectLabelAddedType returns a new ObjectLabelAddedType instance
+func NewObjectLabelAddedType(Description string) *ObjectLabelAddedType {
+	s := new(ObjectLabelAddedType)
+	s.Description = Description
+	return s
+}
+
+// ObjectLabelRemovedDetails : Removed a label.
+type ObjectLabelRemovedDetails struct {
+	// LabelType : Labels mark a file or folder.
+	LabelType *LabelType `json:"label_type"`
+}
+
+// NewObjectLabelRemovedDetails returns a new ObjectLabelRemovedDetails instance
+func NewObjectLabelRemovedDetails(LabelType *LabelType) *ObjectLabelRemovedDetails {
+	s := new(ObjectLabelRemovedDetails)
+	s.LabelType = LabelType
+	return s
+}
+
+// ObjectLabelRemovedType : has no documentation (yet)
+type ObjectLabelRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewObjectLabelRemovedType returns a new ObjectLabelRemovedType instance
+func NewObjectLabelRemovedType(Description string) *ObjectLabelRemovedType {
+	s := new(ObjectLabelRemovedType)
+	s.Description = Description
+	return s
+}
+
+// ObjectLabelUpdatedValueDetails : Updated a label's value.
+type ObjectLabelUpdatedValueDetails struct {
+	// LabelType : Labels mark a file or folder.
+	LabelType *LabelType `json:"label_type"`
+}
+
+// NewObjectLabelUpdatedValueDetails returns a new ObjectLabelUpdatedValueDetails instance
+func NewObjectLabelUpdatedValueDetails(LabelType *LabelType) *ObjectLabelUpdatedValueDetails {
+	s := new(ObjectLabelUpdatedValueDetails)
+	s.LabelType = LabelType
+	return s
+}
+
+// ObjectLabelUpdatedValueType : has no documentation (yet)
+type ObjectLabelUpdatedValueType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewObjectLabelUpdatedValueType returns a new ObjectLabelUpdatedValueType instance
+func NewObjectLabelUpdatedValueType(Description string) *ObjectLabelUpdatedValueType {
+	s := new(ObjectLabelUpdatedValueType)
 	s.Description = Description
 	return s
 }
@@ -17631,7 +18020,7 @@ func NewPaperDesktopPolicyChangedType(Description string) *PaperDesktopPolicyCha
 type PaperDocAddCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -17688,11 +18077,9 @@ func NewPaperDocChangeMemberRoleType(Description string) *PaperDocChangeMemberRo
 type PaperDocChangeSharingPolicyDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// PublicSharingPolicy : Sharing policy with external users. Might be
-	// missing due to historical data gap.
+	// PublicSharingPolicy : Sharing policy with external users.
 	PublicSharingPolicy string `json:"public_sharing_policy,omitempty"`
-	// TeamSharingPolicy : Sharing policy with team. Might be missing due to
-	// historical data gap.
+	// TeamSharingPolicy : Sharing policy with team.
 	TeamSharingPolicy string `json:"team_sharing_policy,omitempty"`
 }
 
@@ -17752,7 +18139,7 @@ func NewPaperDocChangeSubscriptionType(Description string) *PaperDocChangeSubscr
 type PaperDocDeleteCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -17835,7 +18222,7 @@ func NewPaperDocDownloadType(Description string) *PaperDocDownloadType {
 type PaperDocEditCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -17998,7 +18385,7 @@ func NewPaperDocRequestAccessType(Description string) *PaperDocRequestAccessType
 type PaperDocResolveCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -18130,7 +18517,7 @@ func NewPaperDocTrashedType(Description string) *PaperDocTrashedType {
 type PaperDocUnresolveCommentDetails struct {
 	// EventUuid : Event unique identifier.
 	EventUuid string `json:"event_uuid"`
-	// CommentText : Comment text. Might be missing due to historical data gap.
+	// CommentText : Comment text.
 	CommentText string `json:"comment_text,omitempty"`
 }
 
@@ -18776,8 +19163,7 @@ func NewPasswordStrengthRequirementsChangePolicyType(Description string) *Passwo
 
 // PathLogInfo : Path's details.
 type PathLogInfo struct {
-	// Contextual : Fully qualified path relative to event's context. Might be
-	// missing due to historical data gap.
+	// Contextual : Fully qualified path relative to event's context.
 	Contextual string `json:"contextual,omitempty"`
 	// NamespaceRelative : Path relative to the namespace containing the
 	// content.
@@ -18858,6 +19244,7 @@ const (
 	PlacementRestrictionEuropeOnly    = "europe_only"
 	PlacementRestrictionJapanOnly     = "japan_only"
 	PlacementRestrictionNone          = "none"
+	PlacementRestrictionUkOnly        = "uk_only"
 	PlacementRestrictionOther         = "other"
 )
 
@@ -18868,8 +19255,9 @@ type PolicyType struct {
 
 // Valid tag values for PolicyType
 const (
-	PolicyTypeRetention = "retention"
-	PolicyTypeOther     = "other"
+	PolicyTypeDisposition = "disposition"
+	PolicyTypeRetention   = "retention"
+	PolicyTypeOther       = "other"
 )
 
 // PrimaryTeamRequestAcceptedDetails : Team merge request acceptance details
@@ -18958,6 +19346,22 @@ const (
 	QuickActionTypeUnlinkSession       = "unlink_session"
 	QuickActionTypeOther               = "other"
 )
+
+// RecipientsConfiguration : Recipients Configuration
+type RecipientsConfiguration struct {
+	// RecipientSettingType : Recipients setting type.
+	RecipientSettingType *AlertRecipientsSettingType `json:"recipient_setting_type,omitempty"`
+	// Emails : A list of user emails to notify.
+	Emails []string `json:"emails,omitempty"`
+	// Groups : A list of groups to notify.
+	Groups []string `json:"groups,omitempty"`
+}
+
+// NewRecipientsConfiguration returns a new RecipientsConfiguration instance
+func NewRecipientsConfiguration() *RecipientsConfiguration {
+	s := new(RecipientsConfiguration)
+	return s
+}
 
 // RelocateAssetReferencesLogInfo : Provides the indices of the source asset and
 // the destination asset for a relocate action.
@@ -19366,8 +19770,7 @@ type SfAddGroupDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 	// TeamName : Team name.
 	TeamName string `json:"team_name"`
@@ -19402,8 +19805,7 @@ type SfAllowNonMembersToViewSharedLinksDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharedFolderType : Shared folder type. Might be missing due to historical
-	// data gap.
+	// SharedFolderType : Shared folder type.
 	SharedFolderType string `json:"shared_folder_type,omitempty"`
 }
 
@@ -19435,11 +19837,9 @@ type SfExternalInviteWarnDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// NewSharingPermission : New sharing permission. Might be missing due to
-	// historical data gap.
+	// NewSharingPermission : New sharing permission.
 	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
-	// PreviousSharingPermission : Previous sharing permission. Might be missing
-	// due to historical data gap.
+	// PreviousSharingPermission : Previous sharing permission.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
 }
 
@@ -19470,11 +19870,9 @@ type SfFbInviteChangeRoleDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// PreviousSharingPermission : Previous sharing permission. Might be missing
-	// due to historical data gap.
+	// PreviousSharingPermission : Previous sharing permission.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
-	// NewSharingPermission : New sharing permission. Might be missing due to
-	// historical data gap.
+	// NewSharingPermission : New sharing permission.
 	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
 }
 
@@ -19505,8 +19903,7 @@ type SfFbInviteDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
 
@@ -19621,11 +20018,9 @@ type SfTeamInviteChangeRoleDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// NewSharingPermission : New sharing permission. Might be missing due to
-	// historical data gap.
+	// NewSharingPermission : New sharing permission.
 	NewSharingPermission string `json:"new_sharing_permission,omitempty"`
-	// PreviousSharingPermission : Previous sharing permission. Might be missing
-	// due to historical data gap.
+	// PreviousSharingPermission : Previous sharing permission.
 	PreviousSharingPermission string `json:"previous_sharing_permission,omitempty"`
 }
 
@@ -19656,8 +20051,7 @@ type SfTeamInviteDetails struct {
 	TargetAssetIndex uint64 `json:"target_asset_index"`
 	// OriginalFolderName : Original shared folder name.
 	OriginalFolderName string `json:"original_folder_name"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
 
@@ -19706,8 +20100,7 @@ type SfTeamJoinFromOobLinkDetails struct {
 	OriginalFolderName string `json:"original_folder_name"`
 	// TokenKey : Shared link token key.
 	TokenKey string `json:"token_key,omitempty"`
-	// SharingPermission : Sharing permission. Might be missing due to
-	// historical data gap.
+	// SharingPermission : Sharing permission.
 	SharingPermission string `json:"sharing_permission,omitempty"`
 }
 
@@ -20063,8 +20456,7 @@ func NewSharedContentChangeMemberRoleType(Description string) *SharedContentChan
 type SharedContentChangeViewerInfoPolicyDetails struct {
 	// NewValue : New viewer info policy.
 	NewValue *sharing.ViewerInfoPolicy `json:"new_value"`
-	// PreviousValue : Previous view info policy. Might be missing due to
-	// historical data gap.
+	// PreviousValue : Previous view info policy.
 	PreviousValue *sharing.ViewerInfoPolicy `json:"previous_value,omitempty"`
 }
 
@@ -20563,8 +20955,7 @@ func NewSharedFolderChangeMembersPolicyType(Description string) *SharedFolderCha
 
 // SharedFolderCreateDetails : Created shared folder.
 type SharedFolderCreateDetails struct {
-	// TargetNsId : Target namespace ID. Might be missing due to historical data
-	// gap.
+	// TargetNsId : Target namespace ID.
 	TargetNsId string `json:"target_ns_id,omitempty"`
 }
 
@@ -20649,17 +21040,13 @@ func NewSharedFolderMountType(Description string) *SharedFolderMountType {
 
 // SharedFolderNestDetails : Changed parent of shared folder.
 type SharedFolderNestDetails struct {
-	// PreviousParentNsId : Previous parent namespace ID. Might be missing due
-	// to historical data gap.
+	// PreviousParentNsId : Previous parent namespace ID.
 	PreviousParentNsId string `json:"previous_parent_ns_id,omitempty"`
-	// NewParentNsId : New parent namespace ID. Might be missing due to
-	// historical data gap.
+	// NewParentNsId : New parent namespace ID.
 	NewParentNsId string `json:"new_parent_ns_id,omitempty"`
-	// PreviousNsPath : Previous namespace path. Might be missing due to
-	// historical data gap.
+	// PreviousNsPath : Previous namespace path.
 	PreviousNsPath string `json:"previous_ns_path,omitempty"`
-	// NewNsPath : New namespace path. Might be missing due to historical data
-	// gap.
+	// NewNsPath : New namespace path.
 	NewNsPath string `json:"new_ns_path,omitempty"`
 }
 
@@ -22594,8 +22981,7 @@ func NewSsoAddLoginUrlType(Description string) *SsoAddLoginUrlType {
 
 // SsoAddLogoutUrlDetails : Added sign-out URL for SSO.
 type SsoAddLogoutUrlDetails struct {
-	// NewValue : New single sign-on logout URL. Might be missing due to
-	// historical data gap.
+	// NewValue : New single sign-on logout URL.
 	NewValue string `json:"new_value,omitempty"`
 }
 
@@ -22681,8 +23067,7 @@ type SsoChangeLogoutUrlDetails struct {
 	// PreviousValue : Previous single sign-on logout URL. Might be missing due
 	// to historical data gap.
 	PreviousValue string `json:"previous_value,omitempty"`
-	// NewValue : New single sign-on logout URL. Might be missing due to
-	// historical data gap.
+	// NewValue : New single sign-on logout URL.
 	NewValue string `json:"new_value,omitempty"`
 }
 
@@ -23263,8 +23648,7 @@ func NewTeamLogInfo(DisplayName string) *TeamLogInfo {
 // TeamMemberLogInfo : Team member's logged information.
 type TeamMemberLogInfo struct {
 	UserLogInfo
-	// TeamMemberId : Team member ID. Might be missing due to historical data
-	// gap.
+	// TeamMemberId : Team member ID.
 	TeamMemberId string `json:"team_member_id,omitempty"`
 	// MemberExternalId : Team member external ID.
 	MemberExternalId string `json:"member_external_id,omitempty"`
@@ -24857,8 +25241,7 @@ func NewWatermarkingPolicyChangedType(Description string) *WatermarkingPolicyCha
 // WebDeviceSessionLogInfo : Information on active web sessions
 type WebDeviceSessionLogInfo struct {
 	DeviceSessionLogInfo
-	// SessionInfo : Web session unique id. Might be missing due to historical
-	// data gap.
+	// SessionInfo : Web session unique id.
 	SessionInfo *WebSessionLogInfo `json:"session_info,omitempty"`
 	// UserAgent : Information on the hosting device.
 	UserAgent string `json:"user_agent"`

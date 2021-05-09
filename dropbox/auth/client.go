@@ -34,7 +34,10 @@ type Client interface {
 	// TokenFromOauth1 : Creates an OAuth 2.0 access token from the supplied
 	// OAuth 1.0 access token.
 	TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error)
-	// TokenRevoke : Disables the access token used to authenticate the call.
+	// TokenRevoke : Disables the access token used to authenticate the call. If
+	// there is a corresponding refresh token for the access token, this
+	// disables that refresh token, as well as any other access tokens for that
+	// refresh token.
 	TokenRevoke() (err error)
 }
 
