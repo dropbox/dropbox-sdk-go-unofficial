@@ -1,6 +1,6 @@
 module github.com/dropbox/dropbox-sdk-go-unofficial/v6
 
-go 1.11
+go 1.13
 
 require (
 	golang.org/x/net v0.0.0-20201224014010-6772e930b67b
