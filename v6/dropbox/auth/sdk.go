@@ -43,15 +43,17 @@ func ParseError(err error, appError error) error {
 		return err
 	}
 
-	switch sdkErr.StatusCode {
-	case http.StatusBadRequest:
-		return BadRequest{
+	if sdkErr.StatusCode >= 500 && sdkErr.StatusCode <= 599 {
+		return ServerError{
 			APIError: dropbox.APIError{
 				ErrorSummary: sdkErr.Content,
 			},
 		}
-	case http.StatusInternalServerError:
-		return ServerError{
+	}
+
+	switch sdkErr.StatusCode {
+	case http.StatusBadRequest:
+		return BadRequest{
 			APIError: dropbox.APIError{
 				ErrorSummary: sdkErr.Content,
 			},
