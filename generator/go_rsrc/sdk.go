@@ -28,7 +28,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"mime"
 	"net/http"
 	"strings"
 
@@ -66,11 +65,12 @@ func (e APIError) Error() string {
 }
 
 type SDKInternalError struct {
-	error
+	StatusCode int
+	Content    string
+}
 
-	StatusCode  int
-	ContentType string
-	Content     string
+func (e SDKInternalError) Error() string {
+	return fmt.Sprintf("Unexpected error: %v (code: %v)", e.Content, e.StatusCode)
 }
 
 // Config contains parameters for configuring the SDK.
@@ -192,6 +192,9 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 		case "upload", "download":
 			httpReq.Header.Set("Dropbox-API-Arg", string(serializedArg))
 			httpReq.Header.Set("Content-Type", "application/octet-stream")
+			if body == nil {
+				body = bytes.NewReader(nil)
+			}
 			httpReq.Body = ioutil.NopCloser(body)
 		}
 	}
@@ -232,11 +235,9 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 		return nil, nil, err
 	}
 
-	contentType, _, _ := mime.ParseMediaType(resp.Header.Get("content-type"))
 	return nil, nil, SDKInternalError{
-		StatusCode:  resp.StatusCode,
-		ContentType: contentType,
-		Content:     string(b),
+		StatusCode: resp.StatusCode,
+		Content:    string(b),
 	}
 }
 
