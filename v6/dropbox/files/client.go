@@ -658,7 +658,7 @@ type CopyAPIError struct {
 
 func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 	log.Printf("WARNING: API `Copy` is deprecated")
-	log.Printf("Use API `Copy` instead")
+	log.Printf("Use API `CopyV2` instead")
 
 	cli := dbx.Client
 
@@ -804,7 +804,7 @@ type CopyBatchAPIError struct {
 
 func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
 	log.Printf("WARNING: API `CopyBatch` is deprecated")
-	log.Printf("Use API `CopyBatch` instead")
+	log.Printf("Use API `CopyBatchV2` instead")
 
 	cli := dbx.Client
 
@@ -939,7 +939,7 @@ type CopyBatchCheckAPIError struct {
 
 func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
 	log.Printf("WARNING: API `CopyBatchCheck` is deprecated")
-	log.Printf("Use API `CopyBatchCheck` instead")
+	log.Printf("Use API `CopyBatchCheckV2` instead")
 
 	cli := dbx.Client
 
@@ -1206,7 +1206,7 @@ type CreateFolderAPIError struct {
 
 func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err error) {
 	log.Printf("WARNING: API `CreateFolder` is deprecated")
-	log.Printf("Use API `CreateFolder` instead")
+	log.Printf("Use API `CreateFolderV2` instead")
 
 	cli := dbx.Client
 
@@ -1473,7 +1473,7 @@ type DeleteAPIError struct {
 
 func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
 	log.Printf("WARNING: API `Delete` is deprecated")
-	log.Printf("Use API `Delete` instead")
+	log.Printf("Use API `DeleteV2` instead")
 
 	cli := dbx.Client
 
@@ -2890,7 +2890,7 @@ type MoveAPIError struct {
 
 func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
 	log.Printf("WARNING: API `Move` is deprecated")
-	log.Printf("Use API `Move` instead")
+	log.Printf("Use API `MoveV2` instead")
 
 	cli := dbx.Client
 
@@ -3036,7 +3036,7 @@ type MoveBatchAPIError struct {
 
 func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaunch, err error) {
 	log.Printf("WARNING: API `MoveBatch` is deprecated")
-	log.Printf("Use API `MoveBatch` instead")
+	log.Printf("Use API `MoveBatchV2` instead")
 
 	cli := dbx.Client
 
@@ -3171,7 +3171,7 @@ type MoveBatchCheckAPIError struct {
 
 func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobStatus, err error) {
 	log.Printf("WARNING: API `MoveBatchCheck` is deprecated")
-	log.Printf("Use API `MoveBatchCheck` instead")
+	log.Printf("Use API `MoveBatchCheckV2` instead")
 
 	cli := dbx.Client
 
@@ -4013,7 +4013,7 @@ type SearchAPIError struct {
 
 func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 	log.Printf("WARNING: API `Search` is deprecated")
-	log.Printf("Use API `Search` instead")
+	log.Printf("Use API `SearchV2` instead")
 
 	cli := dbx.Client
 
@@ -4409,7 +4409,7 @@ type UploadSessionAppendAPIError struct {
 
 func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error) {
 	log.Printf("WARNING: API `UploadSessionAppend` is deprecated")
-	log.Printf("Use API `UploadSessionAppend` instead")
+	log.Printf("Use API `UploadSessionAppendV2` instead")
 
 	cli := dbx.Client
 
