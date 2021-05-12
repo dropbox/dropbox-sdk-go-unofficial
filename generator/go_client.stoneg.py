@@ -91,7 +91,10 @@ class GoClientBackend(CodeBackend):
             if route.deprecated is not None:
                 out('log.Printf("WARNING: API `%s` is deprecated")' % fn)
                 if route.deprecated.by is not None:
-                    out('log.Printf("Use API `%s` instead")' % fmt_var(route.deprecated.by.name))
+                    replacement_fn = fmt_var(route.deprecated.by.name)
+                    if route.deprecated.by.version != 1:
+                        replacement_fn += "V%d" % route.deprecated.by.version
+                    out('log.Printf("Use API `%s` instead")' % replacement_fn)
                 out()
 
             args = {

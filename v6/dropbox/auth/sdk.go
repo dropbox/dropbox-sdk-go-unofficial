@@ -37,7 +37,7 @@ type ServerError struct {
 	StatusCode int
 }
 
-func ParseError(err error, appError interface{}) error {
+func ParseError(err error, appError error) error {
 	sdkErr, ok := err.(dropbox.SDKInternalError)
 	if !ok {
 		return err
@@ -77,6 +77,12 @@ func ParseError(err error, appError interface{}) error {
 		}
 
 		return apiError
+	case http.StatusConflict:
+		if pErr := json.Unmarshal([]byte(sdkErr.Content), appError); pErr != nil {
+			return pErr
+		}
+
+		return appError
 	}
 
 	return err
