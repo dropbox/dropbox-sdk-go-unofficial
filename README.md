@@ -1,4 +1,4 @@
-# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://godoc.org/github.com/dropbox/dropbox-sdk-go-unofficial/dropbox?status.svg)](https://godoc.org/github.com/dropbox/dropbox-sdk-go-unofficial/dropbox) [![Build Status](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial.svg?branch=master)](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial) [![Go Report Card](https://goreportcard.com/badge/github.com/dropbox/dropbox-sdk-go-unofficial)](https://goreportcard.com/report/github.com/dropbox/dropbox-sdk-go-unofficial)
+# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Build Status](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial.svg?branch=master)](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial) [![Go Report Card](https://goreportcard.com/badge/github.com/dropbox/dropbox-sdk-go-unofficial)](https://goreportcard.com/report/github.com/dropbox/dropbox-sdk-go-unofficial)
 
 An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.11+
 
@@ -17,18 +17,18 @@ An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go
 ## Installation
 
 ```sh
-$ go get github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/...
+$ go get github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/...
 ```
 
 For most applications, you should just import the relevant namespace(s) only. The SDK exports the following sub-packages:
 
-* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/auth`
-* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/files`
-* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/sharing`
-* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/team`
-* `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/team`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users`
 
-Additionally, the base `github.com/dropbox/dropbox-sdk-go-unofficial/dropbox` package exports some configuration and helper methods.
+Additionally, the base `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox` package exports some configuration and helper methods.
 
 ## Usage
 
@@ -39,8 +39,8 @@ First, you need to [register a new "app"](https://dropbox.com/developers/apps) t
 Once you've created an app, you can get an access token from the app's console. Note that this token will only work for the Dropbox account the token is associated with.
 
 ```go
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox"
-import "github.com/dropbox/dropbox-sdk-go-unofficial/dropbox/users"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users"
 
 func main() {
   config := dropbox.Config{
@@ -54,7 +54,7 @@ func main() {
 
 ### Using OAuth2 flow
 
-For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See [this](https://godoc.org/golang.org/x/oauth2#example-Config) for an example of oauth2 flow in Go.
+For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See [this](https://pkg.go.dev/golang.org/x/oauth2#example-Config) for an example of oauth2 flow in Go.
 
 Once you have the token, usage is same as above.
 
