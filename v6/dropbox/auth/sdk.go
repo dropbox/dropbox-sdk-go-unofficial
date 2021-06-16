@@ -2,9 +2,7 @@ package auth
 
 import (
 	"encoding/json"
-	"mime"
 	"net/http"
-	"strconv"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 )
@@ -27,41 +25,67 @@ type RateLimitAPIError struct {
 	RateLimitError *RateLimitError `json:"error"`
 }
 
-// HandleCommonAuthErrors handles common authentication errors
-func HandleCommonAuthErrors(c dropbox.Config, resp *http.Response, body []byte) error {
-	switch resp.StatusCode {
+// Bad input parameter.
+type BadRequest struct {
+	dropbox.APIError
+}
+
+// An error occurred on the Dropbox servers. Check status.dropbox.com for announcements about
+// Dropbox service issues.
+type ServerError struct {
+	dropbox.APIError
+	StatusCode int
+}
+
+func ParseError(err error, appError error) error {
+	sdkErr, ok := err.(dropbox.SDKInternalError)
+	if !ok {
+		return err
+	}
+
+	if sdkErr.StatusCode >= 500 && sdkErr.StatusCode <= 599 {
+		return ServerError{
+			APIError: dropbox.APIError{
+				ErrorSummary: sdkErr.Content,
+			},
+		}
+	}
+
+	switch sdkErr.StatusCode {
+	case http.StatusBadRequest:
+		return BadRequest{
+			APIError: dropbox.APIError{
+				ErrorSummary: sdkErr.Content,
+			},
+		}
 	case http.StatusUnauthorized:
 		var apiError AuthAPIError
-		if err := json.Unmarshal(body, &apiError); err != nil {
-			c.LogDebug("Error unmarshaling '%s' into JSON", body)
-			return err
+		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
+			return pErr
 		}
+
 		return apiError
 	case http.StatusForbidden:
 		var apiError AccessAPIError
-		if err := json.Unmarshal(body, &apiError); err != nil {
-			c.LogDebug("Error unmarshaling '%s' into JSON", body)
-			return err
+		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
+			return pErr
 		}
+
 		return apiError
 	case http.StatusTooManyRequests:
 		var apiError RateLimitAPIError
-		// Check content-type
-		contentType, _, _ := mime.ParseMediaType(resp.Header.Get("content-type"))
-		if contentType == "application/json" {
-			if err := json.Unmarshal(body, &apiError); err != nil {
-				c.LogDebug("Error unmarshaling '%s' into JSON", body)
-				return err
-			}
-		} else { // assume plain text
-			apiError.ErrorSummary = string(body)
-			reason := RateLimitReason{dropbox.Tagged{Tag: RateLimitReasonTooManyRequests}}
-			apiError.RateLimitError = NewRateLimitError(&reason)
-			timeout, _ := strconv.ParseInt(resp.Header.Get("retry-after"), 10, 64)
-			apiError.RateLimitError.RetryAfter = uint64(timeout)
+		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
+			return pErr
 		}
+
 		return apiError
-	default:
-		return nil
+	case http.StatusConflict:
+		if pErr := json.Unmarshal([]byte(sdkErr.Content), appError); pErr != nil {
+			return pErr
+		}
+
+		return appError
 	}
+
+	return err
 }
