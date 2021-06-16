@@ -83,6 +83,8 @@ type Config struct {
 	Logger *log.Logger
 	// Used with APIs that support operations as another user
 	AsMemberID string
+	// Path relative to which action should be taken
+	PathRoot string
 	// No need to set -- for testing only
 	Domain string
 	// No need to set -- for testing only
@@ -132,6 +134,17 @@ func (c *Config) LogInfo(format string, v ...interface{}) {
 	c.doLog(LogInfo, format, v...)
 }
 
+// Ergonomic methods to set namespace relative to which action should be taken
+func (c Config) WithNamespaceID(nsID string) Config {
+	c.PathRoot = fmt.Sprintf(`{".tag": "namespace_id", "namespace_id": "%s"}`, nsID)
+	return c
+}
+
+func (c Config) WithRoot(nsID string) Config {
+	c.PathRoot = fmt.Sprintf(`{".tag": "root", "root": "%s"}`, nsID)
+	return c
+}
+
 // Context is the base client context used to implement per-namespace clients.
 type Context struct {
 	Config          Config
@@ -173,6 +186,12 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 
 	if req.Auth == "noauth" {
 		httpReq.Header.Del("Authorization")
+	}
+	if req.Auth != "team" && c.Config.AsMemberID != "" {
+		httpReq.Header.Add("Dropbox-API-Select-User", c.Config.AsMemberID)
+	}
+	if c.Config.PathRoot != "" {
+		httpReq.Header.Add("Dropbox-API-Path-Root", c.Config.PathRoot)
 	}
 
 	if req.Arg != nil {
