@@ -167,7 +167,7 @@ type Request struct {
 
 func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, error) {
 	url := c.URLGenerator(req.Host, req.Namespace, req.Route)
-	httpReq, err := http.NewRequest("POST", url, nil)
+	httpReq, err := http.NewRequest("POST", url, body)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -208,13 +208,10 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 
 			httpReq.Header.Set("Content-Type", "application/json")
 			httpReq.Body = ioutil.NopCloser(bytes.NewReader(serializedArg))
+			httpReq.ContentLength = int64(len(serializedArg))
 		case "upload", "download":
 			httpReq.Header.Set("Dropbox-API-Arg", string(serializedArg))
 			httpReq.Header.Set("Content-Type", "application/octet-stream")
-			if body == nil {
-				body = bytes.NewReader(nil)
-			}
-			httpReq.Body = ioutil.NopCloser(body)
 		}
 	}
 
