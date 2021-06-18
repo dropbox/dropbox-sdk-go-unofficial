@@ -57,7 +57,7 @@ func (dbx *apiImpl) SetProfilePhoto(arg *SetProfilePhotoArg) (res *SetProfilePho
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &SetProfilePhotoAPIError{})
+		err = auth.ParseError(err, SetProfilePhotoAPIError{})
 		return
 	}
 

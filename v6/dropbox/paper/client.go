@@ -253,7 +253,7 @@ func (dbx *apiImpl) DocsArchive(arg *RefPaperDoc) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsArchiveAPIError{})
+		err = auth.ParseError(err, DocsArchiveAPIError{})
 		return
 	}
 
@@ -285,7 +285,7 @@ func (dbx *apiImpl) DocsCreate(arg *PaperDocCreateArgs, content io.Reader) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, &DocsCreateAPIError{})
+		err = auth.ParseError(err, DocsCreateAPIError{})
 		return
 	}
 
@@ -321,7 +321,7 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsDownloadAPIError{})
+		err = auth.ParseError(err, DocsDownloadAPIError{})
 		return
 	}
 
@@ -357,7 +357,7 @@ func (dbx *apiImpl) DocsFolderUsersList(arg *ListUsersOnFolderArgs) (res *ListUs
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsFolderUsersListAPIError{})
+		err = auth.ParseError(err, DocsFolderUsersListAPIError{})
 		return
 	}
 
@@ -393,7 +393,7 @@ func (dbx *apiImpl) DocsFolderUsersListContinue(arg *ListUsersOnFolderContinueAr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsFolderUsersListContinueAPIError{})
+		err = auth.ParseError(err, DocsFolderUsersListContinueAPIError{})
 		return
 	}
 
@@ -429,7 +429,7 @@ func (dbx *apiImpl) DocsGetFolderInfo(arg *RefPaperDoc) (res *FoldersContainingP
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsGetFolderInfoAPIError{})
+		err = auth.ParseError(err, DocsGetFolderInfoAPIError{})
 		return
 	}
 
@@ -465,7 +465,7 @@ func (dbx *apiImpl) DocsList(arg *ListPaperDocsArgs) (res *ListPaperDocsResponse
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsListAPIError{})
+		err = auth.ParseError(err, DocsListAPIError{})
 		return
 	}
 
@@ -501,7 +501,7 @@ func (dbx *apiImpl) DocsListContinue(arg *ListPaperDocsContinueArgs) (res *ListP
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsListContinueAPIError{})
+		err = auth.ParseError(err, DocsListContinueAPIError{})
 		return
 	}
 
@@ -537,7 +537,7 @@ func (dbx *apiImpl) DocsPermanentlyDelete(arg *RefPaperDoc) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsPermanentlyDeleteAPIError{})
+		err = auth.ParseError(err, DocsPermanentlyDeleteAPIError{})
 		return
 	}
 
@@ -569,7 +569,7 @@ func (dbx *apiImpl) DocsSharingPolicyGet(arg *RefPaperDoc) (res *SharingPolicy, 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsSharingPolicyGetAPIError{})
+		err = auth.ParseError(err, DocsSharingPolicyGetAPIError{})
 		return
 	}
 
@@ -605,7 +605,7 @@ func (dbx *apiImpl) DocsSharingPolicySet(arg *PaperDocSharingPolicy) (err error)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsSharingPolicySetAPIError{})
+		err = auth.ParseError(err, DocsSharingPolicySetAPIError{})
 		return
 	}
 
@@ -637,7 +637,7 @@ func (dbx *apiImpl) DocsUpdate(arg *PaperDocUpdateArgs, content io.Reader) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, &DocsUpdateAPIError{})
+		err = auth.ParseError(err, DocsUpdateAPIError{})
 		return
 	}
 
@@ -673,7 +673,7 @@ func (dbx *apiImpl) DocsUsersAdd(arg *AddPaperDocUser) (res []*AddPaperDocUserMe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsUsersAddAPIError{})
+		err = auth.ParseError(err, DocsUsersAddAPIError{})
 		return
 	}
 
@@ -709,7 +709,7 @@ func (dbx *apiImpl) DocsUsersList(arg *ListUsersOnPaperDocArgs) (res *ListUsersO
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsUsersListAPIError{})
+		err = auth.ParseError(err, DocsUsersListAPIError{})
 		return
 	}
 
@@ -745,7 +745,7 @@ func (dbx *apiImpl) DocsUsersListContinue(arg *ListUsersOnPaperDocContinueArgs) 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsUsersListContinueAPIError{})
+		err = auth.ParseError(err, DocsUsersListContinueAPIError{})
 		return
 	}
 
@@ -781,7 +781,7 @@ func (dbx *apiImpl) DocsUsersRemove(arg *RemovePaperDocUser) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DocsUsersRemoveAPIError{})
+		err = auth.ParseError(err, DocsUsersRemoveAPIError{})
 		return
 	}
 
@@ -813,7 +813,7 @@ func (dbx *apiImpl) FoldersCreate(arg *PaperFolderCreateArg) (res *PaperFolderCr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &FoldersCreateAPIError{})
+		err = auth.ParseError(err, FoldersCreateAPIError{})
 		return
 	}
 
