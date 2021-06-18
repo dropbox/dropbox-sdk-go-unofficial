@@ -69,7 +69,7 @@ func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &AppAPIError{})
+		err = auth.ParseError(err, AppAPIError{})
 		return
 	}
 
@@ -103,7 +103,7 @@ func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &UserAPIError{})
+		err = auth.ParseError(err, UserAPIError{})
 		return
 	}
 

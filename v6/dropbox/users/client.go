@@ -68,7 +68,7 @@ func (dbx *apiImpl) FeaturesGetValues(arg *UserFeaturesGetValuesBatchArg) (res *
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &FeaturesGetValuesAPIError{})
+		err = auth.ParseError(err, FeaturesGetValuesAPIError{})
 		return
 	}
 
@@ -102,7 +102,7 @@ func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetAccountAPIError{})
+		err = auth.ParseError(err, GetAccountAPIError{})
 		return
 	}
 
@@ -136,7 +136,7 @@ func (dbx *apiImpl) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccoun
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetAccountBatchAPIError{})
+		err = auth.ParseError(err, GetAccountBatchAPIError{})
 		return
 	}
 
@@ -170,7 +170,7 @@ func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetCurrentAccountAPIError{})
+		err = auth.ParseError(err, GetCurrentAccountAPIError{})
 		return
 	}
 
@@ -204,7 +204,7 @@ func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetSpaceUsageAPIError{})
+		err = auth.ParseError(err, GetSpaceUsageAPIError{})
 		return
 	}
 

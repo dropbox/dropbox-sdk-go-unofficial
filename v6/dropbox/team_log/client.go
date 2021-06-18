@@ -69,7 +69,7 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetEventsAPIError{})
+		err = auth.ParseError(err, GetEventsAPIError{})
 		return
 	}
 
@@ -103,7 +103,7 @@ func (dbx *apiImpl) GetEventsContinue(arg *GetTeamEventsContinueArg) (res *GetTe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetEventsContinueAPIError{})
+		err = auth.ParseError(err, GetEventsContinueAPIError{})
 		return
 	}
 

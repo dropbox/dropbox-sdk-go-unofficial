@@ -411,7 +411,7 @@ func (dbx *apiImpl) DevicesListMemberDevices(arg *ListMemberDevicesArg) (res *Li
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DevicesListMemberDevicesAPIError{})
+		err = auth.ParseError(err, DevicesListMemberDevicesAPIError{})
 		return
 	}
 
@@ -445,7 +445,7 @@ func (dbx *apiImpl) DevicesListMembersDevices(arg *ListMembersDevicesArg) (res *
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DevicesListMembersDevicesAPIError{})
+		err = auth.ParseError(err, DevicesListMembersDevicesAPIError{})
 		return
 	}
 
@@ -482,7 +482,7 @@ func (dbx *apiImpl) DevicesListTeamDevices(arg *ListTeamDevicesArg) (res *ListTe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DevicesListTeamDevicesAPIError{})
+		err = auth.ParseError(err, DevicesListTeamDevicesAPIError{})
 		return
 	}
 
@@ -516,7 +516,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSession(arg *RevokeDeviceSessionArg) (err
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DevicesRevokeDeviceSessionAPIError{})
+		err = auth.ParseError(err, DevicesRevokeDeviceSessionAPIError{})
 		return
 	}
 
@@ -546,7 +546,7 @@ func (dbx *apiImpl) DevicesRevokeDeviceSessionBatch(arg *RevokeDeviceSessionBatc
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DevicesRevokeDeviceSessionBatchAPIError{})
+		err = auth.ParseError(err, DevicesRevokeDeviceSessionBatchAPIError{})
 		return
 	}
 
@@ -580,7 +580,7 @@ func (dbx *apiImpl) FeaturesGetValues(arg *FeaturesGetValuesBatchArg) (res *Feat
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &FeaturesGetValuesAPIError{})
+		err = auth.ParseError(err, FeaturesGetValuesAPIError{})
 		return
 	}
 
@@ -614,7 +614,7 @@ func (dbx *apiImpl) GetInfo() (res *TeamGetInfoResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GetInfoAPIError{})
+		err = auth.ParseError(err, GetInfoAPIError{})
 		return
 	}
 
@@ -648,7 +648,7 @@ func (dbx *apiImpl) GroupsCreate(arg *GroupCreateArg) (res *GroupFullInfo, err e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsCreateAPIError{})
+		err = auth.ParseError(err, GroupsCreateAPIError{})
 		return
 	}
 
@@ -682,7 +682,7 @@ func (dbx *apiImpl) GroupsDelete(arg *GroupSelector) (res *async.LaunchEmptyResu
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsDeleteAPIError{})
+		err = auth.ParseError(err, GroupsDeleteAPIError{})
 		return
 	}
 
@@ -716,7 +716,7 @@ func (dbx *apiImpl) GroupsGetInfo(arg *GroupsSelector) (res []*GroupsGetInfoItem
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsGetInfoAPIError{})
+		err = auth.ParseError(err, GroupsGetInfoAPIError{})
 		return
 	}
 
@@ -750,7 +750,7 @@ func (dbx *apiImpl) GroupsJobStatusGet(arg *async.PollArg) (res *async.PollEmpty
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsJobStatusGetAPIError{})
+		err = auth.ParseError(err, GroupsJobStatusGetAPIError{})
 		return
 	}
 
@@ -784,7 +784,7 @@ func (dbx *apiImpl) GroupsList(arg *GroupsListArg) (res *GroupsListResult, err e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsListAPIError{})
+		err = auth.ParseError(err, GroupsListAPIError{})
 		return
 	}
 
@@ -818,7 +818,7 @@ func (dbx *apiImpl) GroupsListContinue(arg *GroupsListContinueArg) (res *GroupsL
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsListContinueAPIError{})
+		err = auth.ParseError(err, GroupsListContinueAPIError{})
 		return
 	}
 
@@ -852,7 +852,7 @@ func (dbx *apiImpl) GroupsMembersAdd(arg *GroupMembersAddArg) (res *GroupMembers
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsMembersAddAPIError{})
+		err = auth.ParseError(err, GroupsMembersAddAPIError{})
 		return
 	}
 
@@ -886,7 +886,7 @@ func (dbx *apiImpl) GroupsMembersList(arg *GroupsMembersListArg) (res *GroupsMem
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsMembersListAPIError{})
+		err = auth.ParseError(err, GroupsMembersListAPIError{})
 		return
 	}
 
@@ -920,7 +920,7 @@ func (dbx *apiImpl) GroupsMembersListContinue(arg *GroupsMembersListContinueArg)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsMembersListContinueAPIError{})
+		err = auth.ParseError(err, GroupsMembersListContinueAPIError{})
 		return
 	}
 
@@ -954,7 +954,7 @@ func (dbx *apiImpl) GroupsMembersRemove(arg *GroupMembersRemoveArg) (res *GroupM
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsMembersRemoveAPIError{})
+		err = auth.ParseError(err, GroupsMembersRemoveAPIError{})
 		return
 	}
 
@@ -988,7 +988,7 @@ func (dbx *apiImpl) GroupsMembersSetAccessType(arg *GroupMembersSetAccessTypeArg
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsMembersSetAccessTypeAPIError{})
+		err = auth.ParseError(err, GroupsMembersSetAccessTypeAPIError{})
 		return
 	}
 
@@ -1022,7 +1022,7 @@ func (dbx *apiImpl) GroupsUpdate(arg *GroupUpdateArgs) (res *GroupFullInfo, err 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &GroupsUpdateAPIError{})
+		err = auth.ParseError(err, GroupsUpdateAPIError{})
 		return
 	}
 
@@ -1056,7 +1056,7 @@ func (dbx *apiImpl) LegalHoldsCreatePolicy(arg *LegalHoldsPolicyCreateArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsCreatePolicyAPIError{})
+		err = auth.ParseError(err, LegalHoldsCreatePolicyAPIError{})
 		return
 	}
 
@@ -1090,7 +1090,7 @@ func (dbx *apiImpl) LegalHoldsGetPolicy(arg *LegalHoldsGetPolicyArg) (res *Legal
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsGetPolicyAPIError{})
+		err = auth.ParseError(err, LegalHoldsGetPolicyAPIError{})
 		return
 	}
 
@@ -1124,7 +1124,7 @@ func (dbx *apiImpl) LegalHoldsListHeldRevisions(arg *LegalHoldsListHeldRevisions
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsListHeldRevisionsAPIError{})
+		err = auth.ParseError(err, LegalHoldsListHeldRevisionsAPIError{})
 		return
 	}
 
@@ -1158,7 +1158,7 @@ func (dbx *apiImpl) LegalHoldsListHeldRevisionsContinue(arg *LegalHoldsListHeldR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsListHeldRevisionsContinueAPIError{})
+		err = auth.ParseError(err, LegalHoldsListHeldRevisionsContinueAPIError{})
 		return
 	}
 
@@ -1192,7 +1192,7 @@ func (dbx *apiImpl) LegalHoldsListPolicies(arg *LegalHoldsListPoliciesArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsListPoliciesAPIError{})
+		err = auth.ParseError(err, LegalHoldsListPoliciesAPIError{})
 		return
 	}
 
@@ -1226,7 +1226,7 @@ func (dbx *apiImpl) LegalHoldsReleasePolicy(arg *LegalHoldsPolicyReleaseArg) (er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsReleasePolicyAPIError{})
+		err = auth.ParseError(err, LegalHoldsReleasePolicyAPIError{})
 		return
 	}
 
@@ -1256,7 +1256,7 @@ func (dbx *apiImpl) LegalHoldsUpdatePolicy(arg *LegalHoldsPolicyUpdateArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LegalHoldsUpdatePolicyAPIError{})
+		err = auth.ParseError(err, LegalHoldsUpdatePolicyAPIError{})
 		return
 	}
 
@@ -1290,7 +1290,7 @@ func (dbx *apiImpl) LinkedAppsListMemberLinkedApps(arg *ListMemberAppsArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LinkedAppsListMemberLinkedAppsAPIError{})
+		err = auth.ParseError(err, LinkedAppsListMemberLinkedAppsAPIError{})
 		return
 	}
 
@@ -1324,7 +1324,7 @@ func (dbx *apiImpl) LinkedAppsListMembersLinkedApps(arg *ListMembersAppsArg) (re
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LinkedAppsListMembersLinkedAppsAPIError{})
+		err = auth.ParseError(err, LinkedAppsListMembersLinkedAppsAPIError{})
 		return
 	}
 
@@ -1361,7 +1361,7 @@ func (dbx *apiImpl) LinkedAppsListTeamLinkedApps(arg *ListTeamAppsArg) (res *Lis
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LinkedAppsListTeamLinkedAppsAPIError{})
+		err = auth.ParseError(err, LinkedAppsListTeamLinkedAppsAPIError{})
 		return
 	}
 
@@ -1395,7 +1395,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedApp(arg *RevokeLinkedApiAppArg) (err e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LinkedAppsRevokeLinkedAppAPIError{})
+		err = auth.ParseError(err, LinkedAppsRevokeLinkedAppAPIError{})
 		return
 	}
 
@@ -1425,7 +1425,7 @@ func (dbx *apiImpl) LinkedAppsRevokeLinkedAppBatch(arg *RevokeLinkedApiAppBatchA
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &LinkedAppsRevokeLinkedAppBatchAPIError{})
+		err = auth.ParseError(err, LinkedAppsRevokeLinkedAppBatchAPIError{})
 		return
 	}
 
@@ -1459,7 +1459,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersAdd(arg *ExcludedUsersUpdateAr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsExcludedUsersAddAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsExcludedUsersAddAPIError{})
 		return
 	}
 
@@ -1493,7 +1493,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersList(arg *ExcludedUsersListArg
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsExcludedUsersListAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsExcludedUsersListAPIError{})
 		return
 	}
 
@@ -1527,7 +1527,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersListContinue(arg *ExcludedUser
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsExcludedUsersListContinueAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsExcludedUsersListContinueAPIError{})
 		return
 	}
 
@@ -1561,7 +1561,7 @@ func (dbx *apiImpl) MemberSpaceLimitsExcludedUsersRemove(arg *ExcludedUsersUpdat
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsExcludedUsersRemoveAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsExcludedUsersRemoveAPIError{})
 		return
 	}
 
@@ -1595,7 +1595,7 @@ func (dbx *apiImpl) MemberSpaceLimitsGetCustomQuota(arg *CustomQuotaUsersArg) (r
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsGetCustomQuotaAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsGetCustomQuotaAPIError{})
 		return
 	}
 
@@ -1629,7 +1629,7 @@ func (dbx *apiImpl) MemberSpaceLimitsRemoveCustomQuota(arg *CustomQuotaUsersArg)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsRemoveCustomQuotaAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsRemoveCustomQuotaAPIError{})
 		return
 	}
 
@@ -1663,7 +1663,7 @@ func (dbx *apiImpl) MemberSpaceLimitsSetCustomQuota(arg *SetCustomQuotaArg) (res
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MemberSpaceLimitsSetCustomQuotaAPIError{})
+		err = auth.ParseError(err, MemberSpaceLimitsSetCustomQuotaAPIError{})
 		return
 	}
 
@@ -1697,7 +1697,7 @@ func (dbx *apiImpl) MembersAddV2(arg *MembersAddV2Arg) (res *MembersAddLaunchV2R
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersAddV2APIError{})
+		err = auth.ParseError(err, MembersAddV2APIError{})
 		return
 	}
 
@@ -1731,7 +1731,7 @@ func (dbx *apiImpl) MembersAdd(arg *MembersAddArg) (res *MembersAddLaunch, err e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersAddAPIError{})
+		err = auth.ParseError(err, MembersAddAPIError{})
 		return
 	}
 
@@ -1765,7 +1765,7 @@ func (dbx *apiImpl) MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAd
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersAddJobStatusGetV2APIError{})
+		err = auth.ParseError(err, MembersAddJobStatusGetV2APIError{})
 		return
 	}
 
@@ -1799,7 +1799,7 @@ func (dbx *apiImpl) MembersAddJobStatusGet(arg *async.PollArg) (res *MembersAddJ
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersAddJobStatusGetAPIError{})
+		err = auth.ParseError(err, MembersAddJobStatusGetAPIError{})
 		return
 	}
 
@@ -1833,7 +1833,7 @@ func (dbx *apiImpl) MembersDeleteProfilePhotoV2(arg *MembersDeleteProfilePhotoAr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersDeleteProfilePhotoV2APIError{})
+		err = auth.ParseError(err, MembersDeleteProfilePhotoV2APIError{})
 		return
 	}
 
@@ -1867,7 +1867,7 @@ func (dbx *apiImpl) MembersDeleteProfilePhoto(arg *MembersDeleteProfilePhotoArg)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersDeleteProfilePhotoAPIError{})
+		err = auth.ParseError(err, MembersDeleteProfilePhotoAPIError{})
 		return
 	}
 
@@ -1901,7 +1901,7 @@ func (dbx *apiImpl) MembersGetAvailableTeamMemberRoles() (res *MembersGetAvailab
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersGetAvailableTeamMemberRolesAPIError{})
+		err = auth.ParseError(err, MembersGetAvailableTeamMemberRolesAPIError{})
 		return
 	}
 
@@ -1935,7 +1935,7 @@ func (dbx *apiImpl) MembersGetInfoV2(arg *MembersGetInfoV2Arg) (res *MembersGetI
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersGetInfoV2APIError{})
+		err = auth.ParseError(err, MembersGetInfoV2APIError{})
 		return
 	}
 
@@ -1969,7 +1969,7 @@ func (dbx *apiImpl) MembersGetInfo(arg *MembersGetInfoArgs) (res []*MembersGetIn
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersGetInfoAPIError{})
+		err = auth.ParseError(err, MembersGetInfoAPIError{})
 		return
 	}
 
@@ -2003,7 +2003,7 @@ func (dbx *apiImpl) MembersListV2(arg *MembersListArg) (res *MembersListV2Result
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersListV2APIError{})
+		err = auth.ParseError(err, MembersListV2APIError{})
 		return
 	}
 
@@ -2037,7 +2037,7 @@ func (dbx *apiImpl) MembersList(arg *MembersListArg) (res *MembersListResult, er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersListAPIError{})
+		err = auth.ParseError(err, MembersListAPIError{})
 		return
 	}
 
@@ -2071,7 +2071,7 @@ func (dbx *apiImpl) MembersListContinueV2(arg *MembersListContinueArg) (res *Mem
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersListContinueV2APIError{})
+		err = auth.ParseError(err, MembersListContinueV2APIError{})
 		return
 	}
 
@@ -2105,7 +2105,7 @@ func (dbx *apiImpl) MembersListContinue(arg *MembersListContinueArg) (res *Membe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersListContinueAPIError{})
+		err = auth.ParseError(err, MembersListContinueAPIError{})
 		return
 	}
 
@@ -2139,7 +2139,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFiles(arg *MembersDataTransferArg) (r
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersMoveFormerMemberFilesAPIError{})
+		err = auth.ParseError(err, MembersMoveFormerMemberFilesAPIError{})
 		return
 	}
 
@@ -2173,7 +2173,7 @@ func (dbx *apiImpl) MembersMoveFormerMemberFilesJobStatusCheck(arg *async.PollAr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersMoveFormerMemberFilesJobStatusCheckAPIError{})
+		err = auth.ParseError(err, MembersMoveFormerMemberFilesJobStatusCheckAPIError{})
 		return
 	}
 
@@ -2207,7 +2207,7 @@ func (dbx *apiImpl) MembersRecover(arg *MembersRecoverArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersRecoverAPIError{})
+		err = auth.ParseError(err, MembersRecoverAPIError{})
 		return
 	}
 
@@ -2237,7 +2237,7 @@ func (dbx *apiImpl) MembersRemove(arg *MembersRemoveArg) (res *async.LaunchEmpty
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersRemoveAPIError{})
+		err = auth.ParseError(err, MembersRemoveAPIError{})
 		return
 	}
 
@@ -2271,7 +2271,7 @@ func (dbx *apiImpl) MembersRemoveJobStatusGet(arg *async.PollArg) (res *async.Po
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersRemoveJobStatusGetAPIError{})
+		err = auth.ParseError(err, MembersRemoveJobStatusGetAPIError{})
 		return
 	}
 
@@ -2305,7 +2305,7 @@ func (dbx *apiImpl) MembersSecondaryEmailsAdd(arg *AddSecondaryEmailsArg) (res *
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSecondaryEmailsAddAPIError{})
+		err = auth.ParseError(err, MembersSecondaryEmailsAddAPIError{})
 		return
 	}
 
@@ -2339,7 +2339,7 @@ func (dbx *apiImpl) MembersSecondaryEmailsDelete(arg *DeleteSecondaryEmailsArg) 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSecondaryEmailsDeleteAPIError{})
+		err = auth.ParseError(err, MembersSecondaryEmailsDeleteAPIError{})
 		return
 	}
 
@@ -2373,7 +2373,7 @@ func (dbx *apiImpl) MembersSecondaryEmailsResendVerificationEmails(arg *ResendVe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSecondaryEmailsResendVerificationEmailsAPIError{})
+		err = auth.ParseError(err, MembersSecondaryEmailsResendVerificationEmailsAPIError{})
 		return
 	}
 
@@ -2407,7 +2407,7 @@ func (dbx *apiImpl) MembersSendWelcomeEmail(arg *UserSelectorArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSendWelcomeEmailAPIError{})
+		err = auth.ParseError(err, MembersSendWelcomeEmailAPIError{})
 		return
 	}
 
@@ -2437,7 +2437,7 @@ func (dbx *apiImpl) MembersSetAdminPermissionsV2(arg *MembersSetPermissions2Arg)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetAdminPermissionsV2APIError{})
+		err = auth.ParseError(err, MembersSetAdminPermissionsV2APIError{})
 		return
 	}
 
@@ -2471,7 +2471,7 @@ func (dbx *apiImpl) MembersSetAdminPermissions(arg *MembersSetPermissionsArg) (r
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetAdminPermissionsAPIError{})
+		err = auth.ParseError(err, MembersSetAdminPermissionsAPIError{})
 		return
 	}
 
@@ -2505,7 +2505,7 @@ func (dbx *apiImpl) MembersSetProfileV2(arg *MembersSetProfileArg) (res *TeamMem
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetProfileV2APIError{})
+		err = auth.ParseError(err, MembersSetProfileV2APIError{})
 		return
 	}
 
@@ -2539,7 +2539,7 @@ func (dbx *apiImpl) MembersSetProfile(arg *MembersSetProfileArg) (res *TeamMembe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetProfileAPIError{})
+		err = auth.ParseError(err, MembersSetProfileAPIError{})
 		return
 	}
 
@@ -2573,7 +2573,7 @@ func (dbx *apiImpl) MembersSetProfilePhotoV2(arg *MembersSetProfilePhotoArg) (re
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetProfilePhotoV2APIError{})
+		err = auth.ParseError(err, MembersSetProfilePhotoV2APIError{})
 		return
 	}
 
@@ -2607,7 +2607,7 @@ func (dbx *apiImpl) MembersSetProfilePhoto(arg *MembersSetProfilePhotoArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSetProfilePhotoAPIError{})
+		err = auth.ParseError(err, MembersSetProfilePhotoAPIError{})
 		return
 	}
 
@@ -2641,7 +2641,7 @@ func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersSuspendAPIError{})
+		err = auth.ParseError(err, MembersSuspendAPIError{})
 		return
 	}
 
@@ -2671,7 +2671,7 @@ func (dbx *apiImpl) MembersUnsuspend(arg *MembersUnsuspendArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &MembersUnsuspendAPIError{})
+		err = auth.ParseError(err, MembersUnsuspendAPIError{})
 		return
 	}
 
@@ -2701,7 +2701,7 @@ func (dbx *apiImpl) NamespacesList(arg *TeamNamespacesListArg) (res *TeamNamespa
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &NamespacesListAPIError{})
+		err = auth.ParseError(err, NamespacesListAPIError{})
 		return
 	}
 
@@ -2735,7 +2735,7 @@ func (dbx *apiImpl) NamespacesListContinue(arg *TeamNamespacesListContinueArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &NamespacesListContinueAPIError{})
+		err = auth.ParseError(err, NamespacesListContinueAPIError{})
 		return
 	}
 
@@ -2771,7 +2771,7 @@ func (dbx *apiImpl) PropertiesTemplateAdd(arg *file_properties.AddTemplateArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesTemplateAddAPIError{})
+		err = auth.ParseError(err, PropertiesTemplateAddAPIError{})
 		return
 	}
 
@@ -2807,7 +2807,7 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesTemplateGetAPIError{})
+		err = auth.ParseError(err, PropertiesTemplateGetAPIError{})
 		return
 	}
 
@@ -2843,7 +2843,7 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesTemplateListAPIError{})
+		err = auth.ParseError(err, PropertiesTemplateListAPIError{})
 		return
 	}
 
@@ -2879,7 +2879,7 @@ func (dbx *apiImpl) PropertiesTemplateUpdate(arg *file_properties.UpdateTemplate
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesTemplateUpdateAPIError{})
+		err = auth.ParseError(err, PropertiesTemplateUpdateAPIError{})
 		return
 	}
 
@@ -2915,7 +2915,7 @@ func (dbx *apiImpl) ReportsGetActivity(arg *DateRange) (res *GetActivityReport, 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &ReportsGetActivityAPIError{})
+		err = auth.ParseError(err, ReportsGetActivityAPIError{})
 		return
 	}
 
@@ -2951,7 +2951,7 @@ func (dbx *apiImpl) ReportsGetDevices(arg *DateRange) (res *GetDevicesReport, er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &ReportsGetDevicesAPIError{})
+		err = auth.ParseError(err, ReportsGetDevicesAPIError{})
 		return
 	}
 
@@ -2987,7 +2987,7 @@ func (dbx *apiImpl) ReportsGetMembership(arg *DateRange) (res *GetMembershipRepo
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &ReportsGetMembershipAPIError{})
+		err = auth.ParseError(err, ReportsGetMembershipAPIError{})
 		return
 	}
 
@@ -3023,7 +3023,7 @@ func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &ReportsGetStorageAPIError{})
+		err = auth.ParseError(err, ReportsGetStorageAPIError{})
 		return
 	}
 
@@ -3057,7 +3057,7 @@ func (dbx *apiImpl) TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMet
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderActivateAPIError{})
+		err = auth.ParseError(err, TeamFolderActivateAPIError{})
 		return
 	}
 
@@ -3091,7 +3091,7 @@ func (dbx *apiImpl) TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolde
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderArchiveAPIError{})
+		err = auth.ParseError(err, TeamFolderArchiveAPIError{})
 		return
 	}
 
@@ -3125,7 +3125,7 @@ func (dbx *apiImpl) TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderA
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderArchiveCheckAPIError{})
+		err = auth.ParseError(err, TeamFolderArchiveCheckAPIError{})
 		return
 	}
 
@@ -3159,7 +3159,7 @@ func (dbx *apiImpl) TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderM
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderCreateAPIError{})
+		err = auth.ParseError(err, TeamFolderCreateAPIError{})
 		return
 	}
 
@@ -3193,7 +3193,7 @@ func (dbx *apiImpl) TeamFolderGetInfo(arg *TeamFolderIdListArg) (res []*TeamFold
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderGetInfoAPIError{})
+		err = auth.ParseError(err, TeamFolderGetInfoAPIError{})
 		return
 	}
 
@@ -3227,7 +3227,7 @@ func (dbx *apiImpl) TeamFolderList(arg *TeamFolderListArg) (res *TeamFolderListR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderListAPIError{})
+		err = auth.ParseError(err, TeamFolderListAPIError{})
 		return
 	}
 
@@ -3261,7 +3261,7 @@ func (dbx *apiImpl) TeamFolderListContinue(arg *TeamFolderListContinueArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderListContinueAPIError{})
+		err = auth.ParseError(err, TeamFolderListContinueAPIError{})
 		return
 	}
 
@@ -3295,7 +3295,7 @@ func (dbx *apiImpl) TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderPermanentlyDeleteAPIError{})
+		err = auth.ParseError(err, TeamFolderPermanentlyDeleteAPIError{})
 		return
 	}
 
@@ -3325,7 +3325,7 @@ func (dbx *apiImpl) TeamFolderRename(arg *TeamFolderRenameArg) (res *TeamFolderM
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderRenameAPIError{})
+		err = auth.ParseError(err, TeamFolderRenameAPIError{})
 		return
 	}
 
@@ -3359,7 +3359,7 @@ func (dbx *apiImpl) TeamFolderUpdateSyncSettings(arg *TeamFolderUpdateSyncSettin
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TeamFolderUpdateSyncSettingsAPIError{})
+		err = auth.ParseError(err, TeamFolderUpdateSyncSettingsAPIError{})
 		return
 	}
 
@@ -3393,7 +3393,7 @@ func (dbx *apiImpl) TokenGetAuthenticatedAdmin() (res *TokenGetAuthenticatedAdmi
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TokenGetAuthenticatedAdminAPIError{})
+		err = auth.ParseError(err, TokenGetAuthenticatedAdminAPIError{})
 		return
 	}
 

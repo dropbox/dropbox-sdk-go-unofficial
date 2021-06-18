@@ -61,7 +61,7 @@ func (dbx *apiImpl) DeleteManualContacts() (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DeleteManualContactsAPIError{})
+		err = auth.ParseError(err, DeleteManualContactsAPIError{})
 		return
 	}
 
@@ -91,7 +91,7 @@ func (dbx *apiImpl) DeleteManualContactsBatch(arg *DeleteManualContactsArg) (err
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &DeleteManualContactsBatchAPIError{})
+		err = auth.ParseError(err, DeleteManualContactsBatchAPIError{})
 		return
 	}
 

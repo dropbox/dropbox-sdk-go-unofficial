@@ -122,7 +122,7 @@ func (dbx *apiImpl) PropertiesAdd(arg *AddPropertiesArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesAddAPIError{})
+		err = auth.ParseError(err, PropertiesAddAPIError{})
 		return
 	}
 
@@ -152,7 +152,7 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err err
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesOverwriteAPIError{})
+		err = auth.ParseError(err, PropertiesOverwriteAPIError{})
 		return
 	}
 
@@ -182,7 +182,7 @@ func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesRemoveAPIError{})
+		err = auth.ParseError(err, PropertiesRemoveAPIError{})
 		return
 	}
 
@@ -212,7 +212,7 @@ func (dbx *apiImpl) PropertiesSearch(arg *PropertiesSearchArg) (res *PropertiesS
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesSearchAPIError{})
+		err = auth.ParseError(err, PropertiesSearchAPIError{})
 		return
 	}
 
@@ -246,7 +246,7 @@ func (dbx *apiImpl) PropertiesSearchContinue(arg *PropertiesSearchContinueArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesSearchContinueAPIError{})
+		err = auth.ParseError(err, PropertiesSearchContinueAPIError{})
 		return
 	}
 
@@ -280,7 +280,7 @@ func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertiesArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &PropertiesUpdateAPIError{})
+		err = auth.ParseError(err, PropertiesUpdateAPIError{})
 		return
 	}
 
@@ -310,7 +310,7 @@ func (dbx *apiImpl) TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateRe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesAddForTeamAPIError{})
+		err = auth.ParseError(err, TemplatesAddForTeamAPIError{})
 		return
 	}
 
@@ -344,7 +344,7 @@ func (dbx *apiImpl) TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateRe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesAddForUserAPIError{})
+		err = auth.ParseError(err, TemplatesAddForUserAPIError{})
 		return
 	}
 
@@ -378,7 +378,7 @@ func (dbx *apiImpl) TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateRe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesGetForTeamAPIError{})
+		err = auth.ParseError(err, TemplatesGetForTeamAPIError{})
 		return
 	}
 
@@ -412,7 +412,7 @@ func (dbx *apiImpl) TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateRe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesGetForUserAPIError{})
+		err = auth.ParseError(err, TemplatesGetForUserAPIError{})
 		return
 	}
 
@@ -446,7 +446,7 @@ func (dbx *apiImpl) TemplatesListForTeam() (res *ListTemplateResult, err error) 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesListForTeamAPIError{})
+		err = auth.ParseError(err, TemplatesListForTeamAPIError{})
 		return
 	}
 
@@ -480,7 +480,7 @@ func (dbx *apiImpl) TemplatesListForUser() (res *ListTemplateResult, err error) 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesListForUserAPIError{})
+		err = auth.ParseError(err, TemplatesListForUserAPIError{})
 		return
 	}
 
@@ -514,7 +514,7 @@ func (dbx *apiImpl) TemplatesRemoveForTeam(arg *RemoveTemplateArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesRemoveForTeamAPIError{})
+		err = auth.ParseError(err, TemplatesRemoveForTeamAPIError{})
 		return
 	}
 
@@ -544,7 +544,7 @@ func (dbx *apiImpl) TemplatesRemoveForUser(arg *RemoveTemplateArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesRemoveForUserAPIError{})
+		err = auth.ParseError(err, TemplatesRemoveForUserAPIError{})
 		return
 	}
 
@@ -574,7 +574,7 @@ func (dbx *apiImpl) TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateT
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesUpdateForTeamAPIError{})
+		err = auth.ParseError(err, TemplatesUpdateForTeamAPIError{})
 		return
 	}
 
@@ -608,7 +608,7 @@ func (dbx *apiImpl) TemplatesUpdateForUser(arg *UpdateTemplateArg) (res *UpdateT
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, &TemplatesUpdateForUserAPIError{})
+		err = auth.ParseError(err, TemplatesUpdateForUserAPIError{})
 		return
 	}
 
