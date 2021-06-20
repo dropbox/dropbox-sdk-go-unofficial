@@ -62,7 +62,11 @@ func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAut
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = ParseError(err, TokenFromOauth1APIError{})
+		var appErr TokenFromOauth1APIError
+		err = ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -96,7 +100,11 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = ParseError(err, TokenRevokeAPIError{})
+		var appErr TokenRevokeAPIError
+		err = ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 

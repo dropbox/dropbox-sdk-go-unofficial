@@ -455,7 +455,11 @@ func (dbx *apiImpl) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, AlphaGetMetadataAPIError{})
+		var appErr AlphaGetMetadataAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -503,7 +507,11 @@ func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, AlphaUploadAPIError{})
+		var appErr AlphaUploadAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -537,7 +545,11 @@ func (dbx *apiImpl) CopyV2(arg *RelocationArg) (res *RelocationResult, err error
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyV2APIError{})
+		var appErr CopyV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -574,7 +586,11 @@ func (dbx *apiImpl) Copy(arg *RelocationArg) (res IsMetadata, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyAPIError{})
+		var appErr CopyAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -619,7 +635,11 @@ func (dbx *apiImpl) CopyBatchV2(arg *RelocationBatchArgBase) (res *RelocationBat
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyBatchV2APIError{})
+		var appErr CopyBatchV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -656,7 +676,11 @@ func (dbx *apiImpl) CopyBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyBatchAPIError{})
+		var appErr CopyBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -690,7 +714,11 @@ func (dbx *apiImpl) CopyBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyBatchCheckV2APIError{})
+		var appErr CopyBatchCheckV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -727,7 +755,11 @@ func (dbx *apiImpl) CopyBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyBatchCheckAPIError{})
+		var appErr CopyBatchCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -761,7 +793,11 @@ func (dbx *apiImpl) CopyReferenceGet(arg *GetCopyReferenceArg) (res *GetCopyRefe
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyReferenceGetAPIError{})
+		var appErr CopyReferenceGetAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -795,7 +831,11 @@ func (dbx *apiImpl) CopyReferenceSave(arg *SaveCopyReferenceArg) (res *SaveCopyR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CopyReferenceSaveAPIError{})
+		var appErr CopyReferenceSaveAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -829,7 +869,11 @@ func (dbx *apiImpl) CreateFolderV2(arg *CreateFolderArg) (res *CreateFolderResul
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CreateFolderV2APIError{})
+		var appErr CreateFolderV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -866,7 +910,11 @@ func (dbx *apiImpl) CreateFolder(arg *CreateFolderArg) (res *FolderMetadata, err
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CreateFolderAPIError{})
+		var appErr CreateFolderAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -900,7 +948,11 @@ func (dbx *apiImpl) CreateFolderBatch(arg *CreateFolderBatchArg) (res *CreateFol
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CreateFolderBatchAPIError{})
+		var appErr CreateFolderBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -934,7 +986,11 @@ func (dbx *apiImpl) CreateFolderBatchCheck(arg *async.PollArg) (res *CreateFolde
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CreateFolderBatchCheckAPIError{})
+		var appErr CreateFolderBatchCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -968,7 +1024,11 @@ func (dbx *apiImpl) DeleteV2(arg *DeleteArg) (res *DeleteResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteV2APIError{})
+		var appErr DeleteV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1005,7 +1065,11 @@ func (dbx *apiImpl) Delete(arg *DeleteArg) (res IsMetadata, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteAPIError{})
+		var appErr DeleteAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1050,7 +1114,11 @@ func (dbx *apiImpl) DeleteBatch(arg *DeleteBatchArg) (res *DeleteBatchLaunch, er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteBatchAPIError{})
+		var appErr DeleteBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1084,7 +1152,11 @@ func (dbx *apiImpl) DeleteBatchCheck(arg *async.PollArg) (res *DeleteBatchJobSta
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteBatchCheckAPIError{})
+		var appErr DeleteBatchCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1118,7 +1190,11 @@ func (dbx *apiImpl) Download(arg *DownloadArg) (res *FileMetadata, content io.Re
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DownloadAPIError{})
+		var appErr DownloadAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1152,7 +1228,11 @@ func (dbx *apiImpl) DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, co
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DownloadZipAPIError{})
+		var appErr DownloadZipAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1186,7 +1266,11 @@ func (dbx *apiImpl) Export(arg *ExportArg) (res *ExportResult, content io.ReadCl
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ExportAPIError{})
+		var appErr ExportAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1220,7 +1304,11 @@ func (dbx *apiImpl) GetFileLockBatch(arg *LockFileBatchArg) (res *LockFileBatchR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetFileLockBatchAPIError{})
+		var appErr GetFileLockBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1254,7 +1342,11 @@ func (dbx *apiImpl) GetMetadata(arg *GetMetadataArg) (res IsMetadata, err error)
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetMetadataAPIError{})
+		var appErr GetMetadataAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1299,7 +1391,11 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetPreviewAPIError{})
+		var appErr GetPreviewAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1333,7 +1429,11 @@ func (dbx *apiImpl) GetTemporaryLink(arg *GetTemporaryLinkArg) (res *GetTemporar
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetTemporaryLinkAPIError{})
+		var appErr GetTemporaryLinkAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1367,7 +1467,11 @@ func (dbx *apiImpl) GetTemporaryUploadLink(arg *GetTemporaryUploadLinkArg) (res 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetTemporaryUploadLinkAPIError{})
+		var appErr GetTemporaryUploadLinkAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1401,7 +1505,11 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetThumbnailAPIError{})
+		var appErr GetThumbnailAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1435,7 +1543,11 @@ func (dbx *apiImpl) GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, con
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetThumbnailV2APIError{})
+		var appErr GetThumbnailV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1469,7 +1581,11 @@ func (dbx *apiImpl) GetThumbnailBatch(arg *GetThumbnailBatchArg) (res *GetThumbn
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetThumbnailBatchAPIError{})
+		var appErr GetThumbnailBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1503,7 +1619,11 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListFolderAPIError{})
+		var appErr ListFolderAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1537,7 +1657,11 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListFolderContinueAPIError{})
+		var appErr ListFolderContinueAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1571,7 +1695,11 @@ func (dbx *apiImpl) ListFolderGetLatestCursor(arg *ListFolderArg) (res *ListFold
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListFolderGetLatestCursorAPIError{})
+		var appErr ListFolderGetLatestCursorAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1605,7 +1733,11 @@ func (dbx *apiImpl) ListFolderLongpoll(arg *ListFolderLongpollArg) (res *ListFol
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListFolderLongpollAPIError{})
+		var appErr ListFolderLongpollAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1639,7 +1771,11 @@ func (dbx *apiImpl) ListRevisions(arg *ListRevisionsArg) (res *ListRevisionsResu
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListRevisionsAPIError{})
+		var appErr ListRevisionsAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1673,7 +1809,11 @@ func (dbx *apiImpl) LockFileBatch(arg *LockFileBatchArg) (res *LockFileBatchResu
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, LockFileBatchAPIError{})
+		var appErr LockFileBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1707,7 +1847,11 @@ func (dbx *apiImpl) MoveV2(arg *RelocationArg) (res *RelocationResult, err error
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveV2APIError{})
+		var appErr MoveV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1744,7 +1888,11 @@ func (dbx *apiImpl) Move(arg *RelocationArg) (res IsMetadata, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveAPIError{})
+		var appErr MoveAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1789,7 +1937,11 @@ func (dbx *apiImpl) MoveBatchV2(arg *MoveBatchArg) (res *RelocationBatchV2Launch
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveBatchV2APIError{})
+		var appErr MoveBatchV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1826,7 +1978,11 @@ func (dbx *apiImpl) MoveBatch(arg *RelocationBatchArg) (res *RelocationBatchLaun
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveBatchAPIError{})
+		var appErr MoveBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1860,7 +2016,11 @@ func (dbx *apiImpl) MoveBatchCheckV2(arg *async.PollArg) (res *RelocationBatchV2
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveBatchCheckV2APIError{})
+		var appErr MoveBatchCheckV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1897,7 +2057,11 @@ func (dbx *apiImpl) MoveBatchCheck(arg *async.PollArg) (res *RelocationBatchJobS
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, MoveBatchCheckAPIError{})
+		var appErr MoveBatchCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1931,7 +2095,11 @@ func (dbx *apiImpl) PaperCreate(arg *PaperCreateArg, content io.Reader) (res *Pa
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, PaperCreateAPIError{})
+		var appErr PaperCreateAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1965,7 +2133,11 @@ func (dbx *apiImpl) PaperUpdate(arg *PaperUpdateArg, content io.Reader) (res *Pa
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, PaperUpdateAPIError{})
+		var appErr PaperUpdateAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -1999,7 +2171,11 @@ func (dbx *apiImpl) PermanentlyDelete(arg *DeleteArg) (err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PermanentlyDeleteAPIError{})
+		var appErr PermanentlyDeleteAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2031,7 +2207,11 @@ func (dbx *apiImpl) PropertiesAdd(arg *file_properties.AddPropertiesArg) (err er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesAddAPIError{})
+		var appErr PropertiesAddAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2063,7 +2243,11 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *file_properties.OverwritePropertyGr
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesOverwriteAPIError{})
+		var appErr PropertiesOverwriteAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2095,7 +2279,11 @@ func (dbx *apiImpl) PropertiesRemove(arg *file_properties.RemovePropertiesArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesRemoveAPIError{})
+		var appErr PropertiesRemoveAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2127,7 +2315,11 @@ func (dbx *apiImpl) PropertiesTemplateGet(arg *file_properties.GetTemplateArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesTemplateGetAPIError{})
+		var appErr PropertiesTemplateGetAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2163,7 +2355,11 @@ func (dbx *apiImpl) PropertiesTemplateList() (res *file_properties.ListTemplateR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesTemplateListAPIError{})
+		var appErr PropertiesTemplateListAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2199,7 +2395,11 @@ func (dbx *apiImpl) PropertiesUpdate(arg *file_properties.UpdatePropertiesArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, PropertiesUpdateAPIError{})
+		var appErr PropertiesUpdateAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2229,7 +2429,11 @@ func (dbx *apiImpl) Restore(arg *RestoreArg) (res *FileMetadata, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, RestoreAPIError{})
+		var appErr RestoreAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2263,7 +2467,11 @@ func (dbx *apiImpl) SaveUrl(arg *SaveUrlArg) (res *SaveUrlResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, SaveUrlAPIError{})
+		var appErr SaveUrlAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2297,7 +2505,11 @@ func (dbx *apiImpl) SaveUrlCheckJobStatus(arg *async.PollArg) (res *SaveUrlJobSt
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, SaveUrlCheckJobStatusAPIError{})
+		var appErr SaveUrlCheckJobStatusAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2334,7 +2546,11 @@ func (dbx *apiImpl) Search(arg *SearchArg) (res *SearchResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, SearchAPIError{})
+		var appErr SearchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2368,7 +2584,11 @@ func (dbx *apiImpl) SearchV2(arg *SearchV2Arg) (res *SearchV2Result, err error) 
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, SearchV2APIError{})
+		var appErr SearchV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2402,7 +2622,11 @@ func (dbx *apiImpl) SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Res
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, SearchContinueV2APIError{})
+		var appErr SearchContinueV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2436,7 +2660,11 @@ func (dbx *apiImpl) UnlockFileBatch(arg *UnlockFileBatchArg) (res *LockFileBatch
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, UnlockFileBatchAPIError{})
+		var appErr UnlockFileBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2470,7 +2698,11 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, UploadAPIError{})
+		var appErr UploadAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2504,7 +2736,11 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionAppendV2APIError{})
+		var appErr UploadSessionAppendV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2537,7 +2773,11 @@ func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Rea
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionAppendAPIError{})
+		var appErr UploadSessionAppendAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2567,7 +2807,11 @@ func (dbx *apiImpl) UploadSessionFinish(arg *UploadSessionFinishArg, content io.
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionFinishAPIError{})
+		var appErr UploadSessionFinishAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2601,7 +2845,11 @@ func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionFinishBatchAPIError{})
+		var appErr UploadSessionFinishBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2635,7 +2883,11 @@ func (dbx *apiImpl) UploadSessionFinishBatchCheck(arg *async.PollArg) (res *Uplo
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionFinishBatchCheckAPIError{})
+		var appErr UploadSessionFinishBatchCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -2669,7 +2921,11 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
-		err = auth.ParseError(err, UploadSessionStartAPIError{})
+		var appErr UploadSessionStartAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 

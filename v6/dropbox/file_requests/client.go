@@ -80,7 +80,11 @@ func (dbx *apiImpl) Count() (res *CountFileRequestsResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CountAPIError{})
+		var appErr CountAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -114,7 +118,11 @@ func (dbx *apiImpl) Create(arg *CreateFileRequestArgs) (res *FileRequest, err er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, CreateAPIError{})
+		var appErr CreateAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -148,7 +156,11 @@ func (dbx *apiImpl) Delete(arg *DeleteFileRequestArgs) (res *DeleteFileRequestsR
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteAPIError{})
+		var appErr DeleteAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -182,7 +194,11 @@ func (dbx *apiImpl) DeleteAllClosed() (res *DeleteAllClosedFileRequestsResult, e
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, DeleteAllClosedAPIError{})
+		var appErr DeleteAllClosedAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -216,7 +232,11 @@ func (dbx *apiImpl) Get(arg *GetFileRequestArgs) (res *FileRequest, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, GetAPIError{})
+		var appErr GetAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -250,7 +270,11 @@ func (dbx *apiImpl) ListV2(arg *ListFileRequestsArg) (res *ListFileRequestsV2Res
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListV2APIError{})
+		var appErr ListV2APIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -284,7 +308,11 @@ func (dbx *apiImpl) List() (res *ListFileRequestsResult, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListAPIError{})
+		var appErr ListAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -318,7 +346,11 @@ func (dbx *apiImpl) ListContinue(arg *ListFileRequestsContinueArg) (res *ListFil
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, ListContinueAPIError{})
+		var appErr ListContinueAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
@@ -352,7 +384,11 @@ func (dbx *apiImpl) Update(arg *UpdateFileRequestArgs) (res *FileRequest, err er
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		err = auth.ParseError(err, UpdateAPIError{})
+		var appErr UpdateAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
 		return
 	}
 
