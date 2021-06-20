@@ -143,6 +143,31 @@ func TestAccessError(t *testing.T) {
 	}
 }
 
+func TestAppError(t *testing.T) {
+	eString := `{"error_summary":"","error":{".tag":"app_id_mismatch"}}`
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusConflict)
+			w.Write([]byte(eString))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{Client: ts.Client(), LogLevel: dropbox.LogDebug,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		}}
+	client := auth.New(config)
+	_, e := client.TokenFromOauth1(nil)
+	re, ok := e.(auth.TokenFromOauth1APIError)
+	if !ok {
+		t.Errorf("Unexpected error type: %T\n%v\n", e, e)
+	}
+	if re.EndpointError.Tag != auth.TokenFromOAuth1ErrorAppIdMismatch {
+		t.Errorf("Unexpected tag: %s\n", re.EndpointError.Tag)
+	}
+}
+
 func TestHTTPHeaderSafeJSON(t *testing.T) {
 	for _, test := range []struct {
 		name string

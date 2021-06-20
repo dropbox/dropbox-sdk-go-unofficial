@@ -119,9 +119,11 @@ class GoClientBackend(CodeBackend):
             out("resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, {body})".format(
                 body="content" if route.attrs.get('style', '') == 'upload' else "nil"))
             with self.block("if err != nil"):
-                out("err = {auth}ParseError(err, {fn}APIError{{}})".format(
-                    auth="auth." if namespace.name != "auth" else "",
-                    fn=fn))
+                out("var appErr {fn}APIError".format(fn=fn))
+                out("err = {auth}ParseError(err, &appErr)".format(
+                    auth="auth." if namespace.name != "auth" else ""))
+                with self.block("if err == &appErr"):
+                    out("err = appErr")
                 out("return")
             out()
 
