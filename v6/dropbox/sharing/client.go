@@ -687,7 +687,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 		res = tmp.Folder
 
 	}
-	_ = respBody
+	content = respBody
 	return
 }
 

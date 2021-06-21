@@ -1241,7 +1241,7 @@ func (dbx *apiImpl) DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, co
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 
@@ -1279,7 +1279,7 @@ func (dbx *apiImpl) Export(arg *ExportArg) (res *ExportResult, content io.ReadCl
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 
@@ -1404,7 +1404,7 @@ func (dbx *apiImpl) GetPreview(arg *PreviewArg) (res *FileMetadata, content io.R
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 
@@ -1518,7 +1518,7 @@ func (dbx *apiImpl) GetThumbnail(arg *ThumbnailArg) (res *FileMetadata, content 
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 
@@ -1556,7 +1556,7 @@ func (dbx *apiImpl) GetThumbnailV2(arg *ThumbnailV2Arg) (res *PreviewResult, con
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 

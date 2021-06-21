@@ -342,7 +342,7 @@ func (dbx *apiImpl) DocsDownload(arg *PaperDocExport) (res *PaperDocExportResult
 		return
 	}
 
-	_ = respBody
+	content = respBody
 	return
 }
 
