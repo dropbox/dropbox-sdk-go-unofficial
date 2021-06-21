@@ -144,7 +144,7 @@ class GoClientBackend(CodeBackend):
             else:
                 out("_ = resp")
 
-            if fmt_var(route.name) == "Download":
+            if route.attrs.get('style', 'rpc') == "download":
                 out("content = respBody")
             else:
                 out("_ = respBody")
