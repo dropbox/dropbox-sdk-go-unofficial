@@ -1,4 +1,4 @@
-# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Build Status](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial.svg?branch=master)](https://travis-ci.org/dropbox/dropbox-sdk-go-unofficial) [![Go Report Card](https://goreportcard.com/badge/github.com/dropbox/dropbox-sdk-go-unofficial)](https://goreportcard.com/report/github.com/dropbox/dropbox-sdk-go-unofficial)
+# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Test/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/dropbox/dropbox-sdk-go-unofficial)](https://goreportcard.com/report/github.com/dropbox/dropbox-sdk-go-unofficial)
 
 An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.11+
 
