@@ -147,7 +147,7 @@ class GoTypesBackend(CodeBackend):
                             default = '"{}"'.format(default)
                         self.emit('s.{0} = {1}'.format(fmt_var(field.name), default))
                     elif is_union_type(field.data_type):
-                        self.emit('s.%s = &%s{Tagged:dropbox.Tagged{"%s"}}' %
+                        self.emit('s.%s = &%s{Tagged:dropbox.Tagged{Tag: "%s"}}' %
                                   (fmt_var(field.name),
                                    fmt_type(field.data_type, struct.namespace).lstrip('*'),
                                    field.default.tag_name))

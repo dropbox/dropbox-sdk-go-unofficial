@@ -22,6 +22,7 @@ package dropbox
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -31,7 +32,6 @@ import (
 	"net/http"
 	"strings"
 
-	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 )
 

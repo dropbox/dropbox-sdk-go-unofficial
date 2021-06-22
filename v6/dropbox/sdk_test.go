@@ -63,7 +63,7 @@ func TestRateLimitJSON(t *testing.T) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.Header().Set("Retry-After", "10")
 			w.WriteHeader(http.StatusTooManyRequests)
-			w.Write([]byte(eString))
+			_, _ = w.Write([]byte(eString))
 		}))
 	defer ts.Close()
 
@@ -91,7 +91,7 @@ func TestAuthError(t *testing.T) {
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte(eString))
+			_, _ = w.Write([]byte(eString))
 		}))
 	defer ts.Close()
 
@@ -121,7 +121,7 @@ func TestAccessError(t *testing.T) {
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusForbidden)
-			w.Write([]byte(eString))
+			_, _ = w.Write([]byte(eString))
 		}))
 	defer ts.Close()
 
@@ -149,7 +149,7 @@ func TestAppError(t *testing.T) {
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusConflict)
-			w.Write([]byte(eString))
+			_, _ = w.Write([]byte(eString))
 		}))
 	defer ts.Close()
 

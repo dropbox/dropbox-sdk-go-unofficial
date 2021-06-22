@@ -490,7 +490,7 @@ type PropertiesSearchArg struct {
 func NewPropertiesSearchArg(Queries []*PropertiesSearchQuery) *PropertiesSearchArg {
 	s := new(PropertiesSearchArg)
 	s.Queries = Queries
-	s.TemplateFilter = &TemplateFilter{Tagged: dropbox.Tagged{"filter_none"}}
+	s.TemplateFilter = &TemplateFilter{Tagged: dropbox.Tagged{Tag: "filter_none"}}
 	return s
 }
 
@@ -630,7 +630,7 @@ func NewPropertiesSearchQuery(Query string, Mode *PropertiesSearchMode) *Propert
 	s := new(PropertiesSearchQuery)
 	s.Query = Query
 	s.Mode = Mode
-	s.LogicalOperator = &LogicalOperator{Tagged: dropbox.Tagged{"or_operator"}}
+	s.LogicalOperator = &LogicalOperator{Tagged: dropbox.Tagged{Tag: "or_operator"}}
 	return s
 }
 

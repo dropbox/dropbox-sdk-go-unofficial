@@ -196,7 +196,7 @@ type CommitInfo struct {
 func NewCommitInfo(Path string) *CommitInfo {
 	s := new(CommitInfo)
 	s.Path = Path
-	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
+	s.Mode = &WriteMode{Tagged: dropbox.Tagged{Tag: "add"}}
 	s.Autorename = false
 	s.Mute = false
 	s.StrictConflict = false
@@ -212,7 +212,7 @@ type CommitInfoWithProperties struct {
 func NewCommitInfoWithProperties(Path string) *CommitInfoWithProperties {
 	s := new(CommitInfoWithProperties)
 	s.Path = Path
-	s.Mode = &WriteMode{Tagged: dropbox.Tagged{"add"}}
+	s.Mode = &WriteMode{Tagged: dropbox.Tagged{Tag: "add"}}
 	s.Autorename = false
 	s.Mute = false
 	s.StrictConflict = false
@@ -2126,7 +2126,7 @@ type ListRevisionsArg struct {
 func NewListRevisionsArg(Path string) *ListRevisionsArg {
 	s := new(ListRevisionsArg)
 	s.Path = Path
-	s.Mode = &ListRevisionsMode{Tagged: dropbox.Tagged{"path"}}
+	s.Mode = &ListRevisionsMode{Tagged: dropbox.Tagged{Tag: "path"}}
 	s.Limit = 10
 	return s
 }
@@ -3890,7 +3890,7 @@ func NewSearchArg(Path string, Query string) *SearchArg {
 	s.Query = Query
 	s.Start = 0
 	s.MaxResults = 100
-	s.Mode = &SearchMode{Tagged: dropbox.Tagged{"filename"}}
+	s.Mode = &SearchMode{Tagged: dropbox.Tagged{Tag: "filename"}}
 	return s
 }
 
@@ -4075,7 +4075,7 @@ type SearchOptions struct {
 func NewSearchOptions() *SearchOptions {
 	s := new(SearchOptions)
 	s.MaxResults = 100
-	s.FileStatus = &FileStatus{Tagged: dropbox.Tagged{"active"}}
+	s.FileStatus = &FileStatus{Tagged: dropbox.Tagged{Tag: "active"}}
 	s.FilenameOnly = false
 	return s
 }
@@ -4318,9 +4318,9 @@ type ThumbnailArg struct {
 func NewThumbnailArg(Path string) *ThumbnailArg {
 	s := new(ThumbnailArg)
 	s.Path = Path
-	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{"jpeg"}}
-	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{"w64h64"}}
-	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{"strict"}}
+	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
+	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
+	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
 	return s
 }
 
@@ -4424,9 +4424,9 @@ type ThumbnailV2Arg struct {
 func NewThumbnailV2Arg(Resource *PathOrLink) *ThumbnailV2Arg {
 	s := new(ThumbnailV2Arg)
 	s.Resource = Resource
-	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{"jpeg"}}
-	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{"w64h64"}}
-	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{"strict"}}
+	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
+	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
+	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
 	return s
 }
 
