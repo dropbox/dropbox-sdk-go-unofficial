@@ -100,7 +100,7 @@ func NewAddFileMemberArgs(File string, Members []*MemberSelector) *AddFileMember
 	s.File = File
 	s.Members = Members
 	s.Quiet = false
-	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{"viewer"}}
+	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{Tag: "viewer"}}
 	s.AddMessageAsComment = false
 	return s
 }
@@ -276,7 +276,7 @@ type AddMember struct {
 func NewAddMember(Member *MemberSelector) *AddMember {
 	s := new(AddMember)
 	s.Member = Member
-	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{"viewer"}}
+	s.AccessLevel = &AccessLevel{Tagged: dropbox.Tagged{Tag: "viewer"}}
 	return s
 }
 
@@ -3264,7 +3264,7 @@ type SetAccessInheritanceArg struct {
 func NewSetAccessInheritanceArg(SharedFolderId string) *SetAccessInheritanceArg {
 	s := new(SetAccessInheritanceArg)
 	s.SharedFolderId = SharedFolderId
-	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{"inherit"}}
+	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{Tag: "inherit"}}
 	return s
 }
 
@@ -3334,7 +3334,7 @@ func NewShareFolderArgBase(Path string) *ShareFolderArgBase {
 	s := new(ShareFolderArgBase)
 	s.Path = Path
 	s.ForceAsync = false
-	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{"inherit"}}
+	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{Tag: "inherit"}}
 	return s
 }
 
@@ -3355,7 +3355,7 @@ func NewShareFolderArg(Path string) *ShareFolderArg {
 	s := new(ShareFolderArg)
 	s.Path = Path
 	s.ForceAsync = false
-	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{"inherit"}}
+	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{Tag: "inherit"}}
 	return s
 }
 
@@ -3843,7 +3843,7 @@ func NewSharedFolderMetadata(AccessType *AccessLevel, IsInsideTeamFolder bool, I
 	s.PreviewUrl = PreviewUrl
 	s.SharedFolderId = SharedFolderId
 	s.TimeInvited = TimeInvited
-	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{"inherit"}}
+	s.AccessInheritance = &AccessInheritance{Tagged: dropbox.Tagged{Tag: "inherit"}}
 	return s
 }
 

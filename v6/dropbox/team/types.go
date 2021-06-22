@@ -2611,7 +2611,7 @@ func NewMemberAddArg(MemberEmail string) *MemberAddArg {
 	s := new(MemberAddArg)
 	s.MemberEmail = MemberEmail
 	s.SendWelcomeEmail = true
-	s.Role = &AdminTier{Tagged: dropbox.Tagged{"member_only"}}
+	s.Role = &AdminTier{Tagged: dropbox.Tagged{Tag: "member_only"}}
 	return s
 }
 

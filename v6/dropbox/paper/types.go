@@ -48,7 +48,7 @@ type AddMember struct {
 func NewAddMember(Member *sharing.MemberSelector) *AddMember {
 	s := new(AddMember)
 	s.Member = Member
-	s.PermissionLevel = &PaperDocPermissionLevel{Tagged: dropbox.Tagged{"edit"}}
+	s.PermissionLevel = &PaperDocPermissionLevel{Tagged: dropbox.Tagged{Tag: "edit"}}
 	return s
 }
 
@@ -337,9 +337,9 @@ type ListPaperDocsArgs struct {
 // NewListPaperDocsArgs returns a new ListPaperDocsArgs instance
 func NewListPaperDocsArgs() *ListPaperDocsArgs {
 	s := new(ListPaperDocsArgs)
-	s.FilterBy = &ListPaperDocsFilterBy{Tagged: dropbox.Tagged{"docs_accessed"}}
-	s.SortBy = &ListPaperDocsSortBy{Tagged: dropbox.Tagged{"accessed"}}
-	s.SortOrder = &ListPaperDocsSortOrder{Tagged: dropbox.Tagged{"ascending"}}
+	s.FilterBy = &ListPaperDocsFilterBy{Tagged: dropbox.Tagged{Tag: "docs_accessed"}}
+	s.SortBy = &ListPaperDocsSortBy{Tagged: dropbox.Tagged{Tag: "accessed"}}
+	s.SortOrder = &ListPaperDocsSortOrder{Tagged: dropbox.Tagged{Tag: "ascending"}}
 	s.Limit = 1000
 	return s
 }
@@ -537,7 +537,7 @@ func NewListUsersOnPaperDocArgs(DocId string) *ListUsersOnPaperDocArgs {
 	s := new(ListUsersOnPaperDocArgs)
 	s.DocId = DocId
 	s.Limit = 1000
-	s.FilterBy = &UserOnPaperDocFilter{Tagged: dropbox.Tagged{"shared"}}
+	s.FilterBy = &UserOnPaperDocFilter{Tagged: dropbox.Tagged{Tag: "shared"}}
 	return s
 }
 

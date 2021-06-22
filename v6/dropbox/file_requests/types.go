@@ -417,7 +417,7 @@ type UpdateFileRequestArgs struct {
 func NewUpdateFileRequestArgs(Id string) *UpdateFileRequestArgs {
 	s := new(UpdateFileRequestArgs)
 	s.Id = Id
-	s.Deadline = &UpdateFileRequestDeadline{Tagged: dropbox.Tagged{"no_update"}}
+	s.Deadline = &UpdateFileRequestDeadline{Tagged: dropbox.Tagged{Tag: "no_update"}}
 	return s
 }
 
