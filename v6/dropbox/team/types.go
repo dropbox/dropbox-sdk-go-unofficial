@@ -82,7 +82,7 @@ func NewActiveWebSession(SessionId string, UserAgent string, Os string, Browser 
 // AddSecondaryEmailResult : Result of trying to add a secondary email to a
 // user. 'success' is the only value indicating that a secondary email was
 // successfully added to a user. The other values explain the type of error that
-// occurred, and include the email for which the error occured.
+// occurred, and include the email for which the error occurred.
 type AddSecondaryEmailResult struct {
 	dropbox.Tagged
 	// Success : Describes a secondary email that was successfully added to a
@@ -464,7 +464,7 @@ const (
 // DeleteSecondaryEmailResult : Result of trying to delete a secondary email
 // address. 'success' is the only value indicating that a secondary email was
 // successfully deleted. The other values explain the type of error that
-// occurred, and include the email for which the error occured.
+// occurred, and include the email for which the error occurred.
 type DeleteSecondaryEmailResult struct {
 	dropbox.Tagged
 	// Success : The secondary email was successfully deleted.
@@ -1951,8 +1951,8 @@ type LegalHoldPolicy struct {
 	Description string `json:"description,omitempty"`
 	// ActivationTime : The time at which the legal hold was activated.
 	ActivationTime *time.Time `json:"activation_time,omitempty"`
-	// Members : Team members IDs and number of permanetly deleted members under
-	// hold.
+	// Members : Team members IDs and number of permanently deleted members
+	// under hold.
 	Members *MembersInfo `json:"members"`
 	// Status : The current state of the hold.
 	Status *LegalHoldStatus `json:"status"`
@@ -4440,7 +4440,7 @@ func NewRemovedStatus(IsRecoverable bool, IsDisconnected bool) *RemovedStatus {
 // ResendSecondaryEmailResult : Result of trying to resend verification email to
 // a secondary email address. 'success' is the only value indicating that a
 // verification email was successfully sent. The other values explain the type
-// of error that occurred, and include the email for which the error occured.
+// of error that occurred, and include the email for which the error occurred.
 type ResendSecondaryEmailResult struct {
 	dropbox.Tagged
 	// Success : A verification email was successfully sent to the secondary
@@ -5844,7 +5844,7 @@ func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
 // UserAddResult : Result of trying to add secondary emails to a user. 'success'
 // is the only value indicating that a user was successfully retrieved for
 // adding secondary emails. The other values explain the type of error that
-// occurred, and include the user for which the error occured.
+// occurred, and include the user for which the error occurred.
 type UserAddResult struct {
 	dropbox.Tagged
 	// Success : Describes a user and the results for each attempt to add a
@@ -5968,7 +5968,7 @@ func NewUserDeleteEmailsResult(User *UserSelectorArg, Results []*DeleteSecondary
 // UserDeleteResult : Result of trying to delete a user's secondary emails.
 // 'success' is the only value indicating that a user was successfully retrieved
 // for deleting secondary emails. The other values explain the type of error
-// that occurred, and include the user for which the error occured.
+// that occurred, and include the user for which the error occurred.
 type UserDeleteResult struct {
 	dropbox.Tagged
 	// Success : Describes a user and the results for each attempt to delete a
@@ -6036,7 +6036,7 @@ func NewUserResendEmailsResult(User *UserSelectorArg, Results []*ResendSecondary
 // UserResendResult : Result of trying to resend verification emails to a user.
 // 'success' is the only value indicating that a user was successfully retrieved
 // for sending verification emails. The other values explain the type of error
-// that occurred, and include the user for which the error occured.
+// that occurred, and include the user for which the error occurred.
 type UserResendResult struct {
 	dropbox.Tagged
 	// Success : Describes a user and the results for each attempt to resend
