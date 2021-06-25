@@ -78,7 +78,7 @@ type AddFileMemberArgs struct {
 	// File : File to which to add members.
 	File string `json:"file"`
 	// Members : Members to add. Note that even an email address is given, this
-	// may result in a user being directy added to the membership if that email
+	// may result in a user being directly added to the membership if that email
 	// is the user's main account email.
 	Members []*MemberSelector `json:"members"`
 	// CustomMessage : Message to send to added members in their invitation.
@@ -3914,11 +3914,10 @@ const (
 
 // SharedLinkSettings : has no documentation (yet)
 type SharedLinkSettings struct {
-	// RequestedVisibility : The requested access for this shared link.
-	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
-	// LinkPassword : If `requested_visibility` is
-	// `RequestedVisibility.password` this is needed to specify the password to
-	// access the link.
+	// RequirePassword : Boolean flag to enable or disable password protection.
+	RequirePassword bool `json:"require_password,omitempty"`
+	// LinkPassword : If `require_password` is true, this is needed to specify
+	// the password to access the link.
 	LinkPassword string `json:"link_password,omitempty"`
 	// Expires : Expiration time of the shared link. By default the link won't
 	// expire.
@@ -3932,6 +3931,9 @@ type SharedLinkSettings struct {
 	// Access : Requested access level you want the audience to gain from this
 	// link. Note, modifying access level for an existing link is not supported.
 	Access *RequestedLinkAccessLevel `json:"access,omitempty"`
+	// RequestedVisibility : Use `audience` instead.  The requested access for
+	// this shared link.
+	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
 }
 
 // NewSharedLinkSettings returns a new SharedLinkSettings instance

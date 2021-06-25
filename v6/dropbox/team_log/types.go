@@ -482,6 +482,21 @@ const (
 	AdminAlertCategoryEnumOther                 = "other"
 )
 
+// AdminAlertGeneralStateEnum : Alert state
+type AdminAlertGeneralStateEnum struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminAlertGeneralStateEnum
+const (
+	AdminAlertGeneralStateEnumActive     = "active"
+	AdminAlertGeneralStateEnumDismissed  = "dismissed"
+	AdminAlertGeneralStateEnumInProgress = "in_progress"
+	AdminAlertGeneralStateEnumNa         = "na"
+	AdminAlertGeneralStateEnumResolved   = "resolved"
+	AdminAlertGeneralStateEnumOther      = "other"
+)
+
 // AdminAlertSeverityEnum : Alert severity
 type AdminAlertSeverityEnum struct {
 	dropbox.Tagged
@@ -528,6 +543,47 @@ const (
 	AdminAlertingAlertSensitivityMedium  = "medium"
 	AdminAlertingAlertSensitivityOther   = "other"
 )
+
+// AdminAlertingAlertStateChangedDetails : Changed an alert state.
+type AdminAlertingAlertStateChangedDetails struct {
+	// AlertName : Alert name.
+	AlertName string `json:"alert_name"`
+	// AlertSeverity : Alert severity.
+	AlertSeverity *AdminAlertSeverityEnum `json:"alert_severity"`
+	// AlertCategory : Alert category.
+	AlertCategory *AdminAlertCategoryEnum `json:"alert_category"`
+	// AlertInstanceId : Alert ID.
+	AlertInstanceId string `json:"alert_instance_id"`
+	// PreviousValue : Alert state before the change.
+	PreviousValue *AdminAlertGeneralStateEnum `json:"previous_value"`
+	// NewValue : Alert state after the change.
+	NewValue *AdminAlertGeneralStateEnum `json:"new_value"`
+}
+
+// NewAdminAlertingAlertStateChangedDetails returns a new AdminAlertingAlertStateChangedDetails instance
+func NewAdminAlertingAlertStateChangedDetails(AlertName string, AlertSeverity *AdminAlertSeverityEnum, AlertCategory *AdminAlertCategoryEnum, AlertInstanceId string, PreviousValue *AdminAlertGeneralStateEnum, NewValue *AdminAlertGeneralStateEnum) *AdminAlertingAlertStateChangedDetails {
+	s := new(AdminAlertingAlertStateChangedDetails)
+	s.AlertName = AlertName
+	s.AlertSeverity = AlertSeverity
+	s.AlertCategory = AlertCategory
+	s.AlertInstanceId = AlertInstanceId
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// AdminAlertingAlertStateChangedType : has no documentation (yet)
+type AdminAlertingAlertStateChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminAlertingAlertStateChangedType returns a new AdminAlertingAlertStateChangedType instance
+func NewAdminAlertingAlertStateChangedType(Description string) *AdminAlertingAlertStateChangedType {
+	s := new(AdminAlertingAlertStateChangedType)
+	s.Description = Description
+	return s
+}
 
 // AdminAlertingAlertStatePolicy : Policy for controlling whether an alert can
 // be triggered or not
@@ -1073,6 +1129,29 @@ func NewAppUnlinkUserType(Description string) *AppUnlinkUserType {
 	return s
 }
 
+// ApplyNamingConventionDetails : Applied a Naming Convention rule.
+type ApplyNamingConventionDetails struct {
+}
+
+// NewApplyNamingConventionDetails returns a new ApplyNamingConventionDetails instance
+func NewApplyNamingConventionDetails() *ApplyNamingConventionDetails {
+	s := new(ApplyNamingConventionDetails)
+	return s
+}
+
+// ApplyNamingConventionType : has no documentation (yet)
+type ApplyNamingConventionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewApplyNamingConventionType returns a new ApplyNamingConventionType instance
+func NewApplyNamingConventionType(Description string) *ApplyNamingConventionType {
+	s := new(ApplyNamingConventionType)
+	s.Description = Description
+	return s
+}
+
 // AssetLogInfo : Asset details.
 type AssetLogInfo struct {
 	dropbox.Tagged
@@ -1487,6 +1566,19 @@ func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationD
 	s.Sha1Fingerprint = Sha1Fingerprint
 	return s
 }
+
+// ChangeLinkExpirationPolicy : Policy for deciding whether the team's default
+// expiration days policy must be enforced when an externally shared is updated
+type ChangeLinkExpirationPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ChangeLinkExpirationPolicy
+const (
+	ChangeLinkExpirationPolicyAllowed    = "allowed"
+	ChangeLinkExpirationPolicyNotAllowed = "not_allowed"
+	ChangeLinkExpirationPolicyOther      = "other"
+)
 
 // ChangedEnterpriseAdminRoleDetails : Changed enterprise admin role.
 type ChangedEnterpriseAdminRoleDetails struct {
@@ -1964,6 +2056,25 @@ func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlace
 	s.Description = Description
 	return s
 }
+
+// DefaultLinkExpirationDaysPolicy : Policy for the default number of days until
+// an externally shared link expires
+type DefaultLinkExpirationDaysPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DefaultLinkExpirationDaysPolicy
+const (
+	DefaultLinkExpirationDaysPolicyDay1   = "day_1"
+	DefaultLinkExpirationDaysPolicyDay180 = "day_180"
+	DefaultLinkExpirationDaysPolicyDay3   = "day_3"
+	DefaultLinkExpirationDaysPolicyDay30  = "day_30"
+	DefaultLinkExpirationDaysPolicyDay7   = "day_7"
+	DefaultLinkExpirationDaysPolicyDay90  = "day_90"
+	DefaultLinkExpirationDaysPolicyNone   = "none"
+	DefaultLinkExpirationDaysPolicyYear1  = "year_1"
+	DefaultLinkExpirationDaysPolicyOther  = "other"
+)
 
 // DeleteTeamInviteLinkDetails : Deleted team invite link.
 type DeleteTeamInviteLinkDetails struct {
@@ -3400,6 +3511,19 @@ func NewEndedEnterpriseAdminSessionType(Description string) *EndedEnterpriseAdmi
 	return s
 }
 
+// EnforceLinkPasswordPolicy : Policy for deciding whether password must be
+// enforced when an externally shared link is updated
+type EnforceLinkPasswordPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for EnforceLinkPasswordPolicy
+const (
+	EnforceLinkPasswordPolicyOptional = "optional"
+	EnforceLinkPasswordPolicyRequired = "required"
+	EnforceLinkPasswordPolicyOther    = "other"
+)
+
 // EnterpriseSettingsLockingDetails : Changed who can update a setting.
 type EnterpriseSettingsLockingDetails struct {
 	// TeamName : The secondary team name.
@@ -3470,6 +3594,8 @@ const (
 // EventDetails : Additional fields depending on the event type.
 type EventDetails struct {
 	dropbox.Tagged
+	// AdminAlertingAlertStateChangedDetails : has no documentation (yet)
+	AdminAlertingAlertStateChangedDetails *AdminAlertingAlertStateChangedDetails `json:"admin_alerting_alert_state_changed_details,omitempty"`
 	// AdminAlertingChangedAlertConfigDetails : has no documentation (yet)
 	AdminAlertingChangedAlertConfigDetails *AdminAlertingChangedAlertConfigDetails `json:"admin_alerting_changed_alert_config_details,omitempty"`
 	// AdminAlertingTriggeredAlertDetails : has no documentation (yet)
@@ -3609,6 +3735,8 @@ type EventDetails struct {
 	DomainVerificationRemoveDomainDetails *DomainVerificationRemoveDomainDetails `json:"domain_verification_remove_domain_details,omitempty"`
 	// EnabledDomainInvitesDetails : has no documentation (yet)
 	EnabledDomainInvitesDetails *EnabledDomainInvitesDetails `json:"enabled_domain_invites_details,omitempty"`
+	// ApplyNamingConventionDetails : has no documentation (yet)
+	ApplyNamingConventionDetails *ApplyNamingConventionDetails `json:"apply_naming_convention_details,omitempty"`
 	// CreateFolderDetails : has no documentation (yet)
 	CreateFolderDetails *CreateFolderDetails `json:"create_folder_details,omitempty"`
 	// FileAddDetails : has no documentation (yet)
@@ -3653,8 +3781,14 @@ type EventDetails struct {
 	ObjectLabelRemovedDetails *ObjectLabelRemovedDetails `json:"object_label_removed_details,omitempty"`
 	// ObjectLabelUpdatedValueDetails : has no documentation (yet)
 	ObjectLabelUpdatedValueDetails *ObjectLabelUpdatedValueDetails `json:"object_label_updated_value_details,omitempty"`
+	// OrganizeFolderWithTidyDetails : has no documentation (yet)
+	OrganizeFolderWithTidyDetails *OrganizeFolderWithTidyDetails `json:"organize_folder_with_tidy_details,omitempty"`
 	// RewindFolderDetails : has no documentation (yet)
 	RewindFolderDetails *RewindFolderDetails `json:"rewind_folder_details,omitempty"`
+	// UserTagsAddedDetails : has no documentation (yet)
+	UserTagsAddedDetails *UserTagsAddedDetails `json:"user_tags_added_details,omitempty"`
+	// UserTagsRemovedDetails : has no documentation (yet)
+	UserTagsRemovedDetails *UserTagsRemovedDetails `json:"user_tags_removed_details,omitempty"`
 	// FileRequestChangeDetails : has no documentation (yet)
 	FileRequestChangeDetails *FileRequestChangeDetails `json:"file_request_change_details,omitempty"`
 	// FileRequestCloseDetails : has no documentation (yet)
@@ -4223,6 +4357,8 @@ type EventDetails struct {
 	GroupUserManagementChangePolicyDetails *GroupUserManagementChangePolicyDetails `json:"group_user_management_change_policy_details,omitempty"`
 	// IntegrationPolicyChangedDetails : has no documentation (yet)
 	IntegrationPolicyChangedDetails *IntegrationPolicyChangedDetails `json:"integration_policy_changed_details,omitempty"`
+	// InviteAcceptanceEmailPolicyChangedDetails : has no documentation (yet)
+	InviteAcceptanceEmailPolicyChangedDetails *InviteAcceptanceEmailPolicyChangedDetails `json:"invite_acceptance_email_policy_changed_details,omitempty"`
 	// MemberRequestsChangePolicyDetails : has no documentation (yet)
 	MemberRequestsChangePolicyDetails *MemberRequestsChangePolicyDetails `json:"member_requests_change_policy_details,omitempty"`
 	// MemberSendInvitePolicyChangedDetails : has no documentation (yet)
@@ -4270,6 +4406,15 @@ type EventDetails struct {
 	SendForSignaturePolicyChangedDetails *SendForSignaturePolicyChangedDetails `json:"send_for_signature_policy_changed_details,omitempty"`
 	// SharingChangeFolderJoinPolicyDetails : has no documentation (yet)
 	SharingChangeFolderJoinPolicyDetails *SharingChangeFolderJoinPolicyDetails `json:"sharing_change_folder_join_policy_details,omitempty"`
+	// SharingChangeLinkAllowChangeExpirationPolicyDetails : has no
+	// documentation (yet)
+	SharingChangeLinkAllowChangeExpirationPolicyDetails *SharingChangeLinkAllowChangeExpirationPolicyDetails `json:"sharing_change_link_allow_change_expiration_policy_details,omitempty"`
+	// SharingChangeLinkDefaultExpirationPolicyDetails : has no documentation
+	// (yet)
+	SharingChangeLinkDefaultExpirationPolicyDetails *SharingChangeLinkDefaultExpirationPolicyDetails `json:"sharing_change_link_default_expiration_policy_details,omitempty"`
+	// SharingChangeLinkEnforcePasswordPolicyDetails : has no documentation
+	// (yet)
+	SharingChangeLinkEnforcePasswordPolicyDetails *SharingChangeLinkEnforcePasswordPolicyDetails `json:"sharing_change_link_enforce_password_policy_details,omitempty"`
 	// SharingChangeLinkPolicyDetails : has no documentation (yet)
 	SharingChangeLinkPolicyDetails *SharingChangeLinkPolicyDetails `json:"sharing_change_link_policy_details,omitempty"`
 	// SharingChangeMemberPolicyDetails : has no documentation (yet)
@@ -4419,6 +4564,7 @@ type EventDetails struct {
 
 // Valid tag values for EventDetails
 const (
+	EventDetailsAdminAlertingAlertStateChangedDetails               = "admin_alerting_alert_state_changed_details"
 	EventDetailsAdminAlertingChangedAlertConfigDetails              = "admin_alerting_changed_alert_config_details"
 	EventDetailsAdminAlertingTriggeredAlertDetails                  = "admin_alerting_triggered_alert_details"
 	EventDetailsAppBlockedByPermissionsDetails                      = "app_blocked_by_permissions_details"
@@ -4488,6 +4634,7 @@ const (
 	EventDetailsDomainVerificationAddDomainSuccessDetails           = "domain_verification_add_domain_success_details"
 	EventDetailsDomainVerificationRemoveDomainDetails               = "domain_verification_remove_domain_details"
 	EventDetailsEnabledDomainInvitesDetails                         = "enabled_domain_invites_details"
+	EventDetailsApplyNamingConventionDetails                        = "apply_naming_convention_details"
 	EventDetailsCreateFolderDetails                                 = "create_folder_details"
 	EventDetailsFileAddDetails                                      = "file_add_details"
 	EventDetailsFileCopyDetails                                     = "file_copy_details"
@@ -4510,7 +4657,10 @@ const (
 	EventDetailsObjectLabelAddedDetails                             = "object_label_added_details"
 	EventDetailsObjectLabelRemovedDetails                           = "object_label_removed_details"
 	EventDetailsObjectLabelUpdatedValueDetails                      = "object_label_updated_value_details"
+	EventDetailsOrganizeFolderWithTidyDetails                       = "organize_folder_with_tidy_details"
 	EventDetailsRewindFolderDetails                                 = "rewind_folder_details"
+	EventDetailsUserTagsAddedDetails                                = "user_tags_added_details"
+	EventDetailsUserTagsRemovedDetails                              = "user_tags_removed_details"
 	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
 	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
 	EventDetailsFileRequestCreateDetails                            = "file_request_create_details"
@@ -4792,6 +4942,7 @@ const (
 	EventDetailsGoogleSsoChangePolicyDetails                        = "google_sso_change_policy_details"
 	EventDetailsGroupUserManagementChangePolicyDetails              = "group_user_management_change_policy_details"
 	EventDetailsIntegrationPolicyChangedDetails                     = "integration_policy_changed_details"
+	EventDetailsInviteAcceptanceEmailPolicyChangedDetails           = "invite_acceptance_email_policy_changed_details"
 	EventDetailsMemberRequestsChangePolicyDetails                   = "member_requests_change_policy_details"
 	EventDetailsMemberSendInvitePolicyChangedDetails                = "member_send_invite_policy_changed_details"
 	EventDetailsMemberSpaceLimitsAddExceptionDetails                = "member_space_limits_add_exception_details"
@@ -4815,6 +4966,9 @@ const (
 	EventDetailsRewindPolicyChangedDetails                          = "rewind_policy_changed_details"
 	EventDetailsSendForSignaturePolicyChangedDetails                = "send_for_signature_policy_changed_details"
 	EventDetailsSharingChangeFolderJoinPolicyDetails                = "sharing_change_folder_join_policy_details"
+	EventDetailsSharingChangeLinkAllowChangeExpirationPolicyDetails = "sharing_change_link_allow_change_expiration_policy_details"
+	EventDetailsSharingChangeLinkDefaultExpirationPolicyDetails     = "sharing_change_link_default_expiration_policy_details"
+	EventDetailsSharingChangeLinkEnforcePasswordPolicyDetails       = "sharing_change_link_enforce_password_policy_details"
 	EventDetailsSharingChangeLinkPolicyDetails                      = "sharing_change_link_policy_details"
 	EventDetailsSharingChangeMemberPolicyDetails                    = "sharing_change_member_policy_details"
 	EventDetailsShowcaseChangeDownloadPolicyDetails                 = "showcase_change_download_policy_details"
@@ -4896,6 +5050,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_alert_state_changed_details":
+		err = json.Unmarshal(body, &u.AdminAlertingAlertStateChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "admin_alerting_changed_alert_config_details":
 		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfigDetails)
 
@@ -5310,6 +5470,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "apply_naming_convention_details":
+		err = json.Unmarshal(body, &u.ApplyNamingConventionDetails)
+
+		if err != nil {
+			return err
+		}
 	case "create_folder_details":
 		err = json.Unmarshal(body, &u.CreateFolderDetails)
 
@@ -5442,8 +5608,26 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "organize_folder_with_tidy_details":
+		err = json.Unmarshal(body, &u.OrganizeFolderWithTidyDetails)
+
+		if err != nil {
+			return err
+		}
 	case "rewind_folder_details":
 		err = json.Unmarshal(body, &u.RewindFolderDetails)
+
+		if err != nil {
+			return err
+		}
+	case "user_tags_added_details":
+		err = json.Unmarshal(body, &u.UserTagsAddedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "user_tags_removed_details":
+		err = json.Unmarshal(body, &u.UserTagsRemovedDetails)
 
 		if err != nil {
 			return err
@@ -7134,6 +7318,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "invite_acceptance_email_policy_changed_details":
+		err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "member_requests_change_policy_details":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
 
@@ -7268,6 +7458,24 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "sharing_change_folder_join_policy_details":
 		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_allow_change_expiration_policy_details":
+		err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_default_expiration_policy_details":
+		err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_enforce_password_policy_details":
+		err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicyDetails)
 
 		if err != nil {
 			return err
@@ -7675,6 +7883,8 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 // EventType : The type of the event with description.
 type EventType struct {
 	dropbox.Tagged
+	// AdminAlertingAlertStateChanged : (admin_alerting) Changed an alert state
+	AdminAlertingAlertStateChanged *AdminAlertingAlertStateChangedType `json:"admin_alerting_alert_state_changed,omitempty"`
 	// AdminAlertingChangedAlertConfig : (admin_alerting) Changed an alert
 	// setting
 	AdminAlertingChangedAlertConfig *AdminAlertingChangedAlertConfigType `json:"admin_alerting_changed_alert_config,omitempty"`
@@ -7847,6 +8057,9 @@ type EventType struct {
 	// EnabledDomainInvites : (domains) Enabled domain invites (deprecated, no
 	// longer logged)
 	EnabledDomainInvites *EnabledDomainInvitesType `json:"enabled_domain_invites,omitempty"`
+	// ApplyNamingConvention : (file_operations) Applied a Naming Convention
+	// rule
+	ApplyNamingConvention *ApplyNamingConventionType `json:"apply_naming_convention,omitempty"`
 	// CreateFolder : (file_operations) Created folders (deprecated, no longer
 	// logged)
 	CreateFolder *CreateFolderType `json:"create_folder,omitempty"`
@@ -7899,8 +8112,15 @@ type EventType struct {
 	ObjectLabelRemoved *ObjectLabelRemovedType `json:"object_label_removed,omitempty"`
 	// ObjectLabelUpdatedValue : (file_operations) Updated a label's value
 	ObjectLabelUpdatedValue *ObjectLabelUpdatedValueType `json:"object_label_updated_value,omitempty"`
+	// OrganizeFolderWithTidy : (file_operations) Organized a folder with the
+	// Tidy Up action
+	OrganizeFolderWithTidy *OrganizeFolderWithTidyType `json:"organize_folder_with_tidy,omitempty"`
 	// RewindFolder : (file_operations) Rewound a folder
 	RewindFolder *RewindFolderType `json:"rewind_folder,omitempty"`
+	// UserTagsAdded : (file_operations) Tagged a file
+	UserTagsAdded *UserTagsAddedType `json:"user_tags_added,omitempty"`
+	// UserTagsRemoved : (file_operations) Removed tags
+	UserTagsRemoved *UserTagsRemovedType `json:"user_tags_removed,omitempty"`
 	// FileRequestChange : (file_requests) Changed file request
 	FileRequestChange *FileRequestChangeType `json:"file_request_change,omitempty"`
 	// FileRequestClose : (file_requests) Closed file request
@@ -8605,6 +8825,9 @@ type EventType struct {
 	// IntegrationPolicyChanged : (team_policies) Changed integration policy for
 	// team
 	IntegrationPolicyChanged *IntegrationPolicyChangedType `json:"integration_policy_changed,omitempty"`
+	// InviteAcceptanceEmailPolicyChanged : (team_policies) Changed invite
+	// accept email policy for team
+	InviteAcceptanceEmailPolicyChanged *InviteAcceptanceEmailPolicyChangedType `json:"invite_acceptance_email_policy_changed,omitempty"`
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
 	// find team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
@@ -8674,6 +8897,16 @@ type EventType struct {
 	// SharingChangeFolderJoinPolicy : (team_policies) Changed whether team
 	// members can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
+	// SharingChangeLinkAllowChangeExpirationPolicy : (team_policies) Changed
+	// the password requirement for the links shared outside of the team
+	SharingChangeLinkAllowChangeExpirationPolicy *SharingChangeLinkAllowChangeExpirationPolicyType `json:"sharing_change_link_allow_change_expiration_policy,omitempty"`
+	// SharingChangeLinkDefaultExpirationPolicy : (team_policies) Changed the
+	// default expiration for the links shared outside of the team
+	SharingChangeLinkDefaultExpirationPolicy *SharingChangeLinkDefaultExpirationPolicyType `json:"sharing_change_link_default_expiration_policy,omitempty"`
+	// SharingChangeLinkEnforcePasswordPolicy : (team_policies) Changed the
+	// allow remove or change expiration policy for the links shared outside of
+	// the team
+	SharingChangeLinkEnforcePasswordPolicy *SharingChangeLinkEnforcePasswordPolicyType `json:"sharing_change_link_enforce_password_policy,omitempty"`
 	// SharingChangeLinkPolicy : (team_policies) Changed whether members can
 	// share links outside team, and if links are accessible only by team
 	// members or anyone by default
@@ -8867,6 +9100,7 @@ type EventType struct {
 
 // Valid tag values for EventType
 const (
+	EventTypeAdminAlertingAlertStateChanged               = "admin_alerting_alert_state_changed"
 	EventTypeAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
 	EventTypeAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
 	EventTypeAppBlockedByPermissions                      = "app_blocked_by_permissions"
@@ -8936,6 +9170,7 @@ const (
 	EventTypeDomainVerificationAddDomainSuccess           = "domain_verification_add_domain_success"
 	EventTypeDomainVerificationRemoveDomain               = "domain_verification_remove_domain"
 	EventTypeEnabledDomainInvites                         = "enabled_domain_invites"
+	EventTypeApplyNamingConvention                        = "apply_naming_convention"
 	EventTypeCreateFolder                                 = "create_folder"
 	EventTypeFileAdd                                      = "file_add"
 	EventTypeFileCopy                                     = "file_copy"
@@ -8958,7 +9193,10 @@ const (
 	EventTypeObjectLabelAdded                             = "object_label_added"
 	EventTypeObjectLabelRemoved                           = "object_label_removed"
 	EventTypeObjectLabelUpdatedValue                      = "object_label_updated_value"
+	EventTypeOrganizeFolderWithTidy                       = "organize_folder_with_tidy"
 	EventTypeRewindFolder                                 = "rewind_folder"
+	EventTypeUserTagsAdded                                = "user_tags_added"
+	EventTypeUserTagsRemoved                              = "user_tags_removed"
 	EventTypeFileRequestChange                            = "file_request_change"
 	EventTypeFileRequestClose                             = "file_request_close"
 	EventTypeFileRequestCreate                            = "file_request_create"
@@ -9240,6 +9478,7 @@ const (
 	EventTypeGoogleSsoChangePolicy                        = "google_sso_change_policy"
 	EventTypeGroupUserManagementChangePolicy              = "group_user_management_change_policy"
 	EventTypeIntegrationPolicyChanged                     = "integration_policy_changed"
+	EventTypeInviteAcceptanceEmailPolicyChanged           = "invite_acceptance_email_policy_changed"
 	EventTypeMemberRequestsChangePolicy                   = "member_requests_change_policy"
 	EventTypeMemberSendInvitePolicyChanged                = "member_send_invite_policy_changed"
 	EventTypeMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
@@ -9263,6 +9502,9 @@ const (
 	EventTypeRewindPolicyChanged                          = "rewind_policy_changed"
 	EventTypeSendForSignaturePolicyChanged                = "send_for_signature_policy_changed"
 	EventTypeSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
+	EventTypeSharingChangeLinkAllowChangeExpirationPolicy = "sharing_change_link_allow_change_expiration_policy"
+	EventTypeSharingChangeLinkDefaultExpirationPolicy     = "sharing_change_link_default_expiration_policy"
+	EventTypeSharingChangeLinkEnforcePasswordPolicy       = "sharing_change_link_enforce_password_policy"
 	EventTypeSharingChangeLinkPolicy                      = "sharing_change_link_policy"
 	EventTypeSharingChangeMemberPolicy                    = "sharing_change_member_policy"
 	EventTypeShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
@@ -9343,6 +9585,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	}
 	u.Tag = w.Tag
 	switch u.Tag {
+	case "admin_alerting_alert_state_changed":
+		err = json.Unmarshal(body, &u.AdminAlertingAlertStateChanged)
+
+		if err != nil {
+			return err
+		}
 	case "admin_alerting_changed_alert_config":
 		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfig)
 
@@ -9757,6 +10005,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "apply_naming_convention":
+		err = json.Unmarshal(body, &u.ApplyNamingConvention)
+
+		if err != nil {
+			return err
+		}
 	case "create_folder":
 		err = json.Unmarshal(body, &u.CreateFolder)
 
@@ -9889,8 +10143,26 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "organize_folder_with_tidy":
+		err = json.Unmarshal(body, &u.OrganizeFolderWithTidy)
+
+		if err != nil {
+			return err
+		}
 	case "rewind_folder":
 		err = json.Unmarshal(body, &u.RewindFolder)
+
+		if err != nil {
+			return err
+		}
+	case "user_tags_added":
+		err = json.Unmarshal(body, &u.UserTagsAdded)
+
+		if err != nil {
+			return err
+		}
+	case "user_tags_removed":
+		err = json.Unmarshal(body, &u.UserTagsRemoved)
 
 		if err != nil {
 			return err
@@ -11581,6 +11853,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "invite_acceptance_email_policy_changed":
+		err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "member_requests_change_policy":
 		err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
 
@@ -11715,6 +11993,24 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "sharing_change_folder_join_policy":
 		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_allow_change_expiration_policy":
+		err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_default_expiration_policy":
+		err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicy)
+
+		if err != nil {
+			return err
+		}
+	case "sharing_change_link_enforce_password_policy":
+		err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicy)
 
 		if err != nil {
 			return err
@@ -12120,6 +12416,7 @@ type EventTypeArg struct {
 
 // Valid tag values for EventTypeArg
 const (
+	EventTypeArgAdminAlertingAlertStateChanged               = "admin_alerting_alert_state_changed"
 	EventTypeArgAdminAlertingChangedAlertConfig              = "admin_alerting_changed_alert_config"
 	EventTypeArgAdminAlertingTriggeredAlert                  = "admin_alerting_triggered_alert"
 	EventTypeArgAppBlockedByPermissions                      = "app_blocked_by_permissions"
@@ -12189,6 +12486,7 @@ const (
 	EventTypeArgDomainVerificationAddDomainSuccess           = "domain_verification_add_domain_success"
 	EventTypeArgDomainVerificationRemoveDomain               = "domain_verification_remove_domain"
 	EventTypeArgEnabledDomainInvites                         = "enabled_domain_invites"
+	EventTypeArgApplyNamingConvention                        = "apply_naming_convention"
 	EventTypeArgCreateFolder                                 = "create_folder"
 	EventTypeArgFileAdd                                      = "file_add"
 	EventTypeArgFileCopy                                     = "file_copy"
@@ -12211,7 +12509,10 @@ const (
 	EventTypeArgObjectLabelAdded                             = "object_label_added"
 	EventTypeArgObjectLabelRemoved                           = "object_label_removed"
 	EventTypeArgObjectLabelUpdatedValue                      = "object_label_updated_value"
+	EventTypeArgOrganizeFolderWithTidy                       = "organize_folder_with_tidy"
 	EventTypeArgRewindFolder                                 = "rewind_folder"
+	EventTypeArgUserTagsAdded                                = "user_tags_added"
+	EventTypeArgUserTagsRemoved                              = "user_tags_removed"
 	EventTypeArgFileRequestChange                            = "file_request_change"
 	EventTypeArgFileRequestClose                             = "file_request_close"
 	EventTypeArgFileRequestCreate                            = "file_request_create"
@@ -12493,6 +12794,7 @@ const (
 	EventTypeArgGoogleSsoChangePolicy                        = "google_sso_change_policy"
 	EventTypeArgGroupUserManagementChangePolicy              = "group_user_management_change_policy"
 	EventTypeArgIntegrationPolicyChanged                     = "integration_policy_changed"
+	EventTypeArgInviteAcceptanceEmailPolicyChanged           = "invite_acceptance_email_policy_changed"
 	EventTypeArgMemberRequestsChangePolicy                   = "member_requests_change_policy"
 	EventTypeArgMemberSendInvitePolicyChanged                = "member_send_invite_policy_changed"
 	EventTypeArgMemberSpaceLimitsAddException                = "member_space_limits_add_exception"
@@ -12516,6 +12818,9 @@ const (
 	EventTypeArgRewindPolicyChanged                          = "rewind_policy_changed"
 	EventTypeArgSendForSignaturePolicyChanged                = "send_for_signature_policy_changed"
 	EventTypeArgSharingChangeFolderJoinPolicy                = "sharing_change_folder_join_policy"
+	EventTypeArgSharingChangeLinkAllowChangeExpirationPolicy = "sharing_change_link_allow_change_expiration_policy"
+	EventTypeArgSharingChangeLinkDefaultExpirationPolicy     = "sharing_change_link_default_expiration_policy"
+	EventTypeArgSharingChangeLinkEnforcePasswordPolicy       = "sharing_change_link_enforce_password_policy"
 	EventTypeArgSharingChangeLinkPolicy                      = "sharing_change_link_policy"
 	EventTypeArgSharingChangeMemberPolicy                    = "sharing_change_member_policy"
 	EventTypeArgShowcaseChangeDownloadPolicy                 = "showcase_change_download_policy"
@@ -15321,6 +15626,49 @@ func NewIntegrationPolicyChangedType(Description string) *IntegrationPolicyChang
 	return s
 }
 
+// InviteAcceptanceEmailPolicy : Policy for deciding whether team admins receive
+// email when an invitation to join the team is accepted
+type InviteAcceptanceEmailPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for InviteAcceptanceEmailPolicy
+const (
+	InviteAcceptanceEmailPolicyDisabled = "disabled"
+	InviteAcceptanceEmailPolicyEnabled  = "enabled"
+	InviteAcceptanceEmailPolicyOther    = "other"
+)
+
+// InviteAcceptanceEmailPolicyChangedDetails : Changed invite accept email
+// policy for team.
+type InviteAcceptanceEmailPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *InviteAcceptanceEmailPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *InviteAcceptanceEmailPolicy `json:"previous_value"`
+}
+
+// NewInviteAcceptanceEmailPolicyChangedDetails returns a new InviteAcceptanceEmailPolicyChangedDetails instance
+func NewInviteAcceptanceEmailPolicyChangedDetails(NewValue *InviteAcceptanceEmailPolicy, PreviousValue *InviteAcceptanceEmailPolicy) *InviteAcceptanceEmailPolicyChangedDetails {
+	s := new(InviteAcceptanceEmailPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// InviteAcceptanceEmailPolicyChangedType : has no documentation (yet)
+type InviteAcceptanceEmailPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewInviteAcceptanceEmailPolicyChangedType returns a new InviteAcceptanceEmailPolicyChangedType instance
+func NewInviteAcceptanceEmailPolicyChangedType(Description string) *InviteAcceptanceEmailPolicyChangedType {
+	s := new(InviteAcceptanceEmailPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // InviteMethod : has no documentation (yet)
 type InviteMethod struct {
 	dropbox.Tagged
@@ -15383,6 +15731,8 @@ type LabelType struct {
 // Valid tag values for LabelType
 const (
 	LabelTypePersonalInformation = "personal_information"
+	LabelTypeTestOnly            = "test_only"
+	LabelTypeUserDefinedTag      = "user_defined_tag"
 	LabelTypeOther               = "other"
 )
 
@@ -17459,6 +17809,29 @@ type OrganizationName struct {
 func NewOrganizationName(Organization string) *OrganizationName {
 	s := new(OrganizationName)
 	s.Organization = Organization
+	return s
+}
+
+// OrganizeFolderWithTidyDetails : Organized a folder with the Tidy Up action.
+type OrganizeFolderWithTidyDetails struct {
+}
+
+// NewOrganizeFolderWithTidyDetails returns a new OrganizeFolderWithTidyDetails instance
+func NewOrganizeFolderWithTidyDetails() *OrganizeFolderWithTidyDetails {
+	s := new(OrganizeFolderWithTidyDetails)
+	return s
+}
+
+// OrganizeFolderWithTidyType : has no documentation (yet)
+type OrganizeFolderWithTidyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewOrganizeFolderWithTidyType returns a new OrganizeFolderWithTidyType instance
+func NewOrganizeFolderWithTidyType(Description string) *OrganizeFolderWithTidyType {
+	s := new(OrganizeFolderWithTidyType)
+	s.Description = Description
 	return s
 }
 
@@ -21746,6 +22119,93 @@ func NewSharingChangeFolderJoinPolicyType(Description string) *SharingChangeFold
 	return s
 }
 
+// SharingChangeLinkAllowChangeExpirationPolicyDetails : Changed the password
+// requirement for the links shared outside of the team.
+type SharingChangeLinkAllowChangeExpirationPolicyDetails struct {
+	// NewValue : To.
+	NewValue *EnforceLinkPasswordPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *EnforceLinkPasswordPolicy `json:"previous_value,omitempty"`
+}
+
+// NewSharingChangeLinkAllowChangeExpirationPolicyDetails returns a new SharingChangeLinkAllowChangeExpirationPolicyDetails instance
+func NewSharingChangeLinkAllowChangeExpirationPolicyDetails(NewValue *EnforceLinkPasswordPolicy) *SharingChangeLinkAllowChangeExpirationPolicyDetails {
+	s := new(SharingChangeLinkAllowChangeExpirationPolicyDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// SharingChangeLinkAllowChangeExpirationPolicyType : has no documentation (yet)
+type SharingChangeLinkAllowChangeExpirationPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharingChangeLinkAllowChangeExpirationPolicyType returns a new SharingChangeLinkAllowChangeExpirationPolicyType instance
+func NewSharingChangeLinkAllowChangeExpirationPolicyType(Description string) *SharingChangeLinkAllowChangeExpirationPolicyType {
+	s := new(SharingChangeLinkAllowChangeExpirationPolicyType)
+	s.Description = Description
+	return s
+}
+
+// SharingChangeLinkDefaultExpirationPolicyDetails : Changed the default
+// expiration for the links shared outside of the team.
+type SharingChangeLinkDefaultExpirationPolicyDetails struct {
+	// NewValue : To.
+	NewValue *DefaultLinkExpirationDaysPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *DefaultLinkExpirationDaysPolicy `json:"previous_value,omitempty"`
+}
+
+// NewSharingChangeLinkDefaultExpirationPolicyDetails returns a new SharingChangeLinkDefaultExpirationPolicyDetails instance
+func NewSharingChangeLinkDefaultExpirationPolicyDetails(NewValue *DefaultLinkExpirationDaysPolicy) *SharingChangeLinkDefaultExpirationPolicyDetails {
+	s := new(SharingChangeLinkDefaultExpirationPolicyDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// SharingChangeLinkDefaultExpirationPolicyType : has no documentation (yet)
+type SharingChangeLinkDefaultExpirationPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharingChangeLinkDefaultExpirationPolicyType returns a new SharingChangeLinkDefaultExpirationPolicyType instance
+func NewSharingChangeLinkDefaultExpirationPolicyType(Description string) *SharingChangeLinkDefaultExpirationPolicyType {
+	s := new(SharingChangeLinkDefaultExpirationPolicyType)
+	s.Description = Description
+	return s
+}
+
+// SharingChangeLinkEnforcePasswordPolicyDetails : Changed the allow remove or
+// change expiration policy for the links shared outside of the team.
+type SharingChangeLinkEnforcePasswordPolicyDetails struct {
+	// NewValue : To.
+	NewValue *ChangeLinkExpirationPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *ChangeLinkExpirationPolicy `json:"previous_value,omitempty"`
+}
+
+// NewSharingChangeLinkEnforcePasswordPolicyDetails returns a new SharingChangeLinkEnforcePasswordPolicyDetails instance
+func NewSharingChangeLinkEnforcePasswordPolicyDetails(NewValue *ChangeLinkExpirationPolicy) *SharingChangeLinkEnforcePasswordPolicyDetails {
+	s := new(SharingChangeLinkEnforcePasswordPolicyDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// SharingChangeLinkEnforcePasswordPolicyType : has no documentation (yet)
+type SharingChangeLinkEnforcePasswordPolicyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharingChangeLinkEnforcePasswordPolicyType returns a new SharingChangeLinkEnforcePasswordPolicyType instance
+func NewSharingChangeLinkEnforcePasswordPolicyType(Description string) *SharingChangeLinkEnforcePasswordPolicyType {
+	s := new(SharingChangeLinkEnforcePasswordPolicyType)
+	s.Description = Description
+	return s
+}
+
 // SharingChangeLinkPolicyDetails : Changed whether members can share links
 // outside team, and if links are accessible only by team members or anyone by
 // default.
@@ -25164,6 +25624,58 @@ type UserOrTeamLinkedAppLogInfo struct {
 // NewUserOrTeamLinkedAppLogInfo returns a new UserOrTeamLinkedAppLogInfo instance
 func NewUserOrTeamLinkedAppLogInfo() *UserOrTeamLinkedAppLogInfo {
 	s := new(UserOrTeamLinkedAppLogInfo)
+	return s
+}
+
+// UserTagsAddedDetails : Tagged a file.
+type UserTagsAddedDetails struct {
+	// Values : values.
+	Values []string `json:"values"`
+}
+
+// NewUserTagsAddedDetails returns a new UserTagsAddedDetails instance
+func NewUserTagsAddedDetails(Values []string) *UserTagsAddedDetails {
+	s := new(UserTagsAddedDetails)
+	s.Values = Values
+	return s
+}
+
+// UserTagsAddedType : has no documentation (yet)
+type UserTagsAddedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewUserTagsAddedType returns a new UserTagsAddedType instance
+func NewUserTagsAddedType(Description string) *UserTagsAddedType {
+	s := new(UserTagsAddedType)
+	s.Description = Description
+	return s
+}
+
+// UserTagsRemovedDetails : Removed tags.
+type UserTagsRemovedDetails struct {
+	// Values : values.
+	Values []string `json:"values"`
+}
+
+// NewUserTagsRemovedDetails returns a new UserTagsRemovedDetails instance
+func NewUserTagsRemovedDetails(Values []string) *UserTagsRemovedDetails {
+	s := new(UserTagsRemovedDetails)
+	s.Values = Values
+	return s
+}
+
+// UserTagsRemovedType : has no documentation (yet)
+type UserTagsRemovedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewUserTagsRemovedType returns a new UserTagsRemovedType instance
+func NewUserTagsRemovedType(Description string) *UserTagsRemovedType {
+	s := new(UserTagsRemovedType)
+	s.Description = Description
 	return s
 }
 
