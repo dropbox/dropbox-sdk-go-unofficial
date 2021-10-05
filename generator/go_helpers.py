@@ -141,6 +141,7 @@ def generate_doc(code_generator, t):
 
 
 def _needs_base_type(data_type):
+    data_type, _ = unwrap_nullable(data_type)
     if is_struct_type(data_type) and data_type.has_enumerated_subtypes():
         return True
     if is_list_type(data_type):
