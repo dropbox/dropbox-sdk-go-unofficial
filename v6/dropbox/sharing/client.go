@@ -39,10 +39,6 @@ type Client interface {
 	// get access to all the functionality for this folder, you will need to
 	// call `mountFolder` on their behalf.
 	AddFolderMember(arg *AddFolderMemberArg) (err error)
-	// ChangeFileMemberAccess : Identical to update_file_member but with less
-	// information returned.
-	// Deprecated: Use `UpdateFileMember` instead
-	ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error)
 	// CheckJobStatus : Returns the status of an asynchronous job.
 	CheckJobStatus(arg *async.PollArg) (res *JobStatus, err error)
 	// CheckRemoveMemberJobStatus : Returns the status of an asynchronous job
@@ -52,13 +48,11 @@ type Client interface {
 	// sharing a folder.
 	CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJobStatus, err error)
 	// CreateSharedLink : Create a shared link. If a shared link already exists
-	// for the given path, that link is returned. Note that in the returned
-	// `PathLinkMetadata`, the `PathLinkMetadata.url` field is the shortened URL
-	// if `CreateSharedLinkArg.short_url` argument is set to true. Previously,
-	// it was technically possible to break a shared link by moving or renaming
-	// the corresponding file or folder. In the future, this will no longer be
-	// the case, so your app shouldn't rely on this behavior. Instead, if your
-	// app needs to revoke a shared link, use `revokeSharedLink`.
+	// for the given path, that link is returned. Previously, it was technically
+	// possible to break a shared link by moving or renaming the corresponding
+	// file or folder. In the future, this will no longer be the case, so your
+	// app shouldn't rely on this behavior. Instead, if your app needs to revoke
+	// a shared link, use `revokeSharedLink`.
 	// Deprecated: Use `CreateSharedLinkWithSettings` instead
 	CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error)
 	// CreateSharedLinkWithSettings : Create a shared link with custom settings.
@@ -82,8 +76,7 @@ type Client interface {
 	// shared links for the current user, including collection links, up to a
 	// maximum of 1000 links. If a non-empty path is given, returns a list of
 	// all shared links that allow access to the given path.  Collection links
-	// are never returned in this case. Note that the url field in the response
-	// is never the shortened URL.
+	// are never returned in this case.
 	// Deprecated: Use `ListSharedLinks` instead
 	GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error)
 	// ListFileMembers : Use to obtain the members who have been invited to a
@@ -285,47 +278,6 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	}
 
 	_ = resp
-	_ = respBody
-	return
-}
-
-//ChangeFileMemberAccessAPIError is an error-wrapper for the change_file_member_access route
-type ChangeFileMemberAccessAPIError struct {
-	dropbox.APIError
-	EndpointError *FileMemberActionError `json:"error"`
-}
-
-func (dbx *apiImpl) ChangeFileMemberAccess(arg *ChangeFileMemberAccessArgs) (res *FileMemberActionResult, err error) {
-	log.Printf("WARNING: API `ChangeFileMemberAccess` is deprecated")
-	log.Printf("Use API `UpdateFileMember` instead")
-
-	req := dropbox.Request{
-		Host:         "api",
-		Namespace:    "sharing",
-		Route:        "change_file_member_access",
-		Auth:         "user",
-		Style:        "rpc",
-		Arg:          arg,
-		ExtraHeaders: nil,
-	}
-
-	var resp []byte
-	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
-	if err != nil {
-		var appErr ChangeFileMemberAccessAPIError
-		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
-			err = appErr
-		}
-		return
-	}
-
-	err = json.Unmarshal(resp, &res)
-	if err != nil {
-		return
-	}
-
 	_ = respBody
 	return
 }

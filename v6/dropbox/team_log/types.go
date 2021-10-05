@@ -1537,6 +1537,50 @@ func NewCameraUploadsPolicyChangedType(Description string) *CameraUploadsPolicyC
 	return s
 }
 
+// CaptureTranscriptPolicy : Policy for deciding whether team users can
+// transcription in Capture
+type CaptureTranscriptPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for CaptureTranscriptPolicy
+const (
+	CaptureTranscriptPolicyDefault  = "default"
+	CaptureTranscriptPolicyDisabled = "disabled"
+	CaptureTranscriptPolicyEnabled  = "enabled"
+	CaptureTranscriptPolicyOther    = "other"
+)
+
+// CaptureTranscriptPolicyChangedDetails : Changed Capture transcription policy
+// for team.
+type CaptureTranscriptPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *CaptureTranscriptPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *CaptureTranscriptPolicy `json:"previous_value"`
+}
+
+// NewCaptureTranscriptPolicyChangedDetails returns a new CaptureTranscriptPolicyChangedDetails instance
+func NewCaptureTranscriptPolicyChangedDetails(NewValue *CaptureTranscriptPolicy, PreviousValue *CaptureTranscriptPolicy) *CaptureTranscriptPolicyChangedDetails {
+	s := new(CaptureTranscriptPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// CaptureTranscriptPolicyChangedType : has no documentation (yet)
+type CaptureTranscriptPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewCaptureTranscriptPolicyChangedType returns a new CaptureTranscriptPolicyChangedType instance
+func NewCaptureTranscriptPolicyChangedType(Description string) *CaptureTranscriptPolicyChangedType {
+	s := new(CaptureTranscriptPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // Certificate : Certificate details.
 type Certificate struct {
 	// Subject : Certificate subject.
@@ -1568,7 +1612,8 @@ func NewCertificate(Subject string, Issuer string, IssueDate string, ExpirationD
 }
 
 // ChangeLinkExpirationPolicy : Policy for deciding whether the team's default
-// expiration days policy must be enforced when an externally shared is updated
+// expiration days policy must be enforced when an externally shared link is
+// updated
 type ChangeLinkExpirationPolicy struct {
 	dropbox.Tagged
 }
@@ -3376,6 +3421,84 @@ func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
 	return s
 }
 
+// EmailIngestPolicy : Policy for deciding whether a team can use Email to my
+// Dropbox feature
+type EmailIngestPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for EmailIngestPolicy
+const (
+	EmailIngestPolicyDisabled = "disabled"
+	EmailIngestPolicyEnabled  = "enabled"
+	EmailIngestPolicyOther    = "other"
+)
+
+// EmailIngestPolicyChangedDetails : Changed email to my Dropbox policy for
+// team.
+type EmailIngestPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *EmailIngestPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *EmailIngestPolicy `json:"previous_value"`
+}
+
+// NewEmailIngestPolicyChangedDetails returns a new EmailIngestPolicyChangedDetails instance
+func NewEmailIngestPolicyChangedDetails(NewValue *EmailIngestPolicy, PreviousValue *EmailIngestPolicy) *EmailIngestPolicyChangedDetails {
+	s := new(EmailIngestPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// EmailIngestPolicyChangedType : has no documentation (yet)
+type EmailIngestPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEmailIngestPolicyChangedType returns a new EmailIngestPolicyChangedType instance
+func NewEmailIngestPolicyChangedType(Description string) *EmailIngestPolicyChangedType {
+	s := new(EmailIngestPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// EmailIngestReceiveFileDetails : Received files via Email to my Dropbox.
+type EmailIngestReceiveFileDetails struct {
+	// InboxName : Inbox name.
+	InboxName string `json:"inbox_name"`
+	// AttachmentNames : Submitted file names.
+	AttachmentNames []string `json:"attachment_names"`
+	// Subject : Subject of the email.
+	Subject string `json:"subject,omitempty"`
+	// FromName : The name as provided by the submitter.
+	FromName string `json:"from_name,omitempty"`
+	// FromEmail : The email as provided by the submitter.
+	FromEmail string `json:"from_email,omitempty"`
+}
+
+// NewEmailIngestReceiveFileDetails returns a new EmailIngestReceiveFileDetails instance
+func NewEmailIngestReceiveFileDetails(InboxName string, AttachmentNames []string) *EmailIngestReceiveFileDetails {
+	s := new(EmailIngestReceiveFileDetails)
+	s.InboxName = InboxName
+	s.AttachmentNames = AttachmentNames
+	return s
+}
+
+// EmailIngestReceiveFileType : has no documentation (yet)
+type EmailIngestReceiveFileType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEmailIngestReceiveFileType returns a new EmailIngestReceiveFileType instance
+func NewEmailIngestReceiveFileType(Description string) *EmailIngestReceiveFileType {
+	s := new(EmailIngestReceiveFileType)
+	s.Description = Description
+	return s
+}
+
 // EmmAddExceptionDetails : Added members to EMM exception list.
 type EmmAddExceptionDetails struct {
 }
@@ -3898,6 +4021,8 @@ type EventDetails struct {
 	UserTagsAddedDetails *UserTagsAddedDetails `json:"user_tags_added_details,omitempty"`
 	// UserTagsRemovedDetails : has no documentation (yet)
 	UserTagsRemovedDetails *UserTagsRemovedDetails `json:"user_tags_removed_details,omitempty"`
+	// EmailIngestReceiveFileDetails : has no documentation (yet)
+	EmailIngestReceiveFileDetails *EmailIngestReceiveFileDetails `json:"email_ingest_receive_file_details,omitempty"`
 	// FileRequestChangeDetails : has no documentation (yet)
 	FileRequestChangeDetails *FileRequestChangeDetails `json:"file_request_change_details,omitempty"`
 	// FileRequestCloseDetails : has no documentation (yet)
@@ -4413,6 +4538,8 @@ type EventDetails struct {
 	AppPermissionsChangedDetails *AppPermissionsChangedDetails `json:"app_permissions_changed_details,omitempty"`
 	// CameraUploadsPolicyChangedDetails : has no documentation (yet)
 	CameraUploadsPolicyChangedDetails *CameraUploadsPolicyChangedDetails `json:"camera_uploads_policy_changed_details,omitempty"`
+	// CaptureTranscriptPolicyChangedDetails : has no documentation (yet)
+	CaptureTranscriptPolicyChangedDetails *CaptureTranscriptPolicyChangedDetails `json:"capture_transcript_policy_changed_details,omitempty"`
 	// ClassificationChangePolicyDetails : has no documentation (yet)
 	ClassificationChangePolicyDetails *ClassificationChangePolicyDetails `json:"classification_change_policy_details,omitempty"`
 	// ComputerBackupPolicyChangedDetails : has no documentation (yet)
@@ -4439,6 +4566,8 @@ type EventDetails struct {
 	DirectoryRestrictionsAddMembersDetails *DirectoryRestrictionsAddMembersDetails `json:"directory_restrictions_add_members_details,omitempty"`
 	// DirectoryRestrictionsRemoveMembersDetails : has no documentation (yet)
 	DirectoryRestrictionsRemoveMembersDetails *DirectoryRestrictionsRemoveMembersDetails `json:"directory_restrictions_remove_members_details,omitempty"`
+	// EmailIngestPolicyChangedDetails : has no documentation (yet)
+	EmailIngestPolicyChangedDetails *EmailIngestPolicyChangedDetails `json:"email_ingest_policy_changed_details,omitempty"`
 	// EmmAddExceptionDetails : has no documentation (yet)
 	EmmAddExceptionDetails *EmmAddExceptionDetails `json:"emm_add_exception_details,omitempty"`
 	// EmmChangePolicyDetails : has no documentation (yet)
@@ -4447,6 +4576,8 @@ type EventDetails struct {
 	EmmRemoveExceptionDetails *EmmRemoveExceptionDetails `json:"emm_remove_exception_details,omitempty"`
 	// ExtendedVersionHistoryChangePolicyDetails : has no documentation (yet)
 	ExtendedVersionHistoryChangePolicyDetails *ExtendedVersionHistoryChangePolicyDetails `json:"extended_version_history_change_policy_details,omitempty"`
+	// ExternalDriveBackupPolicyChangedDetails : has no documentation (yet)
+	ExternalDriveBackupPolicyChangedDetails *ExternalDriveBackupPolicyChangedDetails `json:"external_drive_backup_policy_changed_details,omitempty"`
 	// FileCommentsChangePolicyDetails : has no documentation (yet)
 	FileCommentsChangePolicyDetails *FileCommentsChangePolicyDetails `json:"file_comments_change_policy_details,omitempty"`
 	// FileLockingPolicyChangedDetails : has no documentation (yet)
@@ -4770,6 +4901,7 @@ const (
 	EventDetailsRewindFolderDetails                                 = "rewind_folder_details"
 	EventDetailsUserTagsAddedDetails                                = "user_tags_added_details"
 	EventDetailsUserTagsRemovedDetails                              = "user_tags_removed_details"
+	EventDetailsEmailIngestReceiveFileDetails                       = "email_ingest_receive_file_details"
 	EventDetailsFileRequestChangeDetails                            = "file_request_change_details"
 	EventDetailsFileRequestCloseDetails                             = "file_request_close_details"
 	EventDetailsFileRequestCreateDetails                            = "file_request_create_details"
@@ -5025,6 +5157,7 @@ const (
 	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
 	EventDetailsAppPermissionsChangedDetails                        = "app_permissions_changed_details"
 	EventDetailsCameraUploadsPolicyChangedDetails                   = "camera_uploads_policy_changed_details"
+	EventDetailsCaptureTranscriptPolicyChangedDetails               = "capture_transcript_policy_changed_details"
 	EventDetailsClassificationChangePolicyDetails                   = "classification_change_policy_details"
 	EventDetailsComputerBackupPolicyChangedDetails                  = "computer_backup_policy_changed_details"
 	EventDetailsContentAdministrationPolicyChangedDetails           = "content_administration_policy_changed_details"
@@ -5038,10 +5171,12 @@ const (
 	EventDetailsDeviceApprovalsRemoveExceptionDetails               = "device_approvals_remove_exception_details"
 	EventDetailsDirectoryRestrictionsAddMembersDetails              = "directory_restrictions_add_members_details"
 	EventDetailsDirectoryRestrictionsRemoveMembersDetails           = "directory_restrictions_remove_members_details"
+	EventDetailsEmailIngestPolicyChangedDetails                     = "email_ingest_policy_changed_details"
 	EventDetailsEmmAddExceptionDetails                              = "emm_add_exception_details"
 	EventDetailsEmmChangePolicyDetails                              = "emm_change_policy_details"
 	EventDetailsEmmRemoveExceptionDetails                           = "emm_remove_exception_details"
 	EventDetailsExtendedVersionHistoryChangePolicyDetails           = "extended_version_history_change_policy_details"
+	EventDetailsExternalDriveBackupPolicyChangedDetails             = "external_drive_backup_policy_changed_details"
 	EventDetailsFileCommentsChangePolicyDetails                     = "file_comments_change_policy_details"
 	EventDetailsFileLockingPolicyChangedDetails                     = "file_locking_policy_changed_details"
 	EventDetailsFileRequestsChangePolicyDetails                     = "file_requests_change_policy_details"
@@ -5737,6 +5872,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "user_tags_removed_details":
 		err = json.Unmarshal(body, &u.UserTagsRemovedDetails)
+
+		if err != nil {
+			return err
+		}
+	case "email_ingest_receive_file_details":
+		err = json.Unmarshal(body, &u.EmailIngestReceiveFileDetails)
 
 		if err != nil {
 			return err
@@ -7271,6 +7412,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "capture_transcript_policy_changed_details":
+		err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "classification_change_policy_details":
 		err = json.Unmarshal(body, &u.ClassificationChangePolicyDetails)
 
@@ -7349,6 +7496,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "email_ingest_policy_changed_details":
+		err = json.Unmarshal(body, &u.EmailIngestPolicyChangedDetails)
+
+		if err != nil {
+			return err
+		}
 	case "emm_add_exception_details":
 		err = json.Unmarshal(body, &u.EmmAddExceptionDetails)
 
@@ -7369,6 +7522,12 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 		}
 	case "extended_version_history_change_policy_details":
 		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails)
+
+		if err != nil {
+			return err
+		}
+	case "external_drive_backup_policy_changed_details":
+		err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChangedDetails)
 
 		if err != nil {
 			return err
@@ -8230,6 +8389,9 @@ type EventType struct {
 	UserTagsAdded *UserTagsAddedType `json:"user_tags_added,omitempty"`
 	// UserTagsRemoved : (file_operations) Removed tags
 	UserTagsRemoved *UserTagsRemovedType `json:"user_tags_removed,omitempty"`
+	// EmailIngestReceiveFile : (file_requests) Received files via Email to my
+	// Dropbox
+	EmailIngestReceiveFile *EmailIngestReceiveFileType `json:"email_ingest_receive_file,omitempty"`
 	// FileRequestChange : (file_requests) Changed file request
 	FileRequestChange *FileRequestChangeType `json:"file_request_change,omitempty"`
 	// FileRequestClose : (file_requests) Closed file request
@@ -8858,6 +9020,9 @@ type EventType struct {
 	// CameraUploadsPolicyChanged : (team_policies) Changed camera uploads
 	// setting for team
 	CameraUploadsPolicyChanged *CameraUploadsPolicyChangedType `json:"camera_uploads_policy_changed,omitempty"`
+	// CaptureTranscriptPolicyChanged : (team_policies) Changed Capture
+	// transcription policy for team
+	CaptureTranscriptPolicyChanged *CaptureTranscriptPolicyChangedType `json:"capture_transcript_policy_changed,omitempty"`
 	// ClassificationChangePolicy : (team_policies) Changed classification
 	// policy for team
 	ClassificationChangePolicy *ClassificationChangePolicyType `json:"classification_change_policy,omitempty"`
@@ -8897,6 +9062,9 @@ type EventType struct {
 	// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members from
 	// directory restrictions list
 	DirectoryRestrictionsRemoveMembers *DirectoryRestrictionsRemoveMembersType `json:"directory_restrictions_remove_members,omitempty"`
+	// EmailIngestPolicyChanged : (team_policies) Changed email to my Dropbox
+	// policy for team
+	EmailIngestPolicyChanged *EmailIngestPolicyChangedType `json:"email_ingest_policy_changed,omitempty"`
 	// EmmAddException : (team_policies) Added members to EMM exception list
 	EmmAddException *EmmAddExceptionType `json:"emm_add_exception,omitempty"`
 	// EmmChangePolicy : (team_policies) Enabled/disabled enterprise mobility
@@ -8908,6 +9076,9 @@ type EventType struct {
 	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted out
 	// of extended version history
 	ExtendedVersionHistoryChangePolicy *ExtendedVersionHistoryChangePolicyType `json:"extended_version_history_change_policy,omitempty"`
+	// ExternalDriveBackupPolicyChanged : (team_policies) Changed external drive
+	// backup policy for team
+	ExternalDriveBackupPolicyChanged *ExternalDriveBackupPolicyChangedType `json:"external_drive_backup_policy_changed,omitempty"`
 	// FileCommentsChangePolicy : (team_policies) Enabled/disabled commenting on
 	// team files
 	FileCommentsChangePolicy *FileCommentsChangePolicyType `json:"file_comments_change_policy,omitempty"`
@@ -9007,14 +9178,14 @@ type EventType struct {
 	// members can join shared folders owned outside team
 	SharingChangeFolderJoinPolicy *SharingChangeFolderJoinPolicyType `json:"sharing_change_folder_join_policy,omitempty"`
 	// SharingChangeLinkAllowChangeExpirationPolicy : (team_policies) Changed
-	// the password requirement for the links shared outside of the team
+	// the allow remove or change expiration policy for the links shared outside
+	// of the team
 	SharingChangeLinkAllowChangeExpirationPolicy *SharingChangeLinkAllowChangeExpirationPolicyType `json:"sharing_change_link_allow_change_expiration_policy,omitempty"`
 	// SharingChangeLinkDefaultExpirationPolicy : (team_policies) Changed the
 	// default expiration for the links shared outside of the team
 	SharingChangeLinkDefaultExpirationPolicy *SharingChangeLinkDefaultExpirationPolicyType `json:"sharing_change_link_default_expiration_policy,omitempty"`
 	// SharingChangeLinkEnforcePasswordPolicy : (team_policies) Changed the
-	// allow remove or change expiration policy for the links shared outside of
-	// the team
+	// password requirement for the links shared outside of the team
 	SharingChangeLinkEnforcePasswordPolicy *SharingChangeLinkEnforcePasswordPolicyType `json:"sharing_change_link_enforce_password_policy,omitempty"`
 	// SharingChangeLinkPolicy : (team_policies) Changed whether members can
 	// share links outside team, and if links are accessible only by team
@@ -9306,6 +9477,7 @@ const (
 	EventTypeRewindFolder                                 = "rewind_folder"
 	EventTypeUserTagsAdded                                = "user_tags_added"
 	EventTypeUserTagsRemoved                              = "user_tags_removed"
+	EventTypeEmailIngestReceiveFile                       = "email_ingest_receive_file"
 	EventTypeFileRequestChange                            = "file_request_change"
 	EventTypeFileRequestClose                             = "file_request_close"
 	EventTypeFileRequestCreate                            = "file_request_create"
@@ -9561,6 +9733,7 @@ const (
 	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
 	EventTypeAppPermissionsChanged                        = "app_permissions_changed"
 	EventTypeCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
+	EventTypeCaptureTranscriptPolicyChanged               = "capture_transcript_policy_changed"
 	EventTypeClassificationChangePolicy                   = "classification_change_policy"
 	EventTypeComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
 	EventTypeContentAdministrationPolicyChanged           = "content_administration_policy_changed"
@@ -9574,10 +9747,12 @@ const (
 	EventTypeDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
 	EventTypeDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
 	EventTypeDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeEmailIngestPolicyChanged                     = "email_ingest_policy_changed"
 	EventTypeEmmAddException                              = "emm_add_exception"
 	EventTypeEmmChangePolicy                              = "emm_change_policy"
 	EventTypeEmmRemoveException                           = "emm_remove_exception"
 	EventTypeExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
+	EventTypeExternalDriveBackupPolicyChanged             = "external_drive_backup_policy_changed"
 	EventTypeFileCommentsChangePolicy                     = "file_comments_change_policy"
 	EventTypeFileLockingPolicyChanged                     = "file_locking_policy_changed"
 	EventTypeFileRequestsChangePolicy                     = "file_requests_change_policy"
@@ -10272,6 +10447,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "user_tags_removed":
 		err = json.Unmarshal(body, &u.UserTagsRemoved)
+
+		if err != nil {
+			return err
+		}
+	case "email_ingest_receive_file":
+		err = json.Unmarshal(body, &u.EmailIngestReceiveFile)
 
 		if err != nil {
 			return err
@@ -11806,6 +11987,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "capture_transcript_policy_changed":
+		err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "classification_change_policy":
 		err = json.Unmarshal(body, &u.ClassificationChangePolicy)
 
@@ -11884,6 +12071,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		if err != nil {
 			return err
 		}
+	case "email_ingest_policy_changed":
+		err = json.Unmarshal(body, &u.EmailIngestPolicyChanged)
+
+		if err != nil {
+			return err
+		}
 	case "emm_add_exception":
 		err = json.Unmarshal(body, &u.EmmAddException)
 
@@ -11904,6 +12097,12 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 		}
 	case "extended_version_history_change_policy":
 		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy)
+
+		if err != nil {
+			return err
+		}
+	case "external_drive_backup_policy_changed":
+		err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChanged)
 
 		if err != nil {
 			return err
@@ -12622,6 +12821,7 @@ const (
 	EventTypeArgRewindFolder                                 = "rewind_folder"
 	EventTypeArgUserTagsAdded                                = "user_tags_added"
 	EventTypeArgUserTagsRemoved                              = "user_tags_removed"
+	EventTypeArgEmailIngestReceiveFile                       = "email_ingest_receive_file"
 	EventTypeArgFileRequestChange                            = "file_request_change"
 	EventTypeArgFileRequestClose                             = "file_request_close"
 	EventTypeArgFileRequestCreate                            = "file_request_create"
@@ -12877,6 +13077,7 @@ const (
 	EventTypeArgAllowDownloadEnabled                         = "allow_download_enabled"
 	EventTypeArgAppPermissionsChanged                        = "app_permissions_changed"
 	EventTypeArgCameraUploadsPolicyChanged                   = "camera_uploads_policy_changed"
+	EventTypeArgCaptureTranscriptPolicyChanged               = "capture_transcript_policy_changed"
 	EventTypeArgClassificationChangePolicy                   = "classification_change_policy"
 	EventTypeArgComputerBackupPolicyChanged                  = "computer_backup_policy_changed"
 	EventTypeArgContentAdministrationPolicyChanged           = "content_administration_policy_changed"
@@ -12890,10 +13091,12 @@ const (
 	EventTypeArgDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
 	EventTypeArgDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
 	EventTypeArgDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeArgEmailIngestPolicyChanged                     = "email_ingest_policy_changed"
 	EventTypeArgEmmAddException                              = "emm_add_exception"
 	EventTypeArgEmmChangePolicy                              = "emm_change_policy"
 	EventTypeArgEmmRemoveException                           = "emm_remove_exception"
 	EventTypeArgExtendedVersionHistoryChangePolicy           = "extended_version_history_change_policy"
+	EventTypeArgExternalDriveBackupPolicyChanged             = "external_drive_backup_policy_changed"
 	EventTypeArgFileCommentsChangePolicy                     = "file_comments_change_policy"
 	EventTypeArgFileLockingPolicyChanged                     = "file_locking_policy_changed"
 	EventTypeArgFileRequestsChangePolicy                     = "file_requests_change_policy"
@@ -13090,6 +13293,49 @@ const (
 	ExtendedVersionHistoryPolicyImplicitlyUnlimited = "implicitly_unlimited"
 	ExtendedVersionHistoryPolicyOther               = "other"
 )
+
+// ExternalDriveBackupPolicy : Policy for controlling team access to external
+// drive backup feature
+type ExternalDriveBackupPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ExternalDriveBackupPolicy
+const (
+	ExternalDriveBackupPolicyDisabled = "disabled"
+	ExternalDriveBackupPolicyEnabled  = "enabled"
+	ExternalDriveBackupPolicyOther    = "other"
+)
+
+// ExternalDriveBackupPolicyChangedDetails : Changed external drive backup
+// policy for team.
+type ExternalDriveBackupPolicyChangedDetails struct {
+	// NewValue : New external drive backup policy.
+	NewValue *ExternalDriveBackupPolicy `json:"new_value"`
+	// PreviousValue : Previous external drive backup policy.
+	PreviousValue *ExternalDriveBackupPolicy `json:"previous_value"`
+}
+
+// NewExternalDriveBackupPolicyChangedDetails returns a new ExternalDriveBackupPolicyChangedDetails instance
+func NewExternalDriveBackupPolicyChangedDetails(NewValue *ExternalDriveBackupPolicy, PreviousValue *ExternalDriveBackupPolicy) *ExternalDriveBackupPolicyChangedDetails {
+	s := new(ExternalDriveBackupPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// ExternalDriveBackupPolicyChangedType : has no documentation (yet)
+type ExternalDriveBackupPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExternalDriveBackupPolicyChangedType returns a new ExternalDriveBackupPolicyChangedType instance
+func NewExternalDriveBackupPolicyChangedType(Description string) *ExternalDriveBackupPolicyChangedType {
+	s := new(ExternalDriveBackupPolicyChangedType)
+	s.Description = Description
+	return s
+}
 
 // ExternalSharingCreateReportDetails : Created External sharing report.
 type ExternalSharingCreateReportDetails struct {
@@ -22461,8 +22707,8 @@ func NewSharingChangeFolderJoinPolicyType(Description string) *SharingChangeFold
 	return s
 }
 
-// SharingChangeLinkAllowChangeExpirationPolicyDetails : Changed the password
-// requirement for the links shared outside of the team.
+// SharingChangeLinkAllowChangeExpirationPolicyDetails : Changed the allow
+// remove or change expiration policy for the links shared outside of the team.
 type SharingChangeLinkAllowChangeExpirationPolicyDetails struct {
 	// NewValue : To.
 	NewValue *EnforceLinkPasswordPolicy `json:"new_value"`
@@ -22519,8 +22765,8 @@ func NewSharingChangeLinkDefaultExpirationPolicyType(Description string) *Sharin
 	return s
 }
 
-// SharingChangeLinkEnforcePasswordPolicyDetails : Changed the allow remove or
-// change expiration policy for the links shared outside of the team.
+// SharingChangeLinkEnforcePasswordPolicyDetails : Changed the password
+// requirement for the links shared outside of the team.
 type SharingChangeLinkEnforcePasswordPolicyDetails struct {
 	// NewValue : To.
 	NewValue *ChangeLinkExpirationPolicy `json:"new_value"`
