@@ -61,6 +61,18 @@ const (
 	EmmStateOther    = "other"
 )
 
+// ExternalDriveBackupPolicyState : has no documentation (yet)
+type ExternalDriveBackupPolicyState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ExternalDriveBackupPolicyState
+const (
+	ExternalDriveBackupPolicyStateDisabled = "disabled"
+	ExternalDriveBackupPolicyStateEnabled  = "enabled"
+	ExternalDriveBackupPolicyStateOther    = "other"
+)
+
 // FileLockingPolicyState : has no documentation (yet)
 type FileLockingPolicyState struct {
 	dropbox.Tagged

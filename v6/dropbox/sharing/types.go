@@ -346,6 +346,59 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// RequestedVisibility : The access permission that can be requested by the
+// caller for the shared link. Note that the final resolved visibility of the
+// shared link takes into account other aspects, such as team and shared folder
+// settings. Check the `ResolvedVisibility` for more info on the possible
+// resolved visibility values of shared links.
+type RequestedVisibility struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for RequestedVisibility
+const (
+	RequestedVisibilityPublic   = "public"
+	RequestedVisibilityTeamOnly = "team_only"
+	RequestedVisibilityPassword = "password"
+)
+
+// ResolvedVisibility : The actual access permissions values of shared links
+// after taking into account user preferences and the team and shared folder
+// settings. Check the `RequestedVisibility` for more info on the possible
+// visibility values that can be set by the shared link's owner.
+type ResolvedVisibility struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ResolvedVisibility
+const (
+	ResolvedVisibilityPublic           = "public"
+	ResolvedVisibilityTeamOnly         = "team_only"
+	ResolvedVisibilityPassword         = "password"
+	ResolvedVisibilityTeamAndPassword  = "team_and_password"
+	ResolvedVisibilitySharedFolderOnly = "shared_folder_only"
+	ResolvedVisibilityNoOne            = "no_one"
+	ResolvedVisibilityOnlyYou          = "only_you"
+	ResolvedVisibilityOther            = "other"
+)
+
+// AlphaResolvedVisibility : check documentation for ResolvedVisibility.
+type AlphaResolvedVisibility struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AlphaResolvedVisibility
+const (
+	AlphaResolvedVisibilityPublic           = "public"
+	AlphaResolvedVisibilityTeamOnly         = "team_only"
+	AlphaResolvedVisibilityPassword         = "password"
+	AlphaResolvedVisibilityTeamAndPassword  = "team_and_password"
+	AlphaResolvedVisibilitySharedFolderOnly = "shared_folder_only"
+	AlphaResolvedVisibilityNoOne            = "no_one"
+	AlphaResolvedVisibilityOnlyYou          = "only_you"
+	AlphaResolvedVisibilityOther            = "other"
+)
+
 // AudienceExceptionContentInfo : Information about the content that has a link
 // audience different than that of this folder.
 type AudienceExceptionContentInfo struct {
@@ -397,25 +450,6 @@ func NewAudienceRestrictingSharedFolder(SharedFolderId string, Name string, Audi
 	s.SharedFolderId = SharedFolderId
 	s.Name = Name
 	s.Audience = Audience
-	return s
-}
-
-// ChangeFileMemberAccessArgs : Arguments for `changeFileMemberAccess`.
-type ChangeFileMemberAccessArgs struct {
-	// File : File for which we are changing a member's access.
-	File string `json:"file"`
-	// Member : The member whose access we are changing.
-	Member *MemberSelector `json:"member"`
-	// AccessLevel : The new access level for the member.
-	AccessLevel *AccessLevel `json:"access_level"`
-}
-
-// NewChangeFileMemberAccessArgs returns a new ChangeFileMemberAccessArgs instance
-func NewChangeFileMemberAccessArgs(File string, Member *MemberSelector, AccessLevel *AccessLevel) *ChangeFileMemberAccessArgs {
-	s := new(ChangeFileMemberAccessArgs)
-	s.File = File
-	s.Member = Member
-	s.AccessLevel = AccessLevel
 	return s
 }
 
@@ -522,7 +556,7 @@ func NewCollectionLinkMetadata(Url string, Visibility *Visibility) *CollectionLi
 type CreateSharedLinkArg struct {
 	// Path : The path to share.
 	Path string `json:"path"`
-	// ShortUrl : Whether to return a shortened URL.
+	// ShortUrl : has no documentation (yet)
 	ShortUrl bool `json:"short_url"`
 	// PendingUpload : If it's okay to share a path that does not yet exist, set
 	// this to either `PendingUploadMode.file` or `PendingUploadMode.folder` to
@@ -1026,8 +1060,7 @@ func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// FileMemberActionResult : Per-member result for `addFileMember` or
-// `changeFileMemberAccess`.
+// FileMemberActionResult : Per-member result for `addFileMember`.
 type FileMemberActionResult struct {
 	// Member : One of specified input members.
 	Member *MemberSelector `json:"member"`
@@ -1800,6 +1833,59 @@ const (
 	LinkAudienceOther    = "other"
 )
 
+// VisibilityPolicyDisallowedReason : has no documentation (yet)
+type VisibilityPolicyDisallowedReason struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for VisibilityPolicyDisallowedReason
+const (
+	VisibilityPolicyDisallowedReasonDeleteAndRecreate        = "delete_and_recreate"
+	VisibilityPolicyDisallowedReasonRestrictedBySharedFolder = "restricted_by_shared_folder"
+	VisibilityPolicyDisallowedReasonRestrictedByTeam         = "restricted_by_team"
+	VisibilityPolicyDisallowedReasonUserNotOnTeam            = "user_not_on_team"
+	VisibilityPolicyDisallowedReasonUserAccountType          = "user_account_type"
+	VisibilityPolicyDisallowedReasonPermissionDenied         = "permission_denied"
+	VisibilityPolicyDisallowedReasonOther                    = "other"
+)
+
+// LinkAudienceDisallowedReason : check documentation for
+// VisibilityPolicyDisallowedReason.
+type LinkAudienceDisallowedReason struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for LinkAudienceDisallowedReason
+const (
+	LinkAudienceDisallowedReasonDeleteAndRecreate        = "delete_and_recreate"
+	LinkAudienceDisallowedReasonRestrictedBySharedFolder = "restricted_by_shared_folder"
+	LinkAudienceDisallowedReasonRestrictedByTeam         = "restricted_by_team"
+	LinkAudienceDisallowedReasonUserNotOnTeam            = "user_not_on_team"
+	LinkAudienceDisallowedReasonUserAccountType          = "user_account_type"
+	LinkAudienceDisallowedReasonPermissionDenied         = "permission_denied"
+	LinkAudienceDisallowedReasonOther                    = "other"
+)
+
+// LinkAudienceOption : has no documentation (yet)
+type LinkAudienceOption struct {
+	// Audience : Specifies who can access the link.
+	Audience *LinkAudience `json:"audience"`
+	// Allowed : Whether the user calling this API can select this audience
+	// option.
+	Allowed bool `json:"allowed"`
+	// DisallowedReason : If `allowed` is false, this will provide the reason
+	// that the user is not permitted to set the visibility to this policy.
+	DisallowedReason *LinkAudienceDisallowedReason `json:"disallowed_reason,omitempty"`
+}
+
+// NewLinkAudienceOption returns a new LinkAudienceOption instance
+func NewLinkAudienceOption(Audience *LinkAudience, Allowed bool) *LinkAudienceOption {
+	s := new(LinkAudienceOption)
+	s.Audience = Audience
+	s.Allowed = Allowed
+	return s
+}
+
 // LinkExpiry : has no documentation (yet)
 type LinkExpiry struct {
 	dropbox.Tagged
@@ -1926,12 +2012,58 @@ type LinkPermissions struct {
 	// `link_access_level` does not take into account the API caller's current
 	// permissions to the content.
 	LinkAccessLevel *LinkAccessLevel `json:"link_access_level,omitempty"`
+	// VisibilityPolicies : A list of policies that the user might be able to
+	// set for the visibility.
+	VisibilityPolicies []*VisibilityPolicy `json:"visibility_policies"`
+	// CanSetExpiry : Whether the user can set the expiry settings of the link.
+	// This refers to the ability to create a new expiry and modify an existing
+	// expiry.
+	CanSetExpiry bool `json:"can_set_expiry"`
+	// CanRemoveExpiry : Whether the user can remove the expiry of the link.
+	CanRemoveExpiry bool `json:"can_remove_expiry"`
+	// AllowDownload : Whether the link can be downloaded or not.
+	AllowDownload bool `json:"allow_download"`
+	// CanAllowDownload : Whether the user can allow downloads via the link.
+	// This refers to the ability to remove a no-download restriction on the
+	// link.
+	CanAllowDownload bool `json:"can_allow_download"`
+	// CanDisallowDownload : Whether the user can disallow downloads via the
+	// link. This refers to the ability to impose a no-download restriction on
+	// the link.
+	CanDisallowDownload bool `json:"can_disallow_download"`
+	// AllowComments : Whether comments are enabled for the linked file. This
+	// takes the team commenting policy into account.
+	AllowComments bool `json:"allow_comments"`
+	// TeamRestrictsComments : Whether the team has disabled commenting
+	// globally.
+	TeamRestrictsComments bool `json:"team_restricts_comments"`
+	// AudienceOptions : A list of link audience options the user might be able
+	// to set as the new audience.
+	AudienceOptions []*LinkAudienceOption `json:"audience_options,omitempty"`
+	// CanSetPassword : Whether the user can set a password for the link.
+	CanSetPassword bool `json:"can_set_password,omitempty"`
+	// CanRemovePassword : Whether the user can remove the password of the link.
+	CanRemovePassword bool `json:"can_remove_password,omitempty"`
+	// RequirePassword : Whether the user is required to provide a password to
+	// view the link.
+	RequirePassword bool `json:"require_password,omitempty"`
+	// CanUseExtendedSharingControls : Whether the user can use extended sharing
+	// controls, based on their account type.
+	CanUseExtendedSharingControls bool `json:"can_use_extended_sharing_controls,omitempty"`
 }
 
 // NewLinkPermissions returns a new LinkPermissions instance
-func NewLinkPermissions(CanRevoke bool) *LinkPermissions {
+func NewLinkPermissions(CanRevoke bool, VisibilityPolicies []*VisibilityPolicy, CanSetExpiry bool, CanRemoveExpiry bool, AllowDownload bool, CanAllowDownload bool, CanDisallowDownload bool, AllowComments bool, TeamRestrictsComments bool) *LinkPermissions {
 	s := new(LinkPermissions)
 	s.CanRevoke = CanRevoke
+	s.VisibilityPolicies = VisibilityPolicies
+	s.CanSetExpiry = CanSetExpiry
+	s.CanRemoveExpiry = CanRemoveExpiry
+	s.AllowDownload = AllowDownload
+	s.CanAllowDownload = CanAllowDownload
+	s.CanDisallowDownload = CanDisallowDownload
+	s.AllowComments = AllowComments
+	s.TeamRestrictsComments = TeamRestrictsComments
 	return s
 }
 
@@ -2924,7 +3056,8 @@ type RelinquishFolderMembershipArg struct {
 	// SharedFolderId : The ID for the shared folder.
 	SharedFolderId string `json:"shared_folder_id"`
 	// LeaveACopy : Keep a copy of the folder's contents upon relinquishing
-	// membership.
+	// membership. This must be set to false when the folder is within a team
+	// folder or another shared folder.
 	LeaveACopy bool `json:"leave_a_copy"`
 }
 
@@ -3064,8 +3197,9 @@ type RemoveFolderMemberArg struct {
 	Member *MemberSelector `json:"member"`
 	// LeaveACopy : If true, the removed user will keep their copy of the folder
 	// after it's unshared, assuming it was mounted. Otherwise, it will be
-	// removed from their Dropbox. Also, this must be set to false when kicking
-	// a group.
+	// removed from their Dropbox. This must be set to false when removing a
+	// group, or when the folder is within a team folder or another shared
+	// folder.
 	LeaveACopy bool `json:"leave_a_copy"`
 }
 
@@ -3189,40 +3323,6 @@ const (
 	RequestedLinkAccessLevelEditor = "editor"
 	RequestedLinkAccessLevelMax    = "max"
 	RequestedLinkAccessLevelOther  = "other"
-)
-
-// RequestedVisibility : The access permission that can be requested by the
-// caller for the shared link. Note that the final resolved visibility of the
-// shared link takes into account other aspects, such as team and shared folder
-// settings. Check the `ResolvedVisibility` for more info on the possible
-// resolved visibility values of shared links.
-type RequestedVisibility struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for RequestedVisibility
-const (
-	RequestedVisibilityPublic   = "public"
-	RequestedVisibilityTeamOnly = "team_only"
-	RequestedVisibilityPassword = "password"
-)
-
-// ResolvedVisibility : The actual access permissions values of shared links
-// after taking into account user preferences and the team and shared folder
-// settings. Check the `RequestedVisibility` for more info on the possible
-// visibility values that can be set by the shared link's owner.
-type ResolvedVisibility struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for ResolvedVisibility
-const (
-	ResolvedVisibilityPublic           = "public"
-	ResolvedVisibilityTeamOnly         = "team_only"
-	ResolvedVisibilityPassword         = "password"
-	ResolvedVisibilityTeamAndPassword  = "team_and_password"
-	ResolvedVisibilitySharedFolderOnly = "shared_folder_only"
-	ResolvedVisibilityOther            = "other"
 )
 
 // RevokeSharedLinkArg : has no documentation (yet)
@@ -3934,6 +4034,9 @@ type SharedLinkSettings struct {
 	// RequestedVisibility : Use `audience` instead.  The requested access for
 	// this shared link.
 	RequestedVisibility *RequestedVisibility `json:"requested_visibility,omitempty"`
+	// AllowDownload : Boolean flag to allow or not download capabilities for
+	// shared links.
+	AllowDownload bool `json:"allow_download,omitempty"`
 }
 
 // NewSharedLinkSettings returns a new SharedLinkSettings instance
@@ -4231,7 +4334,12 @@ func (u *UnshareFolderError) UnmarshalJSON(body []byte) error {
 
 // UpdateFileMemberArgs : Arguments for `updateFileMember`.
 type UpdateFileMemberArgs struct {
-	ChangeFileMemberAccessArgs
+	// File : File for which we are changing a member's access.
+	File string `json:"file"`
+	// Member : The member whose access we are changing.
+	Member *MemberSelector `json:"member"`
+	// AccessLevel : The new access level for the member.
+	AccessLevel *AccessLevel `json:"access_level"`
 }
 
 // NewUpdateFileMemberArgs returns a new UpdateFileMemberArgs instance
@@ -4425,7 +4533,8 @@ func NewUserMembershipInfo(AccessType *AccessLevel, User *UserInfo) *UserMembers
 type UserFileMembershipInfo struct {
 	UserMembershipInfo
 	// TimeLastSeen : The UTC timestamp of when the user has last seen the
-	// content, if they have.
+	// content. Only populated if the user has seen the content and the caller
+	// has a plan that includes viewer history.
 	TimeLastSeen *time.Time `json:"time_last_seen,omitempty"`
 	// PlatformType : The platform on which the user has last seen the content,
 	// or unknown.
@@ -4495,3 +4604,29 @@ const (
 	VisibilitySharedFolderOnly = "shared_folder_only"
 	VisibilityOther            = "other"
 )
+
+// VisibilityPolicy : has no documentation (yet)
+type VisibilityPolicy struct {
+	// Policy : This is the value to submit when saving the visibility setting.
+	Policy *RequestedVisibility `json:"policy"`
+	// ResolvedPolicy : This is what the effective policy would be, if you
+	// selected this option. The resolved policy is obtained after considering
+	// external effects such as shared folder settings and team policy. This
+	// value is guaranteed to be provided.
+	ResolvedPolicy *AlphaResolvedVisibility `json:"resolved_policy"`
+	// Allowed : Whether the user is permitted to set the visibility to this
+	// policy.
+	Allowed bool `json:"allowed"`
+	// DisallowedReason : If `allowed` is false, this will provide the reason
+	// that the user is not permitted to set the visibility to this policy.
+	DisallowedReason *VisibilityPolicyDisallowedReason `json:"disallowed_reason,omitempty"`
+}
+
+// NewVisibilityPolicy returns a new VisibilityPolicy instance
+func NewVisibilityPolicy(Policy *RequestedVisibility, ResolvedPolicy *AlphaResolvedVisibility, Allowed bool) *VisibilityPolicy {
+	s := new(VisibilityPolicy)
+	s.Policy = Policy
+	s.ResolvedPolicy = ResolvedPolicy
+	s.Allowed = Allowed
+	return s
+}

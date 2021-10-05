@@ -354,14 +354,16 @@ type Client interface {
 	// Permission : Team member file access.
 	TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
 	// TeamFolderArchive : Sets an active team folder's status to archived and
-	// removes all folder and file members. Permission : Team member file
+	// removes all folder and file members. This endpoint cannot be used for
+	// teams that have a shared team space. Permission : Team member file
 	// access.
 	TeamFolderArchive(arg *TeamFolderArchiveArg) (res *TeamFolderArchiveLaunch, err error)
 	// TeamFolderArchiveCheck : Returns the status of an asynchronous job for
 	// archiving a team folder. Permission : Team member file access.
 	TeamFolderArchiveCheck(arg *async.PollArg) (res *TeamFolderArchiveJobStatus, err error)
 	// TeamFolderCreate : Creates a new, active, team folder with no members.
-	// Permission : Team member file access.
+	// This endpoint can only be used for teams that do not already have a
+	// shared team space. Permission : Team member file access.
 	TeamFolderCreate(arg *TeamFolderCreateArg) (res *TeamFolderMetadata, err error)
 	// TeamFolderGetInfo : Retrieves metadata for team folders. Permission :
 	// Team member file access.
@@ -374,7 +376,8 @@ type Client interface {
 	// Permission : Team member file access.
 	TeamFolderListContinue(arg *TeamFolderListContinueArg) (res *TeamFolderListResult, err error)
 	// TeamFolderPermanentlyDelete : Permanently deletes an archived team
-	// folder. Permission : Team member file access.
+	// folder. This endpoint cannot be used for teams that have a shared team
+	// space. Permission : Team member file access.
 	TeamFolderPermanentlyDelete(arg *TeamFolderIdArg) (err error)
 	// TeamFolderRename : Changes an active team folder's name. Permission :
 	// Team member file access.

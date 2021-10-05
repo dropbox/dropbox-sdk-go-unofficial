@@ -392,6 +392,21 @@ type Client interface {
 	// `Data transport limit page`
 	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
 	UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error)
+	// UploadSessionFinishBatch : This route helps you commit many files at once
+	// into a user's Dropbox. Use `uploadSessionStart` and `uploadSessionAppend`
+	// to upload file contents. We recommend uploading many files in parallel to
+	// increase throughput. Once the file contents have been uploaded, rather
+	// than calling `uploadSessionFinish`, use this route to finish all your
+	// upload sessions in a single request. `UploadSessionStartArg.close` or
+	// `UploadSessionAppendArg.close` needs to be true for the last
+	// `uploadSessionStart` or `uploadSessionAppend` call of each upload
+	// session. The maximum size of a file one can upload to an upload session
+	// is 350 GB. We allow up to 1000 entries in a single request. Calls to this
+	// endpoint will count as data transport calls for any Dropbox Business
+	// teams with a limit on the number of data transport calls allowed per
+	// month. For more information, see the `Data transport limit page`
+	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
+	UploadSessionFinishBatchV2(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchResult, err error)
 	// UploadSessionFinishBatchCheck : Returns the status of an asynchronous job
 	// for `uploadSessionFinishBatch`. If success, it returns list of result for
 	// each entry.
@@ -2846,6 +2861,44 @@ func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
 		var appErr UploadSessionFinishBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+//UploadSessionFinishBatchV2APIError is an error-wrapper for the upload_session/finish_batch_v2 route
+type UploadSessionFinishBatchV2APIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) UploadSessionFinishBatchV2(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "files",
+		Route:        "upload_session/finish_batch_v2",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr UploadSessionFinishBatchV2APIError
 		err = auth.ParseError(err, &appErr)
 		if err == &appErr {
 			err = appErr

@@ -5110,9 +5110,14 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 type WriteMode struct {
 	dropbox.Tagged
 	// Update : Overwrite if the given "rev" matches the existing file's "rev".
-	// The autorename strategy is to append the string "conflicted copy" to the
-	// file name. For example, "document.txt" might become "document (conflicted
-	// copy).txt" or "document (Panda's conflicted copy).txt".
+	// The supplied value should be the latest known "rev" of the file, for
+	// example, from `FileMetadata`, from when the file was last downloaded by
+	// the app. This will cause the file on the Dropbox servers to be
+	// overwritten if the given "rev" matches the existing file's current "rev"
+	// on the Dropbox servers. The autorename strategy is to append the string
+	// "conflicted copy" to the file name. For example, "document.txt" might
+	// become "document (conflicted copy).txt" or "document (Panda's conflicted
+	// copy).txt".
 	Update string `json:"update,omitempty"`
 }
 
@@ -5128,10 +5133,14 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// Update : Overwrite if the given "rev" matches the existing file's
-		// "rev". The autorename strategy is to append the string "conflicted
-		// copy" to the file name. For example, "document.txt" might become
-		// "document (conflicted copy).txt" or "document (Panda's conflicted
-		// copy).txt".
+		// "rev". The supplied value should be the latest known "rev" of the
+		// file, for example, from `FileMetadata`, from when the file was last
+		// downloaded by the app. This will cause the file on the Dropbox
+		// servers to be overwritten if the given "rev" matches the existing
+		// file's current "rev" on the Dropbox servers. The autorename strategy
+		// is to append the string "conflicted copy" to the file name. For
+		// example, "document.txt" might become "document (conflicted copy).txt"
+		// or "document (Panda's conflicted copy).txt".
 		Update string `json:"update,omitempty"`
 	}
 	var w wrap
