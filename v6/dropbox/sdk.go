@@ -83,6 +83,8 @@ type Config struct {
 	Logger *log.Logger
 	// Used with APIs that support operations as another user
 	AsMemberID string
+	// Used with APIs that support operations as an admin
+	AsAdminID string
 	// Path relative to which action should be taken
 	PathRoot string
 	// No need to set -- for testing only
@@ -189,6 +191,9 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 	}
 	if req.Auth != "team" && c.Config.AsMemberID != "" {
 		httpReq.Header.Add("Dropbox-API-Select-User", c.Config.AsMemberID)
+	}
+	if req.Auth != "team" && c.Config.AsAdminID != "" {
+		httpReq.Header.Add("Dropbox-API-Select-Admin", c.Config.AsAdminID)
 	}
 	if c.Config.PathRoot != "" {
 		httpReq.Header.Add("Dropbox-API-Path-Root", c.Config.PathRoot)
