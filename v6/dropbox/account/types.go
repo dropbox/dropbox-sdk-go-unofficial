@@ -57,9 +57,6 @@ func (u *PhotoSourceArg) UnmarshalJSON(body []byte) error {
 	case "base64_data":
 		u.Base64Data = w.Base64Data
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

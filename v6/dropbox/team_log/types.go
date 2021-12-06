@@ -76,41 +76,35 @@ func (u *AccessMethodLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "admin_console":
-		err = json.Unmarshal(body, &u.AdminConsole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminConsole); err != nil {
 			return err
 		}
+
 	case "api":
-		err = json.Unmarshal(body, &u.Api)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Api); err != nil {
 			return err
 		}
+
 	case "content_manager":
-		err = json.Unmarshal(body, &u.ContentManager)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ContentManager); err != nil {
 			return err
 		}
+
 	case "end_user":
-		u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser)
-
-		if err != nil {
+		if u.EndUser, err = IsSessionLogInfoFromJSON(w.EndUser); err != nil {
 			return err
 		}
+
 	case "enterprise_console":
-		err = json.Unmarshal(body, &u.EnterpriseConsole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EnterpriseConsole); err != nil {
 			return err
 		}
+
 	case "sign_in_as":
-		err = json.Unmarshal(body, &u.SignInAs)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SignInAs); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -376,21 +370,16 @@ func (u *ActionDetails) UnmarshalJSON(body []byte) error {
 	case "remove_action":
 		u.RemoveAction = w.RemoveAction
 
-		if err != nil {
-			return err
-		}
 	case "team_invite_details":
-		err = json.Unmarshal(body, &u.TeamInviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamInviteDetails); err != nil {
 			return err
 		}
+
 	case "team_join_details":
-		err = json.Unmarshal(body, &u.TeamJoinDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamJoinDetails); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -438,29 +427,25 @@ func (u *ActorLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "admin":
-		u.Admin, err = IsUserLogInfoFromJSON(w.Admin)
-
-		if err != nil {
+		if u.Admin, err = IsUserLogInfoFromJSON(w.Admin); err != nil {
 			return err
 		}
+
 	case "app":
-		u.App, err = IsAppLogInfoFromJSON(w.App)
-
-		if err != nil {
+		if u.App, err = IsAppLogInfoFromJSON(w.App); err != nil {
 			return err
 		}
+
 	case "reseller":
-		err = json.Unmarshal(body, &u.Reseller)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Reseller); err != nil {
 			return err
 		}
+
 	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
-
-		if err != nil {
+		if u.User, err = IsUserLogInfoFromJSON(w.User); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -967,23 +952,20 @@ func (u *appLogInfoUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "user_or_team_linked_app":
-		err = json.Unmarshal(body, &u.UserOrTeamLinkedApp)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserOrTeamLinkedApp); err != nil {
 			return err
 		}
+
 	case "user_linked_app":
-		err = json.Unmarshal(body, &u.UserLinkedApp)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserLinkedApp); err != nil {
 			return err
 		}
+
 	case "team_linked_app":
-		err = json.Unmarshal(body, &u.TeamLinkedApp)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamLinkedApp); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1190,35 +1172,30 @@ func (u *AssetLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "file":
-		err = json.Unmarshal(body, &u.File)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.File); err != nil {
 			return err
 		}
+
 	case "folder":
-		err = json.Unmarshal(body, &u.Folder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Folder); err != nil {
 			return err
 		}
+
 	case "paper_document":
-		err = json.Unmarshal(body, &u.PaperDocument)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocument); err != nil {
 			return err
 		}
+
 	case "paper_folder":
-		err = json.Unmarshal(body, &u.PaperFolder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolder); err != nil {
 			return err
 		}
+
 	case "showcase_document":
-		err = json.Unmarshal(body, &u.ShowcaseDocument)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseDocument); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1966,29 +1943,25 @@ func (u *ContextLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "non_team_member":
-		err = json.Unmarshal(body, &u.NonTeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NonTeamMember); err != nil {
 			return err
 		}
+
 	case "organization_team":
-		err = json.Unmarshal(body, &u.OrganizationTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OrganizationTeam); err != nil {
 			return err
 		}
+
 	case "team_member":
-		err = json.Unmarshal(body, &u.TeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMember); err != nil {
 			return err
 		}
+
 	case "trusted_non_team_member":
-		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TrustedNonTeamMember); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2204,29 +2177,25 @@ func (u *deviceSessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "desktop_device_session":
-		err = json.Unmarshal(body, &u.DesktopDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DesktopDeviceSession); err != nil {
 			return err
 		}
+
 	case "mobile_device_session":
-		err = json.Unmarshal(body, &u.MobileDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MobileDeviceSession); err != nil {
 			return err
 		}
+
 	case "web_device_session":
-		err = json.Unmarshal(body, &u.WebDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebDeviceSession); err != nil {
 			return err
 		}
+
 	case "legacy_device_session":
-		err = json.Unmarshal(body, &u.LegacyDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegacyDeviceSession); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2333,23 +2302,20 @@ func (u *sessionLogInfoUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "web":
-		err = json.Unmarshal(body, &u.Web)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Web); err != nil {
 			return err
 		}
+
 	case "desktop":
-		err = json.Unmarshal(body, &u.Desktop)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Desktop); err != nil {
 			return err
 		}
+
 	case "mobile":
-		err = json.Unmarshal(body, &u.Mobile)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Mobile); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -5295,2855 +5261,2380 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "admin_alerting_alert_state_changed_details":
-		err = json.Unmarshal(body, &u.AdminAlertingAlertStateChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingAlertStateChangedDetails); err != nil {
 			return err
 		}
+
 	case "admin_alerting_changed_alert_config_details":
-		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfigDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfigDetails); err != nil {
 			return err
 		}
+
 	case "admin_alerting_triggered_alert_details":
-		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlertDetails); err != nil {
 			return err
 		}
+
 	case "app_blocked_by_permissions_details":
-		err = json.Unmarshal(body, &u.AppBlockedByPermissionsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppBlockedByPermissionsDetails); err != nil {
 			return err
 		}
+
 	case "app_link_team_details":
-		err = json.Unmarshal(body, &u.AppLinkTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppLinkTeamDetails); err != nil {
 			return err
 		}
+
 	case "app_link_user_details":
-		err = json.Unmarshal(body, &u.AppLinkUserDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppLinkUserDetails); err != nil {
 			return err
 		}
+
 	case "app_unlink_team_details":
-		err = json.Unmarshal(body, &u.AppUnlinkTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppUnlinkTeamDetails); err != nil {
 			return err
 		}
+
 	case "app_unlink_user_details":
-		err = json.Unmarshal(body, &u.AppUnlinkUserDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppUnlinkUserDetails); err != nil {
 			return err
 		}
+
 	case "integration_connected_details":
-		err = json.Unmarshal(body, &u.IntegrationConnectedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationConnectedDetails); err != nil {
 			return err
 		}
+
 	case "integration_disconnected_details":
-		err = json.Unmarshal(body, &u.IntegrationDisconnectedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationDisconnectedDetails); err != nil {
 			return err
 		}
+
 	case "file_add_comment_details":
-		err = json.Unmarshal(body, &u.FileAddCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileAddCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_change_comment_subscription_details":
-		err = json.Unmarshal(body, &u.FileChangeCommentSubscriptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileChangeCommentSubscriptionDetails); err != nil {
 			return err
 		}
+
 	case "file_delete_comment_details":
-		err = json.Unmarshal(body, &u.FileDeleteCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDeleteCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_edit_comment_details":
-		err = json.Unmarshal(body, &u.FileEditCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileEditCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_like_comment_details":
-		err = json.Unmarshal(body, &u.FileLikeCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLikeCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_resolve_comment_details":
-		err = json.Unmarshal(body, &u.FileResolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileResolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_unlike_comment_details":
-		err = json.Unmarshal(body, &u.FileUnlikeCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileUnlikeCommentDetails); err != nil {
 			return err
 		}
+
 	case "file_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.FileUnresolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileUnresolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_add_folders_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyAddFoldersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyAddFoldersDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_add_folder_failed_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailedDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_content_disposed_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyContentDisposedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyContentDisposedDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_create_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyCreateDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_delete_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyDeleteDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_edit_details_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyEditDetailsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyEditDetailsDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_edit_duration_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyEditDurationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyEditDurationDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_export_created_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyExportCreatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyExportCreatedDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_export_removed_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyExportRemovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyExportRemovedDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_remove_folders_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFoldersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyRemoveFoldersDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_report_created_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyReportCreatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyReportCreatedDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_zip_part_downloaded_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloadedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloadedDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_activate_a_hold_details":
-		err = json.Unmarshal(body, &u.LegalHoldsActivateAHoldDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsActivateAHoldDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_add_members_details":
-		err = json.Unmarshal(body, &u.LegalHoldsAddMembersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsAddMembersDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_change_hold_details_details":
-		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetailsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetailsDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_change_hold_name_details":
-		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldNameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsChangeHoldNameDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_a_hold_details":
-		err = json.Unmarshal(body, &u.LegalHoldsExportAHoldDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportAHoldDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_cancelled_details":
-		err = json.Unmarshal(body, &u.LegalHoldsExportCancelledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportCancelledDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_downloaded_details":
-		err = json.Unmarshal(body, &u.LegalHoldsExportDownloadedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportDownloadedDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_removed_details":
-		err = json.Unmarshal(body, &u.LegalHoldsExportRemovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportRemovedDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_release_a_hold_details":
-		err = json.Unmarshal(body, &u.LegalHoldsReleaseAHoldDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsReleaseAHoldDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_remove_members_details":
-		err = json.Unmarshal(body, &u.LegalHoldsRemoveMembersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsRemoveMembersDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_report_a_hold_details":
-		err = json.Unmarshal(body, &u.LegalHoldsReportAHoldDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsReportAHoldDetails); err != nil {
 			return err
 		}
+
 	case "device_change_ip_desktop_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpDesktopDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpDesktopDetails); err != nil {
 			return err
 		}
+
 	case "device_change_ip_mobile_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpMobileDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpMobileDetails); err != nil {
 			return err
 		}
+
 	case "device_change_ip_web_details":
-		err = json.Unmarshal(body, &u.DeviceChangeIpWebDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpWebDetails); err != nil {
 			return err
 		}
+
 	case "device_delete_on_unlink_fail_details":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFailDetails); err != nil {
 			return err
 		}
+
 	case "device_delete_on_unlink_success_details":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccessDetails); err != nil {
 			return err
 		}
+
 	case "device_link_fail_details":
-		err = json.Unmarshal(body, &u.DeviceLinkFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceLinkFailDetails); err != nil {
 			return err
 		}
+
 	case "device_link_success_details":
-		err = json.Unmarshal(body, &u.DeviceLinkSuccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceLinkSuccessDetails); err != nil {
 			return err
 		}
+
 	case "device_management_disabled_details":
-		err = json.Unmarshal(body, &u.DeviceManagementDisabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceManagementDisabledDetails); err != nil {
 			return err
 		}
+
 	case "device_management_enabled_details":
-		err = json.Unmarshal(body, &u.DeviceManagementEnabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceManagementEnabledDetails); err != nil {
 			return err
 		}
+
 	case "device_sync_backup_status_changed_details":
-		err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChangedDetails); err != nil {
 			return err
 		}
+
 	case "device_unlink_details":
-		err = json.Unmarshal(body, &u.DeviceUnlinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceUnlinkDetails); err != nil {
 			return err
 		}
+
 	case "dropbox_passwords_exported_details":
-		err = json.Unmarshal(body, &u.DropboxPasswordsExportedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DropboxPasswordsExportedDetails); err != nil {
 			return err
 		}
+
 	case "dropbox_passwords_new_device_enrolled_details":
-		err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolledDetails); err != nil {
 			return err
 		}
+
 	case "emm_refresh_auth_token_details":
-		err = json.Unmarshal(body, &u.EmmRefreshAuthTokenDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmRefreshAuthTokenDetails); err != nil {
 			return err
 		}
+
 	case "account_capture_change_availability_details":
-		err = json.Unmarshal(body, &u.AccountCaptureChangeAvailabilityDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureChangeAvailabilityDetails); err != nil {
 			return err
 		}
+
 	case "account_capture_migrate_account_details":
-		err = json.Unmarshal(body, &u.AccountCaptureMigrateAccountDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureMigrateAccountDetails); err != nil {
 			return err
 		}
+
 	case "account_capture_notification_emails_sent_details":
-		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSentDetails); err != nil {
 			return err
 		}
+
 	case "account_capture_relinquish_account_details":
-		err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccountDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccountDetails); err != nil {
 			return err
 		}
+
 	case "disabled_domain_invites_details":
-		err = json.Unmarshal(body, &u.DisabledDomainInvitesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DisabledDomainInvitesDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_approve_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeamDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_decline_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeamDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_email_existing_users_details":
-		err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsersDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_request_to_join_team_details":
-		err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeamDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_set_invite_new_user_pref_to_no_details":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNoDetails); err != nil {
 			return err
 		}
+
 	case "domain_invites_set_invite_new_user_pref_to_yes_details":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYesDetails); err != nil {
 			return err
 		}
+
 	case "domain_verification_add_domain_fail_details":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationAddDomainFailDetails); err != nil {
 			return err
 		}
+
 	case "domain_verification_add_domain_success_details":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccessDetails); err != nil {
 			return err
 		}
+
 	case "domain_verification_remove_domain_details":
-		err = json.Unmarshal(body, &u.DomainVerificationRemoveDomainDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationRemoveDomainDetails); err != nil {
 			return err
 		}
+
 	case "enabled_domain_invites_details":
-		err = json.Unmarshal(body, &u.EnabledDomainInvitesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EnabledDomainInvitesDetails); err != nil {
 			return err
 		}
+
 	case "apply_naming_convention_details":
-		err = json.Unmarshal(body, &u.ApplyNamingConventionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ApplyNamingConventionDetails); err != nil {
 			return err
 		}
+
 	case "create_folder_details":
-		err = json.Unmarshal(body, &u.CreateFolderDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CreateFolderDetails); err != nil {
 			return err
 		}
+
 	case "file_add_details":
-		err = json.Unmarshal(body, &u.FileAddDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileAddDetails); err != nil {
 			return err
 		}
+
 	case "file_copy_details":
-		err = json.Unmarshal(body, &u.FileCopyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileCopyDetails); err != nil {
 			return err
 		}
+
 	case "file_delete_details":
-		err = json.Unmarshal(body, &u.FileDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDeleteDetails); err != nil {
 			return err
 		}
+
 	case "file_download_details":
-		err = json.Unmarshal(body, &u.FileDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDownloadDetails); err != nil {
 			return err
 		}
+
 	case "file_edit_details":
-		err = json.Unmarshal(body, &u.FileEditDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileEditDetails); err != nil {
 			return err
 		}
+
 	case "file_get_copy_reference_details":
-		err = json.Unmarshal(body, &u.FileGetCopyReferenceDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileGetCopyReferenceDetails); err != nil {
 			return err
 		}
+
 	case "file_locking_lock_status_changed_details":
-		err = json.Unmarshal(body, &u.FileLockingLockStatusChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLockingLockStatusChangedDetails); err != nil {
 			return err
 		}
+
 	case "file_move_details":
-		err = json.Unmarshal(body, &u.FileMoveDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileMoveDetails); err != nil {
 			return err
 		}
+
 	case "file_permanently_delete_details":
-		err = json.Unmarshal(body, &u.FilePermanentlyDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FilePermanentlyDeleteDetails); err != nil {
 			return err
 		}
+
 	case "file_preview_details":
-		err = json.Unmarshal(body, &u.FilePreviewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FilePreviewDetails); err != nil {
 			return err
 		}
+
 	case "file_rename_details":
-		err = json.Unmarshal(body, &u.FileRenameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRenameDetails); err != nil {
 			return err
 		}
+
 	case "file_restore_details":
-		err = json.Unmarshal(body, &u.FileRestoreDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRestoreDetails); err != nil {
 			return err
 		}
+
 	case "file_revert_details":
-		err = json.Unmarshal(body, &u.FileRevertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRevertDetails); err != nil {
 			return err
 		}
+
 	case "file_rollback_changes_details":
-		err = json.Unmarshal(body, &u.FileRollbackChangesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRollbackChangesDetails); err != nil {
 			return err
 		}
+
 	case "file_save_copy_reference_details":
-		err = json.Unmarshal(body, &u.FileSaveCopyReferenceDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileSaveCopyReferenceDetails); err != nil {
 			return err
 		}
+
 	case "folder_overview_description_changed_details":
-		err = json.Unmarshal(body, &u.FolderOverviewDescriptionChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewDescriptionChangedDetails); err != nil {
 			return err
 		}
+
 	case "folder_overview_item_pinned_details":
-		err = json.Unmarshal(body, &u.FolderOverviewItemPinnedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewItemPinnedDetails); err != nil {
 			return err
 		}
+
 	case "folder_overview_item_unpinned_details":
-		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinnedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewItemUnpinnedDetails); err != nil {
 			return err
 		}
+
 	case "object_label_added_details":
-		err = json.Unmarshal(body, &u.ObjectLabelAddedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelAddedDetails); err != nil {
 			return err
 		}
+
 	case "object_label_removed_details":
-		err = json.Unmarshal(body, &u.ObjectLabelRemovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelRemovedDetails); err != nil {
 			return err
 		}
+
 	case "object_label_updated_value_details":
-		err = json.Unmarshal(body, &u.ObjectLabelUpdatedValueDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelUpdatedValueDetails); err != nil {
 			return err
 		}
+
 	case "organize_folder_with_tidy_details":
-		err = json.Unmarshal(body, &u.OrganizeFolderWithTidyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OrganizeFolderWithTidyDetails); err != nil {
 			return err
 		}
+
 	case "rewind_folder_details":
-		err = json.Unmarshal(body, &u.RewindFolderDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.RewindFolderDetails); err != nil {
 			return err
 		}
+
 	case "user_tags_added_details":
-		err = json.Unmarshal(body, &u.UserTagsAddedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserTagsAddedDetails); err != nil {
 			return err
 		}
+
 	case "user_tags_removed_details":
-		err = json.Unmarshal(body, &u.UserTagsRemovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserTagsRemovedDetails); err != nil {
 			return err
 		}
+
 	case "email_ingest_receive_file_details":
-		err = json.Unmarshal(body, &u.EmailIngestReceiveFileDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmailIngestReceiveFileDetails); err != nil {
 			return err
 		}
+
 	case "file_request_change_details":
-		err = json.Unmarshal(body, &u.FileRequestChangeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestChangeDetails); err != nil {
 			return err
 		}
+
 	case "file_request_close_details":
-		err = json.Unmarshal(body, &u.FileRequestCloseDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestCloseDetails); err != nil {
 			return err
 		}
+
 	case "file_request_create_details":
-		err = json.Unmarshal(body, &u.FileRequestCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestCreateDetails); err != nil {
 			return err
 		}
+
 	case "file_request_delete_details":
-		err = json.Unmarshal(body, &u.FileRequestDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestDeleteDetails); err != nil {
 			return err
 		}
+
 	case "file_request_receive_file_details":
-		err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestReceiveFileDetails); err != nil {
 			return err
 		}
+
 	case "group_add_external_id_details":
-		err = json.Unmarshal(body, &u.GroupAddExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupAddExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "group_add_member_details":
-		err = json.Unmarshal(body, &u.GroupAddMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupAddMemberDetails); err != nil {
 			return err
 		}
+
 	case "group_change_external_id_details":
-		err = json.Unmarshal(body, &u.GroupChangeExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "group_change_management_type_details":
-		err = json.Unmarshal(body, &u.GroupChangeManagementTypeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeManagementTypeDetails); err != nil {
 			return err
 		}
+
 	case "group_change_member_role_details":
-		err = json.Unmarshal(body, &u.GroupChangeMemberRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeMemberRoleDetails); err != nil {
 			return err
 		}
+
 	case "group_create_details":
-		err = json.Unmarshal(body, &u.GroupCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupCreateDetails); err != nil {
 			return err
 		}
+
 	case "group_delete_details":
-		err = json.Unmarshal(body, &u.GroupDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupDeleteDetails); err != nil {
 			return err
 		}
+
 	case "group_description_updated_details":
-		err = json.Unmarshal(body, &u.GroupDescriptionUpdatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupDescriptionUpdatedDetails); err != nil {
 			return err
 		}
+
 	case "group_join_policy_updated_details":
-		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupJoinPolicyUpdatedDetails); err != nil {
 			return err
 		}
+
 	case "group_moved_details":
-		err = json.Unmarshal(body, &u.GroupMovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupMovedDetails); err != nil {
 			return err
 		}
+
 	case "group_remove_external_id_details":
-		err = json.Unmarshal(body, &u.GroupRemoveExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRemoveExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "group_remove_member_details":
-		err = json.Unmarshal(body, &u.GroupRemoveMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRemoveMemberDetails); err != nil {
 			return err
 		}
+
 	case "group_rename_details":
-		err = json.Unmarshal(body, &u.GroupRenameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRenameDetails); err != nil {
 			return err
 		}
+
 	case "account_lock_or_unlocked_details":
-		err = json.Unmarshal(body, &u.AccountLockOrUnlockedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountLockOrUnlockedDetails); err != nil {
 			return err
 		}
+
 	case "emm_error_details":
-		err = json.Unmarshal(body, &u.EmmErrorDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmErrorDetails); err != nil {
 			return err
 		}
+
 	case "guest_admin_signed_in_via_trusted_teams_details":
-		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeamsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeamsDetails); err != nil {
 			return err
 		}
+
 	case "guest_admin_signed_out_via_trusted_teams_details":
-		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeamsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeamsDetails); err != nil {
 			return err
 		}
+
 	case "login_fail_details":
-		err = json.Unmarshal(body, &u.LoginFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LoginFailDetails); err != nil {
 			return err
 		}
+
 	case "login_success_details":
-		err = json.Unmarshal(body, &u.LoginSuccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LoginSuccessDetails); err != nil {
 			return err
 		}
+
 	case "logout_details":
-		err = json.Unmarshal(body, &u.LogoutDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LogoutDetails); err != nil {
 			return err
 		}
+
 	case "reseller_support_session_end_details":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionEndDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportSessionEndDetails); err != nil {
 			return err
 		}
+
 	case "reseller_support_session_start_details":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionStartDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportSessionStartDetails); err != nil {
 			return err
 		}
+
 	case "sign_in_as_session_end_details":
-		err = json.Unmarshal(body, &u.SignInAsSessionEndDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SignInAsSessionEndDetails); err != nil {
 			return err
 		}
+
 	case "sign_in_as_session_start_details":
-		err = json.Unmarshal(body, &u.SignInAsSessionStartDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SignInAsSessionStartDetails); err != nil {
 			return err
 		}
+
 	case "sso_error_details":
-		err = json.Unmarshal(body, &u.SsoErrorDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoErrorDetails); err != nil {
 			return err
 		}
+
 	case "create_team_invite_link_details":
-		err = json.Unmarshal(body, &u.CreateTeamInviteLinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CreateTeamInviteLinkDetails); err != nil {
 			return err
 		}
+
 	case "delete_team_invite_link_details":
-		err = json.Unmarshal(body, &u.DeleteTeamInviteLinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeleteTeamInviteLinkDetails); err != nil {
 			return err
 		}
+
 	case "member_add_external_id_details":
-		err = json.Unmarshal(body, &u.MemberAddExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberAddExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "member_add_name_details":
-		err = json.Unmarshal(body, &u.MemberAddNameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberAddNameDetails); err != nil {
 			return err
 		}
+
 	case "member_change_admin_role_details":
-		err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeAdminRoleDetails); err != nil {
 			return err
 		}
+
 	case "member_change_email_details":
-		err = json.Unmarshal(body, &u.MemberChangeEmailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeEmailDetails); err != nil {
 			return err
 		}
+
 	case "member_change_external_id_details":
-		err = json.Unmarshal(body, &u.MemberChangeExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "member_change_membership_type_details":
-		err = json.Unmarshal(body, &u.MemberChangeMembershipTypeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeMembershipTypeDetails); err != nil {
 			return err
 		}
+
 	case "member_change_name_details":
-		err = json.Unmarshal(body, &u.MemberChangeNameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeNameDetails); err != nil {
 			return err
 		}
+
 	case "member_change_reseller_role_details":
-		err = json.Unmarshal(body, &u.MemberChangeResellerRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeResellerRoleDetails); err != nil {
 			return err
 		}
+
 	case "member_change_status_details":
-		err = json.Unmarshal(body, &u.MemberChangeStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeStatusDetails); err != nil {
 			return err
 		}
+
 	case "member_delete_manual_contacts_details":
-		err = json.Unmarshal(body, &u.MemberDeleteManualContactsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberDeleteManualContactsDetails); err != nil {
 			return err
 		}
+
 	case "member_delete_profile_photo_details":
-		err = json.Unmarshal(body, &u.MemberDeleteProfilePhotoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberDeleteProfilePhotoDetails); err != nil {
 			return err
 		}
+
 	case "member_permanently_delete_account_contents_details":
-		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails); err != nil {
 			return err
 		}
+
 	case "member_remove_external_id_details":
-		err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberRemoveExternalIdDetails); err != nil {
 			return err
 		}
+
 	case "member_set_profile_photo_details":
-		err = json.Unmarshal(body, &u.MemberSetProfilePhotoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSetProfilePhotoDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_add_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuotaDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuotaDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuotaDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuotaDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_status_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatusDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_remove_custom_quota_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuotaDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuotaDetails); err != nil {
 			return err
 		}
+
 	case "member_suggest_details":
-		err = json.Unmarshal(body, &u.MemberSuggestDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSuggestDetails); err != nil {
 			return err
 		}
+
 	case "member_transfer_account_contents_details":
-		err = json.Unmarshal(body, &u.MemberTransferAccountContentsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberTransferAccountContentsDetails); err != nil {
 			return err
 		}
+
 	case "pending_secondary_email_added_details":
-		err = json.Unmarshal(body, &u.PendingSecondaryEmailAddedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PendingSecondaryEmailAddedDetails); err != nil {
 			return err
 		}
+
 	case "secondary_email_deleted_details":
-		err = json.Unmarshal(body, &u.SecondaryEmailDeletedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryEmailDeletedDetails); err != nil {
 			return err
 		}
+
 	case "secondary_email_verified_details":
-		err = json.Unmarshal(body, &u.SecondaryEmailVerifiedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryEmailVerifiedDetails); err != nil {
 			return err
 		}
+
 	case "secondary_mails_policy_changed_details":
-		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryMailsPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "binder_add_page_details":
-		err = json.Unmarshal(body, &u.BinderAddPageDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderAddPageDetails); err != nil {
 			return err
 		}
+
 	case "binder_add_section_details":
-		err = json.Unmarshal(body, &u.BinderAddSectionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderAddSectionDetails); err != nil {
 			return err
 		}
+
 	case "binder_remove_page_details":
-		err = json.Unmarshal(body, &u.BinderRemovePageDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRemovePageDetails); err != nil {
 			return err
 		}
+
 	case "binder_remove_section_details":
-		err = json.Unmarshal(body, &u.BinderRemoveSectionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRemoveSectionDetails); err != nil {
 			return err
 		}
+
 	case "binder_rename_page_details":
-		err = json.Unmarshal(body, &u.BinderRenamePageDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRenamePageDetails); err != nil {
 			return err
 		}
+
 	case "binder_rename_section_details":
-		err = json.Unmarshal(body, &u.BinderRenameSectionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRenameSectionDetails); err != nil {
 			return err
 		}
+
 	case "binder_reorder_page_details":
-		err = json.Unmarshal(body, &u.BinderReorderPageDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderReorderPageDetails); err != nil {
 			return err
 		}
+
 	case "binder_reorder_section_details":
-		err = json.Unmarshal(body, &u.BinderReorderSectionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderReorderSectionDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_add_member_details":
-		err = json.Unmarshal(body, &u.PaperContentAddMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentAddMemberDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_add_to_folder_details":
-		err = json.Unmarshal(body, &u.PaperContentAddToFolderDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentAddToFolderDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_archive_details":
-		err = json.Unmarshal(body, &u.PaperContentArchiveDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentArchiveDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_create_details":
-		err = json.Unmarshal(body, &u.PaperContentCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentCreateDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_permanently_delete_details":
-		err = json.Unmarshal(body, &u.PaperContentPermanentlyDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentPermanentlyDeleteDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_remove_from_folder_details":
-		err = json.Unmarshal(body, &u.PaperContentRemoveFromFolderDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRemoveFromFolderDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_remove_member_details":
-		err = json.Unmarshal(body, &u.PaperContentRemoveMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRemoveMemberDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_rename_details":
-		err = json.Unmarshal(body, &u.PaperContentRenameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRenameDetails); err != nil {
 			return err
 		}
+
 	case "paper_content_restore_details":
-		err = json.Unmarshal(body, &u.PaperContentRestoreDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRestoreDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_add_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocAddCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocAddCommentDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_member_role_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeMemberRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeMemberRoleDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_sharing_policy_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_subscription_details":
-		err = json.Unmarshal(body, &u.PaperDocChangeSubscriptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeSubscriptionDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_deleted_details":
-		err = json.Unmarshal(body, &u.PaperDocDeletedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDeletedDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_delete_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocDeleteCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDeleteCommentDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_download_details":
-		err = json.Unmarshal(body, &u.PaperDocDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDownloadDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_edit_details":
-		err = json.Unmarshal(body, &u.PaperDocEditDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocEditDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_edit_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocEditCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocEditCommentDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_followed_details":
-		err = json.Unmarshal(body, &u.PaperDocFollowedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocFollowedDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_mention_details":
-		err = json.Unmarshal(body, &u.PaperDocMentionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocMentionDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_ownership_changed_details":
-		err = json.Unmarshal(body, &u.PaperDocOwnershipChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocOwnershipChangedDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_request_access_details":
-		err = json.Unmarshal(body, &u.PaperDocRequestAccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocRequestAccessDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_resolve_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocResolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocResolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_revert_details":
-		err = json.Unmarshal(body, &u.PaperDocRevertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocRevertDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_slack_share_details":
-		err = json.Unmarshal(body, &u.PaperDocSlackShareDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocSlackShareDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_team_invite_details":
-		err = json.Unmarshal(body, &u.PaperDocTeamInviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocTeamInviteDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_trashed_details":
-		err = json.Unmarshal(body, &u.PaperDocTrashedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocTrashedDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.PaperDocUnresolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocUnresolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_untrashed_details":
-		err = json.Unmarshal(body, &u.PaperDocUntrashedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocUntrashedDetails); err != nil {
 			return err
 		}
+
 	case "paper_doc_view_details":
-		err = json.Unmarshal(body, &u.PaperDocViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocViewDetails); err != nil {
 			return err
 		}
+
 	case "paper_external_view_allow_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewAllowDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewAllowDetails); err != nil {
 			return err
 		}
+
 	case "paper_external_view_default_team_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeamDetails); err != nil {
 			return err
 		}
+
 	case "paper_external_view_forbid_details":
-		err = json.Unmarshal(body, &u.PaperExternalViewForbidDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewForbidDetails); err != nil {
 			return err
 		}
+
 	case "paper_folder_change_subscription_details":
-		err = json.Unmarshal(body, &u.PaperFolderChangeSubscriptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderChangeSubscriptionDetails); err != nil {
 			return err
 		}
+
 	case "paper_folder_deleted_details":
-		err = json.Unmarshal(body, &u.PaperFolderDeletedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderDeletedDetails); err != nil {
 			return err
 		}
+
 	case "paper_folder_followed_details":
-		err = json.Unmarshal(body, &u.PaperFolderFollowedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderFollowedDetails); err != nil {
 			return err
 		}
+
 	case "paper_folder_team_invite_details":
-		err = json.Unmarshal(body, &u.PaperFolderTeamInviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderTeamInviteDetails); err != nil {
 			return err
 		}
+
 	case "paper_published_link_change_permission_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermissionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermissionDetails); err != nil {
 			return err
 		}
+
 	case "paper_published_link_create_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkCreateDetails); err != nil {
 			return err
 		}
+
 	case "paper_published_link_disabled_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkDisabledDetails); err != nil {
 			return err
 		}
+
 	case "paper_published_link_view_details":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkViewDetails); err != nil {
 			return err
 		}
+
 	case "password_change_details":
-		err = json.Unmarshal(body, &u.PasswordChangeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordChangeDetails); err != nil {
 			return err
 		}
+
 	case "password_reset_details":
-		err = json.Unmarshal(body, &u.PasswordResetDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordResetDetails); err != nil {
 			return err
 		}
+
 	case "password_reset_all_details":
-		err = json.Unmarshal(body, &u.PasswordResetAllDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordResetAllDetails); err != nil {
 			return err
 		}
+
 	case "classification_create_report_details":
-		err = json.Unmarshal(body, &u.ClassificationCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "classification_create_report_fail_details":
-		err = json.Unmarshal(body, &u.ClassificationCreateReportFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationCreateReportFailDetails); err != nil {
 			return err
 		}
+
 	case "emm_create_exceptions_report_details":
-		err = json.Unmarshal(body, &u.EmmCreateExceptionsReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmCreateExceptionsReportDetails); err != nil {
 			return err
 		}
+
 	case "emm_create_usage_report_details":
-		err = json.Unmarshal(body, &u.EmmCreateUsageReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmCreateUsageReportDetails); err != nil {
 			return err
 		}
+
 	case "export_members_report_details":
-		err = json.Unmarshal(body, &u.ExportMembersReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExportMembersReportDetails); err != nil {
 			return err
 		}
+
 	case "export_members_report_fail_details":
-		err = json.Unmarshal(body, &u.ExportMembersReportFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExportMembersReportFailDetails); err != nil {
 			return err
 		}
+
 	case "external_sharing_create_report_details":
-		err = json.Unmarshal(body, &u.ExternalSharingCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalSharingCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "external_sharing_report_failed_details":
-		err = json.Unmarshal(body, &u.ExternalSharingReportFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalSharingReportFailedDetails); err != nil {
 			return err
 		}
+
 	case "no_expiration_link_gen_create_report_details":
-		err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "no_expiration_link_gen_report_failed_details":
-		err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailedDetails); err != nil {
 			return err
 		}
+
 	case "no_password_link_gen_create_report_details":
-		err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "no_password_link_gen_report_failed_details":
-		err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailedDetails); err != nil {
 			return err
 		}
+
 	case "no_password_link_view_create_report_details":
-		err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "no_password_link_view_report_failed_details":
-		err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailedDetails); err != nil {
 			return err
 		}
+
 	case "outdated_link_view_create_report_details":
-		err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "outdated_link_view_report_failed_details":
-		err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailedDetails); err != nil {
 			return err
 		}
+
 	case "paper_admin_export_start_details":
-		err = json.Unmarshal(body, &u.PaperAdminExportStartDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperAdminExportStartDetails); err != nil {
 			return err
 		}
+
 	case "smart_sync_create_admin_privilege_report_details":
-		err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReportDetails); err != nil {
 			return err
 		}
+
 	case "team_activity_create_report_details":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamActivityCreateReportDetails); err != nil {
 			return err
 		}
+
 	case "team_activity_create_report_fail_details":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportFailDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamActivityCreateReportFailDetails); err != nil {
 			return err
 		}
+
 	case "collection_share_details":
-		err = json.Unmarshal(body, &u.CollectionShareDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CollectionShareDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_file_add_details":
-		err = json.Unmarshal(body, &u.FileTransfersFileAddDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersFileAddDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_delete_details":
-		err = json.Unmarshal(body, &u.FileTransfersTransferDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferDeleteDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_download_details":
-		err = json.Unmarshal(body, &u.FileTransfersTransferDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferDownloadDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_send_details":
-		err = json.Unmarshal(body, &u.FileTransfersTransferSendDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferSendDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_view_details":
-		err = json.Unmarshal(body, &u.FileTransfersTransferViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferViewDetails); err != nil {
 			return err
 		}
+
 	case "note_acl_invite_only_details":
-		err = json.Unmarshal(body, &u.NoteAclInviteOnlyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclInviteOnlyDetails); err != nil {
 			return err
 		}
+
 	case "note_acl_link_details":
-		err = json.Unmarshal(body, &u.NoteAclLinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclLinkDetails); err != nil {
 			return err
 		}
+
 	case "note_acl_team_link_details":
-		err = json.Unmarshal(body, &u.NoteAclTeamLinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclTeamLinkDetails); err != nil {
 			return err
 		}
+
 	case "note_shared_details":
-		err = json.Unmarshal(body, &u.NoteSharedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteSharedDetails); err != nil {
 			return err
 		}
+
 	case "note_share_receive_details":
-		err = json.Unmarshal(body, &u.NoteShareReceiveDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteShareReceiveDetails); err != nil {
 			return err
 		}
+
 	case "open_note_shared_details":
-		err = json.Unmarshal(body, &u.OpenNoteSharedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OpenNoteSharedDetails); err != nil {
 			return err
 		}
+
 	case "sf_add_group_details":
-		err = json.Unmarshal(body, &u.SfAddGroupDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfAddGroupDetails); err != nil {
 			return err
 		}
+
 	case "sf_allow_non_members_to_view_shared_links_details":
-		err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinksDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinksDetails); err != nil {
 			return err
 		}
+
 	case "sf_external_invite_warn_details":
-		err = json.Unmarshal(body, &u.SfExternalInviteWarnDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfExternalInviteWarnDetails); err != nil {
 			return err
 		}
+
 	case "sf_fb_invite_details":
-		err = json.Unmarshal(body, &u.SfFbInviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbInviteDetails); err != nil {
 			return err
 		}
+
 	case "sf_fb_invite_change_role_details":
-		err = json.Unmarshal(body, &u.SfFbInviteChangeRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbInviteChangeRoleDetails); err != nil {
 			return err
 		}
+
 	case "sf_fb_uninvite_details":
-		err = json.Unmarshal(body, &u.SfFbUninviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbUninviteDetails); err != nil {
 			return err
 		}
+
 	case "sf_invite_group_details":
-		err = json.Unmarshal(body, &u.SfInviteGroupDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfInviteGroupDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_grant_access_details":
-		err = json.Unmarshal(body, &u.SfTeamGrantAccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamGrantAccessDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_invite_details":
-		err = json.Unmarshal(body, &u.SfTeamInviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamInviteDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_invite_change_role_details":
-		err = json.Unmarshal(body, &u.SfTeamInviteChangeRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamInviteChangeRoleDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_join_details":
-		err = json.Unmarshal(body, &u.SfTeamJoinDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamJoinDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_join_from_oob_link_details":
-		err = json.Unmarshal(body, &u.SfTeamJoinFromOobLinkDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamJoinFromOobLinkDetails); err != nil {
 			return err
 		}
+
 	case "sf_team_uninvite_details":
-		err = json.Unmarshal(body, &u.SfTeamUninviteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamUninviteDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_add_invitees_details":
-		err = json.Unmarshal(body, &u.SharedContentAddInviteesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddInviteesDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_add_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddLinkExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_add_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkPasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddLinkPasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_add_member_details":
-		err = json.Unmarshal(body, &u.SharedContentAddMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddMemberDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_downloads_policy_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_invitee_role_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeInviteeRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeInviteeRoleDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_audience_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkAudienceDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkAudienceDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkPasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkPasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_member_role_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeMemberRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeMemberRoleDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_change_viewer_info_policy_details":
-		err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_claim_invitation_details":
-		err = json.Unmarshal(body, &u.SharedContentClaimInvitationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentClaimInvitationDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_copy_details":
-		err = json.Unmarshal(body, &u.SharedContentCopyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentCopyDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_download_details":
-		err = json.Unmarshal(body, &u.SharedContentDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentDownloadDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_relinquish_membership_details":
-		err = json.Unmarshal(body, &u.SharedContentRelinquishMembershipDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRelinquishMembershipDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_invitees_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInviteesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveInviteesDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_link_expiry_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_link_password_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkPasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveLinkPasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_member_details":
-		err = json.Unmarshal(body, &u.SharedContentRemoveMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveMemberDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_request_access_details":
-		err = json.Unmarshal(body, &u.SharedContentRequestAccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRequestAccessDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_restore_invitees_details":
-		err = json.Unmarshal(body, &u.SharedContentRestoreInviteesDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRestoreInviteesDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_restore_member_details":
-		err = json.Unmarshal(body, &u.SharedContentRestoreMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRestoreMemberDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_unshare_details":
-		err = json.Unmarshal(body, &u.SharedContentUnshareDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentUnshareDetails); err != nil {
 			return err
 		}
+
 	case "shared_content_view_details":
-		err = json.Unmarshal(body, &u.SharedContentViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentViewDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_link_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_inheritance_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_management_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_policy_details":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicyDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_create_details":
-		err = json.Unmarshal(body, &u.SharedFolderCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderCreateDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_decline_invitation_details":
-		err = json.Unmarshal(body, &u.SharedFolderDeclineInvitationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderDeclineInvitationDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_mount_details":
-		err = json.Unmarshal(body, &u.SharedFolderMountDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderMountDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_nest_details":
-		err = json.Unmarshal(body, &u.SharedFolderNestDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderNestDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_transfer_ownership_details":
-		err = json.Unmarshal(body, &u.SharedFolderTransferOwnershipDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderTransferOwnershipDetails); err != nil {
 			return err
 		}
+
 	case "shared_folder_unmount_details":
-		err = json.Unmarshal(body, &u.SharedFolderUnmountDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderUnmountDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_add_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkAddExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkAddExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_change_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkChangeExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkChangeExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_change_visibility_details":
-		err = json.Unmarshal(body, &u.SharedLinkChangeVisibilityDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkChangeVisibilityDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_copy_details":
-		err = json.Unmarshal(body, &u.SharedLinkCopyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkCopyDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_create_details":
-		err = json.Unmarshal(body, &u.SharedLinkCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkCreateDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_disable_details":
-		err = json.Unmarshal(body, &u.SharedLinkDisableDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkDisableDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_download_details":
-		err = json.Unmarshal(body, &u.SharedLinkDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkDownloadDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_remove_expiry_details":
-		err = json.Unmarshal(body, &u.SharedLinkRemoveExpiryDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkRemoveExpiryDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_add_expiration_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpirationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpirationDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_add_password_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAddPasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAddPasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_allow_download_disabled_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabledDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_allow_download_enabled_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabledDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_audience_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudienceDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudienceDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_expiration_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpirationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpirationDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_password_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangePasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangePasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_remove_expiration_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpirationDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpirationDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_remove_password_details":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePasswordDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePasswordDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_share_details":
-		err = json.Unmarshal(body, &u.SharedLinkShareDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkShareDetails); err != nil {
 			return err
 		}
+
 	case "shared_link_view_details":
-		err = json.Unmarshal(body, &u.SharedLinkViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkViewDetails); err != nil {
 			return err
 		}
+
 	case "shared_note_opened_details":
-		err = json.Unmarshal(body, &u.SharedNoteOpenedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedNoteOpenedDetails); err != nil {
 			return err
 		}
+
 	case "shmodel_disable_downloads_details":
-		err = json.Unmarshal(body, &u.ShmodelDisableDownloadsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelDisableDownloadsDetails); err != nil {
 			return err
 		}
+
 	case "shmodel_enable_downloads_details":
-		err = json.Unmarshal(body, &u.ShmodelEnableDownloadsDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelEnableDownloadsDetails); err != nil {
 			return err
 		}
+
 	case "shmodel_group_share_details":
-		err = json.Unmarshal(body, &u.ShmodelGroupShareDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelGroupShareDetails); err != nil {
 			return err
 		}
+
 	case "showcase_access_granted_details":
-		err = json.Unmarshal(body, &u.ShowcaseAccessGrantedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseAccessGrantedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_add_member_details":
-		err = json.Unmarshal(body, &u.ShowcaseAddMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseAddMemberDetails); err != nil {
 			return err
 		}
+
 	case "showcase_archived_details":
-		err = json.Unmarshal(body, &u.ShowcaseArchivedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseArchivedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_created_details":
-		err = json.Unmarshal(body, &u.ShowcaseCreatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseCreatedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_delete_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseDeleteCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseDeleteCommentDetails); err != nil {
 			return err
 		}
+
 	case "showcase_edited_details":
-		err = json.Unmarshal(body, &u.ShowcaseEditedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseEditedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_edit_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseEditCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseEditCommentDetails); err != nil {
 			return err
 		}
+
 	case "showcase_file_added_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileAddedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileAddedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_file_download_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileDownloadDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileDownloadDetails); err != nil {
 			return err
 		}
+
 	case "showcase_file_removed_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileRemovedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileRemovedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_file_view_details":
-		err = json.Unmarshal(body, &u.ShowcaseFileViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileViewDetails); err != nil {
 			return err
 		}
+
 	case "showcase_permanently_deleted_details":
-		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeletedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcasePermanentlyDeletedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_post_comment_details":
-		err = json.Unmarshal(body, &u.ShowcasePostCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcasePostCommentDetails); err != nil {
 			return err
 		}
+
 	case "showcase_remove_member_details":
-		err = json.Unmarshal(body, &u.ShowcaseRemoveMemberDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRemoveMemberDetails); err != nil {
 			return err
 		}
+
 	case "showcase_renamed_details":
-		err = json.Unmarshal(body, &u.ShowcaseRenamedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRenamedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_request_access_details":
-		err = json.Unmarshal(body, &u.ShowcaseRequestAccessDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRequestAccessDetails); err != nil {
 			return err
 		}
+
 	case "showcase_resolve_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseResolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseResolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "showcase_restored_details":
-		err = json.Unmarshal(body, &u.ShowcaseRestoredDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRestoredDetails); err != nil {
 			return err
 		}
+
 	case "showcase_trashed_details":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseTrashedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_trashed_deprecated_details":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecatedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_unresolve_comment_details":
-		err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUnresolveCommentDetails); err != nil {
 			return err
 		}
+
 	case "showcase_untrashed_details":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUntrashedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_untrashed_deprecated_details":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecatedDetails); err != nil {
 			return err
 		}
+
 	case "showcase_view_details":
-		err = json.Unmarshal(body, &u.ShowcaseViewDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseViewDetails); err != nil {
 			return err
 		}
+
 	case "sso_add_cert_details":
-		err = json.Unmarshal(body, &u.SsoAddCertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddCertDetails); err != nil {
 			return err
 		}
+
 	case "sso_add_login_url_details":
-		err = json.Unmarshal(body, &u.SsoAddLoginUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddLoginUrlDetails); err != nil {
 			return err
 		}
+
 	case "sso_add_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoAddLogoutUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddLogoutUrlDetails); err != nil {
 			return err
 		}
+
 	case "sso_change_cert_details":
-		err = json.Unmarshal(body, &u.SsoChangeCertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeCertDetails); err != nil {
 			return err
 		}
+
 	case "sso_change_login_url_details":
-		err = json.Unmarshal(body, &u.SsoChangeLoginUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeLoginUrlDetails); err != nil {
 			return err
 		}
+
 	case "sso_change_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoChangeLogoutUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeLogoutUrlDetails); err != nil {
 			return err
 		}
+
 	case "sso_change_saml_identity_mode_details":
-		err = json.Unmarshal(body, &u.SsoChangeSamlIdentityModeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeSamlIdentityModeDetails); err != nil {
 			return err
 		}
+
 	case "sso_remove_cert_details":
-		err = json.Unmarshal(body, &u.SsoRemoveCertDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveCertDetails); err != nil {
 			return err
 		}
+
 	case "sso_remove_login_url_details":
-		err = json.Unmarshal(body, &u.SsoRemoveLoginUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveLoginUrlDetails); err != nil {
 			return err
 		}
+
 	case "sso_remove_logout_url_details":
-		err = json.Unmarshal(body, &u.SsoRemoveLogoutUrlDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveLogoutUrlDetails); err != nil {
 			return err
 		}
+
 	case "team_folder_change_status_details":
-		err = json.Unmarshal(body, &u.TeamFolderChangeStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderChangeStatusDetails); err != nil {
 			return err
 		}
+
 	case "team_folder_create_details":
-		err = json.Unmarshal(body, &u.TeamFolderCreateDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderCreateDetails); err != nil {
 			return err
 		}
+
 	case "team_folder_downgrade_details":
-		err = json.Unmarshal(body, &u.TeamFolderDowngradeDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderDowngradeDetails); err != nil {
 			return err
 		}
+
 	case "team_folder_permanently_delete_details":
-		err = json.Unmarshal(body, &u.TeamFolderPermanentlyDeleteDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderPermanentlyDeleteDetails); err != nil {
 			return err
 		}
+
 	case "team_folder_rename_details":
-		err = json.Unmarshal(body, &u.TeamFolderRenameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderRenameDetails); err != nil {
 			return err
 		}
+
 	case "team_selective_sync_settings_changed_details":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChangedDetails); err != nil {
 			return err
 		}
+
 	case "account_capture_change_policy_details":
-		err = json.Unmarshal(body, &u.AccountCaptureChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "allow_download_disabled_details":
-		err = json.Unmarshal(body, &u.AllowDownloadDisabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AllowDownloadDisabledDetails); err != nil {
 			return err
 		}
+
 	case "allow_download_enabled_details":
-		err = json.Unmarshal(body, &u.AllowDownloadEnabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AllowDownloadEnabledDetails); err != nil {
 			return err
 		}
+
 	case "app_permissions_changed_details":
-		err = json.Unmarshal(body, &u.AppPermissionsChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppPermissionsChangedDetails); err != nil {
 			return err
 		}
+
 	case "camera_uploads_policy_changed_details":
-		err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CameraUploadsPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "capture_transcript_policy_changed_details":
-		err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "classification_change_policy_details":
-		err = json.Unmarshal(body, &u.ClassificationChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "computer_backup_policy_changed_details":
-		err = json.Unmarshal(body, &u.ComputerBackupPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ComputerBackupPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "content_administration_policy_changed_details":
-		err = json.Unmarshal(body, &u.ContentAdministrationPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ContentAdministrationPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "data_placement_restriction_change_policy_details":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "data_placement_restriction_satisfy_policy_details":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicyDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_add_exception_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsAddExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsAddExceptionDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_desktop_policy_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicyDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_mobile_policy_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicyDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_overage_action_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageActionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageActionDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_unlink_action_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkActionDetails); err != nil {
 			return err
 		}
+
 	case "device_approvals_remove_exception_details":
-		err = json.Unmarshal(body, &u.DeviceApprovalsRemoveExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsRemoveExceptionDetails); err != nil {
 			return err
 		}
+
 	case "directory_restrictions_add_members_details":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembersDetails); err != nil {
 			return err
 		}
+
 	case "directory_restrictions_remove_members_details":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembersDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembersDetails); err != nil {
 			return err
 		}
+
 	case "email_ingest_policy_changed_details":
-		err = json.Unmarshal(body, &u.EmailIngestPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmailIngestPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "emm_add_exception_details":
-		err = json.Unmarshal(body, &u.EmmAddExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmAddExceptionDetails); err != nil {
 			return err
 		}
+
 	case "emm_change_policy_details":
-		err = json.Unmarshal(body, &u.EmmChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "emm_remove_exception_details":
-		err = json.Unmarshal(body, &u.EmmRemoveExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmRemoveExceptionDetails); err != nil {
 			return err
 		}
+
 	case "extended_version_history_change_policy_details":
-		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "external_drive_backup_policy_changed_details":
-		err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "file_comments_change_policy_details":
-		err = json.Unmarshal(body, &u.FileCommentsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileCommentsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "file_locking_policy_changed_details":
-		err = json.Unmarshal(body, &u.FileLockingPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLockingPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "file_requests_change_policy_details":
-		err = json.Unmarshal(body, &u.FileRequestsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "file_requests_emails_enabled_details":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsEnabledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsEmailsEnabledDetails); err != nil {
 			return err
 		}
+
 	case "file_requests_emails_restricted_to_team_only_details":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnlyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnlyDetails); err != nil {
 			return err
 		}
+
 	case "file_transfers_policy_changed_details":
-		err = json.Unmarshal(body, &u.FileTransfersPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "google_sso_change_policy_details":
-		err = json.Unmarshal(body, &u.GoogleSsoChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GoogleSsoChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "group_user_management_change_policy_details":
-		err = json.Unmarshal(body, &u.GroupUserManagementChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupUserManagementChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "integration_policy_changed_details":
-		err = json.Unmarshal(body, &u.IntegrationPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "invite_acceptance_email_policy_changed_details":
-		err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "member_requests_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "member_send_invite_policy_changed_details":
-		err = json.Unmarshal(body, &u.MemberSendInvitePolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSendInvitePolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_add_exception_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsAddExceptionDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_caps_type_policy_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicyDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "member_space_limits_remove_exception_details":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveExceptionDetails); err != nil {
 			return err
 		}
+
 	case "member_suggestions_change_policy_details":
-		err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "microsoft_office_addin_change_policy_details":
-		err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "network_control_change_policy_details":
-		err = json.Unmarshal(body, &u.NetworkControlChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NetworkControlChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_change_deployment_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_change_member_link_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_change_member_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangeMemberPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeMemberPolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_change_policy_details":
-		err = json.Unmarshal(body, &u.PaperChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "paper_default_folder_policy_changed_details":
-		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "paper_desktop_policy_changed_details":
-		err = json.Unmarshal(body, &u.PaperDesktopPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDesktopPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "paper_enabled_users_group_addition_details":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAdditionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAdditionDetails); err != nil {
 			return err
 		}
+
 	case "paper_enabled_users_group_removal_details":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemovalDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemovalDetails); err != nil {
 			return err
 		}
+
 	case "password_strength_requirements_change_policy_details":
-		err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "permanent_delete_change_policy_details":
-		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PermanentDeleteChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "reseller_support_change_policy_details":
-		err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "rewind_policy_changed_details":
-		err = json.Unmarshal(body, &u.RewindPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.RewindPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "send_for_signature_policy_changed_details":
-		err = json.Unmarshal(body, &u.SendForSignaturePolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SendForSignaturePolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_folder_join_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicyDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_allow_change_expiration_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicyDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_default_expiration_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicyDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_enforce_password_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicyDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeLinkPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkPolicyDetails); err != nil {
 			return err
 		}
+
 	case "sharing_change_member_policy_details":
-		err = json.Unmarshal(body, &u.SharingChangeMemberPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeMemberPolicyDetails); err != nil {
 			return err
 		}
+
 	case "showcase_change_download_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicyDetails); err != nil {
 			return err
 		}
+
 	case "showcase_change_enabled_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicyDetails); err != nil {
 			return err
 		}
+
 	case "showcase_change_external_sharing_policy_details":
-		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicyDetails); err != nil {
 			return err
 		}
+
 	case "smarter_smart_sync_policy_changed_details":
-		err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "smart_sync_change_policy_details":
-		err = json.Unmarshal(body, &u.SmartSyncChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "smart_sync_not_opt_out_details":
-		err = json.Unmarshal(body, &u.SmartSyncNotOptOutDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncNotOptOutDetails); err != nil {
 			return err
 		}
+
 	case "smart_sync_opt_out_details":
-		err = json.Unmarshal(body, &u.SmartSyncOptOutDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncOptOutDetails); err != nil {
 			return err
 		}
+
 	case "sso_change_policy_details":
-		err = json.Unmarshal(body, &u.SsoChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "team_branding_policy_changed_details":
-		err = json.Unmarshal(body, &u.TeamBrandingPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamBrandingPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "team_extensions_policy_changed_details":
-		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamExtensionsPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "team_selective_sync_policy_changed_details":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "team_sharing_whitelist_subjects_changed_details":
-		err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChangedDetails); err != nil {
 			return err
 		}
+
 	case "tfa_add_exception_details":
-		err = json.Unmarshal(body, &u.TfaAddExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddExceptionDetails); err != nil {
 			return err
 		}
+
 	case "tfa_change_policy_details":
-		err = json.Unmarshal(body, &u.TfaChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "tfa_remove_exception_details":
-		err = json.Unmarshal(body, &u.TfaRemoveExceptionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveExceptionDetails); err != nil {
 			return err
 		}
+
 	case "two_account_change_policy_details":
-		err = json.Unmarshal(body, &u.TwoAccountChangePolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TwoAccountChangePolicyDetails); err != nil {
 			return err
 		}
+
 	case "viewer_info_policy_changed_details":
-		err = json.Unmarshal(body, &u.ViewerInfoPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ViewerInfoPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "watermarking_policy_changed_details":
-		err = json.Unmarshal(body, &u.WatermarkingPolicyChangedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WatermarkingPolicyChangedDetails); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_active_session_limit_details":
-		err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimitDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimitDetails); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_fixed_length_policy_details":
-		err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicyDetails); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_idle_length_policy_details":
-		err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicyDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_from_details":
-		err = json.Unmarshal(body, &u.TeamMergeFromDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeFromDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_to_details":
-		err = json.Unmarshal(body, &u.TeamMergeToDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeToDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_add_background_details":
-		err = json.Unmarshal(body, &u.TeamProfileAddBackgroundDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileAddBackgroundDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_add_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileAddLogoDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_change_background_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeBackgroundDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeBackgroundDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_change_default_language_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguageDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguageDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_change_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeLogoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeLogoDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_change_name_details":
-		err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeNameDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_remove_background_details":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveBackgroundDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileRemoveBackgroundDetails); err != nil {
 			return err
 		}
+
 	case "team_profile_remove_logo_details":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveLogoDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileRemoveLogoDetails); err != nil {
 			return err
 		}
+
 	case "tfa_add_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaAddBackupPhoneDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddBackupPhoneDetails); err != nil {
 			return err
 		}
+
 	case "tfa_add_security_key_details":
-		err = json.Unmarshal(body, &u.TfaAddSecurityKeyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddSecurityKeyDetails); err != nil {
 			return err
 		}
+
 	case "tfa_change_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaChangeBackupPhoneDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangeBackupPhoneDetails); err != nil {
 			return err
 		}
+
 	case "tfa_change_status_details":
-		err = json.Unmarshal(body, &u.TfaChangeStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangeStatusDetails); err != nil {
 			return err
 		}
+
 	case "tfa_remove_backup_phone_details":
-		err = json.Unmarshal(body, &u.TfaRemoveBackupPhoneDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveBackupPhoneDetails); err != nil {
 			return err
 		}
+
 	case "tfa_remove_security_key_details":
-		err = json.Unmarshal(body, &u.TfaRemoveSecurityKeyDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveSecurityKeyDetails); err != nil {
 			return err
 		}
+
 	case "tfa_reset_details":
-		err = json.Unmarshal(body, &u.TfaResetDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaResetDetails); err != nil {
 			return err
 		}
+
 	case "changed_enterprise_admin_role_details":
-		err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRoleDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRoleDetails); err != nil {
 			return err
 		}
+
 	case "changed_enterprise_connected_team_status_details":
-		err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatusDetails); err != nil {
 			return err
 		}
+
 	case "ended_enterprise_admin_session_details":
-		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDetails); err != nil {
 			return err
 		}
+
 	case "ended_enterprise_admin_session_deprecated_details":
-		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecatedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecatedDetails); err != nil {
 			return err
 		}
+
 	case "enterprise_settings_locking_details":
-		err = json.Unmarshal(body, &u.EnterpriseSettingsLockingDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EnterpriseSettingsLockingDetails); err != nil {
 			return err
 		}
+
 	case "guest_admin_change_status_details":
-		err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminChangeStatusDetails); err != nil {
 			return err
 		}
+
 	case "started_enterprise_admin_session_details":
-		err = json.Unmarshal(body, &u.StartedEnterpriseAdminSessionDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.StartedEnterpriseAdminSessionDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_auto_canceled_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceledDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceledDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpiredDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_rejected_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_rejected_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminderDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_revoked_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRevokedDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRevokedDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_sent_shown_to_primary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "team_merge_request_sent_shown_to_secondary_team_details":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeamDetails); err != nil {
 			return err
 		}
+
 	case "missing_details":
-		err = json.Unmarshal(body, &u.MissingDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MissingDetails); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -9870,2849 +9361,2375 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "admin_alerting_alert_state_changed":
-		err = json.Unmarshal(body, &u.AdminAlertingAlertStateChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingAlertStateChanged); err != nil {
 			return err
 		}
+
 	case "admin_alerting_changed_alert_config":
-		err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfig)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingChangedAlertConfig); err != nil {
 			return err
 		}
+
 	case "admin_alerting_triggered_alert":
-		err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AdminAlertingTriggeredAlert); err != nil {
 			return err
 		}
+
 	case "app_blocked_by_permissions":
-		err = json.Unmarshal(body, &u.AppBlockedByPermissions)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppBlockedByPermissions); err != nil {
 			return err
 		}
+
 	case "app_link_team":
-		err = json.Unmarshal(body, &u.AppLinkTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppLinkTeam); err != nil {
 			return err
 		}
+
 	case "app_link_user":
-		err = json.Unmarshal(body, &u.AppLinkUser)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppLinkUser); err != nil {
 			return err
 		}
+
 	case "app_unlink_team":
-		err = json.Unmarshal(body, &u.AppUnlinkTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppUnlinkTeam); err != nil {
 			return err
 		}
+
 	case "app_unlink_user":
-		err = json.Unmarshal(body, &u.AppUnlinkUser)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppUnlinkUser); err != nil {
 			return err
 		}
+
 	case "integration_connected":
-		err = json.Unmarshal(body, &u.IntegrationConnected)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationConnected); err != nil {
 			return err
 		}
+
 	case "integration_disconnected":
-		err = json.Unmarshal(body, &u.IntegrationDisconnected)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationDisconnected); err != nil {
 			return err
 		}
+
 	case "file_add_comment":
-		err = json.Unmarshal(body, &u.FileAddComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileAddComment); err != nil {
 			return err
 		}
+
 	case "file_change_comment_subscription":
-		err = json.Unmarshal(body, &u.FileChangeCommentSubscription)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileChangeCommentSubscription); err != nil {
 			return err
 		}
+
 	case "file_delete_comment":
-		err = json.Unmarshal(body, &u.FileDeleteComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDeleteComment); err != nil {
 			return err
 		}
+
 	case "file_edit_comment":
-		err = json.Unmarshal(body, &u.FileEditComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileEditComment); err != nil {
 			return err
 		}
+
 	case "file_like_comment":
-		err = json.Unmarshal(body, &u.FileLikeComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLikeComment); err != nil {
 			return err
 		}
+
 	case "file_resolve_comment":
-		err = json.Unmarshal(body, &u.FileResolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileResolveComment); err != nil {
 			return err
 		}
+
 	case "file_unlike_comment":
-		err = json.Unmarshal(body, &u.FileUnlikeComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileUnlikeComment); err != nil {
 			return err
 		}
+
 	case "file_unresolve_comment":
-		err = json.Unmarshal(body, &u.FileUnresolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileUnresolveComment); err != nil {
 			return err
 		}
+
 	case "governance_policy_add_folders":
-		err = json.Unmarshal(body, &u.GovernancePolicyAddFolders)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyAddFolders); err != nil {
 			return err
 		}
+
 	case "governance_policy_add_folder_failed":
-		err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyAddFolderFailed); err != nil {
 			return err
 		}
+
 	case "governance_policy_content_disposed":
-		err = json.Unmarshal(body, &u.GovernancePolicyContentDisposed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyContentDisposed); err != nil {
 			return err
 		}
+
 	case "governance_policy_create":
-		err = json.Unmarshal(body, &u.GovernancePolicyCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyCreate); err != nil {
 			return err
 		}
+
 	case "governance_policy_delete":
-		err = json.Unmarshal(body, &u.GovernancePolicyDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyDelete); err != nil {
 			return err
 		}
+
 	case "governance_policy_edit_details":
-		err = json.Unmarshal(body, &u.GovernancePolicyEditDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyEditDetails); err != nil {
 			return err
 		}
+
 	case "governance_policy_edit_duration":
-		err = json.Unmarshal(body, &u.GovernancePolicyEditDuration)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyEditDuration); err != nil {
 			return err
 		}
+
 	case "governance_policy_export_created":
-		err = json.Unmarshal(body, &u.GovernancePolicyExportCreated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyExportCreated); err != nil {
 			return err
 		}
+
 	case "governance_policy_export_removed":
-		err = json.Unmarshal(body, &u.GovernancePolicyExportRemoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyExportRemoved); err != nil {
 			return err
 		}
+
 	case "governance_policy_remove_folders":
-		err = json.Unmarshal(body, &u.GovernancePolicyRemoveFolders)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyRemoveFolders); err != nil {
 			return err
 		}
+
 	case "governance_policy_report_created":
-		err = json.Unmarshal(body, &u.GovernancePolicyReportCreated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyReportCreated); err != nil {
 			return err
 		}
+
 	case "governance_policy_zip_part_downloaded":
-		err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloaded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GovernancePolicyZipPartDownloaded); err != nil {
 			return err
 		}
+
 	case "legal_holds_activate_a_hold":
-		err = json.Unmarshal(body, &u.LegalHoldsActivateAHold)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsActivateAHold); err != nil {
 			return err
 		}
+
 	case "legal_holds_add_members":
-		err = json.Unmarshal(body, &u.LegalHoldsAddMembers)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsAddMembers); err != nil {
 			return err
 		}
+
 	case "legal_holds_change_hold_details":
-		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsChangeHoldDetails); err != nil {
 			return err
 		}
+
 	case "legal_holds_change_hold_name":
-		err = json.Unmarshal(body, &u.LegalHoldsChangeHoldName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsChangeHoldName); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_a_hold":
-		err = json.Unmarshal(body, &u.LegalHoldsExportAHold)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportAHold); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_cancelled":
-		err = json.Unmarshal(body, &u.LegalHoldsExportCancelled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportCancelled); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_downloaded":
-		err = json.Unmarshal(body, &u.LegalHoldsExportDownloaded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportDownloaded); err != nil {
 			return err
 		}
+
 	case "legal_holds_export_removed":
-		err = json.Unmarshal(body, &u.LegalHoldsExportRemoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsExportRemoved); err != nil {
 			return err
 		}
+
 	case "legal_holds_release_a_hold":
-		err = json.Unmarshal(body, &u.LegalHoldsReleaseAHold)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsReleaseAHold); err != nil {
 			return err
 		}
+
 	case "legal_holds_remove_members":
-		err = json.Unmarshal(body, &u.LegalHoldsRemoveMembers)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsRemoveMembers); err != nil {
 			return err
 		}
+
 	case "legal_holds_report_a_hold":
-		err = json.Unmarshal(body, &u.LegalHoldsReportAHold)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegalHoldsReportAHold); err != nil {
 			return err
 		}
+
 	case "device_change_ip_desktop":
-		err = json.Unmarshal(body, &u.DeviceChangeIpDesktop)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpDesktop); err != nil {
 			return err
 		}
+
 	case "device_change_ip_mobile":
-		err = json.Unmarshal(body, &u.DeviceChangeIpMobile)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpMobile); err != nil {
 			return err
 		}
+
 	case "device_change_ip_web":
-		err = json.Unmarshal(body, &u.DeviceChangeIpWeb)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceChangeIpWeb); err != nil {
 			return err
 		}
+
 	case "device_delete_on_unlink_fail":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkFail); err != nil {
 			return err
 		}
+
 	case "device_delete_on_unlink_success":
-		err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceDeleteOnUnlinkSuccess); err != nil {
 			return err
 		}
+
 	case "device_link_fail":
-		err = json.Unmarshal(body, &u.DeviceLinkFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceLinkFail); err != nil {
 			return err
 		}
+
 	case "device_link_success":
-		err = json.Unmarshal(body, &u.DeviceLinkSuccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceLinkSuccess); err != nil {
 			return err
 		}
+
 	case "device_management_disabled":
-		err = json.Unmarshal(body, &u.DeviceManagementDisabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceManagementDisabled); err != nil {
 			return err
 		}
+
 	case "device_management_enabled":
-		err = json.Unmarshal(body, &u.DeviceManagementEnabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceManagementEnabled); err != nil {
 			return err
 		}
+
 	case "device_sync_backup_status_changed":
-		err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceSyncBackupStatusChanged); err != nil {
 			return err
 		}
+
 	case "device_unlink":
-		err = json.Unmarshal(body, &u.DeviceUnlink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceUnlink); err != nil {
 			return err
 		}
+
 	case "dropbox_passwords_exported":
-		err = json.Unmarshal(body, &u.DropboxPasswordsExported)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DropboxPasswordsExported); err != nil {
 			return err
 		}
+
 	case "dropbox_passwords_new_device_enrolled":
-		err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DropboxPasswordsNewDeviceEnrolled); err != nil {
 			return err
 		}
+
 	case "emm_refresh_auth_token":
-		err = json.Unmarshal(body, &u.EmmRefreshAuthToken)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmRefreshAuthToken); err != nil {
 			return err
 		}
+
 	case "account_capture_change_availability":
-		err = json.Unmarshal(body, &u.AccountCaptureChangeAvailability)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureChangeAvailability); err != nil {
 			return err
 		}
+
 	case "account_capture_migrate_account":
-		err = json.Unmarshal(body, &u.AccountCaptureMigrateAccount)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureMigrateAccount); err != nil {
 			return err
 		}
+
 	case "account_capture_notification_emails_sent":
-		err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSent)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureNotificationEmailsSent); err != nil {
 			return err
 		}
+
 	case "account_capture_relinquish_account":
-		err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccount)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureRelinquishAccount); err != nil {
 			return err
 		}
+
 	case "disabled_domain_invites":
-		err = json.Unmarshal(body, &u.DisabledDomainInvites)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DisabledDomainInvites); err != nil {
 			return err
 		}
+
 	case "domain_invites_approve_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesApproveRequestToJoinTeam); err != nil {
 			return err
 		}
+
 	case "domain_invites_decline_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesDeclineRequestToJoinTeam); err != nil {
 			return err
 		}
+
 	case "domain_invites_email_existing_users":
-		err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsers)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesEmailExistingUsers); err != nil {
 			return err
 		}
+
 	case "domain_invites_request_to_join_team":
-		err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesRequestToJoinTeam); err != nil {
 			return err
 		}
+
 	case "domain_invites_set_invite_new_user_pref_to_no":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToNo); err != nil {
 			return err
 		}
+
 	case "domain_invites_set_invite_new_user_pref_to_yes":
-		err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYes)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainInvitesSetInviteNewUserPrefToYes); err != nil {
 			return err
 		}
+
 	case "domain_verification_add_domain_fail":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationAddDomainFail); err != nil {
 			return err
 		}
+
 	case "domain_verification_add_domain_success":
-		err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationAddDomainSuccess); err != nil {
 			return err
 		}
+
 	case "domain_verification_remove_domain":
-		err = json.Unmarshal(body, &u.DomainVerificationRemoveDomain)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DomainVerificationRemoveDomain); err != nil {
 			return err
 		}
+
 	case "enabled_domain_invites":
-		err = json.Unmarshal(body, &u.EnabledDomainInvites)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EnabledDomainInvites); err != nil {
 			return err
 		}
+
 	case "apply_naming_convention":
-		err = json.Unmarshal(body, &u.ApplyNamingConvention)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ApplyNamingConvention); err != nil {
 			return err
 		}
+
 	case "create_folder":
-		err = json.Unmarshal(body, &u.CreateFolder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CreateFolder); err != nil {
 			return err
 		}
+
 	case "file_add":
-		err = json.Unmarshal(body, &u.FileAdd)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileAdd); err != nil {
 			return err
 		}
+
 	case "file_copy":
-		err = json.Unmarshal(body, &u.FileCopy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileCopy); err != nil {
 			return err
 		}
+
 	case "file_delete":
-		err = json.Unmarshal(body, &u.FileDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDelete); err != nil {
 			return err
 		}
+
 	case "file_download":
-		err = json.Unmarshal(body, &u.FileDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileDownload); err != nil {
 			return err
 		}
+
 	case "file_edit":
-		err = json.Unmarshal(body, &u.FileEdit)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileEdit); err != nil {
 			return err
 		}
+
 	case "file_get_copy_reference":
-		err = json.Unmarshal(body, &u.FileGetCopyReference)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileGetCopyReference); err != nil {
 			return err
 		}
+
 	case "file_locking_lock_status_changed":
-		err = json.Unmarshal(body, &u.FileLockingLockStatusChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLockingLockStatusChanged); err != nil {
 			return err
 		}
+
 	case "file_move":
-		err = json.Unmarshal(body, &u.FileMove)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileMove); err != nil {
 			return err
 		}
+
 	case "file_permanently_delete":
-		err = json.Unmarshal(body, &u.FilePermanentlyDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FilePermanentlyDelete); err != nil {
 			return err
 		}
+
 	case "file_preview":
-		err = json.Unmarshal(body, &u.FilePreview)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FilePreview); err != nil {
 			return err
 		}
+
 	case "file_rename":
-		err = json.Unmarshal(body, &u.FileRename)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRename); err != nil {
 			return err
 		}
+
 	case "file_restore":
-		err = json.Unmarshal(body, &u.FileRestore)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRestore); err != nil {
 			return err
 		}
+
 	case "file_revert":
-		err = json.Unmarshal(body, &u.FileRevert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRevert); err != nil {
 			return err
 		}
+
 	case "file_rollback_changes":
-		err = json.Unmarshal(body, &u.FileRollbackChanges)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRollbackChanges); err != nil {
 			return err
 		}
+
 	case "file_save_copy_reference":
-		err = json.Unmarshal(body, &u.FileSaveCopyReference)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileSaveCopyReference); err != nil {
 			return err
 		}
+
 	case "folder_overview_description_changed":
-		err = json.Unmarshal(body, &u.FolderOverviewDescriptionChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewDescriptionChanged); err != nil {
 			return err
 		}
+
 	case "folder_overview_item_pinned":
-		err = json.Unmarshal(body, &u.FolderOverviewItemPinned)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewItemPinned); err != nil {
 			return err
 		}
+
 	case "folder_overview_item_unpinned":
-		err = json.Unmarshal(body, &u.FolderOverviewItemUnpinned)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FolderOverviewItemUnpinned); err != nil {
 			return err
 		}
+
 	case "object_label_added":
-		err = json.Unmarshal(body, &u.ObjectLabelAdded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelAdded); err != nil {
 			return err
 		}
+
 	case "object_label_removed":
-		err = json.Unmarshal(body, &u.ObjectLabelRemoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelRemoved); err != nil {
 			return err
 		}
+
 	case "object_label_updated_value":
-		err = json.Unmarshal(body, &u.ObjectLabelUpdatedValue)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ObjectLabelUpdatedValue); err != nil {
 			return err
 		}
+
 	case "organize_folder_with_tidy":
-		err = json.Unmarshal(body, &u.OrganizeFolderWithTidy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OrganizeFolderWithTidy); err != nil {
 			return err
 		}
+
 	case "rewind_folder":
-		err = json.Unmarshal(body, &u.RewindFolder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.RewindFolder); err != nil {
 			return err
 		}
+
 	case "user_tags_added":
-		err = json.Unmarshal(body, &u.UserTagsAdded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserTagsAdded); err != nil {
 			return err
 		}
+
 	case "user_tags_removed":
-		err = json.Unmarshal(body, &u.UserTagsRemoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.UserTagsRemoved); err != nil {
 			return err
 		}
+
 	case "email_ingest_receive_file":
-		err = json.Unmarshal(body, &u.EmailIngestReceiveFile)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmailIngestReceiveFile); err != nil {
 			return err
 		}
+
 	case "file_request_change":
-		err = json.Unmarshal(body, &u.FileRequestChange)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestChange); err != nil {
 			return err
 		}
+
 	case "file_request_close":
-		err = json.Unmarshal(body, &u.FileRequestClose)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestClose); err != nil {
 			return err
 		}
+
 	case "file_request_create":
-		err = json.Unmarshal(body, &u.FileRequestCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestCreate); err != nil {
 			return err
 		}
+
 	case "file_request_delete":
-		err = json.Unmarshal(body, &u.FileRequestDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestDelete); err != nil {
 			return err
 		}
+
 	case "file_request_receive_file":
-		err = json.Unmarshal(body, &u.FileRequestReceiveFile)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestReceiveFile); err != nil {
 			return err
 		}
+
 	case "group_add_external_id":
-		err = json.Unmarshal(body, &u.GroupAddExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupAddExternalId); err != nil {
 			return err
 		}
+
 	case "group_add_member":
-		err = json.Unmarshal(body, &u.GroupAddMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupAddMember); err != nil {
 			return err
 		}
+
 	case "group_change_external_id":
-		err = json.Unmarshal(body, &u.GroupChangeExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeExternalId); err != nil {
 			return err
 		}
+
 	case "group_change_management_type":
-		err = json.Unmarshal(body, &u.GroupChangeManagementType)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeManagementType); err != nil {
 			return err
 		}
+
 	case "group_change_member_role":
-		err = json.Unmarshal(body, &u.GroupChangeMemberRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupChangeMemberRole); err != nil {
 			return err
 		}
+
 	case "group_create":
-		err = json.Unmarshal(body, &u.GroupCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupCreate); err != nil {
 			return err
 		}
+
 	case "group_delete":
-		err = json.Unmarshal(body, &u.GroupDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupDelete); err != nil {
 			return err
 		}
+
 	case "group_description_updated":
-		err = json.Unmarshal(body, &u.GroupDescriptionUpdated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupDescriptionUpdated); err != nil {
 			return err
 		}
+
 	case "group_join_policy_updated":
-		err = json.Unmarshal(body, &u.GroupJoinPolicyUpdated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupJoinPolicyUpdated); err != nil {
 			return err
 		}
+
 	case "group_moved":
-		err = json.Unmarshal(body, &u.GroupMoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupMoved); err != nil {
 			return err
 		}
+
 	case "group_remove_external_id":
-		err = json.Unmarshal(body, &u.GroupRemoveExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRemoveExternalId); err != nil {
 			return err
 		}
+
 	case "group_remove_member":
-		err = json.Unmarshal(body, &u.GroupRemoveMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRemoveMember); err != nil {
 			return err
 		}
+
 	case "group_rename":
-		err = json.Unmarshal(body, &u.GroupRename)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupRename); err != nil {
 			return err
 		}
+
 	case "account_lock_or_unlocked":
-		err = json.Unmarshal(body, &u.AccountLockOrUnlocked)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountLockOrUnlocked); err != nil {
 			return err
 		}
+
 	case "emm_error":
-		err = json.Unmarshal(body, &u.EmmError)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmError); err != nil {
 			return err
 		}
+
 	case "guest_admin_signed_in_via_trusted_teams":
-		err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeams)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminSignedInViaTrustedTeams); err != nil {
 			return err
 		}
+
 	case "guest_admin_signed_out_via_trusted_teams":
-		err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeams)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminSignedOutViaTrustedTeams); err != nil {
 			return err
 		}
+
 	case "login_fail":
-		err = json.Unmarshal(body, &u.LoginFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LoginFail); err != nil {
 			return err
 		}
+
 	case "login_success":
-		err = json.Unmarshal(body, &u.LoginSuccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LoginSuccess); err != nil {
 			return err
 		}
+
 	case "logout":
-		err = json.Unmarshal(body, &u.Logout)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Logout); err != nil {
 			return err
 		}
+
 	case "reseller_support_session_end":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionEnd)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportSessionEnd); err != nil {
 			return err
 		}
+
 	case "reseller_support_session_start":
-		err = json.Unmarshal(body, &u.ResellerSupportSessionStart)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportSessionStart); err != nil {
 			return err
 		}
+
 	case "sign_in_as_session_end":
-		err = json.Unmarshal(body, &u.SignInAsSessionEnd)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SignInAsSessionEnd); err != nil {
 			return err
 		}
+
 	case "sign_in_as_session_start":
-		err = json.Unmarshal(body, &u.SignInAsSessionStart)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SignInAsSessionStart); err != nil {
 			return err
 		}
+
 	case "sso_error":
-		err = json.Unmarshal(body, &u.SsoError)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoError); err != nil {
 			return err
 		}
+
 	case "create_team_invite_link":
-		err = json.Unmarshal(body, &u.CreateTeamInviteLink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CreateTeamInviteLink); err != nil {
 			return err
 		}
+
 	case "delete_team_invite_link":
-		err = json.Unmarshal(body, &u.DeleteTeamInviteLink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeleteTeamInviteLink); err != nil {
 			return err
 		}
+
 	case "member_add_external_id":
-		err = json.Unmarshal(body, &u.MemberAddExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberAddExternalId); err != nil {
 			return err
 		}
+
 	case "member_add_name":
-		err = json.Unmarshal(body, &u.MemberAddName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberAddName); err != nil {
 			return err
 		}
+
 	case "member_change_admin_role":
-		err = json.Unmarshal(body, &u.MemberChangeAdminRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeAdminRole); err != nil {
 			return err
 		}
+
 	case "member_change_email":
-		err = json.Unmarshal(body, &u.MemberChangeEmail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeEmail); err != nil {
 			return err
 		}
+
 	case "member_change_external_id":
-		err = json.Unmarshal(body, &u.MemberChangeExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeExternalId); err != nil {
 			return err
 		}
+
 	case "member_change_membership_type":
-		err = json.Unmarshal(body, &u.MemberChangeMembershipType)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeMembershipType); err != nil {
 			return err
 		}
+
 	case "member_change_name":
-		err = json.Unmarshal(body, &u.MemberChangeName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeName); err != nil {
 			return err
 		}
+
 	case "member_change_reseller_role":
-		err = json.Unmarshal(body, &u.MemberChangeResellerRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeResellerRole); err != nil {
 			return err
 		}
+
 	case "member_change_status":
-		err = json.Unmarshal(body, &u.MemberChangeStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberChangeStatus); err != nil {
 			return err
 		}
+
 	case "member_delete_manual_contacts":
-		err = json.Unmarshal(body, &u.MemberDeleteManualContacts)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberDeleteManualContacts); err != nil {
 			return err
 		}
+
 	case "member_delete_profile_photo":
-		err = json.Unmarshal(body, &u.MemberDeleteProfilePhoto)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberDeleteProfilePhoto); err != nil {
 			return err
 		}
+
 	case "member_permanently_delete_account_contents":
-		err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents); err != nil {
 			return err
 		}
+
 	case "member_remove_external_id":
-		err = json.Unmarshal(body, &u.MemberRemoveExternalId)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberRemoveExternalId); err != nil {
 			return err
 		}
+
 	case "member_set_profile_photo":
-		err = json.Unmarshal(body, &u.MemberSetProfilePhoto)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSetProfilePhoto); err != nil {
 			return err
 		}
+
 	case "member_space_limits_add_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuota)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsAddCustomQuota); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuota)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCustomQuota); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_status":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeStatus); err != nil {
 			return err
 		}
+
 	case "member_space_limits_remove_custom_quota":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuota)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveCustomQuota); err != nil {
 			return err
 		}
+
 	case "member_suggest":
-		err = json.Unmarshal(body, &u.MemberSuggest)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSuggest); err != nil {
 			return err
 		}
+
 	case "member_transfer_account_contents":
-		err = json.Unmarshal(body, &u.MemberTransferAccountContents)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberTransferAccountContents); err != nil {
 			return err
 		}
+
 	case "pending_secondary_email_added":
-		err = json.Unmarshal(body, &u.PendingSecondaryEmailAdded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PendingSecondaryEmailAdded); err != nil {
 			return err
 		}
+
 	case "secondary_email_deleted":
-		err = json.Unmarshal(body, &u.SecondaryEmailDeleted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryEmailDeleted); err != nil {
 			return err
 		}
+
 	case "secondary_email_verified":
-		err = json.Unmarshal(body, &u.SecondaryEmailVerified)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryEmailVerified); err != nil {
 			return err
 		}
+
 	case "secondary_mails_policy_changed":
-		err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryMailsPolicyChanged); err != nil {
 			return err
 		}
+
 	case "binder_add_page":
-		err = json.Unmarshal(body, &u.BinderAddPage)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderAddPage); err != nil {
 			return err
 		}
+
 	case "binder_add_section":
-		err = json.Unmarshal(body, &u.BinderAddSection)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderAddSection); err != nil {
 			return err
 		}
+
 	case "binder_remove_page":
-		err = json.Unmarshal(body, &u.BinderRemovePage)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRemovePage); err != nil {
 			return err
 		}
+
 	case "binder_remove_section":
-		err = json.Unmarshal(body, &u.BinderRemoveSection)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRemoveSection); err != nil {
 			return err
 		}
+
 	case "binder_rename_page":
-		err = json.Unmarshal(body, &u.BinderRenamePage)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRenamePage); err != nil {
 			return err
 		}
+
 	case "binder_rename_section":
-		err = json.Unmarshal(body, &u.BinderRenameSection)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderRenameSection); err != nil {
 			return err
 		}
+
 	case "binder_reorder_page":
-		err = json.Unmarshal(body, &u.BinderReorderPage)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderReorderPage); err != nil {
 			return err
 		}
+
 	case "binder_reorder_section":
-		err = json.Unmarshal(body, &u.BinderReorderSection)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.BinderReorderSection); err != nil {
 			return err
 		}
+
 	case "paper_content_add_member":
-		err = json.Unmarshal(body, &u.PaperContentAddMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentAddMember); err != nil {
 			return err
 		}
+
 	case "paper_content_add_to_folder":
-		err = json.Unmarshal(body, &u.PaperContentAddToFolder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentAddToFolder); err != nil {
 			return err
 		}
+
 	case "paper_content_archive":
-		err = json.Unmarshal(body, &u.PaperContentArchive)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentArchive); err != nil {
 			return err
 		}
+
 	case "paper_content_create":
-		err = json.Unmarshal(body, &u.PaperContentCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentCreate); err != nil {
 			return err
 		}
+
 	case "paper_content_permanently_delete":
-		err = json.Unmarshal(body, &u.PaperContentPermanentlyDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentPermanentlyDelete); err != nil {
 			return err
 		}
+
 	case "paper_content_remove_from_folder":
-		err = json.Unmarshal(body, &u.PaperContentRemoveFromFolder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRemoveFromFolder); err != nil {
 			return err
 		}
+
 	case "paper_content_remove_member":
-		err = json.Unmarshal(body, &u.PaperContentRemoveMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRemoveMember); err != nil {
 			return err
 		}
+
 	case "paper_content_rename":
-		err = json.Unmarshal(body, &u.PaperContentRename)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRename); err != nil {
 			return err
 		}
+
 	case "paper_content_restore":
-		err = json.Unmarshal(body, &u.PaperContentRestore)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperContentRestore); err != nil {
 			return err
 		}
+
 	case "paper_doc_add_comment":
-		err = json.Unmarshal(body, &u.PaperDocAddComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocAddComment); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_member_role":
-		err = json.Unmarshal(body, &u.PaperDocChangeMemberRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeMemberRole); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_sharing_policy":
-		err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeSharingPolicy); err != nil {
 			return err
 		}
+
 	case "paper_doc_change_subscription":
-		err = json.Unmarshal(body, &u.PaperDocChangeSubscription)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocChangeSubscription); err != nil {
 			return err
 		}
+
 	case "paper_doc_deleted":
-		err = json.Unmarshal(body, &u.PaperDocDeleted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDeleted); err != nil {
 			return err
 		}
+
 	case "paper_doc_delete_comment":
-		err = json.Unmarshal(body, &u.PaperDocDeleteComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDeleteComment); err != nil {
 			return err
 		}
+
 	case "paper_doc_download":
-		err = json.Unmarshal(body, &u.PaperDocDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocDownload); err != nil {
 			return err
 		}
+
 	case "paper_doc_edit":
-		err = json.Unmarshal(body, &u.PaperDocEdit)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocEdit); err != nil {
 			return err
 		}
+
 	case "paper_doc_edit_comment":
-		err = json.Unmarshal(body, &u.PaperDocEditComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocEditComment); err != nil {
 			return err
 		}
+
 	case "paper_doc_followed":
-		err = json.Unmarshal(body, &u.PaperDocFollowed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocFollowed); err != nil {
 			return err
 		}
+
 	case "paper_doc_mention":
-		err = json.Unmarshal(body, &u.PaperDocMention)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocMention); err != nil {
 			return err
 		}
+
 	case "paper_doc_ownership_changed":
-		err = json.Unmarshal(body, &u.PaperDocOwnershipChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocOwnershipChanged); err != nil {
 			return err
 		}
+
 	case "paper_doc_request_access":
-		err = json.Unmarshal(body, &u.PaperDocRequestAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocRequestAccess); err != nil {
 			return err
 		}
+
 	case "paper_doc_resolve_comment":
-		err = json.Unmarshal(body, &u.PaperDocResolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocResolveComment); err != nil {
 			return err
 		}
+
 	case "paper_doc_revert":
-		err = json.Unmarshal(body, &u.PaperDocRevert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocRevert); err != nil {
 			return err
 		}
+
 	case "paper_doc_slack_share":
-		err = json.Unmarshal(body, &u.PaperDocSlackShare)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocSlackShare); err != nil {
 			return err
 		}
+
 	case "paper_doc_team_invite":
-		err = json.Unmarshal(body, &u.PaperDocTeamInvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocTeamInvite); err != nil {
 			return err
 		}
+
 	case "paper_doc_trashed":
-		err = json.Unmarshal(body, &u.PaperDocTrashed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocTrashed); err != nil {
 			return err
 		}
+
 	case "paper_doc_unresolve_comment":
-		err = json.Unmarshal(body, &u.PaperDocUnresolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocUnresolveComment); err != nil {
 			return err
 		}
+
 	case "paper_doc_untrashed":
-		err = json.Unmarshal(body, &u.PaperDocUntrashed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocUntrashed); err != nil {
 			return err
 		}
+
 	case "paper_doc_view":
-		err = json.Unmarshal(body, &u.PaperDocView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDocView); err != nil {
 			return err
 		}
+
 	case "paper_external_view_allow":
-		err = json.Unmarshal(body, &u.PaperExternalViewAllow)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewAllow); err != nil {
 			return err
 		}
+
 	case "paper_external_view_default_team":
-		err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewDefaultTeam); err != nil {
 			return err
 		}
+
 	case "paper_external_view_forbid":
-		err = json.Unmarshal(body, &u.PaperExternalViewForbid)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperExternalViewForbid); err != nil {
 			return err
 		}
+
 	case "paper_folder_change_subscription":
-		err = json.Unmarshal(body, &u.PaperFolderChangeSubscription)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderChangeSubscription); err != nil {
 			return err
 		}
+
 	case "paper_folder_deleted":
-		err = json.Unmarshal(body, &u.PaperFolderDeleted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderDeleted); err != nil {
 			return err
 		}
+
 	case "paper_folder_followed":
-		err = json.Unmarshal(body, &u.PaperFolderFollowed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderFollowed); err != nil {
 			return err
 		}
+
 	case "paper_folder_team_invite":
-		err = json.Unmarshal(body, &u.PaperFolderTeamInvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperFolderTeamInvite); err != nil {
 			return err
 		}
+
 	case "paper_published_link_change_permission":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermission)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkChangePermission); err != nil {
 			return err
 		}
+
 	case "paper_published_link_create":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkCreate); err != nil {
 			return err
 		}
+
 	case "paper_published_link_disabled":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkDisabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkDisabled); err != nil {
 			return err
 		}
+
 	case "paper_published_link_view":
-		err = json.Unmarshal(body, &u.PaperPublishedLinkView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperPublishedLinkView); err != nil {
 			return err
 		}
+
 	case "password_change":
-		err = json.Unmarshal(body, &u.PasswordChange)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordChange); err != nil {
 			return err
 		}
+
 	case "password_reset":
-		err = json.Unmarshal(body, &u.PasswordReset)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordReset); err != nil {
 			return err
 		}
+
 	case "password_reset_all":
-		err = json.Unmarshal(body, &u.PasswordResetAll)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordResetAll); err != nil {
 			return err
 		}
+
 	case "classification_create_report":
-		err = json.Unmarshal(body, &u.ClassificationCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationCreateReport); err != nil {
 			return err
 		}
+
 	case "classification_create_report_fail":
-		err = json.Unmarshal(body, &u.ClassificationCreateReportFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationCreateReportFail); err != nil {
 			return err
 		}
+
 	case "emm_create_exceptions_report":
-		err = json.Unmarshal(body, &u.EmmCreateExceptionsReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmCreateExceptionsReport); err != nil {
 			return err
 		}
+
 	case "emm_create_usage_report":
-		err = json.Unmarshal(body, &u.EmmCreateUsageReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmCreateUsageReport); err != nil {
 			return err
 		}
+
 	case "export_members_report":
-		err = json.Unmarshal(body, &u.ExportMembersReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExportMembersReport); err != nil {
 			return err
 		}
+
 	case "export_members_report_fail":
-		err = json.Unmarshal(body, &u.ExportMembersReportFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExportMembersReportFail); err != nil {
 			return err
 		}
+
 	case "external_sharing_create_report":
-		err = json.Unmarshal(body, &u.ExternalSharingCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalSharingCreateReport); err != nil {
 			return err
 		}
+
 	case "external_sharing_report_failed":
-		err = json.Unmarshal(body, &u.ExternalSharingReportFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalSharingReportFailed); err != nil {
 			return err
 		}
+
 	case "no_expiration_link_gen_create_report":
-		err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExpirationLinkGenCreateReport); err != nil {
 			return err
 		}
+
 	case "no_expiration_link_gen_report_failed":
-		err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExpirationLinkGenReportFailed); err != nil {
 			return err
 		}
+
 	case "no_password_link_gen_create_report":
-		err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkGenCreateReport); err != nil {
 			return err
 		}
+
 	case "no_password_link_gen_report_failed":
-		err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkGenReportFailed); err != nil {
 			return err
 		}
+
 	case "no_password_link_view_create_report":
-		err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkViewCreateReport); err != nil {
 			return err
 		}
+
 	case "no_password_link_view_report_failed":
-		err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoPasswordLinkViewReportFailed); err != nil {
 			return err
 		}
+
 	case "outdated_link_view_create_report":
-		err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OutdatedLinkViewCreateReport); err != nil {
 			return err
 		}
+
 	case "outdated_link_view_report_failed":
-		err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OutdatedLinkViewReportFailed); err != nil {
 			return err
 		}
+
 	case "paper_admin_export_start":
-		err = json.Unmarshal(body, &u.PaperAdminExportStart)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperAdminExportStart); err != nil {
 			return err
 		}
+
 	case "smart_sync_create_admin_privilege_report":
-		err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncCreateAdminPrivilegeReport); err != nil {
 			return err
 		}
+
 	case "team_activity_create_report":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReport)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamActivityCreateReport); err != nil {
 			return err
 		}
+
 	case "team_activity_create_report_fail":
-		err = json.Unmarshal(body, &u.TeamActivityCreateReportFail)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamActivityCreateReportFail); err != nil {
 			return err
 		}
+
 	case "collection_share":
-		err = json.Unmarshal(body, &u.CollectionShare)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CollectionShare); err != nil {
 			return err
 		}
+
 	case "file_transfers_file_add":
-		err = json.Unmarshal(body, &u.FileTransfersFileAdd)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersFileAdd); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_delete":
-		err = json.Unmarshal(body, &u.FileTransfersTransferDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferDelete); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_download":
-		err = json.Unmarshal(body, &u.FileTransfersTransferDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferDownload); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_send":
-		err = json.Unmarshal(body, &u.FileTransfersTransferSend)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferSend); err != nil {
 			return err
 		}
+
 	case "file_transfers_transfer_view":
-		err = json.Unmarshal(body, &u.FileTransfersTransferView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersTransferView); err != nil {
 			return err
 		}
+
 	case "note_acl_invite_only":
-		err = json.Unmarshal(body, &u.NoteAclInviteOnly)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclInviteOnly); err != nil {
 			return err
 		}
+
 	case "note_acl_link":
-		err = json.Unmarshal(body, &u.NoteAclLink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclLink); err != nil {
 			return err
 		}
+
 	case "note_acl_team_link":
-		err = json.Unmarshal(body, &u.NoteAclTeamLink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteAclTeamLink); err != nil {
 			return err
 		}
+
 	case "note_shared":
-		err = json.Unmarshal(body, &u.NoteShared)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteShared); err != nil {
 			return err
 		}
+
 	case "note_share_receive":
-		err = json.Unmarshal(body, &u.NoteShareReceive)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoteShareReceive); err != nil {
 			return err
 		}
+
 	case "open_note_shared":
-		err = json.Unmarshal(body, &u.OpenNoteShared)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OpenNoteShared); err != nil {
 			return err
 		}
+
 	case "sf_add_group":
-		err = json.Unmarshal(body, &u.SfAddGroup)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfAddGroup); err != nil {
 			return err
 		}
+
 	case "sf_allow_non_members_to_view_shared_links":
-		err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinks)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfAllowNonMembersToViewSharedLinks); err != nil {
 			return err
 		}
+
 	case "sf_external_invite_warn":
-		err = json.Unmarshal(body, &u.SfExternalInviteWarn)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfExternalInviteWarn); err != nil {
 			return err
 		}
+
 	case "sf_fb_invite":
-		err = json.Unmarshal(body, &u.SfFbInvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbInvite); err != nil {
 			return err
 		}
+
 	case "sf_fb_invite_change_role":
-		err = json.Unmarshal(body, &u.SfFbInviteChangeRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbInviteChangeRole); err != nil {
 			return err
 		}
+
 	case "sf_fb_uninvite":
-		err = json.Unmarshal(body, &u.SfFbUninvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfFbUninvite); err != nil {
 			return err
 		}
+
 	case "sf_invite_group":
-		err = json.Unmarshal(body, &u.SfInviteGroup)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfInviteGroup); err != nil {
 			return err
 		}
+
 	case "sf_team_grant_access":
-		err = json.Unmarshal(body, &u.SfTeamGrantAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamGrantAccess); err != nil {
 			return err
 		}
+
 	case "sf_team_invite":
-		err = json.Unmarshal(body, &u.SfTeamInvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamInvite); err != nil {
 			return err
 		}
+
 	case "sf_team_invite_change_role":
-		err = json.Unmarshal(body, &u.SfTeamInviteChangeRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamInviteChangeRole); err != nil {
 			return err
 		}
+
 	case "sf_team_join":
-		err = json.Unmarshal(body, &u.SfTeamJoin)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamJoin); err != nil {
 			return err
 		}
+
 	case "sf_team_join_from_oob_link":
-		err = json.Unmarshal(body, &u.SfTeamJoinFromOobLink)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamJoinFromOobLink); err != nil {
 			return err
 		}
+
 	case "sf_team_uninvite":
-		err = json.Unmarshal(body, &u.SfTeamUninvite)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SfTeamUninvite); err != nil {
 			return err
 		}
+
 	case "shared_content_add_invitees":
-		err = json.Unmarshal(body, &u.SharedContentAddInvitees)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddInvitees); err != nil {
 			return err
 		}
+
 	case "shared_content_add_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddLinkExpiry); err != nil {
 			return err
 		}
+
 	case "shared_content_add_link_password":
-		err = json.Unmarshal(body, &u.SharedContentAddLinkPassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddLinkPassword); err != nil {
 			return err
 		}
+
 	case "shared_content_add_member":
-		err = json.Unmarshal(body, &u.SharedContentAddMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentAddMember); err != nil {
 			return err
 		}
+
 	case "shared_content_change_downloads_policy":
-		err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeDownloadsPolicy); err != nil {
 			return err
 		}
+
 	case "shared_content_change_invitee_role":
-		err = json.Unmarshal(body, &u.SharedContentChangeInviteeRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeInviteeRole); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_audience":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkAudience)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkAudience); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkExpiry); err != nil {
 			return err
 		}
+
 	case "shared_content_change_link_password":
-		err = json.Unmarshal(body, &u.SharedContentChangeLinkPassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeLinkPassword); err != nil {
 			return err
 		}
+
 	case "shared_content_change_member_role":
-		err = json.Unmarshal(body, &u.SharedContentChangeMemberRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeMemberRole); err != nil {
 			return err
 		}
+
 	case "shared_content_change_viewer_info_policy":
-		err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentChangeViewerInfoPolicy); err != nil {
 			return err
 		}
+
 	case "shared_content_claim_invitation":
-		err = json.Unmarshal(body, &u.SharedContentClaimInvitation)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentClaimInvitation); err != nil {
 			return err
 		}
+
 	case "shared_content_copy":
-		err = json.Unmarshal(body, &u.SharedContentCopy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentCopy); err != nil {
 			return err
 		}
+
 	case "shared_content_download":
-		err = json.Unmarshal(body, &u.SharedContentDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentDownload); err != nil {
 			return err
 		}
+
 	case "shared_content_relinquish_membership":
-		err = json.Unmarshal(body, &u.SharedContentRelinquishMembership)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRelinquishMembership); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_invitees":
-		err = json.Unmarshal(body, &u.SharedContentRemoveInvitees)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveInvitees); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_link_expiry":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveLinkExpiry); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_link_password":
-		err = json.Unmarshal(body, &u.SharedContentRemoveLinkPassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveLinkPassword); err != nil {
 			return err
 		}
+
 	case "shared_content_remove_member":
-		err = json.Unmarshal(body, &u.SharedContentRemoveMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRemoveMember); err != nil {
 			return err
 		}
+
 	case "shared_content_request_access":
-		err = json.Unmarshal(body, &u.SharedContentRequestAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRequestAccess); err != nil {
 			return err
 		}
+
 	case "shared_content_restore_invitees":
-		err = json.Unmarshal(body, &u.SharedContentRestoreInvitees)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRestoreInvitees); err != nil {
 			return err
 		}
+
 	case "shared_content_restore_member":
-		err = json.Unmarshal(body, &u.SharedContentRestoreMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentRestoreMember); err != nil {
 			return err
 		}
+
 	case "shared_content_unshare":
-		err = json.Unmarshal(body, &u.SharedContentUnshare)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentUnshare); err != nil {
 			return err
 		}
+
 	case "shared_content_view":
-		err = json.Unmarshal(body, &u.SharedContentView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedContentView); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_link_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeLinkPolicy); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_inheritance_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersInheritancePolicy); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_management_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersManagementPolicy); err != nil {
 			return err
 		}
+
 	case "shared_folder_change_members_policy":
-		err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderChangeMembersPolicy); err != nil {
 			return err
 		}
+
 	case "shared_folder_create":
-		err = json.Unmarshal(body, &u.SharedFolderCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderCreate); err != nil {
 			return err
 		}
+
 	case "shared_folder_decline_invitation":
-		err = json.Unmarshal(body, &u.SharedFolderDeclineInvitation)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderDeclineInvitation); err != nil {
 			return err
 		}
+
 	case "shared_folder_mount":
-		err = json.Unmarshal(body, &u.SharedFolderMount)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderMount); err != nil {
 			return err
 		}
+
 	case "shared_folder_nest":
-		err = json.Unmarshal(body, &u.SharedFolderNest)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderNest); err != nil {
 			return err
 		}
+
 	case "shared_folder_transfer_ownership":
-		err = json.Unmarshal(body, &u.SharedFolderTransferOwnership)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderTransferOwnership); err != nil {
 			return err
 		}
+
 	case "shared_folder_unmount":
-		err = json.Unmarshal(body, &u.SharedFolderUnmount)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedFolderUnmount); err != nil {
 			return err
 		}
+
 	case "shared_link_add_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkAddExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkAddExpiry); err != nil {
 			return err
 		}
+
 	case "shared_link_change_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkChangeExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkChangeExpiry); err != nil {
 			return err
 		}
+
 	case "shared_link_change_visibility":
-		err = json.Unmarshal(body, &u.SharedLinkChangeVisibility)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkChangeVisibility); err != nil {
 			return err
 		}
+
 	case "shared_link_copy":
-		err = json.Unmarshal(body, &u.SharedLinkCopy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkCopy); err != nil {
 			return err
 		}
+
 	case "shared_link_create":
-		err = json.Unmarshal(body, &u.SharedLinkCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkCreate); err != nil {
 			return err
 		}
+
 	case "shared_link_disable":
-		err = json.Unmarshal(body, &u.SharedLinkDisable)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkDisable); err != nil {
 			return err
 		}
+
 	case "shared_link_download":
-		err = json.Unmarshal(body, &u.SharedLinkDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkDownload); err != nil {
 			return err
 		}
+
 	case "shared_link_remove_expiry":
-		err = json.Unmarshal(body, &u.SharedLinkRemoveExpiry)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkRemoveExpiry); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_add_expiration":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpiration)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAddExpiration); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_add_password":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAddPassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAddPassword); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_allow_download_disabled":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadDisabled); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_allow_download_enabled":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsAllowDownloadEnabled); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_audience":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudience)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangeAudience); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_expiration":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpiration)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangeExpiration); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_change_password":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsChangePassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsChangePassword); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_remove_expiration":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpiration)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsRemoveExpiration); err != nil {
 			return err
 		}
+
 	case "shared_link_settings_remove_password":
-		err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePassword)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkSettingsRemovePassword); err != nil {
 			return err
 		}
+
 	case "shared_link_share":
-		err = json.Unmarshal(body, &u.SharedLinkShare)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkShare); err != nil {
 			return err
 		}
+
 	case "shared_link_view":
-		err = json.Unmarshal(body, &u.SharedLinkView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedLinkView); err != nil {
 			return err
 		}
+
 	case "shared_note_opened":
-		err = json.Unmarshal(body, &u.SharedNoteOpened)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharedNoteOpened); err != nil {
 			return err
 		}
+
 	case "shmodel_disable_downloads":
-		err = json.Unmarshal(body, &u.ShmodelDisableDownloads)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelDisableDownloads); err != nil {
 			return err
 		}
+
 	case "shmodel_enable_downloads":
-		err = json.Unmarshal(body, &u.ShmodelEnableDownloads)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelEnableDownloads); err != nil {
 			return err
 		}
+
 	case "shmodel_group_share":
-		err = json.Unmarshal(body, &u.ShmodelGroupShare)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShmodelGroupShare); err != nil {
 			return err
 		}
+
 	case "showcase_access_granted":
-		err = json.Unmarshal(body, &u.ShowcaseAccessGranted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseAccessGranted); err != nil {
 			return err
 		}
+
 	case "showcase_add_member":
-		err = json.Unmarshal(body, &u.ShowcaseAddMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseAddMember); err != nil {
 			return err
 		}
+
 	case "showcase_archived":
-		err = json.Unmarshal(body, &u.ShowcaseArchived)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseArchived); err != nil {
 			return err
 		}
+
 	case "showcase_created":
-		err = json.Unmarshal(body, &u.ShowcaseCreated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseCreated); err != nil {
 			return err
 		}
+
 	case "showcase_delete_comment":
-		err = json.Unmarshal(body, &u.ShowcaseDeleteComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseDeleteComment); err != nil {
 			return err
 		}
+
 	case "showcase_edited":
-		err = json.Unmarshal(body, &u.ShowcaseEdited)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseEdited); err != nil {
 			return err
 		}
+
 	case "showcase_edit_comment":
-		err = json.Unmarshal(body, &u.ShowcaseEditComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseEditComment); err != nil {
 			return err
 		}
+
 	case "showcase_file_added":
-		err = json.Unmarshal(body, &u.ShowcaseFileAdded)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileAdded); err != nil {
 			return err
 		}
+
 	case "showcase_file_download":
-		err = json.Unmarshal(body, &u.ShowcaseFileDownload)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileDownload); err != nil {
 			return err
 		}
+
 	case "showcase_file_removed":
-		err = json.Unmarshal(body, &u.ShowcaseFileRemoved)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileRemoved); err != nil {
 			return err
 		}
+
 	case "showcase_file_view":
-		err = json.Unmarshal(body, &u.ShowcaseFileView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseFileView); err != nil {
 			return err
 		}
+
 	case "showcase_permanently_deleted":
-		err = json.Unmarshal(body, &u.ShowcasePermanentlyDeleted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcasePermanentlyDeleted); err != nil {
 			return err
 		}
+
 	case "showcase_post_comment":
-		err = json.Unmarshal(body, &u.ShowcasePostComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcasePostComment); err != nil {
 			return err
 		}
+
 	case "showcase_remove_member":
-		err = json.Unmarshal(body, &u.ShowcaseRemoveMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRemoveMember); err != nil {
 			return err
 		}
+
 	case "showcase_renamed":
-		err = json.Unmarshal(body, &u.ShowcaseRenamed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRenamed); err != nil {
 			return err
 		}
+
 	case "showcase_request_access":
-		err = json.Unmarshal(body, &u.ShowcaseRequestAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRequestAccess); err != nil {
 			return err
 		}
+
 	case "showcase_resolve_comment":
-		err = json.Unmarshal(body, &u.ShowcaseResolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseResolveComment); err != nil {
 			return err
 		}
+
 	case "showcase_restored":
-		err = json.Unmarshal(body, &u.ShowcaseRestored)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseRestored); err != nil {
 			return err
 		}
+
 	case "showcase_trashed":
-		err = json.Unmarshal(body, &u.ShowcaseTrashed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseTrashed); err != nil {
 			return err
 		}
+
 	case "showcase_trashed_deprecated":
-		err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseTrashedDeprecated); err != nil {
 			return err
 		}
+
 	case "showcase_unresolve_comment":
-		err = json.Unmarshal(body, &u.ShowcaseUnresolveComment)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUnresolveComment); err != nil {
 			return err
 		}
+
 	case "showcase_untrashed":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUntrashed); err != nil {
 			return err
 		}
+
 	case "showcase_untrashed_deprecated":
-		err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseUntrashedDeprecated); err != nil {
 			return err
 		}
+
 	case "showcase_view":
-		err = json.Unmarshal(body, &u.ShowcaseView)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseView); err != nil {
 			return err
 		}
+
 	case "sso_add_cert":
-		err = json.Unmarshal(body, &u.SsoAddCert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddCert); err != nil {
 			return err
 		}
+
 	case "sso_add_login_url":
-		err = json.Unmarshal(body, &u.SsoAddLoginUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddLoginUrl); err != nil {
 			return err
 		}
+
 	case "sso_add_logout_url":
-		err = json.Unmarshal(body, &u.SsoAddLogoutUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoAddLogoutUrl); err != nil {
 			return err
 		}
+
 	case "sso_change_cert":
-		err = json.Unmarshal(body, &u.SsoChangeCert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeCert); err != nil {
 			return err
 		}
+
 	case "sso_change_login_url":
-		err = json.Unmarshal(body, &u.SsoChangeLoginUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeLoginUrl); err != nil {
 			return err
 		}
+
 	case "sso_change_logout_url":
-		err = json.Unmarshal(body, &u.SsoChangeLogoutUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeLogoutUrl); err != nil {
 			return err
 		}
+
 	case "sso_change_saml_identity_mode":
-		err = json.Unmarshal(body, &u.SsoChangeSamlIdentityMode)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangeSamlIdentityMode); err != nil {
 			return err
 		}
+
 	case "sso_remove_cert":
-		err = json.Unmarshal(body, &u.SsoRemoveCert)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveCert); err != nil {
 			return err
 		}
+
 	case "sso_remove_login_url":
-		err = json.Unmarshal(body, &u.SsoRemoveLoginUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveLoginUrl); err != nil {
 			return err
 		}
+
 	case "sso_remove_logout_url":
-		err = json.Unmarshal(body, &u.SsoRemoveLogoutUrl)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoRemoveLogoutUrl); err != nil {
 			return err
 		}
+
 	case "team_folder_change_status":
-		err = json.Unmarshal(body, &u.TeamFolderChangeStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderChangeStatus); err != nil {
 			return err
 		}
+
 	case "team_folder_create":
-		err = json.Unmarshal(body, &u.TeamFolderCreate)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderCreate); err != nil {
 			return err
 		}
+
 	case "team_folder_downgrade":
-		err = json.Unmarshal(body, &u.TeamFolderDowngrade)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderDowngrade); err != nil {
 			return err
 		}
+
 	case "team_folder_permanently_delete":
-		err = json.Unmarshal(body, &u.TeamFolderPermanentlyDelete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderPermanentlyDelete); err != nil {
 			return err
 		}
+
 	case "team_folder_rename":
-		err = json.Unmarshal(body, &u.TeamFolderRename)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderRename); err != nil {
 			return err
 		}
+
 	case "team_selective_sync_settings_changed":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSelectiveSyncSettingsChanged); err != nil {
 			return err
 		}
+
 	case "account_capture_change_policy":
-		err = json.Unmarshal(body, &u.AccountCaptureChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AccountCaptureChangePolicy); err != nil {
 			return err
 		}
+
 	case "allow_download_disabled":
-		err = json.Unmarshal(body, &u.AllowDownloadDisabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AllowDownloadDisabled); err != nil {
 			return err
 		}
+
 	case "allow_download_enabled":
-		err = json.Unmarshal(body, &u.AllowDownloadEnabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AllowDownloadEnabled); err != nil {
 			return err
 		}
+
 	case "app_permissions_changed":
-		err = json.Unmarshal(body, &u.AppPermissionsChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AppPermissionsChanged); err != nil {
 			return err
 		}
+
 	case "camera_uploads_policy_changed":
-		err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CameraUploadsPolicyChanged); err != nil {
 			return err
 		}
+
 	case "capture_transcript_policy_changed":
-		err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.CaptureTranscriptPolicyChanged); err != nil {
 			return err
 		}
+
 	case "classification_change_policy":
-		err = json.Unmarshal(body, &u.ClassificationChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ClassificationChangePolicy); err != nil {
 			return err
 		}
+
 	case "computer_backup_policy_changed":
-		err = json.Unmarshal(body, &u.ComputerBackupPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ComputerBackupPolicyChanged); err != nil {
 			return err
 		}
+
 	case "content_administration_policy_changed":
-		err = json.Unmarshal(body, &u.ContentAdministrationPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ContentAdministrationPolicyChanged); err != nil {
 			return err
 		}
+
 	case "data_placement_restriction_change_policy":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DataPlacementRestrictionChangePolicy); err != nil {
 			return err
 		}
+
 	case "data_placement_restriction_satisfy_policy":
-		err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DataPlacementRestrictionSatisfyPolicy); err != nil {
 			return err
 		}
+
 	case "device_approvals_add_exception":
-		err = json.Unmarshal(body, &u.DeviceApprovalsAddException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsAddException); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_desktop_policy":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeDesktopPolicy); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_mobile_policy":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeMobilePolicy); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_overage_action":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageAction)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeOverageAction); err != nil {
 			return err
 		}
+
 	case "device_approvals_change_unlink_action":
-		err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsChangeUnlinkAction); err != nil {
 			return err
 		}
+
 	case "device_approvals_remove_exception":
-		err = json.Unmarshal(body, &u.DeviceApprovalsRemoveException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DeviceApprovalsRemoveException); err != nil {
 			return err
 		}
+
 	case "directory_restrictions_add_members":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembers)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DirectoryRestrictionsAddMembers); err != nil {
 			return err
 		}
+
 	case "directory_restrictions_remove_members":
-		err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembers)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DirectoryRestrictionsRemoveMembers); err != nil {
 			return err
 		}
+
 	case "email_ingest_policy_changed":
-		err = json.Unmarshal(body, &u.EmailIngestPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmailIngestPolicyChanged); err != nil {
 			return err
 		}
+
 	case "emm_add_exception":
-		err = json.Unmarshal(body, &u.EmmAddException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmAddException); err != nil {
 			return err
 		}
+
 	case "emm_change_policy":
-		err = json.Unmarshal(body, &u.EmmChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmChangePolicy); err != nil {
 			return err
 		}
+
 	case "emm_remove_exception":
-		err = json.Unmarshal(body, &u.EmmRemoveException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EmmRemoveException); err != nil {
 			return err
 		}
+
 	case "extended_version_history_change_policy":
-		err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy); err != nil {
 			return err
 		}
+
 	case "external_drive_backup_policy_changed":
-		err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupPolicyChanged); err != nil {
 			return err
 		}
+
 	case "file_comments_change_policy":
-		err = json.Unmarshal(body, &u.FileCommentsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileCommentsChangePolicy); err != nil {
 			return err
 		}
+
 	case "file_locking_policy_changed":
-		err = json.Unmarshal(body, &u.FileLockingPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileLockingPolicyChanged); err != nil {
 			return err
 		}
+
 	case "file_requests_change_policy":
-		err = json.Unmarshal(body, &u.FileRequestsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsChangePolicy); err != nil {
 			return err
 		}
+
 	case "file_requests_emails_enabled":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsEnabled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsEmailsEnabled); err != nil {
 			return err
 		}
+
 	case "file_requests_emails_restricted_to_team_only":
-		err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnly)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileRequestsEmailsRestrictedToTeamOnly); err != nil {
 			return err
 		}
+
 	case "file_transfers_policy_changed":
-		err = json.Unmarshal(body, &u.FileTransfersPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.FileTransfersPolicyChanged); err != nil {
 			return err
 		}
+
 	case "google_sso_change_policy":
-		err = json.Unmarshal(body, &u.GoogleSsoChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GoogleSsoChangePolicy); err != nil {
 			return err
 		}
+
 	case "group_user_management_change_policy":
-		err = json.Unmarshal(body, &u.GroupUserManagementChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupUserManagementChangePolicy); err != nil {
 			return err
 		}
+
 	case "integration_policy_changed":
-		err = json.Unmarshal(body, &u.IntegrationPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IntegrationPolicyChanged); err != nil {
 			return err
 		}
+
 	case "invite_acceptance_email_policy_changed":
-		err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.InviteAcceptanceEmailPolicyChanged); err != nil {
 			return err
 		}
+
 	case "member_requests_change_policy":
-		err = json.Unmarshal(body, &u.MemberRequestsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberRequestsChangePolicy); err != nil {
 			return err
 		}
+
 	case "member_send_invite_policy_changed":
-		err = json.Unmarshal(body, &u.MemberSendInvitePolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSendInvitePolicyChanged); err != nil {
 			return err
 		}
+
 	case "member_space_limits_add_exception":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsAddException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsAddException); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_caps_type_policy":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangeCapsTypePolicy); err != nil {
 			return err
 		}
+
 	case "member_space_limits_change_policy":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsChangePolicy); err != nil {
 			return err
 		}
+
 	case "member_space_limits_remove_exception":
-		err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSpaceLimitsRemoveException); err != nil {
 			return err
 		}
+
 	case "member_suggestions_change_policy":
-		err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberSuggestionsChangePolicy); err != nil {
 			return err
 		}
+
 	case "microsoft_office_addin_change_policy":
-		err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicy); err != nil {
 			return err
 		}
+
 	case "network_control_change_policy":
-		err = json.Unmarshal(body, &u.NetworkControlChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NetworkControlChangePolicy); err != nil {
 			return err
 		}
+
 	case "paper_change_deployment_policy":
-		err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeDeploymentPolicy); err != nil {
 			return err
 		}
+
 	case "paper_change_member_link_policy":
-		err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeMemberLinkPolicy); err != nil {
 			return err
 		}
+
 	case "paper_change_member_policy":
-		err = json.Unmarshal(body, &u.PaperChangeMemberPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangeMemberPolicy); err != nil {
 			return err
 		}
+
 	case "paper_change_policy":
-		err = json.Unmarshal(body, &u.PaperChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperChangePolicy); err != nil {
 			return err
 		}
+
 	case "paper_default_folder_policy_changed":
-		err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDefaultFolderPolicyChanged); err != nil {
 			return err
 		}
+
 	case "paper_desktop_policy_changed":
-		err = json.Unmarshal(body, &u.PaperDesktopPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperDesktopPolicyChanged); err != nil {
 			return err
 		}
+
 	case "paper_enabled_users_group_addition":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAddition)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperEnabledUsersGroupAddition); err != nil {
 			return err
 		}
+
 	case "paper_enabled_users_group_removal":
-		err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemoval)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PaperEnabledUsersGroupRemoval); err != nil {
 			return err
 		}
+
 	case "password_strength_requirements_change_policy":
-		err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PasswordStrengthRequirementsChangePolicy); err != nil {
 			return err
 		}
+
 	case "permanent_delete_change_policy":
-		err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PermanentDeleteChangePolicy); err != nil {
 			return err
 		}
+
 	case "reseller_support_change_policy":
-		err = json.Unmarshal(body, &u.ResellerSupportChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ResellerSupportChangePolicy); err != nil {
 			return err
 		}
+
 	case "rewind_policy_changed":
-		err = json.Unmarshal(body, &u.RewindPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.RewindPolicyChanged); err != nil {
 			return err
 		}
+
 	case "send_for_signature_policy_changed":
-		err = json.Unmarshal(body, &u.SendForSignaturePolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SendForSignaturePolicyChanged); err != nil {
 			return err
 		}
+
 	case "sharing_change_folder_join_policy":
-		err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeFolderJoinPolicy); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_allow_change_expiration_policy":
-		err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkAllowChangeExpirationPolicy); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_default_expiration_policy":
-		err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkDefaultExpirationPolicy); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_enforce_password_policy":
-		err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkEnforcePasswordPolicy); err != nil {
 			return err
 		}
+
 	case "sharing_change_link_policy":
-		err = json.Unmarshal(body, &u.SharingChangeLinkPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeLinkPolicy); err != nil {
 			return err
 		}
+
 	case "sharing_change_member_policy":
-		err = json.Unmarshal(body, &u.SharingChangeMemberPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SharingChangeMemberPolicy); err != nil {
 			return err
 		}
+
 	case "showcase_change_download_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeDownloadPolicy); err != nil {
 			return err
 		}
+
 	case "showcase_change_enabled_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeEnabledPolicy); err != nil {
 			return err
 		}
+
 	case "showcase_change_external_sharing_policy":
-		err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ShowcaseChangeExternalSharingPolicy); err != nil {
 			return err
 		}
+
 	case "smarter_smart_sync_policy_changed":
-		err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmarterSmartSyncPolicyChanged); err != nil {
 			return err
 		}
+
 	case "smart_sync_change_policy":
-		err = json.Unmarshal(body, &u.SmartSyncChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncChangePolicy); err != nil {
 			return err
 		}
+
 	case "smart_sync_not_opt_out":
-		err = json.Unmarshal(body, &u.SmartSyncNotOptOut)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncNotOptOut); err != nil {
 			return err
 		}
+
 	case "smart_sync_opt_out":
-		err = json.Unmarshal(body, &u.SmartSyncOptOut)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SmartSyncOptOut); err != nil {
 			return err
 		}
+
 	case "sso_change_policy":
-		err = json.Unmarshal(body, &u.SsoChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SsoChangePolicy); err != nil {
 			return err
 		}
+
 	case "team_branding_policy_changed":
-		err = json.Unmarshal(body, &u.TeamBrandingPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamBrandingPolicyChanged); err != nil {
 			return err
 		}
+
 	case "team_extensions_policy_changed":
-		err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamExtensionsPolicyChanged); err != nil {
 			return err
 		}
+
 	case "team_selective_sync_policy_changed":
-		err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSelectiveSyncPolicyChanged); err != nil {
 			return err
 		}
+
 	case "team_sharing_whitelist_subjects_changed":
-		err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamSharingWhitelistSubjectsChanged); err != nil {
 			return err
 		}
+
 	case "tfa_add_exception":
-		err = json.Unmarshal(body, &u.TfaAddException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddException); err != nil {
 			return err
 		}
+
 	case "tfa_change_policy":
-		err = json.Unmarshal(body, &u.TfaChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangePolicy); err != nil {
 			return err
 		}
+
 	case "tfa_remove_exception":
-		err = json.Unmarshal(body, &u.TfaRemoveException)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveException); err != nil {
 			return err
 		}
+
 	case "two_account_change_policy":
-		err = json.Unmarshal(body, &u.TwoAccountChangePolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TwoAccountChangePolicy); err != nil {
 			return err
 		}
+
 	case "viewer_info_policy_changed":
-		err = json.Unmarshal(body, &u.ViewerInfoPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ViewerInfoPolicyChanged); err != nil {
 			return err
 		}
+
 	case "watermarking_policy_changed":
-		err = json.Unmarshal(body, &u.WatermarkingPolicyChanged)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WatermarkingPolicyChanged); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_active_session_limit":
-		err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimit)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeActiveSessionLimit); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_fixed_length_policy":
-		err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeFixedLengthPolicy); err != nil {
 			return err
 		}
+
 	case "web_sessions_change_idle_length_policy":
-		err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicy)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSessionsChangeIdleLengthPolicy); err != nil {
 			return err
 		}
+
 	case "team_merge_from":
-		err = json.Unmarshal(body, &u.TeamMergeFrom)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeFrom); err != nil {
 			return err
 		}
+
 	case "team_merge_to":
-		err = json.Unmarshal(body, &u.TeamMergeTo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeTo); err != nil {
 			return err
 		}
+
 	case "team_profile_add_background":
-		err = json.Unmarshal(body, &u.TeamProfileAddBackground)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileAddBackground); err != nil {
 			return err
 		}
+
 	case "team_profile_add_logo":
-		err = json.Unmarshal(body, &u.TeamProfileAddLogo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileAddLogo); err != nil {
 			return err
 		}
+
 	case "team_profile_change_background":
-		err = json.Unmarshal(body, &u.TeamProfileChangeBackground)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeBackground); err != nil {
 			return err
 		}
+
 	case "team_profile_change_default_language":
-		err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguage)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeDefaultLanguage); err != nil {
 			return err
 		}
+
 	case "team_profile_change_logo":
-		err = json.Unmarshal(body, &u.TeamProfileChangeLogo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeLogo); err != nil {
 			return err
 		}
+
 	case "team_profile_change_name":
-		err = json.Unmarshal(body, &u.TeamProfileChangeName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileChangeName); err != nil {
 			return err
 		}
+
 	case "team_profile_remove_background":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveBackground)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileRemoveBackground); err != nil {
 			return err
 		}
+
 	case "team_profile_remove_logo":
-		err = json.Unmarshal(body, &u.TeamProfileRemoveLogo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamProfileRemoveLogo); err != nil {
 			return err
 		}
+
 	case "tfa_add_backup_phone":
-		err = json.Unmarshal(body, &u.TfaAddBackupPhone)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddBackupPhone); err != nil {
 			return err
 		}
+
 	case "tfa_add_security_key":
-		err = json.Unmarshal(body, &u.TfaAddSecurityKey)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaAddSecurityKey); err != nil {
 			return err
 		}
+
 	case "tfa_change_backup_phone":
-		err = json.Unmarshal(body, &u.TfaChangeBackupPhone)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangeBackupPhone); err != nil {
 			return err
 		}
+
 	case "tfa_change_status":
-		err = json.Unmarshal(body, &u.TfaChangeStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaChangeStatus); err != nil {
 			return err
 		}
+
 	case "tfa_remove_backup_phone":
-		err = json.Unmarshal(body, &u.TfaRemoveBackupPhone)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveBackupPhone); err != nil {
 			return err
 		}
+
 	case "tfa_remove_security_key":
-		err = json.Unmarshal(body, &u.TfaRemoveSecurityKey)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaRemoveSecurityKey); err != nil {
 			return err
 		}
+
 	case "tfa_reset":
-		err = json.Unmarshal(body, &u.TfaReset)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TfaReset); err != nil {
 			return err
 		}
+
 	case "changed_enterprise_admin_role":
-		err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRole)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ChangedEnterpriseAdminRole); err != nil {
 			return err
 		}
+
 	case "changed_enterprise_connected_team_status":
-		err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ChangedEnterpriseConnectedTeamStatus); err != nil {
 			return err
 		}
+
 	case "ended_enterprise_admin_session":
-		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EndedEnterpriseAdminSession); err != nil {
 			return err
 		}
+
 	case "ended_enterprise_admin_session_deprecated":
-		err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecated)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EndedEnterpriseAdminSessionDeprecated); err != nil {
 			return err
 		}
+
 	case "enterprise_settings_locking":
-		err = json.Unmarshal(body, &u.EnterpriseSettingsLocking)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.EnterpriseSettingsLocking); err != nil {
 			return err
 		}
+
 	case "guest_admin_change_status":
-		err = json.Unmarshal(body, &u.GuestAdminChangeStatus)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GuestAdminChangeStatus); err != nil {
 			return err
 		}
+
 	case "started_enterprise_admin_session":
-		err = json.Unmarshal(body, &u.StartedEnterpriseAdminSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.StartedEnterpriseAdminSession); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAccepted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAccepted); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_accepted_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAcceptedShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_auto_canceled":
-		err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestAutoCanceled); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceled)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceled); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_canceled_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestCanceledShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpired)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpired); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_expired_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestExpiredShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_rejected_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_rejected_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRejectedShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminder); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_reminder_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestReminderShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_revoked":
-		err = json.Unmarshal(body, &u.TeamMergeRequestRevoked)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestRevoked); err != nil {
 			return err
 		}
+
 	case "team_merge_request_sent_shown_to_primary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToPrimaryTeam); err != nil {
 			return err
 		}
+
 	case "team_merge_request_sent_shown_to_secondary_team":
-		err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMergeRequestSentShownToSecondaryTeam); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -13458,17 +12475,15 @@ func (u *FedExtraDetails) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "organization":
-		err = json.Unmarshal(body, &u.Organization)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Organization); err != nil {
 			return err
 		}
+
 	case "team":
-		err = json.Unmarshal(body, &u.Team)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Team); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -13522,23 +12537,20 @@ func (u *FederationStatusChangeAdditionalInfo) UnmarshalJSON(body []byte) error 
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "connected_team_name":
-		err = json.Unmarshal(body, &u.ConnectedTeamName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.ConnectedTeamName); err != nil {
 			return err
 		}
+
 	case "non_trusted_team_details":
-		err = json.Unmarshal(body, &u.NonTrustedTeamDetails)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NonTrustedTeamDetails); err != nil {
 			return err
 		}
+
 	case "organization_name":
-		err = json.Unmarshal(body, &u.OrganizationName)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.OrganizationName); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -14874,9 +13886,6 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 	case "reset":
 		u.Reset = w.Reset
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -16570,29 +15579,25 @@ func (u *LinkedDeviceLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "desktop_device_session":
-		err = json.Unmarshal(body, &u.DesktopDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DesktopDeviceSession); err != nil {
 			return err
 		}
+
 	case "legacy_device_session":
-		err = json.Unmarshal(body, &u.LegacyDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LegacyDeviceSession); err != nil {
 			return err
 		}
+
 	case "mobile_device_session":
-		err = json.Unmarshal(body, &u.MobileDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MobileDeviceSession); err != nil {
 			return err
 		}
+
 	case "web_device_session":
-		err = json.Unmarshal(body, &u.WebDeviceSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebDeviceSession); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -17919,23 +16924,20 @@ func (u *userLogInfoUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "team_member":
-		err = json.Unmarshal(body, &u.TeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamMember); err != nil {
 			return err
 		}
+
 	case "trusted_non_team_member":
-		err = json.Unmarshal(body, &u.TrustedNonTeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TrustedNonTeamMember); err != nil {
 			return err
 		}
+
 	case "non_team_member":
-		err = json.Unmarshal(body, &u.NonTeamMember)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NonTeamMember); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -19821,17 +18823,15 @@ func (u *ParticipantLogInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "group":
-		err = json.Unmarshal(body, &u.Group)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Group); err != nil {
 			return err
 		}
+
 	case "user":
-		u.User, err = IsUserLogInfoFromJSON(w.User)
-
-		if err != nil {
+		if u.User, err = IsUserLogInfoFromJSON(w.User); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -24830,17 +23830,15 @@ func (u *TeamMergeRequestAcceptedExtraDetails) UnmarshalJSON(body []byte) error 
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PrimaryTeam); err != nil {
 			return err
 		}
+
 	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryTeam); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -24991,17 +23989,15 @@ func (u *TeamMergeRequestCanceledExtraDetails) UnmarshalJSON(body []byte) error 
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PrimaryTeam); err != nil {
 			return err
 		}
+
 	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryTeam); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -25126,17 +24122,15 @@ func (u *TeamMergeRequestExpiredExtraDetails) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PrimaryTeam); err != nil {
 			return err
 		}
+
 	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryTeam); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -25315,17 +24309,15 @@ func (u *TeamMergeRequestReminderExtraDetails) UnmarshalJSON(body []byte) error 
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "primary_team":
-		err = json.Unmarshal(body, &u.PrimaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.PrimaryTeam); err != nil {
 			return err
 		}
+
 	case "secondary_team":
-		err = json.Unmarshal(body, &u.SecondaryTeam)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SecondaryTeam); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -26526,11 +25518,10 @@ func (u *WebSessionsFixedLengthPolicy) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "defined":
-		err = json.Unmarshal(body, &u.Defined)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Defined); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -26562,11 +25553,10 @@ func (u *WebSessionsIdleLengthPolicy) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "defined":
-		err = json.Unmarshal(body, &u.Defined)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Defined); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }

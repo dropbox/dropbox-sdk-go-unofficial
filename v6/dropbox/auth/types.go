@@ -63,15 +63,9 @@ func (u *AccessError) UnmarshalJSON(body []byte) error {
 	case "invalid_account_type":
 		u.InvalidAccountType = w.InvalidAccountType
 
-		if err != nil {
-			return err
-		}
 	case "paper_access_denied":
 		u.PaperAccessDenied = w.PaperAccessDenied
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -109,11 +103,10 @@ func (u *AuthError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "missing_scope":
-		err = json.Unmarshal(body, &u.MissingScope)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MissingScope); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }

@@ -73,9 +73,6 @@ func (u *DeleteManualContactsError) UnmarshalJSON(body []byte) error {
 	case "contacts_not_found":
 		u.ContactsNotFound = w.ContactsNotFound
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

@@ -119,9 +119,6 @@ func (u *FileLockingValue) UnmarshalJSON(body []byte) error {
 	case "enabled":
 		u.Enabled = w.Enabled
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -333,9 +330,6 @@ func (u *GetAccountBatchError) UnmarshalJSON(body []byte) error {
 	case "no_account":
 		u.NoAccount = w.NoAccount
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -432,9 +426,6 @@ func (u *PaperAsFilesValue) UnmarshalJSON(body []byte) error {
 	case "enabled":
 		u.Enabled = w.Enabled
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -470,17 +461,15 @@ func (u *SpaceAllocation) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "individual":
-		err = json.Unmarshal(body, &u.Individual)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Individual); err != nil {
 			return err
 		}
+
 	case "team":
-		err = json.Unmarshal(body, &u.Team)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Team); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -578,15 +567,9 @@ func (u *UserFeatureValue) UnmarshalJSON(body []byte) error {
 	case "paper_as_files":
 		u.PaperAsFiles = w.PaperAsFiles
 
-		if err != nil {
-			return err
-		}
 	case "file_locking":
 		u.FileLocking = w.FileLocking
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

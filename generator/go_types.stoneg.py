@@ -219,14 +219,14 @@ class GoTypesBackend(CodeBackend):
                     field_name = fmt_var(field.name)
                     with self.block('case "%s":' % field.name, delim=(None, None)):
                         if _needs_base_type(field.data_type):
-                            self.emit("u.{0}, err = Is{1}FromJSON(w.{0})"
-                                      .format(field_name, field.data_type.name))
+                            with self.block("if u.{0}, err = Is{1}FromJSON(w.{0}); err != nil"
+                                       .format(field_name, field.data_type.name)):
+                                self.emit("return err")
                         elif is_struct_type(field.data_type):
-                            self.emit('err = json.Unmarshal(body, &u.{0})'
-                                  .format(field_name))
+                            with self.block('if err = json.Unmarshal(body, &u.{0}); err != nil'
+                                            .format(field_name)):
+                                self.emit("return err")
                         else:
                             self.emit('u.{0} = w.{0}'.format(field_name))
-                    with self.block("if err != nil"):
-                        self.emit("return err")
             self.emit('return nil')
         self.emit()

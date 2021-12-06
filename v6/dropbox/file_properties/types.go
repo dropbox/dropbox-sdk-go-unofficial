@@ -99,9 +99,6 @@ func (u *TemplateError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -143,15 +140,9 @@ func (u *PropertiesError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -196,15 +187,9 @@ func (u *InvalidPropertyGroupError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -250,15 +235,9 @@ func (u *AddPropertiesError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -411,9 +390,6 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	case "malformed_path":
 		u.MalformedPath = w.MalformedPath
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -453,9 +429,6 @@ func (u *ModifyTemplateError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -549,9 +522,6 @@ func (u *PropertiesSearchError) UnmarshalJSON(body []byte) error {
 	case "property_group_lookup":
 		u.PropertyGroupLookup = w.PropertyGroupLookup
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -608,9 +578,6 @@ func (u *PropertiesSearchMode) UnmarshalJSON(body []byte) error {
 	case "field_name":
 		u.FieldName = w.FieldName
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -802,21 +769,12 @@ func (u *RemovePropertiesError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "property_group_lookup":
 		u.PropertyGroupLookup = w.PropertyGroupLookup
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -867,9 +825,6 @@ func (u *TemplateFilterBase) UnmarshalJSON(body []byte) error {
 	case "filter_some":
 		u.FilterSome = w.FilterSome
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -907,9 +862,6 @@ func (u *TemplateFilter) UnmarshalJSON(body []byte) error {
 	case "filter_some":
 		u.FilterSome = w.FilterSome
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -987,21 +939,12 @@ func (u *UpdatePropertiesError) UnmarshalJSON(body []byte) error {
 	case "template_not_found":
 		u.TemplateNotFound = w.TemplateNotFound
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "property_group_lookup":
 		u.PropertyGroupLookup = w.PropertyGroupLookup
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
