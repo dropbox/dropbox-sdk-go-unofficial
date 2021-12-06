@@ -71,15 +71,9 @@ func (u *PathRoot) UnmarshalJSON(body []byte) error {
 	case "root":
 		u.Root = w.Root
 
-		if err != nil {
-			return err
-		}
 	case "namespace_id":
 		u.NamespaceId = w.NamespaceId
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -115,11 +109,10 @@ func (u *PathRootError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "invalid_root":
-		u.InvalidRoot, err = IsRootInfoFromJSON(w.InvalidRoot)
-
-		if err != nil {
+		if u.InvalidRoot, err = IsRootInfoFromJSON(w.InvalidRoot); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -178,17 +171,15 @@ func (u *rootInfoUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "team":
-		err = json.Unmarshal(body, &u.Team)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Team); err != nil {
 			return err
 		}
+
 	case "user":
-		err = json.Unmarshal(body, &u.User)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.User); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }

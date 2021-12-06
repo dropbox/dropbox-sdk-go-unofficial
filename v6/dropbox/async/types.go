@@ -64,9 +64,6 @@ func (u *LaunchResultBase) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -107,9 +104,6 @@ func (u *LaunchEmptyResult) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

@@ -159,59 +159,34 @@ func (u *AddSecondaryEmailResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "unavailable":
 		u.Unavailable = w.Unavailable
 
-		if err != nil {
-			return err
-		}
 	case "already_pending":
 		u.AlreadyPending = w.AlreadyPending
 
-		if err != nil {
-			return err
-		}
 	case "already_owned_by_user":
 		u.AlreadyOwnedByUser = w.AlreadyOwnedByUser
 
-		if err != nil {
-			return err
-		}
 	case "reached_limit":
 		u.ReachedLimit = w.ReachedLimit
 
-		if err != nil {
-			return err
-		}
 	case "transient_error":
 		u.TransientError = w.TransientError
 
-		if err != nil {
-			return err
-		}
 	case "too_many_updates":
 		u.TooManyUpdates = w.TooManyUpdates
 
-		if err != nil {
-			return err
-		}
 	case "unknown_error":
 		u.UnknownError = w.UnknownError
 
-		if err != nil {
-			return err
-		}
 	case "rate_limited":
 		u.RateLimited = w.RateLimited
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -346,21 +321,12 @@ func (u *BaseTeamFolderError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -407,17 +373,13 @@ func (u *CustomQuotaResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "invalid_user":
 		u.InvalidUser = w.InvalidUser
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -506,21 +468,12 @@ func (u *DeleteSecondaryEmailResult) UnmarshalJSON(body []byte) error {
 	case "success":
 		u.Success = w.Success
 
-		if err != nil {
-			return err
-		}
 	case "not_found":
 		u.NotFound = w.NotFound
 
-		if err != nil {
-			return err
-		}
 	case "cannot_remove_primary":
 		u.CannotRemovePrimary = w.CannotRemovePrimary
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -824,27 +777,15 @@ func (u *FeatureValue) UnmarshalJSON(body []byte) error {
 	case "upload_api_rate_limit":
 		u.UploadApiRateLimit = w.UploadApiRateLimit
 
-		if err != nil {
-			return err
-		}
 	case "has_team_shared_dropbox":
 		u.HasTeamSharedDropbox = w.HasTeamSharedDropbox
 
-		if err != nil {
-			return err
-		}
 	case "has_team_file_events":
 		u.HasTeamFileEvents = w.HasTeamFileEvents
 
-		if err != nil {
-			return err
-		}
 	case "has_team_selective_sync":
 		u.HasTeamSelectiveSync = w.HasTeamSelectiveSync
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1296,21 +1237,12 @@ func (u *GroupMembersAddError) UnmarshalJSON(body []byte) error {
 	case "members_not_in_team":
 		u.MembersNotInTeam = w.MembersNotInTeam
 
-		if err != nil {
-			return err
-		}
 	case "users_not_found":
 		u.UsersNotFound = w.UsersNotFound
 
-		if err != nil {
-			return err
-		}
 	case "user_cannot_be_manager_of_company_managed_group":
 		u.UserCannotBeManagerOfCompanyManagedGroup = w.UserCannotBeManagerOfCompanyManagedGroup
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1408,15 +1340,9 @@ func (u *GroupMembersRemoveError) UnmarshalJSON(body []byte) error {
 	case "members_not_in_team":
 		u.MembersNotInTeam = w.MembersNotInTeam
 
-		if err != nil {
-			return err
-		}
 	case "users_not_found":
 		u.UsersNotFound = w.UsersNotFound
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1493,15 +1419,9 @@ func (u *GroupSelector) UnmarshalJSON(body []byte) error {
 	case "group_id":
 		u.GroupId = w.GroupId
 
-		if err != nil {
-			return err
-		}
 	case "group_external_id":
 		u.GroupExternalId = w.GroupExternalId
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1592,15 +1512,11 @@ func (u *GroupsGetInfoItem) UnmarshalJSON(body []byte) error {
 	case "id_not_found":
 		u.IdNotFound = w.IdNotFound
 
-		if err != nil {
-			return err
-		}
 	case "group_info":
-		err = json.Unmarshal(body, &u.GroupInfo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.GroupInfo); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1774,15 +1690,9 @@ func (u *GroupsSelector) UnmarshalJSON(body []byte) error {
 	case "group_ids":
 		u.GroupIds = w.GroupIds
 
-		if err != nil {
-			return err
-		}
 	case "group_external_ids":
 		u.GroupExternalIds = w.GroupExternalIds
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1817,9 +1727,6 @@ func (u *HasTeamFileEventsValue) UnmarshalJSON(body []byte) error {
 	case "enabled":
 		u.Enabled = w.Enabled
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1855,9 +1762,6 @@ func (u *HasTeamSelectiveSyncValue) UnmarshalJSON(body []byte) error {
 	case "has_team_selective_sync":
 		u.HasTeamSelectiveSync = w.HasTeamSelectiveSync
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1892,9 +1796,6 @@ func (u *HasTeamSharedDropboxValue) UnmarshalJSON(body []byte) error {
 	case "has_team_shared_dropbox":
 		u.HasTeamSharedDropbox = w.HasTeamSharedDropbox
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2709,63 +2610,33 @@ func (u *MemberAddResultBase) UnmarshalJSON(body []byte) error {
 	case "team_license_limit":
 		u.TeamLicenseLimit = w.TeamLicenseLimit
 
-		if err != nil {
-			return err
-		}
 	case "free_team_member_limit_reached":
 		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
 
-		if err != nil {
-			return err
-		}
 	case "user_already_on_team":
 		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_on_another_team":
 		u.UserOnAnotherTeam = w.UserOnAnotherTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_already_paired":
 		u.UserAlreadyPaired = w.UserAlreadyPaired
 
-		if err != nil {
-			return err
-		}
 	case "user_migration_failed":
 		u.UserMigrationFailed = w.UserMigrationFailed
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_external_member_id":
 		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_member_persistent_id":
 		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
 
-		if err != nil {
-			return err
-		}
 	case "persistent_id_disabled":
 		u.PersistentIdDisabled = w.PersistentIdDisabled
 
-		if err != nil {
-			return err
-		}
 	case "user_creation_failed":
 		u.UserCreationFailed = w.UserCreationFailed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2870,69 +2741,38 @@ func (u *MemberAddResult) UnmarshalJSON(body []byte) error {
 	case "team_license_limit":
 		u.TeamLicenseLimit = w.TeamLicenseLimit
 
-		if err != nil {
-			return err
-		}
 	case "free_team_member_limit_reached":
 		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
 
-		if err != nil {
-			return err
-		}
 	case "user_already_on_team":
 		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_on_another_team":
 		u.UserOnAnotherTeam = w.UserOnAnotherTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_already_paired":
 		u.UserAlreadyPaired = w.UserAlreadyPaired
 
-		if err != nil {
-			return err
-		}
 	case "user_migration_failed":
 		u.UserMigrationFailed = w.UserMigrationFailed
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_external_member_id":
 		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_member_persistent_id":
 		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
 
-		if err != nil {
-			return err
-		}
 	case "persistent_id_disabled":
 		u.PersistentIdDisabled = w.PersistentIdDisabled
 
-		if err != nil {
-			return err
-		}
 	case "user_creation_failed":
 		u.UserCreationFailed = w.UserCreationFailed
 
-		if err != nil {
-			return err
-		}
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3054,69 +2894,38 @@ func (u *MemberAddV2Result) UnmarshalJSON(body []byte) error {
 	case "team_license_limit":
 		u.TeamLicenseLimit = w.TeamLicenseLimit
 
-		if err != nil {
-			return err
-		}
 	case "free_team_member_limit_reached":
 		u.FreeTeamMemberLimitReached = w.FreeTeamMemberLimitReached
 
-		if err != nil {
-			return err
-		}
 	case "user_already_on_team":
 		u.UserAlreadyOnTeam = w.UserAlreadyOnTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_on_another_team":
 		u.UserOnAnotherTeam = w.UserOnAnotherTeam
 
-		if err != nil {
-			return err
-		}
 	case "user_already_paired":
 		u.UserAlreadyPaired = w.UserAlreadyPaired
 
-		if err != nil {
-			return err
-		}
 	case "user_migration_failed":
 		u.UserMigrationFailed = w.UserMigrationFailed
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_external_member_id":
 		u.DuplicateExternalMemberId = w.DuplicateExternalMemberId
 
-		if err != nil {
-			return err
-		}
 	case "duplicate_member_persistent_id":
 		u.DuplicateMemberPersistentId = w.DuplicateMemberPersistentId
 
-		if err != nil {
-			return err
-		}
 	case "persistent_id_disabled":
 		u.PersistentIdDisabled = w.PersistentIdDisabled
 
-		if err != nil {
-			return err
-		}
 	case "user_creation_failed":
 		u.UserCreationFailed = w.UserCreationFailed
 
-		if err != nil {
-			return err
-		}
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3303,15 +3112,9 @@ func (u *MembersAddJobStatus) UnmarshalJSON(body []byte) error {
 	case "complete":
 		u.Complete = w.Complete
 
-		if err != nil {
-			return err
-		}
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3358,15 +3161,9 @@ func (u *MembersAddJobStatusV2Result) UnmarshalJSON(body []byte) error {
 	case "complete":
 		u.Complete = w.Complete
 
-		if err != nil {
-			return err
-		}
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3409,15 +3206,9 @@ func (u *MembersAddLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
 		u.Complete = w.Complete
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3461,15 +3252,9 @@ func (u *MembersAddLaunchV2Result) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
 		u.Complete = w.Complete
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3649,9 +3434,6 @@ func (u *MembersGetInfoItemBase) UnmarshalJSON(body []byte) error {
 	case "id_not_found":
 		u.IdNotFound = w.IdNotFound
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3695,15 +3477,11 @@ func (u *MembersGetInfoItem) UnmarshalJSON(body []byte) error {
 	case "id_not_found":
 		u.IdNotFound = w.IdNotFound
 
-		if err != nil {
-			return err
-		}
 	case "member_info":
-		err = json.Unmarshal(body, &u.MemberInfo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberInfo); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3748,15 +3526,11 @@ func (u *MembersGetInfoItemV2) UnmarshalJSON(body []byte) error {
 	case "id_not_found":
 		u.IdNotFound = w.IdNotFound
 
-		if err != nil {
-			return err
-		}
 	case "member_info":
-		err = json.Unmarshal(body, &u.MemberInfo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MemberInfo); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -4221,9 +3995,6 @@ func (u *MembersSetProfilePhotoError) UnmarshalJSON(body []byte) error {
 	case "photo_error":
 		u.PhotoError = w.PhotoError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4407,15 +4178,9 @@ func (u *RemoveCustomQuotaResult) UnmarshalJSON(body []byte) error {
 	case "success":
 		u.Success = w.Success
 
-		if err != nil {
-			return err
-		}
 	case "invalid_user":
 		u.InvalidUser = w.InvalidUser
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4485,21 +4250,12 @@ func (u *ResendSecondaryEmailResult) UnmarshalJSON(body []byte) error {
 	case "success":
 		u.Success = w.Success
 
-		if err != nil {
-			return err
-		}
 	case "not_pending":
 		u.NotPending = w.NotPending
 
-		if err != nil {
-			return err
-		}
 	case "rate_limited":
 		u.RateLimited = w.RateLimited
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4580,23 +4336,20 @@ func (u *RevokeDeviceSessionArg) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "web_session":
-		err = json.Unmarshal(body, &u.WebSession)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.WebSession); err != nil {
 			return err
 		}
+
 	case "desktop_client":
-		err = json.Unmarshal(body, &u.DesktopClient)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.DesktopClient); err != nil {
 			return err
 		}
+
 	case "mobile_client":
-		err = json.Unmarshal(body, &u.MobileClient)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.MobileClient); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -4844,21 +4597,12 @@ func (u *TeamFolderActivateError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4931,21 +4675,12 @@ func (u *TeamFolderArchiveError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4984,17 +4719,13 @@ func (u *TeamFolderArchiveJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5035,15 +4766,11 @@ func (u *TeamFolderArchiveLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -5097,9 +4824,6 @@ func (u *TeamFolderCreateError) UnmarshalJSON(body []byte) error {
 	case "sync_settings_error":
 		u.SyncSettingsError = w.SyncSettingsError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5138,15 +4862,11 @@ func (u *TeamFolderGetInfoItem) UnmarshalJSON(body []byte) error {
 	case "id_not_found":
 		u.IdNotFound = w.IdNotFound
 
-		if err != nil {
-			return err
-		}
 	case "team_folder_metadata":
-		err = json.Unmarshal(body, &u.TeamFolderMetadata)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.TeamFolderMetadata); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -5319,21 +5039,12 @@ func (u *TeamFolderPermanentlyDeleteError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5396,21 +5107,12 @@ func (u *TeamFolderRenameError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5502,27 +5204,15 @@ func (u *TeamFolderUpdateSyncSettingsError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "status_error":
 		u.StatusError = w.StatusError
 
-		if err != nil {
-			return err
-		}
 	case "team_shared_dropbox_error":
 		u.TeamSharedDropboxError = w.TeamSharedDropboxError
 
-		if err != nil {
-			return err
-		}
 	case "sync_settings_error":
 		u.SyncSettingsError = w.SyncSettingsError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5673,11 +5363,10 @@ func (u *TeamMemberStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "removed":
-		err = json.Unmarshal(body, &u.Removed)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Removed); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -5834,9 +5523,6 @@ func (u *UploadApiRateLimitValue) UnmarshalJSON(body []byte) error {
 	case "limit":
 		u.Limit = w.Limit
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5889,29 +5575,19 @@ func (u *UserAddResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "invalid_user":
 		u.InvalidUser = w.InvalidUser
 
-		if err != nil {
-			return err
-		}
 	case "unverified":
 		u.Unverified = w.Unverified
 
-		if err != nil {
-			return err
-		}
 	case "placeholder_user":
 		u.PlaceholderUser = w.PlaceholderUser
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -6002,17 +5678,13 @@ func (u *UserDeleteResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "invalid_user":
 		u.InvalidUser = w.InvalidUser
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -6070,17 +5742,13 @@ func (u *UserResendResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "invalid_user":
 		u.InvalidUser = w.InvalidUser
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -6157,21 +5825,12 @@ func (u *UserSelectorArg) UnmarshalJSON(body []byte) error {
 	case "team_member_id":
 		u.TeamMemberId = w.TeamMemberId
 
-		if err != nil {
-			return err
-		}
 	case "external_id":
 		u.ExternalId = w.ExternalId
 
-		if err != nil {
-			return err
-		}
 	case "email":
 		u.Email = w.Email
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -6216,21 +5875,12 @@ func (u *UsersSelectorArg) UnmarshalJSON(body []byte) error {
 	case "team_member_ids":
 		u.TeamMemberIds = w.TeamMemberIds
 
-		if err != nil {
-			return err
-		}
 	case "external_ids":
 		u.ExternalIds = w.ExternalIds
 
-		if err != nil {
-			return err
-		}
 	case "emails":
 		u.Emails = w.Emails
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

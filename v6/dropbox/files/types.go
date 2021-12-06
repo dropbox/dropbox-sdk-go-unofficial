@@ -107,9 +107,6 @@ func (u *GetMetadataError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -148,15 +145,9 @@ func (u *AlphaGetMetadataError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "properties_error":
 		u.PropertiesError = w.PropertiesError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -332,17 +323,13 @@ func (u *CreateFolderBatchJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -385,15 +372,11 @@ func (u *CreateFolderBatchLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -453,17 +436,13 @@ func (u *CreateFolderBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -498,9 +477,6 @@ func (u *CreateFolderEntryError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -547,9 +523,6 @@ func (u *CreateFolderError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -640,17 +613,13 @@ func (u *DeleteBatchJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -693,15 +662,11 @@ func (u *DeleteBatchLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -782,17 +747,13 @@ func (u *DeleteBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -834,15 +795,9 @@ func (u *DeleteError) UnmarshalJSON(body []byte) error {
 	case "path_lookup":
 		u.PathLookup = w.PathLookup
 
-		if err != nil {
-			return err
-		}
 	case "path_write":
 		u.PathWrite = w.PathWrite
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -946,23 +901,20 @@ func (u *metadataUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "file":
-		err = json.Unmarshal(body, &u.File)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.File); err != nil {
 			return err
 		}
+
 	case "folder":
-		err = json.Unmarshal(body, &u.Folder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Folder); err != nil {
 			return err
 		}
+
 	case "deleted":
-		err = json.Unmarshal(body, &u.Deleted)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Deleted); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1064,9 +1016,6 @@ func (u *DownloadError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1116,9 +1065,6 @@ func (u *DownloadZipError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1187,9 +1133,6 @@ func (u *ExportError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1310,11 +1253,10 @@ func (u *FileLockContent) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "single_user":
-		err = json.Unmarshal(body, &u.SingleUser)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.SingleUser); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1543,9 +1485,6 @@ func (u *GetCopyReferenceError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1643,9 +1582,6 @@ func (u *GetTemporaryLinkError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1784,17 +1720,13 @@ func (u *GetThumbnailBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1943,9 +1875,6 @@ func (u *ListFolderContinueError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1985,15 +1914,9 @@ func (u *ListFolderError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "template_error":
 		u.TemplateError = w.TemplateError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2161,9 +2084,6 @@ func (u *ListRevisionsError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2297,15 +2217,11 @@ func (u *LockFileError) UnmarshalJSON(body []byte) error {
 	case "path_lookup":
 		u.PathLookup = w.PathLookup
 
-		if err != nil {
-			return err
-		}
 	case "lock_conflict":
-		err = json.Unmarshal(body, &u.LockConflict)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.LockConflict); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2377,17 +2293,13 @@ func (u *LockFileResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2434,9 +2346,6 @@ func (u *LookupError) UnmarshalJSON(body []byte) error {
 	case "malformed_path":
 		u.MalformedPath = w.MalformedPath
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2469,11 +2378,10 @@ func (u *MediaInfo) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "metadata":
-		u.Metadata, err = IsMediaMetadataFromJSON(w.Metadata)
-
-		if err != nil {
+		if u.Metadata, err = IsMediaMetadataFromJSON(w.Metadata); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2529,17 +2437,15 @@ func (u *mediaMetadataUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "photo":
-		err = json.Unmarshal(body, &u.Photo)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Photo); err != nil {
 			return err
 		}
+
 	case "video":
-		err = json.Unmarshal(body, &u.Video)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Video); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2589,11 +2495,10 @@ func (u *MetadataV2) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "metadata":
-		u.Metadata, err = IsMetadataFromJSON(w.Metadata)
-
-		if err != nil {
+		if u.Metadata, err = IsMetadataFromJSON(w.Metadata); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2817,9 +2722,6 @@ func (u *PaperUpdateError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2870,15 +2772,11 @@ func (u *PathOrLink) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "link":
-		err = json.Unmarshal(body, &u.Link)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Link); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2941,9 +2839,6 @@ func (u *PreviewError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3084,27 +2979,15 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 	case "from_lookup":
 		u.FromLookup = w.FromLookup
 
-		if err != nil {
-			return err
-		}
 	case "from_write":
 		u.FromWrite = w.FromWrite
 
-		if err != nil {
-			return err
-		}
 	case "to":
 		u.To = w.To
 
-		if err != nil {
-			return err
-		}
 	case "cant_move_into_vault":
 		u.CantMoveIntoVault = w.CantMoveIntoVault
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3166,27 +3049,15 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 	case "from_lookup":
 		u.FromLookup = w.FromLookup
 
-		if err != nil {
-			return err
-		}
 	case "from_write":
 		u.FromWrite = w.FromWrite
 
-		if err != nil {
-			return err
-		}
 	case "to":
 		u.To = w.To
 
-		if err != nil {
-			return err
-		}
 	case "cant_move_into_vault":
 		u.CantMoveIntoVault = w.CantMoveIntoVault
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3223,9 +3094,6 @@ func (u *RelocationBatchErrorEntry) UnmarshalJSON(body []byte) error {
 	case "relocation_error":
 		u.RelocationError = w.RelocationError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3261,17 +3129,13 @@ func (u *RelocationBatchJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3314,15 +3178,11 @@ func (u *RelocationBatchLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3405,17 +3265,13 @@ func (u *RelocationBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		u.Success, err = IsMetadataFromJSON(w.Success)
-
-		if err != nil {
+		if u.Success, err = IsMetadataFromJSON(w.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3448,11 +3304,10 @@ func (u *RelocationBatchV2JobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3494,15 +3349,11 @@ func (u *RelocationBatchV2Launch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3609,15 +3460,9 @@ func (u *RestoreError) UnmarshalJSON(body []byte) error {
 	case "path_lookup":
 		u.PathLookup = w.PathLookup
 
-		if err != nil {
-			return err
-		}
 	case "path_write":
 		u.PathWrite = w.PathWrite
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3672,9 +3517,6 @@ func (u *SaveCopyReferenceError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3761,9 +3603,6 @@ func (u *SaveUrlError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3799,17 +3638,13 @@ func (u *SaveUrlJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3850,15 +3685,11 @@ func (u *SaveUrlResult) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3930,15 +3761,9 @@ func (u *SearchError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "invalid_argument":
 		u.InvalidArgument = w.InvalidArgument
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4293,9 +4118,6 @@ func (u *SyncSettingsError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4356,9 +4178,6 @@ func (u *ThumbnailError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4465,9 +4284,6 @@ func (u *ThumbnailV2Error) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4533,17 +4349,13 @@ func (u *UploadError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(body, &u.Path)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Path); err != nil {
 			return err
 		}
+
 	case "properties_error":
 		u.PropertiesError = w.PropertiesError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4581,17 +4393,13 @@ func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(body, &u.Path)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Path); err != nil {
 			return err
 		}
+
 	case "properties_error":
 		u.PropertiesError = w.PropertiesError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4687,11 +4495,10 @@ func (u *UploadSessionFinishBatchJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -4735,15 +4542,11 @@ func (u *UploadSessionFinishBatchLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -4792,17 +4595,13 @@ func (u *UploadSessionFinishBatchResultEntry) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "failure":
 		u.Failure = w.Failure
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4860,21 +4659,12 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 	case "lookup_failed":
 		u.LookupFailed = w.LookupFailed
 
-		if err != nil {
-			return err
-		}
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "properties_error":
 		u.PropertiesError = w.PropertiesError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4914,11 +4704,10 @@ func (u *UploadSessionLookupError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "incorrect_offset":
-		err = json.Unmarshal(body, &u.IncorrectOffset)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.IncorrectOffset); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -5085,15 +4874,9 @@ func (u *WriteError) UnmarshalJSON(body []byte) error {
 	case "malformed_path":
 		u.MalformedPath = w.MalformedPath
 
-		if err != nil {
-			return err
-		}
 	case "conflict":
 		u.Conflict = w.Conflict
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -5153,9 +4936,6 @@ func (u *WriteMode) UnmarshalJSON(body []byte) error {
 	case "update":
 		u.Update = w.Update
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

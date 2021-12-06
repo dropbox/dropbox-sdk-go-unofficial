@@ -142,15 +142,9 @@ func (u *AddFileMemberError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -237,27 +231,15 @@ func (u *AddFolderMemberError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "bad_member":
 		u.BadMember = w.BadMember
 
-		if err != nil {
-			return err
-		}
 	case "too_many_members":
 		u.TooManyMembers = w.TooManyMembers
 
-		if err != nil {
-			return err
-		}
 	case "too_many_pending_invites":
 		u.TooManyPendingInvites = w.TooManyPendingInvites
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -327,21 +309,12 @@ func (u *AddMemberSelectorError) UnmarshalJSON(body []byte) error {
 	case "invalid_dropbox_id":
 		u.InvalidDropboxId = w.InvalidDropboxId
 
-		if err != nil {
-			return err
-		}
 	case "invalid_email":
 		u.InvalidEmail = w.InvalidEmail
 
-		if err != nil {
-			return err
-		}
 	case "unverified_dropbox_id":
 		u.UnverifiedDropboxId = w.UnverifiedDropboxId
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -507,17 +480,15 @@ func (u *linkMetadataUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "path":
-		err = json.Unmarshal(body, &u.Path)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Path); err != nil {
 			return err
 		}
+
 	case "collection":
-		err = json.Unmarshal(body, &u.Collection)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Collection); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -602,9 +573,6 @@ func (u *CreateSharedLinkError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -669,21 +637,12 @@ func (u *CreateSharedLinkWithSettingsError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	case "shared_link_already_exists":
 		u.SharedLinkAlreadyExists = w.SharedLinkAlreadyExists
 
-		if err != nil {
-			return err
-		}
 	case "settings_error":
 		u.SettingsError = w.SettingsError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -806,21 +765,12 @@ func (u *FileErrorResult) UnmarshalJSON(body []byte) error {
 	case "file_not_found_error":
 		u.FileNotFoundError = w.FileNotFoundError
 
-		if err != nil {
-			return err
-		}
 	case "invalid_file_action_error":
 		u.InvalidFileActionError = w.InvalidFileActionError
 
-		if err != nil {
-			return err
-		}
 	case "permission_denied_error":
 		u.PermissionDeniedError = w.PermissionDeniedError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -895,17 +845,15 @@ func (u *sharedLinkMetadataUnion) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "file":
-		err = json.Unmarshal(body, &u.File)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.File); err != nil {
 			return err
 		}
+
 	case "folder":
-		err = json.Unmarshal(body, &u.Folder)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Folder); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -997,15 +945,11 @@ func (u *FileMemberActionError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "no_explicit_access":
-		err = json.Unmarshal(body, &u.NoExplicitAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExplicitAccess); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -1047,15 +991,9 @@ func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 	case "success":
 		u.Success = w.Success
 
-		if err != nil {
-			return err
-		}
 	case "member_error":
 		u.MemberError = w.MemberError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1107,17 +1045,13 @@ func (u *FileMemberRemoveActionResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "success":
-		err = json.Unmarshal(body, &u.Success)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Success); err != nil {
 			return err
 		}
+
 	case "member_error":
 		u.MemberError = w.MemberError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1317,15 +1251,9 @@ func (u *GetFileMetadataError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1361,17 +1289,13 @@ func (u *GetFileMetadataIndividualResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "metadata":
-		err = json.Unmarshal(body, &u.Metadata)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Metadata); err != nil {
 			return err
 		}
+
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1483,9 +1407,6 @@ func (u *GetSharedLinksError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1660,9 +1581,6 @@ func (u *InviteeInfo) UnmarshalJSON(body []byte) error {
 	case "email":
 		u.Email = w.Email
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1733,21 +1651,12 @@ func (u *JobError) UnmarshalJSON(body []byte) error {
 	case "unshare_folder_error":
 		u.UnshareFolderError = w.UnshareFolderError
 
-		if err != nil {
-			return err
-		}
 	case "remove_folder_member_error":
 		u.RemoveFolderMemberError = w.RemoveFolderMemberError
 
-		if err != nil {
-			return err
-		}
 	case "relinquish_folder_membership_error":
 		u.RelinquishFolderMembershipError = w.RelinquishFolderMembershipError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1783,9 +1692,6 @@ func (u *JobStatus) UnmarshalJSON(body []byte) error {
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1917,9 +1823,6 @@ func (u *LinkExpiry) UnmarshalJSON(body []byte) error {
 	case "set_expiry":
 		u.SetExpiry = w.SetExpiry
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -1955,9 +1858,6 @@ func (u *LinkPassword) UnmarshalJSON(body []byte) error {
 	case "set_password":
 		u.SetPassword = w.SetPassword
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2192,15 +2092,9 @@ func (u *ListFileMembersContinueError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2257,15 +2151,9 @@ func (u *ListFileMembersError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2302,17 +2190,13 @@ func (u *ListFileMembersIndividualResult) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "result":
-		err = json.Unmarshal(body, &u.Result)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Result); err != nil {
 			return err
 		}
+
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2379,9 +2263,6 @@ func (u *ListFilesContinueError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2479,9 +2360,6 @@ func (u *ListFolderMembersContinueError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2597,9 +2475,6 @@ func (u *ListSharedLinksError) UnmarshalJSON(body []byte) error {
 	case "path":
 		u.Path = w.Path
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2760,15 +2635,9 @@ func (u *MemberSelector) UnmarshalJSON(body []byte) error {
 	case "dropbox_id":
 		u.DropboxId = w.DropboxId
 
-		if err != nil {
-			return err
-		}
 	case "email":
 		u.Email = w.Email
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2827,9 +2696,6 @@ func (u *ModifySharedLinkSettingsError) UnmarshalJSON(body []byte) error {
 	case "settings_error":
 		u.SettingsError = w.SettingsError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -2885,15 +2751,11 @@ func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "insufficient_quota":
-		err = json.Unmarshal(body, &u.InsufficientQuota)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.InsufficientQuota); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -2990,11 +2852,10 @@ func (u *PermissionDeniedReason) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "insufficient_plan":
-		err = json.Unmarshal(body, &u.InsufficientPlan)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.InsufficientPlan); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3044,9 +2905,6 @@ func (u *RelinquishFileMembershipError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3105,9 +2963,6 @@ func (u *RelinquishFolderMembershipError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3170,21 +3025,14 @@ func (u *RemoveFileMemberError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "no_explicit_access":
-		err = json.Unmarshal(body, &u.NoExplicitAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExplicitAccess); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3252,15 +3100,9 @@ func (u *RemoveFolderMemberError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "member_error":
 		u.MemberError = w.MemberError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3297,17 +3139,13 @@ func (u *RemoveMemberJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3399,9 +3237,6 @@ func (u *SetAccessInheritanceError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3492,9 +3327,6 @@ func (u *ShareFolderErrorBase) UnmarshalJSON(body []byte) error {
 	case "bad_path":
 		u.BadPath = w.BadPath
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3533,9 +3365,6 @@ func (u *ShareFolderError) UnmarshalJSON(body []byte) error {
 	case "bad_path":
 		u.BadPath = w.BadPath
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3572,17 +3401,13 @@ func (u *ShareFolderJobStatus) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	case "failed":
 		u.Failed = w.Failed
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -3623,15 +3448,11 @@ func (u *ShareFolderLaunch) UnmarshalJSON(body []byte) error {
 	case "async_job_id":
 		u.AsyncJobId = w.AsyncJobId
 
-		if err != nil {
-			return err
-		}
 	case "complete":
-		err = json.Unmarshal(body, &u.Complete)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3677,11 +3498,10 @@ func (u *SharePathError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "already_shared":
-		err = json.Unmarshal(body, &u.AlreadyShared)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.AlreadyShared); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3836,11 +3656,10 @@ func (u *SharedFolderMemberError) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "no_explicit_access":
-		err = json.Unmarshal(body, &u.NoExplicitAccess)
-
-		if err != nil {
+		if err = json.Unmarshal(body, &u.NoExplicitAccess); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -3990,11 +3809,10 @@ func (u *SharedLinkAlreadyExistsMetadata) UnmarshalJSON(body []byte) error {
 	u.Tag = w.Tag
 	switch u.Tag {
 	case "metadata":
-		u.Metadata, err = IsSharedLinkMetadataFromJSON(w.Metadata)
-
-		if err != nil {
+		if u.Metadata, err = IsSharedLinkMetadataFromJSON(w.Metadata); err != nil {
 			return err
 		}
+
 	}
 	return nil
 }
@@ -4153,9 +3971,6 @@ func (u *TransferFolderError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4205,9 +4020,6 @@ func (u *UnmountFolderError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4260,15 +4072,9 @@ func (u *UnshareFileError) UnmarshalJSON(body []byte) error {
 	case "user_error":
 		u.UserError = w.UserError
 
-		if err != nil {
-			return err
-		}
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4325,9 +4131,6 @@ func (u *UnshareFolderError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4417,21 +4220,12 @@ func (u *UpdateFolderMemberError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	case "member_error":
 		u.MemberError = w.MemberError
 
-		if err != nil {
-			return err
-		}
 	case "no_explicit_access":
 		u.NoExplicitAccess = w.NoExplicitAccess
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -4504,9 +4298,6 @@ func (u *UpdateFolderPolicyError) UnmarshalJSON(body []byte) error {
 	case "access_error":
 		u.AccessError = w.AccessError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

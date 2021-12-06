@@ -452,9 +452,6 @@ func (u *UpdateFileRequestDeadline) UnmarshalJSON(body []byte) error {
 	case "update":
 		u.Update = w.Update
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }

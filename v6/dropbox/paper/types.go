@@ -313,9 +313,6 @@ func (u *ListDocsCursorError) UnmarshalJSON(body []byte) error {
 	case "cursor_error":
 		u.CursorError = w.CursorError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
@@ -453,9 +450,6 @@ func (u *ListUsersCursorError) UnmarshalJSON(body []byte) error {
 	case "cursor_error":
 		u.CursorError = w.CursorError
 
-		if err != nil {
-			return err
-		}
 	}
 	return nil
 }
