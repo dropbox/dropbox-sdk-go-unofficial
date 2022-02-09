@@ -39,12 +39,11 @@ type Client interface {
 	// Deprecated: Use `GetMetadata` instead
 	AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, err error)
 	// AlphaUpload : Create a new file with the contents provided in the
-	// request. Note that this endpoint is part of the properties API alpha and
-	// is slightly different from `upload`. Do not use this to upload a file
-	// larger than 150 MB. Instead, create an upload session with
-	// `uploadSessionStart`.
-	// Deprecated: Use `AlphaUpload` instead
-	AlphaUpload(arg *CommitInfoWithProperties, content io.Reader) (res *FileMetadata, err error)
+	// request. Note that the behavior of this alpha endpoint is unstable and
+	// subject to change. Do not use this to upload a file larger than 150 MB.
+	// Instead, create an upload session with `uploadSessionStart`.
+	// Deprecated: Use `Upload` instead
+	AlphaUpload(arg *UploadArg, content io.Reader) (res *FileMetadata, err error)
 	// Copy : Copy a file or folder to a different location in the user's
 	// Dropbox. If the source path is a folder all its contents will be copied.
 	CopyV2(arg *RelocationArg) (res *RelocationResult, err error)
@@ -332,6 +331,13 @@ type Client interface {
 	// Duplicate results may be returned across pages. Some results may not be
 	// returned.
 	SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Result, err error)
+	// TagsAdd : Add a tag to an item. A tag is a string. No more than 20 tags
+	// can be added to a given item.
+	TagsAdd(arg *AddTagArg) (err error)
+	// TagsGet : Get list of tags assigned to items.
+	TagsGet(arg *GetTagsArg) (res *GetTagsResult, err error)
+	// TagsRemove : Remove a tag from an item.
+	TagsRemove(arg *RemoveTagArg) (err error)
 	// UnlockFileBatch : Unlock the files at the given paths. A locked file can
 	// only be unlocked by the lock holder or, if a business account, a team
 	// admin. A successful response indicates that the file has been unlocked.
@@ -345,7 +351,7 @@ type Client interface {
 	// on the number of data transport calls allowed per month. For more
 	// information, see the `Data transport limit page`
 	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
-	Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error)
+	Upload(arg *UploadArg, content io.Reader) (res *FileMetadata, err error)
 	// UploadSessionAppend : Append more data to an upload session. When the
 	// parameter close is set, this call will close the session. A single
 	// request should not upload more than 150 MB. The maximum size of a file
@@ -391,6 +397,7 @@ type Client interface {
 	// of data transport calls allowed per month. For more information, see the
 	// `Data transport limit page`
 	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
+	// Deprecated: Use `UploadSessionFinishBatchV2` instead
 	UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error)
 	// UploadSessionFinishBatch : This route helps you commit many files at once
 	// into a user's Dropbox. Use `uploadSessionStart` and `uploadSessionAppend`
@@ -501,12 +508,12 @@ func (dbx *apiImpl) AlphaGetMetadata(arg *AlphaGetMetadataArg) (res IsMetadata, 
 //AlphaUploadAPIError is an error-wrapper for the alpha/upload route
 type AlphaUploadAPIError struct {
 	dropbox.APIError
-	EndpointError *UploadErrorWithProperties `json:"error"`
+	EndpointError *UploadError `json:"error"`
 }
 
-func (dbx *apiImpl) AlphaUpload(arg *CommitInfoWithProperties, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *apiImpl) AlphaUpload(arg *UploadArg, content io.Reader) (res *FileMetadata, err error) {
 	log.Printf("WARNING: API `AlphaUpload` is deprecated")
-	log.Printf("Use API `AlphaUpload` instead")
+	log.Printf("Use API `Upload` instead")
 
 	req := dropbox.Request{
 		Host:         "content",
@@ -1624,7 +1631,7 @@ func (dbx *apiImpl) ListFolder(arg *ListFolderArg) (res *ListFolderResult, err e
 		Host:         "api",
 		Namespace:    "files",
 		Route:        "list_folder",
-		Auth:         "user",
+		Auth:         "app, user",
 		Style:        "rpc",
 		Arg:          arg,
 		ExtraHeaders: nil,
@@ -1662,7 +1669,7 @@ func (dbx *apiImpl) ListFolderContinue(arg *ListFolderContinueArg) (res *ListFol
 		Host:         "api",
 		Namespace:    "files",
 		Route:        "list_folder/continue",
-		Auth:         "user",
+		Auth:         "app, user",
 		Style:        "rpc",
 		Arg:          arg,
 		ExtraHeaders: nil,
@@ -2654,6 +2661,112 @@ func (dbx *apiImpl) SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Res
 	return
 }
 
+//TagsAddAPIError is an error-wrapper for the tags/add route
+type TagsAddAPIError struct {
+	dropbox.APIError
+	EndpointError *AddTagError `json:"error"`
+}
+
+func (dbx *apiImpl) TagsAdd(arg *AddTagArg) (err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "files",
+		Route:        "tags/add",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr TagsAddAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	_ = resp
+	_ = respBody
+	return
+}
+
+//TagsGetAPIError is an error-wrapper for the tags/get route
+type TagsGetAPIError struct {
+	dropbox.APIError
+	EndpointError *BaseTagError `json:"error"`
+}
+
+func (dbx *apiImpl) TagsGet(arg *GetTagsArg) (res *GetTagsResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "files",
+		Route:        "tags/get",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr TagsGetAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+//TagsRemoveAPIError is an error-wrapper for the tags/remove route
+type TagsRemoveAPIError struct {
+	dropbox.APIError
+	EndpointError *RemoveTagError `json:"error"`
+}
+
+func (dbx *apiImpl) TagsRemove(arg *RemoveTagArg) (err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "files",
+		Route:        "tags/remove",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr TagsRemoveAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	_ = resp
+	_ = respBody
+	return
+}
+
 //UnlockFileBatchAPIError is an error-wrapper for the unlock_file_batch route
 type UnlockFileBatchAPIError struct {
 	dropbox.APIError
@@ -2698,7 +2811,7 @@ type UploadAPIError struct {
 	EndpointError *UploadError `json:"error"`
 }
 
-func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadata, err error) {
+func (dbx *apiImpl) Upload(arg *UploadArg, content io.Reader) (res *FileMetadata, err error) {
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -2733,7 +2846,7 @@ func (dbx *apiImpl) Upload(arg *CommitInfo, content io.Reader) (res *FileMetadat
 //UploadSessionAppendV2APIError is an error-wrapper for the upload_session/append_v2 route
 type UploadSessionAppendV2APIError struct {
 	dropbox.APIError
-	EndpointError *UploadSessionLookupError `json:"error"`
+	EndpointError *UploadSessionAppendError `json:"error"`
 }
 
 func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content io.Reader) (err error) {
@@ -2767,7 +2880,7 @@ func (dbx *apiImpl) UploadSessionAppendV2(arg *UploadSessionAppendArg, content i
 //UploadSessionAppendAPIError is an error-wrapper for the upload_session/append route
 type UploadSessionAppendAPIError struct {
 	dropbox.APIError
-	EndpointError *UploadSessionLookupError `json:"error"`
+	EndpointError *UploadSessionAppendError `json:"error"`
 }
 
 func (dbx *apiImpl) UploadSessionAppend(arg *UploadSessionCursor, content io.Reader) (err error) {
@@ -2846,6 +2959,9 @@ type UploadSessionFinishBatchAPIError struct {
 }
 
 func (dbx *apiImpl) UploadSessionFinishBatch(arg *UploadSessionFinishBatchArg) (res *UploadSessionFinishBatchLaunch, err error) {
+	log.Printf("WARNING: API `UploadSessionFinishBatch` is deprecated")
+	log.Printf("Use API `UploadSessionFinishBatchV2` instead")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "files",

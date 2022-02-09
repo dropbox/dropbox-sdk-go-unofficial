@@ -1111,7 +1111,7 @@ func NewAppUnlinkUserType(Description string) *AppUnlinkUserType {
 	return s
 }
 
-// ApplyNamingConventionDetails : Applied a Naming Convention rule.
+// ApplyNamingConventionDetails : Applied naming convention.
 type ApplyNamingConventionDetails struct {
 }
 
@@ -2071,6 +2071,54 @@ type DataPlacementRestrictionSatisfyPolicyType struct {
 // NewDataPlacementRestrictionSatisfyPolicyType returns a new DataPlacementRestrictionSatisfyPolicyType instance
 func NewDataPlacementRestrictionSatisfyPolicyType(Description string) *DataPlacementRestrictionSatisfyPolicyType {
 	s := new(DataPlacementRestrictionSatisfyPolicyType)
+	s.Description = Description
+	return s
+}
+
+// DataResidencyMigrationRequestSuccessfulDetails : Requested data residency
+// migration for team data.
+type DataResidencyMigrationRequestSuccessfulDetails struct {
+}
+
+// NewDataResidencyMigrationRequestSuccessfulDetails returns a new DataResidencyMigrationRequestSuccessfulDetails instance
+func NewDataResidencyMigrationRequestSuccessfulDetails() *DataResidencyMigrationRequestSuccessfulDetails {
+	s := new(DataResidencyMigrationRequestSuccessfulDetails)
+	return s
+}
+
+// DataResidencyMigrationRequestSuccessfulType : has no documentation (yet)
+type DataResidencyMigrationRequestSuccessfulType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDataResidencyMigrationRequestSuccessfulType returns a new DataResidencyMigrationRequestSuccessfulType instance
+func NewDataResidencyMigrationRequestSuccessfulType(Description string) *DataResidencyMigrationRequestSuccessfulType {
+	s := new(DataResidencyMigrationRequestSuccessfulType)
+	s.Description = Description
+	return s
+}
+
+// DataResidencyMigrationRequestUnsuccessfulDetails : Request for data residency
+// migration for team data has failed.
+type DataResidencyMigrationRequestUnsuccessfulDetails struct {
+}
+
+// NewDataResidencyMigrationRequestUnsuccessfulDetails returns a new DataResidencyMigrationRequestUnsuccessfulDetails instance
+func NewDataResidencyMigrationRequestUnsuccessfulDetails() *DataResidencyMigrationRequestUnsuccessfulDetails {
+	s := new(DataResidencyMigrationRequestUnsuccessfulDetails)
+	return s
+}
+
+// DataResidencyMigrationRequestUnsuccessfulType : has no documentation (yet)
+type DataResidencyMigrationRequestUnsuccessfulType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDataResidencyMigrationRequestUnsuccessfulType returns a new DataResidencyMigrationRequestUnsuccessfulType instance
+func NewDataResidencyMigrationRequestUnsuccessfulType(Description string) *DataResidencyMigrationRequestUnsuccessfulType {
+	s := new(DataResidencyMigrationRequestUnsuccessfulType)
 	s.Description = Description
 	return s
 }
@@ -3983,6 +4031,10 @@ type EventDetails struct {
 	OrganizeFolderWithTidyDetails *OrganizeFolderWithTidyDetails `json:"organize_folder_with_tidy_details,omitempty"`
 	// RewindFolderDetails : has no documentation (yet)
 	RewindFolderDetails *RewindFolderDetails `json:"rewind_folder_details,omitempty"`
+	// UndoNamingConventionDetails : has no documentation (yet)
+	UndoNamingConventionDetails *UndoNamingConventionDetails `json:"undo_naming_convention_details,omitempty"`
+	// UndoOrganizeFolderWithTidyDetails : has no documentation (yet)
+	UndoOrganizeFolderWithTidyDetails *UndoOrganizeFolderWithTidyDetails `json:"undo_organize_folder_with_tidy_details,omitempty"`
 	// UserTagsAddedDetails : has no documentation (yet)
 	UserTagsAddedDetails *UserTagsAddedDetails `json:"user_tags_added_details,omitempty"`
 	// UserTagsRemovedDetails : has no documentation (yet)
@@ -4667,6 +4719,12 @@ type EventDetails struct {
 	WebSessionsChangeFixedLengthPolicyDetails *WebSessionsChangeFixedLengthPolicyDetails `json:"web_sessions_change_fixed_length_policy_details,omitempty"`
 	// WebSessionsChangeIdleLengthPolicyDetails : has no documentation (yet)
 	WebSessionsChangeIdleLengthPolicyDetails *WebSessionsChangeIdleLengthPolicyDetails `json:"web_sessions_change_idle_length_policy_details,omitempty"`
+	// DataResidencyMigrationRequestSuccessfulDetails : has no documentation
+	// (yet)
+	DataResidencyMigrationRequestSuccessfulDetails *DataResidencyMigrationRequestSuccessfulDetails `json:"data_residency_migration_request_successful_details,omitempty"`
+	// DataResidencyMigrationRequestUnsuccessfulDetails : has no documentation
+	// (yet)
+	DataResidencyMigrationRequestUnsuccessfulDetails *DataResidencyMigrationRequestUnsuccessfulDetails `json:"data_residency_migration_request_unsuccessful_details,omitempty"`
 	// TeamMergeFromDetails : has no documentation (yet)
 	TeamMergeFromDetails *TeamMergeFromDetails `json:"team_merge_from_details,omitempty"`
 	// TeamMergeToDetails : has no documentation (yet)
@@ -4865,6 +4923,8 @@ const (
 	EventDetailsObjectLabelUpdatedValueDetails                      = "object_label_updated_value_details"
 	EventDetailsOrganizeFolderWithTidyDetails                       = "organize_folder_with_tidy_details"
 	EventDetailsRewindFolderDetails                                 = "rewind_folder_details"
+	EventDetailsUndoNamingConventionDetails                         = "undo_naming_convention_details"
+	EventDetailsUndoOrganizeFolderWithTidyDetails                   = "undo_organize_folder_with_tidy_details"
 	EventDetailsUserTagsAddedDetails                                = "user_tags_added_details"
 	EventDetailsUserTagsRemovedDetails                              = "user_tags_removed_details"
 	EventDetailsEmailIngestReceiveFileDetails                       = "email_ingest_receive_file_details"
@@ -5202,6 +5262,8 @@ const (
 	EventDetailsWebSessionsChangeActiveSessionLimitDetails          = "web_sessions_change_active_session_limit_details"
 	EventDetailsWebSessionsChangeFixedLengthPolicyDetails           = "web_sessions_change_fixed_length_policy_details"
 	EventDetailsWebSessionsChangeIdleLengthPolicyDetails            = "web_sessions_change_idle_length_policy_details"
+	EventDetailsDataResidencyMigrationRequestSuccessfulDetails      = "data_residency_migration_request_successful_details"
+	EventDetailsDataResidencyMigrationRequestUnsuccessfulDetails    = "data_residency_migration_request_unsuccessful_details"
 	EventDetailsTeamMergeFromDetails                                = "team_merge_from_details"
 	EventDetailsTeamMergeToDetails                                  = "team_merge_to_details"
 	EventDetailsTeamProfileAddBackgroundDetails                     = "team_profile_add_background_details"
@@ -5732,6 +5794,16 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "rewind_folder_details":
 		if err = json.Unmarshal(body, &u.RewindFolderDetails); err != nil {
+			return err
+		}
+
+	case "undo_naming_convention_details":
+		if err = json.Unmarshal(body, &u.UndoNamingConventionDetails); err != nil {
+			return err
+		}
+
+	case "undo_organize_folder_with_tidy_details":
+		if err = json.Unmarshal(body, &u.UndoOrganizeFolderWithTidyDetails); err != nil {
 			return err
 		}
 
@@ -7420,6 +7492,16 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "data_residency_migration_request_successful_details":
+		if err = json.Unmarshal(body, &u.DataResidencyMigrationRequestSuccessfulDetails); err != nil {
+			return err
+		}
+
+	case "data_residency_migration_request_unsuccessful_details":
+		if err = json.Unmarshal(body, &u.DataResidencyMigrationRequestUnsuccessfulDetails); err != nil {
+			return err
+		}
+
 	case "team_merge_from_details":
 		if err = json.Unmarshal(body, &u.TeamMergeFromDetails); err != nil {
 			return err
@@ -7816,8 +7898,7 @@ type EventType struct {
 	// EnabledDomainInvites : (domains) Enabled domain invites (deprecated, no
 	// longer logged)
 	EnabledDomainInvites *EnabledDomainInvitesType `json:"enabled_domain_invites,omitempty"`
-	// ApplyNamingConvention : (file_operations) Applied a Naming Convention
-	// rule
+	// ApplyNamingConvention : (file_operations) Applied naming convention
 	ApplyNamingConvention *ApplyNamingConventionType `json:"apply_naming_convention,omitempty"`
 	// CreateFolder : (file_operations) Created folders (deprecated, no longer
 	// logged)
@@ -7871,11 +7952,16 @@ type EventType struct {
 	ObjectLabelRemoved *ObjectLabelRemovedType `json:"object_label_removed,omitempty"`
 	// ObjectLabelUpdatedValue : (file_operations) Updated a label's value
 	ObjectLabelUpdatedValue *ObjectLabelUpdatedValueType `json:"object_label_updated_value,omitempty"`
-	// OrganizeFolderWithTidy : (file_operations) Organized a folder with the
-	// Tidy Up action
+	// OrganizeFolderWithTidy : (file_operations) Organized a folder with
+	// multi-file organize
 	OrganizeFolderWithTidy *OrganizeFolderWithTidyType `json:"organize_folder_with_tidy,omitempty"`
 	// RewindFolder : (file_operations) Rewound a folder
 	RewindFolder *RewindFolderType `json:"rewind_folder,omitempty"`
+	// UndoNamingConvention : (file_operations) Reverted naming convention
+	UndoNamingConvention *UndoNamingConventionType `json:"undo_naming_convention,omitempty"`
+	// UndoOrganizeFolderWithTidy : (file_operations) Removed multi-file
+	// organize
+	UndoOrganizeFolderWithTidy *UndoOrganizeFolderWithTidyType `json:"undo_organize_folder_with_tidy,omitempty"`
 	// UserTagsAdded : (file_operations) Tagged a file
 	UserTagsAdded *UserTagsAddedType `json:"user_tags_added,omitempty"`
 	// UserTagsRemoved : (file_operations) Removed tags
@@ -8746,6 +8832,12 @@ type EventType struct {
 	// WebSessionsChangeIdleLengthPolicy : (team_policies) Changed how long team
 	// members can be idle while signed in to Dropbox.com
 	WebSessionsChangeIdleLengthPolicy *WebSessionsChangeIdleLengthPolicyType `json:"web_sessions_change_idle_length_policy,omitempty"`
+	// DataResidencyMigrationRequestSuccessful : (team_profile) Requested data
+	// residency migration for team data
+	DataResidencyMigrationRequestSuccessful *DataResidencyMigrationRequestSuccessfulType `json:"data_residency_migration_request_successful,omitempty"`
+	// DataResidencyMigrationRequestUnsuccessful : (team_profile) Request for
+	// data residency migration for team data has failed
+	DataResidencyMigrationRequestUnsuccessful *DataResidencyMigrationRequestUnsuccessfulType `json:"data_residency_migration_request_unsuccessful,omitempty"`
 	// TeamMergeFrom : (team_profile) Merged another team into this team
 	TeamMergeFrom *TeamMergeFromType `json:"team_merge_from,omitempty"`
 	// TeamMergeTo : (team_profile) Merged this team into another team
@@ -8966,6 +9058,8 @@ const (
 	EventTypeObjectLabelUpdatedValue                      = "object_label_updated_value"
 	EventTypeOrganizeFolderWithTidy                       = "organize_folder_with_tidy"
 	EventTypeRewindFolder                                 = "rewind_folder"
+	EventTypeUndoNamingConvention                         = "undo_naming_convention"
+	EventTypeUndoOrganizeFolderWithTidy                   = "undo_organize_folder_with_tidy"
 	EventTypeUserTagsAdded                                = "user_tags_added"
 	EventTypeUserTagsRemoved                              = "user_tags_removed"
 	EventTypeEmailIngestReceiveFile                       = "email_ingest_receive_file"
@@ -9303,6 +9397,8 @@ const (
 	EventTypeWebSessionsChangeActiveSessionLimit          = "web_sessions_change_active_session_limit"
 	EventTypeWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
 	EventTypeWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
+	EventTypeDataResidencyMigrationRequestSuccessful      = "data_residency_migration_request_successful"
+	EventTypeDataResidencyMigrationRequestUnsuccessful    = "data_residency_migration_request_unsuccessful"
 	EventTypeTeamMergeFrom                                = "team_merge_from"
 	EventTypeTeamMergeTo                                  = "team_merge_to"
 	EventTypeTeamProfileAddBackground                     = "team_profile_add_background"
@@ -9832,6 +9928,16 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "rewind_folder":
 		if err = json.Unmarshal(body, &u.RewindFolder); err != nil {
+			return err
+		}
+
+	case "undo_naming_convention":
+		if err = json.Unmarshal(body, &u.UndoNamingConvention); err != nil {
+			return err
+		}
+
+	case "undo_organize_folder_with_tidy":
+		if err = json.Unmarshal(body, &u.UndoOrganizeFolderWithTidy); err != nil {
 			return err
 		}
 
@@ -11520,6 +11626,16 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "data_residency_migration_request_successful":
+		if err = json.Unmarshal(body, &u.DataResidencyMigrationRequestSuccessful); err != nil {
+			return err
+		}
+
+	case "data_residency_migration_request_unsuccessful":
+		if err = json.Unmarshal(body, &u.DataResidencyMigrationRequestUnsuccessful); err != nil {
+			return err
+		}
+
 	case "team_merge_from":
 		if err = json.Unmarshal(body, &u.TeamMergeFrom); err != nil {
 			return err
@@ -11836,6 +11952,8 @@ const (
 	EventTypeArgObjectLabelUpdatedValue                      = "object_label_updated_value"
 	EventTypeArgOrganizeFolderWithTidy                       = "organize_folder_with_tidy"
 	EventTypeArgRewindFolder                                 = "rewind_folder"
+	EventTypeArgUndoNamingConvention                         = "undo_naming_convention"
+	EventTypeArgUndoOrganizeFolderWithTidy                   = "undo_organize_folder_with_tidy"
 	EventTypeArgUserTagsAdded                                = "user_tags_added"
 	EventTypeArgUserTagsRemoved                              = "user_tags_removed"
 	EventTypeArgEmailIngestReceiveFile                       = "email_ingest_receive_file"
@@ -12173,6 +12291,8 @@ const (
 	EventTypeArgWebSessionsChangeActiveSessionLimit          = "web_sessions_change_active_session_limit"
 	EventTypeArgWebSessionsChangeFixedLengthPolicy           = "web_sessions_change_fixed_length_policy"
 	EventTypeArgWebSessionsChangeIdleLengthPolicy            = "web_sessions_change_idle_length_policy"
+	EventTypeArgDataResidencyMigrationRequestSuccessful      = "data_residency_migration_request_successful"
+	EventTypeArgDataResidencyMigrationRequestUnsuccessful    = "data_residency_migration_request_unsuccessful"
 	EventTypeArgTeamMergeFrom                                = "team_merge_from"
 	EventTypeArgTeamMergeTo                                  = "team_merge_to"
 	EventTypeArgTeamProfileAddBackground                     = "team_profile_add_background"
@@ -12319,6 +12439,7 @@ type ExternalDriveBackupPolicy struct {
 
 // Valid tag values for ExternalDriveBackupPolicy
 const (
+	ExternalDriveBackupPolicyDefault  = "default"
 	ExternalDriveBackupPolicyDisabled = "disabled"
 	ExternalDriveBackupPolicyEnabled  = "enabled"
 	ExternalDriveBackupPolicyOther    = "other"
@@ -17228,7 +17349,7 @@ func NewOrganizationName(Organization string) *OrganizationName {
 	return s
 }
 
-// OrganizeFolderWithTidyDetails : Organized a folder with the Tidy Up action.
+// OrganizeFolderWithTidyDetails : Organized a folder with multi-file organize.
 type OrganizeFolderWithTidyDetails struct {
 }
 
@@ -21876,6 +21997,7 @@ type SharingLinkPolicy struct {
 
 // Valid tag values for SharingLinkPolicy
 const (
+	SharingLinkPolicyDefaultNoOne   = "default_no_one"
 	SharingLinkPolicyDefaultPrivate = "default_private"
 	SharingLinkPolicyDefaultPublic  = "default_public"
 	SharingLinkPolicyOnlyPrivate    = "only_private"
@@ -25203,6 +25325,52 @@ const (
 	TwoAccountPolicyEnabled  = "enabled"
 	TwoAccountPolicyOther    = "other"
 )
+
+// UndoNamingConventionDetails : Reverted naming convention.
+type UndoNamingConventionDetails struct {
+}
+
+// NewUndoNamingConventionDetails returns a new UndoNamingConventionDetails instance
+func NewUndoNamingConventionDetails() *UndoNamingConventionDetails {
+	s := new(UndoNamingConventionDetails)
+	return s
+}
+
+// UndoNamingConventionType : has no documentation (yet)
+type UndoNamingConventionType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewUndoNamingConventionType returns a new UndoNamingConventionType instance
+func NewUndoNamingConventionType(Description string) *UndoNamingConventionType {
+	s := new(UndoNamingConventionType)
+	s.Description = Description
+	return s
+}
+
+// UndoOrganizeFolderWithTidyDetails : Removed multi-file organize.
+type UndoOrganizeFolderWithTidyDetails struct {
+}
+
+// NewUndoOrganizeFolderWithTidyDetails returns a new UndoOrganizeFolderWithTidyDetails instance
+func NewUndoOrganizeFolderWithTidyDetails() *UndoOrganizeFolderWithTidyDetails {
+	s := new(UndoOrganizeFolderWithTidyDetails)
+	return s
+}
+
+// UndoOrganizeFolderWithTidyType : has no documentation (yet)
+type UndoOrganizeFolderWithTidyType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewUndoOrganizeFolderWithTidyType returns a new UndoOrganizeFolderWithTidyType instance
+func NewUndoOrganizeFolderWithTidyType(Description string) *UndoOrganizeFolderWithTidyType {
+	s := new(UndoOrganizeFolderWithTidyType)
+	s.Description = Description
+	return s
+}
 
 // UserLinkedAppLogInfo : User linked app
 type UserLinkedAppLogInfo struct {

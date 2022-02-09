@@ -6,14 +6,14 @@ used to programmatically generate the [Dropbox Go SDK](https://github.com/dropbo
 ## Requirements
 
   * While not a hard requirement, this repo currently assumes `python3` in the path.
-  * Assumes you have already installed [Stone](https://github.com/dropbox/stone)
-  * Requires [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) to fix up imports in the auto-generated code
+  * Assumes you have already installed [Stone](https://github.com/dropbox/stone) and have `stone` in the path.
+  * Requires [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) in the path to fix up imports in the auto-generated code.
 
 ## Basic Setup
 
-  . Clone this repo
-  . Run `git submodule init` followed by `git submodule update`
-  . Run `./generate-sdk.sh` to generate code under `../dropbox`
+  * Clone this repo
+  * Run `git submodule init` followed by `git submodule update`. To fetch the latest API spec, use `git submodule update --remote`
+  * Run `./generate-sdk.sh X.Y.Z`, where `X.Y.Z` is the desired version number, to generate code under `../vX/dropbox`
 
 ## Generated Code
 

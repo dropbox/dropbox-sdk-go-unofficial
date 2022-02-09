@@ -70,6 +70,7 @@ type ExternalDriveBackupPolicyState struct {
 const (
 	ExternalDriveBackupPolicyStateDisabled = "disabled"
 	ExternalDriveBackupPolicyStateEnabled  = "enabled"
+	ExternalDriveBackupPolicyStateDefault  = "default"
 	ExternalDriveBackupPolicyStateOther    = "other"
 )
 
@@ -231,6 +232,7 @@ const (
 	SharedLinkCreatePolicyDefaultPublic   = "default_public"
 	SharedLinkCreatePolicyDefaultTeamOnly = "default_team_only"
 	SharedLinkCreatePolicyTeamOnly        = "team_only"
+	SharedLinkCreatePolicyDefaultNoOne    = "default_no_one"
 	SharedLinkCreatePolicyOther           = "other"
 )
 

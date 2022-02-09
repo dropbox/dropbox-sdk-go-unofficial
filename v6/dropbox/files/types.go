@@ -30,6 +30,91 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/file_properties"
 )
 
+// AddTagArg : has no documentation (yet)
+type AddTagArg struct {
+	// Path : Path to the item to be tagged.
+	Path string `json:"path"`
+	// TagText : The value of the tag to add.
+	TagText string `json:"tag_text"`
+}
+
+// NewAddTagArg returns a new AddTagArg instance
+func NewAddTagArg(Path string, TagText string) *AddTagArg {
+	s := new(AddTagArg)
+	s.Path = Path
+	s.TagText = TagText
+	return s
+}
+
+// BaseTagError : has no documentation (yet)
+type BaseTagError struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for BaseTagError
+const (
+	BaseTagErrorPath  = "path"
+	BaseTagErrorOther = "other"
+)
+
+// UnmarshalJSON deserializes into a BaseTagError instance
+func (u *BaseTagError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path *LookupError `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+	}
+	return nil
+}
+
+// AddTagError : has no documentation (yet)
+type AddTagError struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for AddTagError
+const (
+	AddTagErrorPath        = "path"
+	AddTagErrorOther       = "other"
+	AddTagErrorTooManyTags = "too_many_tags"
+)
+
+// UnmarshalJSON deserializes into a AddTagError instance
+func (u *AddTagError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path *LookupError `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+	}
+	return nil
+}
+
 // GetMetadataArg : has no documentation (yet)
 type GetMetadataArg struct {
 	// Path : The path of a file or folder on Dropbox.
@@ -186,22 +271,6 @@ type CommitInfo struct {
 // NewCommitInfo returns a new CommitInfo instance
 func NewCommitInfo(Path string) *CommitInfo {
 	s := new(CommitInfo)
-	s.Path = Path
-	s.Mode = &WriteMode{Tagged: dropbox.Tagged{Tag: "add"}}
-	s.Autorename = false
-	s.Mute = false
-	s.StrictConflict = false
-	return s
-}
-
-// CommitInfoWithProperties : has no documentation (yet)
-type CommitInfoWithProperties struct {
-	CommitInfo
-}
-
-// NewCommitInfoWithProperties returns a new CommitInfoWithProperties instance
-func NewCommitInfoWithProperties(Path string) *CommitInfoWithProperties {
-	s := new(CommitInfoWithProperties)
 	s.Path = Path
 	s.Mode = &WriteMode{Tagged: dropbox.Tagged{Tag: "add"}}
 	s.Autorename = false
@@ -1536,6 +1605,32 @@ func (u *GetCopyReferenceResult) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
+// GetTagsArg : has no documentation (yet)
+type GetTagsArg struct {
+	// Paths : Path to the items.
+	Paths []string `json:"paths"`
+}
+
+// NewGetTagsArg returns a new GetTagsArg instance
+func NewGetTagsArg(Paths []string) *GetTagsArg {
+	s := new(GetTagsArg)
+	s.Paths = Paths
+	return s
+}
+
+// GetTagsResult : has no documentation (yet)
+type GetTagsResult struct {
+	// PathsToTags : List of paths and their corresponding tags.
+	PathsToTags []*PathToTags `json:"paths_to_tags"`
+}
+
+// NewGetTagsResult returns a new GetTagsResult instance
+func NewGetTagsResult(PathsToTags []*PathToTags) *GetTagsResult {
+	s := new(GetTagsResult)
+	s.PathsToTags = PathsToTags
+	return s
+}
+
 // GetTemporaryLinkArg : has no documentation (yet)
 type GetTemporaryLinkArg struct {
 	// Path : The path to the file you want a temporary link to.
@@ -2563,6 +2658,17 @@ func NewMoveBatchArg(Entries []*RelocationPath) *MoveBatchArg {
 	return s
 }
 
+// MoveIntoFamilyError : has no documentation (yet)
+type MoveIntoFamilyError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MoveIntoFamilyError
+const (
+	MoveIntoFamilyErrorIsSharedFolder = "is_shared_folder"
+	MoveIntoFamilyErrorOther          = "other"
+)
+
 // MoveIntoVaultError : has no documentation (yet)
 type MoveIntoVaultError struct {
 	dropbox.Tagged
@@ -2781,6 +2887,22 @@ func (u *PathOrLink) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// PathToTags : has no documentation (yet)
+type PathToTags struct {
+	// Path : Path of the item.
+	Path string `json:"path"`
+	// Tags : Tags assigned to this item.
+	Tags []*Tag `json:"tags"`
+}
+
+// NewPathToTags returns a new PathToTags instance
+func NewPathToTags(Path string, Tags []*Tag) *PathToTags {
+	s := new(PathToTags)
+	s.Path = Path
+	s.Tags = Tags
+	return s
+}
+
 // PhotoMetadata : Metadata for a photo.
 type PhotoMetadata struct {
 	MediaMetadata
@@ -2935,6 +3057,9 @@ type RelocationError struct {
 	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
 	// circumstances, see detailed error.
 	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
+	// CantMoveIntoFamily : Some content cannot be moved into the Family Room
+	// folder under certain circumstances, see detailed error.
+	CantMoveIntoFamily *MoveIntoFamilyError `json:"cant_move_into_family,omitempty"`
 }
 
 // Valid tag values for RelocationError
@@ -2952,6 +3077,7 @@ const (
 	RelocationErrorInternalError            = "internal_error"
 	RelocationErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationErrorCantMoveIntoVault        = "cant_move_into_vault"
+	RelocationErrorCantMoveIntoFamily       = "cant_move_into_family"
 	RelocationErrorOther                    = "other"
 )
 
@@ -2968,6 +3094,9 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 		// CantMoveIntoVault : Some content cannot be moved into Vault under
 		// certain circumstances, see detailed error.
 		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
+		// CantMoveIntoFamily : Some content cannot be moved into the Family
+		// Room folder under certain circumstances, see detailed error.
+		CantMoveIntoFamily *MoveIntoFamilyError `json:"cant_move_into_family,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2987,6 +3116,9 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 
 	case "cant_move_into_vault":
 		u.CantMoveIntoVault = w.CantMoveIntoVault
+
+	case "cant_move_into_family":
+		u.CantMoveIntoFamily = w.CantMoveIntoFamily
 
 	}
 	return nil
@@ -3004,6 +3136,9 @@ type RelocationBatchError struct {
 	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
 	// circumstances, see detailed error.
 	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
+	// CantMoveIntoFamily : Some content cannot be moved into the Family Room
+	// folder under certain circumstances, see detailed error.
+	CantMoveIntoFamily *MoveIntoFamilyError `json:"cant_move_into_family,omitempty"`
 }
 
 // Valid tag values for RelocationBatchError
@@ -3021,6 +3156,7 @@ const (
 	RelocationBatchErrorInternalError            = "internal_error"
 	RelocationBatchErrorCantMoveSharedFolder     = "cant_move_shared_folder"
 	RelocationBatchErrorCantMoveIntoVault        = "cant_move_into_vault"
+	RelocationBatchErrorCantMoveIntoFamily       = "cant_move_into_family"
 	RelocationBatchErrorOther                    = "other"
 	RelocationBatchErrorTooManyWriteOperations   = "too_many_write_operations"
 )
@@ -3038,6 +3174,9 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 		// CantMoveIntoVault : Some content cannot be moved into Vault under
 		// certain circumstances, see detailed error.
 		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
+		// CantMoveIntoFamily : Some content cannot be moved into the Family
+		// Room folder under certain circumstances, see detailed error.
+		CantMoveIntoFamily *MoveIntoFamilyError `json:"cant_move_into_family,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3057,6 +3196,9 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 
 	case "cant_move_into_vault":
 		u.CantMoveIntoVault = w.CantMoveIntoVault
+
+	case "cant_move_into_family":
+		u.CantMoveIntoFamily = w.CantMoveIntoFamily
 
 	}
 	return nil
@@ -3403,6 +3545,57 @@ func (u *RelocationResult) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	u.Metadata = Metadata
+	return nil
+}
+
+// RemoveTagArg : has no documentation (yet)
+type RemoveTagArg struct {
+	// Path : Path to the item to tag.
+	Path string `json:"path"`
+	// TagText : The tag to remove.
+	TagText string `json:"tag_text"`
+}
+
+// NewRemoveTagArg returns a new RemoveTagArg instance
+func NewRemoveTagArg(Path string, TagText string) *RemoveTagArg {
+	s := new(RemoveTagArg)
+	s.Path = Path
+	s.TagText = TagText
+	return s
+}
+
+// RemoveTagError : has no documentation (yet)
+type RemoveTagError struct {
+	dropbox.Tagged
+	// Path : has no documentation (yet)
+	Path *LookupError `json:"path,omitempty"`
+}
+
+// Valid tag values for RemoveTagError
+const (
+	RemoveTagErrorPath          = "path"
+	RemoveTagErrorOther         = "other"
+	RemoveTagErrorTagNotPresent = "tag_not_present"
+)
+
+// UnmarshalJSON deserializes into a RemoveTagError instance
+func (u *RemoveTagError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Path : has no documentation (yet)
+		Path *LookupError `json:"path,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "path":
+		u.Path = w.Path
+
+	}
 	return nil
 }
 
@@ -4122,6 +4315,40 @@ func (u *SyncSettingsError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// Tag : Tag that can be added in multiple ways.
+type Tag struct {
+	dropbox.Tagged
+	// UserGeneratedTag : Tag generated by the user.
+	UserGeneratedTag *UserGeneratedTag `json:"user_generated_tag,omitempty"`
+}
+
+// Valid tag values for Tag
+const (
+	TagUserGeneratedTag = "user_generated_tag"
+	TagOther            = "other"
+)
+
+// UnmarshalJSON deserializes into a Tag instance
+func (u *Tag) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "user_generated_tag":
+		if err = json.Unmarshal(body, &u.UserGeneratedTag); err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
 // ThumbnailArg : has no documentation (yet)
 type ThumbnailArg struct {
 	// Path : The path to the image file you want to thumbnail.
@@ -4316,6 +4543,27 @@ func NewUnlockFileBatchArg(Entries []*UnlockFileArg) *UnlockFileBatchArg {
 	return s
 }
 
+// UploadArg : has no documentation (yet)
+type UploadArg struct {
+	CommitInfo
+	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
+	// this call. If provided and the uploaded content does not match this hash,
+	// an error will be returned. For more information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash,omitempty"`
+}
+
+// NewUploadArg returns a new UploadArg instance
+func NewUploadArg(Path string) *UploadArg {
+	s := new(UploadArg)
+	s.Path = Path
+	s.Mode = &WriteMode{Tagged: dropbox.Tagged{Tag: "add"}}
+	s.Autorename = false
+	s.Mute = false
+	s.StrictConflict = false
+	return s
+}
+
 // UploadError : has no documentation (yet)
 type UploadError struct {
 	dropbox.Tagged
@@ -4328,57 +4576,15 @@ type UploadError struct {
 
 // Valid tag values for UploadError
 const (
-	UploadErrorPath            = "path"
-	UploadErrorPropertiesError = "properties_error"
-	UploadErrorOther           = "other"
+	UploadErrorPath                = "path"
+	UploadErrorPropertiesError     = "properties_error"
+	UploadErrorPayloadTooLarge     = "payload_too_large"
+	UploadErrorContentHashMismatch = "content_hash_mismatch"
+	UploadErrorOther               = "other"
 )
 
 // UnmarshalJSON deserializes into a UploadError instance
 func (u *UploadError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// PropertiesError : The supplied property group is invalid. The file
-		// has uploaded without property groups.
-		PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "path":
-		if err = json.Unmarshal(body, &u.Path); err != nil {
-			return err
-		}
-
-	case "properties_error":
-		u.PropertiesError = w.PropertiesError
-
-	}
-	return nil
-}
-
-// UploadErrorWithProperties : has no documentation (yet)
-type UploadErrorWithProperties struct {
-	dropbox.Tagged
-	// Path : Unable to save the uploaded contents to a file.
-	Path *UploadWriteFailed `json:"path,omitempty"`
-	// PropertiesError : The supplied property group is invalid. The file has
-	// uploaded without property groups.
-	PropertiesError *file_properties.InvalidPropertyGroupError `json:"properties_error,omitempty"`
-}
-
-// Valid tag values for UploadErrorWithProperties
-const (
-	UploadErrorWithPropertiesPath            = "path"
-	UploadErrorWithPropertiesPropertiesError = "properties_error"
-	UploadErrorWithPropertiesOther           = "other"
-)
-
-// UnmarshalJSON deserializes into a UploadErrorWithProperties instance
-func (u *UploadErrorWithProperties) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// PropertiesError : The supplied property group is invalid. The file
@@ -4412,6 +4618,11 @@ type UploadSessionAppendArg struct {
 	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
+	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
+	// this call. If provided and the uploaded content does not match this hash,
+	// an error will be returned. For more information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash,omitempty"`
 }
 
 // NewUploadSessionAppendArg returns a new UploadSessionAppendArg instance
@@ -4420,6 +4631,95 @@ func NewUploadSessionAppendArg(Cursor *UploadSessionCursor) *UploadSessionAppend
 	s.Cursor = Cursor
 	s.Close = false
 	return s
+}
+
+// UploadSessionLookupError : has no documentation (yet)
+type UploadSessionLookupError struct {
+	dropbox.Tagged
+	// IncorrectOffset : The specified offset was incorrect. See the value for
+	// the correct offset. This error may occur when a previous request was
+	// received and processed successfully but the client did not receive the
+	// response, e.g. due to a network error.
+	IncorrectOffset *UploadSessionOffsetError `json:"incorrect_offset,omitempty"`
+}
+
+// Valid tag values for UploadSessionLookupError
+const (
+	UploadSessionLookupErrorNotFound                         = "not_found"
+	UploadSessionLookupErrorIncorrectOffset                  = "incorrect_offset"
+	UploadSessionLookupErrorClosed                           = "closed"
+	UploadSessionLookupErrorNotClosed                        = "not_closed"
+	UploadSessionLookupErrorTooLarge                         = "too_large"
+	UploadSessionLookupErrorConcurrentSessionInvalidOffset   = "concurrent_session_invalid_offset"
+	UploadSessionLookupErrorConcurrentSessionInvalidDataSize = "concurrent_session_invalid_data_size"
+	UploadSessionLookupErrorPayloadTooLarge                  = "payload_too_large"
+	UploadSessionLookupErrorOther                            = "other"
+)
+
+// UnmarshalJSON deserializes into a UploadSessionLookupError instance
+func (u *UploadSessionLookupError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "incorrect_offset":
+		if err = json.Unmarshal(body, &u.IncorrectOffset); err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
+// UploadSessionAppendError : has no documentation (yet)
+type UploadSessionAppendError struct {
+	dropbox.Tagged
+	// IncorrectOffset : The specified offset was incorrect. See the value for
+	// the correct offset. This error may occur when a previous request was
+	// received and processed successfully but the client did not receive the
+	// response, e.g. due to a network error.
+	IncorrectOffset *UploadSessionOffsetError `json:"incorrect_offset,omitempty"`
+}
+
+// Valid tag values for UploadSessionAppendError
+const (
+	UploadSessionAppendErrorNotFound                         = "not_found"
+	UploadSessionAppendErrorIncorrectOffset                  = "incorrect_offset"
+	UploadSessionAppendErrorClosed                           = "closed"
+	UploadSessionAppendErrorNotClosed                        = "not_closed"
+	UploadSessionAppendErrorTooLarge                         = "too_large"
+	UploadSessionAppendErrorConcurrentSessionInvalidOffset   = "concurrent_session_invalid_offset"
+	UploadSessionAppendErrorConcurrentSessionInvalidDataSize = "concurrent_session_invalid_data_size"
+	UploadSessionAppendErrorPayloadTooLarge                  = "payload_too_large"
+	UploadSessionAppendErrorOther                            = "other"
+	UploadSessionAppendErrorContentHashMismatch              = "content_hash_mismatch"
+)
+
+// UnmarshalJSON deserializes into a UploadSessionAppendError instance
+func (u *UploadSessionAppendError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "incorrect_offset":
+		if err = json.Unmarshal(body, &u.IncorrectOffset); err != nil {
+			return err
+		}
+
+	}
+	return nil
 }
 
 // UploadSessionCursor : has no documentation (yet)
@@ -4446,6 +4746,11 @@ type UploadSessionFinishArg struct {
 	Cursor *UploadSessionCursor `json:"cursor"`
 	// Commit : Contains the path and other optional modifiers for the commit.
 	Commit *CommitInfo `json:"commit"`
+	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
+	// this call. If provided and the uploaded content does not match this hash,
+	// an error will be returned. For more information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash,omitempty"`
 }
 
 // NewUploadSessionFinishArg returns a new UploadSessionFinishArg instance
@@ -4631,6 +4936,8 @@ const (
 	UploadSessionFinishErrorConcurrentSessionDataNotAllowed = "concurrent_session_data_not_allowed"
 	UploadSessionFinishErrorConcurrentSessionNotClosed      = "concurrent_session_not_closed"
 	UploadSessionFinishErrorConcurrentSessionMissingData    = "concurrent_session_missing_data"
+	UploadSessionFinishErrorPayloadTooLarge                 = "payload_too_large"
+	UploadSessionFinishErrorContentHashMismatch             = "content_hash_mismatch"
 	UploadSessionFinishErrorOther                           = "other"
 )
 
@@ -4669,49 +4976,6 @@ func (u *UploadSessionFinishError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// UploadSessionLookupError : has no documentation (yet)
-type UploadSessionLookupError struct {
-	dropbox.Tagged
-	// IncorrectOffset : The specified offset was incorrect. See the value for
-	// the correct offset. This error may occur when a previous request was
-	// received and processed successfully but the client did not receive the
-	// response, e.g. due to a network error.
-	IncorrectOffset *UploadSessionOffsetError `json:"incorrect_offset,omitempty"`
-}
-
-// Valid tag values for UploadSessionLookupError
-const (
-	UploadSessionLookupErrorNotFound                         = "not_found"
-	UploadSessionLookupErrorIncorrectOffset                  = "incorrect_offset"
-	UploadSessionLookupErrorClosed                           = "closed"
-	UploadSessionLookupErrorNotClosed                        = "not_closed"
-	UploadSessionLookupErrorTooLarge                         = "too_large"
-	UploadSessionLookupErrorConcurrentSessionInvalidOffset   = "concurrent_session_invalid_offset"
-	UploadSessionLookupErrorConcurrentSessionInvalidDataSize = "concurrent_session_invalid_data_size"
-	UploadSessionLookupErrorOther                            = "other"
-)
-
-// UnmarshalJSON deserializes into a UploadSessionLookupError instance
-func (u *UploadSessionLookupError) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "incorrect_offset":
-		if err = json.Unmarshal(body, &u.IncorrectOffset); err != nil {
-			return err
-		}
-
-	}
-	return nil
-}
-
 // UploadSessionOffsetError : has no documentation (yet)
 type UploadSessionOffsetError struct {
 	// CorrectOffset : The offset up to which data has been collected.
@@ -4734,6 +4998,11 @@ type UploadSessionStartArg struct {
 	// SessionType : Type of upload session you want to start. If not specified,
 	// default is `UploadSessionType.sequential`.
 	SessionType *UploadSessionType `json:"session_type,omitempty"`
+	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
+	// this call. If provided and the uploaded content does not match this hash,
+	// an error will be returned. For more information see our `Content hash`
+	// <https://www.dropbox.com/developers/reference/content-hash> page.
+	ContentHash string `json:"content_hash,omitempty"`
 }
 
 // NewUploadSessionStartArg returns a new UploadSessionStartArg instance
@@ -4752,6 +5021,8 @@ type UploadSessionStartError struct {
 const (
 	UploadSessionStartErrorConcurrentSessionDataNotAllowed  = "concurrent_session_data_not_allowed"
 	UploadSessionStartErrorConcurrentSessionCloseNotAllowed = "concurrent_session_close_not_allowed"
+	UploadSessionStartErrorPayloadTooLarge                  = "payload_too_large"
+	UploadSessionStartErrorContentHashMismatch              = "content_hash_mismatch"
 	UploadSessionStartErrorOther                            = "other"
 )
 
@@ -4796,6 +5067,19 @@ func NewUploadWriteFailed(Reason *WriteError, UploadSessionId string) *UploadWri
 	s := new(UploadWriteFailed)
 	s.Reason = Reason
 	s.UploadSessionId = UploadSessionId
+	return s
+}
+
+// UserGeneratedTag : has no documentation (yet)
+type UserGeneratedTag struct {
+	// TagText : has no documentation (yet)
+	TagText string `json:"tag_text"`
+}
+
+// NewUserGeneratedTag returns a new UserGeneratedTag instance
+func NewUserGeneratedTag(TagText string) *UserGeneratedTag {
+	s := new(UserGeneratedTag)
+	s.TagText = TagText
 	return s
 }
 

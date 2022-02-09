@@ -83,8 +83,8 @@ type AddFileMemberArgs struct {
 	Members []*MemberSelector `json:"members"`
 	// CustomMessage : Message to send to added members in their invitation.
 	CustomMessage string `json:"custom_message,omitempty"`
-	// Quiet : Whether added members should be notified via device notifications
-	// of their invitation.
+	// Quiet : Whether added members should be notified via email and device
+	// notifications of their invitation.
 	Quiet bool `json:"quiet"`
 	// AccessLevel : AccessLevel union object, describing what access level we
 	// want to give new members.
@@ -3481,6 +3481,7 @@ const (
 	SharePathErrorIsOsxPackage         = "is_osx_package"
 	SharePathErrorInsideOsxPackage     = "inside_osx_package"
 	SharePathErrorIsVault              = "is_vault"
+	SharePathErrorIsVaultLocked        = "is_vault_locked"
 	SharePathErrorIsFamily             = "is_family"
 	SharePathErrorOther                = "other"
 )
