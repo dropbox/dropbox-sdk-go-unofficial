@@ -505,6 +505,10 @@ type AdminAlertingAlertConfiguration struct {
 	SensitivityLevel *AdminAlertingAlertSensitivity `json:"sensitivity_level,omitempty"`
 	// RecipientsSettings : Recipient settings.
 	RecipientsSettings *RecipientsConfiguration `json:"recipients_settings,omitempty"`
+	// Text : Text.
+	Text string `json:"text,omitempty"`
+	// ExcludedFileExtensions : Excluded file extensions.
+	ExcludedFileExtensions string `json:"excluded_file_extensions,omitempty"`
 }
 
 // NewAdminAlertingAlertConfiguration returns a new AdminAlertingAlertConfiguration instance
@@ -673,6 +677,50 @@ const (
 	AdminConsoleAppPolicyBlock   = "block"
 	AdminConsoleAppPolicyDefault = "default"
 	AdminConsoleAppPolicyOther   = "other"
+)
+
+// AdminEmailRemindersChangedDetails : Changed admin reminder settings for
+// requests to join the team.
+type AdminEmailRemindersChangedDetails struct {
+	// NewValue : To.
+	NewValue *AdminEmailRemindersPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *AdminEmailRemindersPolicy `json:"previous_value"`
+}
+
+// NewAdminEmailRemindersChangedDetails returns a new AdminEmailRemindersChangedDetails instance
+func NewAdminEmailRemindersChangedDetails(NewValue *AdminEmailRemindersPolicy, PreviousValue *AdminEmailRemindersPolicy) *AdminEmailRemindersChangedDetails {
+	s := new(AdminEmailRemindersChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// AdminEmailRemindersChangedType : has no documentation (yet)
+type AdminEmailRemindersChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewAdminEmailRemindersChangedType returns a new AdminEmailRemindersChangedType instance
+func NewAdminEmailRemindersChangedType(Description string) *AdminEmailRemindersChangedType {
+	s := new(AdminEmailRemindersChangedType)
+	s.Description = Description
+	return s
+}
+
+// AdminEmailRemindersPolicy : Policy for deciding whether team admins receive
+// reminder emails for requests to join the team
+type AdminEmailRemindersPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for AdminEmailRemindersPolicy
+const (
+	AdminEmailRemindersPolicyDefault  = "default"
+	AdminEmailRemindersPolicyDisabled = "disabled"
+	AdminEmailRemindersPolicyEnabled  = "enabled"
+	AdminEmailRemindersPolicyOther    = "other"
 )
 
 // AdminRole : has no documentation (yet)
@@ -3419,6 +3467,50 @@ func NewDropboxPasswordsNewDeviceEnrolledType(Description string) *DropboxPasswo
 	return s
 }
 
+// DropboxPasswordsPolicy : Policy for deciding whether team users can use
+// Dropbox Passwords
+type DropboxPasswordsPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DropboxPasswordsPolicy
+const (
+	DropboxPasswordsPolicyDefault  = "default"
+	DropboxPasswordsPolicyDisabled = "disabled"
+	DropboxPasswordsPolicyEnabled  = "enabled"
+	DropboxPasswordsPolicyOther    = "other"
+)
+
+// DropboxPasswordsPolicyChangedDetails : Changed Dropbox Passwords policy for
+// team.
+type DropboxPasswordsPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *DropboxPasswordsPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *DropboxPasswordsPolicy `json:"previous_value"`
+}
+
+// NewDropboxPasswordsPolicyChangedDetails returns a new DropboxPasswordsPolicyChangedDetails instance
+func NewDropboxPasswordsPolicyChangedDetails(NewValue *DropboxPasswordsPolicy, PreviousValue *DropboxPasswordsPolicy) *DropboxPasswordsPolicyChangedDetails {
+	s := new(DropboxPasswordsPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// DropboxPasswordsPolicyChangedType : has no documentation (yet)
+type DropboxPasswordsPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDropboxPasswordsPolicyChangedType returns a new DropboxPasswordsPolicyChangedType instance
+func NewDropboxPasswordsPolicyChangedType(Description string) *DropboxPasswordsPolicyChangedType {
+	s := new(DropboxPasswordsPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // DurationLogInfo : Represents a time duration: unit and amount
 type DurationLogInfo struct {
 	// Unit : Time unit.
@@ -3435,7 +3527,7 @@ func NewDurationLogInfo(Unit *TimeUnit, Amount uint64) *DurationLogInfo {
 	return s
 }
 
-// EmailIngestPolicy : Policy for deciding whether a team can use Email to my
+// EmailIngestPolicy : Policy for deciding whether a team can use Email to
 // Dropbox feature
 type EmailIngestPolicy struct {
 	dropbox.Tagged
@@ -3448,8 +3540,7 @@ const (
 	EmailIngestPolicyOther    = "other"
 )
 
-// EmailIngestPolicyChangedDetails : Changed email to my Dropbox policy for
-// team.
+// EmailIngestPolicyChangedDetails : Changed email to Dropbox policy for team.
 type EmailIngestPolicyChangedDetails struct {
 	// NewValue : To.
 	NewValue *EmailIngestPolicy `json:"new_value"`
@@ -3478,7 +3569,7 @@ func NewEmailIngestPolicyChangedType(Description string) *EmailIngestPolicyChang
 	return s
 }
 
-// EmailIngestReceiveFileDetails : Received files via Email to my Dropbox.
+// EmailIngestReceiveFileDetails : Received files via Email to Dropbox.
 type EmailIngestReceiveFileDetails struct {
 	// InboxName : Inbox name.
 	InboxName string `json:"inbox_name"`
@@ -3950,6 +4041,11 @@ type EventDetails struct {
 	DropboxPasswordsNewDeviceEnrolledDetails *DropboxPasswordsNewDeviceEnrolledDetails `json:"dropbox_passwords_new_device_enrolled_details,omitempty"`
 	// EmmRefreshAuthTokenDetails : has no documentation (yet)
 	EmmRefreshAuthTokenDetails *EmmRefreshAuthTokenDetails `json:"emm_refresh_auth_token_details,omitempty"`
+	// ExternalDriveBackupEligibilityStatusCheckedDetails : has no documentation
+	// (yet)
+	ExternalDriveBackupEligibilityStatusCheckedDetails *ExternalDriveBackupEligibilityStatusCheckedDetails `json:"external_drive_backup_eligibility_status_checked_details,omitempty"`
+	// ExternalDriveBackupStatusChangedDetails : has no documentation (yet)
+	ExternalDriveBackupStatusChangedDetails *ExternalDriveBackupStatusChangedDetails `json:"external_drive_backup_status_changed_details,omitempty"`
 	// AccountCaptureChangeAvailabilityDetails : has no documentation (yet)
 	AccountCaptureChangeAvailabilityDetails *AccountCaptureChangeAvailabilityDetails `json:"account_capture_change_availability_details,omitempty"`
 	// AccountCaptureMigrateAccountDetails : has no documentation (yet)
@@ -4548,6 +4644,8 @@ type EventDetails struct {
 	TeamSelectiveSyncSettingsChangedDetails *TeamSelectiveSyncSettingsChangedDetails `json:"team_selective_sync_settings_changed_details,omitempty"`
 	// AccountCaptureChangePolicyDetails : has no documentation (yet)
 	AccountCaptureChangePolicyDetails *AccountCaptureChangePolicyDetails `json:"account_capture_change_policy_details,omitempty"`
+	// AdminEmailRemindersChangedDetails : has no documentation (yet)
+	AdminEmailRemindersChangedDetails *AdminEmailRemindersChangedDetails `json:"admin_email_reminders_changed_details,omitempty"`
 	// AllowDownloadDisabledDetails : has no documentation (yet)
 	AllowDownloadDisabledDetails *AllowDownloadDisabledDetails `json:"allow_download_disabled_details,omitempty"`
 	// AllowDownloadEnabledDetails : has no documentation (yet)
@@ -4584,6 +4682,8 @@ type EventDetails struct {
 	DirectoryRestrictionsAddMembersDetails *DirectoryRestrictionsAddMembersDetails `json:"directory_restrictions_add_members_details,omitempty"`
 	// DirectoryRestrictionsRemoveMembersDetails : has no documentation (yet)
 	DirectoryRestrictionsRemoveMembersDetails *DirectoryRestrictionsRemoveMembersDetails `json:"directory_restrictions_remove_members_details,omitempty"`
+	// DropboxPasswordsPolicyChangedDetails : has no documentation (yet)
+	DropboxPasswordsPolicyChangedDetails *DropboxPasswordsPolicyChangedDetails `json:"dropbox_passwords_policy_changed_details,omitempty"`
 	// EmailIngestPolicyChangedDetails : has no documentation (yet)
 	EmailIngestPolicyChangedDetails *EmailIngestPolicyChangedDetails `json:"email_ingest_policy_changed_details,omitempty"`
 	// EmmAddExceptionDetails : has no documentation (yet)
@@ -4600,6 +4700,8 @@ type EventDetails struct {
 	FileCommentsChangePolicyDetails *FileCommentsChangePolicyDetails `json:"file_comments_change_policy_details,omitempty"`
 	// FileLockingPolicyChangedDetails : has no documentation (yet)
 	FileLockingPolicyChangedDetails *FileLockingPolicyChangedDetails `json:"file_locking_policy_changed_details,omitempty"`
+	// FileProviderMigrationPolicyChangedDetails : has no documentation (yet)
+	FileProviderMigrationPolicyChangedDetails *FileProviderMigrationPolicyChangedDetails `json:"file_provider_migration_policy_changed_details,omitempty"`
 	// FileRequestsChangePolicyDetails : has no documentation (yet)
 	FileRequestsChangePolicyDetails *FileRequestsChangePolicyDetails `json:"file_requests_change_policy_details,omitempty"`
 	// FileRequestsEmailsEnabledDetails : has no documentation (yet)
@@ -4883,6 +4985,8 @@ const (
 	EventDetailsDropboxPasswordsExportedDetails                     = "dropbox_passwords_exported_details"
 	EventDetailsDropboxPasswordsNewDeviceEnrolledDetails            = "dropbox_passwords_new_device_enrolled_details"
 	EventDetailsEmmRefreshAuthTokenDetails                          = "emm_refresh_auth_token_details"
+	EventDetailsExternalDriveBackupEligibilityStatusCheckedDetails  = "external_drive_backup_eligibility_status_checked_details"
+	EventDetailsExternalDriveBackupStatusChangedDetails             = "external_drive_backup_status_changed_details"
 	EventDetailsAccountCaptureChangeAvailabilityDetails             = "account_capture_change_availability_details"
 	EventDetailsAccountCaptureMigrateAccountDetails                 = "account_capture_migrate_account_details"
 	EventDetailsAccountCaptureNotificationEmailsSentDetails         = "account_capture_notification_emails_sent_details"
@@ -5179,6 +5283,7 @@ const (
 	EventDetailsTeamFolderRenameDetails                             = "team_folder_rename_details"
 	EventDetailsTeamSelectiveSyncSettingsChangedDetails             = "team_selective_sync_settings_changed_details"
 	EventDetailsAccountCaptureChangePolicyDetails                   = "account_capture_change_policy_details"
+	EventDetailsAdminEmailRemindersChangedDetails                   = "admin_email_reminders_changed_details"
 	EventDetailsAllowDownloadDisabledDetails                        = "allow_download_disabled_details"
 	EventDetailsAllowDownloadEnabledDetails                         = "allow_download_enabled_details"
 	EventDetailsAppPermissionsChangedDetails                        = "app_permissions_changed_details"
@@ -5197,6 +5302,7 @@ const (
 	EventDetailsDeviceApprovalsRemoveExceptionDetails               = "device_approvals_remove_exception_details"
 	EventDetailsDirectoryRestrictionsAddMembersDetails              = "directory_restrictions_add_members_details"
 	EventDetailsDirectoryRestrictionsRemoveMembersDetails           = "directory_restrictions_remove_members_details"
+	EventDetailsDropboxPasswordsPolicyChangedDetails                = "dropbox_passwords_policy_changed_details"
 	EventDetailsEmailIngestPolicyChangedDetails                     = "email_ingest_policy_changed_details"
 	EventDetailsEmmAddExceptionDetails                              = "emm_add_exception_details"
 	EventDetailsEmmChangePolicyDetails                              = "emm_change_policy_details"
@@ -5205,6 +5311,7 @@ const (
 	EventDetailsExternalDriveBackupPolicyChangedDetails             = "external_drive_backup_policy_changed_details"
 	EventDetailsFileCommentsChangePolicyDetails                     = "file_comments_change_policy_details"
 	EventDetailsFileLockingPolicyChangedDetails                     = "file_locking_policy_changed_details"
+	EventDetailsFileProviderMigrationPolicyChangedDetails           = "file_provider_migration_policy_changed_details"
 	EventDetailsFileRequestsChangePolicyDetails                     = "file_requests_change_policy_details"
 	EventDetailsFileRequestsEmailsEnabledDetails                    = "file_requests_emails_enabled_details"
 	EventDetailsFileRequestsEmailsRestrictedToTeamOnlyDetails       = "file_requests_emails_restricted_to_team_only_details"
@@ -5594,6 +5701,16 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "emm_refresh_auth_token_details":
 		if err = json.Unmarshal(body, &u.EmmRefreshAuthTokenDetails); err != nil {
+			return err
+		}
+
+	case "external_drive_backup_eligibility_status_checked_details":
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupEligibilityStatusCheckedDetails); err != nil {
+			return err
+		}
+
+	case "external_drive_backup_status_changed_details":
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupStatusChangedDetails); err != nil {
 			return err
 		}
 
@@ -7077,6 +7194,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "admin_email_reminders_changed_details":
+		if err = json.Unmarshal(body, &u.AdminEmailRemindersChangedDetails); err != nil {
+			return err
+		}
+
 	case "allow_download_disabled_details":
 		if err = json.Unmarshal(body, &u.AllowDownloadDisabledDetails); err != nil {
 			return err
@@ -7167,6 +7289,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "dropbox_passwords_policy_changed_details":
+		if err = json.Unmarshal(body, &u.DropboxPasswordsPolicyChangedDetails); err != nil {
+			return err
+		}
+
 	case "email_ingest_policy_changed_details":
 		if err = json.Unmarshal(body, &u.EmailIngestPolicyChangedDetails); err != nil {
 			return err
@@ -7204,6 +7331,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "file_locking_policy_changed_details":
 		if err = json.Unmarshal(body, &u.FileLockingPolicyChangedDetails); err != nil {
+			return err
+		}
+
+	case "file_provider_migration_policy_changed_details":
+		if err = json.Unmarshal(body, &u.FileProviderMigrationPolicyChangedDetails); err != nil {
 			return err
 		}
 
@@ -7856,6 +7988,12 @@ type EventType struct {
 	// EmmRefreshAuthToken : (devices) Refreshed auth token used for setting up
 	// EMM
 	EmmRefreshAuthToken *EmmRefreshAuthTokenType `json:"emm_refresh_auth_token,omitempty"`
+	// ExternalDriveBackupEligibilityStatusChecked : (devices) Checked external
+	// drive backup eligibility status
+	ExternalDriveBackupEligibilityStatusChecked *ExternalDriveBackupEligibilityStatusCheckedType `json:"external_drive_backup_eligibility_status_checked,omitempty"`
+	// ExternalDriveBackupStatusChanged : (devices) Modified external drive
+	// backup
+	ExternalDriveBackupStatusChanged *ExternalDriveBackupStatusChangedType `json:"external_drive_backup_status_changed,omitempty"`
 	// AccountCaptureChangeAvailability : (domains) Granted/revoked option to
 	// enable account capture on team domains
 	AccountCaptureChangeAvailability *AccountCaptureChangeAvailabilityType `json:"account_capture_change_availability,omitempty"`
@@ -7966,7 +8104,7 @@ type EventType struct {
 	UserTagsAdded *UserTagsAddedType `json:"user_tags_added,omitempty"`
 	// UserTagsRemoved : (file_operations) Removed tags
 	UserTagsRemoved *UserTagsRemovedType `json:"user_tags_removed,omitempty"`
-	// EmailIngestReceiveFile : (file_requests) Received files via Email to my
+	// EmailIngestReceiveFile : (file_requests) Received files via Email to
 	// Dropbox
 	EmailIngestReceiveFile *EmailIngestReceiveFileType `json:"email_ingest_receive_file,omitempty"`
 	// FileRequestChange : (file_requests) Changed file request
@@ -8586,6 +8724,9 @@ type EventType struct {
 	// AccountCaptureChangePolicy : (team_policies) Changed account capture
 	// setting on team domain
 	AccountCaptureChangePolicy *AccountCaptureChangePolicyType `json:"account_capture_change_policy,omitempty"`
+	// AdminEmailRemindersChanged : (team_policies) Changed admin reminder
+	// settings for requests to join the team
+	AdminEmailRemindersChanged *AdminEmailRemindersChangedType `json:"admin_email_reminders_changed,omitempty"`
 	// AllowDownloadDisabled : (team_policies) Disabled downloads (deprecated,
 	// no longer logged)
 	AllowDownloadDisabled *AllowDownloadDisabledType `json:"allow_download_disabled,omitempty"`
@@ -8639,7 +8780,10 @@ type EventType struct {
 	// DirectoryRestrictionsRemoveMembers : (team_policies) Removed members from
 	// directory restrictions list
 	DirectoryRestrictionsRemoveMembers *DirectoryRestrictionsRemoveMembersType `json:"directory_restrictions_remove_members,omitempty"`
-	// EmailIngestPolicyChanged : (team_policies) Changed email to my Dropbox
+	// DropboxPasswordsPolicyChanged : (team_policies) Changed Dropbox Passwords
+	// policy for team
+	DropboxPasswordsPolicyChanged *DropboxPasswordsPolicyChangedType `json:"dropbox_passwords_policy_changed,omitempty"`
+	// EmailIngestPolicyChanged : (team_policies) Changed email to Dropbox
 	// policy for team
 	EmailIngestPolicyChanged *EmailIngestPolicyChangedType `json:"email_ingest_policy_changed,omitempty"`
 	// EmmAddException : (team_policies) Added members to EMM exception list
@@ -8662,6 +8806,9 @@ type EventType struct {
 	// FileLockingPolicyChanged : (team_policies) Changed file locking policy
 	// for team
 	FileLockingPolicyChanged *FileLockingPolicyChangedType `json:"file_locking_policy_changed,omitempty"`
+	// FileProviderMigrationPolicyChanged : (team_policies) Changed File
+	// Provider Migration policy for team
+	FileProviderMigrationPolicyChanged *FileProviderMigrationPolicyChangedType `json:"file_provider_migration_policy_changed,omitempty"`
 	// FileRequestsChangePolicy : (team_policies) Enabled/disabled file requests
 	FileRequestsChangePolicy *FileRequestsChangePolicyType `json:"file_requests_change_policy,omitempty"`
 	// FileRequestsEmailsEnabled : (team_policies) Enabled file request emails
@@ -9018,6 +9165,8 @@ const (
 	EventTypeDropboxPasswordsExported                     = "dropbox_passwords_exported"
 	EventTypeDropboxPasswordsNewDeviceEnrolled            = "dropbox_passwords_new_device_enrolled"
 	EventTypeEmmRefreshAuthToken                          = "emm_refresh_auth_token"
+	EventTypeExternalDriveBackupEligibilityStatusChecked  = "external_drive_backup_eligibility_status_checked"
+	EventTypeExternalDriveBackupStatusChanged             = "external_drive_backup_status_changed"
 	EventTypeAccountCaptureChangeAvailability             = "account_capture_change_availability"
 	EventTypeAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
 	EventTypeAccountCaptureNotificationEmailsSent         = "account_capture_notification_emails_sent"
@@ -9314,6 +9463,7 @@ const (
 	EventTypeTeamFolderRename                             = "team_folder_rename"
 	EventTypeTeamSelectiveSyncSettingsChanged             = "team_selective_sync_settings_changed"
 	EventTypeAccountCaptureChangePolicy                   = "account_capture_change_policy"
+	EventTypeAdminEmailRemindersChanged                   = "admin_email_reminders_changed"
 	EventTypeAllowDownloadDisabled                        = "allow_download_disabled"
 	EventTypeAllowDownloadEnabled                         = "allow_download_enabled"
 	EventTypeAppPermissionsChanged                        = "app_permissions_changed"
@@ -9332,6 +9482,7 @@ const (
 	EventTypeDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
 	EventTypeDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
 	EventTypeDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeDropboxPasswordsPolicyChanged                = "dropbox_passwords_policy_changed"
 	EventTypeEmailIngestPolicyChanged                     = "email_ingest_policy_changed"
 	EventTypeEmmAddException                              = "emm_add_exception"
 	EventTypeEmmChangePolicy                              = "emm_change_policy"
@@ -9340,6 +9491,7 @@ const (
 	EventTypeExternalDriveBackupPolicyChanged             = "external_drive_backup_policy_changed"
 	EventTypeFileCommentsChangePolicy                     = "file_comments_change_policy"
 	EventTypeFileLockingPolicyChanged                     = "file_locking_policy_changed"
+	EventTypeFileProviderMigrationPolicyChanged           = "file_provider_migration_policy_changed"
 	EventTypeFileRequestsChangePolicy                     = "file_requests_change_policy"
 	EventTypeFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
 	EventTypeFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
@@ -9728,6 +9880,16 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "emm_refresh_auth_token":
 		if err = json.Unmarshal(body, &u.EmmRefreshAuthToken); err != nil {
+			return err
+		}
+
+	case "external_drive_backup_eligibility_status_checked":
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupEligibilityStatusChecked); err != nil {
+			return err
+		}
+
+	case "external_drive_backup_status_changed":
+		if err = json.Unmarshal(body, &u.ExternalDriveBackupStatusChanged); err != nil {
 			return err
 		}
 
@@ -11211,6 +11373,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "admin_email_reminders_changed":
+		if err = json.Unmarshal(body, &u.AdminEmailRemindersChanged); err != nil {
+			return err
+		}
+
 	case "allow_download_disabled":
 		if err = json.Unmarshal(body, &u.AllowDownloadDisabled); err != nil {
 			return err
@@ -11301,6 +11468,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "dropbox_passwords_policy_changed":
+		if err = json.Unmarshal(body, &u.DropboxPasswordsPolicyChanged); err != nil {
+			return err
+		}
+
 	case "email_ingest_policy_changed":
 		if err = json.Unmarshal(body, &u.EmailIngestPolicyChanged); err != nil {
 			return err
@@ -11338,6 +11510,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "file_locking_policy_changed":
 		if err = json.Unmarshal(body, &u.FileLockingPolicyChanged); err != nil {
+			return err
+		}
+
+	case "file_provider_migration_policy_changed":
+		if err = json.Unmarshal(body, &u.FileProviderMigrationPolicyChanged); err != nil {
 			return err
 		}
 
@@ -11912,6 +12089,8 @@ const (
 	EventTypeArgDropboxPasswordsExported                     = "dropbox_passwords_exported"
 	EventTypeArgDropboxPasswordsNewDeviceEnrolled            = "dropbox_passwords_new_device_enrolled"
 	EventTypeArgEmmRefreshAuthToken                          = "emm_refresh_auth_token"
+	EventTypeArgExternalDriveBackupEligibilityStatusChecked  = "external_drive_backup_eligibility_status_checked"
+	EventTypeArgExternalDriveBackupStatusChanged             = "external_drive_backup_status_changed"
 	EventTypeArgAccountCaptureChangeAvailability             = "account_capture_change_availability"
 	EventTypeArgAccountCaptureMigrateAccount                 = "account_capture_migrate_account"
 	EventTypeArgAccountCaptureNotificationEmailsSent         = "account_capture_notification_emails_sent"
@@ -12208,6 +12387,7 @@ const (
 	EventTypeArgTeamFolderRename                             = "team_folder_rename"
 	EventTypeArgTeamSelectiveSyncSettingsChanged             = "team_selective_sync_settings_changed"
 	EventTypeArgAccountCaptureChangePolicy                   = "account_capture_change_policy"
+	EventTypeArgAdminEmailRemindersChanged                   = "admin_email_reminders_changed"
 	EventTypeArgAllowDownloadDisabled                        = "allow_download_disabled"
 	EventTypeArgAllowDownloadEnabled                         = "allow_download_enabled"
 	EventTypeArgAppPermissionsChanged                        = "app_permissions_changed"
@@ -12226,6 +12406,7 @@ const (
 	EventTypeArgDeviceApprovalsRemoveException               = "device_approvals_remove_exception"
 	EventTypeArgDirectoryRestrictionsAddMembers              = "directory_restrictions_add_members"
 	EventTypeArgDirectoryRestrictionsRemoveMembers           = "directory_restrictions_remove_members"
+	EventTypeArgDropboxPasswordsPolicyChanged                = "dropbox_passwords_policy_changed"
 	EventTypeArgEmailIngestPolicyChanged                     = "email_ingest_policy_changed"
 	EventTypeArgEmmAddException                              = "emm_add_exception"
 	EventTypeArgEmmChangePolicy                              = "emm_change_policy"
@@ -12234,6 +12415,7 @@ const (
 	EventTypeArgExternalDriveBackupPolicyChanged             = "external_drive_backup_policy_changed"
 	EventTypeArgFileCommentsChangePolicy                     = "file_comments_change_policy"
 	EventTypeArgFileLockingPolicyChanged                     = "file_locking_policy_changed"
+	EventTypeArgFileProviderMigrationPolicyChanged           = "file_provider_migration_policy_changed"
 	EventTypeArgFileRequestsChangePolicy                     = "file_requests_change_policy"
 	EventTypeArgFileRequestsEmailsEnabled                    = "file_requests_emails_enabled"
 	EventTypeArgFileRequestsEmailsRestrictedToTeamOnly       = "file_requests_emails_restricted_to_team_only"
@@ -12431,6 +12613,53 @@ const (
 	ExtendedVersionHistoryPolicyOther               = "other"
 )
 
+// ExternalDriveBackupEligibilityStatus : External Drive Backup eligibility
+// status
+type ExternalDriveBackupEligibilityStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ExternalDriveBackupEligibilityStatus
+const (
+	ExternalDriveBackupEligibilityStatusExceedLicenseCap = "exceed_license_cap"
+	ExternalDriveBackupEligibilityStatusSuccess          = "success"
+	ExternalDriveBackupEligibilityStatusOther            = "other"
+)
+
+// ExternalDriveBackupEligibilityStatusCheckedDetails : Checked external drive
+// backup eligibility status.
+type ExternalDriveBackupEligibilityStatusCheckedDetails struct {
+	// DesktopDeviceSessionInfo : Device's session logged information.
+	DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo `json:"desktop_device_session_info"`
+	// Status : Current eligibility status of external drive backup.
+	Status *ExternalDriveBackupEligibilityStatus `json:"status"`
+	// NumberOfExternalDriveBackup : Total number of valid external drive backup
+	// for all the team members.
+	NumberOfExternalDriveBackup uint64 `json:"number_of_external_drive_backup"`
+}
+
+// NewExternalDriveBackupEligibilityStatusCheckedDetails returns a new ExternalDriveBackupEligibilityStatusCheckedDetails instance
+func NewExternalDriveBackupEligibilityStatusCheckedDetails(DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo, Status *ExternalDriveBackupEligibilityStatus, NumberOfExternalDriveBackup uint64) *ExternalDriveBackupEligibilityStatusCheckedDetails {
+	s := new(ExternalDriveBackupEligibilityStatusCheckedDetails)
+	s.DesktopDeviceSessionInfo = DesktopDeviceSessionInfo
+	s.Status = Status
+	s.NumberOfExternalDriveBackup = NumberOfExternalDriveBackup
+	return s
+}
+
+// ExternalDriveBackupEligibilityStatusCheckedType : has no documentation (yet)
+type ExternalDriveBackupEligibilityStatusCheckedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExternalDriveBackupEligibilityStatusCheckedType returns a new ExternalDriveBackupEligibilityStatusCheckedType instance
+func NewExternalDriveBackupEligibilityStatusCheckedType(Description string) *ExternalDriveBackupEligibilityStatusCheckedType {
+	s := new(ExternalDriveBackupEligibilityStatusCheckedType)
+	s.Description = Description
+	return s
+}
+
 // ExternalDriveBackupPolicy : Policy for controlling team access to external
 // drive backup feature
 type ExternalDriveBackupPolicy struct {
@@ -12471,6 +12700,54 @@ type ExternalDriveBackupPolicyChangedType struct {
 // NewExternalDriveBackupPolicyChangedType returns a new ExternalDriveBackupPolicyChangedType instance
 func NewExternalDriveBackupPolicyChangedType(Description string) *ExternalDriveBackupPolicyChangedType {
 	s := new(ExternalDriveBackupPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// ExternalDriveBackupStatus : External Drive Backup status
+type ExternalDriveBackupStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ExternalDriveBackupStatus
+const (
+	ExternalDriveBackupStatusBroken          = "broken"
+	ExternalDriveBackupStatusCreated         = "created"
+	ExternalDriveBackupStatusCreatedOrBroken = "created_or_broken"
+	ExternalDriveBackupStatusDeleted         = "deleted"
+	ExternalDriveBackupStatusEmpty           = "empty"
+	ExternalDriveBackupStatusUnknown         = "unknown"
+	ExternalDriveBackupStatusOther           = "other"
+)
+
+// ExternalDriveBackupStatusChangedDetails : Modified external drive backup.
+type ExternalDriveBackupStatusChangedDetails struct {
+	// DesktopDeviceSessionInfo : Device's session logged information.
+	DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo `json:"desktop_device_session_info"`
+	// PreviousValue : Previous status of this external drive backup.
+	PreviousValue *ExternalDriveBackupStatus `json:"previous_value"`
+	// NewValue : Next status of this external drive backup.
+	NewValue *ExternalDriveBackupStatus `json:"new_value"`
+}
+
+// NewExternalDriveBackupStatusChangedDetails returns a new ExternalDriveBackupStatusChangedDetails instance
+func NewExternalDriveBackupStatusChangedDetails(DesktopDeviceSessionInfo *DesktopDeviceSessionLogInfo, PreviousValue *ExternalDriveBackupStatus, NewValue *ExternalDriveBackupStatus) *ExternalDriveBackupStatusChangedDetails {
+	s := new(ExternalDriveBackupStatusChangedDetails)
+	s.DesktopDeviceSessionInfo = DesktopDeviceSessionInfo
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// ExternalDriveBackupStatusChangedType : has no documentation (yet)
+type ExternalDriveBackupStatusChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewExternalDriveBackupStatusChangedType returns a new ExternalDriveBackupStatusChangedType instance
+func NewExternalDriveBackupStatusChangedType(Description string) *ExternalDriveBackupStatusChangedType {
+	s := new(ExternalDriveBackupStatusChangedType)
 	s.Description = Description
 	return s
 }
@@ -13160,6 +13437,36 @@ type FilePreviewType struct {
 // NewFilePreviewType returns a new FilePreviewType instance
 func NewFilePreviewType(Description string) *FilePreviewType {
 	s := new(FilePreviewType)
+	s.Description = Description
+	return s
+}
+
+// FileProviderMigrationPolicyChangedDetails : Changed File Provider Migration
+// policy for team.
+type FileProviderMigrationPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *team_policies.FileProviderMigrationPolicyState `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *team_policies.FileProviderMigrationPolicyState `json:"previous_value"`
+}
+
+// NewFileProviderMigrationPolicyChangedDetails returns a new FileProviderMigrationPolicyChangedDetails instance
+func NewFileProviderMigrationPolicyChangedDetails(NewValue *team_policies.FileProviderMigrationPolicyState, PreviousValue *team_policies.FileProviderMigrationPolicyState) *FileProviderMigrationPolicyChangedDetails {
+	s := new(FileProviderMigrationPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// FileProviderMigrationPolicyChangedType : has no documentation (yet)
+type FileProviderMigrationPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewFileProviderMigrationPolicyChangedType returns a new FileProviderMigrationPolicyChangedType instance
+func NewFileProviderMigrationPolicyChangedType(Description string) *FileProviderMigrationPolicyChangedType {
+	s := new(FileProviderMigrationPolicyChangedType)
 	s.Description = Description
 	return s
 }
@@ -19153,6 +19460,7 @@ const (
 	PlacementRestrictionJapanOnly     = "japan_only"
 	PlacementRestrictionNone          = "none"
 	PlacementRestrictionUkOnly        = "uk_only"
+	PlacementRestrictionUsS3Only      = "us_s3_only"
 	PlacementRestrictionOther         = "other"
 )
 
@@ -23879,6 +24187,7 @@ type TeamMembershipType struct {
 const (
 	TeamMembershipTypeFree  = "free"
 	TeamMembershipTypeFull  = "full"
+	TeamMembershipTypeGuest = "guest"
 	TeamMembershipTypeOther = "other"
 )
 

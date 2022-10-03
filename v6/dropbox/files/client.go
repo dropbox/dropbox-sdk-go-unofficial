@@ -121,7 +121,8 @@ type Client interface {
 	// The folder must be less than 20 GB in size and any single file within
 	// must be less than 4 GB in size. The resulting zip must have fewer than
 	// 10,000 total file and folder entries, including the top level folder. The
-	// input cannot be a single file.
+	// input cannot be a single file. Note: this endpoint does not support HTTP
+	// range requests.
 	DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, content io.ReadCloser, err error)
 	// Export : Export a file from a user's Dropbox. This route only supports
 	// exporting files that cannot be downloaded directly  and whose
@@ -331,8 +332,9 @@ type Client interface {
 	// Duplicate results may be returned across pages. Some results may not be
 	// returned.
 	SearchContinueV2(arg *SearchV2ContinueArg) (res *SearchV2Result, err error)
-	// TagsAdd : Add a tag to an item. A tag is a string. No more than 20 tags
-	// can be added to a given item.
+	// TagsAdd : Add a tag to an item. A tag is a string. The strings are
+	// automatically converted to lowercase letters. No more than 20 tags can be
+	// added to a given item.
 	TagsAdd(arg *AddTagArg) (err error)
 	// TagsGet : Get list of tags assigned to items.
 	TagsGet(arg *GetTagsArg) (res *GetTagsResult, err error)
@@ -449,6 +451,13 @@ type Client interface {
 	// `uploadSessionAppend` with `UploadSessionStartArg.close` to true, that
 	// may contain any remaining data).
 	UploadSessionStart(arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error)
+	// UploadSessionStartBatch : This route starts batch of upload_sessions.
+	// Please refer to `upload_session/start` usage. Calls to this endpoint will
+	// count as data transport calls for any Dropbox Business teams with a limit
+	// on the number of data transport calls allowed per month. For more
+	// information, see the `Data transport limit page`
+	// <https://www.dropbox.com/developers/reference/data-transport-limit>.
+	UploadSessionStartBatch(arg *UploadSessionStartBatchArg) (res *UploadSessionStartBatchResult, err error)
 }
 
 type apiImpl dropbox.Context
@@ -3091,6 +3100,44 @@ func (dbx *apiImpl) UploadSessionStart(arg *UploadSessionStartArg, content io.Re
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, content)
 	if err != nil {
 		var appErr UploadSessionStartAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+//UploadSessionStartBatchAPIError is an error-wrapper for the upload_session/start_batch route
+type UploadSessionStartBatchAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) UploadSessionStartBatch(arg *UploadSessionStartBatchArg) (res *UploadSessionStartBatchResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "files",
+		Route:        "upload_session/start_batch",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr UploadSessionStartBatchAPIError
 		err = auth.ParseError(err, &appErr)
 		if err == &appErr {
 			err = appErr

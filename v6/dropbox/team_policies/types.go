@@ -86,6 +86,19 @@ const (
 	FileLockingPolicyStateOther    = "other"
 )
 
+// FileProviderMigrationPolicyState : has no documentation (yet)
+type FileProviderMigrationPolicyState struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for FileProviderMigrationPolicyState
+const (
+	FileProviderMigrationPolicyStateDisabled = "disabled"
+	FileProviderMigrationPolicyStateEnabled  = "enabled"
+	FileProviderMigrationPolicyStateDefault  = "default"
+	FileProviderMigrationPolicyStateOther    = "other"
+)
+
 // GroupCreation : has no documentation (yet)
 type GroupCreation struct {
 	dropbox.Tagged

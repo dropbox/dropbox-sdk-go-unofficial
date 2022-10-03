@@ -12,6 +12,7 @@ from stone.ir import (
     unwrap_nullable,
     is_composite_type,
     is_list_type,
+    is_map_type,
     is_struct_type,
     Void,
 )
@@ -74,6 +75,10 @@ def fmt_type(data_type, namespace=None, use_interface=False, raw=False):
         if raw and not _needs_base_type(data_type.data_type):
             return "json.RawMessage"
         return '[]%s' % fmt_type(data_type.data_type, namespace, use_interface, raw)
+    if is_map_type(data_type):
+        if raw and not _needs_base_type(data_type.data_type):
+            return "json.RawMessage"
+        return 'map[string]%s' % fmt_type(data_type.value_data_type, namespace, use_interface, raw)
     if raw:
         return "json.RawMessage"
     type_name = data_type.name
@@ -146,6 +151,8 @@ def _needs_base_type(data_type):
         return True
     if is_list_type(data_type):
         return _needs_base_type(data_type.data_type)
+    if is_map_type(data_type):
+        return _needs_base_type(data_type.value_data_type)
     return False
 
 
