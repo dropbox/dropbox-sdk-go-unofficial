@@ -57,6 +57,7 @@ const (
 	AccessLevelEditor          = "editor"
 	AccessLevelViewer          = "viewer"
 	AccessLevelViewerNoComment = "viewer_no_comment"
+	AccessLevelTraverse        = "traverse"
 	AccessLevelOther           = "other"
 )
 
@@ -957,7 +958,10 @@ func (u *FileMemberActionError) UnmarshalJSON(body []byte) error {
 // FileMemberActionIndividualResult : has no documentation (yet)
 type FileMemberActionIndividualResult struct {
 	dropbox.Tagged
-	// Success : Member was successfully removed from this file. If AccessLevel
+	// Success : Part of the response for both add_file_member and
+	// remove_file_member_v1 (deprecated). For add_file_member, indicates giving
+	// access was successful and at what AccessLevel. For remove_file_member_v1,
+	// indicates member was successfully removed from the file. If AccessLevel
 	// is given, the member still has access via a parent shared folder.
 	Success *AccessLevel `json:"success,omitempty"`
 	// MemberError : User was not able to perform this action.
@@ -974,9 +978,12 @@ const (
 func (u *FileMemberActionIndividualResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Success : Member was successfully removed from this file. If
-		// AccessLevel is given, the member still has access via a parent shared
-		// folder.
+		// Success : Part of the response for both add_file_member and
+		// remove_file_member_v1 (deprecated). For add_file_member, indicates
+		// giving access was successful and at what AccessLevel. For
+		// remove_file_member_v1, indicates member was successfully removed from
+		// the file. If AccessLevel is given, the member still has access via a
+		// parent shared folder.
 		Success *AccessLevel `json:"success,omitempty"`
 		// MemberError : User was not able to perform this action.
 		MemberError *FileMemberActionError `json:"member_error,omitempty"`
@@ -1004,6 +1011,12 @@ type FileMemberActionResult struct {
 	Member *MemberSelector `json:"member"`
 	// Result : The outcome of the action on this member.
 	Result *FileMemberActionIndividualResult `json:"result"`
+	// SckeySha1 : The SHA-1 encrypted shared content key.
+	SckeySha1 string `json:"sckey_sha1,omitempty"`
+	// InvitationSignature : The sharing sender-recipient invitation signatures
+	// for the input member_id. A member_id can be a group and thus have
+	// multiple users and multiple invitation signatures.
+	InvitationSignature []string `json:"invitation_signature,omitempty"`
 }
 
 // NewFileMemberActionResult returns a new FileMemberActionResult instance

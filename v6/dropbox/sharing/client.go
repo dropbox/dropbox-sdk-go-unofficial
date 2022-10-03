@@ -654,7 +654,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 		Host:         "api",
 		Namespace:    "sharing",
 		Route:        "get_shared_link_metadata",
-		Auth:         "user",
+		Auth:         "app, user",
 		Style:        "rpc",
 		Arg:          arg,
 		ExtraHeaders: nil,

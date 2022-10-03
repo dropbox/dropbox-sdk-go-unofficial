@@ -34,7 +34,8 @@ import (
 type AddTagArg struct {
 	// Path : Path to the item to be tagged.
 	Path string `json:"path"`
-	// TagText : The value of the tag to add.
+	// TagText : The value of the tag to add. Will be automatically converted to
+	// lowercase letters.
 	TagText string `json:"tag_text"`
 }
 
@@ -923,6 +924,8 @@ type Metadata struct {
 	// `FileSharingInfo.parent_shared_folder_id` or
 	// `FolderSharingInfo.parent_shared_folder_id` instead.
 	ParentSharedFolderId string `json:"parent_shared_folder_id,omitempty"`
+	// PreviewUrl : The preview URL of the file.
+	PreviewUrl string `json:"preview_url,omitempty"`
 }
 
 // NewMetadata returns a new Metadata instance
@@ -3552,7 +3555,8 @@ func (u *RelocationResult) UnmarshalJSON(b []byte) error {
 type RemoveTagArg struct {
 	// Path : Path to the item to tag.
 	Path string `json:"path"`
-	// TagText : The tag to remove.
+	// TagText : The tag to remove. Will be automatically converted to lowercase
+	// letters.
 	TagText string `json:"tag_text"`
 }
 
@@ -4087,6 +4091,8 @@ type SearchOptions struct {
 	// FileCategories : Restricts search to only the file categories specified.
 	// Only supported for active file search.
 	FileCategories []*FileCategory `json:"file_categories,omitempty"`
+	// AccountId : Restricts results to the given account id.
+	AccountId string `json:"account_id,omitempty"`
 }
 
 // NewSearchOptions returns a new SearchOptions instance
@@ -4546,9 +4552,9 @@ func NewUnlockFileBatchArg(Entries []*UnlockFileArg) *UnlockFileBatchArg {
 // UploadArg : has no documentation (yet)
 type UploadArg struct {
 	CommitInfo
-	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
-	// this call. If provided and the uploaded content does not match this hash,
-	// an error will be returned. For more information see our `Content hash`
+	// ContentHash : A hash of the file content uploaded in this call. If
+	// provided and the uploaded content does not match this hash, an error will
+	// be returned. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4618,9 +4624,9 @@ type UploadSessionAppendArg struct {
 	// won't be able to call `uploadSessionAppend` anymore with the current
 	// session.
 	Close bool `json:"close"`
-	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
-	// this call. If provided and the uploaded content does not match this hash,
-	// an error will be returned. For more information see our `Content hash`
+	// ContentHash : A hash of the file content uploaded in this call. If
+	// provided and the uploaded content does not match this hash, an error will
+	// be returned. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4746,9 +4752,9 @@ type UploadSessionFinishArg struct {
 	Cursor *UploadSessionCursor `json:"cursor"`
 	// Commit : Contains the path and other optional modifiers for the commit.
 	Commit *CommitInfo `json:"commit"`
-	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
-	// this call. If provided and the uploaded content does not match this hash,
-	// an error will be returned. For more information see our `Content hash`
+	// ContentHash : A hash of the file content uploaded in this call. If
+	// provided and the uploaded content does not match this hash, an error will
+	// be returned. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4998,9 +5004,9 @@ type UploadSessionStartArg struct {
 	// SessionType : Type of upload session you want to start. If not specified,
 	// default is `UploadSessionType.sequential`.
 	SessionType *UploadSessionType `json:"session_type,omitempty"`
-	// ContentHash : NOT YET SUPPORTED. A hash of the file content uploaded in
-	// this call. If provided and the uploaded content does not match this hash,
-	// an error will be returned. For more information see our `Content hash`
+	// ContentHash : A hash of the file content uploaded in this call. If
+	// provided and the uploaded content does not match this hash, an error will
+	// be returned. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -5009,6 +5015,36 @@ type UploadSessionStartArg struct {
 func NewUploadSessionStartArg() *UploadSessionStartArg {
 	s := new(UploadSessionStartArg)
 	s.Close = false
+	return s
+}
+
+// UploadSessionStartBatchArg : has no documentation (yet)
+type UploadSessionStartBatchArg struct {
+	// SessionType : Type of upload session you want to start. If not specified,
+	// default is `UploadSessionType.sequential`.
+	SessionType *UploadSessionType `json:"session_type,omitempty"`
+	// NumSessions : The number of upload sessions to start.
+	NumSessions uint64 `json:"num_sessions"`
+}
+
+// NewUploadSessionStartBatchArg returns a new UploadSessionStartBatchArg instance
+func NewUploadSessionStartBatchArg(NumSessions uint64) *UploadSessionStartBatchArg {
+	s := new(UploadSessionStartBatchArg)
+	s.NumSessions = NumSessions
+	return s
+}
+
+// UploadSessionStartBatchResult : has no documentation (yet)
+type UploadSessionStartBatchResult struct {
+	// SessionIds : A List of unique identifiers for the upload session. Pass
+	// each session_id to `uploadSessionAppend` and `uploadSessionFinish`.
+	SessionIds []string `json:"session_ids"`
+}
+
+// NewUploadSessionStartBatchResult returns a new UploadSessionStartBatchResult instance
+func NewUploadSessionStartBatchResult(SessionIds []string) *UploadSessionStartBatchResult {
+	s := new(UploadSessionStartBatchResult)
+	s.SessionIds = SessionIds
 	return s
 }
 
