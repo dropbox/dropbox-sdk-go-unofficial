@@ -18,45 +18,5 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-// Package check : has no documentation (yet)
-package check
-
-import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
-
-// EchoArg : Contains the arguments to be sent to the Dropbox servers.
-type EchoArg struct {
-	// Query : The string that you'd like to be echoed back to you.
-	Query string `json:"query"`
-}
-
-// NewEchoArg returns a new EchoArg instance
-func NewEchoArg() *EchoArg {
-	s := new(EchoArg)
-	s.Query = ""
-	return s
-}
-
-// EchoError : EchoError contains the error returned from the Dropbox servers.
-type EchoError struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for EchoError
-const (
-	EchoErrorUserRequested = "user_requested"
-	EchoErrorOther         = "other"
-)
-
-// EchoResult : EchoResult contains the result returned from the Dropbox
-// servers.
-type EchoResult struct {
-	// Result : If everything worked correctly, this would be the same as query.
-	Result string `json:"result"`
-}
-
-// NewEchoResult returns a new EchoResult instance
-func NewEchoResult() *EchoResult {
-	s := new(EchoResult)
-	s.Result = ""
-	return s
-}
+// Package account_id : has no documentation (yet)
+package account_id

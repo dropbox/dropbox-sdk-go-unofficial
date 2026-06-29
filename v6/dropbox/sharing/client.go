@@ -52,12 +52,13 @@ type Client interface {
 	// possible to break a shared link by moving or renaming the corresponding
 	// file or folder. In the future, this will no longer be the case, so your
 	// app shouldn't rely on this behavior. Instead, if your app needs to revoke
-	// a shared link, use `revokeSharedLink`.
-	// Deprecated: Use `CreateSharedLinkWithSettings` instead
+	// a shared link, use revoke_shared_link. DEPRECATED: Use
+	// create_shared_link_with_settings instead.
+	// Deprecated:
 	CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error)
 	// CreateSharedLinkWithSettings : Create a shared link with custom settings.
 	// If no settings are given then the default visibility is
-	// `RequestedVisibility.public` (The resolved visibility, though, may depend
+	// RequestedVisibility.public (The resolved visibility, though, may depend
 	// on other aspects such as team and shared folder settings).
 	CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettingsArg) (res IsSharedLinkMetadata, err error)
 	// GetFileMetadata : Returns shared file metadata.
@@ -67,17 +68,18 @@ type Client interface {
 	// GetFolderMetadata : Returns shared folder metadata by its folder ID.
 	GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMetadata, err error)
 	// GetSharedLinkFile : Download the shared link's file from a user's
-	// Dropbox.
+	// Dropbox. This is a download-style endpoint that returns the file content.
 	GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, content io.ReadCloser, err error)
 	// GetSharedLinkMetadata : Get the shared link's metadata.
 	GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error)
-	// GetSharedLinks : Returns a list of `LinkMetadata` objects for this user,
-	// including collection links. If no path is given, returns a list of all
-	// shared links for the current user, including collection links, up to a
-	// maximum of 1000 links. If a non-empty path is given, returns a list of
-	// all shared links that allow access to the given path.  Collection links
-	// are never returned in this case.
-	// Deprecated: Use `ListSharedLinks` instead
+	// GetSharedLinks : DEPRECATED: Use list_shared_links instead. This endpoint
+	// will be retired in October 2026. Returns a list of `LinkMetadata` objects
+	// for this user, including collection links. If no path is given, returns a
+	// list of all shared links for the current user, including collection
+	// links, up to a maximum of 1000 links. If a non-empty path is given,
+	// returns a list of all shared links that allow access to the given path.
+	// Collection links are never returned in this case.
+	// Deprecated:
 	GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error)
 	// ListFileMembers : Use to obtain the members who have been invited to a
 	// file, both inherited and uninherited members.
@@ -115,8 +117,6 @@ type Client interface {
 	// `listMountableFolders` or `listMountableFoldersContinue`.
 	ListMountableFoldersContinue(arg *ListFoldersContinueArg) (res *ListFoldersResult, err error)
 	// ListReceivedFiles : Returns a list of all files shared with current user.
-	// Does not include files the user has received via shared folders, and does
-	// not include unclaimed invitations.
 	ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, err error)
 	// ListReceivedFilesContinue : Get more results with a cursor from
 	// `listReceivedFiles`.
@@ -125,29 +125,29 @@ type Client interface {
 	// returns a list of all shared links for the current user. For members of
 	// business teams using team space and member folders, returns all shared
 	// links in the team member's home folder unless the team space ID is
-	// specified in the request header. For more information, refer to the
-	// `Namespace Guide`
-	// <https://www.dropbox.com/developers/reference/namespace-guide>. If a
-	// non-empty path is given, returns a list of all shared links that allow
-	// access to the given path - direct links to the given path and links to
-	// parent folders of the given path. Links to parent folders can be
-	// suppressed by setting direct_only to true.
+	// specified in the request header. If a non-empty path is given, returns a
+	// list of all shared links that allow access to the given path - direct
+	// links to the given path and links to parent folders of the given path.
+	// Links to parent folders can be suppressed by setting direct_only to true.
 	ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLinksResult, err error)
 	// ModifySharedLinkSettings : Modify the shared link's settings. If the
 	// requested visibility conflict with the shared links policy of the team or
 	// the shared folder (in case the linked file is part of a shared folder)
-	// then the `LinkPermissions.resolved_visibility` of the returned
-	// `SharedLinkMetadata` will reflect the actual visibility of the shared
-	// link and the `LinkPermissions.requested_visibility` will reflect the
-	// requested visibility.
+	// then the LinkPermissions.resolved_visibility of the returned
+	// SharedLinkMetadata will reflect the actual visibility of the shared link
+	// and the LinkPermissions.requested_visibility will reflect the requested
+	// visibility.
 	ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) (res IsSharedLinkMetadata, err error)
 	// MountFolder : The current user mounts the designated folder. Mount a
 	// shared folder for a user after they have been added as a member. Once
 	// mounted, the shared folder will appear in their Dropbox.
 	MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata, err error)
+	// RelinquishAccess : Removes all self-removable access from a file or
+	// folder for the current user. Best-effort and idempotent: attempts to drop
+	// link-visitor associations and explicit ACL membership.
+	RelinquishAccess(arg *RelinquishAccessArg) (res *RelinquishAccessResult, err error)
 	// RelinquishFileMembership : The current user relinquishes their membership
-	// in the designated file. Note that the current user may still have
-	// inherited access to this file through the parent folder.
+	// in the designated file.
 	RelinquishFileMembership(arg *RelinquishFileMembershipArg) (err error)
 	// RelinquishFolderMembership : The current user relinquishes their
 	// membership in the designated shared folder and will no longer have access
@@ -157,7 +157,7 @@ type Client interface {
 	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error)
 	// RemoveFileMember : Identical to remove_file_member_2 but with less
 	// information returned.
-	// Deprecated: Use `RemoveFileMember2` instead
+	// Deprecated:
 	RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error)
 	// RemoveFileMember2 : Removes a specified member from the file.
 	RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error)
@@ -167,8 +167,8 @@ type Client interface {
 	// RevokeSharedLink : Revoke a shared link. Note that even after revoking a
 	// shared link to a file, the file may be accessible if there are shared
 	// links leading to any of the file parent folders. To list all shared links
-	// that enable access to a specific file, you can use the `listSharedLinks`
-	// with the file as the `ListSharedLinksArg.path` argument.
+	// that enable access to a specific file, you can use the list_shared_links
+	// with the file as the ListSharedLinksArg.path argument.
 	RevokeSharedLink(arg *RevokeSharedLinkArg) (err error)
 	// SetAccessInheritance : Change the inheritance policy of an existing
 	// Shared Folder. Only permitted for shared folders in a shared team root.
@@ -194,11 +194,15 @@ type Client interface {
 	// inherited members.
 	UnshareFile(arg *UnshareFileArg) (err error)
 	// UnshareFolder : Allows a shared folder owner to unshare the folder.
+	// Unshare will not work in following cases: The shared folder contains
+	// shared folders OR the shared folder is inside another shared folder.
 	// You'll need to call `checkJobStatus` to determine if the action has
 	// completed successfully.
 	UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmptyResult, err error)
 	// UpdateFileMember : Changes a member's access on a shared file.
 	UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAccessLevelResult, err error)
+	// UpdateFilePolicy : Update the viewer info policy of a file.
+	UpdateFilePolicy(arg *UpdateFilePolicyArg) (res *SharedFileMetadata, err error)
 	// UpdateFolderMember : Allows an owner or editor of a shared folder to
 	// update another member's permissions.
 	UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberAccessLevelResult, err error)
@@ -210,7 +214,7 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//AddFileMemberAPIError is an error-wrapper for the add_file_member route
+// AddFileMemberAPIError is an error-wrapper for the add_file_member route
 type AddFileMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *AddFileMemberError `json:"error"`
@@ -248,7 +252,7 @@ func (dbx *apiImpl) AddFileMember(arg *AddFileMemberArgs) (res []*FileMemberActi
 	return
 }
 
-//AddFolderMemberAPIError is an error-wrapper for the add_folder_member route
+// AddFolderMemberAPIError is an error-wrapper for the add_folder_member route
 type AddFolderMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *AddFolderMemberError `json:"error"`
@@ -282,7 +286,7 @@ func (dbx *apiImpl) AddFolderMember(arg *AddFolderMemberArg) (err error) {
 	return
 }
 
-//CheckJobStatusAPIError is an error-wrapper for the check_job_status route
+// CheckJobStatusAPIError is an error-wrapper for the check_job_status route
 type CheckJobStatusAPIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
@@ -320,7 +324,7 @@ func (dbx *apiImpl) CheckJobStatus(arg *async.PollArg) (res *JobStatus, err erro
 	return
 }
 
-//CheckRemoveMemberJobStatusAPIError is an error-wrapper for the check_remove_member_job_status route
+// CheckRemoveMemberJobStatusAPIError is an error-wrapper for the check_remove_member_job_status route
 type CheckRemoveMemberJobStatusAPIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
@@ -358,7 +362,7 @@ func (dbx *apiImpl) CheckRemoveMemberJobStatus(arg *async.PollArg) (res *RemoveM
 	return
 }
 
-//CheckShareJobStatusAPIError is an error-wrapper for the check_share_job_status route
+// CheckShareJobStatusAPIError is an error-wrapper for the check_share_job_status route
 type CheckShareJobStatusAPIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
@@ -396,7 +400,7 @@ func (dbx *apiImpl) CheckShareJobStatus(arg *async.PollArg) (res *ShareFolderJob
 	return
 }
 
-//CreateSharedLinkAPIError is an error-wrapper for the create_shared_link route
+// CreateSharedLinkAPIError is an error-wrapper for the create_shared_link route
 type CreateSharedLinkAPIError struct {
 	dropbox.APIError
 	EndpointError *CreateSharedLinkError `json:"error"`
@@ -404,7 +408,6 @@ type CreateSharedLinkAPIError struct {
 
 func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMetadata, err error) {
 	log.Printf("WARNING: API `CreateSharedLink` is deprecated")
-	log.Printf("Use API `CreateSharedLinkWithSettings` instead")
 
 	req := dropbox.Request{
 		Host:         "api",
@@ -437,7 +440,7 @@ func (dbx *apiImpl) CreateSharedLink(arg *CreateSharedLinkArg) (res *PathLinkMet
 	return
 }
 
-//CreateSharedLinkWithSettingsAPIError is an error-wrapper for the create_shared_link_with_settings route
+// CreateSharedLinkWithSettingsAPIError is an error-wrapper for the create_shared_link_with_settings route
 type CreateSharedLinkWithSettingsAPIError struct {
 	dropbox.APIError
 	EndpointError *CreateSharedLinkWithSettingsError `json:"error"`
@@ -483,7 +486,7 @@ func (dbx *apiImpl) CreateSharedLinkWithSettings(arg *CreateSharedLinkWithSettin
 	return
 }
 
-//GetFileMetadataAPIError is an error-wrapper for the get_file_metadata route
+// GetFileMetadataAPIError is an error-wrapper for the get_file_metadata route
 type GetFileMetadataAPIError struct {
 	dropbox.APIError
 	EndpointError *GetFileMetadataError `json:"error"`
@@ -521,7 +524,7 @@ func (dbx *apiImpl) GetFileMetadata(arg *GetFileMetadataArg) (res *SharedFileMet
 	return
 }
 
-//GetFileMetadataBatchAPIError is an error-wrapper for the get_file_metadata/batch route
+// GetFileMetadataBatchAPIError is an error-wrapper for the get_file_metadata/batch route
 type GetFileMetadataBatchAPIError struct {
 	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
@@ -559,7 +562,7 @@ func (dbx *apiImpl) GetFileMetadataBatch(arg *GetFileMetadataBatchArg) (res []*G
 	return
 }
 
-//GetFolderMetadataAPIError is an error-wrapper for the get_folder_metadata route
+// GetFolderMetadataAPIError is an error-wrapper for the get_folder_metadata route
 type GetFolderMetadataAPIError struct {
 	dropbox.APIError
 	EndpointError *SharedFolderAccessError `json:"error"`
@@ -597,7 +600,7 @@ func (dbx *apiImpl) GetFolderMetadata(arg *GetMetadataArgs) (res *SharedFolderMe
 	return
 }
 
-//GetSharedLinkFileAPIError is an error-wrapper for the get_shared_link_file route
+// GetSharedLinkFileAPIError is an error-wrapper for the get_shared_link_file route
 type GetSharedLinkFileAPIError struct {
 	dropbox.APIError
 	EndpointError *GetSharedLinkFileError `json:"error"`
@@ -608,7 +611,7 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 		Host:         "content",
 		Namespace:    "sharing",
 		Route:        "get_shared_link_file",
-		Auth:         "user",
+		Auth:         "app, user",
 		Style:        "download",
 		Arg:          arg,
 		ExtraHeaders: nil,
@@ -643,10 +646,10 @@ func (dbx *apiImpl) GetSharedLinkFile(arg *GetSharedLinkMetadataArg) (res IsShar
 	return
 }
 
-//GetSharedLinkMetadataAPIError is an error-wrapper for the get_shared_link_metadata route
+// GetSharedLinkMetadataAPIError is an error-wrapper for the get_shared_link_metadata route
 type GetSharedLinkMetadataAPIError struct {
 	dropbox.APIError
-	EndpointError *SharedLinkError `json:"error"`
+	EndpointError *SharedLinkMetadataError `json:"error"`
 }
 
 func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res IsSharedLinkMetadata, err error) {
@@ -689,7 +692,7 @@ func (dbx *apiImpl) GetSharedLinkMetadata(arg *GetSharedLinkMetadataArg) (res Is
 	return
 }
 
-//GetSharedLinksAPIError is an error-wrapper for the get_shared_links route
+// GetSharedLinksAPIError is an error-wrapper for the get_shared_links route
 type GetSharedLinksAPIError struct {
 	dropbox.APIError
 	EndpointError *GetSharedLinksError `json:"error"`
@@ -697,7 +700,6 @@ type GetSharedLinksAPIError struct {
 
 func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksResult, err error) {
 	log.Printf("WARNING: API `GetSharedLinks` is deprecated")
-	log.Printf("Use API `ListSharedLinks` instead")
 
 	req := dropbox.Request{
 		Host:         "api",
@@ -730,7 +732,7 @@ func (dbx *apiImpl) GetSharedLinks(arg *GetSharedLinksArg) (res *GetSharedLinksR
 	return
 }
 
-//ListFileMembersAPIError is an error-wrapper for the list_file_members route
+// ListFileMembersAPIError is an error-wrapper for the list_file_members route
 type ListFileMembersAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFileMembersError `json:"error"`
@@ -768,7 +770,7 @@ func (dbx *apiImpl) ListFileMembers(arg *ListFileMembersArg) (res *SharedFileMem
 	return
 }
 
-//ListFileMembersBatchAPIError is an error-wrapper for the list_file_members/batch route
+// ListFileMembersBatchAPIError is an error-wrapper for the list_file_members/batch route
 type ListFileMembersBatchAPIError struct {
 	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
@@ -806,7 +808,7 @@ func (dbx *apiImpl) ListFileMembersBatch(arg *ListFileMembersBatchArg) (res []*L
 	return
 }
 
-//ListFileMembersContinueAPIError is an error-wrapper for the list_file_members/continue route
+// ListFileMembersContinueAPIError is an error-wrapper for the list_file_members/continue route
 type ListFileMembersContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFileMembersContinueError `json:"error"`
@@ -844,7 +846,7 @@ func (dbx *apiImpl) ListFileMembersContinue(arg *ListFileMembersContinueArg) (re
 	return
 }
 
-//ListFolderMembersAPIError is an error-wrapper for the list_folder_members route
+// ListFolderMembersAPIError is an error-wrapper for the list_folder_members route
 type ListFolderMembersAPIError struct {
 	dropbox.APIError
 	EndpointError *SharedFolderAccessError `json:"error"`
@@ -882,7 +884,7 @@ func (dbx *apiImpl) ListFolderMembers(arg *ListFolderMembersArgs) (res *SharedFo
 	return
 }
 
-//ListFolderMembersContinueAPIError is an error-wrapper for the list_folder_members/continue route
+// ListFolderMembersContinueAPIError is an error-wrapper for the list_folder_members/continue route
 type ListFolderMembersContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFolderMembersContinueError `json:"error"`
@@ -920,7 +922,7 @@ func (dbx *apiImpl) ListFolderMembersContinue(arg *ListFolderMembersContinueArg)
 	return
 }
 
-//ListFoldersAPIError is an error-wrapper for the list_folders route
+// ListFoldersAPIError is an error-wrapper for the list_folders route
 type ListFoldersAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
@@ -958,7 +960,7 @@ func (dbx *apiImpl) ListFolders(arg *ListFoldersArgs) (res *ListFoldersResult, e
 	return
 }
 
-//ListFoldersContinueAPIError is an error-wrapper for the list_folders/continue route
+// ListFoldersContinueAPIError is an error-wrapper for the list_folders/continue route
 type ListFoldersContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFoldersContinueError `json:"error"`
@@ -996,7 +998,7 @@ func (dbx *apiImpl) ListFoldersContinue(arg *ListFoldersContinueArg) (res *ListF
 	return
 }
 
-//ListMountableFoldersAPIError is an error-wrapper for the list_mountable_folders route
+// ListMountableFoldersAPIError is an error-wrapper for the list_mountable_folders route
 type ListMountableFoldersAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
@@ -1034,7 +1036,7 @@ func (dbx *apiImpl) ListMountableFolders(arg *ListFoldersArgs) (res *ListFolders
 	return
 }
 
-//ListMountableFoldersContinueAPIError is an error-wrapper for the list_mountable_folders/continue route
+// ListMountableFoldersContinueAPIError is an error-wrapper for the list_mountable_folders/continue route
 type ListMountableFoldersContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFoldersContinueError `json:"error"`
@@ -1072,7 +1074,7 @@ func (dbx *apiImpl) ListMountableFoldersContinue(arg *ListFoldersContinueArg) (r
 	return
 }
 
-//ListReceivedFilesAPIError is an error-wrapper for the list_received_files route
+// ListReceivedFilesAPIError is an error-wrapper for the list_received_files route
 type ListReceivedFilesAPIError struct {
 	dropbox.APIError
 	EndpointError *SharingUserError `json:"error"`
@@ -1110,7 +1112,7 @@ func (dbx *apiImpl) ListReceivedFiles(arg *ListFilesArg) (res *ListFilesResult, 
 	return
 }
 
-//ListReceivedFilesContinueAPIError is an error-wrapper for the list_received_files/continue route
+// ListReceivedFilesContinueAPIError is an error-wrapper for the list_received_files/continue route
 type ListReceivedFilesContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *ListFilesContinueError `json:"error"`
@@ -1148,7 +1150,7 @@ func (dbx *apiImpl) ListReceivedFilesContinue(arg *ListFilesContinueArg) (res *L
 	return
 }
 
-//ListSharedLinksAPIError is an error-wrapper for the list_shared_links route
+// ListSharedLinksAPIError is an error-wrapper for the list_shared_links route
 type ListSharedLinksAPIError struct {
 	dropbox.APIError
 	EndpointError *ListSharedLinksError `json:"error"`
@@ -1186,7 +1188,7 @@ func (dbx *apiImpl) ListSharedLinks(arg *ListSharedLinksArg) (res *ListSharedLin
 	return
 }
 
-//ModifySharedLinkSettingsAPIError is an error-wrapper for the modify_shared_link_settings route
+// ModifySharedLinkSettingsAPIError is an error-wrapper for the modify_shared_link_settings route
 type ModifySharedLinkSettingsAPIError struct {
 	dropbox.APIError
 	EndpointError *ModifySharedLinkSettingsError `json:"error"`
@@ -1232,7 +1234,7 @@ func (dbx *apiImpl) ModifySharedLinkSettings(arg *ModifySharedLinkSettingsArgs) 
 	return
 }
 
-//MountFolderAPIError is an error-wrapper for the mount_folder route
+// MountFolderAPIError is an error-wrapper for the mount_folder route
 type MountFolderAPIError struct {
 	dropbox.APIError
 	EndpointError *MountFolderError `json:"error"`
@@ -1270,7 +1272,45 @@ func (dbx *apiImpl) MountFolder(arg *MountFolderArg) (res *SharedFolderMetadata,
 	return
 }
 
-//RelinquishFileMembershipAPIError is an error-wrapper for the relinquish_file_membership route
+// RelinquishAccessAPIError is an error-wrapper for the relinquish_access route
+type RelinquishAccessAPIError struct {
+	dropbox.APIError
+	EndpointError *RelinquishAccessError `json:"error"`
+}
+
+func (dbx *apiImpl) RelinquishAccess(arg *RelinquishAccessArg) (res *RelinquishAccessResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "sharing",
+		Route:        "relinquish_access",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr RelinquishAccessAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+// RelinquishFileMembershipAPIError is an error-wrapper for the relinquish_file_membership route
 type RelinquishFileMembershipAPIError struct {
 	dropbox.APIError
 	EndpointError *RelinquishFileMembershipError `json:"error"`
@@ -1304,7 +1344,7 @@ func (dbx *apiImpl) RelinquishFileMembership(arg *RelinquishFileMembershipArg) (
 	return
 }
 
-//RelinquishFolderMembershipAPIError is an error-wrapper for the relinquish_folder_membership route
+// RelinquishFolderMembershipAPIError is an error-wrapper for the relinquish_folder_membership route
 type RelinquishFolderMembershipAPIError struct {
 	dropbox.APIError
 	EndpointError *RelinquishFolderMembershipError `json:"error"`
@@ -1342,7 +1382,7 @@ func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipAr
 	return
 }
 
-//RemoveFileMemberAPIError is an error-wrapper for the remove_file_member route
+// RemoveFileMemberAPIError is an error-wrapper for the remove_file_member route
 type RemoveFileMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *RemoveFileMemberError `json:"error"`
@@ -1350,7 +1390,6 @@ type RemoveFileMemberAPIError struct {
 
 func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
 	log.Printf("WARNING: API `RemoveFileMember` is deprecated")
-	log.Printf("Use API `RemoveFileMember2` instead")
 
 	req := dropbox.Request{
 		Host:         "api",
@@ -1383,7 +1422,7 @@ func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberA
 	return
 }
 
-//RemoveFileMember2APIError is an error-wrapper for the remove_file_member_2 route
+// RemoveFileMember2APIError is an error-wrapper for the remove_file_member_2 route
 type RemoveFileMember2APIError struct {
 	dropbox.APIError
 	EndpointError *RemoveFileMemberError `json:"error"`
@@ -1421,7 +1460,7 @@ func (dbx *apiImpl) RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMember
 	return
 }
 
-//RemoveFolderMemberAPIError is an error-wrapper for the remove_folder_member route
+// RemoveFolderMemberAPIError is an error-wrapper for the remove_folder_member route
 type RemoveFolderMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *RemoveFolderMemberError `json:"error"`
@@ -1459,7 +1498,7 @@ func (dbx *apiImpl) RemoveFolderMember(arg *RemoveFolderMemberArg) (res *async.L
 	return
 }
 
-//RevokeSharedLinkAPIError is an error-wrapper for the revoke_shared_link route
+// RevokeSharedLinkAPIError is an error-wrapper for the revoke_shared_link route
 type RevokeSharedLinkAPIError struct {
 	dropbox.APIError
 	EndpointError *RevokeSharedLinkError `json:"error"`
@@ -1493,7 +1532,7 @@ func (dbx *apiImpl) RevokeSharedLink(arg *RevokeSharedLinkArg) (err error) {
 	return
 }
 
-//SetAccessInheritanceAPIError is an error-wrapper for the set_access_inheritance route
+// SetAccessInheritanceAPIError is an error-wrapper for the set_access_inheritance route
 type SetAccessInheritanceAPIError struct {
 	dropbox.APIError
 	EndpointError *SetAccessInheritanceError `json:"error"`
@@ -1531,7 +1570,7 @@ func (dbx *apiImpl) SetAccessInheritance(arg *SetAccessInheritanceArg) (res *Sha
 	return
 }
 
-//ShareFolderAPIError is an error-wrapper for the share_folder route
+// ShareFolderAPIError is an error-wrapper for the share_folder route
 type ShareFolderAPIError struct {
 	dropbox.APIError
 	EndpointError *ShareFolderError `json:"error"`
@@ -1569,7 +1608,7 @@ func (dbx *apiImpl) ShareFolder(arg *ShareFolderArg) (res *ShareFolderLaunch, er
 	return
 }
 
-//TransferFolderAPIError is an error-wrapper for the transfer_folder route
+// TransferFolderAPIError is an error-wrapper for the transfer_folder route
 type TransferFolderAPIError struct {
 	dropbox.APIError
 	EndpointError *TransferFolderError `json:"error"`
@@ -1603,7 +1642,7 @@ func (dbx *apiImpl) TransferFolder(arg *TransferFolderArg) (err error) {
 	return
 }
 
-//UnmountFolderAPIError is an error-wrapper for the unmount_folder route
+// UnmountFolderAPIError is an error-wrapper for the unmount_folder route
 type UnmountFolderAPIError struct {
 	dropbox.APIError
 	EndpointError *UnmountFolderError `json:"error"`
@@ -1637,7 +1676,7 @@ func (dbx *apiImpl) UnmountFolder(arg *UnmountFolderArg) (err error) {
 	return
 }
 
-//UnshareFileAPIError is an error-wrapper for the unshare_file route
+// UnshareFileAPIError is an error-wrapper for the unshare_file route
 type UnshareFileAPIError struct {
 	dropbox.APIError
 	EndpointError *UnshareFileError `json:"error"`
@@ -1671,7 +1710,7 @@ func (dbx *apiImpl) UnshareFile(arg *UnshareFileArg) (err error) {
 	return
 }
 
-//UnshareFolderAPIError is an error-wrapper for the unshare_folder route
+// UnshareFolderAPIError is an error-wrapper for the unshare_folder route
 type UnshareFolderAPIError struct {
 	dropbox.APIError
 	EndpointError *UnshareFolderError `json:"error"`
@@ -1709,7 +1748,7 @@ func (dbx *apiImpl) UnshareFolder(arg *UnshareFolderArg) (res *async.LaunchEmpty
 	return
 }
 
-//UpdateFileMemberAPIError is an error-wrapper for the update_file_member route
+// UpdateFileMemberAPIError is an error-wrapper for the update_file_member route
 type UpdateFileMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *FileMemberActionError `json:"error"`
@@ -1747,7 +1786,45 @@ func (dbx *apiImpl) UpdateFileMember(arg *UpdateFileMemberArgs) (res *MemberAcce
 	return
 }
 
-//UpdateFolderMemberAPIError is an error-wrapper for the update_folder_member route
+// UpdateFilePolicyAPIError is an error-wrapper for the update_file_policy route
+type UpdateFilePolicyAPIError struct {
+	dropbox.APIError
+	EndpointError *UpdateFilePolicyError `json:"error"`
+}
+
+func (dbx *apiImpl) UpdateFilePolicy(arg *UpdateFilePolicyArg) (res *SharedFileMetadata, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "sharing",
+		Route:        "update_file_policy",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr UpdateFilePolicyAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+// UpdateFolderMemberAPIError is an error-wrapper for the update_folder_member route
 type UpdateFolderMemberAPIError struct {
 	dropbox.APIError
 	EndpointError *UpdateFolderMemberError `json:"error"`
@@ -1785,7 +1862,7 @@ func (dbx *apiImpl) UpdateFolderMember(arg *UpdateFolderMemberArg) (res *MemberA
 	return
 }
 
-//UpdateFolderPolicyAPIError is an error-wrapper for the update_folder_policy route
+// UpdateFolderPolicyAPIError is an error-wrapper for the update_folder_policy route
 type UpdateFolderPolicyAPIError struct {
 	dropbox.APIError
 	EndpointError *UpdateFolderPolicyError `json:"error"`

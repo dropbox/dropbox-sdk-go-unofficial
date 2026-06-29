@@ -101,7 +101,7 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//PropertiesAddAPIError is an error-wrapper for the properties/add route
+// PropertiesAddAPIError is an error-wrapper for the properties/add route
 type PropertiesAddAPIError struct {
 	dropbox.APIError
 	EndpointError *AddPropertiesError `json:"error"`
@@ -135,7 +135,7 @@ func (dbx *apiImpl) PropertiesAdd(arg *AddPropertiesArg) (err error) {
 	return
 }
 
-//PropertiesOverwriteAPIError is an error-wrapper for the properties/overwrite route
+// PropertiesOverwriteAPIError is an error-wrapper for the properties/overwrite route
 type PropertiesOverwriteAPIError struct {
 	dropbox.APIError
 	EndpointError *InvalidPropertyGroupError `json:"error"`
@@ -169,7 +169,7 @@ func (dbx *apiImpl) PropertiesOverwrite(arg *OverwritePropertyGroupArg) (err err
 	return
 }
 
-//PropertiesRemoveAPIError is an error-wrapper for the properties/remove route
+// PropertiesRemoveAPIError is an error-wrapper for the properties/remove route
 type PropertiesRemoveAPIError struct {
 	dropbox.APIError
 	EndpointError *RemovePropertiesError `json:"error"`
@@ -203,7 +203,7 @@ func (dbx *apiImpl) PropertiesRemove(arg *RemovePropertiesArg) (err error) {
 	return
 }
 
-//PropertiesSearchAPIError is an error-wrapper for the properties/search route
+// PropertiesSearchAPIError is an error-wrapper for the properties/search route
 type PropertiesSearchAPIError struct {
 	dropbox.APIError
 	EndpointError *PropertiesSearchError `json:"error"`
@@ -241,7 +241,7 @@ func (dbx *apiImpl) PropertiesSearch(arg *PropertiesSearchArg) (res *PropertiesS
 	return
 }
 
-//PropertiesSearchContinueAPIError is an error-wrapper for the properties/search/continue route
+// PropertiesSearchContinueAPIError is an error-wrapper for the properties/search/continue route
 type PropertiesSearchContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *PropertiesSearchContinueError `json:"error"`
@@ -279,7 +279,7 @@ func (dbx *apiImpl) PropertiesSearchContinue(arg *PropertiesSearchContinueArg) (
 	return
 }
 
-//PropertiesUpdateAPIError is an error-wrapper for the properties/update route
+// PropertiesUpdateAPIError is an error-wrapper for the properties/update route
 type PropertiesUpdateAPIError struct {
 	dropbox.APIError
 	EndpointError *UpdatePropertiesError `json:"error"`
@@ -313,7 +313,7 @@ func (dbx *apiImpl) PropertiesUpdate(arg *UpdatePropertiesArg) (err error) {
 	return
 }
 
-//TemplatesAddForTeamAPIError is an error-wrapper for the templates/add_for_team route
+// TemplatesAddForTeamAPIError is an error-wrapper for the templates/add_for_team route
 type TemplatesAddForTeamAPIError struct {
 	dropbox.APIError
 	EndpointError *ModifyTemplateError `json:"error"`
@@ -351,7 +351,7 @@ func (dbx *apiImpl) TemplatesAddForTeam(arg *AddTemplateArg) (res *AddTemplateRe
 	return
 }
 
-//TemplatesAddForUserAPIError is an error-wrapper for the templates/add_for_user route
+// TemplatesAddForUserAPIError is an error-wrapper for the templates/add_for_user route
 type TemplatesAddForUserAPIError struct {
 	dropbox.APIError
 	EndpointError *ModifyTemplateError `json:"error"`
@@ -389,7 +389,7 @@ func (dbx *apiImpl) TemplatesAddForUser(arg *AddTemplateArg) (res *AddTemplateRe
 	return
 }
 
-//TemplatesGetForTeamAPIError is an error-wrapper for the templates/get_for_team route
+// TemplatesGetForTeamAPIError is an error-wrapper for the templates/get_for_team route
 type TemplatesGetForTeamAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -427,7 +427,7 @@ func (dbx *apiImpl) TemplatesGetForTeam(arg *GetTemplateArg) (res *GetTemplateRe
 	return
 }
 
-//TemplatesGetForUserAPIError is an error-wrapper for the templates/get_for_user route
+// TemplatesGetForUserAPIError is an error-wrapper for the templates/get_for_user route
 type TemplatesGetForUserAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -465,7 +465,7 @@ func (dbx *apiImpl) TemplatesGetForUser(arg *GetTemplateArg) (res *GetTemplateRe
 	return
 }
 
-//TemplatesListForTeamAPIError is an error-wrapper for the templates/list_for_team route
+// TemplatesListForTeamAPIError is an error-wrapper for the templates/list_for_team route
 type TemplatesListForTeamAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -503,7 +503,7 @@ func (dbx *apiImpl) TemplatesListForTeam() (res *ListTemplateResult, err error) 
 	return
 }
 
-//TemplatesListForUserAPIError is an error-wrapper for the templates/list_for_user route
+// TemplatesListForUserAPIError is an error-wrapper for the templates/list_for_user route
 type TemplatesListForUserAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -541,7 +541,7 @@ func (dbx *apiImpl) TemplatesListForUser() (res *ListTemplateResult, err error) 
 	return
 }
 
-//TemplatesRemoveForTeamAPIError is an error-wrapper for the templates/remove_for_team route
+// TemplatesRemoveForTeamAPIError is an error-wrapper for the templates/remove_for_team route
 type TemplatesRemoveForTeamAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -575,7 +575,7 @@ func (dbx *apiImpl) TemplatesRemoveForTeam(arg *RemoveTemplateArg) (err error) {
 	return
 }
 
-//TemplatesRemoveForUserAPIError is an error-wrapper for the templates/remove_for_user route
+// TemplatesRemoveForUserAPIError is an error-wrapper for the templates/remove_for_user route
 type TemplatesRemoveForUserAPIError struct {
 	dropbox.APIError
 	EndpointError *TemplateError `json:"error"`
@@ -609,7 +609,7 @@ func (dbx *apiImpl) TemplatesRemoveForUser(arg *RemoveTemplateArg) (err error) {
 	return
 }
 
-//TemplatesUpdateForTeamAPIError is an error-wrapper for the templates/update_for_team route
+// TemplatesUpdateForTeamAPIError is an error-wrapper for the templates/update_for_team route
 type TemplatesUpdateForTeamAPIError struct {
 	dropbox.APIError
 	EndpointError *ModifyTemplateError `json:"error"`
@@ -647,7 +647,7 @@ func (dbx *apiImpl) TemplatesUpdateForTeam(arg *UpdateTemplateArg) (res *UpdateT
 	return
 }
 
-//TemplatesUpdateForUserAPIError is an error-wrapper for the templates/update_for_user route
+// TemplatesUpdateForUserAPIError is an error-wrapper for the templates/update_for_user route
 type TemplatesUpdateForUserAPIError struct {
 	dropbox.APIError
 	EndpointError *ModifyTemplateError `json:"error"`

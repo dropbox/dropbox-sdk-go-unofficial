@@ -48,10 +48,10 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//AppAPIError is an error-wrapper for the app route
+// AppAPIError is an error-wrapper for the app route
 type AppAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *EchoError `json:"error"`
 }
 
 func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
@@ -86,10 +86,10 @@ func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
 	return
 }
 
-//UserAPIError is an error-wrapper for the user route
+// UserAPIError is an error-wrapper for the user route
 type UserAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *EchoError `json:"error"`
 }
 
 func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {

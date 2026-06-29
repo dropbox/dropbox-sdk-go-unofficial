@@ -27,20 +27,18 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 )
 
-// AuthError : has no documentation (yet)
-type AuthError struct {
+// OpenIdError : has no documentation (yet)
+type OpenIdError struct {
 	dropbox.Tagged
 }
 
-// Valid tag values for AuthError
+// Valid tag values for OpenIdError
 const (
-	AuthErrorInvalidToken = "invalid_token"
-	AuthErrorNoOpenidAuth = "no_openid_auth"
-	AuthErrorOther        = "other"
+	OpenIdErrorIncorrectOpenidScopes = "incorrect_openid_scopes"
+	OpenIdErrorOther                 = "other"
 )
 
-// UserInfoArgs : This struct is empty. The comment here is intentionally
-// emitted to avoid indentation issues with Stone.
+// UserInfoArgs : No Parameters
 type UserInfoArgs struct {
 }
 
@@ -52,17 +50,36 @@ func NewUserInfoArgs() *UserInfoArgs {
 
 // UserInfoError : has no documentation (yet)
 type UserInfoError struct {
-	// Err : has no documentation (yet)
-	Err *err_union `json:"err,omitempty"`
-	// ErrorMessage : Brief explanation of the error.
-	ErrorMessage string `json:"error_message"`
+	dropbox.Tagged
+	// OpenidError : has no documentation (yet)
+	OpenidError *OpenIdError `json:"openid_error,omitempty"`
 }
 
-// NewUserInfoError returns a new UserInfoError instance
-func NewUserInfoError() *UserInfoError {
-	s := new(UserInfoError)
-	s.ErrorMessage = ""
-	return s
+// Valid tag values for UserInfoError
+const (
+	UserInfoErrorOpenidError = "openid_error"
+	UserInfoErrorOther       = "other"
+)
+
+// UnmarshalJSON deserializes into a UserInfoError instance
+func (u *UserInfoError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// OpenidError : has no documentation (yet)
+		OpenidError *OpenIdError `json:"openid_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "openid_error":
+		u.OpenidError = w.OpenidError
+
+	}
+	return nil
 }
 
 // UserInfoResult : has no documentation (yet)
@@ -88,38 +105,4 @@ func NewUserInfoResult() *UserInfoResult {
 	s.Iss = ""
 	s.Sub = ""
 	return s
-}
-
-// ErrUnion : has no documentation (yet)
-type err_union struct {
-	dropbox.Tagged
-	// AuthError : has no documentation (yet)
-	AuthError *AuthError `json:"auth_error,omitempty"`
-}
-
-// Valid tag values for ErrUnion
-const (
-	ErrUnionAuthError = "auth_error"
-	ErrUnionOther     = "other"
-)
-
-// UnmarshalJSON deserializes into a err_union instance
-func (u *err_union) UnmarshalJSON(body []byte) error {
-	type wrap struct {
-		dropbox.Tagged
-		// AuthError : has no documentation (yet)
-		AuthError *AuthError `json:"auth_error,omitempty"`
-	}
-	var w wrap
-	var err error
-	if err = json.Unmarshal(body, &w); err != nil {
-		return err
-	}
-	u.Tag = w.Tag
-	switch u.Tag {
-	case "auth_error":
-		u.AuthError = w.AuthError
-
-	}
-	return nil
 }
