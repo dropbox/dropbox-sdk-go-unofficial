@@ -30,13 +30,93 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
+	// DeleteProfilePhoto : Deletes the current user's profile photo.
+	DeleteProfilePhoto(arg *DeleteProfilePhotoArg) (res *DeleteProfilePhotoResult, err error)
+	// GetPhoto : This lovely endpoint gets the account photo of a given user.
+	GetPhoto(arg *AccountPhotoGetArg) (res *AccountPhotoGetResult, content io.ReadCloser, err error)
 	// SetProfilePhoto : Sets a user's profile photo.
 	SetProfilePhoto(arg *SetProfilePhotoArg) (res *SetProfilePhotoResult, err error)
 }
 
 type apiImpl dropbox.Context
 
-//SetProfilePhotoAPIError is an error-wrapper for the set_profile_photo route
+// DeleteProfilePhotoAPIError is an error-wrapper for the delete_profile_photo route
+type DeleteProfilePhotoAPIError struct {
+	dropbox.APIError
+	EndpointError *DeleteProfilePhotoError `json:"error"`
+}
+
+func (dbx *apiImpl) DeleteProfilePhoto(arg *DeleteProfilePhotoArg) (res *DeleteProfilePhotoResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "account",
+		Route:        "delete_profile_photo",
+		Auth:         "user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr DeleteProfilePhotoAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+// GetPhotoAPIError is an error-wrapper for the get_photo route
+type GetPhotoAPIError struct {
+	dropbox.APIError
+	EndpointError *AccountPhotoGetError `json:"error"`
+}
+
+func (dbx *apiImpl) GetPhoto(arg *AccountPhotoGetArg) (res *AccountPhotoGetResult, content io.ReadCloser, err error) {
+	req := dropbox.Request{
+		Host:         "content",
+		Namespace:    "account",
+		Route:        "get_photo",
+		Auth:         "user",
+		Style:        "download",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr GetPhotoAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	content = respBody
+	return
+}
+
+// SetProfilePhotoAPIError is an error-wrapper for the set_profile_photo route
 type SetProfilePhotoAPIError struct {
 	dropbox.APIError
 	EndpointError *SetProfilePhotoError `json:"error"`

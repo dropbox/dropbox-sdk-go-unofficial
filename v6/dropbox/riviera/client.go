@@ -18,163 +18,49 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-package users
+package riviera
 
 import (
 	"encoding/json"
 	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/async"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth"
 )
 
 // Client interface describes all routes in this namespace
 type Client interface {
-	// FeaturesGetValues : Get a list of feature values that may be configured
-	// for the current account.
-	FeaturesGetValues(arg *UserFeaturesGetValuesBatchArg) (res *UserFeaturesGetValuesBatchResult, err error)
-	// GetAccount : Get information about a user's account.
-	GetAccount(arg *GetAccountArg) (res *BasicAccount, err error)
-	// GetAccountBatch : Get information about multiple user accounts. At most
-	// 300 accounts may be queried per request.
-	GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccount, err error)
-	// GetCurrentAccount : Get information about the current user's account.
-	GetCurrentAccount() (res *FullAccount, err error)
-	// GetSpaceUsage : Get the space usage information for the current user's
-	// account.
-	GetSpaceUsage() (res *SpaceUsage, err error)
+	// GetMarkdownAsync : Asynchronous document-to-markdown conversion for
+	// supported file formats.
+	GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
+	// GetMarkdownAsyncCheck : Returns the status or result of specified
+	// get_markdown_async task.
+	GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
+	// GetTranscriptAsync : Asynchronous transcript generation for audio and
+	// video files.
+	GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
+	// GetTranscriptAsyncCheck : Returns the status or result of specified
+	// get_transcript_async task.
+	GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
 }
 
 type apiImpl dropbox.Context
 
-// FeaturesGetValuesAPIError is an error-wrapper for the features/get_values route
-type FeaturesGetValuesAPIError struct {
-	dropbox.APIError
-	EndpointError *UserFeaturesGetValuesBatchError `json:"error"`
-}
-
-func (dbx *apiImpl) FeaturesGetValues(arg *UserFeaturesGetValuesBatchArg) (res *UserFeaturesGetValuesBatchResult, err error) {
-	req := dropbox.Request{
-		Host:         "api",
-		Namespace:    "users",
-		Route:        "features/get_values",
-		Auth:         "user",
-		Style:        "rpc",
-		Arg:          arg,
-		ExtraHeaders: nil,
-	}
-
-	var resp []byte
-	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
-	if err != nil {
-		var appErr FeaturesGetValuesAPIError
-		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
-			err = appErr
-		}
-		return
-	}
-
-	err = json.Unmarshal(resp, &res)
-	if err != nil {
-		return
-	}
-
-	_ = respBody
-	return
-}
-
-// GetAccountAPIError is an error-wrapper for the get_account route
-type GetAccountAPIError struct {
-	dropbox.APIError
-	EndpointError *GetAccountError `json:"error"`
-}
-
-func (dbx *apiImpl) GetAccount(arg *GetAccountArg) (res *BasicAccount, err error) {
-	req := dropbox.Request{
-		Host:         "api",
-		Namespace:    "users",
-		Route:        "get_account",
-		Auth:         "user",
-		Style:        "rpc",
-		Arg:          arg,
-		ExtraHeaders: nil,
-	}
-
-	var resp []byte
-	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
-	if err != nil {
-		var appErr GetAccountAPIError
-		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
-			err = appErr
-		}
-		return
-	}
-
-	err = json.Unmarshal(resp, &res)
-	if err != nil {
-		return
-	}
-
-	_ = respBody
-	return
-}
-
-// GetAccountBatchAPIError is an error-wrapper for the get_account_batch route
-type GetAccountBatchAPIError struct {
-	dropbox.APIError
-	EndpointError *GetAccountBatchError `json:"error"`
-}
-
-func (dbx *apiImpl) GetAccountBatch(arg *GetAccountBatchArg) (res []*BasicAccount, err error) {
-	req := dropbox.Request{
-		Host:         "api",
-		Namespace:    "users",
-		Route:        "get_account_batch",
-		Auth:         "user",
-		Style:        "rpc",
-		Arg:          arg,
-		ExtraHeaders: nil,
-	}
-
-	var resp []byte
-	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
-	if err != nil {
-		var appErr GetAccountBatchAPIError
-		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
-			err = appErr
-		}
-		return
-	}
-
-	err = json.Unmarshal(resp, &res)
-	if err != nil {
-		return
-	}
-
-	_ = respBody
-	return
-}
-
-// GetCurrentAccountAPIError is an error-wrapper for the get_current_account route
-type GetCurrentAccountAPIError struct {
+// GetMarkdownAsyncAPIError is an error-wrapper for the get_markdown_async route
+type GetMarkdownAsyncAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
+func (dbx *apiImpl) GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
-		Namespace:    "users",
-		Route:        "get_current_account",
-		Auth:         "user",
+		Namespace:    "riviera",
+		Route:        "get_markdown_async",
+		Auth:         "app, user",
 		Style:        "rpc",
-		Arg:          nil,
+		Arg:          arg,
 		ExtraHeaders: nil,
 	}
 
@@ -182,7 +68,7 @@ func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		var appErr GetCurrentAccountAPIError
+		var appErr GetMarkdownAsyncAPIError
 		err = auth.ParseError(err, &appErr)
 		if err == &appErr {
 			err = appErr
@@ -199,20 +85,20 @@ func (dbx *apiImpl) GetCurrentAccount() (res *FullAccount, err error) {
 	return
 }
 
-// GetSpaceUsageAPIError is an error-wrapper for the get_space_usage route
-type GetSpaceUsageAPIError struct {
+// GetMarkdownAsyncCheckAPIError is an error-wrapper for the get_markdown_async/check route
+type GetMarkdownAsyncCheckAPIError struct {
 	dropbox.APIError
-	EndpointError struct{} `json:"error"`
+	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
+func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
-		Namespace:    "users",
-		Route:        "get_space_usage",
-		Auth:         "user",
+		Namespace:    "riviera",
+		Route:        "get_markdown_async/check",
+		Auth:         "app, user",
 		Style:        "rpc",
-		Arg:          nil,
+		Arg:          arg,
 		ExtraHeaders: nil,
 	}
 
@@ -220,7 +106,83 @@ func (dbx *apiImpl) GetSpaceUsage() (res *SpaceUsage, err error) {
 	var respBody io.ReadCloser
 	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
 	if err != nil {
-		var appErr GetSpaceUsageAPIError
+		var appErr GetMarkdownAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+// GetTranscriptAsyncAPIError is an error-wrapper for the get_transcript_async route
+type GetTranscriptAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+func (dbx *apiImpl) GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_transcript_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr GetTranscriptAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if err == &appErr {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+// GetTranscriptAsyncCheckAPIError is an error-wrapper for the get_transcript_async/check route
+type GetTranscriptAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+func (dbx *apiImpl) GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_transcript_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	if err != nil {
+		var appErr GetTranscriptAsyncCheckAPIError
 		err = auth.ParseError(err, &appErr)
 		if err == &appErr {
 			err = appErr

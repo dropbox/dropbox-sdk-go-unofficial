@@ -40,7 +40,7 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//DeleteManualContactsAPIError is an error-wrapper for the delete_manual_contacts route
+// DeleteManualContactsAPIError is an error-wrapper for the delete_manual_contacts route
 type DeleteManualContactsAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
@@ -74,7 +74,7 @@ func (dbx *apiImpl) DeleteManualContacts() (err error) {
 	return
 }
 
-//DeleteManualContactsBatchAPIError is an error-wrapper for the delete_manual_contacts_batch route
+// DeleteManualContactsBatchAPIError is an error-wrapper for the delete_manual_contacts_batch route
 type DeleteManualContactsBatchAPIError struct {
 	dropbox.APIError
 	EndpointError *DeleteManualContactsError `json:"error"`

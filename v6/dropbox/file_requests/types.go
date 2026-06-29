@@ -82,6 +82,8 @@ type CreateFileRequestArgs struct {
 	Open bool `json:"open"`
 	// Description : A description of the file request.
 	Description string `json:"description,omitempty"`
+	// VideoProjectId : If this request was created from video project, its id.
+	VideoProjectId string `json:"video_project_id,omitempty"`
 }
 
 // NewCreateFileRequestArgs returns a new CreateFileRequestArgs instance
@@ -100,14 +102,15 @@ type FileRequestError struct {
 
 // Valid tag values for FileRequestError
 const (
-	FileRequestErrorDisabledForTeam = "disabled_for_team"
-	FileRequestErrorOther           = "other"
-	FileRequestErrorNotFound        = "not_found"
-	FileRequestErrorNotAFolder      = "not_a_folder"
-	FileRequestErrorAppLacksAccess  = "app_lacks_access"
-	FileRequestErrorNoPermission    = "no_permission"
-	FileRequestErrorEmailUnverified = "email_unverified"
-	FileRequestErrorValidationError = "validation_error"
+	FileRequestErrorDisabledForTeam   = "disabled_for_team"
+	FileRequestErrorOther             = "other"
+	FileRequestErrorNotFound          = "not_found"
+	FileRequestErrorNotAFolder        = "not_a_folder"
+	FileRequestErrorAppLacksAccess    = "app_lacks_access"
+	FileRequestErrorNoPermission      = "no_permission"
+	FileRequestErrorEmailUnverified   = "email_unverified"
+	FileRequestErrorValidationError   = "validation_error"
+	FileRequestErrorNoWritePermission = "no_write_permission"
 )
 
 // CreateFileRequestError : There was an error creating the file request.
@@ -117,16 +120,17 @@ type CreateFileRequestError struct {
 
 // Valid tag values for CreateFileRequestError
 const (
-	CreateFileRequestErrorDisabledForTeam = "disabled_for_team"
-	CreateFileRequestErrorOther           = "other"
-	CreateFileRequestErrorNotFound        = "not_found"
-	CreateFileRequestErrorNotAFolder      = "not_a_folder"
-	CreateFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	CreateFileRequestErrorNoPermission    = "no_permission"
-	CreateFileRequestErrorEmailUnverified = "email_unverified"
-	CreateFileRequestErrorValidationError = "validation_error"
-	CreateFileRequestErrorInvalidLocation = "invalid_location"
-	CreateFileRequestErrorRateLimit       = "rate_limit"
+	CreateFileRequestErrorDisabledForTeam   = "disabled_for_team"
+	CreateFileRequestErrorOther             = "other"
+	CreateFileRequestErrorNotFound          = "not_found"
+	CreateFileRequestErrorNotAFolder        = "not_a_folder"
+	CreateFileRequestErrorAppLacksAccess    = "app_lacks_access"
+	CreateFileRequestErrorNoPermission      = "no_permission"
+	CreateFileRequestErrorEmailUnverified   = "email_unverified"
+	CreateFileRequestErrorValidationError   = "validation_error"
+	CreateFileRequestErrorNoWritePermission = "no_write_permission"
+	CreateFileRequestErrorInvalidLocation   = "invalid_location"
+	CreateFileRequestErrorRateLimit         = "rate_limit"
 )
 
 // DeleteAllClosedFileRequestsError : There was an error deleting all closed
@@ -137,14 +141,15 @@ type DeleteAllClosedFileRequestsError struct {
 
 // Valid tag values for DeleteAllClosedFileRequestsError
 const (
-	DeleteAllClosedFileRequestsErrorDisabledForTeam = "disabled_for_team"
-	DeleteAllClosedFileRequestsErrorOther           = "other"
-	DeleteAllClosedFileRequestsErrorNotFound        = "not_found"
-	DeleteAllClosedFileRequestsErrorNotAFolder      = "not_a_folder"
-	DeleteAllClosedFileRequestsErrorAppLacksAccess  = "app_lacks_access"
-	DeleteAllClosedFileRequestsErrorNoPermission    = "no_permission"
-	DeleteAllClosedFileRequestsErrorEmailUnverified = "email_unverified"
-	DeleteAllClosedFileRequestsErrorValidationError = "validation_error"
+	DeleteAllClosedFileRequestsErrorDisabledForTeam   = "disabled_for_team"
+	DeleteAllClosedFileRequestsErrorOther             = "other"
+	DeleteAllClosedFileRequestsErrorNotFound          = "not_found"
+	DeleteAllClosedFileRequestsErrorNotAFolder        = "not_a_folder"
+	DeleteAllClosedFileRequestsErrorAppLacksAccess    = "app_lacks_access"
+	DeleteAllClosedFileRequestsErrorNoPermission      = "no_permission"
+	DeleteAllClosedFileRequestsErrorEmailUnverified   = "email_unverified"
+	DeleteAllClosedFileRequestsErrorValidationError   = "validation_error"
+	DeleteAllClosedFileRequestsErrorNoWritePermission = "no_write_permission"
 )
 
 // DeleteAllClosedFileRequestsResult : Result for `deleteAllClosed`.
@@ -180,15 +185,16 @@ type DeleteFileRequestError struct {
 
 // Valid tag values for DeleteFileRequestError
 const (
-	DeleteFileRequestErrorDisabledForTeam = "disabled_for_team"
-	DeleteFileRequestErrorOther           = "other"
-	DeleteFileRequestErrorNotFound        = "not_found"
-	DeleteFileRequestErrorNotAFolder      = "not_a_folder"
-	DeleteFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	DeleteFileRequestErrorNoPermission    = "no_permission"
-	DeleteFileRequestErrorEmailUnverified = "email_unverified"
-	DeleteFileRequestErrorValidationError = "validation_error"
-	DeleteFileRequestErrorFileRequestOpen = "file_request_open"
+	DeleteFileRequestErrorDisabledForTeam   = "disabled_for_team"
+	DeleteFileRequestErrorOther             = "other"
+	DeleteFileRequestErrorNotFound          = "not_found"
+	DeleteFileRequestErrorNotAFolder        = "not_a_folder"
+	DeleteFileRequestErrorAppLacksAccess    = "app_lacks_access"
+	DeleteFileRequestErrorNoPermission      = "no_permission"
+	DeleteFileRequestErrorEmailUnverified   = "email_unverified"
+	DeleteFileRequestErrorValidationError   = "validation_error"
+	DeleteFileRequestErrorNoWritePermission = "no_write_permission"
+	DeleteFileRequestErrorFileRequestOpen   = "file_request_open"
 )
 
 // DeleteFileRequestsResult : Result for `delete`.
@@ -229,6 +235,8 @@ type FileRequest struct {
 	FileCount int64 `json:"file_count"`
 	// Description : A description of the file request.
 	Description string `json:"description,omitempty"`
+	// VideoProjectId : If this request was created from video project, its id.
+	VideoProjectId string `json:"video_project_id,omitempty"`
 }
 
 // NewFileRequest returns a new FileRequest instance
@@ -248,7 +256,7 @@ type FileRequestDeadline struct {
 	// Deadline : The deadline for this file request.
 	Deadline time.Time `json:"deadline"`
 	// AllowLateUploads : If set, allow uploads after the deadline has passed.
-	// These     uploads will be marked overdue.
+	// These uploads will be marked overdue.
 	AllowLateUploads *GracePeriod `json:"allow_late_uploads,omitempty"`
 }
 
@@ -280,14 +288,15 @@ type GetFileRequestError struct {
 
 // Valid tag values for GetFileRequestError
 const (
-	GetFileRequestErrorDisabledForTeam = "disabled_for_team"
-	GetFileRequestErrorOther           = "other"
-	GetFileRequestErrorNotFound        = "not_found"
-	GetFileRequestErrorNotAFolder      = "not_a_folder"
-	GetFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	GetFileRequestErrorNoPermission    = "no_permission"
-	GetFileRequestErrorEmailUnverified = "email_unverified"
-	GetFileRequestErrorValidationError = "validation_error"
+	GetFileRequestErrorDisabledForTeam   = "disabled_for_team"
+	GetFileRequestErrorOther             = "other"
+	GetFileRequestErrorNotFound          = "not_found"
+	GetFileRequestErrorNotAFolder        = "not_a_folder"
+	GetFileRequestErrorAppLacksAccess    = "app_lacks_access"
+	GetFileRequestErrorNoPermission      = "no_permission"
+	GetFileRequestErrorEmailUnverified   = "email_unverified"
+	GetFileRequestErrorValidationError   = "validation_error"
+	GetFileRequestErrorNoWritePermission = "no_write_permission"
 )
 
 // GracePeriod : has no documentation (yet)
@@ -463,12 +472,13 @@ type UpdateFileRequestError struct {
 
 // Valid tag values for UpdateFileRequestError
 const (
-	UpdateFileRequestErrorDisabledForTeam = "disabled_for_team"
-	UpdateFileRequestErrorOther           = "other"
-	UpdateFileRequestErrorNotFound        = "not_found"
-	UpdateFileRequestErrorNotAFolder      = "not_a_folder"
-	UpdateFileRequestErrorAppLacksAccess  = "app_lacks_access"
-	UpdateFileRequestErrorNoPermission    = "no_permission"
-	UpdateFileRequestErrorEmailUnverified = "email_unverified"
-	UpdateFileRequestErrorValidationError = "validation_error"
+	UpdateFileRequestErrorDisabledForTeam   = "disabled_for_team"
+	UpdateFileRequestErrorOther             = "other"
+	UpdateFileRequestErrorNotFound          = "not_found"
+	UpdateFileRequestErrorNotAFolder        = "not_a_folder"
+	UpdateFileRequestErrorAppLacksAccess    = "app_lacks_access"
+	UpdateFileRequestErrorNoPermission      = "no_permission"
+	UpdateFileRequestErrorEmailUnverified   = "email_unverified"
+	UpdateFileRequestErrorValidationError   = "validation_error"
+	UpdateFileRequestErrorNoWritePermission = "no_write_permission"
 )

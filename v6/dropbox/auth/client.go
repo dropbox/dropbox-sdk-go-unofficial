@@ -23,6 +23,7 @@ package auth
 import (
 	"encoding/json"
 	"io"
+	"log"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 )
@@ -31,6 +32,7 @@ import (
 type Client interface {
 	// TokenFromOauth1 : Creates an OAuth 2.0 access token from the supplied
 	// OAuth 1.0 access token.
+	// Deprecated:
 	TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error)
 	// TokenRevoke : Disables the access token used to authenticate the call. If
 	// there is a corresponding refresh token for the access token, this
@@ -41,13 +43,15 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//TokenFromOauth1APIError is an error-wrapper for the token/from_oauth1 route
+// TokenFromOauth1APIError is an error-wrapper for the token/from_oauth1 route
 type TokenFromOauth1APIError struct {
 	dropbox.APIError
 	EndpointError *TokenFromOAuth1Error `json:"error"`
 }
 
 func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
+	log.Printf("WARNING: API `TokenFromOauth1` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "auth",
@@ -79,7 +83,7 @@ func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAut
 	return
 }
 
-//TokenRevokeAPIError is an error-wrapper for the token/revoke route
+// TokenRevokeAPIError is an error-wrapper for the token/revoke route
 type TokenRevokeAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`

@@ -38,7 +38,7 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//UserinfoAPIError is an error-wrapper for the userinfo route
+// UserinfoAPIError is an error-wrapper for the userinfo route
 type UserinfoAPIError struct {
 	dropbox.APIError
 	EndpointError *UserInfoError `json:"error"`

@@ -193,6 +193,7 @@ type ExportFormat struct {
 const (
 	ExportFormatHtml     = "html"
 	ExportFormatMarkdown = "markdown"
+	ExportFormatJson     = "json"
 	ExportFormatOther    = "other"
 )
 
@@ -251,6 +252,21 @@ type FoldersContainingPaperDoc struct {
 // NewFoldersContainingPaperDoc returns a new FoldersContainingPaperDoc instance
 func NewFoldersContainingPaperDoc() *FoldersContainingPaperDoc {
 	s := new(FoldersContainingPaperDoc)
+	return s
+}
+
+// GetDocMetadataArg : Argument for retrieving Paper doc metadata. Accepts
+// either a legacy Paper doc ID or a Cloud Doc file ID.
+type GetDocMetadataArg struct {
+	// DocId : Legacy Paper doc identifier.
+	DocId string `json:"doc_id,omitempty"`
+	// FileId : Dropbox file ID for Cloud Docs (post-PiFS migration).
+	FileId string `json:"file_id,omitempty"`
+}
+
+// NewGetDocMetadataArg returns a new GetDocMetadataArg instance
+func NewGetDocMetadataArg() *GetDocMetadataArg {
+	s := new(GetDocMetadataArg)
 	return s
 }
 
@@ -329,6 +345,9 @@ type ListPaperDocsArgs struct {
 	// retrieved per batch is 1000. Higher value results in invalid arguments
 	// error.
 	Limit int32 `json:"limit"`
+	// StopAtDate : Do not return results beyond this date. Behavior depends on
+	// sort order.
+	StopAtDate *time.Time `json:"stop_at_date,omitempty"`
 }
 
 // NewListPaperDocsArgs returns a new ListPaperDocsArgs instance
@@ -654,6 +673,11 @@ type PaperDocExport struct {
 	RefPaperDoc
 	// ExportFormat : has no documentation (yet)
 	ExportFormat *ExportFormat `json:"export_format"`
+	// IncludeComments : When true, export includes comment threads (e.g.
+	// markdown footnotes). When false or omitted, body only. Other formats may
+	// adopt this later; currently only markdown uses it. Plain bool (not
+	// optional): protoc-gen-godbx does not support proto3 optional yet.
+	IncludeComments bool `json:"include_comments"`
 }
 
 // NewPaperDocExport returns a new PaperDocExport instance
@@ -661,6 +685,7 @@ func NewPaperDocExport(DocId string, ExportFormat *ExportFormat) *PaperDocExport
 	s := new(PaperDocExport)
 	s.DocId = DocId
 	s.ExportFormat = ExportFormat
+	s.IncludeComments = false
 	return s
 }
 
@@ -684,6 +709,40 @@ func NewPaperDocExportResult(Owner string, Title string, Revision int64, MimeTyp
 	s.Title = Title
 	s.Revision = Revision
 	s.MimeType = MimeType
+	return s
+}
+
+// PaperDocGetMetadataResult : Metadata returned by docs/get_metadata.
+type PaperDocGetMetadataResult struct {
+	// DocId : The Paper doc ID.
+	DocId string `json:"doc_id"`
+	// Owner : The Paper doc owner's email address.
+	Owner string `json:"owner"`
+	// Title : The Paper doc title.
+	Title string `json:"title"`
+	// CreatedDate : The Paper doc creation date.
+	CreatedDate time.Time `json:"created_date"`
+	// Status : The Paper doc status.
+	Status *PaperDocStatus `json:"status"`
+	// Revision : The Paper doc revision. Simply an ever increasing number.
+	Revision int64 `json:"revision"`
+	// LastUpdatedDate : The date when the Paper doc was last edited.
+	LastUpdatedDate time.Time `json:"last_updated_date"`
+	// LastEditor : The email address of the last editor of the Paper doc.
+	LastEditor string `json:"last_editor"`
+}
+
+// NewPaperDocGetMetadataResult returns a new PaperDocGetMetadataResult instance
+func NewPaperDocGetMetadataResult(DocId string, Owner string, Title string, CreatedDate time.Time, Status *PaperDocStatus, Revision int64, LastUpdatedDate time.Time, LastEditor string) *PaperDocGetMetadataResult {
+	s := new(PaperDocGetMetadataResult)
+	s.DocId = DocId
+	s.Owner = Owner
+	s.Title = Title
+	s.CreatedDate = CreatedDate
+	s.Status = Status
+	s.Revision = Revision
+	s.LastUpdatedDate = LastUpdatedDate
+	s.LastEditor = LastEditor
 	return s
 }
 
@@ -713,6 +772,18 @@ func NewPaperDocSharingPolicy(DocId string, SharingPolicy *SharingPolicy) *Paper
 	s.SharingPolicy = SharingPolicy
 	return s
 }
+
+// PaperDocStatus : The status of a Paper doc.
+type PaperDocStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperDocStatus
+const (
+	PaperDocStatusActive  = "active"
+	PaperDocStatusDeleted = "deleted"
+	PaperDocStatusOther   = "other"
+)
 
 // PaperDocUpdateArgs : has no documentation (yet)
 type PaperDocUpdateArgs struct {

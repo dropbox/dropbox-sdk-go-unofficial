@@ -48,7 +48,7 @@ type Client interface {
 
 type apiImpl dropbox.Context
 
-//GetEventsAPIError is an error-wrapper for the get_events route
+// GetEventsAPIError is an error-wrapper for the get_events route
 type GetEventsAPIError struct {
 	dropbox.APIError
 	EndpointError *GetTeamEventsError `json:"error"`
@@ -86,7 +86,7 @@ func (dbx *apiImpl) GetEvents(arg *GetTeamEventsArg) (res *GetTeamEventsResult, 
 	return
 }
 
-//GetEventsContinueAPIError is an error-wrapper for the get_events/continue route
+// GetEventsContinueAPIError is an error-wrapper for the get_events/continue route
 type GetEventsContinueAPIError struct {
 	dropbox.APIError
 	EndpointError *GetTeamEventsContinueError `json:"error"`
