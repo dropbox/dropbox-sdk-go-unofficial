@@ -24,7 +24,6 @@ package sharing
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
@@ -454,7 +453,7 @@ type LinkMetadata struct {
 	// Visibility : Who can access the link.
 	Visibility *Visibility `json:"visibility"`
 	// Expires : Expiration time, if set. By default the link won't expire.
-	Expires *time.Time `json:"expires,omitempty"`
+	Expires *dropbox.DBXTime `json:"expires,omitempty"`
 }
 
 // NewLinkMetadata returns a new LinkMetadata instance
@@ -690,7 +689,7 @@ type SharedContentLinkMetadataBase struct {
 	CurrentAudience *LinkAudience `json:"current_audience"`
 	// Expiry : Whether the link has an expiry set on it. A link with an expiry
 	// will have its audience changed to members when the expiry is reached.
-	Expiry *time.Time `json:"expiry,omitempty"`
+	Expiry *dropbox.DBXTime `json:"expiry,omitempty"`
 	// LinkPermissions : A list of permissions for actions you can perform on
 	// the link.
 	LinkPermissions []*LinkPermission `json:"link_permissions"`
@@ -811,7 +810,7 @@ type SharedLinkMetadata struct {
 	// slash.
 	Name string `json:"name"`
 	// Expires : Expiration time, if set. By default the link won't expire.
-	Expires *time.Time `json:"expires,omitempty"`
+	Expires *dropbox.DBXTime `json:"expires,omitempty"`
 	// PathLower : The lowercased full path in the user's Dropbox. This always
 	// starts with a slash. This field will only be present only if the linked
 	// file is in the authenticated user's dropbox and the user is the owner of
@@ -910,9 +909,9 @@ type FileLinkMetadata struct {
 	// server stores whatever the desktop client sends up), this should only be
 	// used for display purposes (such as sorting) and not, for example, to
 	// determine if a file has changed or not.
-	ClientModified time.Time `json:"client_modified"`
+	ClientModified dropbox.DBXTime `json:"client_modified"`
 	// ServerModified : The last time the file was modified on Dropbox.
-	ServerModified time.Time `json:"server_modified"`
+	ServerModified dropbox.DBXTime `json:"server_modified"`
 	// Rev : A unique identifier for the current revision of a file. This field
 	// is the same rev as elsewhere in the API and can be used to detect changes
 	// and avoid conflicts.
@@ -922,7 +921,7 @@ type FileLinkMetadata struct {
 }
 
 // NewFileLinkMetadata returns a new FileLinkMetadata instance
-func NewFileLinkMetadata(Url string, Name string, LinkPermissions *LinkPermissions, ClientModified time.Time, ServerModified time.Time, Rev string, Size uint64) *FileLinkMetadata {
+func NewFileLinkMetadata(Url string, Name string, LinkPermissions *LinkPermissions, ClientModified dropbox.DBXTime, ServerModified dropbox.DBXTime, Rev string, Size uint64) *FileLinkMetadata {
 	s := new(FileLinkMetadata)
 	s.Url = Url
 	s.Name = Name
@@ -1839,7 +1838,7 @@ func NewLinkAudienceOption(Audience *LinkAudience, Allowed bool) *LinkAudienceOp
 type LinkExpiry struct {
 	dropbox.Tagged
 	// SetExpiry : Set a new expiry or change an existing expiry.
-	SetExpiry time.Time `json:"set_expiry,omitempty"`
+	SetExpiry dropbox.DBXTime `json:"set_expiry,omitempty"`
 }
 
 // Valid tag values for LinkExpiry
@@ -1854,7 +1853,7 @@ func (u *LinkExpiry) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
 		// SetExpiry : Set a new expiry or change an existing expiry.
-		SetExpiry time.Time `json:"set_expiry,omitempty"`
+		SetExpiry dropbox.DBXTime `json:"set_expiry,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3842,7 +3841,7 @@ type SharedFileMetadata struct {
 	// this shared file. If the user was not invited to the shared file, the
 	// timestamp will indicate when the user was invited to the parent shared
 	// folder. This value may be absent.
-	TimeInvited *time.Time `json:"time_invited,omitempty"`
+	TimeInvited *dropbox.DBXTime `json:"time_invited,omitempty"`
 }
 
 // NewSharedFileMetadata returns a new SharedFileMetadata instance
@@ -3991,7 +3990,7 @@ type SharedFolderMetadata struct {
 	SharedFolderId string `json:"shared_folder_id"`
 	// TimeInvited : Timestamp indicating when the current user was invited to
 	// this shared folder.
-	TimeInvited time.Time `json:"time_invited"`
+	TimeInvited dropbox.DBXTime `json:"time_invited"`
 	// AccessInheritance : Whether the folder inherits its members from its
 	// parent.
 	AccessInheritance *AccessInheritance `json:"access_inheritance"`
@@ -4000,7 +3999,7 @@ type SharedFolderMetadata struct {
 }
 
 // NewSharedFolderMetadata returns a new SharedFolderMetadata instance
-func NewSharedFolderMetadata(AccessType *AccessLevel, IsInsideTeamFolder bool, IsTeamFolder bool, Name string, Policy *FolderPolicy, PreviewUrl string, SharedFolderId string, TimeInvited time.Time) *SharedFolderMetadata {
+func NewSharedFolderMetadata(AccessType *AccessLevel, IsInsideTeamFolder bool, IsTeamFolder bool, Name string, Policy *FolderPolicy, PreviewUrl string, SharedFolderId string, TimeInvited dropbox.DBXTime) *SharedFolderMetadata {
 	s := new(SharedFolderMetadata)
 	s.AccessType = AccessType
 	s.IsInsideTeamFolder = IsInsideTeamFolder
@@ -4102,7 +4101,7 @@ type SharedLinkSettings struct {
 	LinkPassword string `json:"link_password,omitempty"`
 	// Expires : Expiration time of the shared link. By default the link won't
 	// expire.
-	Expires *time.Time `json:"expires,omitempty"`
+	Expires *dropbox.DBXTime `json:"expires,omitempty"`
 	// Audience : The new audience who can benefit from the access level
 	// specified by the link's access level specified in the `link_access_level`
 	// field of `LinkPermissions`. This is used in conjunction with team
@@ -4646,7 +4645,7 @@ type UserFileMembershipInfo struct {
 	// TimeLastSeen : The UTC timestamp of when the user has last seen the
 	// content. Only populated if the user has seen the content and the caller
 	// has a plan that includes viewer history.
-	TimeLastSeen *time.Time `json:"time_last_seen,omitempty"`
+	TimeLastSeen *dropbox.DBXTime `json:"time_last_seen,omitempty"`
 	// PlatformType : The platform on which the user has last seen the content,
 	// or unknown.
 	PlatformType *seen_state.PlatformType `json:"platform_type,omitempty"`

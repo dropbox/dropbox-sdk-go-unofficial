@@ -29,7 +29,6 @@ package paper
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing"
@@ -138,7 +137,7 @@ type Cursor struct {
 	// time will have a very short expiration as docs do get modified very often
 	// and the modified time can be changed while the iteration is happening
 	// thus altering the results.
-	Expiration *time.Time `json:"expiration,omitempty"`
+	Expiration *dropbox.DBXTime `json:"expiration,omitempty"`
 }
 
 // NewCursor returns a new Cursor instance
@@ -347,7 +346,7 @@ type ListPaperDocsArgs struct {
 	Limit int32 `json:"limit"`
 	// StopAtDate : Do not return results beyond this date. Behavior depends on
 	// sort order.
-	StopAtDate *time.Time `json:"stop_at_date,omitempty"`
+	StopAtDate *dropbox.DBXTime `json:"stop_at_date,omitempty"`
 }
 
 // NewListPaperDocsArgs returns a new ListPaperDocsArgs instance
@@ -721,19 +720,19 @@ type PaperDocGetMetadataResult struct {
 	// Title : The Paper doc title.
 	Title string `json:"title"`
 	// CreatedDate : The Paper doc creation date.
-	CreatedDate time.Time `json:"created_date"`
+	CreatedDate dropbox.DBXTime `json:"created_date"`
 	// Status : The Paper doc status.
 	Status *PaperDocStatus `json:"status"`
 	// Revision : The Paper doc revision. Simply an ever increasing number.
 	Revision int64 `json:"revision"`
 	// LastUpdatedDate : The date when the Paper doc was last edited.
-	LastUpdatedDate time.Time `json:"last_updated_date"`
+	LastUpdatedDate dropbox.DBXTime `json:"last_updated_date"`
 	// LastEditor : The email address of the last editor of the Paper doc.
 	LastEditor string `json:"last_editor"`
 }
 
 // NewPaperDocGetMetadataResult returns a new PaperDocGetMetadataResult instance
-func NewPaperDocGetMetadataResult(DocId string, Owner string, Title string, CreatedDate time.Time, Status *PaperDocStatus, Revision int64, LastUpdatedDate time.Time, LastEditor string) *PaperDocGetMetadataResult {
+func NewPaperDocGetMetadataResult(DocId string, Owner string, Title string, CreatedDate dropbox.DBXTime, Status *PaperDocStatus, Revision int64, LastUpdatedDate dropbox.DBXTime, LastEditor string) *PaperDocGetMetadataResult {
 	s := new(PaperDocGetMetadataResult)
 	s.DocId = DocId
 	s.Owner = Owner

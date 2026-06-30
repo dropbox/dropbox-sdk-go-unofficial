@@ -23,7 +23,6 @@ package team
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/account"
@@ -44,9 +43,9 @@ type DeviceSession struct {
 	// made.
 	Country string `json:"country,omitempty"`
 	// Created : The time this session was created.
-	Created *time.Time `json:"created,omitempty"`
+	Created *dropbox.DBXTime `json:"created,omitempty"`
 	// Updated : The time of the last activity from this session.
-	Updated *time.Time `json:"updated,omitempty"`
+	Updated *dropbox.DBXTime `json:"updated,omitempty"`
 }
 
 // NewDeviceSession returns a new DeviceSession instance
@@ -66,7 +65,7 @@ type ActiveWebSession struct {
 	// Browser : Information on the browser used for this web session.
 	Browser string `json:"browser"`
 	// Expires : The time this session expires.
-	Expires *time.Time `json:"expires,omitempty"`
+	Expires *dropbox.DBXTime `json:"expires,omitempty"`
 }
 
 // NewActiveWebSession returns a new ActiveWebSession instance
@@ -255,7 +254,7 @@ type ApiApp struct {
 	// PublisherUrl : The publisher's URL.
 	PublisherUrl string `json:"publisher_url,omitempty"`
 	// Linked : The time this application was linked.
-	Linked *time.Time `json:"linked,omitempty"`
+	Linked *dropbox.DBXTime `json:"linked,omitempty"`
 	// IsAppFolder : Whether the linked application uses a dedicated folder.
 	IsAppFolder bool `json:"is_app_folder"`
 }
@@ -403,9 +402,9 @@ func NewCustomQuotaUsersArg(Users []*UserSelectorArg) *CustomQuotaUsersArg {
 type DateRange struct {
 	// StartDate : Optional starting date (inclusive). If start_date is None or
 	// too long ago, this field will be set to 6 months ago.
-	StartDate *time.Time `json:"start_date,omitempty"`
+	StartDate *dropbox.DBXTime `json:"start_date,omitempty"`
 	// EndDate : Optional ending date (exclusive).
-	EndDate *time.Time `json:"end_date,omitempty"`
+	EndDate *dropbox.DBXTime `json:"end_date,omitempty"`
 }
 
 // NewDateRange returns a new DateRange instance
@@ -1856,7 +1855,7 @@ type LegalHoldHeldRevisionMetadata struct {
 	// OriginalFilePath : The original path of the held revision.
 	OriginalFilePath string `json:"original_file_path"`
 	// ServerModified : The last time the file was modified on Dropbox.
-	ServerModified time.Time `json:"server_modified"`
+	ServerModified dropbox.DBXTime `json:"server_modified"`
 	// AuthorMemberId : The member id of the revision's author.
 	AuthorMemberId string `json:"author_member_id"`
 	// AuthorMemberStatus : The member status of the revision's author.
@@ -1874,7 +1873,7 @@ type LegalHoldHeldRevisionMetadata struct {
 }
 
 // NewLegalHoldHeldRevisionMetadata returns a new LegalHoldHeldRevisionMetadata instance
-func NewLegalHoldHeldRevisionMetadata(NewFilename string, OriginalRevisionId string, OriginalFilePath string, ServerModified time.Time, AuthorMemberId string, AuthorMemberStatus *TeamMemberStatus, AuthorEmail string, FileType string, Size uint64, ContentHash string) *LegalHoldHeldRevisionMetadata {
+func NewLegalHoldHeldRevisionMetadata(NewFilename string, OriginalRevisionId string, OriginalFilePath string, ServerModified dropbox.DBXTime, AuthorMemberId string, AuthorMemberStatus *TeamMemberStatus, AuthorEmail string, FileType string, Size uint64, ContentHash string) *LegalHoldHeldRevisionMetadata {
 	s := new(LegalHoldHeldRevisionMetadata)
 	s.NewFilename = NewFilename
 	s.OriginalRevisionId = OriginalRevisionId
@@ -1898,20 +1897,20 @@ type LegalHoldPolicy struct {
 	// Description : A description of the legal hold policy.
 	Description string `json:"description,omitempty"`
 	// ActivationTime : The time at which the legal hold was activated.
-	ActivationTime *time.Time `json:"activation_time,omitempty"`
+	ActivationTime *dropbox.DBXTime `json:"activation_time,omitempty"`
 	// Members : Team members IDs and number of permanently deleted members
 	// under hold.
 	Members *MembersInfo `json:"members"`
 	// Status : The current state of the hold.
 	Status *LegalHoldStatus `json:"status"`
 	// StartDate : Start date of the legal hold policy.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : End date of the legal hold policy.
-	EndDate *time.Time `json:"end_date,omitempty"`
+	EndDate *dropbox.DBXTime `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldPolicy returns a new LegalHoldPolicy instance
-func NewLegalHoldPolicy(Id string, Name string, Members *MembersInfo, Status *LegalHoldStatus, StartDate time.Time) *LegalHoldPolicy {
+func NewLegalHoldPolicy(Id string, Name string, Members *MembersInfo, Status *LegalHoldStatus, StartDate dropbox.DBXTime) *LegalHoldPolicy {
 	s := new(LegalHoldPolicy)
 	s.Id = Id
 	s.Name = Name
@@ -2104,9 +2103,9 @@ type LegalHoldsPolicyCreateArg struct {
 	// Members : List of team member IDs added to the hold.
 	Members []string `json:"members"`
 	// StartDate : start date of the legal hold policy.
-	StartDate *time.Time `json:"start_date,omitempty"`
+	StartDate *dropbox.DBXTime `json:"start_date,omitempty"`
 	// EndDate : end date of the legal hold policy.
-	EndDate *time.Time `json:"end_date,omitempty"`
+	EndDate *dropbox.DBXTime `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldsPolicyCreateArg returns a new LegalHoldsPolicyCreateArg instance
@@ -3039,14 +3038,14 @@ type MemberProfile struct {
 	MembershipType *TeamMembershipType `json:"membership_type"`
 	// InvitedOn : The date and time the user was invited to the team (contains
 	// value only when the member's status matches `TeamMemberStatus.invited`).
-	InvitedOn *time.Time `json:"invited_on,omitempty"`
+	InvitedOn *dropbox.DBXTime `json:"invited_on,omitempty"`
 	// JoinedOn : The date and time the user joined as a member of a specific
 	// team.
-	JoinedOn *time.Time `json:"joined_on,omitempty"`
+	JoinedOn *dropbox.DBXTime `json:"joined_on,omitempty"`
 	// SuspendedOn : The date and time the user was suspended from the team
 	// (contains value only when the member's status matches
 	// `TeamMemberStatus.suspended`).
-	SuspendedOn *time.Time `json:"suspended_on,omitempty"`
+	SuspendedOn *dropbox.DBXTime `json:"suspended_on,omitempty"`
 	// PersistentId : Persistent ID that a team can attach to the user. The
 	// persistent ID is unique ID to be used for SAML authentication.
 	PersistentId string `json:"persistent_id,omitempty"`

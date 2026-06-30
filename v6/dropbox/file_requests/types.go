@@ -24,7 +24,6 @@ package file_requests
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 )
@@ -224,7 +223,7 @@ type FileRequest struct {
 	// with the app folder permission, this will be relative to the app folder.
 	Destination string `json:"destination,omitempty"`
 	// Created : When this file request was created.
-	Created time.Time `json:"created"`
+	Created dropbox.DBXTime `json:"created"`
 	// Deadline : The deadline for this file request. Only set if the request
 	// has a deadline.
 	Deadline *FileRequestDeadline `json:"deadline,omitempty"`
@@ -240,7 +239,7 @@ type FileRequest struct {
 }
 
 // NewFileRequest returns a new FileRequest instance
-func NewFileRequest(Id string, Url string, Title string, Created time.Time, IsOpen bool, FileCount int64) *FileRequest {
+func NewFileRequest(Id string, Url string, Title string, Created dropbox.DBXTime, IsOpen bool, FileCount int64) *FileRequest {
 	s := new(FileRequest)
 	s.Id = Id
 	s.Url = Url
@@ -254,14 +253,14 @@ func NewFileRequest(Id string, Url string, Title string, Created time.Time, IsOp
 // FileRequestDeadline : has no documentation (yet)
 type FileRequestDeadline struct {
 	// Deadline : The deadline for this file request.
-	Deadline time.Time `json:"deadline"`
+	Deadline dropbox.DBXTime `json:"deadline"`
 	// AllowLateUploads : If set, allow uploads after the deadline has passed.
 	// These uploads will be marked overdue.
 	AllowLateUploads *GracePeriod `json:"allow_late_uploads,omitempty"`
 }
 
 // NewFileRequestDeadline returns a new FileRequestDeadline instance
-func NewFileRequestDeadline(Deadline time.Time) *FileRequestDeadline {
+func NewFileRequestDeadline(Deadline dropbox.DBXTime) *FileRequestDeadline {
 	s := new(FileRequestDeadline)
 	s.Deadline = Deadline
 	return s
