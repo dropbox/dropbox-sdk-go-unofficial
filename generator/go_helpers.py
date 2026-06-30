@@ -122,12 +122,12 @@ def _doc_handler(tag, val):
         raise RuntimeError('Unknown doc ref tag %r' % tag)
 
 
-def generate_doc(code_generator, t):
+def generate_doc(code_generator, t, name_override=None):
     doc = t.doc
     if doc is None:
         doc = 'has no documentation (yet)'
     doc = code_generator.process_doc(doc, _doc_handler)
-    d = '%s : %s' % (fmt_var(t.name), doc)
+    d = '%s : %s' % (name_override or fmt_var(t.name), doc)
     if isinstance(t, ApiNamespace):
         d = 'Package %s : %s' % (t.name, doc)
     code_generator.emit_wrapped_text(d, prefix='// ')

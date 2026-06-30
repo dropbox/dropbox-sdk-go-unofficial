@@ -166,9 +166,15 @@ type Request struct {
 	ExtraHeaders map[string]string
 }
 
+// Execute executes a Dropbox API request with a background context.
 func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, error) {
+	return c.ExecuteContext(context.Background(), req, body)
+}
+
+// ExecuteContext executes a Dropbox API request with the provided context.
+func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reader) ([]byte, io.ReadCloser, error) {
 	url := c.URLGenerator(req.Host, req.Namespace, req.Route)
-	httpReq, err := http.NewRequest("POST", url, body)
+	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, body)
 	if err != nil {
 		return nil, nil, err
 	}

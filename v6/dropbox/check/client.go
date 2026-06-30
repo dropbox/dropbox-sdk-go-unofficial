@@ -21,7 +21,9 @@
 package check
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
@@ -46,6 +48,25 @@ type Client interface {
 	User(arg *EchoArg) (res *EchoResult, err error)
 }
 
+// ContextClient interface describes all routes in this namespace with context support
+type ContextClient interface {
+	Client
+	// AppContext : This endpoint performs App Authentication, validating the supplied
+	// app key and secret, and returns the supplied string, to allow you to test
+	// your code and connection to the Dropbox API. It has no other effect. If
+	// you receive an HTTP 200 response with the supplied query, it indicates at
+	// least part of the Dropbox API infrastructure is working and that the app
+	// key and secret valid.
+	AppContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error)
+	// UserContext : This endpoint performs User Authentication, validating the
+	// supplied access token, and returns the supplied string, to allow you to
+	// test your code and connection to the Dropbox API. It has no other effect.
+	// If you receive an HTTP 200 response with the supplied query, it indicates
+	// at least part of the Dropbox API infrastructure is working and that the
+	// access token is valid.
+	UserContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error)
+}
+
 type apiImpl dropbox.Context
 
 // AppAPIError is an error-wrapper for the app route
@@ -54,7 +75,13 @@ type AppAPIError struct {
 	EndpointError *EchoError `json:"error"`
 }
 
-func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
+// AppContext : This endpoint performs App Authentication, validating the supplied
+// app key and secret, and returns the supplied string, to allow you to test
+// your code and connection to the Dropbox API. It has no other effect. If
+// you receive an HTTP 200 response with the supplied query, it indicates at
+// least part of the Dropbox API infrastructure is working and that the app
+// key and secret valid.
+func (dbx *apiImpl) AppContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "check",
@@ -67,11 +94,11 @@ func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr AppAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -86,13 +113,23 @@ func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
 	return
 }
 
+func (dbx *apiImpl) App(arg *EchoArg) (res *EchoResult, err error) {
+	return dbx.AppContext(context.Background(), arg)
+}
+
 // UserAPIError is an error-wrapper for the user route
 type UserAPIError struct {
 	dropbox.APIError
 	EndpointError *EchoError `json:"error"`
 }
 
-func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
+// UserContext : This endpoint performs User Authentication, validating the
+// supplied access token, and returns the supplied string, to allow you to
+// test your code and connection to the Dropbox API. It has no other effect.
+// If you receive an HTTP 200 response with the supplied query, it indicates
+// at least part of the Dropbox API infrastructure is working and that the
+// access token is valid.
+func (dbx *apiImpl) UserContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "check",
@@ -105,11 +142,11 @@ func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr UserAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -124,8 +161,17 @@ func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
 	return
 }
 
-// New returns a Client implementation for this namespace
-func New(c dropbox.Config) Client {
+func (dbx *apiImpl) User(arg *EchoArg) (res *EchoResult, err error) {
+	return dbx.UserContext(context.Background(), arg)
+}
+
+// NewContext returns a ContextClient implementation for this namespace
+func NewContext(c dropbox.Config) ContextClient {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx
+}
+
+// New returns a Client implementation for this namespace
+func New(c dropbox.Config) Client {
+	return NewContext(c)
 }
