@@ -57,7 +57,7 @@ _type_table = {
     Float32: 'float32',
     Boolean: 'bool',
     String: 'string',
-    Timestamp: 'time.Time',
+    Timestamp: 'dropbox.DBXTime',
     Void: 'struct{}',
 }
 

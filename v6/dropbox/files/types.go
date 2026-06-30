@@ -24,7 +24,6 @@ package files
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/file_properties"
@@ -253,7 +252,7 @@ type CommitInfo struct {
 	// the Dropbox servers. It can also record an additional timestamp, provided
 	// by Dropbox desktop clients, mobile clients, and API apps of when the file
 	// was actually created or modified.
-	ClientModified *time.Time `json:"client_modified,omitempty"`
+	ClientModified *dropbox.DBXTime `json:"client_modified,omitempty"`
 	// Mute : Normally, users are made aware of any file modifications in their
 	// Dropbox account via notifications in the client software. If true, this
 	// tells the clients that this modification shouldn't result in a user
@@ -1346,7 +1345,7 @@ type FileLockMetadata struct {
 	// LockholderAccountId : The account ID of the lock holder if known.
 	LockholderAccountId string `json:"lockholder_account_id,omitempty"`
 	// Created : The timestamp of the lock was created.
-	Created *time.Time `json:"created,omitempty"`
+	Created *dropbox.DBXTime `json:"created,omitempty"`
 }
 
 // NewFileLockMetadata returns a new FileLockMetadata instance
@@ -1365,9 +1364,9 @@ type FileMetadata struct {
 	// verified (the Dropbox server stores whatever the desktop client sends
 	// up), this should only be used for display purposes (such as sorting) and
 	// not, for example, to determine if a file has changed or not.
-	ClientModified time.Time `json:"client_modified"`
+	ClientModified dropbox.DBXTime `json:"client_modified"`
 	// ServerModified : The last time the file was modified on Dropbox.
-	ServerModified time.Time `json:"server_modified"`
+	ServerModified dropbox.DBXTime `json:"server_modified"`
 	// Rev : A unique identifier for the current revision of a file. This field
 	// is the same rev as elsewhere in the API and can be used to detect changes
 	// and avoid conflicts.
@@ -1411,7 +1410,7 @@ type FileMetadata struct {
 }
 
 // NewFileMetadata returns a new FileMetadata instance
-func NewFileMetadata(Name string, Id string, ClientModified time.Time, ServerModified time.Time, Rev string, Size uint64) *FileMetadata {
+func NewFileMetadata(Name string, Id string, ClientModified dropbox.DBXTime, ServerModified dropbox.DBXTime, Rev string, Size uint64) *FileMetadata {
 	s := new(FileMetadata)
 	s.Name = Name
 	s.Id = Id
@@ -1577,11 +1576,11 @@ type GetCopyReferenceResult struct {
 	// Expires : The expiration date of the copy reference. This value is
 	// currently set to be far enough in the future so that expiration is
 	// effectively not an issue.
-	Expires time.Time `json:"expires"`
+	Expires dropbox.DBXTime `json:"expires"`
 }
 
 // NewGetCopyReferenceResult returns a new GetCopyReferenceResult instance
-func NewGetCopyReferenceResult(Metadata IsMetadata, CopyReference string, Expires time.Time) *GetCopyReferenceResult {
+func NewGetCopyReferenceResult(Metadata IsMetadata, CopyReference string, Expires dropbox.DBXTime) *GetCopyReferenceResult {
 	s := new(GetCopyReferenceResult)
 	s.Metadata = Metadata
 	s.CopyReference = CopyReference
@@ -1599,7 +1598,7 @@ func (u *GetCopyReferenceResult) UnmarshalJSON(b []byte) error {
 		// Expires : The expiration date of the copy reference. This value is
 		// currently set to be far enough in the future so that expiration is
 		// effectively not an issue.
-		Expires time.Time `json:"expires"`
+		Expires dropbox.DBXTime `json:"expires"`
 	}
 	var w wrap
 	if err := json.Unmarshal(b, &w); err != nil {
@@ -2231,7 +2230,7 @@ type ListRevisionsResult struct {
 	// latest revision of the file older than before_rev.
 	IsDeleted bool `json:"is_deleted"`
 	// ServerDeleted : The time of deletion if the file was deleted.
-	ServerDeleted *time.Time `json:"server_deleted,omitempty"`
+	ServerDeleted *dropbox.DBXTime `json:"server_deleted,omitempty"`
 	// Entries : The revisions for the file. Only revisions that are not deleted
 	// will show up here.
 	Entries []*FileMetadata `json:"entries"`
@@ -2526,7 +2525,7 @@ type MediaMetadata struct {
 	// Location : The GPS coordinate of the photo/video.
 	Location *GpsCoordinates `json:"location,omitempty"`
 	// TimeTaken : The timestamp when the photo/video is taken.
-	TimeTaken *time.Time `json:"time_taken,omitempty"`
+	TimeTaken *dropbox.DBXTime `json:"time_taken,omitempty"`
 }
 
 // NewMediaMetadata returns a new MediaMetadata instance
@@ -4268,7 +4267,7 @@ func NewSharedLinkFileInfo(Url string) *SharedLinkFileInfo {
 // SingleUserLock : has no documentation (yet)
 type SingleUserLock struct {
 	// Created : The time the lock was created.
-	Created time.Time `json:"created"`
+	Created dropbox.DBXTime `json:"created"`
 	// LockHolderAccountId : The account ID of the lock holder if known.
 	LockHolderAccountId string `json:"lock_holder_account_id"`
 	// LockHolderTeamId : The id of the team of the account holder if it exists.
@@ -4276,7 +4275,7 @@ type SingleUserLock struct {
 }
 
 // NewSingleUserLock returns a new SingleUserLock instance
-func NewSingleUserLock(Created time.Time, LockHolderAccountId string) *SingleUserLock {
+func NewSingleUserLock(Created dropbox.DBXTime, LockHolderAccountId string) *SingleUserLock {
 	s := new(SingleUserLock)
 	s.Created = Created
 	s.LockHolderAccountId = LockHolderAccountId

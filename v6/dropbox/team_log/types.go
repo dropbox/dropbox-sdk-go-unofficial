@@ -23,7 +23,6 @@ package team_log
 
 import (
 	"encoding/json"
-	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
@@ -3550,9 +3549,9 @@ type DeviceSessionLogInfo struct {
 	// IpAddress : The IP address of the last activity from this session.
 	IpAddress string `json:"ip_address,omitempty"`
 	// Created : The time this session was created.
-	Created *time.Time `json:"created,omitempty"`
+	Created *dropbox.DBXTime `json:"created,omitempty"`
 	// Updated : The time of the last activity from this session.
-	Updated *time.Time `json:"updated,omitempty"`
+	Updated *dropbox.DBXTime `json:"updated,omitempty"`
 }
 
 // NewDeviceSessionLogInfo returns a new DeviceSessionLogInfo instance
@@ -17399,7 +17398,7 @@ func NewFileRequestCreateType(Description string) *FileRequestCreateType {
 type FileRequestDeadline struct {
 	// Deadline : The deadline for this file request. Might be missing due to
 	// historical data gap.
-	Deadline *time.Time `json:"deadline,omitempty"`
+	Deadline *dropbox.DBXTime `json:"deadline,omitempty"`
 	// AllowLateUploads : If set, allow uploads after the deadline has passed.
 	AllowLateUploads string `json:"allow_late_uploads,omitempty"`
 }
@@ -18180,7 +18179,7 @@ type GetTeamEventsContinueError struct {
 	// `getEvents`. The associated value is the approximate timestamp of the
 	// most recent event returned by the cursor. This should be used as a
 	// resumption point when calling `getEvents` to obtain a new cursor.
-	Reset time.Time `json:"reset,omitempty"`
+	Reset dropbox.DBXTime `json:"reset,omitempty"`
 }
 
 // Valid tag values for GetTeamEventsContinueError
@@ -18201,7 +18200,7 @@ func (u *GetTeamEventsContinueError) UnmarshalJSON(body []byte) error {
 		// timestamp of the most recent event returned by the cursor. This
 		// should be used as a resumption point when calling `getEvents` to
 		// obtain a new cursor.
-		Reset time.Time `json:"reset,omitempty"`
+		Reset dropbox.DBXTime `json:"reset,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -19500,9 +19499,9 @@ func (u *LegacyDeviceSessionLogInfo) UnmarshalJSON(b []byte) error {
 		// IpAddress : The IP address of the last activity from this session.
 		IpAddress string `json:"ip_address,omitempty"`
 		// Created : The time this session was created.
-		Created *time.Time `json:"created,omitempty"`
+		Created *dropbox.DBXTime `json:"created,omitempty"`
 		// Updated : The time of the last activity from this session.
-		Updated *time.Time `json:"updated,omitempty"`
+		Updated *dropbox.DBXTime `json:"updated,omitempty"`
 		// SessionInfo : Session unique id.
 		SessionInfo json.RawMessage `json:"session_info,omitempty"`
 		// DisplayName : The device name. Might be missing due to historical
@@ -19560,13 +19559,13 @@ type LegalHoldsActivateAHoldDetails struct {
 	// Name : Hold name.
 	Name string `json:"name"`
 	// StartDate : Hold start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Hold end date.
-	EndDate *time.Time `json:"end_date,omitempty"`
+	EndDate *dropbox.DBXTime `json:"end_date,omitempty"`
 }
 
 // NewLegalHoldsActivateAHoldDetails returns a new LegalHoldsActivateAHoldDetails instance
-func NewLegalHoldsActivateAHoldDetails(LegalHoldId string, Name string, StartDate time.Time) *LegalHoldsActivateAHoldDetails {
+func NewLegalHoldsActivateAHoldDetails(LegalHoldId string, Name string, StartDate dropbox.DBXTime) *LegalHoldsActivateAHoldDetails {
 	s := new(LegalHoldsActivateAHoldDetails)
 	s.LegalHoldId = LegalHoldId
 	s.Name = Name
@@ -19910,7 +19909,7 @@ type LinkSettingsLogInfo struct {
 	// Downloadable : Downloadable.
 	Downloadable bool `json:"downloadable"`
 	// ExpireAt : Expires at.
-	ExpireAt *time.Time `json:"expire_at,omitempty"`
+	ExpireAt *dropbox.DBXTime `json:"expire_at,omitempty"`
 	// PasswordRequired : Password required.
 	PasswordRequired bool `json:"password_required"`
 	// Url : Link URL.
@@ -21204,13 +21203,13 @@ const (
 // no expiration.
 type NoExpirationLinkGenCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate time.Time `json:"end_date"`
+	EndDate dropbox.DBXTime `json:"end_date"`
 }
 
 // NewNoExpirationLinkGenCreateReportDetails returns a new NoExpirationLinkGenCreateReportDetails instance
-func NewNoExpirationLinkGenCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoExpirationLinkGenCreateReportDetails {
+func NewNoExpirationLinkGenCreateReportDetails(StartDate dropbox.DBXTime, EndDate dropbox.DBXTime) *NoExpirationLinkGenCreateReportDetails {
 	s := new(NoExpirationLinkGenCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -21261,13 +21260,13 @@ func NewNoExpirationLinkGenReportFailedType(Description string) *NoExpirationLin
 // passwords.
 type NoPasswordLinkGenCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate time.Time `json:"end_date"`
+	EndDate dropbox.DBXTime `json:"end_date"`
 }
 
 // NewNoPasswordLinkGenCreateReportDetails returns a new NoPasswordLinkGenCreateReportDetails instance
-func NewNoPasswordLinkGenCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoPasswordLinkGenCreateReportDetails {
+func NewNoPasswordLinkGenCreateReportDetails(StartDate dropbox.DBXTime, EndDate dropbox.DBXTime) *NoPasswordLinkGenCreateReportDetails {
 	s := new(NoPasswordLinkGenCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -21318,13 +21317,13 @@ func NewNoPasswordLinkGenReportFailedType(Description string) *NoPasswordLinkGen
 // without passwords.
 type NoPasswordLinkViewCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate time.Time `json:"end_date"`
+	EndDate dropbox.DBXTime `json:"end_date"`
 }
 
 // NewNoPasswordLinkViewCreateReportDetails returns a new NoPasswordLinkViewCreateReportDetails instance
-func NewNoPasswordLinkViewCreateReportDetails(StartDate time.Time, EndDate time.Time) *NoPasswordLinkViewCreateReportDetails {
+func NewNoPasswordLinkViewCreateReportDetails(StartDate dropbox.DBXTime, EndDate dropbox.DBXTime) *NoPasswordLinkViewCreateReportDetails {
 	s := new(NoPasswordLinkViewCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -21770,13 +21769,13 @@ func NewOriginLogInfo(AccessMethod *AccessMethodLogInfo) *OriginLogInfo {
 // OutdatedLinkViewCreateReportDetails : Report created: Views of old links.
 type OutdatedLinkViewCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate time.Time `json:"end_date"`
+	EndDate dropbox.DBXTime `json:"end_date"`
 }
 
 // NewOutdatedLinkViewCreateReportDetails returns a new OutdatedLinkViewCreateReportDetails instance
-func NewOutdatedLinkViewCreateReportDetails(StartDate time.Time, EndDate time.Time) *OutdatedLinkViewCreateReportDetails {
+func NewOutdatedLinkViewCreateReportDetails(StartDate dropbox.DBXTime, EndDate dropbox.DBXTime) *OutdatedLinkViewCreateReportDetails {
 	s := new(OutdatedLinkViewCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -24403,11 +24402,11 @@ func NewResellerSupportSessionStartType(Description string) *ResellerSupportSess
 // RewindFolderDetails : Rewound a folder.
 type RewindFolderDetails struct {
 	// RewindFolderTargetTsMs : Folder was Rewound to this date.
-	RewindFolderTargetTsMs time.Time `json:"rewind_folder_target_ts_ms"`
+	RewindFolderTargetTsMs dropbox.DBXTime `json:"rewind_folder_target_ts_ms"`
 }
 
 // NewRewindFolderDetails returns a new RewindFolderDetails instance
-func NewRewindFolderDetails(RewindFolderTargetTsMs time.Time) *RewindFolderDetails {
+func NewRewindFolderDetails(RewindFolderTargetTsMs dropbox.DBXTime) *RewindFolderDetails {
 	s := new(RewindFolderDetails)
 	s.RewindFolderTargetTsMs = RewindFolderTargetTsMs
 	return s
@@ -25431,7 +25430,7 @@ func NewSharedContentAddInviteesType(Description string) *SharedContentAddInvite
 type SharedContentAddLinkExpiryDetails struct {
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue *time.Time `json:"new_value,omitempty"`
+	NewValue *dropbox.DBXTime `json:"new_value,omitempty"`
 }
 
 // NewSharedContentAddLinkExpiryDetails returns a new SharedContentAddLinkExpiryDetails instance
@@ -25601,10 +25600,10 @@ func NewSharedContentChangeLinkAudienceType(Description string) *SharedContentCh
 type SharedContentChangeLinkExpiryDetails struct {
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue *time.Time `json:"new_value,omitempty"`
+	NewValue *dropbox.DBXTime `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentChangeLinkExpiryDetails returns a new SharedContentChangeLinkExpiryDetails instance
@@ -25906,7 +25905,7 @@ func NewSharedContentRemoveInviteesType(Description string) *SharedContentRemove
 type SharedContentRemoveLinkExpiryDetails struct {
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 }
 
 // NewSharedContentRemoveLinkExpiryDetails returns a new SharedContentRemoveLinkExpiryDetails instance
@@ -26492,14 +26491,14 @@ const (
 // SharedLinkAddExpiryDetails : Added shared link expiration date.
 type SharedLinkAddExpiryDetails struct {
 	// NewValue : New shared link expiration date.
-	NewValue time.Time `json:"new_value"`
+	NewValue dropbox.DBXTime `json:"new_value"`
 	// IsConsolidationAction : Indicates whether this was a consolidation action
 	// by system.
 	IsConsolidationAction bool `json:"is_consolidation_action,omitempty"`
 }
 
 // NewSharedLinkAddExpiryDetails returns a new SharedLinkAddExpiryDetails instance
-func NewSharedLinkAddExpiryDetails(NewValue time.Time) *SharedLinkAddExpiryDetails {
+func NewSharedLinkAddExpiryDetails(NewValue dropbox.DBXTime) *SharedLinkAddExpiryDetails {
 	s := new(SharedLinkAddExpiryDetails)
 	s.NewValue = NewValue
 	return s
@@ -26522,10 +26521,10 @@ func NewSharedLinkAddExpiryType(Description string) *SharedLinkAddExpiryType {
 type SharedLinkChangeExpiryDetails struct {
 	// NewValue : New shared link expiration date. Might be missing due to
 	// historical data gap.
-	NewValue *time.Time `json:"new_value,omitempty"`
+	NewValue *dropbox.DBXTime `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 	// IsConsolidationAction : Indicates whether this was a consolidation action
 	// by system.
 	IsConsolidationAction bool `json:"is_consolidation_action,omitempty"`
@@ -26791,7 +26790,7 @@ func NewSharedLinkDownloadType(Description string) *SharedLinkDownloadType {
 type SharedLinkRemoveExpiryDetails struct {
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkRemoveExpiryDetails returns a new SharedLinkRemoveExpiryDetails instance
@@ -26845,7 +26844,7 @@ type SharedLinkSettingsAddExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue *time.Time `json:"new_value,omitempty"`
+	NewValue *dropbox.DBXTime `json:"new_value,omitempty"`
 }
 
 // NewSharedLinkSettingsAddExpirationDetails returns a new SharedLinkSettingsAddExpirationDetails instance
@@ -26995,10 +26994,10 @@ type SharedLinkSettingsChangeExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// NewValue : New shared content link expiration date. Might be missing due
 	// to historical data gap.
-	NewValue *time.Time `json:"new_value,omitempty"`
+	NewValue *dropbox.DBXTime `json:"new_value,omitempty"`
 	// PreviousValue : Previous shared content link expiration date. Might be
 	// missing due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkSettingsChangeExpirationDetails returns a new SharedLinkSettingsChangeExpirationDetails instance
@@ -27059,7 +27058,7 @@ type SharedLinkSettingsRemoveExpirationDetails struct {
 	SharedContentLink string `json:"shared_content_link,omitempty"`
 	// PreviousValue : Previous shared link expiration date. Might be missing
 	// due to historical data gap.
-	PreviousValue *time.Time `json:"previous_value,omitempty"`
+	PreviousValue *dropbox.DBXTime `json:"previous_value,omitempty"`
 }
 
 // NewSharedLinkSettingsRemoveExpirationDetails returns a new SharedLinkSettingsRemoveExpirationDetails instance
@@ -29296,13 +29295,13 @@ func NewStartedEnterpriseAdminSessionType(Description string) *StartedEnterprise
 // TeamActivityCreateReportDetails : Created team activity report.
 type TeamActivityCreateReportDetails struct {
 	// StartDate : Report start date.
-	StartDate time.Time `json:"start_date"`
+	StartDate dropbox.DBXTime `json:"start_date"`
 	// EndDate : Report end date.
-	EndDate time.Time `json:"end_date"`
+	EndDate dropbox.DBXTime `json:"end_date"`
 }
 
 // NewTeamActivityCreateReportDetails returns a new TeamActivityCreateReportDetails instance
-func NewTeamActivityCreateReportDetails(StartDate time.Time, EndDate time.Time) *TeamActivityCreateReportDetails {
+func NewTeamActivityCreateReportDetails(StartDate dropbox.DBXTime, EndDate dropbox.DBXTime) *TeamActivityCreateReportDetails {
 	s := new(TeamActivityCreateReportDetails)
 	s.StartDate = StartDate
 	s.EndDate = EndDate
@@ -29618,7 +29617,7 @@ func NewTeamEncryptionKeyScheduleKeyDeletionType(Description string) *TeamEncryp
 // TeamEvent : An audit log event.
 type TeamEvent struct {
 	// Timestamp : The Dropbox timestamp representing when the action was taken.
-	Timestamp time.Time `json:"timestamp"`
+	Timestamp dropbox.DBXTime `json:"timestamp"`
 	// EventCategory : The category that this type of action belongs to.
 	EventCategory *EventCategory `json:"event_category"`
 	// Actor : The entity who actually performed the action.
@@ -29650,7 +29649,7 @@ type TeamEvent struct {
 }
 
 // NewTeamEvent returns a new TeamEvent instance
-func NewTeamEvent(Timestamp time.Time, EventCategory *EventCategory, EventType *EventType, Details *EventDetails) *TeamEvent {
+func NewTeamEvent(Timestamp dropbox.DBXTime, EventCategory *EventCategory, EventType *EventType, Details *EventDetails) *TeamEvent {
 	s := new(TeamEvent)
 	s.Timestamp = Timestamp
 	s.EventCategory = EventCategory
