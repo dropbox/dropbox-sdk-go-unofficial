@@ -1,6 +1,6 @@
 # Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Test/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Lint/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions)
 
-An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Tested with Go 1.11+
+An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Requires Go 1.23+
 
 :warning: WARNING: This SDK is **NOT yet official**. What does this mean?
 
@@ -75,6 +75,63 @@ Here's an example:
   } else {
     fmt.Printf("Name: %v", resp.Name)
   }
+```
+
+### Working with polymorphic responses
+
+Some API methods return interface types (e.g. `IsSharedLinkMetadata`, `IsMetadata`). Use a type switch to access the concrete type:
+
+```go
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing"
+
+// CreateSharedLinkWithSettings returns IsSharedLinkMetadata
+res, err := client.CreateSharedLinkWithSettings(arg)
+if err != nil {
+    return err
+}
+switch link := res.(type) {
+case *sharing.FileLinkMetadata:
+    fmt.Println("File link:", link.Url)
+case *sharing.FolderLinkMetadata:
+    fmt.Println("Folder link:", link.Url)
+case *sharing.SharedLinkMetadata:
+    fmt.Println("Link:", link.Url)
+}
+```
+
+Similarly, when listing folder contents, entries are returned as `IsMetadata`:
+
+```go
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
+
+res, err := client.ListFolder(files.NewListFolderArg("/path"))
+if err != nil {
+    return err
+}
+for _, entry := range res.Entries {
+    switch e := entry.(type) {
+    case *files.FileMetadata:
+        fmt.Printf("File: %s (%d bytes)\n", e.Name, e.Size)
+    case *files.FolderMetadata:
+        fmt.Printf("Folder: %s\n", e.Name)
+    case *files.DeletedMetadata:
+        fmt.Printf("Deleted: %s\n", e.Name)
+    }
+}
+```
+
+### Timestamps
+
+All timestamp fields use `dropbox.DBXTime` which serializes to the format the Dropbox API expects (`2006-01-02T15:04:05Z`). Convert to/from `time.Time`:
+
+```go
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+
+// time.Time → DBXTime
+modified := dropbox.DBXTime(time.Now())
+
+// DBXTime → time.Time
+t := time.Time(metadata.ClientModified)
 ```
 
 ### Error Handling
