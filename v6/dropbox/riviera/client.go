@@ -21,7 +21,9 @@
 package riviera
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
@@ -45,6 +47,23 @@ type Client interface {
 	GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
 }
 
+// ContextClient interface describes all routes in this namespace with context support
+type ContextClient interface {
+	Client
+	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
+	// supported file formats.
+	GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
+	// GetMarkdownAsyncCheckContext : Returns the status or result of specified
+	// get_markdown_async task.
+	GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
+	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio and
+	// video files.
+	GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
+	// GetTranscriptAsyncCheckContext : Returns the status or result of specified
+	// get_transcript_async task.
+	GetTranscriptAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
+}
+
 type apiImpl dropbox.Context
 
 // GetMarkdownAsyncAPIError is an error-wrapper for the get_markdown_async route
@@ -53,7 +72,9 @@ type GetMarkdownAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
+// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
+// supported file formats.
+func (dbx *apiImpl) GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -66,11 +87,11 @@ func (dbx *apiImpl) GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchRes
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr GetMarkdownAsyncAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -85,13 +106,19 @@ func (dbx *apiImpl) GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchRes
 	return
 }
 
+func (dbx *apiImpl) GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetMarkdownAsyncContext(context.Background(), arg)
+}
+
 // GetMarkdownAsyncCheckAPIError is an error-wrapper for the get_markdown_async/check route
 type GetMarkdownAsyncCheckAPIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
+// GetMarkdownAsyncCheckContext : Returns the status or result of specified
+// get_markdown_async task.
+func (dbx *apiImpl) GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -104,11 +131,11 @@ func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownA
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr GetMarkdownAsyncCheckAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -123,13 +150,19 @@ func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownA
 	return
 }
 
+func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
+	return dbx.GetMarkdownAsyncCheckContext(context.Background(), arg)
+}
+
 // GetTranscriptAsyncAPIError is an error-wrapper for the get_transcript_async route
 type GetTranscriptAsyncAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
+// GetTranscriptAsyncContext : Asynchronous transcript generation for audio and
+// video files.
+func (dbx *apiImpl) GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -142,11 +175,11 @@ func (dbx *apiImpl) GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.Launc
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr GetTranscriptAsyncAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -161,13 +194,19 @@ func (dbx *apiImpl) GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.Launc
 	return
 }
 
+func (dbx *apiImpl) GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetTranscriptAsyncContext(context.Background(), arg)
+}
+
 // GetTranscriptAsyncCheckAPIError is an error-wrapper for the get_transcript_async/check route
 type GetTranscriptAsyncCheckAPIError struct {
 	dropbox.APIError
 	EndpointError *async.PollError `json:"error"`
 }
 
-func (dbx *apiImpl) GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error) {
+// GetTranscriptAsyncCheckContext : Returns the status or result of specified
+// get_transcript_async task.
+func (dbx *apiImpl) GetTranscriptAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -180,11 +219,11 @@ func (dbx *apiImpl) GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscr
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr GetTranscriptAsyncCheckAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -199,8 +238,17 @@ func (dbx *apiImpl) GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscr
 	return
 }
 
-// New returns a Client implementation for this namespace
-func New(c dropbox.Config) Client {
+func (dbx *apiImpl) GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error) {
+	return dbx.GetTranscriptAsyncCheckContext(context.Background(), arg)
+}
+
+// NewContext returns a ContextClient implementation for this namespace
+func NewContext(c dropbox.Config) ContextClient {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx
+}
+
+// New returns a Client implementation for this namespace
+func New(c dropbox.Config) Client {
+	return NewContext(c)
 }

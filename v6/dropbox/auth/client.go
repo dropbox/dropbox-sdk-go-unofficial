@@ -21,7 +21,9 @@
 package auth
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 
@@ -41,6 +43,20 @@ type Client interface {
 	TokenRevoke() (err error)
 }
 
+// ContextClient interface describes all routes in this namespace with context support
+type ContextClient interface {
+	Client
+	// TokenFromOauth1Context : Creates an OAuth 2.0 access token from the supplied
+	// OAuth 1.0 access token.
+	// Deprecated:
+	TokenFromOauth1Context(ctx context.Context, arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error)
+	// TokenRevokeContext : Disables the access token used to authenticate the call. If
+	// there is a corresponding refresh token for the access token, this
+	// disables that refresh token, as well as any other access tokens for that
+	// refresh token.
+	TokenRevokeContext(ctx context.Context) (err error)
+}
+
 type apiImpl dropbox.Context
 
 // TokenFromOauth1APIError is an error-wrapper for the token/from_oauth1 route
@@ -49,7 +65,10 @@ type TokenFromOauth1APIError struct {
 	EndpointError *TokenFromOAuth1Error `json:"error"`
 }
 
-func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
+// TokenFromOauth1Context : Creates an OAuth 2.0 access token from the supplied
+// OAuth 1.0 access token.
+// Deprecated:
+func (dbx *apiImpl) TokenFromOauth1Context(ctx context.Context, arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
 	log.Printf("WARNING: API `TokenFromOauth1` is deprecated")
 
 	req := dropbox.Request{
@@ -64,11 +83,11 @@ func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAut
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr TokenFromOauth1APIError
 		err = ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -83,13 +102,21 @@ func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAut
 	return
 }
 
+func (dbx *apiImpl) TokenFromOauth1(arg *TokenFromOAuth1Arg) (res *TokenFromOAuth1Result, err error) {
+	return dbx.TokenFromOauth1Context(context.Background(), arg)
+}
+
 // TokenRevokeAPIError is an error-wrapper for the token/revoke route
 type TokenRevokeAPIError struct {
 	dropbox.APIError
 	EndpointError struct{} `json:"error"`
 }
 
-func (dbx *apiImpl) TokenRevoke() (err error) {
+// TokenRevokeContext : Disables the access token used to authenticate the call. If
+// there is a corresponding refresh token for the access token, this
+// disables that refresh token, as well as any other access tokens for that
+// refresh token.
+func (dbx *apiImpl) TokenRevokeContext(ctx context.Context) (err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "auth",
@@ -102,11 +129,11 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr TokenRevokeAPIError
 		err = ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -117,8 +144,17 @@ func (dbx *apiImpl) TokenRevoke() (err error) {
 	return
 }
 
-// New returns a Client implementation for this namespace
-func New(c dropbox.Config) Client {
+func (dbx *apiImpl) TokenRevoke() (err error) {
+	return dbx.TokenRevokeContext(context.Background())
+}
+
+// NewContext returns a ContextClient implementation for this namespace
+func NewContext(c dropbox.Config) ContextClient {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx
+}
+
+// New returns a Client implementation for this namespace
+func New(c dropbox.Config) Client {
+	return NewContext(c)
 }

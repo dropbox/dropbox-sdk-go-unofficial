@@ -36,35 +36,58 @@ class GoClientBackend(CodeBackend):
                     self.emit(self._generate_route_signature(namespace, route))
             self.emit()
 
+            self.emit('// ContextClient interface describes all routes in this namespace with context support')
+            with self.block('type ContextClient interface'):
+                self.emit('Client')
+                for route in namespace.routes:
+                    generate_doc(self, route, name_override=self._generate_route_name(route, context=True))
+                    self.emit(self._generate_route_signature(namespace, route, context=True))
+            self.emit()
+
             self.emit('type apiImpl dropbox.Context')
             for route in namespace.routes:
                 self._generate_route(namespace, route)
-            self.emit('// New returns a Client implementation for this namespace')
-            with self.block('func New(c dropbox.Config) Client'):
+            self.emit('// NewContext returns a ContextClient implementation for this namespace')
+            with self.block('func NewContext(c dropbox.Config) ContextClient'):
                 self.emit('ctx := apiImpl(dropbox.NewContext(c))')
                 self.emit('return &ctx')
+            self.emit()
+            self.emit('// New returns a Client implementation for this namespace')
+            with self.block('func New(c dropbox.Config) Client'):
+                self.emit('return NewContext(c)')
 
-    def _generate_route_signature(self, namespace, route):
+    def _generate_route_signature(self, namespace, route, context=False):
         req = fmt_type(route.arg_data_type, namespace)
         res = fmt_type(route.result_data_type, namespace, use_interface=True)
+        fn = self._generate_route_name(route, context=context)
+        style = route.attrs.get('style', 'rpc')
+
+        args = []
+        if context:
+            args.append('ctx context.Context')
+        if not is_void_type(route.arg_data_type):
+            args.append('arg %s' % req)
+        if style == 'upload':
+            args.append('content io.Reader')
+
+        rets = []
+        if not is_void_type(route.result_data_type):
+            rets.append('res %s' % res)
+        if style == 'download':
+            rets.append('content io.ReadCloser')
+        rets.append('err error')
+
+        return '{fn}({args}) ({rets})'.format(
+            fn=fn, args=', '.join(args), rets=', '.join(rets))
+
+    def _generate_route_name(self, route, context=False):
         fn = fmt_var(route.name)
         if route.version != 1:
             fn += 'V%d' % route.version
-        style = route.attrs.get('style', 'rpc')
 
-        arg = '' if is_void_type(route.arg_data_type) else 'arg {req}'
-        ret = '(err error)' if is_void_type(route.result_data_type) else \
-            '(res {res}, err error)'
-        signature = '{fn}(' + arg + ') ' + ret
-        if style == 'download':
-            signature = '{fn}(' + arg + \
-                ') (res {res}, content io.ReadCloser, err error)'
-        elif style == 'upload':
-            signature = '{fn}(' + arg + ', content io.Reader) ' + ret
-            if is_void_type(route.arg_data_type):
-                signature = '{fn}(content io.Reader) ' + ret
-        return signature.format(fn=fn, req=req, res=res)
-
+        if context:
+            fn += 'Context'
+        return fn
 
     def _generate_route(self, namespace, route):
         out = self.emit
@@ -72,6 +95,8 @@ class GoClientBackend(CodeBackend):
         route_name = route.name
         if route.version != 1:
             route_name += '_v%d' % route.version
+
+        route_style = route.attrs.get('style', 'rpc')
 
         fn = fmt_var(route.name)
         if route.version != 1:
@@ -85,9 +110,11 @@ class GoClientBackend(CodeBackend):
             out('EndpointError {err} `json:"error"`'.format(err=err))
         out()
 
-        signature = 'func (dbx *apiImpl) ' + self._generate_route_signature(
-            namespace, route)
-        with self.block(signature):
+        # Generate the Context variant (does the real work)
+        generate_doc(self, route, name_override=self._generate_route_name(route, context=True))
+        signature_context = 'func (dbx *apiImpl) ' + self._generate_route_signature(
+            namespace, route, context=True)
+        with self.block(signature_context):
             if route.deprecated is not None:
                 out('log.Printf("WARNING: API `%s` is deprecated")' % fn)
                 if route.deprecated.by is not None:
@@ -102,7 +129,7 @@ class GoClientBackend(CodeBackend):
                 "Namespace": namespace.name,
                 "Route": route_name,
                 "Auth": route.attrs.get('auth', ''),
-                "Style": route.attrs.get('style', 'rpc'),
+                "Style": route_style,
             }
 
             with self.block('req := dropbox.Request'):
@@ -116,13 +143,13 @@ class GoClientBackend(CodeBackend):
 
             out("var resp []byte")
             out("var respBody io.ReadCloser")
-            out("resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, {body})".format(
-                body="content" if route.attrs.get('style', '') == 'upload' else "nil"))
+            out("resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, {body})".format(
+                body="content" if route_style == 'upload' else "nil"))
             with self.block("if err != nil"):
                 out("var appErr {fn}APIError".format(fn=fn))
                 out("err = {auth}ParseError(err, &appErr)".format(
                     auth="auth." if namespace.name != "auth" else ""))
-                with self.block("if err == &appErr"):
+                with self.block("if errors.Is(err, &appErr)"):
                     out("err = appErr")
                 out("return")
             out()
@@ -144,9 +171,21 @@ class GoClientBackend(CodeBackend):
             else:
                 out("_ = resp")
 
-            if route.attrs.get('style', 'rpc') == "download":
+            if route_style == "download":
                 out("content = respBody")
             else:
                 out("_ = respBody")
             out('return')
+        out()
+
+        # Generate the non-context variant (delegates to Context variant)
+        signature = 'func (dbx *apiImpl) ' + self._generate_route_signature(
+            namespace, route, context=False)
+        with self.block(signature):
+            call_args = ['context.Background()']
+            if not is_void_type(route.arg_data_type):
+                call_args.append('arg')
+            if route_style == 'upload':
+                call_args.append('content')
+            out('return dbx.%sContext(%s)' % (fn, ', '.join(call_args)))
         out()
