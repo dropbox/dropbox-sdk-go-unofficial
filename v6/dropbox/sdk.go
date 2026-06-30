@@ -239,11 +239,13 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 		switch req.Style {
 		case "rpc", "upload":
 			if resp.Body == nil {
-				return nil, nil, errors.New("Expected body in RPC response, got nil")
+				return nil, nil, errors.New("expected body in RPC response, got nil")
 			}
 
 			b, err := io.ReadAll(resp.Body)
-			resp.Body.Close()
+			if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+				err = closeErr
+			}
 			if err != nil {
 				return nil, nil, err
 			}
@@ -256,7 +258,9 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 	}
 
 	b, err := io.ReadAll(resp.Body)
-	resp.Body.Close()
+	if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+		err = closeErr
+	}
 	if err != nil {
 		return nil, nil, err
 	}
