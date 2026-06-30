@@ -21,7 +21,9 @@
 package openid
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"io"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
@@ -36,6 +38,15 @@ type Client interface {
 	Userinfo(arg *UserInfoArgs) (res *UserInfoResult, err error)
 }
 
+// ContextClient interface describes all routes in this namespace with context support
+type ContextClient interface {
+	Client
+	// UserinfoContext : This route is used for refreshing the info that is found in
+	// the id_token during the OIDC flow. This route doesn't require any
+	// arguments and will use the scopes approved for the given access token.
+	UserinfoContext(ctx context.Context, arg *UserInfoArgs) (res *UserInfoResult, err error)
+}
+
 type apiImpl dropbox.Context
 
 // UserinfoAPIError is an error-wrapper for the userinfo route
@@ -44,7 +55,10 @@ type UserinfoAPIError struct {
 	EndpointError *UserInfoError `json:"error"`
 }
 
-func (dbx *apiImpl) Userinfo(arg *UserInfoArgs) (res *UserInfoResult, err error) {
+// UserinfoContext : This route is used for refreshing the info that is found in
+// the id_token during the OIDC flow. This route doesn't require any
+// arguments and will use the scopes approved for the given access token.
+func (dbx *apiImpl) UserinfoContext(ctx context.Context, arg *UserInfoArgs) (res *UserInfoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "openid",
@@ -57,11 +71,11 @@ func (dbx *apiImpl) Userinfo(arg *UserInfoArgs) (res *UserInfoResult, err error)
 
 	var resp []byte
 	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).Execute(req, nil)
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
 	if err != nil {
 		var appErr UserinfoAPIError
 		err = auth.ParseError(err, &appErr)
-		if err == &appErr {
+		if errors.Is(err, &appErr) {
 			err = appErr
 		}
 		return
@@ -76,8 +90,17 @@ func (dbx *apiImpl) Userinfo(arg *UserInfoArgs) (res *UserInfoResult, err error)
 	return
 }
 
-// New returns a Client implementation for this namespace
-func New(c dropbox.Config) Client {
+func (dbx *apiImpl) Userinfo(arg *UserInfoArgs) (res *UserInfoResult, err error) {
+	return dbx.UserinfoContext(context.Background(), arg)
+}
+
+// NewContext returns a ContextClient implementation for this namespace
+func NewContext(c dropbox.Config) ContextClient {
 	ctx := apiImpl(dropbox.NewContext(c))
 	return &ctx
+}
+
+// New returns a Client implementation for this namespace
+func New(c dropbox.Config) Client {
+	return NewContext(c)
 }
