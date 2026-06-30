@@ -21,6 +21,7 @@
 package dropbox_test
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -35,6 +36,32 @@ import (
 
 func generateURL(base string, namespace string, route string) string {
 	return fmt.Sprintf("%s/%s/%s", base, namespace, route)
+}
+
+type legacyUsersClient struct{}
+
+var _ users.Client = legacyUsersClient{}
+var _ func(dropbox.Config) users.Client = users.New
+var _ func(dropbox.Config) users.ContextClient = users.NewContext
+
+func (legacyUsersClient) FeaturesGetValues(arg *users.UserFeaturesGetValuesBatchArg) (*users.UserFeaturesGetValuesBatchResult, error) {
+	return nil, nil
+}
+
+func (legacyUsersClient) GetAccount(arg *users.GetAccountArg) (*users.BasicAccount, error) {
+	return nil, nil
+}
+
+func (legacyUsersClient) GetAccountBatch(arg *users.GetAccountBatchArg) ([]*users.BasicAccount, error) {
+	return nil, nil
+}
+
+func (legacyUsersClient) GetCurrentAccount() (*users.FullAccount, error) {
+	return nil, nil
+}
+
+func (legacyUsersClient) GetSpaceUsage() (*users.SpaceUsage, error) {
+	return nil, nil
 }
 
 func TestInternalError(t *testing.T) {
@@ -219,5 +246,60 @@ func TestHTTPHeaderSafeJSON(t *testing.T) {
 				t.Errorf("Want %q got %q", test.want, got)
 			}
 		})
+	}
+}
+
+func TestExecuteBackwardCompatibility(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte(`{}`))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{Client: ts.Client(), LogLevel: dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		}}
+	ctx := dropbox.NewContext(config)
+	resp, respBody, err := ctx.Execute(dropbox.Request{
+		Host:      "api",
+		Namespace: "users",
+		Route:     "get_current_account",
+		Auth:      "user",
+		Style:     "rpc",
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(resp) != "{}" {
+		t.Errorf("unexpected response: %s", string(resp))
+	}
+	if respBody != nil {
+		t.Errorf("unexpected response body: %v", respBody)
+	}
+}
+
+func TestContextCancellation(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			<-r.Context().Done()
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{Client: ts.Client(), LogLevel: dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		}}
+	client := users.NewContext(config)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	_, err := client.GetCurrentAccountContext(ctx)
+	if err == nil {
+		t.Fatal("expected error from cancelled context")
+	}
+	if !strings.Contains(err.Error(), "context canceled") {
+		t.Errorf("expected context canceled error, got: %v", err)
 	}
 }
