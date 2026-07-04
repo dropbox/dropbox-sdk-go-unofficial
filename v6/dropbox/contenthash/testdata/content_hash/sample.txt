@@ -1,0 +1,4 @@
+Dropbox content hash fixture.
+
+This text file gives the content hash tests a small, stable plain-text sample.
+It intentionally has multiple lines so newline handling is part of the fixture.

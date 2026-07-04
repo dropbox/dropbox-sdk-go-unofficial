@@ -23,6 +23,7 @@ $ go get github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/...
 For most applications, you should just import the relevant namespace(s) only. The SDK exports the following sub-packages:
 
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/contenthash`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/team`
@@ -75,6 +76,30 @@ Here's an example:
   } else {
     fmt.Printf("Name: %v", resp.Name)
   }
+```
+
+### Computing upload content hashes
+
+Upload routes accept an optional Dropbox `content_hash` value for server-side validation. Use `contenthash.Compute` to calculate it before upload:
+
+```go
+f, err := os.Open("local-file.txt")
+if err != nil {
+    return err
+}
+defer f.Close()
+
+contentHash, err := contenthash.Compute(f)
+if err != nil {
+    return err
+}
+if _, err := f.Seek(0, io.SeekStart); err != nil {
+    return err
+}
+
+arg := files.NewUploadArg("/remote-file.txt")
+arg.ContentHash = contentHash
+_, err = client.Upload(arg, f)
 ```
 
 ### Working with polymorphic responses
