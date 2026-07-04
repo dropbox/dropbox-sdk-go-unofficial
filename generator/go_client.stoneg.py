@@ -124,6 +124,14 @@ class GoClientBackend(CodeBackend):
                     out('log.Printf("Use API `%s` instead")' % replacement_fn)
                 out()
 
+            if (namespace.name == 'files' and route_style == 'upload' and
+                    self._route_arg_has_content_hash(route)):
+                arg_type = fmt_var(route.arg_data_type.name)
+                out('arg, content, err = addAutoContentHashTo%s(arg, content)' % arg_type)
+                with self.block('if err != nil'):
+                    out('return')
+                out()
+
             args = {
                 "Host": route.attrs.get('host', 'api'),
                 "Namespace": namespace.name,
@@ -189,3 +197,9 @@ class GoClientBackend(CodeBackend):
                 call_args.append('content')
             out('return dbx.%sContext(%s)' % (fn, ', '.join(call_args)))
         out()
+
+    def _route_arg_has_content_hash(self, route):
+        if not is_struct_type(route.arg_data_type):
+            return False
+        return any(field.name == 'content_hash'
+                   for field in route.arg_data_type.all_fields)

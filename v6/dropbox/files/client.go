@@ -985,6 +985,11 @@ type AlphaUploadAPIError struct {
 func (dbx *apiImpl) AlphaUploadContext(ctx context.Context, arg *UploadArg, content io.Reader) (res *FileMetadata, err error) {
 	log.Printf("WARNING: API `AlphaUpload` is deprecated")
 
+	arg, content, err = addAutoContentHashToUploadArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -3628,6 +3633,11 @@ type UploadAPIError struct {
 // information, see the Data transport limit page
 // https://www.dropbox.com/developers/reference/data-transport-limit.
 func (dbx *apiImpl) UploadContext(ctx context.Context, arg *UploadArg, content io.Reader) (res *FileMetadata, err error) {
+	arg, content, err = addAutoContentHashToUploadArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -3726,6 +3736,11 @@ type UploadSessionAppendV2APIError struct {
 // allowed per month. For more information, see the Data transport limit
 // page https://www.dropbox.com/developers/reference/data-transport-limit.
 func (dbx *apiImpl) UploadSessionAppendV2Context(ctx context.Context, arg *UploadSessionAppendArg, content io.Reader) (err error) {
+	arg, content, err = addAutoContentHashToUploadSessionAppendArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -3775,6 +3790,11 @@ type UploadSessionAppendBatchAPIError struct {
 // per month. For more information, see the Data transport limit page
 // https://www.dropbox.com/developers/reference/data-transport-limit.
 func (dbx *apiImpl) UploadSessionAppendBatchContext(ctx context.Context, arg *UploadSessionAppendBatchArg, content io.Reader) (res *UploadSessionAppendBatchResult, err error) {
+	arg, content, err = addAutoContentHashToUploadSessionAppendBatchArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -3825,6 +3845,11 @@ type UploadSessionFinishAPIError struct {
 // information, see the Data transport limit page
 // https://www.dropbox.com/developers/reference/data-transport-limit.
 func (dbx *apiImpl) UploadSessionFinishContext(ctx context.Context, arg *UploadSessionFinishArg, content io.Reader) (res *FileMetadata, err error) {
+	arg, content, err = addAutoContentHashToUploadSessionFinishArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
@@ -4065,6 +4090,11 @@ type UploadSessionStartAPIError struct {
 // or `UploadSessionAppendBatchArgEntry.close` set to true that may contain
 // any remaining data.
 func (dbx *apiImpl) UploadSessionStartContext(ctx context.Context, arg *UploadSessionStartArg, content io.Reader) (res *UploadSessionStartResult, err error) {
+	arg, content, err = addAutoContentHashToUploadSessionStartArg(arg, content)
+	if err != nil {
+		return
+	}
+
 	req := dropbox.Request{
 		Host:         "content",
 		Namespace:    "files",
