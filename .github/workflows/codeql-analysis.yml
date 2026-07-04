@@ -33,16 +33,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'go' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python' ]
-        # Learn more:
-        # https://docs.github.com/en/free-pro-team@latest/github/finding-security-vulnerabilities-and-errors-in-your-code/configuring-code-scanning#changing-the-languages-that-are-analyzed
+        language: [ 'go', 'actions' ]
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v7
 
     - name: Install Go
+      if: matrix.language == 'go'
       uses: actions/setup-go@v6
       with:
         go-version: '1.23.x'
@@ -60,6 +58,7 @@ jobs:
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     # If this step fails, then you should remove it and run the build manually (see below)
     - name: Autobuild
+      if: matrix.language == 'go'
       uses: github/codeql-action/autobuild@v4
 
     # ℹ️ Command-line programs to run using the OS shell.
