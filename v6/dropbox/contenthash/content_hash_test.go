@@ -102,7 +102,11 @@ func TestComputeFixtureFiles(t *testing.T) {
 			if err != nil {
 				t.Fatalf("open fixture: %v", err)
 			}
-			defer f.Close()
+			defer func() {
+				if err := f.Close(); err != nil {
+					t.Fatalf("close fixture: %v", err)
+				}
+			}()
 
 			got, err := contenthash.Compute(f)
 			if err != nil {
