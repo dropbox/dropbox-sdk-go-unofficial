@@ -78,28 +78,57 @@ Here's an example:
   }
 ```
 
-### Computing upload content hashes
+### Automatic upload integrity (`content_hash`)
 
-Upload routes accept an optional Dropbox `content_hash` value for server-side validation. Use `contenthash.Compute` to calculate it before upload:
+For file upload calls whose argument includes `ContentHash`, the SDK automatically
+computes a Dropbox `content_hash` when the content reader implements `io.ReadSeeker`.
+This covers `Upload`, `UploadSessionStart`, `UploadSessionAppendV2`,
+`UploadSessionAppendBatch`, and `UploadSessionFinish`. The server rejects the
+request if the hash does not match the received bytes, providing end-to-end
+integrity protection with no code changes required.
+
+Because the hash must appear in the HTTP request header, the SDK reads the content once
+to compute the hash, seeks back, then reads again for the upload body. For local files
+the second read is typically served from the OS page cache. To disable auto-hashing:
 
 ```go
+_, err = client.Upload(arg, files.WithoutAutoContentHash(f))
+```
+
+The SDK treats a reader as seekable when it implements `io.ReadSeeker`.
+Non-seekable readers (e.g. `io.Pipe`, `bytes.Buffer`) are never hashed
+automatically because the SDK cannot rewind them for the upload body.
+
+To set `content_hash` manually instead, assign it on the arg. The SDK skips
+auto-hashing when a value is already present, even if the reader is wrapped with
+`WithoutAutoContentHash`. This also works for non-seekable readers if you already
+know the Dropbox content hash:
+
+```go
+arg := files.NewUploadArg("/remote-file.txt")
+arg.ContentHash = myPrecomputedHash
+_, err = client.Upload(arg, f)
+```
+
+### Computing content hashes manually
+
+Use the `contenthash` package directly when you need the hash value (e.g. for
+local-vs-remote comparison):
+
+```go
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/contenthash"
+
 f, err := os.Open("local-file.txt")
 if err != nil {
     return err
 }
 defer f.Close()
 
-contentHash, err := contenthash.Compute(f)
+hash, err := contenthash.Compute(f)
 if err != nil {
     return err
 }
-if _, err := f.Seek(0, io.SeekStart); err != nil {
-    return err
-}
-
-arg := files.NewUploadArg("/remote-file.txt")
-arg.ContentHash = contentHash
-_, err = client.Upload(arg, f)
+fmt.Println(hash) // hex-encoded Dropbox content_hash
 ```
 
 ### Working with polymorphic responses
