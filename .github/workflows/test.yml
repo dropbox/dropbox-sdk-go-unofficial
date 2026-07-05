@@ -13,12 +13,16 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v7
     - name: Install Go
       uses: actions/setup-go@v6
       with:
         go-version: ${{ matrix.go-version }}
-    - name: Checkout code
-      uses: actions/checkout@v7
+        cache-dependency-path: v6/go.sum
+    - name: Vet
+      run: go vet ./...
+      working-directory: ./v6
     - name: Test
-      run: go test -race -v ./...
+      run: go test -vet=off -race -v ./...
       working-directory: ./v6
