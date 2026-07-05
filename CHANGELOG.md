@@ -3,7 +3,7 @@
 Notable changes to this SDK are documented here. Historical entries are
 summarized from the repository history.
 
-## Unreleased
+## v6.3.0 - 2026-07-04
 
 ### Added
 
@@ -11,6 +11,15 @@ summarized from the repository history.
   `content_hash` values.
 - Added automatic `content_hash` population for seekable file upload readers
   on upload routes whose arguments include `ContentHash`.
+- Added `go vet` step to test workflow for platform-specific issue detection.
+- Added `.golangci.yml` configuration with govet enable-all.
+- Added godoc comment to `SDKInternalError`.
+
+### Changed
+
+- Added Go module caching (`cache-dependency-path`) to test and lint workflows.
+- Added CodeQL scanning for GitHub Actions workflows.
+- Fixed CodeQL Go analysis to use explicit module build.
 
 ### Security
 
