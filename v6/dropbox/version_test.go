@@ -30,8 +30,8 @@ import (
 func TestVersion(t *testing.T) {
 	sdkVersion, specVersion := dropbox.Version()
 
-	if sdkVersion != "6.2.0" {
-		t.Fatalf("sdk version = %q, want %q", sdkVersion, "6.2.0")
+	if sdkVersion != "6.3.0" {
+		t.Fatalf("sdk version = %q, want %q", sdkVersion, "6.3.0")
 	}
 
 	if !regexp.MustCompile(`^[0-9a-f]{7,40}$`).MatchString(specVersion) {
