@@ -63,6 +63,8 @@ func (e APIError) Error() string {
 	return e.ErrorSummary
 }
 
+// SDKInternalError is returned when the Dropbox API responds with a status code
+// that does not carry a typed error body (e.g. 500 Internal Server Error).
 type SDKInternalError struct {
 	StatusCode int
 	Content    string
