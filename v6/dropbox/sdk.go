@@ -88,14 +88,18 @@ type Config struct {
 	AsAdminID string
 	// Path relative to which action should be taken
 	PathRoot string
-	// No need to set -- for testing only
+	// Dropbox API domain. The default is ".dropboxapi.com".
 	Domain string
-	// No need to set -- for testing only
+	// HTTP client used for authenticated Dropbox API calls. If set, Client takes
+	// precedence over TokenSource and Token.
 	Client *http.Client
 	// No need to set -- for testing only
 	HeaderGenerator func(hostType string, namespace string, route string) map[string]string
 	// No need to set -- for testing only
 	URLGenerator func(hostType string, namespace string, route string) string
+	// OAuth2 token source used for authenticated Dropbox API calls. If Client is
+	// nil and TokenSource is set, TokenSource takes precedence over Token.
+	TokenSource oauth2.TokenSource
 }
 
 // LogLevel defines a type that can set the desired level of logging the SDK will generate.
@@ -282,9 +286,13 @@ func NewContext(c Config) Context {
 
 	client := c.Client
 	if client == nil {
-		var conf = &oauth2.Config{Endpoint: OAuthEndpoint(domain)}
-		tok := &oauth2.Token{AccessToken: c.Token}
-		client = conf.Client(context.Background(), tok)
+		if c.TokenSource != nil {
+			client = oauth2.NewClient(context.Background(), c.TokenSource)
+		} else {
+			var conf = &oauth2.Config{Endpoint: OAuthEndpoint(domain)}
+			tok := &oauth2.Token{AccessToken: c.Token}
+			client = conf.Client(context.Background(), tok)
+		}
 	}
 
 	noAuthClient := c.Client
