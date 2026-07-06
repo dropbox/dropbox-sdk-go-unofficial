@@ -69,6 +69,24 @@ func TestPKCEFlowAuthCodeURL(t *testing.T) {
 	assertQueryValue(t, query, "code_challenge_method", "S256")
 }
 
+func TestPKCEFlowAuthCodeURLOpenIDScopes(t *testing.T) {
+	flow, err := dropboxoauth.NewPKCEFlow(
+		"app-key",
+		dropboxoauth.WithState("test-state"),
+		dropboxoauth.WithVerifier(testVerifier),
+		dropboxoauth.WithScopes(dropboxoauth.ScopeOpenID, dropboxoauth.ScopeEmail, dropboxoauth.ScopeProfile),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(flow.AuthCodeURL())
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertQueryValue(t, authURL.Query(), "scope", "openid email profile")
+}
+
 func TestPKCEFlowGeneratesStateAndVerifier(t *testing.T) {
 	flow, err := dropboxoauth.NewPKCEFlow("app-key")
 	if err != nil {

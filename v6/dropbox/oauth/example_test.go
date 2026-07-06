@@ -87,6 +87,35 @@ func ExampleNewWebPKCEFlow() {
 	// result, err := flow.Finish(r.Context(), r.URL.Query(), csrfToken)
 }
 
+func ExampleNewWebPKCEFlow_openID() {
+	verifier, err := dropboxoauth.GenerateVerifier()
+	if err != nil {
+		panic(err)
+	}
+
+	flow, err := dropboxoauth.NewWebPKCEFlow(
+		"APP_KEY",
+		"https://example.com/dropbox/callback",
+		dropboxoauth.WithVerifier(verifier),
+		dropboxoauth.WithScopes(
+			dropboxoauth.ScopeOpenID,
+			dropboxoauth.ScopeEmail,
+			dropboxoauth.ScopeProfile,
+		),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	authURL, csrfToken, err := flow.Start("optional-url-state")
+	if err != nil {
+		panic(err)
+	}
+	_ = authURL
+	_ = csrfToken
+	// After Finish succeeds, call UserinfoContext on an openid client.
+}
+
 func ExampleNewOAuth2FlowNoRedirect() {
 	flow, err := dropboxoauth.NewOAuth2FlowNoRedirect(
 		"APP_KEY",

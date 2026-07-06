@@ -70,6 +70,15 @@ const (
 	IncludeGrantedScopesTeam IncludeGrantedScopes = "team"
 )
 
+const (
+	// ScopeOpenID requests OpenID Connect identity information.
+	ScopeOpenID = "openid"
+	// ScopeEmail requests email identity information through OpenID Connect.
+	ScopeEmail = "email"
+	// ScopeProfile requests profile identity information through OpenID Connect.
+	ScopeProfile = "profile"
+)
+
 // Option configures Dropbox OAuth helpers.
 type Option func(*options)
 
