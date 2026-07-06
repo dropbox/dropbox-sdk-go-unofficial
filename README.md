@@ -25,6 +25,8 @@ For most applications, you should just import the relevant namespace(s) only. Th
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/contenthash`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/openid`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/team`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users`
@@ -185,6 +187,36 @@ config := dropbox.Config{
 
 The SDK still accepts a static access token through `dropbox.Config.Token`; for
 refreshable tokens, pass a token source through `dropbox.Config.TokenSource`.
+
+If your app uses Dropbox as a login identity provider, request OpenID Connect
+scopes during OAuth, then call `UserinfoContext` on an `openid` client with the
+resulting token. Normal Dropbox API access does not require OpenID scopes.
+
+```go
+flow, err := dropboxoauth.NewWebPKCEFlow(
+  appKey,
+  redirectURL,
+  dropboxoauth.WithVerifier(verifier),
+  dropboxoauth.WithScopes(
+    dropboxoauth.ScopeOpenID,
+    dropboxoauth.ScopeEmail,
+    dropboxoauth.ScopeProfile,
+  ),
+)
+if err != nil {
+  return err
+}
+
+// Finish the OAuth flow as shown above.
+identityClient := openid.NewContext(dropbox.Config{
+  TokenSource: dropboxoauth.TokenSource(ctx, appKey, result.Token),
+})
+info, err := identityClient.UserinfoContext(ctx, openid.NewUserInfoArgs())
+if err != nil {
+  return err
+}
+_ = info
+```
 
 ### Making API calls
 
