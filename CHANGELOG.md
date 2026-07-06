@@ -13,6 +13,9 @@ summarized from the repository history.
 - Added Python-style OAuth 2 no-redirect and web flows with app-secret support,
   PKCE mode, legacy token access type compatibility, and option validation.
 - Added `dropbox.Config.TokenSource` for refreshable OAuth token sources.
+- Added `oauth.GenerateVerifier` for generating PKCE code verifiers.
+- Added `oauth.ScopeOpenID`, `oauth.ScopeEmail`, and `oauth.ScopeProfile`
+  constants and `dropbox/openid` identity-flow examples for OpenID Connect.
 
 ## v6.3.0 - 2026-07-04
 
