@@ -94,6 +94,49 @@ The PKCE helper requests offline access by default. Use
 `dropboxoauth.TokenSource` in `dropbox.Config` for automatic refresh, or call
 `dropboxoauth.Refresh` directly when you manage token storage yourself.
 
+For redirect-based web apps, use `NewWebPKCEFlow`. Each login attempt needs a
+single PKCE verifier for both `Start` and `Finish`; generate it with
+`oauth2.GenerateVerifier` from `golang.org/x/oauth2`, store it with the
+returned CSRF token in the user's session, then pass both values back when
+finishing the flow:
+
+```go
+verifier := oauth2.GenerateVerifier()
+flow, err := dropboxoauth.NewWebPKCEFlow(
+  appKey,
+  redirectURL,
+  dropboxoauth.WithVerifier(verifier),
+)
+if err != nil {
+  return err
+}
+
+authURL, csrfToken, err := flow.Start("optional-url-state")
+if err != nil {
+  return err
+}
+// Redirect the user to authURL and store csrfToken and verifier in your web session.
+
+// In the callback handler, load csrfToken and verifier from your web session.
+flow, err = dropboxoauth.NewWebPKCEFlow(
+  appKey,
+  redirectURL,
+  dropboxoauth.WithVerifier(verifier),
+)
+if err != nil {
+  return err
+}
+
+result, err := flow.Finish(r.Context(), r.URL.Query(), csrfToken)
+if err != nil {
+  return err
+}
+
+config := dropbox.Config{
+  TokenSource: dropboxoauth.TokenSource(r.Context(), appKey, result.Token),
+}
+```
+
 Existing apps that use an app secret can continue to use `golang.org/x/oauth2`
 directly with `dropbox.OAuthEndpoint(domain)`. The SDK still accepts a static
 access token through `dropbox.Config.Token`; for refreshable tokens, pass a

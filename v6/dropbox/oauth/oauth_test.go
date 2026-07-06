@@ -22,6 +22,8 @@ package oauth_test
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -122,6 +124,260 @@ func TestPKCEFlowExchangeSendsVerifierAndAppKey(t *testing.T) {
 	assertQueryValue(t, form, "client_id", "app-key")
 	if got := form.Get("client_secret"); got != "" {
 		t.Fatalf("client_secret = %q, want empty", got)
+	}
+}
+
+func TestWebPKCEFlowStart(t *testing.T) {
+	flow, err := dropboxoauth.NewWebPKCEFlow(
+		"app-key",
+		"http://localhost/callback",
+		dropboxoauth.WithVerifier(testVerifier),
+		dropboxoauth.WithScopes("files.metadata.read", "files.content.write"),
+		dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopesUser),
+		dropboxoauth.WithLocale("en_US"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rawAuthURL, csrfToken, err := flow.Start("url-state")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if csrfToken == "" {
+		t.Fatal("expected csrf token")
+	}
+
+	authURL, err := url.Parse(rawAuthURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	query := authURL.Query()
+	if authURL.Scheme != "https" || authURL.Host != "www.dropbox.com" || authURL.Path != "/1/oauth2/authorize" {
+		t.Fatalf("auth URL = %s", authURL)
+	}
+	assertQueryValue(t, query, "client_id", "app-key")
+	assertQueryValue(t, query, "response_type", "code")
+	assertQueryValue(t, query, "redirect_uri", "http://localhost/callback")
+	assertQueryValue(t, query, "state", csrfToken+"|url-state")
+	assertQueryValue(t, query, "scope", "files.metadata.read files.content.write")
+	assertQueryValue(t, query, "include_granted_scopes", "user")
+	assertQueryValue(t, query, "token_access_type", "offline")
+	assertQueryValue(t, query, "code_challenge", "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM")
+	assertQueryValue(t, query, "code_challenge_method", "S256")
+	assertQueryValue(t, query, "locale", "en_US")
+}
+
+func TestWebPKCEFlowStartGeneratesVerifierAndCSRFOnlyState(t *testing.T) {
+	flow, err := dropboxoauth.NewWebPKCEFlow("app-key", "http://localhost/callback")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rawAuthURL, csrfToken, err := flow.Start("")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(rawAuthURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	query := authURL.Query()
+	assertQueryValue(t, query, "state", csrfToken)
+	if got := query.Get("code_challenge"); got == "" || got == "47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU" {
+		t.Fatalf("code_challenge = %q, want generated verifier challenge", got)
+	}
+	assertQueryValue(t, query, "code_challenge_method", "S256")
+}
+
+func TestWebPKCEFlowFinishExchangesCodeAndReturnsResult(t *testing.T) {
+	var requestURL string
+	var form url.Values
+	client := httpClient(func(req *http.Request) (*http.Response, error) {
+		requestURL = req.URL.String()
+		var err error
+		form, err = readForm(req)
+		if err != nil {
+			return nil, err
+		}
+		return jsonResponse(http.StatusOK, `{"access_token":"access-token","refresh_token":"refresh-token","token_type":"Bearer","expires_in":3600,"account_id":"dbid:account","team_id":"dbtid:team","uid":12345,"scope":"files.metadata.read files.content.write"}`), nil
+	})
+
+	flow, err := dropboxoauth.NewWebPKCEFlow(
+		"app-key",
+		"http://localhost/callback",
+		dropboxoauth.WithVerifier(testVerifier),
+		dropboxoauth.WithHTTPClient(client),
+		dropboxoauth.WithLocale("en_US"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	result, err := flow.Finish(context.Background(), url.Values{
+		"state": {"stored-csrf|url-state"},
+		"code":  {"auth-code"},
+	}, "stored-csrf")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Token.AccessToken != "access-token" || result.Token.RefreshToken != "refresh-token" || result.Token.TokenType != "Bearer" {
+		t.Fatalf("unexpected token: %#v", result.Token)
+	}
+	if result.Token.Expiry.IsZero() {
+		t.Fatal("expected token expiry")
+	}
+	if result.AccountID != "dbid:account" || result.TeamID != "dbtid:team" || result.UserID != "12345" {
+		t.Fatalf("unexpected account info: %#v", result)
+	}
+	if result.URLState != "url-state" {
+		t.Fatalf("url state = %q, want url-state", result.URLState)
+	}
+	assertScopes(t, result.Scopes, "files.metadata.read", "files.content.write")
+
+	if requestURL != "https://api.dropboxapi.com/1/oauth2/token" {
+		t.Fatalf("request URL = %q", requestURL)
+	}
+	assertQueryValue(t, form, "grant_type", "authorization_code")
+	assertQueryValue(t, form, "code", "auth-code")
+	assertQueryValue(t, form, "code_verifier", testVerifier)
+	assertQueryValue(t, form, "client_id", "app-key")
+	assertQueryValue(t, form, "redirect_uri", "http://localhost/callback")
+	if got := form.Get("locale"); got != "" {
+		t.Fatalf("locale = %q, want empty", got)
+	}
+	if got := form.Get("client_secret"); got != "" {
+		t.Fatalf("client_secret = %q, want empty", got)
+	}
+}
+
+func TestWebPKCEFlowStartUsesCustomDomainAndRedirectFallback(t *testing.T) {
+	flow, err := dropboxoauth.NewWebPKCEFlow(
+		"app-key",
+		"http://localhost/callback",
+		dropboxoauth.WithDomain(".example.com"),
+		dropboxoauth.WithRedirectURL(""),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rawAuthURL, _, err := flow.Start("")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(rawAuthURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if authURL.Host != "meta.example.com" {
+		t.Fatalf("auth host = %q, want meta.example.com", authURL.Host)
+	}
+	assertQueryValue(t, authURL.Query(), "redirect_uri", "http://localhost/callback")
+}
+
+func TestWebPKCEFlowFinishRejectsRedirectErrors(t *testing.T) {
+	tests := []struct {
+		name      string
+		query     url.Values
+		csrfToken string
+		wantErr   error
+	}{
+		{
+			name: "missing state",
+			query: url.Values{
+				"code": {"auth-code"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.BadRequestError{},
+		},
+		{
+			name: "missing code and error",
+			query: url.Values{
+				"state": {"stored-csrf"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.BadRequestError{},
+		},
+		{
+			name: "code and error",
+			query: url.Values{
+				"state": {"stored-csrf"},
+				"code":  {"auth-code"},
+				"error": {"access_denied"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.BadRequestError{},
+		},
+		{
+			name: "missing csrf token",
+			query: url.Values{
+				"state": {"stored-csrf"},
+				"code":  {"auth-code"},
+			},
+			wantErr: &dropboxoauth.BadStateError{},
+		},
+		{
+			name: "csrf mismatch",
+			query: url.Values{
+				"state": {"other-csrf"},
+				"code":  {"auth-code"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.CSRFError{},
+		},
+		{
+			name: "access denied",
+			query: url.Values{
+				"state":             {"stored-csrf"},
+				"error":             {"access_denied"},
+				"error_description": {"denied"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.NotApprovedError{},
+		},
+		{
+			name: "provider error",
+			query: url.Values{
+				"state":             {"stored-csrf"},
+				"error":             {"server_error"},
+				"error_description": {"bad"},
+			},
+			csrfToken: "stored-csrf",
+			wantErr:   &dropboxoauth.ProviderError{},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			flow, err := dropboxoauth.NewWebPKCEFlow("app-key", "http://localhost/callback")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			_, err = flow.Finish(context.Background(), tt.query, tt.csrfToken)
+			if err == nil {
+				t.Fatal("expected error")
+			}
+			if _, ok := tt.wantErr.(*dropboxoauth.CSRFError); ok && strings.Contains(fmt.Sprintf("%+v", err), tt.csrfToken) {
+				t.Fatalf("csrf error leaked stored token: %#v", err)
+			}
+			assertErrorAs(t, err, tt.wantErr)
+		})
+	}
+}
+
+func TestNewWebPKCEFlowRejectsMissingInputs(t *testing.T) {
+	if _, err := dropboxoauth.NewWebPKCEFlow(" ", "http://localhost/callback"); err == nil {
+		t.Fatal("expected missing app key error")
+	}
+	if _, err := dropboxoauth.NewWebPKCEFlow("app-key", " "); err == nil {
+		t.Fatal("expected missing redirect URL error")
+	}
+	if _, err := dropboxoauth.NewWebPKCEFlow("app-key", "http://localhost/callback", dropboxoauth.WithState("state")); err == nil {
+		t.Fatal("expected unsupported state error")
 	}
 }
 
@@ -247,6 +503,51 @@ func assertQueryValue(t *testing.T, values url.Values, key string, want string) 
 	t.Helper()
 	if got := values.Get(key); got != want {
 		t.Fatalf("%s = %q, want %q", key, got, want)
+	}
+}
+
+func assertScopes(t *testing.T, got []string, want ...string) {
+	t.Helper()
+	if len(got) != len(want) {
+		t.Fatalf("scopes = %#v, want %#v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("scopes = %#v, want %#v", got, want)
+		}
+	}
+}
+
+func assertErrorAs(t *testing.T, err error, want error) {
+	t.Helper()
+	switch want.(type) {
+	case *dropboxoauth.BadRequestError:
+		var target *dropboxoauth.BadRequestError
+		if !errors.As(err, &target) {
+			t.Fatalf("error = %T %v, want %T", err, err, want)
+		}
+	case *dropboxoauth.BadStateError:
+		var target *dropboxoauth.BadStateError
+		if !errors.As(err, &target) {
+			t.Fatalf("error = %T %v, want %T", err, err, want)
+		}
+	case *dropboxoauth.CSRFError:
+		var target *dropboxoauth.CSRFError
+		if !errors.As(err, &target) {
+			t.Fatalf("error = %T %v, want %T", err, err, want)
+		}
+	case *dropboxoauth.NotApprovedError:
+		var target *dropboxoauth.NotApprovedError
+		if !errors.As(err, &target) {
+			t.Fatalf("error = %T %v, want %T", err, err, want)
+		}
+	case *dropboxoauth.ProviderError:
+		var target *dropboxoauth.ProviderError
+		if !errors.As(err, &target) {
+			t.Fatalf("error = %T %v, want %T", err, err, want)
+		}
+	default:
+		t.Fatalf("unhandled wanted error type %T", want)
 	}
 }
 
