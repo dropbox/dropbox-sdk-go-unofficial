@@ -289,6 +289,11 @@ func NewWebPKCEFlow(appKey string, redirectURL string, opts ...Option) (*WebPKCE
 	}, nil
 }
 
+// GenerateVerifier returns a random PKCE code verifier.
+func GenerateVerifier() (string, error) {
+	return generateVerifier()
+}
+
 // WithDomain configures the Dropbox API domain.
 func WithDomain(domain string) Option {
 	return func(opts *options) {

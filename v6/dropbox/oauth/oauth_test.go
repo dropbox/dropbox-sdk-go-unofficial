@@ -86,6 +86,19 @@ func TestPKCEFlowGeneratesStateAndVerifier(t *testing.T) {
 	}
 }
 
+func TestGenerateVerifier(t *testing.T) {
+	verifier, err := dropboxoauth.GenerateVerifier()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if verifier == "" {
+		t.Fatal("expected verifier")
+	}
+	if strings.ContainsAny(verifier, "+/=") {
+		t.Fatalf("verifier is not raw URL-safe base64: %q", verifier)
+	}
+}
+
 func TestPKCEFlowExchangeSendsVerifierAndAppKey(t *testing.T) {
 	var requestURL string
 	var form url.Values
