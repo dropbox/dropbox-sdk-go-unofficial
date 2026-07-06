@@ -60,6 +60,16 @@ will then have to take users through the OAuth flow, as part of which users
 will explicitly grant permissions to your app. At the end of this process, your
 app exchanges the authorization code for a token.
 
+Choose the OAuth helper that matches your app type:
+
+| App type | Helper |
+| --- | --- |
+| CLI or native public app | `NewPKCEFlow` |
+| Web public app | `NewWebPKCEFlow` |
+| Confidential app without redirect | `NewOAuth2FlowNoRedirect` |
+| Confidential web app | `NewOAuth2Flow` |
+| Refreshable SDK client | `TokenSource` |
+
 ```go
 import "context"
 import "fmt"
@@ -96,12 +106,15 @@ The PKCE helper requests offline access by default. Use
 
 For redirect-based web apps, use `NewWebPKCEFlow`. Each login attempt needs a
 single PKCE verifier for both `Start` and `Finish`; generate it with
-`oauth2.GenerateVerifier` from `golang.org/x/oauth2`, store it with the
-returned CSRF token in the user's session, then pass both values back when
-finishing the flow:
+`dropboxoauth.GenerateVerifier`, store it with the returned CSRF token in the
+user's session, then pass both values back when finishing the flow:
 
 ```go
-verifier := oauth2.GenerateVerifier()
+verifier, err := dropboxoauth.GenerateVerifier()
+if err != nil {
+  return err
+}
+
 flow, err := dropboxoauth.NewWebPKCEFlow(
   appKey,
   redirectURL,
