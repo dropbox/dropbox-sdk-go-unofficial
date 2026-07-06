@@ -54,6 +54,10 @@ const (
 	TokenAccessTypeOffline TokenAccessType = "offline"
 	// TokenAccessTypeOnline requests only a short-lived access token.
 	TokenAccessTypeOnline TokenAccessType = "online"
+	// TokenAccessTypeLegacy requests a long-lived access token.
+	//
+	// Deprecated: prefer TokenAccessTypeOffline and refresh tokens.
+	TokenAccessTypeLegacy TokenAccessType = "legacy"
 )
 
 // IncludeGrantedScopes controls whether Dropbox reuses previously granted scopes.
@@ -71,9 +75,11 @@ type Option func(*options)
 
 type options struct {
 	domain               string
+	appSecret            string
 	redirectURL          string
 	state                string
 	verifier             string
+	usePKCE              bool
 	scopes               []string
 	tokenAccessType      TokenAccessType
 	includeGrantedScopes IncludeGrantedScopes
@@ -83,6 +89,20 @@ type options struct {
 
 // PKCEFlow manages authorization URL generation and code exchange for PKCE.
 type PKCEFlow struct {
+	opts options
+	conf *oauth2.Config
+}
+
+// OAuth2FlowNoRedirect manages authorization URL generation and code exchange
+// for OAuth 2 apps that do not use a redirect URI.
+type OAuth2FlowNoRedirect struct {
+	opts options
+	conf *oauth2.Config
+}
+
+// OAuth2Flow manages redirect-based authorization URL generation and code
+// exchange for OAuth 2 web apps.
+type OAuth2Flow struct {
 	opts options
 	conf *oauth2.Config
 }
@@ -167,14 +187,73 @@ func NewPKCEFlow(appKey string, opts ...Option) (*PKCEFlow, error) {
 		return nil, err
 	}
 
-	o := newFlowOptions(opts)
+	o, err := newPKCEOptions(opts)
+	if err != nil {
+		return nil, err
+	}
+	if o.appSecret != "" {
+		return nil, errors.New("dropbox oauth: WithAppSecret is not supported by PKCEFlow")
+	}
 	if o.state == "" {
-		o.state = oauth2.GenerateVerifier()
+		o.state, err = generateVerifier()
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &PKCEFlow{
 		opts: o,
-		conf: oauthConfig(appKey, o.domain, o.redirectURL, o.scopes),
+		conf: oauthConfig(appKey, "", o.domain, o.redirectURL, o.scopes),
+	}, nil
+}
+
+// NewOAuth2FlowNoRedirect creates a Dropbox OAuth 2 flow for apps that do not
+// use a redirect URI. Pass WithAppSecret for confidential apps or WithPKCE for
+// public clients.
+func NewOAuth2FlowNoRedirect(appKey string, opts ...Option) (*OAuth2FlowNoRedirect, error) {
+	appKey, err := cleanAppKey(appKey)
+	if err != nil {
+		return nil, err
+	}
+
+	o, err := newOAuth2Options(opts)
+	if err != nil {
+		return nil, err
+	}
+
+	return &OAuth2FlowNoRedirect{
+		opts: o,
+		conf: oauthConfig(appKey, flowAppSecret(o), o.domain, "", o.scopes),
+	}, nil
+}
+
+// NewOAuth2Flow creates a Dropbox OAuth 2 flow for web redirects. Pass
+// WithAppSecret for confidential apps or WithPKCE for public clients.
+func NewOAuth2Flow(appKey string, redirectURL string, opts ...Option) (*OAuth2Flow, error) {
+	appKey, err := cleanAppKey(appKey)
+	if err != nil {
+		return nil, err
+	}
+
+	redirectURL = strings.TrimSpace(redirectURL)
+	o, err := newOAuth2Options(opts)
+	if err != nil {
+		return nil, err
+	}
+	if o.state != "" {
+		return nil, errors.New("dropbox oauth: WithState is not supported by OAuth2Flow; pass URL state to Start")
+	}
+	o.redirectURL = strings.TrimSpace(o.redirectURL)
+	if o.redirectURL == "" {
+		o.redirectURL = redirectURL
+	}
+	if o.redirectURL == "" {
+		return nil, errors.New("dropbox oauth: redirect URL is required")
+	}
+
+	return &OAuth2Flow{
+		opts: o,
+		conf: oauthConfig(appKey, flowAppSecret(o), o.domain, o.redirectURL, o.scopes),
 	}, nil
 }
 
@@ -186,7 +265,13 @@ func NewWebPKCEFlow(appKey string, redirectURL string, opts ...Option) (*WebPKCE
 	}
 
 	redirectURL = strings.TrimSpace(redirectURL)
-	o := newFlowOptions(opts)
+	o, err := newPKCEOptions(opts)
+	if err != nil {
+		return nil, err
+	}
+	if o.appSecret != "" {
+		return nil, errors.New("dropbox oauth: WithAppSecret is not supported by WebPKCEFlow")
+	}
 	if o.state != "" {
 		return nil, errors.New("dropbox oauth: WithState is not supported by WebPKCEFlow; pass URL state to Start")
 	}
@@ -200,7 +285,7 @@ func NewWebPKCEFlow(appKey string, redirectURL string, opts ...Option) (*WebPKCE
 
 	return &WebPKCEFlow{
 		opts: o,
-		conf: oauthConfig(appKey, o.domain, o.redirectURL, o.scopes),
+		conf: oauthConfig(appKey, "", o.domain, o.redirectURL, o.scopes),
 	}, nil
 }
 
@@ -211,6 +296,20 @@ func WithDomain(domain string) Option {
 	}
 }
 
+// WithAppSecret configures the Dropbox API app secret for confidential OAuth apps.
+func WithAppSecret(secret string) Option {
+	return func(opts *options) {
+		opts.appSecret = strings.TrimSpace(secret)
+	}
+}
+
+// WithPKCE configures general OAuth flows to use PKCE instead of an app secret.
+func WithPKCE() Option {
+	return func(opts *options) {
+		opts.usePKCE = true
+	}
+}
+
 // WithRedirectURL configures the OAuth redirect URL.
 func WithRedirectURL(url string) Option {
 	return func(opts *options) {
@@ -218,8 +317,8 @@ func WithRedirectURL(url string) Option {
 	}
 }
 
-// WithState configures the OAuth state value for PKCEFlow. WebPKCEFlow builds
-// state from its CSRF token and the urlState passed to Start.
+// WithState configures the OAuth state value for no-redirect flows. Web flows
+// build state from their CSRF token and the urlState passed to Start.
 func WithState(state string) Option {
 	return func(opts *options) {
 		opts.state = state
@@ -230,13 +329,14 @@ func WithState(state string) Option {
 func WithVerifier(verifier string) Option {
 	return func(opts *options) {
 		opts.verifier = verifier
+		opts.usePKCE = true
 	}
 }
 
 // WithScopes configures OAuth scopes.
 func WithScopes(scopes ...string) Option {
 	return func(opts *options) {
-		opts.scopes = append([]string(nil), scopes...)
+		opts.scopes = append(make([]string, 0, len(scopes)), scopes...)
 	}
 }
 
@@ -254,7 +354,7 @@ func WithIncludeGrantedScopes(value IncludeGrantedScopes) Option {
 	}
 }
 
-// WithLocale configures the locale shown on the authorization page.
+// WithLocale configures the locale sent to Dropbox during OAuth.
 func WithLocale(locale string) Option {
 	return func(opts *options) {
 		opts.locale = locale
@@ -288,8 +388,40 @@ func (f *PKCEFlow) Verifier() string {
 	return f.opts.verifier
 }
 
+// Start returns the authorization URL for this no-redirect OAuth flow.
+func (f *OAuth2FlowNoRedirect) Start() string {
+	return f.conf.AuthCodeURL(f.opts.state, authCodeOptions(f.opts)...)
+}
+
+// Finish exchanges an authorization code for OAuth authorization information.
+func (f *OAuth2FlowNoRedirect) Finish(ctx context.Context, code string) (*FlowResult, error) {
+	token, err := f.conf.Exchange(withHTTPClient(ctx, f.opts.httpClient), code, exchangeOptions(f.opts)...)
+	if err != nil {
+		return nil, err
+	}
+	if token == nil {
+		return nil, errors.New("dropbox oauth: token exchange returned nil token")
+	}
+	return flowResultFromToken(token, ""), nil
+}
+
+// Start returns the authorization URL and CSRF token for this web OAuth flow.
+func (f *OAuth2Flow) Start(urlState string) (authURL string, csrfToken string, err error) {
+	return startWebFlow(f.conf, f.opts, urlState)
+}
+
+// Finish validates a redirect query and exchanges its authorization code for
+// OAuth authorization information.
+func (f *OAuth2Flow) Finish(ctx context.Context, query url.Values, csrfToken string) (*FlowResult, error) {
+	return finishWebFlow(ctx, f.conf, f.opts, query, csrfToken)
+}
+
 // Start returns the authorization URL and CSRF token for this web PKCE flow.
 func (f *WebPKCEFlow) Start(urlState string) (authURL string, csrfToken string, err error) {
+	return startWebFlow(f.conf, f.opts, urlState)
+}
+
+func startWebFlow(conf *oauth2.Config, opts options, urlState string) (authURL string, csrfToken string, err error) {
 	csrfToken, err = generateCSRFToken()
 	if err != nil {
 		return "", "", err
@@ -300,11 +432,15 @@ func (f *WebPKCEFlow) Start(urlState string) (authURL string, csrfToken string, 
 		state += stateSeparator + urlState
 	}
 
-	return f.conf.AuthCodeURL(state, authCodeOptions(f.opts)...), csrfToken, nil
+	return conf.AuthCodeURL(state, authCodeOptions(opts)...), csrfToken, nil
 }
 
 // Finish validates a redirect query and exchanges its authorization code for an OAuth token.
 func (f *WebPKCEFlow) Finish(ctx context.Context, query url.Values, csrfToken string) (*FlowResult, error) {
+	return finishWebFlow(ctx, f.conf, f.opts, query, csrfToken)
+}
+
+func finishWebFlow(ctx context.Context, conf *oauth2.Config, opts options, query url.Values, csrfToken string) (*FlowResult, error) {
 	state := query.Get("state")
 	if state == "" {
 		return nil, &BadRequestError{Message: "missing query parameter state"}
@@ -336,7 +472,7 @@ func (f *WebPKCEFlow) Finish(ctx context.Context, query url.Values, csrfToken st
 		return nil, &ProviderError{ErrorCode: errorCode, Description: description}
 	}
 
-	token, err := f.conf.Exchange(withHTTPClient(ctx, f.opts.httpClient), code, exchangeOptions(f.opts)...)
+	token, err := conf.Exchange(withHTTPClient(ctx, opts.httpClient), code, exchangeOptions(opts)...)
 	if err != nil {
 		return nil, err
 	}
@@ -366,7 +502,7 @@ func Refresh(ctx context.Context, appKey string, token *oauth2.Token, opts ...Op
 	expired := *token
 	expired.Expiry = time.Now().Add(-time.Second)
 
-	refreshed, err := oauthConfig(appKey, o.domain, "", nil).TokenSource(withHTTPClient(ctx, o.httpClient), &expired).Token()
+	refreshed, err := oauthConfig(appKey, o.appSecret, o.domain, "", nil).TokenSource(withHTTPClient(ctx, o.httpClient), &expired).Token()
 	if err != nil {
 		return nil, err
 	}
@@ -381,7 +517,7 @@ func TokenSource(ctx context.Context, appKey string, token *oauth2.Token, opts .
 	appKey = strings.TrimSpace(appKey)
 	o := options{}
 	applyOptions(&o, opts)
-	return oauthConfig(appKey, o.domain, "", nil).TokenSource(withHTTPClient(ctx, o.httpClient), token)
+	return oauthConfig(appKey, o.appSecret, o.domain, "", nil).TokenSource(withHTTPClient(ctx, o.httpClient), token)
 }
 
 func applyOptions(o *options, opts []Option) {
@@ -400,19 +536,99 @@ func cleanAppKey(appKey string) (string, error) {
 	return appKey, nil
 }
 
-func newFlowOptions(opts []Option) options {
+func newPKCEOptions(opts []Option) (options, error) {
 	o := options{
+		usePKCE:         true,
 		tokenAccessType: TokenAccessTypeOffline,
 	}
 	applyOptions(&o, opts)
 	if o.verifier == "" {
-		o.verifier = oauth2.GenerateVerifier()
+		verifier, err := generateVerifier()
+		if err != nil {
+			return options{}, err
+		}
+		o.verifier = verifier
 	}
-	return o
+	if err := validateOAuth2Options(o); err != nil {
+		return options{}, err
+	}
+	return o, nil
+}
+
+func newOAuth2Options(opts []Option) (options, error) {
+	o := options{}
+	applyOptions(&o, opts)
+	o.appSecret = strings.TrimSpace(o.appSecret)
+	if o.verifier != "" {
+		o.usePKCE = true
+	}
+	if o.appSecret != "" && o.usePKCE {
+		return options{}, errors.New("dropbox oauth: WithAppSecret cannot be combined with WithPKCE or WithVerifier")
+	}
+	if o.usePKCE && o.verifier == "" {
+		verifier, err := generateVerifier()
+		if err != nil {
+			return options{}, err
+		}
+		o.verifier = verifier
+	}
+	if o.appSecret == "" && !o.usePKCE {
+		return options{}, errors.New("dropbox oauth: either WithAppSecret or WithPKCE is required")
+	}
+	if err := validateOAuth2Options(o); err != nil {
+		return options{}, err
+	}
+	return o, nil
+}
+
+func flowAppSecret(o options) string {
+	if o.usePKCE {
+		return ""
+	}
+	return o.appSecret
+}
+
+func validateOAuth2Options(o options) error {
+	if o.tokenAccessType != "" && !validTokenAccessType(o.tokenAccessType) {
+		return errors.New("dropbox oauth: token access type must be offline, online, or legacy")
+	}
+	if o.scopes != nil && len(o.scopes) == 0 {
+		return errors.New("dropbox oauth: scopes must not be empty")
+	}
+	if o.includeGrantedScopes != "" {
+		if !validIncludeGrantedScopes(o.includeGrantedScopes) {
+			return errors.New("dropbox oauth: include granted scopes must be user or team")
+		}
+		if o.scopes == nil {
+			return errors.New("dropbox oauth: scopes are required when include granted scopes is set")
+		}
+	}
+	return nil
+}
+
+func validTokenAccessType(value TokenAccessType) bool {
+	switch value {
+	case TokenAccessTypeOffline, TokenAccessTypeOnline, TokenAccessTypeLegacy:
+		return true
+	default:
+		return false
+	}
+}
+
+func validIncludeGrantedScopes(value IncludeGrantedScopes) bool {
+	switch value {
+	case IncludeGrantedScopesUser, IncludeGrantedScopesTeam:
+		return true
+	default:
+		return false
+	}
 }
 
 func authCodeOptions(o options) []oauth2.AuthCodeOption {
-	options := []oauth2.AuthCodeOption{oauth2.S256ChallengeOption(o.verifier)}
+	options := []oauth2.AuthCodeOption{}
+	if o.usePKCE {
+		options = append(options, oauth2.S256ChallengeOption(o.verifier))
+	}
 	if o.tokenAccessType != "" {
 		options = append(options, oauth2.SetAuthURLParam(tokenAccessTypeParam, string(o.tokenAccessType)))
 	}
@@ -426,17 +642,25 @@ func authCodeOptions(o options) []oauth2.AuthCodeOption {
 }
 
 func exchangeOptions(o options) []oauth2.AuthCodeOption {
-	return []oauth2.AuthCodeOption{oauth2.VerifierOption(o.verifier)}
+	options := []oauth2.AuthCodeOption{}
+	if o.usePKCE {
+		options = append(options, oauth2.VerifierOption(o.verifier))
+	}
+	if o.locale != "" {
+		options = append(options, oauth2.SetAuthURLParam(localeParam, o.locale))
+	}
+	return options
 }
 
-func oauthConfig(appKey string, domain string, redirectURL string, scopes []string) *oauth2.Config {
+func oauthConfig(appKey string, appSecret string, domain string, redirectURL string, scopes []string) *oauth2.Config {
 	endpoint := dropbox.OAuthEndpoint(domain)
 	endpoint.AuthStyle = oauth2.AuthStyleInParams
 	return &oauth2.Config{
-		ClientID:    appKey,
-		Endpoint:    endpoint,
-		RedirectURL: redirectURL,
-		Scopes:      append([]string(nil), scopes...),
+		ClientID:     appKey,
+		ClientSecret: appSecret,
+		Endpoint:     endpoint,
+		RedirectURL:  redirectURL,
+		Scopes:       append([]string(nil), scopes...),
 	}
 }
 
@@ -448,6 +672,14 @@ func withHTTPClient(ctx context.Context, client *http.Client) context.Context {
 		return ctx
 	}
 	return context.WithValue(ctx, oauth2.HTTPClient, client)
+}
+
+func generateVerifier() (string, error) {
+	data := make([]byte, 32)
+	if _, err := rand.Read(data); err != nil {
+		return "", err
+	}
+	return base64.RawURLEncoding.EncodeToString(data), nil
 }
 
 func generateCSRFToken() (string, error) {
@@ -468,10 +700,15 @@ func safeEquals(a string, b string) bool {
 }
 
 func flowResultFromToken(token *oauth2.Token, urlState string) *FlowResult {
+	accountID := extraString(token, "account_id")
+	teamID := extraString(token, "team_id")
+	if accountID == "" {
+		accountID = teamID
+	}
 	return &FlowResult{
 		Token:     token,
-		AccountID: extraString(token, "account_id"),
-		TeamID:    extraString(token, "team_id"),
+		AccountID: accountID,
+		TeamID:    teamID,
 		UserID:    extraString(token, "uid"),
 		URLState:  urlState,
 		Scopes:    strings.Fields(extraString(token, "scope")),

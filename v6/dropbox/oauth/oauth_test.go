@@ -127,6 +127,194 @@ func TestPKCEFlowExchangeSendsVerifierAndAppKey(t *testing.T) {
 	}
 }
 
+func TestOAuth2FlowNoRedirectAppSecretStartAndFinish(t *testing.T) {
+	var requestURL string
+	var form url.Values
+	client := httpClient(func(req *http.Request) (*http.Response, error) {
+		requestURL = req.URL.String()
+		var err error
+		form, err = readForm(req)
+		if err != nil {
+			return nil, err
+		}
+		return jsonResponse(http.StatusOK, `{"access_token":"access-token","refresh_token":"refresh-token","token_type":"Bearer","expires_in":3600,"account_id":"dbid:account","uid":"12345","scope":"files.metadata.read files.content.write"}`), nil
+	})
+
+	flow, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+		"app-key",
+		dropboxoauth.WithAppSecret("app-secret"),
+		dropboxoauth.WithState("test-state"),
+		dropboxoauth.WithScopes("files.metadata.read", "files.content.write"),
+		dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopesUser),
+		dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessTypeLegacy),
+		dropboxoauth.WithLocale("en_US"),
+		dropboxoauth.WithHTTPClient(client),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(flow.Start())
+	if err != nil {
+		t.Fatal(err)
+	}
+	query := authURL.Query()
+	assertQueryValue(t, query, "client_id", "app-key")
+	assertQueryValue(t, query, "response_type", "code")
+	assertQueryValue(t, query, "state", "test-state")
+	assertQueryValue(t, query, "scope", "files.metadata.read files.content.write")
+	assertQueryValue(t, query, "include_granted_scopes", "user")
+	assertQueryValue(t, query, "token_access_type", "legacy")
+	assertQueryValue(t, query, "locale", "en_US")
+	assertNoQueryValue(t, query, "redirect_uri")
+	assertNoQueryValue(t, query, "code_challenge")
+	assertNoQueryValue(t, query, "code_challenge_method")
+
+	result, err := flow.Finish(context.Background(), "auth-code")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Token.AccessToken != "access-token" || result.Token.RefreshToken != "refresh-token" || result.Token.TokenType != "Bearer" {
+		t.Fatalf("unexpected token: %#v", result.Token)
+	}
+	if result.Token.Expiry.IsZero() {
+		t.Fatal("expected token expiry")
+	}
+	if result.AccountID != "dbid:account" || result.UserID != "12345" {
+		t.Fatalf("unexpected account info: %#v", result)
+	}
+	assertScopes(t, result.Scopes, "files.metadata.read", "files.content.write")
+
+	if requestURL != "https://api.dropboxapi.com/1/oauth2/token" {
+		t.Fatalf("request URL = %q", requestURL)
+	}
+	assertQueryValue(t, form, "grant_type", "authorization_code")
+	assertQueryValue(t, form, "code", "auth-code")
+	assertQueryValue(t, form, "client_id", "app-key")
+	assertQueryValue(t, form, "client_secret", "app-secret")
+	assertQueryValue(t, form, "locale", "en_US")
+	assertNoQueryValue(t, form, "redirect_uri")
+	assertNoQueryValue(t, form, "code_verifier")
+}
+
+func TestOAuth2FlowNoRedirectPKCEStartAndFinish(t *testing.T) {
+	var form url.Values
+	client := httpClient(func(req *http.Request) (*http.Response, error) {
+		var err error
+		form, err = readForm(req)
+		if err != nil {
+			return nil, err
+		}
+		return jsonResponse(http.StatusOK, `{"access_token":"access-token","token_type":"Bearer"}`), nil
+	})
+
+	flow, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+		"app-key",
+		dropboxoauth.WithPKCE(),
+		dropboxoauth.WithVerifier(testVerifier),
+		dropboxoauth.WithHTTPClient(client),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(flow.Start())
+	if err != nil {
+		t.Fatal(err)
+	}
+	query := authURL.Query()
+	assertQueryValue(t, query, "code_challenge", "E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM")
+	assertQueryValue(t, query, "code_challenge_method", "S256")
+
+	if _, err := flow.Finish(context.Background(), "auth-code"); err != nil {
+		t.Fatal(err)
+	}
+	assertQueryValue(t, form, "grant_type", "authorization_code")
+	assertQueryValue(t, form, "code", "auth-code")
+	assertQueryValue(t, form, "client_id", "app-key")
+	assertQueryValue(t, form, "code_verifier", testVerifier)
+	assertNoQueryValue(t, form, "client_secret")
+}
+
+func TestOAuth2FlowNoRedirectAppSecretOmitsTokenAccessTypeByDefault(t *testing.T) {
+	flow, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+		"app-key",
+		dropboxoauth.WithAppSecret("app-secret"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	authURL, err := url.Parse(flow.Start())
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertNoQueryValue(t, authURL.Query(), "token_access_type")
+}
+
+func TestOAuth2FlowAppSecretStartAndFinish(t *testing.T) {
+	var form url.Values
+	client := httpClient(func(req *http.Request) (*http.Response, error) {
+		var err error
+		form, err = readForm(req)
+		if err != nil {
+			return nil, err
+		}
+		return jsonResponse(http.StatusOK, `{"access_token":"access-token","refresh_token":"refresh-token","token_type":"Bearer","expires_in":3600,"team_id":"dbtid:team","uid":12345}`), nil
+	})
+
+	flow, err := dropboxoauth.NewOAuth2Flow(
+		"app-key",
+		"http://localhost/callback",
+		dropboxoauth.WithAppSecret("app-secret"),
+		dropboxoauth.WithLocale("en_US"),
+		dropboxoauth.WithHTTPClient(client),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rawAuthURL, csrfToken, err := flow.Start("url-state")
+	if err != nil {
+		t.Fatal(err)
+	}
+	authURL, err := url.Parse(rawAuthURL)
+	if err != nil {
+		t.Fatal(err)
+	}
+	query := authURL.Query()
+	assertQueryValue(t, query, "redirect_uri", "http://localhost/callback")
+	assertQueryValue(t, query, "state", csrfToken+"|url-state")
+	assertQueryValue(t, query, "locale", "en_US")
+	assertNoQueryValue(t, query, "code_challenge")
+	assertNoQueryValue(t, query, "code_challenge_method")
+
+	result, err := flow.Finish(context.Background(), url.Values{
+		"state": {csrfToken + "|url-state"},
+		"code":  {"auth-code"},
+	}, csrfToken)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if result.Token.AccessToken != "access-token" || result.Token.RefreshToken != "refresh-token" {
+		t.Fatalf("unexpected token: %#v", result.Token)
+	}
+	if result.AccountID != "dbtid:team" || result.TeamID != "dbtid:team" || result.UserID != "12345" {
+		t.Fatalf("unexpected account info: %#v", result)
+	}
+	if result.URLState != "url-state" {
+		t.Fatalf("url state = %q, want url-state", result.URLState)
+	}
+
+	assertQueryValue(t, form, "grant_type", "authorization_code")
+	assertQueryValue(t, form, "code", "auth-code")
+	assertQueryValue(t, form, "client_id", "app-key")
+	assertQueryValue(t, form, "client_secret", "app-secret")
+	assertQueryValue(t, form, "redirect_uri", "http://localhost/callback")
+	assertQueryValue(t, form, "locale", "en_US")
+	assertNoQueryValue(t, form, "code_verifier")
+}
+
 func TestWebPKCEFlowStart(t *testing.T) {
 	flow, err := dropboxoauth.NewWebPKCEFlow(
 		"app-key",
@@ -244,9 +432,7 @@ func TestWebPKCEFlowFinishExchangesCodeAndReturnsResult(t *testing.T) {
 	assertQueryValue(t, form, "code_verifier", testVerifier)
 	assertQueryValue(t, form, "client_id", "app-key")
 	assertQueryValue(t, form, "redirect_uri", "http://localhost/callback")
-	if got := form.Get("locale"); got != "" {
-		t.Fatalf("locale = %q, want empty", got)
-	}
+	assertQueryValue(t, form, "locale", "en_US")
 	if got := form.Get("client_secret"); got != "" {
 		t.Fatalf("client_secret = %q, want empty", got)
 	}
@@ -379,6 +565,202 @@ func TestNewWebPKCEFlowRejectsMissingInputs(t *testing.T) {
 	if _, err := dropboxoauth.NewWebPKCEFlow("app-key", "http://localhost/callback", dropboxoauth.WithState("state")); err == nil {
 		t.Fatal("expected unsupported state error")
 	}
+	if _, err := dropboxoauth.NewWebPKCEFlow("app-key", "http://localhost/callback", dropboxoauth.WithAppSecret("secret")); err == nil {
+		t.Fatal("expected unsupported app secret error")
+	}
+}
+
+func TestNewPKCEFlowRejectsInvalidOptions(t *testing.T) {
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{
+			name: "invalid token access type",
+			fn: func() error {
+				_, err := dropboxoauth.NewPKCEFlow(
+					"app-key",
+					dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessType("invalid")),
+				)
+				return err
+			},
+		},
+		{
+			name: "empty scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewPKCEFlow("app-key", dropboxoauth.WithScopes())
+				return err
+			},
+		},
+		{
+			name: "include granted scopes without scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewPKCEFlow(
+					"app-key",
+					dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopesUser),
+				)
+				return err
+			},
+		},
+		{
+			name: "invalid include granted scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewPKCEFlow(
+					"app-key",
+					dropboxoauth.WithScopes("files.metadata.read"),
+					dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopes("invalid")),
+				)
+				return err
+			},
+		},
+		{
+			name: "web invalid option",
+			fn: func() error {
+				_, err := dropboxoauth.NewWebPKCEFlow(
+					"app-key",
+					"http://localhost/callback",
+					dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessType("invalid")),
+				)
+				return err
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.fn(); err == nil {
+				t.Fatal("expected error")
+			}
+		})
+	}
+}
+
+func TestNewOAuth2FlowRejectsInvalidOptions(t *testing.T) {
+	tests := []struct {
+		name string
+		fn   func() error
+	}{
+		{
+			name: "missing secret or pkce",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect("app-key")
+				return err
+			},
+		},
+		{
+			name: "invalid token access type",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessType("invalid")),
+				)
+				return err
+			},
+		},
+		{
+			name: "empty scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithScopes(),
+				)
+				return err
+			},
+		},
+		{
+			name: "include granted scopes without scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopesUser),
+				)
+				return err
+			},
+		},
+		{
+			name: "invalid include granted scopes",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithScopes("files.metadata.read"),
+					dropboxoauth.WithIncludeGrantedScopes(dropboxoauth.IncludeGrantedScopes("invalid")),
+				)
+				return err
+			},
+		},
+		{
+			name: "web missing redirect url",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2Flow("app-key", " ", dropboxoauth.WithAppSecret("secret"))
+				return err
+			},
+		},
+		{
+			name: "web state option",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2Flow(
+					"app-key",
+					"http://localhost/callback",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithState("state"),
+				)
+				return err
+			},
+		},
+		{
+			name: "pkce constructor app secret",
+			fn: func() error {
+				_, err := dropboxoauth.NewPKCEFlow("app-key", dropboxoauth.WithAppSecret("secret"))
+				return err
+			},
+		},
+		{
+			name: "app secret with pkce",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithPKCE(),
+				)
+				return err
+			},
+		},
+		{
+			name: "app secret with verifier",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+					"app-key",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithVerifier(testVerifier),
+				)
+				return err
+			},
+		},
+		{
+			name: "web app secret with pkce",
+			fn: func() error {
+				_, err := dropboxoauth.NewOAuth2Flow(
+					"app-key",
+					"http://localhost/callback",
+					dropboxoauth.WithAppSecret("secret"),
+					dropboxoauth.WithPKCE(),
+				)
+				return err
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.fn(); err == nil {
+				t.Fatal("expected error")
+			}
+		})
+	}
 }
 
 func TestRefreshSendsRefreshTokenAndPreservesRefreshToken(t *testing.T) {
@@ -416,6 +798,31 @@ func TestRefreshSendsRefreshTokenAndPreservesRefreshToken(t *testing.T) {
 	if got := form.Get("client_secret"); got != "" {
 		t.Fatalf("client_secret = %q, want empty", got)
 	}
+}
+
+func TestRefreshSendsAppSecret(t *testing.T) {
+	var form url.Values
+	client := httpClient(func(req *http.Request) (*http.Response, error) {
+		var err error
+		form, err = readForm(req)
+		if err != nil {
+			return nil, err
+		}
+		return jsonResponse(http.StatusOK, `{"access_token":"new-access","expires_in":3600}`), nil
+	})
+
+	_, err := dropboxoauth.Refresh(context.Background(), "app-key", &oauth2.Token{
+		AccessToken:  "old-access",
+		RefreshToken: "old-refresh",
+		Expiry:       time.Now().Add(-time.Hour),
+	}, dropboxoauth.WithAppSecret("app-secret"), dropboxoauth.WithHTTPClient(client))
+	if err != nil {
+		t.Fatal(err)
+	}
+	assertQueryValue(t, form, "grant_type", "refresh_token")
+	assertQueryValue(t, form, "refresh_token", "old-refresh")
+	assertQueryValue(t, form, "client_id", "app-key")
+	assertQueryValue(t, form, "client_secret", "app-secret")
 }
 
 func TestTokenSourceRefreshesExpiredToken(t *testing.T) {
@@ -503,6 +910,13 @@ func assertQueryValue(t *testing.T, values url.Values, key string, want string) 
 	t.Helper()
 	if got := values.Get(key); got != want {
 		t.Fatalf("%s = %q, want %q", key, got, want)
+	}
+}
+
+func assertNoQueryValue(t *testing.T, values url.Values, key string) {
+	t.Helper()
+	if got, ok := values[key]; ok {
+		t.Fatalf("%s = %#v, want absent", key, got)
 	}
 }
 

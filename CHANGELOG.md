@@ -10,6 +10,8 @@ summarized from the repository history.
 - Added the `dropbox/oauth` package with PKCE authorization URL, code
   exchange, and refresh-token helpers.
 - Added web redirect PKCE OAuth helpers with caller-owned CSRF validation.
+- Added Python-style OAuth 2 no-redirect and web flows with app-secret support,
+  PKCE mode, legacy token access type compatibility, and option validation.
 - Added `dropbox.Config.TokenSource` for refreshable OAuth token sources.
 
 ## v6.3.0 - 2026-07-04
