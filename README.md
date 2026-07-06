@@ -137,10 +137,41 @@ config := dropbox.Config{
 }
 ```
 
-Existing apps that use an app secret can continue to use `golang.org/x/oauth2`
-directly with `dropbox.OAuthEndpoint(domain)`. The SDK still accepts a static
-access token through `dropbox.Config.Token`; for refreshable tokens, pass a
-token source through `dropbox.Config.TokenSource`.
+Confidential apps that can safely keep an app secret can use
+`NewOAuth2FlowNoRedirect` or `NewOAuth2Flow` instead. These helpers support the
+same token access types as Dropbox's Python SDK: omit the token access type to
+use the app default, use `TokenAccessTypeOffline` for refresh tokens, or use the
+deprecated `TokenAccessTypeLegacy` only for legacy compatibility.
+
+```go
+flow, err := dropboxoauth.NewOAuth2FlowNoRedirect(
+  appKey,
+  dropboxoauth.WithAppSecret(appSecret),
+  dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessTypeOffline),
+)
+if err != nil {
+  return err
+}
+
+fmt.Printf("Go to %s\n", flow.Start())
+// Read the authorization code from the user.
+result, err := flow.Finish(ctx, code)
+if err != nil {
+  return err
+}
+
+config := dropbox.Config{
+  TokenSource: dropboxoauth.TokenSource(
+    ctx,
+    appKey,
+    result.Token,
+    dropboxoauth.WithAppSecret(appSecret),
+  ),
+}
+```
+
+The SDK still accepts a static access token through `dropbox.Config.Token`; for
+refreshable tokens, pass a token source through `dropbox.Config.TokenSource`.
 
 ### Making API calls
 
