@@ -102,9 +102,12 @@ func main() {
 }
 ```
 
-The PKCE helper requests offline access by default. Use
-`dropboxoauth.TokenSource` in `dropbox.Config` for automatic refresh, or call
-`dropboxoauth.Refresh` directly when you manage token storage yourself.
+The PKCE helpers request offline access by default so refresh tokens are
+returned. Use `dropboxoauth.TokenSource` in `dropbox.Config` for automatic
+refresh, or call `dropboxoauth.Refresh` directly when you manage token storage
+yourself. If your app only calls Dropbox while the user is actively present and
+does not need background access, pass
+`dropboxoauth.WithTokenAccessType(dropboxoauth.TokenAccessTypeOnline)`.
 
 For redirect-based web apps, use `NewWebPKCEFlow`. Each login attempt needs a
 single PKCE verifier for both `Start` and `Finish`; generate it with
