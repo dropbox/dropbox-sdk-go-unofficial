@@ -55,9 +55,49 @@ func main() {
 
 ### Using OAuth2 flow
 
-For this, you will need your `APP_KEY` and `APP_SECRET` from the developers console. Your app will then have to take users though the oauth flow, as part of which users will explicitly grant permissions to your app. At the end of this process, users will get a token that the app can then use for subsequent authentication. See [this](https://pkg.go.dev/golang.org/x/oauth2#example-Config) for an example of oauth2 flow in Go.
+For PKCE, you will need your `APP_KEY` from the developers console. Your app
+will then have to take users through the OAuth flow, as part of which users
+will explicitly grant permissions to your app. At the end of this process, your
+app exchanges the authorization code for a token.
 
-Once you have the token, usage is same as above.
+```go
+import "context"
+import "fmt"
+
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+import dropboxoauth "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users"
+
+func main() {
+  ctx := context.Background()
+  flow, err := dropboxoauth.NewPKCEFlow(appKey)
+  if err != nil {
+    panic(err)
+  }
+
+  fmt.Printf("Go to %s\n", flow.AuthCodeURL())
+  // Read the authorization code from the user.
+  token, err := flow.Exchange(ctx, code)
+  if err != nil {
+    panic(err)
+  }
+
+  config := dropbox.Config{
+    TokenSource: dropboxoauth.TokenSource(ctx, appKey, token),
+  }
+  dbx := users.New(config)
+  // start making API calls
+}
+```
+
+The PKCE helper requests offline access by default. Use
+`dropboxoauth.TokenSource` in `dropbox.Config` for automatic refresh, or call
+`dropboxoauth.Refresh` directly when you manage token storage yourself.
+
+Existing apps that use an app secret can continue to use `golang.org/x/oauth2`
+directly with `dropbox.OAuthEndpoint(domain)`. The SDK still accepts a static
+access token through `dropbox.Config.Token`; for refreshable tokens, pass a
+token source through `dropbox.Config.TokenSource`.
 
 ### Making API calls
 

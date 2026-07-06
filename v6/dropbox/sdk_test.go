@@ -32,6 +32,7 @@ import (
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users"
+	"golang.org/x/oauth2"
 )
 
 func generateURL(base string, namespace string, route string) string {
@@ -279,6 +280,97 @@ func TestExecuteBackwardCompatibility(t *testing.T) {
 	}
 }
 
+func TestNewContextUsesTokenSourceBeforeToken(t *testing.T) {
+	var authHeader string
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			_, _ = w.Write([]byte(`{}`))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{
+		Token:       "static-token",
+		TokenSource: oauth2.StaticTokenSource(&oauth2.Token{AccessToken: "source-token"}),
+		LogLevel:    dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		},
+	}
+	executeTestRequest(t, config)
+	if authHeader != "Bearer source-token" {
+		t.Fatalf("Authorization = %q, want %q", authHeader, "Bearer source-token")
+	}
+}
+
+func TestNewContextUsesTokenWhenTokenSourceUnset(t *testing.T) {
+	var authHeader string
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			_, _ = w.Write([]byte(`{}`))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{
+		Token:    "static-token",
+		LogLevel: dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		},
+	}
+	executeTestRequest(t, config)
+	if authHeader != "Bearer static-token" {
+		t.Fatalf("Authorization = %q, want %q", authHeader, "Bearer static-token")
+	}
+}
+
+func TestNewContextClientTakesPrecedenceOverTokenSource(t *testing.T) {
+	var authHeader string
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			_, _ = w.Write([]byte(`{}`))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{
+		Client:      ts.Client(),
+		Token:       "static-token",
+		TokenSource: failingTokenSource{t: t},
+		LogLevel:    dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		},
+	}
+	executeTestRequest(t, config)
+	if authHeader != "" {
+		t.Fatalf("Authorization = %q, want empty", authHeader)
+	}
+}
+
+func TestNewContextNoAuthDoesNotUseTokenSource(t *testing.T) {
+	var authHeader string
+	ts := httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			authHeader = r.Header.Get("Authorization")
+			_, _ = w.Write([]byte(`{}`))
+		}))
+	defer ts.Close()
+
+	config := dropbox.Config{
+		TokenSource: failingTokenSource{t: t},
+		LogLevel:    dropbox.LogOff,
+		URLGenerator: func(hostType string, namespace string, route string) string {
+			return generateURL(ts.URL, namespace, route)
+		},
+	}
+	executeTestRequestWithAuth(t, config, "noauth")
+	if authHeader != "" {
+		t.Fatalf("Authorization = %q, want empty", authHeader)
+	}
+}
+
 func TestContextCancellation(t *testing.T) {
 	ts := httptest.NewServer(http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -301,5 +393,42 @@ func TestContextCancellation(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "context canceled") {
 		t.Errorf("expected context canceled error, got: %v", err)
+	}
+}
+
+type failingTokenSource struct {
+	t *testing.T
+}
+
+func (s failingTokenSource) Token() (*oauth2.Token, error) {
+	s.t.Helper()
+	s.t.Fatal("TokenSource should not be used when Config.Client is set")
+	return nil, fmt.Errorf("unexpected TokenSource use")
+}
+
+func executeTestRequest(t *testing.T, config dropbox.Config) {
+	t.Helper()
+	executeTestRequestWithAuth(t, config, "user")
+}
+
+func executeTestRequestWithAuth(t *testing.T, config dropbox.Config, auth string) {
+	t.Helper()
+
+	ctx := dropbox.NewContext(config)
+	resp, respBody, err := ctx.Execute(dropbox.Request{
+		Host:      "api",
+		Namespace: "users",
+		Route:     "get_current_account",
+		Auth:      auth,
+		Style:     "rpc",
+	}, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(resp) != "{}" {
+		t.Errorf("unexpected response: %s", string(resp))
+	}
+	if respBody != nil {
+		t.Errorf("unexpected response body: %v", respBody)
 	}
 }

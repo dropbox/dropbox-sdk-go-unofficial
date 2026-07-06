@@ -3,6 +3,14 @@
 Notable changes to this SDK are documented here. Historical entries are
 summarized from the repository history.
 
+## Unreleased
+
+### Added
+
+- Added the `dropbox/oauth` package with PKCE authorization URL, code
+  exchange, and refresh-token helpers.
+- Added `dropbox.Config.TokenSource` for refreshable OAuth token sources.
+
 ## v6.3.0 - 2026-07-04
 
 ### Added
