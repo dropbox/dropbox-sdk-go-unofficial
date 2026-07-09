@@ -27,6 +27,7 @@ For most applications, you should just import the relevant namespace(s) only. Th
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/openid`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/retry`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/sharing`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/team`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users`
@@ -239,6 +240,71 @@ Here's an example:
     fmt.Printf("Name: %v", resp.Name)
   }
 ```
+
+### Retrying API calls
+
+Retries are disabled by default. To opt in for all calls made by a client, set
+`Config.RetryPolicy`:
+
+```go
+import "time"
+
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/retry"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users"
+
+policy := retry.Policy{
+  MaxRetries:     3,
+  InitialBackoff: 500 * time.Millisecond,
+  MaxBackoff:     30 * time.Second,
+  MaxRetryAfter:  30 * time.Second,
+}
+
+dbx := users.New(dropbox.Config{
+  Token:       accessToken,
+  RetryPolicy: &policy,
+})
+
+arg := users.NewGetAccountArg(accountId)
+resp, err := dbx.GetAccount(arg)
+```
+
+`MaxRetries` is the number of attempts after the initial request. If left unset,
+`InitialBackoff`, `MaxBackoff`, and `MaxRetryAfter` default to 500ms, 30s, and
+30s respectively.
+
+The SDK retries HTTP `429 Too Many Requests` and `503 Service Unavailable`
+responses. `Retry-After` headers and Dropbox 429 `retry_after` response bodies
+are honored up to `MaxRetryAfter`; longer delays are not retried. Network errors
+where no HTTP response is received are not retried.
+
+Use standard context deadlines to bound the whole operation, including retry
+sleeps and all attempts:
+
+```go
+baseCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+defer cancel()
+
+resp, err := dbx.GetAccountContext(baseCtx, arg)
+```
+
+Some Dropbox API `409 Conflict` responses are also safe to retry. Opt in by
+listing the top-level Stone error tags that should be retried:
+
+```go
+policy := retry.Policy{
+  MaxRetries:       3,
+  InitialBackoff:   time.Second,
+  MaxBackoff:       30 * time.Second,
+  MaxRetryAfter:    30 * time.Second,
+  Retryable409Tags: []string{"too_many_write_operations"},
+}
+```
+
+Upload retries require a seekable request body (for example `*os.File`,
+`*bytes.Reader`, or `*strings.Reader`) so the SDK can rewind the body before
+each attempt. Non-seekable upload bodies are sent once and are not retried.
+Leave `Config.RetryPolicy` nil to disable retries.
 
 ### Automatic upload integrity (`content_hash`)
 
