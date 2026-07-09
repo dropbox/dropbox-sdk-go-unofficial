@@ -1,18 +1,6 @@
-# Dropbox SDK for Go [UNOFFICIAL] [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Test/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Lint/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions)
+# Dropbox SDK for Go [![GoDoc](https://pkg.go.dev/badge/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox)](https://pkg.go.dev/github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Test/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions) [![Actions Status](https://github.com/dropbox/dropbox-sdk-go-unofficial/workflows/Lint/badge.svg)](https://github.com/dropbox/dropbox-sdk-go-unofficial/actions)
 
-An **UNOFFICIAL** Go SDK for integrating with the Dropbox API v2. Requires Go 1.23+
-
-:warning: WARNING: This SDK is **NOT yet official**. What does this mean?
-
-  * There is no formal Dropbox [support](https://www.dropbox.com/developers/support) for this SDK at this point
-  * Bugs may or may not get fixed
-  * Not all SDK features may be implemented and implemented features may be buggy or incorrect
-
-
-### Uh OK, so why are you releasing this?
-
-  * the SDK, while unofficial, _is_ usable. See [dbxcli](https://github.com/dropbox/dbxcli) for an example application built using the SDK
-  * we would like to get feedback from the community and evaluate the level of interest/enthusiasm before investing into official supporting one more SDK
+A Go SDK for integrating with the Dropbox API v2. Requires Go 1.25+
 
 ## Installation
 
@@ -278,14 +266,15 @@ responses. `Retry-After` headers and Dropbox 429 `retry_after` response bodies
 are honored up to `MaxRetryAfter`; longer delays are not retried. Network errors
 where no HTTP response is received are not retried.
 
-Use standard context deadlines to bound the whole operation, including retry
-sleeps and all attempts:
+Retry policies are client-wide; there is no per-call retry override. To set a
+per-call time budget, use a context deadline, which covers retry sleeps and all
+attempts:
 
 ```go
-baseCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 defer cancel()
 
-resp, err := dbx.GetAccountContext(baseCtx, arg)
+resp, err := dbx.GetAccountContext(ctx, arg)
 ```
 
 Some Dropbox API `409 Conflict` responses are also safe to retry. Opt in by
@@ -431,8 +420,10 @@ Please read the [API docs](https://www.dropbox.com/developers/documentation/http
 This SDK is automatically generated using the public [Dropbox API spec](https://github.com/dropbox/dropbox-api-spec) and [Stone](https://github.com/dropbox/stone). See this [README](https://github.com/dropbox/dropbox-sdk-go-unofficial/blob/master/generator/README.md)
 for more details on how code is generated. 
 
-## Caveats
+## Support posture
 
-  * To re-iterate, this is an **UNOFFICIAL** SDK and thus has no official support from Dropbox
-  * Only supports the v2 API. Parts of the v2 API are still in beta, and thus subject to change
-  * This SDK itself is in beta, and so interfaces may change at any point
+This SDK is maintained in the Dropbox GitHub organization by Dropbox engineers,
+but it is not a formally supported Dropbox product. Use GitHub issues and pull
+requests for bugs and contributions; Dropbox [Support](https://www.dropbox.com/developers/support)
+does not provide support for this SDK. The SDK implements a practical subset of
+Dropbox API features, not the full API surface.
