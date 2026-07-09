@@ -16,6 +16,16 @@ summarized from the repository history.
 - Added `oauth.GenerateVerifier` for generating PKCE code verifiers.
 - Added `oauth.ScopeOpenID`, `oauth.ScopeEmail`, and `oauth.ScopeProfile`
   constants and `dropbox/openid` identity-flow examples for OpenID Connect.
+- Added the `dropbox/retry` package with a configurable `Policy` for opt-in
+  automatic retries with exponential backoff.
+- Added `dropbox.Config.RetryPolicy` to enable retries for all calls made by a
+  client. Retries `429` and `503` responses (and configurable `409` Stone error
+  tags), honoring `Retry-After` headers and `retry_after` response bodies.
+
+### Changed
+
+- Raised the minimum supported Go version to 1.25.
+- Pinned CI Go versions.
 
 ## v6.3.0 - 2026-07-04
 
