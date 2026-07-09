@@ -31,6 +31,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/retry"
 	"golang.org/x/oauth2"
 )
 
@@ -90,6 +91,9 @@ type Config struct {
 	Domain string
 	// No need to set -- for testing only
 	Client *http.Client
+	// RetryPolicy controls automatic retries for Dropbox API calls. If nil, retries
+	// are disabled.
+	RetryPolicy *retry.Policy
 	// No need to set -- for testing only
 	HeaderGenerator func(hostType string, namespace string, route string) map[string]string
 	// No need to set -- for testing only
@@ -172,11 +176,106 @@ func (c *Context) Execute(req Request, body io.Reader) ([]byte, io.ReadCloser, e
 }
 
 // ExecuteContext executes a Dropbox API request with the provided context.
+// Retries use Config.RetryPolicy when set.
 func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reader) ([]byte, io.ReadCloser, error) {
+	var policy retry.Policy
+	retryConfigured := c.Config.RetryPolicy != nil
+	if retryConfigured {
+		policy = c.Config.RetryPolicy.Normalized()
+	}
+	bodyOffset, bodySeeker, bodyRetryable := retryableBody(body)
+	canRetry := retryConfigured && bodyRetryable
+
+	client := c.Client
+	if req.Auth == "noauth" {
+		client = c.NoAuthClient
+	}
+
+	for attempt := 0; ; attempt++ {
+		if attempt > 0 && bodySeeker != nil {
+			if _, err := bodySeeker.Seek(bodyOffset, io.SeekStart); err != nil {
+				return nil, nil, err
+			}
+		}
+
+		httpReq, err := c.newHTTPRequest(ctx, req, body)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		resp, err := client.Do(httpReq)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
+			switch req.Style {
+			case "rpc", "upload":
+				if resp.Body == nil {
+					return nil, nil, errors.New("expected body in RPC response, got nil")
+				}
+
+				b, err := io.ReadAll(resp.Body)
+				if closeErr := resp.Body.Close(); closeErr != nil && err == nil {
+					err = closeErr
+				}
+				if err != nil {
+					return nil, nil, err
+				}
+
+				return b, nil, nil
+			case "download":
+				b := []byte(resp.Header.Get("Dropbox-API-Result"))
+				return b, resp.Body, nil
+			}
+		}
+
+		b, readErr := io.ReadAll(resp.Body)
+		closeErr := resp.Body.Close()
+		bodyErr := readErr
+		if bodyErr == nil {
+			bodyErr = closeErr
+		}
+		if bodyErr != nil {
+			if canRetry {
+				retryBody := b
+				if readErr != nil {
+					retryBody = nil
+				}
+				if wait, ok := policy.Delay(resp, retryBody, attempt); ok {
+					if err := retry.Sleep(ctx, wait); err != nil {
+						return nil, nil, err
+					}
+					continue
+				}
+			}
+			return nil, nil, bodyErr
+		}
+
+		if canRetry {
+			if wait, ok := policy.Delay(resp, b, attempt); ok {
+				if err := retry.Sleep(ctx, wait); err != nil {
+					return nil, nil, err
+				}
+				continue
+			}
+		}
+
+		return nil, nil, SDKInternalError{
+			StatusCode: resp.StatusCode,
+			Content:    string(b),
+		}
+	}
+}
+
+func (c *Context) newHTTPRequest(ctx context.Context, req Request, body io.Reader) (*http.Request, error) {
 	url := c.URLGenerator(req.Host, req.Namespace, req.Route)
 	httpReq, err := http.NewRequestWithContext(ctx, "POST", url, body)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
+	}
+	if body != nil {
+		httpReq.Body = io.NopCloser(body)
 	}
 
 	for k, v := range req.ExtraHeaders {
@@ -207,13 +306,13 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 	if req.Arg != nil {
 		serializedArg, err := json.Marshal(req.Arg)
 		if err != nil {
-			return nil, nil, err
+			return nil, err
 		}
 
 		switch req.Style {
 		case "rpc":
 			if body != nil {
-				return nil, nil, errors.New("RPC style requests can not have body")
+				return nil, errors.New("RPC style requests can not have body")
 			}
 
 			httpReq.Header.Set("Content-Type", "application/json")
@@ -225,46 +324,22 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 		}
 	}
 
-	client := c.Client
-	if req.Auth == "noauth" {
-		client = c.NoAuthClient
-	}
+	return httpReq, nil
+}
 
-	resp, err := client.Do(httpReq)
+func retryableBody(body io.Reader) (int64, io.Seeker, bool) {
+	if body == nil {
+		return 0, nil, true
+	}
+	seeker, ok := body.(io.Seeker)
+	if !ok {
+		return 0, nil, false
+	}
+	offset, err := seeker.Seek(0, io.SeekCurrent)
 	if err != nil {
-		return nil, nil, err
+		return 0, nil, false
 	}
-
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
-		switch req.Style {
-		case "rpc", "upload":
-			if resp.Body == nil {
-				return nil, nil, errors.New("Expected body in RPC response, got nil")
-			}
-
-			b, err := io.ReadAll(resp.Body)
-			resp.Body.Close()
-			if err != nil {
-				return nil, nil, err
-			}
-
-			return b, nil, nil
-		case "download":
-			b := []byte(resp.Header.Get("Dropbox-API-Result"))
-			return b, resp.Body, nil
-		}
-	}
-
-	b, err := io.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return nil, nil, SDKInternalError{
-		StatusCode: resp.StatusCode,
-		Content:    string(b),
-	}
+	return offset, seeker, true
 }
 
 // NewContext returns a new Context with the given Config.
