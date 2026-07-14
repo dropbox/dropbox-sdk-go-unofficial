@@ -8,9 +8,14 @@ updates:
   - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/v6" # Location of package manifests
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
+  # Group all GitHub Actions updates into one PR
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
