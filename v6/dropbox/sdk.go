@@ -399,10 +399,10 @@ func OAuthEndpoint(domain string) oauth2.Endpoint {
 	if domain == "" {
 		domain = defaultDomain
 	}
-	authURL := fmt.Sprintf("https://meta%s/1/oauth2/authorize", domain)
-	tokenURL := fmt.Sprintf("https://api%s/1/oauth2/token", domain)
+	authURL := fmt.Sprintf("https://meta%s/oauth2/authorize", domain)
+	tokenURL := fmt.Sprintf("https://api%s/oauth2/token", domain)
 	if domain == defaultDomain {
-		authURL = "https://www.dropbox.com/1/oauth2/authorize"
+		authURL = "https://www.dropbox.com/oauth2/authorize"
 	}
 	return oauth2.Endpoint{AuthURL: authURL, TokenURL: tokenURL}
 }
