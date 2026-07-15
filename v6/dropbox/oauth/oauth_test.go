@@ -55,7 +55,7 @@ func TestPKCEFlowAuthCodeURL(t *testing.T) {
 		t.Fatal(err)
 	}
 	query := authURL.Query()
-	if authURL.Scheme != "https" || authURL.Host != "www.dropbox.com" || authURL.Path != "/1/oauth2/authorize" {
+	if authURL.Scheme != "https" || authURL.Host != "www.dropbox.com" || authURL.Path != "/oauth2/authorize" {
 		t.Fatalf("auth URL = %s", authURL)
 	}
 	assertQueryValue(t, query, "client_id", "app-key")
@@ -146,7 +146,7 @@ func TestPKCEFlowExchangeSendsVerifierAndAppKey(t *testing.T) {
 	if token.AccessToken != "access-token" || token.RefreshToken != "refresh-token" || token.TokenType != "Bearer" {
 		t.Fatalf("unexpected token: %#v", token)
 	}
-	if requestURL != "https://api.dropboxapi.com/1/oauth2/token" {
+	if requestURL != "https://api.dropboxapi.com/oauth2/token" {
 		t.Fatalf("request URL = %q", requestURL)
 	}
 	assertQueryValue(t, form, "grant_type", "authorization_code")
@@ -216,7 +216,7 @@ func TestOAuth2FlowNoRedirectAppSecretStartAndFinish(t *testing.T) {
 	}
 	assertScopes(t, result.Scopes, "files.metadata.read", "files.content.write")
 
-	if requestURL != "https://api.dropboxapi.com/1/oauth2/token" {
+	if requestURL != "https://api.dropboxapi.com/oauth2/token" {
 		t.Fatalf("request URL = %q", requestURL)
 	}
 	assertQueryValue(t, form, "grant_type", "authorization_code")
@@ -372,7 +372,7 @@ func TestWebPKCEFlowStart(t *testing.T) {
 		t.Fatal(err)
 	}
 	query := authURL.Query()
-	if authURL.Scheme != "https" || authURL.Host != "www.dropbox.com" || authURL.Path != "/1/oauth2/authorize" {
+	if authURL.Scheme != "https" || authURL.Host != "www.dropbox.com" || authURL.Path != "/oauth2/authorize" {
 		t.Fatalf("auth URL = %s", authURL)
 	}
 	assertQueryValue(t, query, "client_id", "app-key")
@@ -455,7 +455,7 @@ func TestWebPKCEFlowFinishExchangesCodeAndReturnsResult(t *testing.T) {
 	}
 	assertScopes(t, result.Scopes, "files.metadata.read", "files.content.write")
 
-	if requestURL != "https://api.dropboxapi.com/1/oauth2/token" {
+	if requestURL != "https://api.dropboxapi.com/oauth2/token" {
 		t.Fatalf("request URL = %q", requestURL)
 	}
 	assertQueryValue(t, form, "grant_type", "authorization_code")

@@ -98,6 +98,9 @@ type Config struct {
 	HeaderGenerator func(hostType string, namespace string, route string) map[string]string
 	// No need to set -- for testing only
 	URLGenerator func(hostType string, namespace string, route string) string
+	// OAuth2 token source used for authenticated Dropbox API calls. If Client is
+	// nil and TokenSource is set, TokenSource takes precedence over Token.
+	TokenSource oauth2.TokenSource
 }
 
 // LogLevel defines a type that can set the desired level of logging the SDK will generate.
@@ -351,9 +354,13 @@ func NewContext(c Config) Context {
 
 	client := c.Client
 	if client == nil {
-		var conf = &oauth2.Config{Endpoint: OAuthEndpoint(domain)}
-		tok := &oauth2.Token{AccessToken: c.Token}
-		client = conf.Client(context.Background(), tok)
+		if c.TokenSource != nil {
+			client = oauth2.NewClient(context.Background(), c.TokenSource)
+		} else {
+			var conf = &oauth2.Config{Endpoint: OAuthEndpoint(domain)}
+			tok := &oauth2.Token{AccessToken: c.Token}
+			client = conf.Client(context.Background(), tok)
+		}
 	}
 
 	noAuthClient := c.Client
@@ -389,10 +396,10 @@ func OAuthEndpoint(domain string) oauth2.Endpoint {
 	if domain == "" {
 		domain = defaultDomain
 	}
-	authURL := fmt.Sprintf("https://meta%s/1/oauth2/authorize", domain)
-	tokenURL := fmt.Sprintf("https://api%s/1/oauth2/token", domain)
+	authURL := fmt.Sprintf("https://meta%s/oauth2/authorize", domain)
+	tokenURL := fmt.Sprintf("https://api%s/oauth2/token", domain)
 	if domain == defaultDomain {
-		authURL = "https://www.dropbox.com/1/oauth2/authorize"
+		authURL = "https://www.dropbox.com/oauth2/authorize"
 	}
 	return oauth2.Endpoint{AuthURL: authURL, TokenURL: tokenURL}
 }
