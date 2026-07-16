@@ -3,7 +3,7 @@
 Notable changes to this SDK are documented here. Historical entries are
 summarized from the repository history.
 
-## Unreleased
+## v6.4.0 - 2026-07-15
 
 ### Added
 
