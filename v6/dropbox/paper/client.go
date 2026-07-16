@@ -235,23 +235,25 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// DocsArchiveContext : Marks the given Paper doc as archived. This action can be
-	// performed or undone by anyone with edit permissions to the doc. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. This endpoint will be
-	// retired in September 2020. Refer to the `Paper Migration Guide`
+	// DocsArchiveContext : Marks the given Paper doc as archived. This action
+	// can be performed or undone by anyone with edit permissions to the doc.
+	// Note that this endpoint will continue to work for content created by
+	// users on the older version of Paper. To check which version of Paper a
+	// user is on, use /users/features/get_values. If the paper_as_files feature
+	// is enabled, then the user is running the new version of Paper. This
+	// endpoint will be retired in September 2020. Refer to the `Paper Migration
+	// Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for more information.
 	// Deprecated:
 	DocsArchiveContext(ctx context.Context, arg *RefPaperDoc) (err error)
-	// DocsCreateContext : Creates a new Paper doc with the provided content. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. This endpoint will be
-	// retired in September 2020. Refer to the `Paper Migration Guide`
+	// DocsCreateContext : Creates a new Paper doc with the provided content.
+	// Note that this endpoint will continue to work for content created by
+	// users on the older version of Paper. To check which version of Paper a
+	// user is on, use /users/features/get_values. If the paper_as_files feature
+	// is enabled, then the user is running the new version of Paper. This
+	// endpoint will be retired in September 2020. Refer to the `Paper Migration
+	// Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for more information.
 	// Deprecated:
@@ -266,21 +268,21 @@ type ContextClient interface {
 	// for migration information.
 	// Deprecated:
 	DocsDownloadContext(ctx context.Context, arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error)
-	// DocsFolderUsersListContext : Lists the users who are explicitly invited to the
-	// Paper folder in which the Paper doc is contained. For private folders all
-	// users (including owner) shared on the folder are listed and for team
-	// folders all non-team users shared on the folder are returned. Note that
-	// this endpoint will continue to work for content created by users on the
-	// older version of Paper. To check which version of Paper a user is on, use
-	// /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
+	// DocsFolderUsersListContext : Lists the users who are explicitly invited
+	// to the Paper folder in which the Paper doc is contained. For private
+	// folders all users (including owner) shared on the folder are listed and
+	// for team folders all non-team users shared on the folder are returned.
+	// Note that this endpoint will continue to work for content created by
+	// users on the older version of Paper. To check which version of Paper a
+	// user is on, use /users/features/get_values. If the paper_as_files feature
+	// is enabled, then the user is running the new version of Paper. Refer to
+	// the `Paper Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
 	DocsFolderUsersListContext(ctx context.Context, arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error)
-	// DocsFolderUsersListContinueContext : Once a cursor has been retrieved from
-	// `docsFolderUsersList`, use this to paginate through all users on the
+	// DocsFolderUsersListContinueContext : Once a cursor has been retrieved
+	// from `docsFolderUsersList`, use this to paginate through all users on the
 	// Paper folder. Note that this endpoint will continue to work for content
 	// created by users on the older version of Paper. To check which version of
 	// Paper a user is on, use /users/features/get_values. If the paper_as_files
@@ -290,14 +292,14 @@ type ContextClient interface {
 	// for migration information.
 	// Deprecated:
 	DocsFolderUsersListContinueContext(ctx context.Context, arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error)
-	// DocsGetFolderInfoContext : Retrieves folder information for the given Paper doc.
-	// This includes: - folder sharing policy; permissions for subfolders are
-	// set by the top-level folder. - full 'filepath', i.e. the list of folders
-	// (both folderId and folderName) from the root folder to the folder
-	// directly containing the Paper doc. If the Paper doc is not in any folder
-	// (aka unfiled) the response will be empty. Note that this endpoint will
-	// continue to work for content created by users on the older version of
-	// Paper. To check which version of Paper a user is on, use
+	// DocsGetFolderInfoContext : Retrieves folder information for the given
+	// Paper doc. This includes: - folder sharing policy; permissions for
+	// subfolders are set by the top-level folder. - full 'filepath', i.e. the
+	// list of folders (both folderId and folderName) from the root folder to
+	// the folder directly containing the Paper doc. If the Paper doc is not in
+	// any folder (aka unfiled) the response will be empty. Note that this
+	// endpoint will continue to work for content created by users on the older
+	// version of Paper. To check which version of Paper a user is on, use
 	// /users/features/get_values. If the paper_as_files feature is enabled,
 	// then the user is running the new version of Paper. Refer to the `Paper
 	// Migration Guide`
@@ -307,19 +309,9 @@ type ContextClient interface {
 	DocsGetFolderInfoContext(ctx context.Context, arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error)
 	// DocsGetMetadataContext : Returns metadata for a Paper doc or Cloud Doc.
 	DocsGetMetadataContext(ctx context.Context, arg *GetDocMetadataArg) (res *PaperDocGetMetadataResult, err error)
-	// DocsListContext : Return the list of all Paper docs according to the argument
-	// specifications. To iterate over through the full pagination, pass the
-	// cursor to `docsListContinue`. Note that this endpoint will continue to
-	// work for content created by users on the older version of Paper. To check
-	// which version of Paper a user is on, use /users/features/get_values. If
-	// the paper_as_files feature is enabled, then the user is running the new
-	// version of Paper. Refer to the `Paper Migration Guide`
-	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-	// for migration information.
-	// Deprecated:
-	DocsListContext(ctx context.Context, arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error)
-	// DocsListContinueContext : Once a cursor has been retrieved from `docsList`, use
-	// this to paginate through all Paper doc. Note that this endpoint will
+	// DocsListContext : Return the list of all Paper docs according to the
+	// argument specifications. To iterate over through the full pagination,
+	// pass the cursor to `docsListContinue`. Note that this endpoint will
 	// continue to work for content created by users on the older version of
 	// Paper. To check which version of Paper a user is on, use
 	// /users/features/get_values. If the paper_as_files feature is enabled,
@@ -328,30 +320,42 @@ type ContextClient interface {
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
+	DocsListContext(ctx context.Context, arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error)
+	// DocsListContinueContext : Once a cursor has been retrieved from
+	// `docsList`, use this to paginate through all Paper doc. Note that this
+	// endpoint will continue to work for content created by users on the older
+	// version of Paper. To check which version of Paper a user is on, use
+	// /users/features/get_values. If the paper_as_files feature is enabled,
+	// then the user is running the new version of Paper. Refer to the `Paper
+	// Migration Guide`
+	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
+	// for migration information.
+	// Deprecated:
 	DocsListContinueContext(ctx context.Context, arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error)
-	// DocsPermanentlyDeleteContext : Permanently deletes the given Paper doc. This
-	// operation is final as the doc cannot be recovered. This action can be
-	// performed only by the doc owner. Note that this endpoint will continue to
-	// work for content created by users on the older version of Paper. To check
-	// which version of Paper a user is on, use /users/features/get_values. If
-	// the paper_as_files feature is enabled, then the user is running the new
-	// version of Paper. Refer to the `Paper Migration Guide`
+	// DocsPermanentlyDeleteContext : Permanently deletes the given Paper doc.
+	// This operation is final as the doc cannot be recovered. This action can
+	// be performed only by the doc owner. Note that this endpoint will continue
+	// to work for content created by users on the older version of Paper. To
+	// check which version of Paper a user is on, use
+	// /users/features/get_values. If the paper_as_files feature is enabled,
+	// then the user is running the new version of Paper. Refer to the `Paper
+	// Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
 	DocsPermanentlyDeleteContext(ctx context.Context, arg *RefPaperDoc) (err error)
-	// DocsSharingPolicyGetContext : Gets the default sharing policy for the given
-	// Paper doc. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
+	// DocsSharingPolicyGetContext : Gets the default sharing policy for the
+	// given Paper doc. Note that this endpoint will continue to work for
+	// content created by users on the older version of Paper. To check which
+	// version of Paper a user is on, use /users/features/get_values. If the
+	// paper_as_files feature is enabled, then the user is running the new
+	// version of Paper. Refer to the `Paper Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
 	DocsSharingPolicyGetContext(ctx context.Context, arg *RefPaperDoc) (res *SharingPolicy, err error)
-	// DocsSharingPolicySetContext : Sets the default sharing policy for the given
-	// Paper doc. The default 'team_sharing_policy' can be changed only by
+	// DocsSharingPolicySetContext : Sets the default sharing policy for the
+	// given Paper doc. The default 'team_sharing_policy' can be changed only by
 	// teams, omit this field for personal accounts. The 'public_sharing_policy'
 	// policy can't be set to the value 'disabled' because this setting can be
 	// changed only via the team admin console. Note that this endpoint will
@@ -364,22 +368,22 @@ type ContextClient interface {
 	// for migration information.
 	// Deprecated:
 	DocsSharingPolicySetContext(ctx context.Context, arg *PaperDocSharingPolicy) (err error)
-	// DocsUpdateContext : Updates an existing Paper doc with the provided content.
-	// Note that this endpoint will continue to work for content created by
-	// users on the older version of Paper. To check which version of Paper a
-	// user is on, use /users/features/get_values. If the paper_as_files feature
-	// is enabled, then the user is running the new version of Paper. This
-	// endpoint will be retired in September 2020. Refer to the `Paper Migration
-	// Guide`
+	// DocsUpdateContext : Updates an existing Paper doc with the provided
+	// content. Note that this endpoint will continue to work for content
+	// created by users on the older version of Paper. To check which version of
+	// Paper a user is on, use /users/features/get_values. If the paper_as_files
+	// feature is enabled, then the user is running the new version of Paper.
+	// This endpoint will be retired in September 2020. Refer to the `Paper
+	// Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for more information.
 	// Deprecated:
 	DocsUpdateContext(ctx context.Context, arg *PaperDocUpdateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error)
-	// DocsUsersAddContext : Allows an owner or editor to add users to a Paper doc or
-	// change their permissions using their email address or Dropbox account ID.
-	// The doc owner's permissions cannot be changed. Note that this endpoint
-	// will continue to work for content created by users on the older version
-	// of Paper. To check which version of Paper a user is on, use
+	// DocsUsersAddContext : Allows an owner or editor to add users to a Paper
+	// doc or change their permissions using their email address or Dropbox
+	// account ID. The doc owner's permissions cannot be changed. Note that this
+	// endpoint will continue to work for content created by users on the older
+	// version of Paper. To check which version of Paper a user is on, use
 	// /users/features/get_values. If the paper_as_files feature is enabled,
 	// then the user is running the new version of Paper. Refer to the `Paper
 	// Migration Guide`
@@ -387,9 +391,9 @@ type ContextClient interface {
 	// for migration information.
 	// Deprecated:
 	DocsUsersAddContext(ctx context.Context, arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error)
-	// DocsUsersListContext : Lists all users who visited the Paper doc or users with
-	// explicit access. This call excludes users who have been removed. The list
-	// is sorted by the date of the visit or the share date. The list will
+	// DocsUsersListContext : Lists all users who visited the Paper doc or users
+	// with explicit access. This call excludes users who have been removed. The
+	// list is sorted by the date of the visit or the share date. The list will
 	// include both users, the explicitly shared ones as well as those who came
 	// in using the Paper url link. Note that this endpoint will continue to
 	// work for content created by users on the older version of Paper. To check
@@ -411,23 +415,23 @@ type ContextClient interface {
 	// for migration information.
 	// Deprecated:
 	DocsUsersListContinueContext(ctx context.Context, arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error)
-	// DocsUsersRemoveContext : Allows an owner or editor to remove users from a Paper
-	// doc using their email address or Dropbox account ID. The doc owner cannot
-	// be removed. Note that this endpoint will continue to work for content
-	// created by users on the older version of Paper. To check which version of
-	// Paper a user is on, use /users/features/get_values. If the paper_as_files
-	// feature is enabled, then the user is running the new version of Paper.
-	// Refer to the `Paper Migration Guide`
+	// DocsUsersRemoveContext : Allows an owner or editor to remove users from a
+	// Paper doc using their email address or Dropbox account ID. The doc owner
+	// cannot be removed. Note that this endpoint will continue to work for
+	// content created by users on the older version of Paper. To check which
+	// version of Paper a user is on, use /users/features/get_values. If the
+	// paper_as_files feature is enabled, then the user is running the new
+	// version of Paper. Refer to the `Paper Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
 	DocsUsersRemoveContext(ctx context.Context, arg *RemovePaperDocUser) (err error)
-	// FoldersCreateContext : Create a new Paper folder with the provided info. Note
-	// that this endpoint will continue to work for content created by users on
-	// the older version of Paper. To check which version of Paper a user is on,
-	// use /users/features/get_values. If the paper_as_files feature is enabled,
-	// then the user is running the new version of Paper. Refer to the `Paper
-	// Migration Guide`
+	// FoldersCreateContext : Create a new Paper folder with the provided info.
+	// Note that this endpoint will continue to work for content created by
+	// users on the older version of Paper. To check which version of Paper a
+	// user is on, use /users/features/get_values. If the paper_as_files feature
+	// is enabled, then the user is running the new version of Paper. Refer to
+	// the `Paper Migration Guide`
 	// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
 	// for migration information.
 	// Deprecated:
@@ -442,15 +446,15 @@ type DocsArchiveAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsArchiveContext : Marks the given Paper doc as archived. This action can be
-// performed or undone by anyone with edit permissions to the doc. Note that
-// this endpoint will continue to work for content created by users on the
-// older version of Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. This endpoint will be
-// retired in September 2020. Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for more information.
+// DocsArchiveContext : Marks the given Paper doc as archived. This action can
+// be performed or undone by anyone with edit permissions to the doc. Note that
+// this endpoint will continue to work for content created by users on the older
+// version of Paper. To check which version of Paper a user is on, use
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. This endpoint will be retired
+// in September 2020. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// more information.
 // Deprecated:
 func (dbx *apiImpl) DocsArchiveContext(ctx context.Context, arg *RefPaperDoc) (err error) {
 	log.Printf("WARNING: API `DocsArchive` is deprecated")
@@ -492,14 +496,14 @@ type DocsCreateAPIError struct {
 	EndpointError *PaperDocCreateError `json:"error"`
 }
 
-// DocsCreateContext : Creates a new Paper doc with the provided content. Note that
-// this endpoint will continue to work for content created by users on the
+// DocsCreateContext : Creates a new Paper doc with the provided content. Note
+// that this endpoint will continue to work for content created by users on the
 // older version of Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. This endpoint will be
-// retired in September 2020. Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for more information.
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. This endpoint will be retired
+// in September 2020. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// more information.
 // Deprecated:
 func (dbx *apiImpl) DocsCreateContext(ctx context.Context, arg *PaperDocCreateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
 	log.Printf("WARNING: API `DocsCreate` is deprecated")
@@ -546,13 +550,13 @@ type DocsDownloadAPIError struct {
 }
 
 // DocsDownloadContext : Exports and downloads Paper doc either as HTML or
-// markdown. Note that this endpoint will continue to work for content
-// created by users on the older version of Paper. To check which version of
-// Paper a user is on, use /users/features/get_values. If the paper_as_files
-// feature is enabled, then the user is running the new version of Paper.
-// Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// markdown. Note that this endpoint will continue to work for content created
+// by users on the older version of Paper. To check which version of Paper a
+// user is on, use /users/features/get_values. If the paper_as_files feature is
+// enabled, then the user is running the new version of Paper. Refer to the
+// `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsDownloadContext(ctx context.Context, arg *PaperDocExport) (res *PaperDocExportResult, content io.ReadCloser, err error) {
 	log.Printf("WARNING: API `DocsDownload` is deprecated")
@@ -598,17 +602,17 @@ type DocsFolderUsersListAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsFolderUsersListContext : Lists the users who are explicitly invited to the
-// Paper folder in which the Paper doc is contained. For private folders all
-// users (including owner) shared on the folder are listed and for team
-// folders all non-team users shared on the folder are returned. Note that
-// this endpoint will continue to work for content created by users on the
-// older version of Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// DocsFolderUsersListContext : Lists the users who are explicitly invited to
+// the Paper folder in which the Paper doc is contained. For private folders all
+// users (including owner) shared on the folder are listed and for team folders
+// all non-team users shared on the folder are returned. Note that this endpoint
+// will continue to work for content created by users on the older version of
+// Paper. To check which version of Paper a user is on, use
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. Refer to the `Paper Migration
+// Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsFolderUsersListContext(ctx context.Context, arg *ListUsersOnFolderArgs) (res *ListUsersOnFolderResponse, err error) {
 	log.Printf("WARNING: API `DocsFolderUsersList` is deprecated")
@@ -655,14 +659,14 @@ type DocsFolderUsersListContinueAPIError struct {
 }
 
 // DocsFolderUsersListContinueContext : Once a cursor has been retrieved from
-// `docsFolderUsersList`, use this to paginate through all users on the
-// Paper folder. Note that this endpoint will continue to work for content
-// created by users on the older version of Paper. To check which version of
-// Paper a user is on, use /users/features/get_values. If the paper_as_files
-// feature is enabled, then the user is running the new version of Paper.
-// Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// `docsFolderUsersList`, use this to paginate through all users on the Paper
+// folder. Note that this endpoint will continue to work for content created by
+// users on the older version of Paper. To check which version of Paper a user
+// is on, use /users/features/get_values. If the paper_as_files feature is
+// enabled, then the user is running the new version of Paper. Refer to the
+// `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsFolderUsersListContinueContext(ctx context.Context, arg *ListUsersOnFolderContinueArgs) (res *ListUsersOnFolderResponse, err error) {
 	log.Printf("WARNING: API `DocsFolderUsersListContinue` is deprecated")
@@ -708,19 +712,18 @@ type DocsGetFolderInfoAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsGetFolderInfoContext : Retrieves folder information for the given Paper doc.
-// This includes: - folder sharing policy; permissions for subfolders are
+// DocsGetFolderInfoContext : Retrieves folder information for the given Paper
+// doc. This includes: - folder sharing policy; permissions for subfolders are
 // set by the top-level folder. - full 'filepath', i.e. the list of folders
-// (both folderId and folderName) from the root folder to the folder
-// directly containing the Paper doc. If the Paper doc is not in any folder
-// (aka unfiled) the response will be empty. Note that this endpoint will
-// continue to work for content created by users on the older version of
-// Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// (both folderId and folderName) from the root folder to the folder directly
+// containing the Paper doc. If the Paper doc is not in any folder (aka unfiled)
+// the response will be empty. Note that this endpoint will continue to work for
+// content created by users on the older version of Paper. To check which
+// version of Paper a user is on, use /users/features/get_values. If the
+// paper_as_files feature is enabled, then the user is running the new version
+// of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsGetFolderInfoContext(ctx context.Context, arg *RefPaperDoc) (res *FoldersContainingPaperDoc, err error) {
 	log.Printf("WARNING: API `DocsGetFolderInfo` is deprecated")
@@ -810,14 +813,14 @@ type DocsListAPIError struct {
 }
 
 // DocsListContext : Return the list of all Paper docs according to the argument
-// specifications. To iterate over through the full pagination, pass the
-// cursor to `docsListContinue`. Note that this endpoint will continue to
-// work for content created by users on the older version of Paper. To check
-// which version of Paper a user is on, use /users/features/get_values. If
-// the paper_as_files feature is enabled, then the user is running the new
-// version of Paper. Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// specifications. To iterate over through the full pagination, pass the cursor
+// to `docsListContinue`. Note that this endpoint will continue to work for
+// content created by users on the older version of Paper. To check which
+// version of Paper a user is on, use /users/features/get_values. If the
+// paper_as_files feature is enabled, then the user is running the new version
+// of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsListContext(ctx context.Context, arg *ListPaperDocsArgs) (res *ListPaperDocsResponse, err error) {
 	log.Printf("WARNING: API `DocsList` is deprecated")
@@ -863,15 +866,14 @@ type DocsListContinueAPIError struct {
 	EndpointError *ListDocsCursorError `json:"error"`
 }
 
-// DocsListContinueContext : Once a cursor has been retrieved from `docsList`, use
-// this to paginate through all Paper doc. Note that this endpoint will
-// continue to work for content created by users on the older version of
-// Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// DocsListContinueContext : Once a cursor has been retrieved from `docsList`,
+// use this to paginate through all Paper doc. Note that this endpoint will
+// continue to work for content created by users on the older version of Paper.
+// To check which version of Paper a user is on, use /users/features/get_values.
+// If the paper_as_files feature is enabled, then the user is running the new
+// version of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsListContinueContext(ctx context.Context, arg *ListPaperDocsContinueArgs) (res *ListPaperDocsResponse, err error) {
 	log.Printf("WARNING: API `DocsListContinue` is deprecated")
@@ -921,11 +923,11 @@ type DocsPermanentlyDeleteAPIError struct {
 // operation is final as the doc cannot be recovered. This action can be
 // performed only by the doc owner. Note that this endpoint will continue to
 // work for content created by users on the older version of Paper. To check
-// which version of Paper a user is on, use /users/features/get_values. If
-// the paper_as_files feature is enabled, then the user is running the new
-// version of Paper. Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// which version of Paper a user is on, use /users/features/get_values. If the
+// paper_as_files feature is enabled, then the user is running the new version
+// of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsPermanentlyDeleteContext(ctx context.Context, arg *RefPaperDoc) (err error) {
 	log.Printf("WARNING: API `DocsPermanentlyDelete` is deprecated")
@@ -968,13 +970,13 @@ type DocsSharingPolicyGetAPIError struct {
 }
 
 // DocsSharingPolicyGetContext : Gets the default sharing policy for the given
-// Paper doc. Note that this endpoint will continue to work for content
-// created by users on the older version of Paper. To check which version of
-// Paper a user is on, use /users/features/get_values. If the paper_as_files
-// feature is enabled, then the user is running the new version of Paper.
-// Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// Paper doc. Note that this endpoint will continue to work for content created
+// by users on the older version of Paper. To check which version of Paper a
+// user is on, use /users/features/get_values. If the paper_as_files feature is
+// enabled, then the user is running the new version of Paper. Refer to the
+// `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsSharingPolicyGetContext(ctx context.Context, arg *RefPaperDoc) (res *SharingPolicy, err error) {
 	log.Printf("WARNING: API `DocsSharingPolicyGet` is deprecated")
@@ -1021,17 +1023,16 @@ type DocsSharingPolicySetAPIError struct {
 }
 
 // DocsSharingPolicySetContext : Sets the default sharing policy for the given
-// Paper doc. The default 'team_sharing_policy' can be changed only by
-// teams, omit this field for personal accounts. The 'public_sharing_policy'
-// policy can't be set to the value 'disabled' because this setting can be
-// changed only via the team admin console. Note that this endpoint will
-// continue to work for content created by users on the older version of
-// Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// Paper doc. The default 'team_sharing_policy' can be changed only by teams,
+// omit this field for personal accounts. The 'public_sharing_policy' policy
+// can't be set to the value 'disabled' because this setting can be changed only
+// via the team admin console. Note that this endpoint will continue to work for
+// content created by users on the older version of Paper. To check which
+// version of Paper a user is on, use /users/features/get_values. If the
+// paper_as_files feature is enabled, then the user is running the new version
+// of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsSharingPolicySetContext(ctx context.Context, arg *PaperDocSharingPolicy) (err error) {
 	log.Printf("WARNING: API `DocsSharingPolicySet` is deprecated")
@@ -1074,14 +1075,13 @@ type DocsUpdateAPIError struct {
 }
 
 // DocsUpdateContext : Updates an existing Paper doc with the provided content.
-// Note that this endpoint will continue to work for content created by
-// users on the older version of Paper. To check which version of Paper a
-// user is on, use /users/features/get_values. If the paper_as_files feature
-// is enabled, then the user is running the new version of Paper. This
-// endpoint will be retired in September 2020. Refer to the `Paper Migration
-// Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for more information.
+// Note that this endpoint will continue to work for content created by users on
+// the older version of Paper. To check which version of Paper a user is on, use
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. This endpoint will be retired
+// in September 2020. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// more information.
 // Deprecated:
 func (dbx *apiImpl) DocsUpdateContext(ctx context.Context, arg *PaperDocUpdateArgs, content io.Reader) (res *PaperDocCreateUpdateResult, err error) {
 	log.Printf("WARNING: API `DocsUpdate` is deprecated")
@@ -1127,16 +1127,15 @@ type DocsUsersAddAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsUsersAddContext : Allows an owner or editor to add users to a Paper doc or
-// change their permissions using their email address or Dropbox account ID.
-// The doc owner's permissions cannot be changed. Note that this endpoint
-// will continue to work for content created by users on the older version
-// of Paper. To check which version of Paper a user is on, use
-// /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// DocsUsersAddContext : Allows an owner or editor to add users to a Paper doc
+// or change their permissions using their email address or Dropbox account ID.
+// The doc owner's permissions cannot be changed. Note that this endpoint will
+// continue to work for content created by users on the older version of Paper.
+// To check which version of Paper a user is on, use /users/features/get_values.
+// If the paper_as_files feature is enabled, then the user is running the new
+// version of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsUsersAddContext(ctx context.Context, arg *AddPaperDocUser) (res []*AddPaperDocUserMemberResult, err error) {
 	log.Printf("WARNING: API `DocsUsersAdd` is deprecated")
@@ -1182,17 +1181,17 @@ type DocsUsersListAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsUsersListContext : Lists all users who visited the Paper doc or users with
-// explicit access. This call excludes users who have been removed. The list
-// is sorted by the date of the visit or the share date. The list will
-// include both users, the explicitly shared ones as well as those who came
-// in using the Paper url link. Note that this endpoint will continue to
-// work for content created by users on the older version of Paper. To check
-// which version of Paper a user is on, use /users/features/get_values. If
-// the paper_as_files feature is enabled, then the user is running the new
-// version of Paper. Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// DocsUsersListContext : Lists all users who visited the Paper doc or users
+// with explicit access. This call excludes users who have been removed. The
+// list is sorted by the date of the visit or the share date. The list will
+// include both users, the explicitly shared ones as well as those who came in
+// using the Paper url link. Note that this endpoint will continue to work for
+// content created by users on the older version of Paper. To check which
+// version of Paper a user is on, use /users/features/get_values. If the
+// paper_as_files feature is enabled, then the user is running the new version
+// of Paper. Refer to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsUsersListContext(ctx context.Context, arg *ListUsersOnPaperDocArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	log.Printf("WARNING: API `DocsUsersList` is deprecated")
@@ -1240,13 +1239,13 @@ type DocsUsersListContinueAPIError struct {
 
 // DocsUsersListContinueContext : Once a cursor has been retrieved from
 // `docsUsersList`, use this to paginate through all users on the Paper doc.
-// Note that this endpoint will continue to work for content created by
-// users on the older version of Paper. To check which version of Paper a
-// user is on, use /users/features/get_values. If the paper_as_files feature
-// is enabled, then the user is running the new version of Paper. Refer to
-// the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// Note that this endpoint will continue to work for content created by users on
+// the older version of Paper. To check which version of Paper a user is on, use
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. Refer to the `Paper Migration
+// Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsUsersListContinueContext(ctx context.Context, arg *ListUsersOnPaperDocContinueArgs) (res *ListUsersOnPaperDocResponse, err error) {
 	log.Printf("WARNING: API `DocsUsersListContinue` is deprecated")
@@ -1292,15 +1291,15 @@ type DocsUsersRemoveAPIError struct {
 	EndpointError *DocLookupError `json:"error"`
 }
 
-// DocsUsersRemoveContext : Allows an owner or editor to remove users from a Paper
-// doc using their email address or Dropbox account ID. The doc owner cannot
-// be removed. Note that this endpoint will continue to work for content
+// DocsUsersRemoveContext : Allows an owner or editor to remove users from a
+// Paper doc using their email address or Dropbox account ID. The doc owner
+// cannot be removed. Note that this endpoint will continue to work for content
 // created by users on the older version of Paper. To check which version of
 // Paper a user is on, use /users/features/get_values. If the paper_as_files
-// feature is enabled, then the user is running the new version of Paper.
-// Refer to the `Paper Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// feature is enabled, then the user is running the new version of Paper. Refer
+// to the `Paper Migration Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) DocsUsersRemoveContext(ctx context.Context, arg *RemovePaperDocUser) (err error) {
 	log.Printf("WARNING: API `DocsUsersRemove` is deprecated")
@@ -1343,13 +1342,13 @@ type FoldersCreateAPIError struct {
 }
 
 // FoldersCreateContext : Create a new Paper folder with the provided info. Note
-// that this endpoint will continue to work for content created by users on
-// the older version of Paper. To check which version of Paper a user is on,
-// use /users/features/get_values. If the paper_as_files feature is enabled,
-// then the user is running the new version of Paper. Refer to the `Paper
-// Migration Guide`
-// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide>
-// for migration information.
+// that this endpoint will continue to work for content created by users on the
+// older version of Paper. To check which version of Paper a user is on, use
+// /users/features/get_values. If the paper_as_files feature is enabled, then
+// the user is running the new version of Paper. Refer to the `Paper Migration
+// Guide`
+// <https://www.dropbox.com/lp/developers/reference/paper-migration-guide> for
+// migration information.
 // Deprecated:
 func (dbx *apiImpl) FoldersCreateContext(ctx context.Context, arg *PaperFolderCreateArg) (res *PaperFolderCreateResult, err error) {
 	log.Printf("WARNING: API `FoldersCreate` is deprecated")

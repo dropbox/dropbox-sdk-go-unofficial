@@ -5136,11 +5136,12 @@ type TeamFolderCreateError struct {
 
 // Valid tag values for TeamFolderCreateError
 const (
-	TeamFolderCreateErrorInvalidFolderName     = "invalid_folder_name"
-	TeamFolderCreateErrorFolderNameAlreadyUsed = "folder_name_already_used"
-	TeamFolderCreateErrorFolderNameReserved    = "folder_name_reserved"
-	TeamFolderCreateErrorSyncSettingsError     = "sync_settings_error"
-	TeamFolderCreateErrorOther                 = "other"
+	TeamFolderCreateErrorInvalidFolderName        = "invalid_folder_name"
+	TeamFolderCreateErrorFolderNameAlreadyUsed    = "folder_name_already_used"
+	TeamFolderCreateErrorFolderNameReserved       = "folder_name_reserved"
+	TeamFolderCreateErrorSyncSettingsError        = "sync_settings_error"
+	TeamFolderCreateErrorFolderCountLimitExceeded = "folder_count_limit_exceeded"
+	TeamFolderCreateErrorOther                    = "other"
 )
 
 // UnmarshalJSON deserializes into a TeamFolderCreateError instance

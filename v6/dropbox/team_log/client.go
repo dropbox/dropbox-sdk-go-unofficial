@@ -62,8 +62,9 @@ type ContextClient interface {
 	// </developers/documentation/http/teams#team-features-get_values> to check
 	// for this feature. Permission : Team Auditing.
 	GetEventsContext(ctx context.Context, arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error)
-	// GetEventsContinueContext : Once a cursor has been retrieved from `getEvents`,
-	// use this to paginate through all events. Permission : Team Auditing.
+	// GetEventsContinueContext : Once a cursor has been retrieved from
+	// `getEvents`, use this to paginate through all events. Permission : Team
+	// Auditing.
 	GetEventsContinueContext(ctx context.Context, arg *GetTeamEventsContinueArg) (res *GetTeamEventsResult, err error)
 }
 
@@ -76,15 +77,15 @@ type GetEventsAPIError struct {
 }
 
 // GetEventsContext : Retrieves team events. If the result's
-// `GetTeamEventsResult.has_more` field is true, call `getEventsContinue`
-// with the returned cursor to retrieve more entries. If end_time is not
-// specified in your request, you may use the returned cursor to poll
-// `getEventsContinue` for new events. Many attributes note 'may be missing
-// due to historical data gap'. Note that the file_operations category and &
-// analogous paper events are not available on all Dropbox Business `plans`
-// </business/plans-comparison>. Use `features/get_values`
-// </developers/documentation/http/teams#team-features-get_values> to check
-// for this feature. Permission : Team Auditing.
+// `GetTeamEventsResult.has_more` field is true, call `getEventsContinue` with
+// the returned cursor to retrieve more entries. If end_time is not specified in
+// your request, you may use the returned cursor to poll `getEventsContinue` for
+// new events. Many attributes note 'may be missing due to historical data gap'.
+// Note that the file_operations category and & analogous paper events are not
+// available on all Dropbox Business `plans` </business/plans-comparison>. Use
+// `features/get_values`
+// </developers/documentation/http/teams#team-features-get_values> to check for
+// this feature. Permission : Team Auditing.
 func (dbx *apiImpl) GetEventsContext(ctx context.Context, arg *GetTeamEventsArg) (res *GetTeamEventsResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",

@@ -94,8 +94,6 @@ type AddFileMemberArgs struct {
 	// AddMessageAsComment : If the custom message should be added as a comment
 	// on the file. Only meant for Paper files.
 	AddMessageAsComment bool `json:"add_message_as_comment"`
-	// FpSealedResult : The FingerprintJS Sealed Client Result value
-	FpSealedResult string `json:"fp_sealed_result,omitempty"`
 }
 
 // NewAddFileMemberArgs returns a new AddFileMemberArgs instance
@@ -166,8 +164,6 @@ type AddFolderMemberArg struct {
 	// CustomMessage : Optional message to display to added members in their
 	// invitation.
 	CustomMessage string `json:"custom_message,omitempty"`
-	// FpSealedResult : The FingerprintJS Sealed Client Result value
-	FpSealedResult string `json:"fp_sealed_result,omitempty"`
 }
 
 // NewAddFolderMemberArg returns a new AddFolderMemberArg instance

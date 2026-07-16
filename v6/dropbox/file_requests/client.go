@@ -62,28 +62,29 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// CountContext : Returns the total number of file requests owned by this user.
-	// Includes both open and closed file requests.
+	// CountContext : Returns the total number of file requests owned by this
+	// user. Includes both open and closed file requests.
 	CountContext(ctx context.Context) (res *CountFileRequestsResult, err error)
 	// CreateContext : Creates a file request for this user.
 	CreateContext(ctx context.Context, arg *CreateFileRequestArgs) (res *FileRequest, err error)
 	// DeleteContext : Delete a batch of closed file requests.
 	DeleteContext(ctx context.Context, arg *DeleteFileRequestArgs) (res *DeleteFileRequestsResult, err error)
-	// DeleteAllClosedContext : Delete all closed file requests owned by this user.
+	// DeleteAllClosedContext : Delete all closed file requests owned by this
+	// user.
 	DeleteAllClosedContext(ctx context.Context) (res *DeleteAllClosedFileRequestsResult, err error)
 	// GetContext : Returns the specified file request.
 	GetContext(ctx context.Context, arg *GetFileRequestArgs) (res *FileRequest, err error)
-	// ListContext : Returns a list of file requests owned by this user. For apps with
-	// the app folder permission, this will only return file requests with
-	// destinations in the app folder.
+	// ListContext : Returns a list of file requests owned by this user. For
+	// apps with the app folder permission, this will only return file requests
+	// with destinations in the app folder.
 	ListContext(ctx context.Context) (res *ListFileRequestsResult, err error)
-	// ListV2Context : Returns a list of file requests owned by this user. For apps with
-	// the app folder permission, this will only return file requests with
-	// destinations in the app folder.
+	// ListV2Context : Returns a list of file requests owned by this user. For
+	// apps with the app folder permission, this will only return file requests
+	// with destinations in the app folder.
 	ListV2Context(ctx context.Context, arg *ListFileRequestsArg) (res *ListFileRequestsV2Result, err error)
-	// ListContinueContext : Once a cursor has been retrieved from `list`, use this to
-	// paginate through all file requests. The cursor must come from a previous
-	// call to `list` or `listContinue`.
+	// ListContinueContext : Once a cursor has been retrieved from `list`, use
+	// this to paginate through all file requests. The cursor must come from a
+	// previous call to `list` or `listContinue`.
 	ListContinueContext(ctx context.Context, arg *ListFileRequestsContinueArg) (res *ListFileRequestsV2Result, err error)
 	// UpdateContext : Update a file request.
 	UpdateContext(ctx context.Context, arg *UpdateFileRequestArgs) (res *FileRequest, err error)
@@ -313,8 +314,8 @@ type ListAPIError struct {
 	EndpointError *ListFileRequestsError `json:"error"`
 }
 
-// ListContext : Returns a list of file requests owned by this user. For apps with
-// the app folder permission, this will only return file requests with
+// ListContext : Returns a list of file requests owned by this user. For apps
+// with the app folder permission, this will only return file requests with
 // destinations in the app folder.
 func (dbx *apiImpl) ListContext(ctx context.Context) (res *ListFileRequestsResult, err error) {
 	req := dropbox.Request{
@@ -358,8 +359,8 @@ type ListV2APIError struct {
 	EndpointError *ListFileRequestsError `json:"error"`
 }
 
-// ListV2Context : Returns a list of file requests owned by this user. For apps with
-// the app folder permission, this will only return file requests with
+// ListV2Context : Returns a list of file requests owned by this user. For apps
+// with the app folder permission, this will only return file requests with
 // destinations in the app folder.
 func (dbx *apiImpl) ListV2Context(ctx context.Context, arg *ListFileRequestsArg) (res *ListFileRequestsV2Result, err error) {
 	req := dropbox.Request{
@@ -403,8 +404,8 @@ type ListContinueAPIError struct {
 	EndpointError *ListFileRequestsContinueError `json:"error"`
 }
 
-// ListContinueContext : Once a cursor has been retrieved from `list`, use this to
-// paginate through all file requests. The cursor must come from a previous
+// ListContinueContext : Once a cursor has been retrieved from `list`, use this
+// to paginate through all file requests. The cursor must come from a previous
 // call to `list` or `listContinue`.
 func (dbx *apiImpl) ListContinueContext(ctx context.Context, arg *ListFileRequestsContinueArg) (res *ListFileRequestsV2Result, err error) {
 	req := dropbox.Request{
