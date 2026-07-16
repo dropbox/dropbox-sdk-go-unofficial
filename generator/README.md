@@ -6,7 +6,8 @@ used to programmatically generate the [Dropbox Go SDK](https://github.com/dropbo
 ## Requirements
 
   * While not a hard requirement, this repo currently assumes `python3` in the path.
-  * Assumes you have already installed [Stone](https://github.com/dropbox/stone) and have `stone` in the path.
+  * Requires [Stone v3.5.2](https://github.com/dropbox/stone/releases/tag/v3.5.2)
+    in the path. Install it with `python3 -m pip install stone==3.5.2`.
   * Requires [goimports](https://godoc.org/golang.org/x/tools/cmd/goimports) in the path to fix up imports in the auto-generated code.
 
 ## Basic Setup
@@ -33,6 +34,10 @@ Void | struct{}
 ### Structs
 
 Stone [structs](https://github.com/dropbox/stone/blob/master/doc/lang_ref.rst#struct) are represented as Go [structs](https://gobyexample.com/structs) in a relatively straight-forward manner. Each struct member is exported and also gets assigned the correct json tag. The latter is used for serializing requests and deserializing responses. Non-primitive types are represented as pointers to the corresponding type.
+
+Fields annotated with Stone's `Omitted` annotation are caller-restricted and
+are not emitted in the public Go SDK, matching the public serialization maps
+generated for the Python SDK.
 
 ```
 struct Account

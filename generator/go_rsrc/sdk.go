@@ -64,6 +64,8 @@ func (e APIError) Error() string {
 	return e.ErrorSummary
 }
 
+// SDKInternalError is returned when the Dropbox API responds with a status code
+// that does not carry a typed error body (e.g. 500 Internal Server Error).
 type SDKInternalError struct {
 	StatusCode int
 	Content    string
@@ -87,9 +89,10 @@ type Config struct {
 	AsAdminID string
 	// Path relative to which action should be taken
 	PathRoot string
-	// No need to set -- for testing only
+	// Dropbox API domain. The default is ".dropboxapi.com".
 	Domain string
-	// No need to set -- for testing only
+	// HTTP client used for authenticated Dropbox API calls. If set, Client takes
+	// precedence over TokenSource and Token.
 	Client *http.Client
 	// RetryPolicy controls automatic retries for Dropbox API calls. If nil, retries
 	// are disabled.

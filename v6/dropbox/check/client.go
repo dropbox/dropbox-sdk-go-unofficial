@@ -51,12 +51,12 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// AppContext : This endpoint performs App Authentication, validating the supplied
-	// app key and secret, and returns the supplied string, to allow you to test
-	// your code and connection to the Dropbox API. It has no other effect. If
-	// you receive an HTTP 200 response with the supplied query, it indicates at
-	// least part of the Dropbox API infrastructure is working and that the app
-	// key and secret valid.
+	// AppContext : This endpoint performs App Authentication, validating the
+	// supplied app key and secret, and returns the supplied string, to allow
+	// you to test your code and connection to the Dropbox API. It has no other
+	// effect. If you receive an HTTP 200 response with the supplied query, it
+	// indicates at least part of the Dropbox API infrastructure is working and
+	// that the app key and secret valid.
 	AppContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error)
 	// UserContext : This endpoint performs User Authentication, validating the
 	// supplied access token, and returns the supplied string, to allow you to
@@ -75,12 +75,12 @@ type AppAPIError struct {
 	EndpointError *EchoError `json:"error"`
 }
 
-// AppContext : This endpoint performs App Authentication, validating the supplied
-// app key and secret, and returns the supplied string, to allow you to test
-// your code and connection to the Dropbox API. It has no other effect. If
+// AppContext : This endpoint performs App Authentication, validating the
+// supplied app key and secret, and returns the supplied string, to allow you to
+// test your code and connection to the Dropbox API. It has no other effect. If
 // you receive an HTTP 200 response with the supplied query, it indicates at
-// least part of the Dropbox API infrastructure is working and that the app
-// key and secret valid.
+// least part of the Dropbox API infrastructure is working and that the app key
+// and secret valid.
 func (dbx *apiImpl) AppContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",
@@ -124,11 +124,11 @@ type UserAPIError struct {
 }
 
 // UserContext : This endpoint performs User Authentication, validating the
-// supplied access token, and returns the supplied string, to allow you to
-// test your code and connection to the Dropbox API. It has no other effect.
-// If you receive an HTTP 200 response with the supplied query, it indicates
-// at least part of the Dropbox API infrastructure is working and that the
-// access token is valid.
+// supplied access token, and returns the supplied string, to allow you to test
+// your code and connection to the Dropbox API. It has no other effect. If you
+// receive an HTTP 200 response with the supplied query, it indicates at least
+// part of the Dropbox API infrastructure is working and that the access token
+// is valid.
 func (dbx *apiImpl) UserContext(ctx context.Context, arg *EchoArg) (res *EchoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",

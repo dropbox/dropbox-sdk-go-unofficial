@@ -5811,6 +5811,8 @@ type EventDetails struct {
 	FolderOverviewItemPinnedDetails *FolderOverviewItemPinnedDetails `json:"folder_overview_item_pinned_details,omitempty"`
 	// FolderOverviewItemUnpinnedDetails : has no documentation (yet)
 	FolderOverviewItemUnpinnedDetails *FolderOverviewItemUnpinnedDetails `json:"folder_overview_item_unpinned_details,omitempty"`
+	// MediaHubFileDownloadedDetails : has no documentation (yet)
+	MediaHubFileDownloadedDetails *MediaHubFileDownloadedDetails `json:"media_hub_file_downloaded_details,omitempty"`
 	// ObjectLabelAddedDetails : has no documentation (yet)
 	ObjectLabelAddedDetails *ObjectLabelAddedDetails `json:"object_label_added_details,omitempty"`
 	// ObjectLabelRemovedDetails : has no documentation (yet)
@@ -6145,6 +6147,21 @@ type EventDetails struct {
 	FileTransfersTransferSendDetails *FileTransfersTransferSendDetails `json:"file_transfers_transfer_send_details,omitempty"`
 	// FileTransfersTransferViewDetails : has no documentation (yet)
 	FileTransfersTransferViewDetails *FileTransfersTransferViewDetails `json:"file_transfers_transfer_view_details,omitempty"`
+	// MediaHubProjectTeamAddDetails : has no documentation (yet)
+	MediaHubProjectTeamAddDetails *MediaHubProjectTeamAddDetails `json:"media_hub_project_team_add_details,omitempty"`
+	// MediaHubProjectTeamDeleteDetails : has no documentation (yet)
+	MediaHubProjectTeamDeleteDetails *MediaHubProjectTeamDeleteDetails `json:"media_hub_project_team_delete_details,omitempty"`
+	// MediaHubProjectTeamRoleChangedDetails : has no documentation (yet)
+	MediaHubProjectTeamRoleChangedDetails *MediaHubProjectTeamRoleChangedDetails `json:"media_hub_project_team_role_changed_details,omitempty"`
+	// MediaHubSharedLinkAudienceChangedDetails : has no documentation (yet)
+	MediaHubSharedLinkAudienceChangedDetails *MediaHubSharedLinkAudienceChangedDetails `json:"media_hub_shared_link_audience_changed_details,omitempty"`
+	// MediaHubSharedLinkCreatedDetails : has no documentation (yet)
+	MediaHubSharedLinkCreatedDetails *MediaHubSharedLinkCreatedDetails `json:"media_hub_shared_link_created_details,omitempty"`
+	// MediaHubSharedLinkDownloadSettingChangedDetails : has no documentation
+	// (yet)
+	MediaHubSharedLinkDownloadSettingChangedDetails *MediaHubSharedLinkDownloadSettingChangedDetails `json:"media_hub_shared_link_download_setting_changed_details,omitempty"`
+	// MediaHubSharedLinkRevokedDetails : has no documentation (yet)
+	MediaHubSharedLinkRevokedDetails *MediaHubSharedLinkRevokedDetails `json:"media_hub_shared_link_revoked_details,omitempty"`
 	// NoteAclInviteOnlyDetails : has no documentation (yet)
 	NoteAclInviteOnlyDetails *NoteAclInviteOnlyDetails `json:"note_acl_invite_only_details,omitempty"`
 	// NoteAclLinkDetails : has no documentation (yet)
@@ -6525,6 +6542,12 @@ type EventDetails struct {
 	IntegrationPolicyChangedDetails *IntegrationPolicyChangedDetails `json:"integration_policy_changed_details,omitempty"`
 	// InviteAcceptanceEmailPolicyChangedDetails : has no documentation (yet)
 	InviteAcceptanceEmailPolicyChangedDetails *InviteAcceptanceEmailPolicyChangedDetails `json:"invite_acceptance_email_policy_changed_details,omitempty"`
+	// MediaHubAddingPeoplePolicyChangedDetails : has no documentation (yet)
+	MediaHubAddingPeoplePolicyChangedDetails *MediaHubAddingPeoplePolicyChangedDetails `json:"media_hub_adding_people_policy_changed_details,omitempty"`
+	// MediaHubDownloadPolicyChangedDetails : has no documentation (yet)
+	MediaHubDownloadPolicyChangedDetails *MediaHubDownloadPolicyChangedDetails `json:"media_hub_download_policy_changed_details,omitempty"`
+	// MediaHubLinkSharingPolicyChangedDetails : has no documentation (yet)
+	MediaHubLinkSharingPolicyChangedDetails *MediaHubLinkSharingPolicyChangedDetails `json:"media_hub_link_sharing_policy_changed_details,omitempty"`
 	// MemberRequestsChangePolicyDetails : has no documentation (yet)
 	MemberRequestsChangePolicyDetails *MemberRequestsChangePolicyDetails `json:"member_requests_change_policy_details,omitempty"`
 	// MemberSendInvitePolicyChangedDetails : has no documentation (yet)
@@ -6543,6 +6566,8 @@ type EventDetails struct {
 	MicrosoftLoginChangePolicyDetails *MicrosoftLoginChangePolicyDetails `json:"microsoft_login_change_policy_details,omitempty"`
 	// MicrosoftOfficeAddinChangePolicyDetails : has no documentation (yet)
 	MicrosoftOfficeAddinChangePolicyDetails *MicrosoftOfficeAddinChangePolicyDetails `json:"microsoft_office_addin_change_policy_details,omitempty"`
+	// MultiTeamIdentityPolicyChangedDetails : has no documentation (yet)
+	MultiTeamIdentityPolicyChangedDetails *MultiTeamIdentityPolicyChangedDetails `json:"multi_team_identity_policy_changed_details,omitempty"`
 	// NetworkControlChangePolicyDetails : has no documentation (yet)
 	NetworkControlChangePolicyDetails *NetworkControlChangePolicyDetails `json:"network_control_change_policy_details,omitempty"`
 	// PaperChangeDeploymentPolicyDetails : has no documentation (yet)
@@ -6913,6 +6938,7 @@ const (
 	EventDetailsFolderOverviewDescriptionChangedDetails              = "folder_overview_description_changed_details"
 	EventDetailsFolderOverviewItemPinnedDetails                      = "folder_overview_item_pinned_details"
 	EventDetailsFolderOverviewItemUnpinnedDetails                    = "folder_overview_item_unpinned_details"
+	EventDetailsMediaHubFileDownloadedDetails                        = "media_hub_file_downloaded_details"
 	EventDetailsObjectLabelAddedDetails                              = "object_label_added_details"
 	EventDetailsObjectLabelRemovedDetails                            = "object_label_removed_details"
 	EventDetailsObjectLabelUpdatedValueDetails                       = "object_label_updated_value_details"
@@ -7079,6 +7105,13 @@ const (
 	EventDetailsFileTransfersTransferDownloadDetails                 = "file_transfers_transfer_download_details"
 	EventDetailsFileTransfersTransferSendDetails                     = "file_transfers_transfer_send_details"
 	EventDetailsFileTransfersTransferViewDetails                     = "file_transfers_transfer_view_details"
+	EventDetailsMediaHubProjectTeamAddDetails                        = "media_hub_project_team_add_details"
+	EventDetailsMediaHubProjectTeamDeleteDetails                     = "media_hub_project_team_delete_details"
+	EventDetailsMediaHubProjectTeamRoleChangedDetails                = "media_hub_project_team_role_changed_details"
+	EventDetailsMediaHubSharedLinkAudienceChangedDetails             = "media_hub_shared_link_audience_changed_details"
+	EventDetailsMediaHubSharedLinkCreatedDetails                     = "media_hub_shared_link_created_details"
+	EventDetailsMediaHubSharedLinkDownloadSettingChangedDetails      = "media_hub_shared_link_download_setting_changed_details"
+	EventDetailsMediaHubSharedLinkRevokedDetails                     = "media_hub_shared_link_revoked_details"
 	EventDetailsNoteAclInviteOnlyDetails                             = "note_acl_invite_only_details"
 	EventDetailsNoteAclLinkDetails                                   = "note_acl_link_details"
 	EventDetailsNoteAclTeamLinkDetails                               = "note_acl_team_link_details"
@@ -7265,6 +7298,9 @@ const (
 	EventDetailsGroupUserManagementChangePolicyDetails               = "group_user_management_change_policy_details"
 	EventDetailsIntegrationPolicyChangedDetails                      = "integration_policy_changed_details"
 	EventDetailsInviteAcceptanceEmailPolicyChangedDetails            = "invite_acceptance_email_policy_changed_details"
+	EventDetailsMediaHubAddingPeoplePolicyChangedDetails             = "media_hub_adding_people_policy_changed_details"
+	EventDetailsMediaHubDownloadPolicyChangedDetails                 = "media_hub_download_policy_changed_details"
+	EventDetailsMediaHubLinkSharingPolicyChangedDetails              = "media_hub_link_sharing_policy_changed_details"
 	EventDetailsMemberRequestsChangePolicyDetails                    = "member_requests_change_policy_details"
 	EventDetailsMemberSendInvitePolicyChangedDetails                 = "member_send_invite_policy_changed_details"
 	EventDetailsMemberSpaceLimitsAddExceptionDetails                 = "member_space_limits_add_exception_details"
@@ -7274,6 +7310,7 @@ const (
 	EventDetailsMemberSuggestionsChangePolicyDetails                 = "member_suggestions_change_policy_details"
 	EventDetailsMicrosoftLoginChangePolicyDetails                    = "microsoft_login_change_policy_details"
 	EventDetailsMicrosoftOfficeAddinChangePolicyDetails              = "microsoft_office_addin_change_policy_details"
+	EventDetailsMultiTeamIdentityPolicyChangedDetails                = "multi_team_identity_policy_changed_details"
 	EventDetailsNetworkControlChangePolicyDetails                    = "network_control_change_policy_details"
 	EventDetailsPaperChangeDeploymentPolicyDetails                   = "paper_change_deployment_policy_details"
 	EventDetailsPaperChangeMemberLinkPolicyDetails                   = "paper_change_member_link_policy_details"
@@ -8119,6 +8156,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "media_hub_file_downloaded_details":
+		if err = json.Unmarshal(body, &u.MediaHubFileDownloadedDetails); err != nil {
+			return err
+		}
+
 	case "object_label_added_details":
 		if err = json.Unmarshal(body, &u.ObjectLabelAddedDetails); err != nil {
 			return err
@@ -8946,6 +8988,41 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "file_transfers_transfer_view_details":
 		if err = json.Unmarshal(body, &u.FileTransfersTransferViewDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_add_details":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamAddDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_delete_details":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamDeleteDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_role_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamRoleChangedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_audience_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkAudienceChangedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_created_details":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkCreatedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_download_setting_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkDownloadSettingChangedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_revoked_details":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkRevokedDetails); err != nil {
 			return err
 		}
 
@@ -9879,6 +9956,21 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "media_hub_adding_people_policy_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubAddingPeoplePolicyChangedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_download_policy_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubDownloadPolicyChangedDetails); err != nil {
+			return err
+		}
+
+	case "media_hub_link_sharing_policy_changed_details":
+		if err = json.Unmarshal(body, &u.MediaHubLinkSharingPolicyChangedDetails); err != nil {
+			return err
+		}
+
 	case "member_requests_change_policy_details":
 		if err = json.Unmarshal(body, &u.MemberRequestsChangePolicyDetails); err != nil {
 			return err
@@ -9921,6 +10013,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "microsoft_office_addin_change_policy_details":
 		if err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicyDetails); err != nil {
+			return err
+		}
+
+	case "multi_team_identity_policy_changed_details":
+		if err = json.Unmarshal(body, &u.MultiTeamIdentityPolicyChangedDetails); err != nil {
 			return err
 		}
 
@@ -10788,6 +10885,8 @@ type EventType struct {
 	// FolderOverviewItemUnpinned : (file_operations) Unpinned item from folder
 	// overview
 	FolderOverviewItemUnpinned *FolderOverviewItemUnpinnedType `json:"folder_overview_item_unpinned,omitempty"`
+	// MediaHubFileDownloaded : (file_operations) Downloaded files in Media Hub
+	MediaHubFileDownloaded *MediaHubFileDownloadedType `json:"media_hub_file_downloaded,omitempty"`
 	// ObjectLabelAdded : (file_operations) Added a label
 	ObjectLabelAdded *ObjectLabelAddedType `json:"object_label_added,omitempty"`
 	// ObjectLabelRemoved : (file_operations) Removed a label
@@ -11183,6 +11282,24 @@ type EventType struct {
 	FileTransfersTransferSend *FileTransfersTransferSendType `json:"file_transfers_transfer_send,omitempty"`
 	// FileTransfersTransferView : (sharing) Viewed transfer
 	FileTransfersTransferView *FileTransfersTransferViewType `json:"file_transfers_transfer_view,omitempty"`
+	// MediaHubProjectTeamAdd : (sharing) Added member to Media Hub project
+	MediaHubProjectTeamAdd *MediaHubProjectTeamAddType `json:"media_hub_project_team_add,omitempty"`
+	// MediaHubProjectTeamDelete : (sharing) Removed member from Media Hub
+	// project
+	MediaHubProjectTeamDelete *MediaHubProjectTeamDeleteType `json:"media_hub_project_team_delete,omitempty"`
+	// MediaHubProjectTeamRoleChanged : (sharing) Changed member role in Media
+	// Hub project
+	MediaHubProjectTeamRoleChanged *MediaHubProjectTeamRoleChangedType `json:"media_hub_project_team_role_changed,omitempty"`
+	// MediaHubSharedLinkAudienceChanged : (sharing) Changed Media Hub shared
+	// link audience
+	MediaHubSharedLinkAudienceChanged *MediaHubSharedLinkAudienceChangedType `json:"media_hub_shared_link_audience_changed,omitempty"`
+	// MediaHubSharedLinkCreated : (sharing) Created Media Hub shared link
+	MediaHubSharedLinkCreated *MediaHubSharedLinkCreatedType `json:"media_hub_shared_link_created,omitempty"`
+	// MediaHubSharedLinkDownloadSettingChanged : (sharing) Changed Media Hub
+	// shared link download setting
+	MediaHubSharedLinkDownloadSettingChanged *MediaHubSharedLinkDownloadSettingChangedType `json:"media_hub_shared_link_download_setting_changed,omitempty"`
+	// MediaHubSharedLinkRevoked : (sharing) Revoked Media Hub shared link
+	MediaHubSharedLinkRevoked *MediaHubSharedLinkRevokedType `json:"media_hub_shared_link_revoked,omitempty"`
 	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
 	// (deprecated, no longer logged)
 	NoteAclInviteOnly *NoteAclInviteOnlyType `json:"note_acl_invite_only,omitempty"`
@@ -11665,6 +11782,15 @@ type EventType struct {
 	// InviteAcceptanceEmailPolicyChanged : (team_policies) Changed invite
 	// accept email policy for team
 	InviteAcceptanceEmailPolicyChanged *InviteAcceptanceEmailPolicyChangedType `json:"invite_acceptance_email_policy_changed,omitempty"`
+	// MediaHubAddingPeoplePolicyChanged : (team_policies) Changed the policy
+	// for adding people to Media Hub content
+	MediaHubAddingPeoplePolicyChanged *MediaHubAddingPeoplePolicyChangedType `json:"media_hub_adding_people_policy_changed,omitempty"`
+	// MediaHubDownloadPolicyChanged : (team_policies) Changed the policy for
+	// downloading Media Hub content
+	MediaHubDownloadPolicyChanged *MediaHubDownloadPolicyChangedType `json:"media_hub_download_policy_changed,omitempty"`
+	// MediaHubLinkSharingPolicyChanged : (team_policies) Changed the policy for
+	// sharing Media Hub content
+	MediaHubLinkSharingPolicyChanged *MediaHubLinkSharingPolicyChangedType `json:"media_hub_link_sharing_policy_changed,omitempty"`
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
 	// find team when not invited
 	MemberRequestsChangePolicy *MemberRequestsChangePolicyType `json:"member_requests_change_policy,omitempty"`
@@ -11692,6 +11818,9 @@ type EventType struct {
 	// MicrosoftOfficeAddinChangePolicy : (team_policies) Enabled/disabled
 	// Microsoft Office add-in
 	MicrosoftOfficeAddinChangePolicy *MicrosoftOfficeAddinChangePolicyType `json:"microsoft_office_addin_change_policy,omitempty"`
+	// MultiTeamIdentityPolicyChanged : (team_policies) Changed multi-team
+	// identity policy for team
+	MultiTeamIdentityPolicyChanged *MultiTeamIdentityPolicyChangedType `json:"multi_team_identity_policy_changed,omitempty"`
 	// NetworkControlChangePolicy : (team_policies) Enabled/disabled network
 	// control
 	NetworkControlChangePolicy *NetworkControlChangePolicyType `json:"network_control_change_policy,omitempty"`
@@ -12134,6 +12263,7 @@ const (
 	EventTypeFolderOverviewDescriptionChanged              = "folder_overview_description_changed"
 	EventTypeFolderOverviewItemPinned                      = "folder_overview_item_pinned"
 	EventTypeFolderOverviewItemUnpinned                    = "folder_overview_item_unpinned"
+	EventTypeMediaHubFileDownloaded                        = "media_hub_file_downloaded"
 	EventTypeObjectLabelAdded                              = "object_label_added"
 	EventTypeObjectLabelRemoved                            = "object_label_removed"
 	EventTypeObjectLabelUpdatedValue                       = "object_label_updated_value"
@@ -12300,6 +12430,13 @@ const (
 	EventTypeFileTransfersTransferDownload                 = "file_transfers_transfer_download"
 	EventTypeFileTransfersTransferSend                     = "file_transfers_transfer_send"
 	EventTypeFileTransfersTransferView                     = "file_transfers_transfer_view"
+	EventTypeMediaHubProjectTeamAdd                        = "media_hub_project_team_add"
+	EventTypeMediaHubProjectTeamDelete                     = "media_hub_project_team_delete"
+	EventTypeMediaHubProjectTeamRoleChanged                = "media_hub_project_team_role_changed"
+	EventTypeMediaHubSharedLinkAudienceChanged             = "media_hub_shared_link_audience_changed"
+	EventTypeMediaHubSharedLinkCreated                     = "media_hub_shared_link_created"
+	EventTypeMediaHubSharedLinkDownloadSettingChanged      = "media_hub_shared_link_download_setting_changed"
+	EventTypeMediaHubSharedLinkRevoked                     = "media_hub_shared_link_revoked"
 	EventTypeNoteAclInviteOnly                             = "note_acl_invite_only"
 	EventTypeNoteAclLink                                   = "note_acl_link"
 	EventTypeNoteAclTeamLink                               = "note_acl_team_link"
@@ -12486,6 +12623,9 @@ const (
 	EventTypeGroupUserManagementChangePolicy               = "group_user_management_change_policy"
 	EventTypeIntegrationPolicyChanged                      = "integration_policy_changed"
 	EventTypeInviteAcceptanceEmailPolicyChanged            = "invite_acceptance_email_policy_changed"
+	EventTypeMediaHubAddingPeoplePolicyChanged             = "media_hub_adding_people_policy_changed"
+	EventTypeMediaHubDownloadPolicyChanged                 = "media_hub_download_policy_changed"
+	EventTypeMediaHubLinkSharingPolicyChanged              = "media_hub_link_sharing_policy_changed"
 	EventTypeMemberRequestsChangePolicy                    = "member_requests_change_policy"
 	EventTypeMemberSendInvitePolicyChanged                 = "member_send_invite_policy_changed"
 	EventTypeMemberSpaceLimitsAddException                 = "member_space_limits_add_exception"
@@ -12495,6 +12635,7 @@ const (
 	EventTypeMemberSuggestionsChangePolicy                 = "member_suggestions_change_policy"
 	EventTypeMicrosoftLoginChangePolicy                    = "microsoft_login_change_policy"
 	EventTypeMicrosoftOfficeAddinChangePolicy              = "microsoft_office_addin_change_policy"
+	EventTypeMultiTeamIdentityPolicyChanged                = "multi_team_identity_policy_changed"
 	EventTypeNetworkControlChangePolicy                    = "network_control_change_policy"
 	EventTypePaperChangeDeploymentPolicy                   = "paper_change_deployment_policy"
 	EventTypePaperChangeMemberLinkPolicy                   = "paper_change_member_link_policy"
@@ -13339,6 +13480,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "media_hub_file_downloaded":
+		if err = json.Unmarshal(body, &u.MediaHubFileDownloaded); err != nil {
+			return err
+		}
+
 	case "object_label_added":
 		if err = json.Unmarshal(body, &u.ObjectLabelAdded); err != nil {
 			return err
@@ -14166,6 +14312,41 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "file_transfers_transfer_view":
 		if err = json.Unmarshal(body, &u.FileTransfersTransferView); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_add":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamAdd); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_delete":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamDelete); err != nil {
+			return err
+		}
+
+	case "media_hub_project_team_role_changed":
+		if err = json.Unmarshal(body, &u.MediaHubProjectTeamRoleChanged); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_audience_changed":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkAudienceChanged); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_created":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkCreated); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_download_setting_changed":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkDownloadSettingChanged); err != nil {
+			return err
+		}
+
+	case "media_hub_shared_link_revoked":
+		if err = json.Unmarshal(body, &u.MediaHubSharedLinkRevoked); err != nil {
 			return err
 		}
 
@@ -15099,6 +15280,21 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "media_hub_adding_people_policy_changed":
+		if err = json.Unmarshal(body, &u.MediaHubAddingPeoplePolicyChanged); err != nil {
+			return err
+		}
+
+	case "media_hub_download_policy_changed":
+		if err = json.Unmarshal(body, &u.MediaHubDownloadPolicyChanged); err != nil {
+			return err
+		}
+
+	case "media_hub_link_sharing_policy_changed":
+		if err = json.Unmarshal(body, &u.MediaHubLinkSharingPolicyChanged); err != nil {
+			return err
+		}
+
 	case "member_requests_change_policy":
 		if err = json.Unmarshal(body, &u.MemberRequestsChangePolicy); err != nil {
 			return err
@@ -15141,6 +15337,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "microsoft_office_addin_change_policy":
 		if err = json.Unmarshal(body, &u.MicrosoftOfficeAddinChangePolicy); err != nil {
+			return err
+		}
+
+	case "multi_team_identity_policy_changed":
+		if err = json.Unmarshal(body, &u.MultiTeamIdentityPolicyChanged); err != nil {
 			return err
 		}
 
@@ -15796,6 +15997,7 @@ const (
 	EventTypeArgFolderOverviewDescriptionChanged              = "folder_overview_description_changed"
 	EventTypeArgFolderOverviewItemPinned                      = "folder_overview_item_pinned"
 	EventTypeArgFolderOverviewItemUnpinned                    = "folder_overview_item_unpinned"
+	EventTypeArgMediaHubFileDownloaded                        = "media_hub_file_downloaded"
 	EventTypeArgObjectLabelAdded                              = "object_label_added"
 	EventTypeArgObjectLabelRemoved                            = "object_label_removed"
 	EventTypeArgObjectLabelUpdatedValue                       = "object_label_updated_value"
@@ -15962,6 +16164,13 @@ const (
 	EventTypeArgFileTransfersTransferDownload                 = "file_transfers_transfer_download"
 	EventTypeArgFileTransfersTransferSend                     = "file_transfers_transfer_send"
 	EventTypeArgFileTransfersTransferView                     = "file_transfers_transfer_view"
+	EventTypeArgMediaHubProjectTeamAdd                        = "media_hub_project_team_add"
+	EventTypeArgMediaHubProjectTeamDelete                     = "media_hub_project_team_delete"
+	EventTypeArgMediaHubProjectTeamRoleChanged                = "media_hub_project_team_role_changed"
+	EventTypeArgMediaHubSharedLinkAudienceChanged             = "media_hub_shared_link_audience_changed"
+	EventTypeArgMediaHubSharedLinkCreated                     = "media_hub_shared_link_created"
+	EventTypeArgMediaHubSharedLinkDownloadSettingChanged      = "media_hub_shared_link_download_setting_changed"
+	EventTypeArgMediaHubSharedLinkRevoked                     = "media_hub_shared_link_revoked"
 	EventTypeArgNoteAclInviteOnly                             = "note_acl_invite_only"
 	EventTypeArgNoteAclLink                                   = "note_acl_link"
 	EventTypeArgNoteAclTeamLink                               = "note_acl_team_link"
@@ -16148,6 +16357,9 @@ const (
 	EventTypeArgGroupUserManagementChangePolicy               = "group_user_management_change_policy"
 	EventTypeArgIntegrationPolicyChanged                      = "integration_policy_changed"
 	EventTypeArgInviteAcceptanceEmailPolicyChanged            = "invite_acceptance_email_policy_changed"
+	EventTypeArgMediaHubAddingPeoplePolicyChanged             = "media_hub_adding_people_policy_changed"
+	EventTypeArgMediaHubDownloadPolicyChanged                 = "media_hub_download_policy_changed"
+	EventTypeArgMediaHubLinkSharingPolicyChanged              = "media_hub_link_sharing_policy_changed"
 	EventTypeArgMemberRequestsChangePolicy                    = "member_requests_change_policy"
 	EventTypeArgMemberSendInvitePolicyChanged                 = "member_send_invite_policy_changed"
 	EventTypeArgMemberSpaceLimitsAddException                 = "member_space_limits_add_exception"
@@ -16157,6 +16369,7 @@ const (
 	EventTypeArgMemberSuggestionsChangePolicy                 = "member_suggestions_change_policy"
 	EventTypeArgMicrosoftLoginChangePolicy                    = "microsoft_login_change_policy"
 	EventTypeArgMicrosoftOfficeAddinChangePolicy              = "microsoft_office_addin_change_policy"
+	EventTypeArgMultiTeamIdentityPolicyChanged                = "multi_team_identity_policy_changed"
 	EventTypeArgNetworkControlChangePolicy                    = "network_control_change_policy"
 	EventTypeArgPaperChangeDeploymentPolicy                   = "paper_change_deployment_policy"
 	EventTypeArgPaperChangeMemberLinkPolicy                   = "paper_change_member_link_policy"
@@ -20125,6 +20338,406 @@ func NewMalwareExclusionState(ExcludedFileHashesCount int64) *MalwareExclusionSt
 	return s
 }
 
+// MediaHubAddingPeoplePolicy : Policy for deciding who can be added to Media
+// Hub content
+type MediaHubAddingPeoplePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubAddingPeoplePolicy
+const (
+	MediaHubAddingPeoplePolicyAnyone   = "anyone"
+	MediaHubAddingPeoplePolicyTeamOnly = "team_only"
+	MediaHubAddingPeoplePolicyOther    = "other"
+)
+
+// MediaHubAddingPeoplePolicyChangedDetails : Changed the policy for adding
+// people to Media Hub content.
+type MediaHubAddingPeoplePolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *MediaHubAddingPeoplePolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *MediaHubAddingPeoplePolicy `json:"previous_value"`
+}
+
+// NewMediaHubAddingPeoplePolicyChangedDetails returns a new MediaHubAddingPeoplePolicyChangedDetails instance
+func NewMediaHubAddingPeoplePolicyChangedDetails(NewValue *MediaHubAddingPeoplePolicy, PreviousValue *MediaHubAddingPeoplePolicy) *MediaHubAddingPeoplePolicyChangedDetails {
+	s := new(MediaHubAddingPeoplePolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MediaHubAddingPeoplePolicyChangedType : has no documentation (yet)
+type MediaHubAddingPeoplePolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubAddingPeoplePolicyChangedType returns a new MediaHubAddingPeoplePolicyChangedType instance
+func NewMediaHubAddingPeoplePolicyChangedType(Description string) *MediaHubAddingPeoplePolicyChangedType {
+	s := new(MediaHubAddingPeoplePolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubDownloadPolicy : Policy for deciding whether Media Hub content can be
+// downloaded
+type MediaHubDownloadPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubDownloadPolicy
+const (
+	MediaHubDownloadPolicyDisabled = "disabled"
+	MediaHubDownloadPolicyEnabled  = "enabled"
+	MediaHubDownloadPolicyOther    = "other"
+)
+
+// MediaHubDownloadPolicyChangedDetails : Changed the policy for downloading
+// Media Hub content.
+type MediaHubDownloadPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *MediaHubDownloadPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *MediaHubDownloadPolicy `json:"previous_value"`
+}
+
+// NewMediaHubDownloadPolicyChangedDetails returns a new MediaHubDownloadPolicyChangedDetails instance
+func NewMediaHubDownloadPolicyChangedDetails(NewValue *MediaHubDownloadPolicy, PreviousValue *MediaHubDownloadPolicy) *MediaHubDownloadPolicyChangedDetails {
+	s := new(MediaHubDownloadPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MediaHubDownloadPolicyChangedType : has no documentation (yet)
+type MediaHubDownloadPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubDownloadPolicyChangedType returns a new MediaHubDownloadPolicyChangedType instance
+func NewMediaHubDownloadPolicyChangedType(Description string) *MediaHubDownloadPolicyChangedType {
+	s := new(MediaHubDownloadPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubFileDownloadedDetails : Downloaded files in Media Hub.
+type MediaHubFileDownloadedDetails struct {
+}
+
+// NewMediaHubFileDownloadedDetails returns a new MediaHubFileDownloadedDetails instance
+func NewMediaHubFileDownloadedDetails() *MediaHubFileDownloadedDetails {
+	s := new(MediaHubFileDownloadedDetails)
+	return s
+}
+
+// MediaHubFileDownloadedType : has no documentation (yet)
+type MediaHubFileDownloadedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubFileDownloadedType returns a new MediaHubFileDownloadedType instance
+func NewMediaHubFileDownloadedType(Description string) *MediaHubFileDownloadedType {
+	s := new(MediaHubFileDownloadedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubLinkSharingPolicy : Policy for deciding who Media Hub content can be
+// shared with through links
+type MediaHubLinkSharingPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubLinkSharingPolicy
+const (
+	MediaHubLinkSharingPolicyNoOne    = "no_one"
+	MediaHubLinkSharingPolicyPublic   = "public"
+	MediaHubLinkSharingPolicyTeamOnly = "team_only"
+	MediaHubLinkSharingPolicyOther    = "other"
+)
+
+// MediaHubLinkSharingPolicyChangedDetails : Changed the policy for sharing
+// Media Hub content.
+type MediaHubLinkSharingPolicyChangedDetails struct {
+	// NewValue : To.
+	NewValue *MediaHubLinkSharingPolicy `json:"new_value"`
+	// PreviousValue : From.
+	PreviousValue *MediaHubLinkSharingPolicy `json:"previous_value"`
+}
+
+// NewMediaHubLinkSharingPolicyChangedDetails returns a new MediaHubLinkSharingPolicyChangedDetails instance
+func NewMediaHubLinkSharingPolicyChangedDetails(NewValue *MediaHubLinkSharingPolicy, PreviousValue *MediaHubLinkSharingPolicy) *MediaHubLinkSharingPolicyChangedDetails {
+	s := new(MediaHubLinkSharingPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// MediaHubLinkSharingPolicyChangedType : has no documentation (yet)
+type MediaHubLinkSharingPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubLinkSharingPolicyChangedType returns a new MediaHubLinkSharingPolicyChangedType instance
+func NewMediaHubLinkSharingPolicyChangedType(Description string) *MediaHubLinkSharingPolicyChangedType {
+	s := new(MediaHubLinkSharingPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubProjectRole : Media Hub project role
+type MediaHubProjectRole struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubProjectRole
+const (
+	MediaHubProjectRoleEditor   = "editor"
+	MediaHubProjectRoleOwner    = "owner"
+	MediaHubProjectRoleReviewer = "reviewer"
+	MediaHubProjectRoleOther    = "other"
+)
+
+// MediaHubProjectTeamAddDetails : Added member to Media Hub project.
+type MediaHubProjectTeamAddDetails struct {
+}
+
+// NewMediaHubProjectTeamAddDetails returns a new MediaHubProjectTeamAddDetails instance
+func NewMediaHubProjectTeamAddDetails() *MediaHubProjectTeamAddDetails {
+	s := new(MediaHubProjectTeamAddDetails)
+	return s
+}
+
+// MediaHubProjectTeamAddType : has no documentation (yet)
+type MediaHubProjectTeamAddType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubProjectTeamAddType returns a new MediaHubProjectTeamAddType instance
+func NewMediaHubProjectTeamAddType(Description string) *MediaHubProjectTeamAddType {
+	s := new(MediaHubProjectTeamAddType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubProjectTeamDeleteDetails : Removed member from Media Hub project.
+type MediaHubProjectTeamDeleteDetails struct {
+}
+
+// NewMediaHubProjectTeamDeleteDetails returns a new MediaHubProjectTeamDeleteDetails instance
+func NewMediaHubProjectTeamDeleteDetails() *MediaHubProjectTeamDeleteDetails {
+	s := new(MediaHubProjectTeamDeleteDetails)
+	return s
+}
+
+// MediaHubProjectTeamDeleteType : has no documentation (yet)
+type MediaHubProjectTeamDeleteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubProjectTeamDeleteType returns a new MediaHubProjectTeamDeleteType instance
+func NewMediaHubProjectTeamDeleteType(Description string) *MediaHubProjectTeamDeleteType {
+	s := new(MediaHubProjectTeamDeleteType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubProjectTeamRoleChangedDetails : Changed member role in Media Hub
+// project.
+type MediaHubProjectTeamRoleChangedDetails struct {
+	// PreviousRole : Previous Media Hub project role.
+	PreviousRole *MediaHubProjectRole `json:"previous_role"`
+	// NewRole : New Media Hub project role.
+	NewRole *MediaHubProjectRole `json:"new_role"`
+}
+
+// NewMediaHubProjectTeamRoleChangedDetails returns a new MediaHubProjectTeamRoleChangedDetails instance
+func NewMediaHubProjectTeamRoleChangedDetails(PreviousRole *MediaHubProjectRole, NewRole *MediaHubProjectRole) *MediaHubProjectTeamRoleChangedDetails {
+	s := new(MediaHubProjectTeamRoleChangedDetails)
+	s.PreviousRole = PreviousRole
+	s.NewRole = NewRole
+	return s
+}
+
+// MediaHubProjectTeamRoleChangedType : has no documentation (yet)
+type MediaHubProjectTeamRoleChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubProjectTeamRoleChangedType returns a new MediaHubProjectTeamRoleChangedType instance
+func NewMediaHubProjectTeamRoleChangedType(Description string) *MediaHubProjectTeamRoleChangedType {
+	s := new(MediaHubProjectTeamRoleChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubSharedLinkAudience : Media Hub shared link audience
+type MediaHubSharedLinkAudience struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubSharedLinkAudience
+const (
+	MediaHubSharedLinkAudienceNoOne    = "no_one"
+	MediaHubSharedLinkAudiencePublic   = "public"
+	MediaHubSharedLinkAudienceTeamOnly = "team_only"
+	MediaHubSharedLinkAudienceOther    = "other"
+)
+
+// MediaHubSharedLinkAudienceChangedDetails : Changed Media Hub shared link
+// audience.
+type MediaHubSharedLinkAudienceChangedDetails struct {
+	// TargetType : Media Hub shared link target type.
+	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
+	// PreviousValue : Previous Media Hub shared link audience.
+	PreviousValue *MediaHubSharedLinkAudience `json:"previous_value"`
+	// NewValue : New Media Hub shared link audience.
+	NewValue *MediaHubSharedLinkAudience `json:"new_value"`
+}
+
+// NewMediaHubSharedLinkAudienceChangedDetails returns a new MediaHubSharedLinkAudienceChangedDetails instance
+func NewMediaHubSharedLinkAudienceChangedDetails(TargetType *MediaHubSharedLinkTargetType, PreviousValue *MediaHubSharedLinkAudience, NewValue *MediaHubSharedLinkAudience) *MediaHubSharedLinkAudienceChangedDetails {
+	s := new(MediaHubSharedLinkAudienceChangedDetails)
+	s.TargetType = TargetType
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// MediaHubSharedLinkAudienceChangedType : has no documentation (yet)
+type MediaHubSharedLinkAudienceChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubSharedLinkAudienceChangedType returns a new MediaHubSharedLinkAudienceChangedType instance
+func NewMediaHubSharedLinkAudienceChangedType(Description string) *MediaHubSharedLinkAudienceChangedType {
+	s := new(MediaHubSharedLinkAudienceChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubSharedLinkCreatedDetails : Created Media Hub shared link.
+type MediaHubSharedLinkCreatedDetails struct {
+	// TargetType : Media Hub shared link target type.
+	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
+	// Audience : Media Hub shared link audience.
+	Audience *MediaHubSharedLinkAudience `json:"audience"`
+}
+
+// NewMediaHubSharedLinkCreatedDetails returns a new MediaHubSharedLinkCreatedDetails instance
+func NewMediaHubSharedLinkCreatedDetails(TargetType *MediaHubSharedLinkTargetType, Audience *MediaHubSharedLinkAudience) *MediaHubSharedLinkCreatedDetails {
+	s := new(MediaHubSharedLinkCreatedDetails)
+	s.TargetType = TargetType
+	s.Audience = Audience
+	return s
+}
+
+// MediaHubSharedLinkCreatedType : has no documentation (yet)
+type MediaHubSharedLinkCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubSharedLinkCreatedType returns a new MediaHubSharedLinkCreatedType instance
+func NewMediaHubSharedLinkCreatedType(Description string) *MediaHubSharedLinkCreatedType {
+	s := new(MediaHubSharedLinkCreatedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubSharedLinkDownloadSetting : Media Hub shared link download setting
+type MediaHubSharedLinkDownloadSetting struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubSharedLinkDownloadSetting
+const (
+	MediaHubSharedLinkDownloadSettingDisabled = "disabled"
+	MediaHubSharedLinkDownloadSettingEnabled  = "enabled"
+	MediaHubSharedLinkDownloadSettingOther    = "other"
+)
+
+// MediaHubSharedLinkDownloadSettingChangedDetails : Changed Media Hub shared
+// link download setting.
+type MediaHubSharedLinkDownloadSettingChangedDetails struct {
+	// TargetType : Media Hub shared link target type.
+	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
+	// PreviousValue : Previous Media Hub shared link download setting.
+	PreviousValue *MediaHubSharedLinkDownloadSetting `json:"previous_value"`
+	// NewValue : New Media Hub shared link download setting.
+	NewValue *MediaHubSharedLinkDownloadSetting `json:"new_value"`
+}
+
+// NewMediaHubSharedLinkDownloadSettingChangedDetails returns a new MediaHubSharedLinkDownloadSettingChangedDetails instance
+func NewMediaHubSharedLinkDownloadSettingChangedDetails(TargetType *MediaHubSharedLinkTargetType, PreviousValue *MediaHubSharedLinkDownloadSetting, NewValue *MediaHubSharedLinkDownloadSetting) *MediaHubSharedLinkDownloadSettingChangedDetails {
+	s := new(MediaHubSharedLinkDownloadSettingChangedDetails)
+	s.TargetType = TargetType
+	s.PreviousValue = PreviousValue
+	s.NewValue = NewValue
+	return s
+}
+
+// MediaHubSharedLinkDownloadSettingChangedType : has no documentation (yet)
+type MediaHubSharedLinkDownloadSettingChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubSharedLinkDownloadSettingChangedType returns a new MediaHubSharedLinkDownloadSettingChangedType instance
+func NewMediaHubSharedLinkDownloadSettingChangedType(Description string) *MediaHubSharedLinkDownloadSettingChangedType {
+	s := new(MediaHubSharedLinkDownloadSettingChangedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubSharedLinkRevokedDetails : Revoked Media Hub shared link.
+type MediaHubSharedLinkRevokedDetails struct {
+	// TargetType : Media Hub shared link target type.
+	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
+}
+
+// NewMediaHubSharedLinkRevokedDetails returns a new MediaHubSharedLinkRevokedDetails instance
+func NewMediaHubSharedLinkRevokedDetails(TargetType *MediaHubSharedLinkTargetType) *MediaHubSharedLinkRevokedDetails {
+	s := new(MediaHubSharedLinkRevokedDetails)
+	s.TargetType = TargetType
+	return s
+}
+
+// MediaHubSharedLinkRevokedType : has no documentation (yet)
+type MediaHubSharedLinkRevokedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMediaHubSharedLinkRevokedType returns a new MediaHubSharedLinkRevokedType instance
+func NewMediaHubSharedLinkRevokedType(Description string) *MediaHubSharedLinkRevokedType {
+	s := new(MediaHubSharedLinkRevokedType)
+	s.Description = Description
+	return s
+}
+
+// MediaHubSharedLinkTargetType : Media Hub shared link target type
+type MediaHubSharedLinkTargetType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MediaHubSharedLinkTargetType
+const (
+	MediaHubSharedLinkTargetTypeBundle  = "bundle"
+	MediaHubSharedLinkTargetTypeProject = "project"
+	MediaHubSharedLinkTargetTypeOther   = "other"
+)
+
 // MemberAccessDetailsCreateReportDetails : Created member access report.
 type MemberAccessDetailsCreateReportDetails struct {
 }
@@ -21139,6 +21752,49 @@ type MobileSessionLogInfo struct {
 // NewMobileSessionLogInfo returns a new MobileSessionLogInfo instance
 func NewMobileSessionLogInfo() *MobileSessionLogInfo {
 	s := new(MobileSessionLogInfo)
+	return s
+}
+
+// MultiTeamIdentityPolicy : Multi-team identity policy
+type MultiTeamIdentityPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MultiTeamIdentityPolicy
+const (
+	MultiTeamIdentityPolicyDefault  = "default"
+	MultiTeamIdentityPolicyDisabled = "disabled"
+	MultiTeamIdentityPolicyEnabled  = "enabled"
+	MultiTeamIdentityPolicyOther    = "other"
+)
+
+// MultiTeamIdentityPolicyChangedDetails : Changed multi-team identity policy
+// for team.
+type MultiTeamIdentityPolicyChangedDetails struct {
+	// NewValue : New multi-team identity policy.
+	NewValue *MultiTeamIdentityPolicy `json:"new_value"`
+	// PreviousValue : Previous multi-team identity policy. Might be missing due
+	// to historical data gap.
+	PreviousValue *MultiTeamIdentityPolicy `json:"previous_value,omitempty"`
+}
+
+// NewMultiTeamIdentityPolicyChangedDetails returns a new MultiTeamIdentityPolicyChangedDetails instance
+func NewMultiTeamIdentityPolicyChangedDetails(NewValue *MultiTeamIdentityPolicy) *MultiTeamIdentityPolicyChangedDetails {
+	s := new(MultiTeamIdentityPolicyChangedDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// MultiTeamIdentityPolicyChangedType : has no documentation (yet)
+type MultiTeamIdentityPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMultiTeamIdentityPolicyChangedType returns a new MultiTeamIdentityPolicyChangedType instance
+func NewMultiTeamIdentityPolicyChangedType(Description string) *MultiTeamIdentityPolicyChangedType {
+	s := new(MultiTeamIdentityPolicyChangedType)
+	s.Description = Description
 	return s
 }
 

@@ -41,9 +41,10 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// UserinfoContext : This route is used for refreshing the info that is found in
-	// the id_token during the OIDC flow. This route doesn't require any
-	// arguments and will use the scopes approved for the given access token.
+	// UserinfoContext : This route is used for refreshing the info that is
+	// found in the id_token during the OIDC flow. This route doesn't require
+	// any arguments and will use the scopes approved for the given access
+	// token.
 	UserinfoContext(ctx context.Context, arg *UserInfoArgs) (res *UserInfoResult, err error)
 }
 
@@ -56,8 +57,8 @@ type UserinfoAPIError struct {
 }
 
 // UserinfoContext : This route is used for refreshing the info that is found in
-// the id_token during the OIDC flow. This route doesn't require any
-// arguments and will use the scopes approved for the given access token.
+// the id_token during the OIDC flow. This route doesn't require any arguments
+// and will use the scopes approved for the given access token.
 func (dbx *apiImpl) UserinfoContext(ctx context.Context, arg *UserInfoArgs) (res *UserInfoResult, err error) {
 	req := dropbox.Request{
 		Host:         "api",

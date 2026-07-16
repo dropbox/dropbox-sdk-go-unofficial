@@ -7,7 +7,7 @@ if [[ $# -ne 1 ]]; then
 fi
 
 version=$(echo $1 | cut -f1 -d'.')
-loc=$(realpath -e $0)
+loc=$(realpath "$0")
 base_dir=$(dirname "$loc")
 spec_dir="$base_dir/dropbox-api-spec"
 gen_dir=$(dirname ${base_dir})/v$version/dropbox

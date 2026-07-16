@@ -16,11 +16,23 @@ from stone.ir import (
 from go_helpers import (
     HEADER,
     fmt_type,
+    fmt_type_name,
     fmt_var,
     generate_doc,
     needs_base_type,
     _needs_base_type
 )
+
+
+def _public_fields(fields):
+    """Return the fields exposed by the public SDK.
+
+    Stone's Omitted annotation assigns an ``omitted_caller`` to permissioned
+    fields. The public Python SDK excludes those fields from its public field
+    maps; the Go SDK has no caller-specific serialization path, so omit them
+    from the generated public types entirely.
+    """
+    return [field for field in fields if field.omitted_caller is None]
 
 
 class GoTypesBackend(CodeBackend):
@@ -73,7 +85,7 @@ class GoTypesBackend(CodeBackend):
             with self.block("if err := json.Unmarshal(data, &t); err != nil"):
                 self.emit("return nil, err")
             with self.block("switch t.Tag"):
-                fields = base.get_enumerated_subtypes()
+                fields = _public_fields(base.get_enumerated_subtypes())
                 for field in fields:
                     with self.block('case "%s":' % field.name, delim=(None, None)):
                         self.emit("return t.{0}, nil".format(fmt_var(field.name)))
@@ -81,10 +93,11 @@ class GoTypesBackend(CodeBackend):
             self.emit("return nil, nil")
 
     def _generate_struct(self, struct):
-        with self.block('type %s struct' % struct.name):
+        name = fmt_type_name(struct)
+        with self.block('type %s struct' % name):
             if struct.parent_type:
                 self.emit(fmt_type(struct.parent_type, struct.namespace).lstrip('*'))
-            for field in struct.fields:
+            for field in _public_fields(struct.fields):
                 self._generate_field(field, namespace=struct.namespace)
             if struct.name in ('DownloadArg',):
                 self.emit('// ExtraHeaders can be used to pass Range, If-None-Match headers')
@@ -92,16 +105,16 @@ class GoTypesBackend(CodeBackend):
         self._generate_struct_builder(struct)
         self.emit()
         if needs_base_type(struct):
-            self.emit('// UnmarshalJSON deserializes into a %s instance' % struct.name)
-            with self.block('func (u *%s) UnmarshalJSON(b []byte) error' % struct.name):
+            self.emit('// UnmarshalJSON deserializes into a %s instance' % name)
+            with self.block('func (u *%s) UnmarshalJSON(b []byte) error' % name):
                 with self.block('type wrap struct'):
-                    for field in struct.all_fields:
+                    for field in _public_fields(struct.all_fields):
                         self._generate_field(field, namespace=struct.namespace,
                                              raw=_needs_base_type(field.data_type))
                 self.emit('var w wrap')
                 with self.block('if err := json.Unmarshal(b, &w); err != nil'):
                     self.emit('return err')
-                for field in struct.all_fields:
+                for field in _public_fields(struct.all_fields):
                     dt = field.data_type
                     fn = fmt_var(field.name)
                     tn = fmt_type(dt, namespace=struct.namespace, use_interface=True)
@@ -125,19 +138,22 @@ class GoTypesBackend(CodeBackend):
                 self.emit('return nil')
 
     def _generate_struct_builder(self, struct):
+        name = fmt_type_name(struct)
+        required_fields = _public_fields(struct.all_required_fields)
+        optional_fields = _public_fields(struct.all_optional_fields)
         fields = ["%s %s" % (fmt_var(field.name),
                              fmt_type(field.data_type, struct.namespace,
                                       use_interface=True))
-                  for field in struct.all_required_fields]
-        self.emit('// New{0} returns a new {0} instance'.format(struct.name))
-        signature = "func New{0}({1}) *{0}".format(struct.name, ', '.join(fields))
+                  for field in required_fields]
+        self.emit('// New{0} returns a new {0} instance'.format(name))
+        signature = "func New{0}({1}) *{0}".format(name, ', '.join(fields))
         with self.block(signature):
-            self.emit('s := new({0})'.format(struct.name))
-            for field in struct.all_required_fields:
+            self.emit('s := new({0})'.format(name))
+            for field in required_fields:
                 field_name = fmt_var(field.name)
                 self.emit("s.{0} = {0}".format(field_name))
 
-            for field in struct.all_optional_fields:
+            for field in optional_fields:
                 if field.has_default:
                     if is_primitive_type(field.data_type):
                         default = field.default
@@ -167,14 +183,14 @@ class GoTypesBackend(CodeBackend):
         self._generate_union_helper(union)
 
     def _generate_union_helper(self, u):
-        name = u.name
+        name = fmt_type_name(u)
         namespace = u.namespace
         # Unions can be inherited, but don't need to be polymorphic.
         # So let's flatten out all the inherited fields.
-        fields = u.all_fields
+        fields = _public_fields(u.all_fields)
         if is_struct_type(u) and u.has_enumerated_subtypes():
-            name = fmt_var(name, export=False) + 'Union'
-            fields = u.get_enumerated_subtypes()
+            name = fmt_type_name(u, export=False) + 'Union'
+            fields = _public_fields(u.get_enumerated_subtypes())
 
         with self.block('type %s struct' % name):
             self.emit('dropbox.Tagged')
@@ -220,7 +236,7 @@ class GoTypesBackend(CodeBackend):
                     with self.block('case "%s":' % field.name, delim=(None, None)):
                         if _needs_base_type(field.data_type):
                             with self.block("if u.{0}, err = Is{1}FromJSON(w.{0}); err != nil"
-                                       .format(field_name, field.data_type.name)):
+                                       .format(field_name, fmt_type_name(field.data_type))):
                                 self.emit("return err")
                         elif is_struct_type(field.data_type):
                             with self.block('if err = json.Unmarshal(body, &u.{0}); err != nil'

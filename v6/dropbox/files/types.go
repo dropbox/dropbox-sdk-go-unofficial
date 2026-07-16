@@ -4402,8 +4402,6 @@ type ThumbnailArg struct {
 	Size *ThumbnailSize `json:"size"`
 	// Mode : How to resize and crop the image to achieve the desired size.
 	Mode *ThumbnailMode `json:"mode"`
-	// Quality : Quality of the thumbnail image.
-	Quality *ThumbnailQuality `json:"quality"`
 	// ExcludeMediaInfo : Normally, `FileMetadata.media_info` is set for photo
 	// and video. When this flag is true, `FileMetadata.media_info` is not
 	// populated. This improves latency for use cases where `media_info` is not
@@ -4418,7 +4416,6 @@ func NewThumbnailArg(Path string) *ThumbnailArg {
 	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
 	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
 	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
-	s.Quality = &ThumbnailQuality{Tagged: dropbox.Tagged{Tag: "quality_80"}}
 	return s
 }
 
@@ -4511,7 +4508,6 @@ const (
 	ThumbnailSizeW960h640   = "w960h640"
 	ThumbnailSizeW1024h768  = "w1024h768"
 	ThumbnailSizeW2048h1536 = "w2048h1536"
-	ThumbnailSizeW3200h2400 = "w3200h2400"
 )
 
 // ThumbnailV2Arg : has no documentation (yet)
@@ -4528,8 +4524,6 @@ type ThumbnailV2Arg struct {
 	Size *ThumbnailSize `json:"size"`
 	// Mode : How to resize and crop the image to achieve the desired size.
 	Mode *ThumbnailMode `json:"mode"`
-	// Quality : Quality of the thumbnail image.
-	Quality *ThumbnailQuality `json:"quality"`
 	// ExcludeMediaInfo : Normally, `FileMetadata.media_info` is set for photo
 	// and video. When this flag is true, `FileMetadata.media_info` is not
 	// populated. This improves latency for use cases where `media_info` is not
@@ -4544,7 +4538,6 @@ func NewThumbnailV2Arg(Resource *PathOrLink) *ThumbnailV2Arg {
 	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
 	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
 	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
-	s.Quality = &ThumbnailQuality{Tagged: dropbox.Tagged{Tag: "quality_80"}}
 	return s
 }
 

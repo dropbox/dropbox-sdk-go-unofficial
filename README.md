@@ -415,6 +415,39 @@ To use the Team API, you will need to create a Dropbox Business App. The OAuth t
 
 Please read the [API docs](https://www.dropbox.com/developers/documentation/http/teams) carefully to appropriate secure your apps and tokens when using the Team API.
 
+## Testing
+
+Unit tests run with the standard toolchain and require no credentials:
+
+```sh
+cd v6
+go test ./...
+```
+
+Integration tests exercise the live Dropbox API and are guarded by the
+`integration` build tag, so they are excluded from the command above. They
+authenticate with scoped user and team refresh tokens, minting short-lived
+access tokens on demand. Provide the credentials through the environment:
+
+```sh
+cd v6
+SCOPED_USER_CLIENT_ID=... SCOPED_USER_CLIENT_SECRET=... SCOPED_USER_REFRESH_TOKEN=... \
+SCOPED_TEAM_CLIENT_ID=... SCOPED_TEAM_CLIENT_SECRET=... SCOPED_TEAM_REFRESH_TOKEN=... \
+  go test -tags integration -v ./dropbox/integration/...
+```
+
+Alternatively, point `DROPBOX_SDK_SECRETS_FILE` at a JSON file containing those
+keys (values already set in the environment take precedence):
+
+```sh
+cd v6
+DROPBOX_SDK_SECRETS_FILE=/path/to/secrets.json \
+  go test -tags integration -v ./dropbox/integration/...
+```
+
+Any credential that is missing causes the corresponding test to be skipped
+rather than fail.
+
 ## Code Generation
 
 This SDK is automatically generated using the public [Dropbox API spec](https://github.com/dropbox/dropbox-api-spec) and [Stone](https://github.com/dropbox/stone). See this [README](https://github.com/dropbox/dropbox-sdk-go-unofficial/blob/master/generator/README.md)

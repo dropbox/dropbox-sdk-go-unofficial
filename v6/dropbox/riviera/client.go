@@ -39,6 +39,12 @@ type Client interface {
 	// GetMarkdownAsyncCheck : Returns the status or result of specified
 	// get_markdown_async task.
 	GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
+	// GetMetadataAsync : Asynchronous file metadata extraction for supported
+	// file formats.
+	GetMetadataAsync(arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
+	// GetMetadataAsyncCheck : Returns the status or result of specified
+	// get_metadata_async task.
+	GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
 	// GetTranscriptAsync : Asynchronous transcript generation for audio and
 	// video files.
 	GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
@@ -50,17 +56,23 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
-	// supported file formats.
+	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion
+	// for supported file formats.
 	GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheckContext : Returns the status or result of specified
 	// get_markdown_async task.
 	GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
-	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio and
-	// video files.
+	// GetMetadataAsyncContext : Asynchronous file metadata extraction for
+	// supported file formats.
+	GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
+	// GetMetadataAsyncCheckContext : Returns the status or result of specified
+	// get_metadata_async task.
+	GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
+	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio
+	// and video files.
 	GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
-	// GetTranscriptAsyncCheckContext : Returns the status or result of specified
-	// get_transcript_async task.
+	// GetTranscriptAsyncCheckContext : Returns the status or result of
+	// specified get_transcript_async task.
 	GetTranscriptAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
 }
 
@@ -152,6 +164,94 @@ func (dbx *apiImpl) GetMarkdownAsyncCheckContext(ctx context.Context, arg *async
 
 func (dbx *apiImpl) GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
 	return dbx.GetMarkdownAsyncCheckContext(context.Background(), arg)
+}
+
+// GetMetadataAsyncAPIError is an error-wrapper for the get_metadata_async route
+type GetMetadataAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+// GetMetadataAsyncContext : Asynchronous file metadata extraction for supported
+// file formats.
+func (dbx *apiImpl) GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_metadata_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetMetadataAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetMetadataAsync(arg *GetMetadataArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetMetadataAsyncContext(context.Background(), arg)
+}
+
+// GetMetadataAsyncCheckAPIError is an error-wrapper for the get_metadata_async/check route
+type GetMetadataAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// GetMetadataAsyncCheckContext : Returns the status or result of specified
+// get_metadata_async task.
+func (dbx *apiImpl) GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_metadata_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetMetadataAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error) {
+	return dbx.GetMetadataAsyncCheckContext(context.Background(), arg)
 }
 
 // GetTranscriptAsyncAPIError is an error-wrapper for the get_transcript_async route

@@ -69,6 +69,11 @@ def _rename_if_reserved(s):
         return s
 
 
+def fmt_type_name(data_type, export=True):
+    """Format a Stone composite type name as a Go identifier."""
+    return fmt_var(data_type.name, export=export, check_reserved=True)
+
+
 def fmt_type(data_type, namespace=None, use_interface=False, raw=False):
     data_type, nullable = unwrap_nullable(data_type)
     if is_list_type(data_type):
@@ -81,7 +86,8 @@ def fmt_type(data_type, namespace=None, use_interface=False, raw=False):
         return 'map[string]%s' % fmt_type(data_type.value_data_type, namespace, use_interface, raw)
     if raw:
         return "json.RawMessage"
-    type_name = data_type.name
+    type_name = (fmt_type_name(data_type)
+                 if is_composite_type(data_type) else data_type.name)
     if use_interface and _needs_base_type(data_type):
         type_name = 'Is' + type_name
     if is_composite_type(data_type) and namespace is not None and \
@@ -158,6 +164,8 @@ def _needs_base_type(data_type):
 
 def needs_base_type(struct):
     for field in struct.fields:
+        if field.omitted_caller is not None:
+            continue
         if _needs_base_type(field.data_type):
             return True
     return False

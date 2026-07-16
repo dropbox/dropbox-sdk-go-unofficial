@@ -3,6 +3,22 @@
 Notable changes to this SDK are documented here. Historical entries are
 summarized from the repository history.
 
+## Unreleased
+
+### Added
+
+- Added `integration`-tagged live-API tests for the user and team clients
+  (folder create/delete round-trips) authenticated with scoped refresh tokens,
+  plus an Integration GitHub Actions workflow.
+
+### Changed
+
+- Exported generated inline Stone composite types, including
+  `riviera.MetadataUnion`.
+- Matched Python SDK serialization by omitting caller-restricted Stone fields
+  from generated public Go types.
+- Updated the Dropbox API spec to `7e5f668` and regenerated the SDK.
+
 ## v6.4.0 - 2026-07-15
 
 ### Added

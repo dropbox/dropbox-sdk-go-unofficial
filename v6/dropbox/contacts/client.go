@@ -43,12 +43,12 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
-	// DeleteManualContactsContext : Removes all manually added contacts. You'll still
-	// keep contacts who are on your team or who you imported. New contacts will
-	// be added when you share.
+	// DeleteManualContactsContext : Removes all manually added contacts. You'll
+	// still keep contacts who are on your team or who you imported. New
+	// contacts will be added when you share.
 	DeleteManualContactsContext(ctx context.Context) (err error)
-	// DeleteManualContactsBatchContext : Removes manually added contacts from the
-	// given list.
+	// DeleteManualContactsBatchContext : Removes manually added contacts from
+	// the given list.
 	DeleteManualContactsBatchContext(ctx context.Context, arg *DeleteManualContactsArg) (err error)
 }
 
@@ -60,9 +60,9 @@ type DeleteManualContactsAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// DeleteManualContactsContext : Removes all manually added contacts. You'll still
-// keep contacts who are on your team or who you imported. New contacts will
-// be added when you share.
+// DeleteManualContactsContext : Removes all manually added contacts. You'll
+// still keep contacts who are on your team or who you imported. New contacts
+// will be added when you share.
 func (dbx *apiImpl) DeleteManualContactsContext(ctx context.Context) (err error) {
 	req := dropbox.Request{
 		Host:         "api",
