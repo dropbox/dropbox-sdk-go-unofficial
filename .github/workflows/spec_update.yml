@@ -131,7 +131,7 @@ jobs:
           title: 'Automated Spec Update - ${{ steps.current-time.outputs.formattedTime }}'
           body: |
             ${{ steps.git-diff.outputs.commit}}
-          base: 'main'
+          base: 'master'
           labels: |
             automated-spec-update
           draft: false
