@@ -208,6 +208,12 @@ type Client interface {
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error)
+	// MembersBulkSuspend : Launch a bulk suspend job. The server enforces a
+	// maximum of 500 members.
+	MembersBulkSuspend(arg *BulkSuspendArg) (res *async.LaunchResultBase, err error)
+	// MembersBulkSuspendJobStatusCheck : Poll a previously launched bulk
+	// suspend job.
+	MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *BulkSuspendJobStatus, err error)
 	// MembersDeleteFormerMemberFiles : Permanently delete the files of a user
 	// who has been removed from the team. After permanent deletion, those files
 	// will not be available to be transferred to another team member.
@@ -614,6 +620,12 @@ type ContextClient interface {
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGetV2Context(ctx context.Context, arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error)
+	// MembersBulkSuspendContext : Launch a bulk suspend job. The server
+	// enforces a maximum of 500 members.
+	MembersBulkSuspendContext(ctx context.Context, arg *BulkSuspendArg) (res *async.LaunchResultBase, err error)
+	// MembersBulkSuspendJobStatusCheckContext : Poll a previously launched bulk
+	// suspend job.
+	MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *BulkSuspendJobStatus, err error)
 	// MembersDeleteFormerMemberFilesContext : Permanently delete the files of a
 	// user who has been removed from the team. After permanent deletion, those
 	// files will not be available to be transferred to another team member.
@@ -2729,6 +2741,94 @@ func (dbx *apiImpl) MembersAddJobStatusGetV2Context(ctx context.Context, arg *as
 
 func (dbx *apiImpl) MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error) {
 	return dbx.MembersAddJobStatusGetV2Context(context.Background(), arg)
+}
+
+// MembersBulkSuspendAPIError is an error-wrapper for the members/bulk_suspend route
+type MembersBulkSuspendAPIError struct {
+	dropbox.APIError
+	EndpointError *BulkSuspendError `json:"error"`
+}
+
+// MembersBulkSuspendContext : Launch a bulk suspend job. The server enforces a
+// maximum of 500 members.
+func (dbx *apiImpl) MembersBulkSuspendContext(ctx context.Context, arg *BulkSuspendArg) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "members/bulk_suspend",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr MembersBulkSuspendAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) MembersBulkSuspend(arg *BulkSuspendArg) (res *async.LaunchResultBase, err error) {
+	return dbx.MembersBulkSuspendContext(context.Background(), arg)
+}
+
+// MembersBulkSuspendJobStatusCheckAPIError is an error-wrapper for the members/bulk_suspend/job_status/check route
+type MembersBulkSuspendJobStatusCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// MembersBulkSuspendJobStatusCheckContext : Poll a previously launched bulk
+// suspend job.
+func (dbx *apiImpl) MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *BulkSuspendJobStatus, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "members/bulk_suspend/job_status/check",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr MembersBulkSuspendJobStatusCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *BulkSuspendJobStatus, err error) {
+	return dbx.MembersBulkSuspendJobStatusCheckContext(context.Background(), arg)
 }
 
 // MembersDeleteFormerMemberFilesAPIError is an error-wrapper for the members/delete_former_member_files route

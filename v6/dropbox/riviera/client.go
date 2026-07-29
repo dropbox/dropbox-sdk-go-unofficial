@@ -34,19 +34,38 @@ import (
 // Client interface describes all routes in this namespace
 type Client interface {
 	// GetMarkdownAsync : Asynchronous document-to-markdown conversion for
-	// supported file formats.
+	// supported file formats. Supported formats: .binder, .docx, .html, .paper,
+	// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats return an
+	// `unsupported_format_error`. Size limit: the source file must be at most
+	// 50 MB. Larger files are rejected.
 	GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheck : Returns the status or result of specified
 	// get_markdown_async task.
 	GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
 	// GetMetadataAsync : Asynchronous file metadata extraction for supported
-	// file formats.
+	// file formats. The kind of metadata returned depends on the file type: -
+	// Image (EXIF) formats: .3fr, .arw, .avif, .bmp, .cr2, .cr3, .crw, .dcr,
+	// .dcs, .dng, .erf, .gif, .heic, .j2c, .j2k, .jp2, .jpc, .jpeg, .jpf, .jpg,
+	// .jpg2, .jpm, .jpx, .kdc, .mef, .mos, .mrw, .nef, .nrw, .orf, .pef, .png,
+	// .ppm, .r3d, .raf, .rw2, .rwl, .sr2, .tga, .tif, .tiff, .wbmp, .web,
+	// .webp, .x3f. - Audio/video (media) formats: .aac, .aif, .aiff, .flac,
+	// .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma, .3gp, .3gpp, .3gpp2, .asf,
+	// .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts,
+	// .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. - PDF format: .pdf.
+	// - MS Office formats: .docx, .pptx, .xlsx. Unsupported formats return an
+	// `unsupported_format_error`.
 	GetMetadataAsync(arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
 	// GetMetadataAsyncCheck : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
 	// GetTranscriptAsync : Asynchronous transcript generation for audio and
-	// video files.
+	// video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
+	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
+	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
+	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
+	// Unsupported formats return an `unsupported_format_error`. Size limits:
+	// the source file must be at most 10 GB and its audio track at most 1 hour
+	// in duration. Files exceeding these limits are rejected.
 	GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheck : Returns the status or result of specified
 	// get_transcript_async task.
@@ -57,19 +76,38 @@ type Client interface {
 type ContextClient interface {
 	Client
 	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion
-	// for supported file formats.
+	// for supported file formats. Supported formats: .binder, .docx, .html,
+	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats
+	// return an `unsupported_format_error`. Size limit: the source file must be
+	// at most 50 MB. Larger files are rejected.
 	GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheckContext : Returns the status or result of specified
 	// get_markdown_async task.
 	GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
 	// GetMetadataAsyncContext : Asynchronous file metadata extraction for
-	// supported file formats.
+	// supported file formats. The kind of metadata returned depends on the file
+	// type: - Image (EXIF) formats: .3fr, .arw, .avif, .bmp, .cr2, .cr3, .crw,
+	// .dcr, .dcs, .dng, .erf, .gif, .heic, .j2c, .j2k, .jp2, .jpc, .jpeg, .jpf,
+	// .jpg, .jpg2, .jpm, .jpx, .kdc, .mef, .mos, .mrw, .nef, .nrw, .orf, .pef,
+	// .png, .ppm, .r3d, .raf, .rw2, .rwl, .sr2, .tga, .tif, .tiff, .wbmp, .web,
+	// .webp, .x3f. - Audio/video (media) formats: .aac, .aif, .aiff, .flac,
+	// .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma, .3gp, .3gpp, .3gpp2, .asf,
+	// .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts,
+	// .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. - PDF format: .pdf.
+	// - MS Office formats: .docx, .pptx, .xlsx. Unsupported formats return an
+	// `unsupported_format_error`.
 	GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
 	// GetMetadataAsyncCheckContext : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
 	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio
-	// and video files.
+	// and video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
+	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
+	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
+	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
+	// Unsupported formats return an `unsupported_format_error`. Size limits:
+	// the source file must be at most 10 GB and its audio track at most 1 hour
+	// in duration. Files exceeding these limits are rejected.
 	GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheckContext : Returns the status or result of
 	// specified get_transcript_async task.
@@ -85,7 +123,10 @@ type GetMarkdownAsyncAPIError struct {
 }
 
 // GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
-// supported file formats.
+// supported file formats. Supported formats: .binder, .docx, .html, .paper,
+// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats return an
+// `unsupported_format_error`. Size limit: the source file must be at most 50
+// MB. Larger files are rejected.
 func (dbx *apiImpl) GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
@@ -173,7 +214,16 @@ type GetMetadataAsyncAPIError struct {
 }
 
 // GetMetadataAsyncContext : Asynchronous file metadata extraction for supported
-// file formats.
+// file formats. The kind of metadata returned depends on the file type: - Image
+// (EXIF) formats: .3fr, .arw, .avif, .bmp, .cr2, .cr3, .crw, .dcr, .dcs, .dng,
+// .erf, .gif, .heic, .j2c, .j2k, .jp2, .jpc, .jpeg, .jpf, .jpg, .jpg2, .jpm,
+// .jpx, .kdc, .mef, .mos, .mrw, .nef, .nrw, .orf, .pef, .png, .ppm, .r3d, .raf,
+// .rw2, .rwl, .sr2, .tga, .tif, .tiff, .wbmp, .web, .webp, .x3f. - Audio/video
+// (media) formats: .aac, .aif, .aiff, .flac, .m4a, .m4r, .mp3, .oga, .ogg,
+// .wav, .wma, .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v,
+// .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob,
+// .webm, .wmv. - PDF format: .pdf. - MS Office formats: .docx, .pptx, .xlsx.
+// Unsupported formats return an `unsupported_format_error`.
 func (dbx *apiImpl) GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
@@ -261,7 +311,13 @@ type GetTranscriptAsyncAPIError struct {
 }
 
 // GetTranscriptAsyncContext : Asynchronous transcript generation for audio and
-// video files.
+// video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a, .m4r,
+// .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp, .3gpp2,
+// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
+// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
+// formats return an `unsupported_format_error`. Size limits: the source file
+// must be at most 10 GB and its audio track at most 1 hour in duration. Files
+// exceeding these limits are rejected.
 func (dbx *apiImpl) GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",

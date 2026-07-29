@@ -4102,7 +4102,7 @@ type SharedLinkSettings struct {
 	// specified by the link's access level specified in the `link_access_level`
 	// field of `LinkPermissions`. This is used in conjunction with team
 	// policies and shared folder policies to determine the final effective
-	// audience type in the `effective_audience` field of `LinkPermissions.
+	// audience type in the `effective_audience` field of `LinkPermissions`.
 	Audience *LinkAudience `json:"audience,omitempty"`
 	// Access : Requested access level you want the audience to gain from this
 	// link. Note, modifying access level for an existing link is not supported.
