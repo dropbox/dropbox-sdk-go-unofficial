@@ -5938,6 +5938,8 @@ type EventDetails struct {
 	MemberDeleteManualContactsDetails *MemberDeleteManualContactsDetails `json:"member_delete_manual_contacts_details,omitempty"`
 	// MemberDeleteProfilePhotoDetails : has no documentation (yet)
 	MemberDeleteProfilePhotoDetails *MemberDeleteProfilePhotoDetails `json:"member_delete_profile_photo_details,omitempty"`
+	// MemberFolderContentsAccessedDetails : has no documentation (yet)
+	MemberFolderContentsAccessedDetails *MemberFolderContentsAccessedDetails `json:"member_folder_contents_accessed_details,omitempty"`
 	// MemberPermanentlyDeleteAccountContentsDetails : has no documentation
 	// (yet)
 	MemberPermanentlyDeleteAccountContentsDetails *MemberPermanentlyDeleteAccountContentsDetails `json:"member_permanently_delete_account_contents_details,omitempty"`
@@ -6073,6 +6075,20 @@ type EventDetails struct {
 	PasswordResetDetails *PasswordResetDetails `json:"password_reset_details,omitempty"`
 	// PasswordResetAllDetails : has no documentation (yet)
 	PasswordResetAllDetails *PasswordResetAllDetails `json:"password_reset_all_details,omitempty"`
+	// ProtectActionAddCollaboratorDetails : has no documentation (yet)
+	ProtectActionAddCollaboratorDetails *ProtectActionAddCollaboratorDetails `json:"protect_action_add_collaborator_details,omitempty"`
+	// ProtectActionAddLinkDetails : has no documentation (yet)
+	ProtectActionAddLinkDetails *ProtectActionAddLinkDetails `json:"protect_action_add_link_details,omitempty"`
+	// ProtectActionDeleteDetails : has no documentation (yet)
+	ProtectActionDeleteDetails *ProtectActionDeleteDetails `json:"protect_action_delete_details,omitempty"`
+	// ProtectActionExportDetails : has no documentation (yet)
+	ProtectActionExportDetails *ProtectActionExportDetails `json:"protect_action_export_details,omitempty"`
+	// ProtectActionRemoveCollaboratorDetails : has no documentation (yet)
+	ProtectActionRemoveCollaboratorDetails *ProtectActionRemoveCollaboratorDetails `json:"protect_action_remove_collaborator_details,omitempty"`
+	// ProtectActionRemoveLinkDetails : has no documentation (yet)
+	ProtectActionRemoveLinkDetails *ProtectActionRemoveLinkDetails `json:"protect_action_remove_link_details,omitempty"`
+	// ProtectActionStopSharingDetails : has no documentation (yet)
+	ProtectActionStopSharingDetails *ProtectActionStopSharingDetails `json:"protect_action_stop_sharing_details,omitempty"`
 	// ProtectInternalDomainsChangedDetails : has no documentation (yet)
 	ProtectInternalDomainsChangedDetails *ProtectInternalDomainsChangedDetails `json:"protect_internal_domains_changed_details,omitempty"`
 	// ClassificationCreateReportDetails : has no documentation (yet)
@@ -7001,6 +7017,7 @@ const (
 	EventDetailsMemberChangeStatusDetails                            = "member_change_status_details"
 	EventDetailsMemberDeleteManualContactsDetails                    = "member_delete_manual_contacts_details"
 	EventDetailsMemberDeleteProfilePhotoDetails                      = "member_delete_profile_photo_details"
+	EventDetailsMemberFolderContentsAccessedDetails                  = "member_folder_contents_accessed_details"
 	EventDetailsMemberPermanentlyDeleteAccountContentsDetails        = "member_permanently_delete_account_contents_details"
 	EventDetailsMemberRemoveExternalIdDetails                        = "member_remove_external_id_details"
 	EventDetailsMemberSetProfilePhotoDetails                         = "member_set_profile_photo_details"
@@ -7068,6 +7085,13 @@ const (
 	EventDetailsPasswordChangeDetails                                = "password_change_details"
 	EventDetailsPasswordResetDetails                                 = "password_reset_details"
 	EventDetailsPasswordResetAllDetails                              = "password_reset_all_details"
+	EventDetailsProtectActionAddCollaboratorDetails                  = "protect_action_add_collaborator_details"
+	EventDetailsProtectActionAddLinkDetails                          = "protect_action_add_link_details"
+	EventDetailsProtectActionDeleteDetails                           = "protect_action_delete_details"
+	EventDetailsProtectActionExportDetails                           = "protect_action_export_details"
+	EventDetailsProtectActionRemoveCollaboratorDetails               = "protect_action_remove_collaborator_details"
+	EventDetailsProtectActionRemoveLinkDetails                       = "protect_action_remove_link_details"
+	EventDetailsProtectActionStopSharingDetails                      = "protect_action_stop_sharing_details"
 	EventDetailsProtectInternalDomainsChangedDetails                 = "protect_internal_domains_changed_details"
 	EventDetailsClassificationCreateReportDetails                    = "classification_create_report_details"
 	EventDetailsClassificationCreateReportFailDetails                = "classification_create_report_fail_details"
@@ -8471,6 +8495,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "member_folder_contents_accessed_details":
+		if err = json.Unmarshal(body, &u.MemberFolderContentsAccessedDetails); err != nil {
+			return err
+		}
+
 	case "member_permanently_delete_account_contents_details":
 		if err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContentsDetails); err != nil {
 			return err
@@ -8803,6 +8832,41 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "password_reset_all_details":
 		if err = json.Unmarshal(body, &u.PasswordResetAllDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_add_collaborator_details":
+		if err = json.Unmarshal(body, &u.ProtectActionAddCollaboratorDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_add_link_details":
+		if err = json.Unmarshal(body, &u.ProtectActionAddLinkDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_delete_details":
+		if err = json.Unmarshal(body, &u.ProtectActionDeleteDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_export_details":
+		if err = json.Unmarshal(body, &u.ProtectActionExportDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_collaborator_details":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveCollaboratorDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_link_details":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveLinkDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_stop_sharing_details":
+		if err = json.Unmarshal(body, &u.ProtectActionStopSharingDetails); err != nil {
 			return err
 		}
 
@@ -10885,7 +10949,7 @@ type EventType struct {
 	// FolderOverviewItemUnpinned : (file_operations) Unpinned item from folder
 	// overview
 	FolderOverviewItemUnpinned *FolderOverviewItemUnpinnedType `json:"folder_overview_item_unpinned,omitempty"`
-	// MediaHubFileDownloaded : (file_operations) Downloaded files in Media Hub
+	// MediaHubFileDownloaded : (file_operations) Downloaded files in Replay
 	MediaHubFileDownloaded *MediaHubFileDownloadedType `json:"media_hub_file_downloaded,omitempty"`
 	// ObjectLabelAdded : (file_operations) Added a label
 	ObjectLabelAdded *ObjectLabelAddedType `json:"object_label_added,omitempty"`
@@ -11027,6 +11091,9 @@ type EventType struct {
 	MemberDeleteManualContacts *MemberDeleteManualContactsType `json:"member_delete_manual_contacts,omitempty"`
 	// MemberDeleteProfilePhoto : (members) Deleted team member profile photo
 	MemberDeleteProfilePhoto *MemberDeleteProfilePhotoType `json:"member_delete_profile_photo,omitempty"`
+	// MemberFolderContentsAccessed : (members) Admin browsed a team member's
+	// folder contents
+	MemberFolderContentsAccessed *MemberFolderContentsAccessedType `json:"member_folder_contents_accessed,omitempty"`
 	// MemberPermanentlyDeleteAccountContents : (members) Permanently deleted
 	// contents of deleted team member account
 	MemberPermanentlyDeleteAccountContents *MemberPermanentlyDeleteAccountContentsType `json:"member_permanently_delete_account_contents,omitempty"`
@@ -11190,6 +11257,23 @@ type EventType struct {
 	PasswordReset *PasswordResetType `json:"password_reset,omitempty"`
 	// PasswordResetAll : (passwords) Reset all team member passwords
 	PasswordResetAll *PasswordResetAllType `json:"password_reset_all,omitempty"`
+	// ProtectActionAddCollaborator : (protect) Added collaborators via Dropbox
+	// Protect
+	ProtectActionAddCollaborator *ProtectActionAddCollaboratorType `json:"protect_action_add_collaborator,omitempty"`
+	// ProtectActionAddLink : (protect) Added a link via Dropbox Protect
+	ProtectActionAddLink *ProtectActionAddLinkType `json:"protect_action_add_link,omitempty"`
+	// ProtectActionDelete : (protect) Deleted content via Dropbox Protect
+	ProtectActionDelete *ProtectActionDeleteType `json:"protect_action_delete,omitempty"`
+	// ProtectActionExport : (protect) Exported content via Dropbox Protect
+	ProtectActionExport *ProtectActionExportType `json:"protect_action_export,omitempty"`
+	// ProtectActionRemoveCollaborator : (protect) Removed collaborators via
+	// Dropbox Protect
+	ProtectActionRemoveCollaborator *ProtectActionRemoveCollaboratorType `json:"protect_action_remove_collaborator,omitempty"`
+	// ProtectActionRemoveLink : (protect) Removed a link via Dropbox Protect
+	ProtectActionRemoveLink *ProtectActionRemoveLinkType `json:"protect_action_remove_link,omitempty"`
+	// ProtectActionStopSharing : (protect) Stopped sharing content via Dropbox
+	// Protect
+	ProtectActionStopSharing *ProtectActionStopSharingType `json:"protect_action_stop_sharing,omitempty"`
 	// ProtectInternalDomainsChanged : (protect) Modified Protect internal
 	// domains list
 	ProtectInternalDomainsChanged *ProtectInternalDomainsChangedType `json:"protect_internal_domains_changed,omitempty"`
@@ -11282,23 +11366,22 @@ type EventType struct {
 	FileTransfersTransferSend *FileTransfersTransferSendType `json:"file_transfers_transfer_send,omitempty"`
 	// FileTransfersTransferView : (sharing) Viewed transfer
 	FileTransfersTransferView *FileTransfersTransferViewType `json:"file_transfers_transfer_view,omitempty"`
-	// MediaHubProjectTeamAdd : (sharing) Added member to Media Hub project
+	// MediaHubProjectTeamAdd : (sharing) Added member to Replay project
 	MediaHubProjectTeamAdd *MediaHubProjectTeamAddType `json:"media_hub_project_team_add,omitempty"`
-	// MediaHubProjectTeamDelete : (sharing) Removed member from Media Hub
-	// project
+	// MediaHubProjectTeamDelete : (sharing) Removed member from Replay project
 	MediaHubProjectTeamDelete *MediaHubProjectTeamDeleteType `json:"media_hub_project_team_delete,omitempty"`
-	// MediaHubProjectTeamRoleChanged : (sharing) Changed member role in Media
-	// Hub project
+	// MediaHubProjectTeamRoleChanged : (sharing) Changed member role in Replay
+	// project
 	MediaHubProjectTeamRoleChanged *MediaHubProjectTeamRoleChangedType `json:"media_hub_project_team_role_changed,omitempty"`
-	// MediaHubSharedLinkAudienceChanged : (sharing) Changed Media Hub shared
-	// link audience
+	// MediaHubSharedLinkAudienceChanged : (sharing) Changed Replay shared link
+	// audience
 	MediaHubSharedLinkAudienceChanged *MediaHubSharedLinkAudienceChangedType `json:"media_hub_shared_link_audience_changed,omitempty"`
-	// MediaHubSharedLinkCreated : (sharing) Created Media Hub shared link
+	// MediaHubSharedLinkCreated : (sharing) Created Replay shared link
 	MediaHubSharedLinkCreated *MediaHubSharedLinkCreatedType `json:"media_hub_shared_link_created,omitempty"`
-	// MediaHubSharedLinkDownloadSettingChanged : (sharing) Changed Media Hub
+	// MediaHubSharedLinkDownloadSettingChanged : (sharing) Changed Replay
 	// shared link download setting
 	MediaHubSharedLinkDownloadSettingChanged *MediaHubSharedLinkDownloadSettingChangedType `json:"media_hub_shared_link_download_setting_changed,omitempty"`
-	// MediaHubSharedLinkRevoked : (sharing) Revoked Media Hub shared link
+	// MediaHubSharedLinkRevoked : (sharing) Revoked Replay shared link
 	MediaHubSharedLinkRevoked *MediaHubSharedLinkRevokedType `json:"media_hub_shared_link_revoked,omitempty"`
 	// NoteAclInviteOnly : (sharing) Changed Paper doc to invite-only
 	// (deprecated, no longer logged)
@@ -11783,13 +11866,13 @@ type EventType struct {
 	// accept email policy for team
 	InviteAcceptanceEmailPolicyChanged *InviteAcceptanceEmailPolicyChangedType `json:"invite_acceptance_email_policy_changed,omitempty"`
 	// MediaHubAddingPeoplePolicyChanged : (team_policies) Changed the policy
-	// for adding people to Media Hub content
+	// for adding people to Replay content
 	MediaHubAddingPeoplePolicyChanged *MediaHubAddingPeoplePolicyChangedType `json:"media_hub_adding_people_policy_changed,omitempty"`
 	// MediaHubDownloadPolicyChanged : (team_policies) Changed the policy for
-	// downloading Media Hub content
+	// downloading Replay content
 	MediaHubDownloadPolicyChanged *MediaHubDownloadPolicyChangedType `json:"media_hub_download_policy_changed,omitempty"`
 	// MediaHubLinkSharingPolicyChanged : (team_policies) Changed the policy for
-	// sharing Media Hub content
+	// sharing Replay content
 	MediaHubLinkSharingPolicyChanged *MediaHubLinkSharingPolicyChangedType `json:"media_hub_link_sharing_policy_changed,omitempty"`
 	// MemberRequestsChangePolicy : (team_policies) Changed whether users can
 	// find team when not invited
@@ -12326,6 +12409,7 @@ const (
 	EventTypeMemberChangeStatus                            = "member_change_status"
 	EventTypeMemberDeleteManualContacts                    = "member_delete_manual_contacts"
 	EventTypeMemberDeleteProfilePhoto                      = "member_delete_profile_photo"
+	EventTypeMemberFolderContentsAccessed                  = "member_folder_contents_accessed"
 	EventTypeMemberPermanentlyDeleteAccountContents        = "member_permanently_delete_account_contents"
 	EventTypeMemberRemoveExternalId                        = "member_remove_external_id"
 	EventTypeMemberSetProfilePhoto                         = "member_set_profile_photo"
@@ -12393,6 +12477,13 @@ const (
 	EventTypePasswordChange                                = "password_change"
 	EventTypePasswordReset                                 = "password_reset"
 	EventTypePasswordResetAll                              = "password_reset_all"
+	EventTypeProtectActionAddCollaborator                  = "protect_action_add_collaborator"
+	EventTypeProtectActionAddLink                          = "protect_action_add_link"
+	EventTypeProtectActionDelete                           = "protect_action_delete"
+	EventTypeProtectActionExport                           = "protect_action_export"
+	EventTypeProtectActionRemoveCollaborator               = "protect_action_remove_collaborator"
+	EventTypeProtectActionRemoveLink                       = "protect_action_remove_link"
+	EventTypeProtectActionStopSharing                      = "protect_action_stop_sharing"
 	EventTypeProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
 	EventTypeClassificationCreateReport                    = "classification_create_report"
 	EventTypeClassificationCreateReportFail                = "classification_create_report_fail"
@@ -13795,6 +13886,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "member_folder_contents_accessed":
+		if err = json.Unmarshal(body, &u.MemberFolderContentsAccessed); err != nil {
+			return err
+		}
+
 	case "member_permanently_delete_account_contents":
 		if err = json.Unmarshal(body, &u.MemberPermanentlyDeleteAccountContents); err != nil {
 			return err
@@ -14127,6 +14223,41 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "password_reset_all":
 		if err = json.Unmarshal(body, &u.PasswordResetAll); err != nil {
+			return err
+		}
+
+	case "protect_action_add_collaborator":
+		if err = json.Unmarshal(body, &u.ProtectActionAddCollaborator); err != nil {
+			return err
+		}
+
+	case "protect_action_add_link":
+		if err = json.Unmarshal(body, &u.ProtectActionAddLink); err != nil {
+			return err
+		}
+
+	case "protect_action_delete":
+		if err = json.Unmarshal(body, &u.ProtectActionDelete); err != nil {
+			return err
+		}
+
+	case "protect_action_export":
+		if err = json.Unmarshal(body, &u.ProtectActionExport); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_collaborator":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveCollaborator); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_link":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveLink); err != nil {
+			return err
+		}
+
+	case "protect_action_stop_sharing":
+		if err = json.Unmarshal(body, &u.ProtectActionStopSharing); err != nil {
 			return err
 		}
 
@@ -16060,6 +16191,7 @@ const (
 	EventTypeArgMemberChangeStatus                            = "member_change_status"
 	EventTypeArgMemberDeleteManualContacts                    = "member_delete_manual_contacts"
 	EventTypeArgMemberDeleteProfilePhoto                      = "member_delete_profile_photo"
+	EventTypeArgMemberFolderContentsAccessed                  = "member_folder_contents_accessed"
 	EventTypeArgMemberPermanentlyDeleteAccountContents        = "member_permanently_delete_account_contents"
 	EventTypeArgMemberRemoveExternalId                        = "member_remove_external_id"
 	EventTypeArgMemberSetProfilePhoto                         = "member_set_profile_photo"
@@ -16127,6 +16259,13 @@ const (
 	EventTypeArgPasswordChange                                = "password_change"
 	EventTypeArgPasswordReset                                 = "password_reset"
 	EventTypeArgPasswordResetAll                              = "password_reset_all"
+	EventTypeArgProtectActionAddCollaborator                  = "protect_action_add_collaborator"
+	EventTypeArgProtectActionAddLink                          = "protect_action_add_link"
+	EventTypeArgProtectActionDelete                           = "protect_action_delete"
+	EventTypeArgProtectActionExport                           = "protect_action_export"
+	EventTypeArgProtectActionRemoveCollaborator               = "protect_action_remove_collaborator"
+	EventTypeArgProtectActionRemoveLink                       = "protect_action_remove_link"
+	EventTypeArgProtectActionStopSharing                      = "protect_action_stop_sharing"
 	EventTypeArgProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
 	EventTypeArgClassificationCreateReport                    = "classification_create_report"
 	EventTypeArgClassificationCreateReportFail                = "classification_create_report_fail"
@@ -20352,7 +20491,7 @@ const (
 )
 
 // MediaHubAddingPeoplePolicyChangedDetails : Changed the policy for adding
-// people to Media Hub content.
+// people to Replay content.
 type MediaHubAddingPeoplePolicyChangedDetails struct {
 	// NewValue : To.
 	NewValue *MediaHubAddingPeoplePolicy `json:"new_value"`
@@ -20395,7 +20534,7 @@ const (
 )
 
 // MediaHubDownloadPolicyChangedDetails : Changed the policy for downloading
-// Media Hub content.
+// Replay content.
 type MediaHubDownloadPolicyChangedDetails struct {
 	// NewValue : To.
 	NewValue *MediaHubDownloadPolicy `json:"new_value"`
@@ -20424,7 +20563,7 @@ func NewMediaHubDownloadPolicyChangedType(Description string) *MediaHubDownloadP
 	return s
 }
 
-// MediaHubFileDownloadedDetails : Downloaded files in Media Hub.
+// MediaHubFileDownloadedDetails : Downloaded files in Replay.
 type MediaHubFileDownloadedDetails struct {
 }
 
@@ -20462,7 +20601,7 @@ const (
 )
 
 // MediaHubLinkSharingPolicyChangedDetails : Changed the policy for sharing
-// Media Hub content.
+// Replay content.
 type MediaHubLinkSharingPolicyChangedDetails struct {
 	// NewValue : To.
 	NewValue *MediaHubLinkSharingPolicy `json:"new_value"`
@@ -20491,6 +20630,21 @@ func NewMediaHubLinkSharingPolicyChangedType(Description string) *MediaHubLinkSh
 	return s
 }
 
+// MediaHubProjectLogInfo : Replay project
+type MediaHubProjectLogInfo struct {
+	// ProjectName : Replay project name.
+	ProjectName string `json:"project_name"`
+	// ProjectId : Replay project ID.
+	ProjectId string `json:"project_id,omitempty"`
+}
+
+// NewMediaHubProjectLogInfo returns a new MediaHubProjectLogInfo instance
+func NewMediaHubProjectLogInfo(ProjectName string) *MediaHubProjectLogInfo {
+	s := new(MediaHubProjectLogInfo)
+	s.ProjectName = ProjectName
+	return s
+}
+
 // MediaHubProjectRole : Media Hub project role
 type MediaHubProjectRole struct {
 	dropbox.Tagged
@@ -20504,8 +20658,10 @@ const (
 	MediaHubProjectRoleOther    = "other"
 )
 
-// MediaHubProjectTeamAddDetails : Added member to Media Hub project.
+// MediaHubProjectTeamAddDetails : Added member to Replay project.
 type MediaHubProjectTeamAddDetails struct {
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubProjectTeamAddDetails returns a new MediaHubProjectTeamAddDetails instance
@@ -20527,8 +20683,10 @@ func NewMediaHubProjectTeamAddType(Description string) *MediaHubProjectTeamAddTy
 	return s
 }
 
-// MediaHubProjectTeamDeleteDetails : Removed member from Media Hub project.
+// MediaHubProjectTeamDeleteDetails : Removed member from Replay project.
 type MediaHubProjectTeamDeleteDetails struct {
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubProjectTeamDeleteDetails returns a new MediaHubProjectTeamDeleteDetails instance
@@ -20550,13 +20708,15 @@ func NewMediaHubProjectTeamDeleteType(Description string) *MediaHubProjectTeamDe
 	return s
 }
 
-// MediaHubProjectTeamRoleChangedDetails : Changed member role in Media Hub
+// MediaHubProjectTeamRoleChangedDetails : Changed member role in Replay
 // project.
 type MediaHubProjectTeamRoleChangedDetails struct {
 	// PreviousRole : Previous Media Hub project role.
 	PreviousRole *MediaHubProjectRole `json:"previous_role"`
 	// NewRole : New Media Hub project role.
 	NewRole *MediaHubProjectRole `json:"new_role"`
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubProjectTeamRoleChangedDetails returns a new MediaHubProjectTeamRoleChangedDetails instance
@@ -20593,7 +20753,7 @@ const (
 	MediaHubSharedLinkAudienceOther    = "other"
 )
 
-// MediaHubSharedLinkAudienceChangedDetails : Changed Media Hub shared link
+// MediaHubSharedLinkAudienceChangedDetails : Changed Replay shared link
 // audience.
 type MediaHubSharedLinkAudienceChangedDetails struct {
 	// TargetType : Media Hub shared link target type.
@@ -20602,6 +20762,8 @@ type MediaHubSharedLinkAudienceChangedDetails struct {
 	PreviousValue *MediaHubSharedLinkAudience `json:"previous_value"`
 	// NewValue : New Media Hub shared link audience.
 	NewValue *MediaHubSharedLinkAudience `json:"new_value"`
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubSharedLinkAudienceChangedDetails returns a new MediaHubSharedLinkAudienceChangedDetails instance
@@ -20626,12 +20788,14 @@ func NewMediaHubSharedLinkAudienceChangedType(Description string) *MediaHubShare
 	return s
 }
 
-// MediaHubSharedLinkCreatedDetails : Created Media Hub shared link.
+// MediaHubSharedLinkCreatedDetails : Created Replay shared link.
 type MediaHubSharedLinkCreatedDetails struct {
 	// TargetType : Media Hub shared link target type.
 	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
 	// Audience : Media Hub shared link audience.
 	Audience *MediaHubSharedLinkAudience `json:"audience"`
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubSharedLinkCreatedDetails returns a new MediaHubSharedLinkCreatedDetails instance
@@ -20667,8 +20831,8 @@ const (
 	MediaHubSharedLinkDownloadSettingOther    = "other"
 )
 
-// MediaHubSharedLinkDownloadSettingChangedDetails : Changed Media Hub shared
-// link download setting.
+// MediaHubSharedLinkDownloadSettingChangedDetails : Changed Replay shared link
+// download setting.
 type MediaHubSharedLinkDownloadSettingChangedDetails struct {
 	// TargetType : Media Hub shared link target type.
 	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
@@ -20676,6 +20840,8 @@ type MediaHubSharedLinkDownloadSettingChangedDetails struct {
 	PreviousValue *MediaHubSharedLinkDownloadSetting `json:"previous_value"`
 	// NewValue : New Media Hub shared link download setting.
 	NewValue *MediaHubSharedLinkDownloadSetting `json:"new_value"`
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubSharedLinkDownloadSettingChangedDetails returns a new MediaHubSharedLinkDownloadSettingChangedDetails instance
@@ -20700,10 +20866,12 @@ func NewMediaHubSharedLinkDownloadSettingChangedType(Description string) *MediaH
 	return s
 }
 
-// MediaHubSharedLinkRevokedDetails : Revoked Media Hub shared link.
+// MediaHubSharedLinkRevokedDetails : Revoked Replay shared link.
 type MediaHubSharedLinkRevokedDetails struct {
 	// TargetType : Media Hub shared link target type.
 	TargetType *MediaHubSharedLinkTargetType `json:"target_type"`
+	// Project : Replay project.
+	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
 }
 
 // NewMediaHubSharedLinkRevokedDetails returns a new MediaHubSharedLinkRevokedDetails instance
@@ -21099,6 +21267,30 @@ type MemberDeleteProfilePhotoType struct {
 // NewMemberDeleteProfilePhotoType returns a new MemberDeleteProfilePhotoType instance
 func NewMemberDeleteProfilePhotoType(Description string) *MemberDeleteProfilePhotoType {
 	s := new(MemberDeleteProfilePhotoType)
+	s.Description = Description
+	return s
+}
+
+// MemberFolderContentsAccessedDetails : Admin browsed a team member's folder
+// contents.
+type MemberFolderContentsAccessedDetails struct {
+}
+
+// NewMemberFolderContentsAccessedDetails returns a new MemberFolderContentsAccessedDetails instance
+func NewMemberFolderContentsAccessedDetails() *MemberFolderContentsAccessedDetails {
+	s := new(MemberFolderContentsAccessedDetails)
+	return s
+}
+
+// MemberFolderContentsAccessedType : has no documentation (yet)
+type MemberFolderContentsAccessedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewMemberFolderContentsAccessedType returns a new MemberFolderContentsAccessedType instance
+func NewMemberFolderContentsAccessedType(Description string) *MemberFolderContentsAccessedType {
+	s := new(MemberFolderContentsAccessedType)
 	s.Description = Description
 	return s
 }
@@ -24473,6 +24665,191 @@ type ProductRemovedFromMemberType struct {
 // NewProductRemovedFromMemberType returns a new ProductRemovedFromMemberType instance
 func NewProductRemovedFromMemberType(Description string) *ProductRemovedFromMemberType {
 	s := new(ProductRemovedFromMemberType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionAddCollaboratorDetails : Added collaborators via Dropbox
+// Protect.
+type ProtectActionAddCollaboratorDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionAddCollaboratorDetails returns a new ProtectActionAddCollaboratorDetails instance
+func NewProtectActionAddCollaboratorDetails(ActionId string) *ProtectActionAddCollaboratorDetails {
+	s := new(ProtectActionAddCollaboratorDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionAddCollaboratorType : has no documentation (yet)
+type ProtectActionAddCollaboratorType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionAddCollaboratorType returns a new ProtectActionAddCollaboratorType instance
+func NewProtectActionAddCollaboratorType(Description string) *ProtectActionAddCollaboratorType {
+	s := new(ProtectActionAddCollaboratorType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionAddLinkDetails : Added a link via Dropbox Protect.
+type ProtectActionAddLinkDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionAddLinkDetails returns a new ProtectActionAddLinkDetails instance
+func NewProtectActionAddLinkDetails(ActionId string) *ProtectActionAddLinkDetails {
+	s := new(ProtectActionAddLinkDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionAddLinkType : has no documentation (yet)
+type ProtectActionAddLinkType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionAddLinkType returns a new ProtectActionAddLinkType instance
+func NewProtectActionAddLinkType(Description string) *ProtectActionAddLinkType {
+	s := new(ProtectActionAddLinkType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionDeleteDetails : Deleted content via Dropbox Protect.
+type ProtectActionDeleteDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionDeleteDetails returns a new ProtectActionDeleteDetails instance
+func NewProtectActionDeleteDetails(ActionId string) *ProtectActionDeleteDetails {
+	s := new(ProtectActionDeleteDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionDeleteType : has no documentation (yet)
+type ProtectActionDeleteType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionDeleteType returns a new ProtectActionDeleteType instance
+func NewProtectActionDeleteType(Description string) *ProtectActionDeleteType {
+	s := new(ProtectActionDeleteType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionExportDetails : Exported content via Dropbox Protect.
+type ProtectActionExportDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionExportDetails returns a new ProtectActionExportDetails instance
+func NewProtectActionExportDetails(ActionId string) *ProtectActionExportDetails {
+	s := new(ProtectActionExportDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionExportType : has no documentation (yet)
+type ProtectActionExportType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionExportType returns a new ProtectActionExportType instance
+func NewProtectActionExportType(Description string) *ProtectActionExportType {
+	s := new(ProtectActionExportType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionRemoveCollaboratorDetails : Removed collaborators via Dropbox
+// Protect.
+type ProtectActionRemoveCollaboratorDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionRemoveCollaboratorDetails returns a new ProtectActionRemoveCollaboratorDetails instance
+func NewProtectActionRemoveCollaboratorDetails(ActionId string) *ProtectActionRemoveCollaboratorDetails {
+	s := new(ProtectActionRemoveCollaboratorDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionRemoveCollaboratorType : has no documentation (yet)
+type ProtectActionRemoveCollaboratorType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionRemoveCollaboratorType returns a new ProtectActionRemoveCollaboratorType instance
+func NewProtectActionRemoveCollaboratorType(Description string) *ProtectActionRemoveCollaboratorType {
+	s := new(ProtectActionRemoveCollaboratorType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionRemoveLinkDetails : Removed a link via Dropbox Protect.
+type ProtectActionRemoveLinkDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionRemoveLinkDetails returns a new ProtectActionRemoveLinkDetails instance
+func NewProtectActionRemoveLinkDetails(ActionId string) *ProtectActionRemoveLinkDetails {
+	s := new(ProtectActionRemoveLinkDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionRemoveLinkType : has no documentation (yet)
+type ProtectActionRemoveLinkType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionRemoveLinkType returns a new ProtectActionRemoveLinkType instance
+func NewProtectActionRemoveLinkType(Description string) *ProtectActionRemoveLinkType {
+	s := new(ProtectActionRemoveLinkType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionStopSharingDetails : Stopped sharing content via Dropbox
+// Protect.
+type ProtectActionStopSharingDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionStopSharingDetails returns a new ProtectActionStopSharingDetails instance
+func NewProtectActionStopSharingDetails(ActionId string) *ProtectActionStopSharingDetails {
+	s := new(ProtectActionStopSharingDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionStopSharingType : has no documentation (yet)
+type ProtectActionStopSharingType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionStopSharingType returns a new ProtectActionStopSharingType instance
+func NewProtectActionStopSharingType(Description string) *ProtectActionStopSharingType {
+	s := new(ProtectActionStopSharingType)
 	s.Description = Description
 	return s
 }
