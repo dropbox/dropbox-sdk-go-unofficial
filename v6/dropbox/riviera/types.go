@@ -295,12 +295,20 @@ func NewApiTranscriptSegment() *ApiTranscriptSegment {
 	return s
 }
 
-// ContentApiV2Error : has no documentation (yet)
+// ContentApiV2Error : Reason a transcript job failed. Returned in the `failed`
+// variant of `GetTranscriptAsyncCheckResult`. This is a semantic error union:
+// the HTTP status of the poll request itself is unaffected (a poll that
+// surfaces a failed job is still a normal successful poll response). Callers
+// should branch on the variant.
 type ContentApiV2Error struct {
 	dropbox.Tagged
-	// ServerError : has no documentation (yet)
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
 	ServerError string `json:"server_error,omitempty"`
-	// UserError : has no documentation (yet)
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
 	// MediaDurationError : has no documentation (yet)
 	MediaDurationError *MediaDurationError `json:"media_duration_error,omitempty"`
@@ -324,9 +332,13 @@ const (
 func (u *ContentApiV2Error) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// ServerError : has no documentation (yet)
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
 		ServerError string `json:"server_error,omitempty"`
-		// UserError : has no documentation (yet)
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
 		UserError string `json:"user_error,omitempty"`
 	}
 	var w wrap
@@ -351,30 +363,24 @@ func (u *ContentApiV2Error) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// ErrorCode : has no documentation (yet)
-type ErrorCode struct {
-	dropbox.Tagged
-}
-
-// Valid tag values for ErrorCode
-const (
-	ErrorCodeUnknownError   = "unknown_error"
-	ErrorCodeBadRequest     = "bad_request"
-	ErrorCodeApiError       = "api_error"
-	ErrorCodeAccessError    = "access_error"
-	ErrorCodeRatelimitError = "ratelimit_error"
-	ErrorCodeUnavailable    = "unavailable"
-	ErrorCodeOther          = "other"
-)
-
 // FileIdOrUrl : has no documentation (yet)
 type FileIdOrUrl struct {
 	dropbox.Tagged
-	// FileId : has no documentation (yet)
+	// FileId : A Dropbox-issued file id (format: "id:<id>") for a file the
+	// authenticated user has access to.
 	FileId string `json:"file_id,omitempty"`
-	// Url : has no documentation (yet)
+	// Url : Either a Dropbox shared link (www.dropbox.com) or an external HTTP
+	// or HTTPS URL pointing to a supported file. - Dropbox shared links are
+	// resolved internally using the caller's authenticated identity and the
+	// link's visibility / download settings. They therefore require an
+	// authenticated user context (anonymous `url` requests against Dropbox
+	// links are rejected with an `access_error`). Links protected by a password
+	// are rejected with `shared_link_password_protected`; links with downloads
+	// disabled are rejected with `link_download_disabled_error`. - External
+	// URLs are fetched through the backend's egress proxy and must point at a
+	// supported file extension.
 	Url string `json:"url,omitempty"`
-	// Path : has no documentation (yet)
+	// Path : An absolute Dropbox path, e.g. "/folder/example.pdf".
 	Path string `json:"path,omitempty"`
 }
 
@@ -390,11 +396,22 @@ const (
 func (u *FileIdOrUrl) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// FileId : has no documentation (yet)
+		// FileId : A Dropbox-issued file id (format: "id:<id>") for a file the
+		// authenticated user has access to.
 		FileId string `json:"file_id,omitempty"`
-		// Url : has no documentation (yet)
+		// Url : Either a Dropbox shared link (www.dropbox.com) or an external
+		// HTTP or HTTPS URL pointing to a supported file. - Dropbox shared
+		// links are resolved internally using the caller's authenticated
+		// identity and the link's visibility / download settings. They
+		// therefore require an authenticated user context (anonymous `url`
+		// requests against Dropbox links are rejected with an `access_error`).
+		// Links protected by a password are rejected with
+		// `shared_link_password_protected`; links with downloads disabled are
+		// rejected with `link_download_disabled_error`. - External URLs are
+		// fetched through the backend's egress proxy and must point at a
+		// supported file extension.
 		Url string `json:"url,omitempty"`
-		// Path : has no documentation (yet)
+		// Path : An absolute Dropbox path, e.g. "/folder/example.pdf".
 		Path string `json:"path,omitempty"`
 	}
 	var w wrap
@@ -422,21 +439,9 @@ func (u *FileIdOrUrl) UnmarshalJSON(body []byte) error {
 // `file_id_or_url` to identify the document to convert to markdown.
 type GetMarkdownArgs struct {
 	// FileIdOrUrl : Identifier of the document to convert. Callers must set
-	// exactly one of the oneof variants: - file_id: a Dropbox-issued file id
-	// (format: "id:<id>") for a file the authenticated user has access to. -
-	// path: an absolute Dropbox path, e.g. "/folder/report.docx". - url: either
-	// a Dropbox shared link (www.dropbox.com) or an external HTTPS URL pointing
-	// to a supported document file. - Dropbox shared links are resolved
-	// internally using the caller's authenticated identity and the link's
-	// visibility / download settings. They therefore require an authenticated
-	// user context (anonymous `url` requests against Dropbox links are rejected
-	// with an `ACCESS_ERROR`). Links protected by a password are rejected with
-	// `shared_link_password_protected`; links with downloads disabled are
-	// rejected with `link_download_disabled_error`. - External URLs are fetched
-	// over HTTPS through the backend's egress proxy and must point at a
-	// supported document file extension. The referenced file must be a document
-	// in a supported format; requests against unsupported formats return
-	// `unsupported_format_error`.
+	// exactly one of the `FileIdOrUrl` variants. The referenced file must be a
+	// document in a supported format (see the route description for the list);
+	// requests against unsupported formats return `unsupported_format_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 	// EnableOcr : Enable OCR for PDF documents. Processing is slower when
 	// enabled.
@@ -460,7 +465,7 @@ type GetMarkdownAsyncCheckResult struct {
 	// Complete : has no documentation (yet)
 	Complete *GetMarkdownResult `json:"complete,omitempty"`
 	// Failed : has no documentation (yet)
-	Failed *GetMarkdownAsyncError `json:"failed,omitempty"`
+	Failed *MarkdownConversionApiV2Error `json:"failed,omitempty"`
 }
 
 // Valid tag values for GetMarkdownAsyncCheckResult
@@ -475,6 +480,8 @@ const (
 func (u *GetMarkdownAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *MarkdownConversionApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -489,27 +496,10 @@ func (u *GetMarkdownAsyncCheckResult) UnmarshalJSON(body []byte) error {
 		}
 
 	case "failed":
-		if err = json.Unmarshal(body, &u.Failed); err != nil {
-			return err
-		}
+		u.Failed = w.Failed
 
 	}
 	return nil
-}
-
-// GetMarkdownAsyncError : has no documentation (yet)
-type GetMarkdownAsyncError struct {
-	// ErrorCode : has no documentation (yet)
-	ErrorCode *ErrorCode `json:"error_code"`
-	// ErrorDetails : has no documentation (yet)
-	ErrorDetails *MarkdownConversionApiV2Error `json:"error_details,omitempty"`
-}
-
-// NewGetMarkdownAsyncError returns a new GetMarkdownAsyncError instance
-func NewGetMarkdownAsyncError() *GetMarkdownAsyncError {
-	s := new(GetMarkdownAsyncError)
-	s.ErrorCode = &ErrorCode{Tagged: dropbox.Tagged{Tag: "unknown_error"}}
-	return s
 }
 
 // GetMarkdownResult : has no documentation (yet)
@@ -530,23 +520,12 @@ func NewGetMarkdownResult() *GetMarkdownResult {
 // `file_id_or_url` to identify the file whose metadata should be extracted.
 type GetMetadataArgs struct {
 	// FileIdOrUrl : Identifier of the file to extract metadata from. Callers
-	// must set exactly one of the oneof variants: - file_id: a Dropbox-issued
-	// file id (format: "id:<id>") for a file the authenticated user has access
-	// to. - path: an absolute Dropbox path, e.g. "/folder/photo.jpg". - url:
-	// either a Dropbox shared link (www.dropbox.com) or an external HTTPS URL
-	// pointing to a supported file. - Dropbox shared links are resolved
-	// internally using the caller's authenticated identity and the link's
-	// visibility / download settings. They therefore require an authenticated
-	// user context (anonymous `url` requests against Dropbox links are rejected
-	// with an `ACCESS_ERROR`). Links protected by a password are rejected with
-	// `shared_link_password_protected`; links with downloads disabled are
-	// rejected with `link_download_disabled_error`. - External URLs are fetched
-	// over HTTPS through the backend's egress proxy and must point at a
-	// supported file extension. The kind of metadata returned is determined by
-	// the file type: image files return EXIF metadata, audio/video files return
-	// media metadata, PDFs return PDF metadata, and MS Office documents (docx,
-	// pptx, xlsx) return Office metadata. Requests against unsupported formats
-	// return `unsupported_format_error`.
+	// must set exactly one of the `FileIdOrUrl` variants. The kind of metadata
+	// returned is determined by the file type: image files return EXIF
+	// metadata, audio/video files return media metadata, PDFs return PDF
+	// metadata, and MS Office documents (docx, pptx, xlsx) return Office
+	// metadata. See the route description for the supported formats. Requests
+	// against unsupported formats return `unsupported_format_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 }
 
@@ -563,7 +542,7 @@ type GetMetadataAsyncCheckResult struct {
 	// Complete : has no documentation (yet)
 	Complete *GetMetadataResult `json:"complete,omitempty"`
 	// Failed : has no documentation (yet)
-	Failed *GetMetadataAsyncError `json:"failed,omitempty"`
+	Failed *MetadataExtractionApiV2Error `json:"failed,omitempty"`
 }
 
 // Valid tag values for GetMetadataAsyncCheckResult
@@ -578,6 +557,8 @@ const (
 func (u *GetMetadataAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *MetadataExtractionApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -592,27 +573,10 @@ func (u *GetMetadataAsyncCheckResult) UnmarshalJSON(body []byte) error {
 		}
 
 	case "failed":
-		if err = json.Unmarshal(body, &u.Failed); err != nil {
-			return err
-		}
+		u.Failed = w.Failed
 
 	}
 	return nil
-}
-
-// GetMetadataAsyncError : has no documentation (yet)
-type GetMetadataAsyncError struct {
-	// ErrorCode : has no documentation (yet)
-	ErrorCode *ErrorCode `json:"error_code"`
-	// ErrorDetails : has no documentation (yet)
-	ErrorDetails *MetadataExtractionApiV2Error `json:"error_details,omitempty"`
-}
-
-// NewGetMetadataAsyncError returns a new GetMetadataAsyncError instance
-func NewGetMetadataAsyncError() *GetMetadataAsyncError {
-	s := new(GetMetadataAsyncError)
-	s.ErrorCode = &ErrorCode{Tagged: dropbox.Tagged{Tag: "unknown_error"}}
-	return s
 }
 
 // GetMetadataResult : has no documentation (yet)
@@ -636,27 +600,16 @@ func NewGetMetadataResult() *GetMetadataResult {
 // `file_id_or_url` to identify the audio or video asset to transcribe.
 type GetTranscriptArgs struct {
 	// FileIdOrUrl : Identifier of the media asset to transcribe. Callers must
-	// set exactly one of the oneof variants: - file_id: a Dropbox-issued file
-	// id (format: "id:<id>") for a file the authenticated user has access to. -
-	// path: an absolute Dropbox path, e.g. "/folder/recording.mp4". - url:
-	// either a Dropbox shared link (www.dropbox.com) or an external HTTPS URL
-	// pointing to a supported audio/video file. - Dropbox shared links are
-	// resolved internally using the caller's authenticated identity and the
-	// link's visibility / download settings. They therefore require an
-	// authenticated user context (anonymous `url` requests against Dropbox
-	// links are rejected with an `ACCESS_ERROR`). Links protected by a password
-	// are rejected with `shared_link_password_protected`; links with downloads
-	// disabled are rejected with `link_download_disabled_error`. - External
-	// URLs are fetched over HTTPS through the backend's egress proxy and must
-	// point at a supported audio/video file extension. The referenced asset
-	// must be an audio or video file in a supported format; requests against
-	// files with no audio track return a `no_audio_error`.
+	// set exactly one of the `FileIdOrUrl` variants. The referenced asset must
+	// be an audio or video file in a supported format (see the route
+	// description for the list); requests against files with no audio track
+	// return a `no_audio_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 	// TimestampLevel : Granularity of the time offsets returned for each
-	// transcript segment. Defaults to `SENTENCE. - SENTENCE: one segment per
-	// spoken sentence (recommended). - WORD: one segment per word, useful for
-	// fine-grained alignment such as captioning or highlight-as-you-listen
-	// experiences.
+	// transcript segment. Defaults to `SENTENCE` when the field is omitted. -
+	// SENTENCE: one segment per spoken sentence (recommended). - WORD: one
+	// segment per word, useful for fine-grained alignment such as captioning or
+	// highlight-as-you-listen experiences.
 	TimestampLevel *TimestampLevel `json:"timestamp_level"`
 	// IncludedSpecialWords : Comma-delimited list of non-lexical filler words
 	// to preserve in the transcript output, e.g. `"uh, ah, uhm"`. By default
@@ -674,7 +627,7 @@ type GetTranscriptArgs struct {
 // NewGetTranscriptArgs returns a new GetTranscriptArgs instance
 func NewGetTranscriptArgs() *GetTranscriptArgs {
 	s := new(GetTranscriptArgs)
-	s.TimestampLevel = &TimestampLevel{Tagged: dropbox.Tagged{Tag: "unknown"}}
+	s.TimestampLevel = &TimestampLevel{Tagged: dropbox.Tagged{Tag: "sentence"}}
 	s.IncludedSpecialWords = ""
 	s.AudioLanguage = ""
 	return s
@@ -687,7 +640,7 @@ type GetTranscriptAsyncCheckResult struct {
 	// Complete : has no documentation (yet)
 	Complete *GetTranscriptResult `json:"complete,omitempty"`
 	// Failed : has no documentation (yet)
-	Failed *GetTranscriptAsyncError `json:"failed,omitempty"`
+	Failed *ContentApiV2Error `json:"failed,omitempty"`
 }
 
 // Valid tag values for GetTranscriptAsyncCheckResult
@@ -702,6 +655,8 @@ const (
 func (u *GetTranscriptAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *ContentApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -716,27 +671,10 @@ func (u *GetTranscriptAsyncCheckResult) UnmarshalJSON(body []byte) error {
 		}
 
 	case "failed":
-		if err = json.Unmarshal(body, &u.Failed); err != nil {
-			return err
-		}
+		u.Failed = w.Failed
 
 	}
 	return nil
-}
-
-// GetTranscriptAsyncError : has no documentation (yet)
-type GetTranscriptAsyncError struct {
-	// ErrorCode : has no documentation (yet)
-	ErrorCode *ErrorCode `json:"error_code"`
-	// ErrorDetails : has no documentation (yet)
-	ErrorDetails *ContentApiV2Error `json:"error_details,omitempty"`
-}
-
-// NewGetTranscriptAsyncError returns a new GetTranscriptAsyncError instance
-func NewGetTranscriptAsyncError() *GetTranscriptAsyncError {
-	s := new(GetTranscriptAsyncError)
-	s.ErrorCode = &ErrorCode{Tagged: dropbox.Tagged{Tag: "unknown_error"}}
-	return s
 }
 
 // GetTranscriptResult : has no documentation (yet)
@@ -754,12 +692,20 @@ func NewGetTranscriptResult() *GetTranscriptResult {
 	return s
 }
 
-// MarkdownConversionApiV2Error : has no documentation (yet)
+// MarkdownConversionApiV2Error : Reason a markdown conversion job failed.
+// Returned in the `failed` variant of `GetMarkdownAsyncCheckResult`. This is a
+// semantic error union: the HTTP status of the poll request itself is
+// unaffected (a poll that surfaces a failed job is still a normal successful
+// poll response). Callers should branch on the variant.
 type MarkdownConversionApiV2Error struct {
 	dropbox.Tagged
-	// ServerError : has no documentation (yet)
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
 	ServerError string `json:"server_error,omitempty"`
-	// UserError : has no documentation (yet)
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
 }
 
@@ -781,9 +727,13 @@ const (
 func (u *MarkdownConversionApiV2Error) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// ServerError : has no documentation (yet)
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
 		ServerError string `json:"server_error,omitempty"`
-		// UserError : has no documentation (yet)
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
 		UserError string `json:"user_error,omitempty"`
 	}
 	var w wrap
@@ -816,12 +766,20 @@ func NewMediaDurationError() *MediaDurationError {
 	return s
 }
 
-// MetadataExtractionApiV2Error : has no documentation (yet)
+// MetadataExtractionApiV2Error : Reason a metadata extraction job failed.
+// Returned in the `failed` variant of `GetMetadataAsyncCheckResult`. This is a
+// semantic error union: the HTTP status of the poll request itself is
+// unaffected (a poll that surfaces a failed job is still a normal successful
+// poll response). Callers should branch on the variant.
 type MetadataExtractionApiV2Error struct {
 	dropbox.Tagged
-	// ServerError : has no documentation (yet)
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
 	ServerError string `json:"server_error,omitempty"`
-	// UserError : has no documentation (yet)
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
 }
 
@@ -843,9 +801,13 @@ const (
 func (u *MetadataExtractionApiV2Error) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// ServerError : has no documentation (yet)
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
 		ServerError string `json:"server_error,omitempty"`
-		// UserError : has no documentation (yet)
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
 		UserError string `json:"user_error,omitempty"`
 	}
 	var w wrap
@@ -903,7 +865,6 @@ type TimestampLevel struct {
 
 // Valid tag values for TimestampLevel
 const (
-	TimestampLevelUnknown  = "unknown"
 	TimestampLevelSentence = "sentence"
 	TimestampLevelWord     = "word"
 	TimestampLevelOther    = "other"
