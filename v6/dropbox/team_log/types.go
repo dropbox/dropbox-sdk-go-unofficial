@@ -6091,6 +6091,12 @@ type EventDetails struct {
 	ProtectActionStopSharingDetails *ProtectActionStopSharingDetails `json:"protect_action_stop_sharing_details,omitempty"`
 	// ProtectInternalDomainsChangedDetails : has no documentation (yet)
 	ProtectInternalDomainsChangedDetails *ProtectInternalDomainsChangedDetails `json:"protect_internal_domains_changed_details,omitempty"`
+	// ProtectPolicyActivatedDetails : has no documentation (yet)
+	ProtectPolicyActivatedDetails *ProtectPolicyActivatedDetails `json:"protect_policy_activated_details,omitempty"`
+	// ProtectPolicyDeactivatedDetails : has no documentation (yet)
+	ProtectPolicyDeactivatedDetails *ProtectPolicyDeactivatedDetails `json:"protect_policy_deactivated_details,omitempty"`
+	// ProtectPolicyUpdatedDetails : has no documentation (yet)
+	ProtectPolicyUpdatedDetails *ProtectPolicyUpdatedDetails `json:"protect_policy_updated_details,omitempty"`
 	// ClassificationCreateReportDetails : has no documentation (yet)
 	ClassificationCreateReportDetails *ClassificationCreateReportDetails `json:"classification_create_report_details,omitempty"`
 	// ClassificationCreateReportFailDetails : has no documentation (yet)
@@ -7093,6 +7099,9 @@ const (
 	EventDetailsProtectActionRemoveLinkDetails                       = "protect_action_remove_link_details"
 	EventDetailsProtectActionStopSharingDetails                      = "protect_action_stop_sharing_details"
 	EventDetailsProtectInternalDomainsChangedDetails                 = "protect_internal_domains_changed_details"
+	EventDetailsProtectPolicyActivatedDetails                        = "protect_policy_activated_details"
+	EventDetailsProtectPolicyDeactivatedDetails                      = "protect_policy_deactivated_details"
+	EventDetailsProtectPolicyUpdatedDetails                          = "protect_policy_updated_details"
 	EventDetailsClassificationCreateReportDetails                    = "classification_create_report_details"
 	EventDetailsClassificationCreateReportFailDetails                = "classification_create_report_fail_details"
 	EventDetailsEmmCreateExceptionsReportDetails                     = "emm_create_exceptions_report_details"
@@ -8872,6 +8881,21 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "protect_internal_domains_changed_details":
 		if err = json.Unmarshal(body, &u.ProtectInternalDomainsChangedDetails); err != nil {
+			return err
+		}
+
+	case "protect_policy_activated_details":
+		if err = json.Unmarshal(body, &u.ProtectPolicyActivatedDetails); err != nil {
+			return err
+		}
+
+	case "protect_policy_deactivated_details":
+		if err = json.Unmarshal(body, &u.ProtectPolicyDeactivatedDetails); err != nil {
+			return err
+		}
+
+	case "protect_policy_updated_details":
+		if err = json.Unmarshal(body, &u.ProtectPolicyUpdatedDetails); err != nil {
 			return err
 		}
 
@@ -11277,6 +11301,12 @@ type EventType struct {
 	// ProtectInternalDomainsChanged : (protect) Modified Protect internal
 	// domains list
 	ProtectInternalDomainsChanged *ProtectInternalDomainsChangedType `json:"protect_internal_domains_changed,omitempty"`
+	// ProtectPolicyActivated : (protect) Activated a Dropbox Protect policy
+	ProtectPolicyActivated *ProtectPolicyActivatedType `json:"protect_policy_activated,omitempty"`
+	// ProtectPolicyDeactivated : (protect) Deactivated a Dropbox Protect policy
+	ProtectPolicyDeactivated *ProtectPolicyDeactivatedType `json:"protect_policy_deactivated,omitempty"`
+	// ProtectPolicyUpdated : (protect) Updated a Dropbox Protect policy
+	ProtectPolicyUpdated *ProtectPolicyUpdatedType `json:"protect_policy_updated,omitempty"`
 	// ClassificationCreateReport : (reports) Created Classification report
 	ClassificationCreateReport *ClassificationCreateReportType `json:"classification_create_report,omitempty"`
 	// ClassificationCreateReportFail : (reports) Couldn't create Classification
@@ -12485,6 +12515,9 @@ const (
 	EventTypeProtectActionRemoveLink                       = "protect_action_remove_link"
 	EventTypeProtectActionStopSharing                      = "protect_action_stop_sharing"
 	EventTypeProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
+	EventTypeProtectPolicyActivated                        = "protect_policy_activated"
+	EventTypeProtectPolicyDeactivated                      = "protect_policy_deactivated"
+	EventTypeProtectPolicyUpdated                          = "protect_policy_updated"
 	EventTypeClassificationCreateReport                    = "classification_create_report"
 	EventTypeClassificationCreateReportFail                = "classification_create_report_fail"
 	EventTypeEmmCreateExceptionsReport                     = "emm_create_exceptions_report"
@@ -14263,6 +14296,21 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "protect_internal_domains_changed":
 		if err = json.Unmarshal(body, &u.ProtectInternalDomainsChanged); err != nil {
+			return err
+		}
+
+	case "protect_policy_activated":
+		if err = json.Unmarshal(body, &u.ProtectPolicyActivated); err != nil {
+			return err
+		}
+
+	case "protect_policy_deactivated":
+		if err = json.Unmarshal(body, &u.ProtectPolicyDeactivated); err != nil {
+			return err
+		}
+
+	case "protect_policy_updated":
+		if err = json.Unmarshal(body, &u.ProtectPolicyUpdated); err != nil {
 			return err
 		}
 
@@ -16267,6 +16315,9 @@ const (
 	EventTypeArgProtectActionRemoveLink                       = "protect_action_remove_link"
 	EventTypeArgProtectActionStopSharing                      = "protect_action_stop_sharing"
 	EventTypeArgProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
+	EventTypeArgProtectPolicyActivated                        = "protect_policy_activated"
+	EventTypeArgProtectPolicyDeactivated                      = "protect_policy_deactivated"
+	EventTypeArgProtectPolicyUpdated                          = "protect_policy_updated"
 	EventTypeArgClassificationCreateReport                    = "classification_create_report"
 	EventTypeArgClassificationCreateReportFail                = "classification_create_report_fail"
 	EventTypeArgEmmCreateExceptionsReport                     = "emm_create_exceptions_report"
@@ -24878,6 +24929,84 @@ type ProtectInternalDomainsChangedType struct {
 // NewProtectInternalDomainsChangedType returns a new ProtectInternalDomainsChangedType instance
 func NewProtectInternalDomainsChangedType(Description string) *ProtectInternalDomainsChangedType {
 	s := new(ProtectInternalDomainsChangedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectPolicyActivatedDetails : Activated a Dropbox Protect policy.
+type ProtectPolicyActivatedDetails struct {
+	// PolicyId : Policy ID.
+	PolicyId string `json:"policy_id"`
+}
+
+// NewProtectPolicyActivatedDetails returns a new ProtectPolicyActivatedDetails instance
+func NewProtectPolicyActivatedDetails(PolicyId string) *ProtectPolicyActivatedDetails {
+	s := new(ProtectPolicyActivatedDetails)
+	s.PolicyId = PolicyId
+	return s
+}
+
+// ProtectPolicyActivatedType : has no documentation (yet)
+type ProtectPolicyActivatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectPolicyActivatedType returns a new ProtectPolicyActivatedType instance
+func NewProtectPolicyActivatedType(Description string) *ProtectPolicyActivatedType {
+	s := new(ProtectPolicyActivatedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectPolicyDeactivatedDetails : Deactivated a Dropbox Protect policy.
+type ProtectPolicyDeactivatedDetails struct {
+	// PolicyId : Policy ID.
+	PolicyId string `json:"policy_id"`
+}
+
+// NewProtectPolicyDeactivatedDetails returns a new ProtectPolicyDeactivatedDetails instance
+func NewProtectPolicyDeactivatedDetails(PolicyId string) *ProtectPolicyDeactivatedDetails {
+	s := new(ProtectPolicyDeactivatedDetails)
+	s.PolicyId = PolicyId
+	return s
+}
+
+// ProtectPolicyDeactivatedType : has no documentation (yet)
+type ProtectPolicyDeactivatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectPolicyDeactivatedType returns a new ProtectPolicyDeactivatedType instance
+func NewProtectPolicyDeactivatedType(Description string) *ProtectPolicyDeactivatedType {
+	s := new(ProtectPolicyDeactivatedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectPolicyUpdatedDetails : Updated a Dropbox Protect policy.
+type ProtectPolicyUpdatedDetails struct {
+	// PolicyId : Policy ID.
+	PolicyId string `json:"policy_id"`
+}
+
+// NewProtectPolicyUpdatedDetails returns a new ProtectPolicyUpdatedDetails instance
+func NewProtectPolicyUpdatedDetails(PolicyId string) *ProtectPolicyUpdatedDetails {
+	s := new(ProtectPolicyUpdatedDetails)
+	s.PolicyId = PolicyId
+	return s
+}
+
+// ProtectPolicyUpdatedType : has no documentation (yet)
+type ProtectPolicyUpdatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectPolicyUpdatedType returns a new ProtectPolicyUpdatedType instance
+func NewProtectPolicyUpdatedType(Description string) *ProtectPolicyUpdatedType {
+	s := new(ProtectPolicyUpdatedType)
 	s.Description = Description
 	return s
 }
