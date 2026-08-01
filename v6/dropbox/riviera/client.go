@@ -58,6 +58,18 @@ type Client interface {
 	// GetMetadataAsyncCheck : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
+	// GetTextAsync : Asynchronous plain-text extraction from documents.
+	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
+	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
+	// PDF: .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc,
+	// .gsheet, .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported
+	// formats return an `unsupported_format_error`. For the `url` variant only
+	// Dropbox shared links are supported; external URLs return
+	// `unsupported_format_error`.
+	GetTextAsync(arg *GetTextArgs) (res *async.LaunchResultBase, err error)
+	// GetTextAsyncCheck : Returns the status or result of specified
+	// get_text_async task.
+	GetTextAsyncCheck(arg *async.PollArg) (res *GetTextAsyncCheckResult, err error)
 	// GetTranscriptAsync : Asynchronous transcript generation for audio and
 	// video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
 	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
@@ -100,6 +112,18 @@ type ContextClient interface {
 	// GetMetadataAsyncCheckContext : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
+	// GetTextAsyncContext : Asynchronous plain-text extraction from documents.
+	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
+	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
+	// PDF: .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc,
+	// .gsheet, .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported
+	// formats return an `unsupported_format_error`. For the `url` variant only
+	// Dropbox shared links are supported; external URLs return
+	// `unsupported_format_error`.
+	GetTextAsyncContext(ctx context.Context, arg *GetTextArgs) (res *async.LaunchResultBase, err error)
+	// GetTextAsyncCheckContext : Returns the status or result of specified
+	// get_text_async task.
+	GetTextAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTextAsyncCheckResult, err error)
 	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio
 	// and video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
 	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
@@ -302,6 +326,99 @@ func (dbx *apiImpl) GetMetadataAsyncCheckContext(ctx context.Context, arg *async
 
 func (dbx *apiImpl) GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error) {
 	return dbx.GetMetadataAsyncCheckContext(context.Background(), arg)
+}
+
+// GetTextAsyncAPIError is an error-wrapper for the get_text_async route
+type GetTextAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+// GetTextAsyncContext : Asynchronous plain-text extraction from documents.
+// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
+// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. - PDF:
+// .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc, .gsheet,
+// .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported formats return an
+// `unsupported_format_error`. For the `url` variant only Dropbox shared links
+// are supported; external URLs return `unsupported_format_error`.
+func (dbx *apiImpl) GetTextAsyncContext(ctx context.Context, arg *GetTextArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_text_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetTextAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetTextAsync(arg *GetTextArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetTextAsyncContext(context.Background(), arg)
+}
+
+// GetTextAsyncCheckAPIError is an error-wrapper for the get_text_async/check route
+type GetTextAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// GetTextAsyncCheckContext : Returns the status or result of specified
+// get_text_async task.
+func (dbx *apiImpl) GetTextAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTextAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_text_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetTextAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetTextAsyncCheck(arg *async.PollArg) (res *GetTextAsyncCheckResult, err error) {
+	return dbx.GetTextAsyncCheckContext(context.Background(), arg)
 }
 
 // GetTranscriptAsyncAPIError is an error-wrapper for the get_transcript_async route

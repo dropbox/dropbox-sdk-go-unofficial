@@ -595,6 +595,87 @@ func NewGetMetadataResult() *GetMetadataResult {
 	return s
 }
 
+// GetTextArgs : Arguments for the asynchronous `get_text_async` route. Exactly
+// one of `file_id`, `path`, or `url` must be supplied via `file_id_or_url` to
+// identify the document whose plain-text content should be extracted.
+type GetTextArgs struct {
+	// FileIdOrUrl : Identifier of the document to extract text from. Callers
+	// must set exactly one of the `FileIdOrUrl` variants. Text extraction is
+	// supported for common document formats (Word, PowerPoint, Excel, PDF, RTF,
+	// and Dropbox document types); see the route description for the supported
+	// formats. Requests against unsupported formats return
+	// `unsupported_format_error`. NOTE: for the `url` variant, only Dropbox
+	// shared links (www.dropbox.com) are supported. External (non-Dropbox) URLs
+	// are not supported and return `unsupported_format_error`; import the file
+	// into Dropbox and reference it by `file_id` or `path` instead.
+	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
+}
+
+// NewGetTextArgs returns a new GetTextArgs instance
+func NewGetTextArgs() *GetTextArgs {
+	s := new(GetTextArgs)
+	return s
+}
+
+// GetTextAsyncCheckResult : Result type for EventBus async check - must end in
+// "CheckResult"
+type GetTextAsyncCheckResult struct {
+	dropbox.Tagged
+	// Complete : has no documentation (yet)
+	Complete *GetTextResult `json:"complete,omitempty"`
+	// Failed : has no documentation (yet)
+	Failed *TextExtractionApiV2Error `json:"failed,omitempty"`
+}
+
+// Valid tag values for GetTextAsyncCheckResult
+const (
+	GetTextAsyncCheckResultInProgress = "in_progress"
+	GetTextAsyncCheckResultComplete   = "complete"
+	GetTextAsyncCheckResultFailed     = "failed"
+	GetTextAsyncCheckResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a GetTextAsyncCheckResult instance
+func (u *GetTextAsyncCheckResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *TextExtractionApiV2Error `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
+			return err
+		}
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// GetTextResult : has no documentation (yet)
+type GetTextResult struct {
+	// Text : The plain-text content extracted from the document. For multi-page
+	// documents the text is concatenated in document order. May be empty when
+	// no text is detected in the source.
+	Text string `json:"text"`
+}
+
+// NewGetTextResult returns a new GetTextResult instance
+func NewGetTextResult() *GetTextResult {
+	s := new(GetTextResult)
+	s.Text = ""
+	return s
+}
+
 // GetTranscriptArgs : Arguments for the asynchronous `get_transcript_async`
 // route. Exactly one of `file_id`, `path`, or `url` must be supplied via
 // `file_id_or_url` to identify the audio or video asset to transcribe.
@@ -857,6 +938,67 @@ const (
 	OfficeFileTypeOfficeFiletypeExcel      = "office_filetype_excel"
 	OfficeFileTypeOther                    = "other"
 )
+
+// TextExtractionApiV2Error : Reason a text extraction job failed. Returned in
+// the `failed` variant of `GetTextAsyncCheckResult`. This is a semantic error
+// union: the HTTP status of the poll request itself is unaffected (a poll that
+// surfaces a failed job is still a normal successful poll response). Callers
+// should branch on the variant.
+type TextExtractionApiV2Error struct {
+	dropbox.Tagged
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
+	ServerError string `json:"server_error,omitempty"`
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
+	UserError string `json:"user_error,omitempty"`
+}
+
+// Valid tag values for TextExtractionApiV2Error
+const (
+	TextExtractionApiV2ErrorServerError                 = "server_error"
+	TextExtractionApiV2ErrorUserError                   = "user_error"
+	TextExtractionApiV2ErrorUnsupportedFormatError      = "unsupported_format_error"
+	TextExtractionApiV2ErrorLinkDownloadDisabledError   = "link_download_disabled_error"
+	TextExtractionApiV2ErrorSharedLinkPasswordProtected = "shared_link_password_protected"
+	TextExtractionApiV2ErrorLimitExceededError          = "limit_exceeded_error"
+	TextExtractionApiV2ErrorConversionFailureError      = "conversion_failure_error"
+	TextExtractionApiV2ErrorNotFoundError               = "not_found_error"
+	TextExtractionApiV2ErrorIsAFolderError              = "is_a_folder_error"
+	TextExtractionApiV2ErrorOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a TextExtractionApiV2Error instance
+func (u *TextExtractionApiV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
+		ServerError string `json:"server_error,omitempty"`
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
+		UserError string `json:"user_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "server_error":
+		u.ServerError = w.ServerError
+
+	case "user_error":
+		u.UserError = w.UserError
+
+	}
+	return nil
+}
 
 // TimestampLevel : has no documentation (yet)
 type TimestampLevel struct {
