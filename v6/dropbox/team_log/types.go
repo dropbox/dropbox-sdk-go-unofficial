@@ -6095,6 +6095,8 @@ type EventDetails struct {
 	ProtectPolicyActivatedDetails *ProtectPolicyActivatedDetails `json:"protect_policy_activated_details,omitempty"`
 	// ProtectPolicyDeactivatedDetails : has no documentation (yet)
 	ProtectPolicyDeactivatedDetails *ProtectPolicyDeactivatedDetails `json:"protect_policy_deactivated_details,omitempty"`
+	// ProtectPolicyScheduledDetails : has no documentation (yet)
+	ProtectPolicyScheduledDetails *ProtectPolicyScheduledDetails `json:"protect_policy_scheduled_details,omitempty"`
 	// ProtectPolicyUpdatedDetails : has no documentation (yet)
 	ProtectPolicyUpdatedDetails *ProtectPolicyUpdatedDetails `json:"protect_policy_updated_details,omitempty"`
 	// ClassificationCreateReportDetails : has no documentation (yet)
@@ -7101,6 +7103,7 @@ const (
 	EventDetailsProtectInternalDomainsChangedDetails                 = "protect_internal_domains_changed_details"
 	EventDetailsProtectPolicyActivatedDetails                        = "protect_policy_activated_details"
 	EventDetailsProtectPolicyDeactivatedDetails                      = "protect_policy_deactivated_details"
+	EventDetailsProtectPolicyScheduledDetails                        = "protect_policy_scheduled_details"
 	EventDetailsProtectPolicyUpdatedDetails                          = "protect_policy_updated_details"
 	EventDetailsClassificationCreateReportDetails                    = "classification_create_report_details"
 	EventDetailsClassificationCreateReportFailDetails                = "classification_create_report_fail_details"
@@ -8891,6 +8894,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "protect_policy_deactivated_details":
 		if err = json.Unmarshal(body, &u.ProtectPolicyDeactivatedDetails); err != nil {
+			return err
+		}
+
+	case "protect_policy_scheduled_details":
+		if err = json.Unmarshal(body, &u.ProtectPolicyScheduledDetails); err != nil {
 			return err
 		}
 
@@ -11305,6 +11313,8 @@ type EventType struct {
 	ProtectPolicyActivated *ProtectPolicyActivatedType `json:"protect_policy_activated,omitempty"`
 	// ProtectPolicyDeactivated : (protect) Deactivated a Dropbox Protect policy
 	ProtectPolicyDeactivated *ProtectPolicyDeactivatedType `json:"protect_policy_deactivated,omitempty"`
+	// ProtectPolicyScheduled : (protect) Scheduled a Dropbox Protect policy
+	ProtectPolicyScheduled *ProtectPolicyScheduledType `json:"protect_policy_scheduled,omitempty"`
 	// ProtectPolicyUpdated : (protect) Updated a Dropbox Protect policy
 	ProtectPolicyUpdated *ProtectPolicyUpdatedType `json:"protect_policy_updated,omitempty"`
 	// ClassificationCreateReport : (reports) Created Classification report
@@ -12517,6 +12527,7 @@ const (
 	EventTypeProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
 	EventTypeProtectPolicyActivated                        = "protect_policy_activated"
 	EventTypeProtectPolicyDeactivated                      = "protect_policy_deactivated"
+	EventTypeProtectPolicyScheduled                        = "protect_policy_scheduled"
 	EventTypeProtectPolicyUpdated                          = "protect_policy_updated"
 	EventTypeClassificationCreateReport                    = "classification_create_report"
 	EventTypeClassificationCreateReportFail                = "classification_create_report_fail"
@@ -14306,6 +14317,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "protect_policy_deactivated":
 		if err = json.Unmarshal(body, &u.ProtectPolicyDeactivated); err != nil {
+			return err
+		}
+
+	case "protect_policy_scheduled":
+		if err = json.Unmarshal(body, &u.ProtectPolicyScheduled); err != nil {
 			return err
 		}
 
@@ -16317,6 +16333,7 @@ const (
 	EventTypeArgProtectInternalDomainsChanged                 = "protect_internal_domains_changed"
 	EventTypeArgProtectPolicyActivated                        = "protect_policy_activated"
 	EventTypeArgProtectPolicyDeactivated                      = "protect_policy_deactivated"
+	EventTypeArgProtectPolicyScheduled                        = "protect_policy_scheduled"
 	EventTypeArgProtectPolicyUpdated                          = "protect_policy_updated"
 	EventTypeArgClassificationCreateReport                    = "classification_create_report"
 	EventTypeArgClassificationCreateReportFail                = "classification_create_report_fail"
@@ -24981,6 +24998,32 @@ type ProtectPolicyDeactivatedType struct {
 // NewProtectPolicyDeactivatedType returns a new ProtectPolicyDeactivatedType instance
 func NewProtectPolicyDeactivatedType(Description string) *ProtectPolicyDeactivatedType {
 	s := new(ProtectPolicyDeactivatedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectPolicyScheduledDetails : Scheduled a Dropbox Protect policy.
+type ProtectPolicyScheduledDetails struct {
+	// PolicyId : Policy ID.
+	PolicyId string `json:"policy_id"`
+}
+
+// NewProtectPolicyScheduledDetails returns a new ProtectPolicyScheduledDetails instance
+func NewProtectPolicyScheduledDetails(PolicyId string) *ProtectPolicyScheduledDetails {
+	s := new(ProtectPolicyScheduledDetails)
+	s.PolicyId = PolicyId
+	return s
+}
+
+// ProtectPolicyScheduledType : has no documentation (yet)
+type ProtectPolicyScheduledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectPolicyScheduledType returns a new ProtectPolicyScheduledType instance
+func NewProtectPolicyScheduledType(Description string) *ProtectPolicyScheduledType {
+	s := new(ProtectPolicyScheduledType)
 	s.Description = Description
 	return s
 }
