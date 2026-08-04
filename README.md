@@ -228,6 +228,39 @@ Here's an example:
     fmt.Printf("Name: %v", resp.Name)
   }
 ```
+### Downloading a byte range
+
+Use `files.SetRange` to download from a byte offset to the end of a file:
+
+```go
+arg := files.NewDownloadArg("/large-file.bin")
+if err := files.SetRange(arg, 1024); err != nil {
+    return err
+}
+
+_, content, err := client.DownloadContext(ctx, arg)
+if err != nil {
+    return err
+}
+defer content.Close()
+```
+
+Use `files.SetRangeLength` to download a fixed number of bytes:
+
+```go
+arg := files.NewDownloadArg("/large-file.bin")
+if err := files.SetRangeLength(arg, 1024, 4096); err != nil {
+    return err
+}
+
+_, content, err := client.DownloadContext(ctx, arg)
+if err != nil {
+    return err
+}
+defer content.Close()
+```
+
+`SetRange` is useful for continuing an interrupted download from the number of bytes already written.
 
 ### Retrying API calls
 
@@ -413,7 +446,7 @@ As described in the [API docs](https://www.dropbox.com/developers/documentation/
 
 To use the Team API, you will need to create a Dropbox Business App. The OAuth token from this app will _only_ work for the Team API.
 
-Please read the [API docs](https://www.dropbox.com/developers/documentation/http/teams) carefully to appropriate secure your apps and tokens when using the Team API.
+Please read the [API docs](https://www.dropbox.com/developers/documentation/http/teams) carefully to appropriately secure your apps and tokens when using the Team API.
 
 ## Testing
 
