@@ -58,6 +58,20 @@ type Client interface {
 	// GetMetadataAsyncCheck : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
+	// GetOcrAsync : Asynchronous OCR (optical character recognition) text
+	// extraction for images and PDFs, including scanned / non-text PDFs.
+	// Supported formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png,
+	// .tif, .tiff, .webp. - PDF format: .pdf. Unsupported formats return an
+	// `unsupported_format_error`. For the `url` variant only Dropbox shared
+	// links are supported; external URLs return `unsupported_format_error`.
+	// Text-based PDFs already carry a text layer, so OCR is not run against
+	// them and the result is empty; use `get_text_async` to read the embedded
+	// text layer of such a PDF. The result carries the extracted words as plain
+	// text, plus the same content as hOCR with per-word coordinates.
+	GetOcrAsync(arg *GetOcrArgs) (res *async.LaunchResultBase, err error)
+	// GetOcrAsyncCheck : Returns the status or result of specified
+	// get_ocr_async task.
+	GetOcrAsyncCheck(arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error)
 	// GetTextAsync : Asynchronous plain-text extraction from documents.
 	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
 	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
@@ -112,6 +126,20 @@ type ContextClient interface {
 	// GetMetadataAsyncCheckContext : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
+	// GetOcrAsyncContext : Asynchronous OCR (optical character recognition)
+	// text extraction for images and PDFs, including scanned / non-text PDFs.
+	// Supported formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png,
+	// .tif, .tiff, .webp. - PDF format: .pdf. Unsupported formats return an
+	// `unsupported_format_error`. For the `url` variant only Dropbox shared
+	// links are supported; external URLs return `unsupported_format_error`.
+	// Text-based PDFs already carry a text layer, so OCR is not run against
+	// them and the result is empty; use `get_text_async` to read the embedded
+	// text layer of such a PDF. The result carries the extracted words as plain
+	// text, plus the same content as hOCR with per-word coordinates.
+	GetOcrAsyncContext(ctx context.Context, arg *GetOcrArgs) (res *async.LaunchResultBase, err error)
+	// GetOcrAsyncCheckContext : Returns the status or result of specified
+	// get_ocr_async task.
+	GetOcrAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error)
 	// GetTextAsyncContext : Asynchronous plain-text extraction from documents.
 	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
 	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
@@ -326,6 +354,102 @@ func (dbx *apiImpl) GetMetadataAsyncCheckContext(ctx context.Context, arg *async
 
 func (dbx *apiImpl) GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error) {
 	return dbx.GetMetadataAsyncCheckContext(context.Background(), arg)
+}
+
+// GetOcrAsyncAPIError is an error-wrapper for the get_ocr_async route
+type GetOcrAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+// GetOcrAsyncContext : Asynchronous OCR (optical character recognition) text
+// extraction for images and PDFs, including scanned / non-text PDFs. Supported
+// formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png, .tif, .tiff,
+// .webp. - PDF format: .pdf. Unsupported formats return an
+// `unsupported_format_error`. For the `url` variant only Dropbox shared links
+// are supported; external URLs return `unsupported_format_error`. Text-based
+// PDFs already carry a text layer, so OCR is not run against them and the
+// result is empty; use `get_text_async` to read the embedded text layer of such
+// a PDF. The result carries the extracted words as plain text, plus the same
+// content as hOCR with per-word coordinates.
+func (dbx *apiImpl) GetOcrAsyncContext(ctx context.Context, arg *GetOcrArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_ocr_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetOcrAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetOcrAsync(arg *GetOcrArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetOcrAsyncContext(context.Background(), arg)
+}
+
+// GetOcrAsyncCheckAPIError is an error-wrapper for the get_ocr_async/check route
+type GetOcrAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// GetOcrAsyncCheckContext : Returns the status or result of specified
+// get_ocr_async task.
+func (dbx *apiImpl) GetOcrAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_ocr_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetOcrAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetOcrAsyncCheck(arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error) {
+	return dbx.GetOcrAsyncCheckContext(context.Background(), arg)
 }
 
 // GetTextAsyncAPIError is an error-wrapper for the get_text_async route

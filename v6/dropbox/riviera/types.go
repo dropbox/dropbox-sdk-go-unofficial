@@ -595,6 +595,99 @@ func NewGetMetadataResult() *GetMetadataResult {
 	return s
 }
 
+// GetOcrArgs : Arguments for the asynchronous `get_ocr_async` route. Exactly
+// one of `file_id`, `path`, or `url` must be supplied via `file_id_or_url` to
+// identify the image or PDF whose text should be extracted via OCR (optical
+// character recognition).
+type GetOcrArgs struct {
+	// FileIdOrUrl : Identifier of the file to run OCR on. Callers must set
+	// exactly one of the `FileIdOrUrl` variants. OCR is supported for image
+	// files and PDFs, including scanned / non-text PDFs; see the route
+	// description for the supported formats. Requests against unsupported
+	// formats return `unsupported_format_error`. NOTE: for the `url` variant,
+	// only Dropbox shared links (www.dropbox.com) are supported. External
+	// (non-Dropbox) URLs are not supported and return
+	// `unsupported_format_error`; import the file into Dropbox and reference it
+	// by `file_id` or `path` instead.
+	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
+}
+
+// NewGetOcrArgs returns a new GetOcrArgs instance
+func NewGetOcrArgs() *GetOcrArgs {
+	s := new(GetOcrArgs)
+	return s
+}
+
+// GetOcrAsyncCheckResult : Result type for EventBus async check - must end in
+// "CheckResult"
+type GetOcrAsyncCheckResult struct {
+	dropbox.Tagged
+	// Complete : has no documentation (yet)
+	Complete *GetOcrResult `json:"complete,omitempty"`
+	// Failed : has no documentation (yet)
+	Failed *OcrExtractionApiV2Error `json:"failed,omitempty"`
+}
+
+// Valid tag values for GetOcrAsyncCheckResult
+const (
+	GetOcrAsyncCheckResultInProgress = "in_progress"
+	GetOcrAsyncCheckResultComplete   = "complete"
+	GetOcrAsyncCheckResultFailed     = "failed"
+	GetOcrAsyncCheckResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a GetOcrAsyncCheckResult instance
+func (u *GetOcrAsyncCheckResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *OcrExtractionApiV2Error `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
+			return err
+		}
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// GetOcrResult : has no documentation (yet)
+type GetOcrResult struct {
+	// Text : The plain-text content extracted from the file via OCR. Words
+	// within a line are separated by a single space, lines are
+	// newline-separated in reading order, and for multi-page PDFs pages are
+	// separated by a blank line in page order. May be empty when no text is
+	// detected in the source.
+	Text string `json:"text"`
+	// Hocr : The same content as hOCR: HTML that carries the position of every
+	// recognized word. Each page is a `<section>` holding `<p class="line">`
+	// elements with one `<span>` per word, and each element carries `data-x`,
+	// `data-y`, `data-width`, and `data-height` attributes in pixels relative
+	// to the upright page (whose dimensions are on the `<section>`). Use this
+	// when you need word coordinates -- to highlight matches over a page image,
+	// for example; use `text` when you just need the words.
+	Hocr string `json:"hocr"`
+}
+
+// NewGetOcrResult returns a new GetOcrResult instance
+func NewGetOcrResult() *GetOcrResult {
+	s := new(GetOcrResult)
+	s.Text = ""
+	s.Hocr = ""
+	return s
+}
+
 // GetTextArgs : Arguments for the asynchronous `get_text_async` route. Exactly
 // one of `file_id`, `path`, or `url` must be supplied via `file_id_or_url` to
 // identify the document whose plain-text content should be extracted.
@@ -923,6 +1016,67 @@ const (
 	MetadataTypeMetadataTypeOffice  = "metadata_type_office"
 	MetadataTypeOther               = "other"
 )
+
+// OcrExtractionApiV2Error : Reason an OCR extraction job failed. Returned in
+// the `failed` variant of `GetOcrAsyncCheckResult`. This is a semantic error
+// union: the HTTP status of the poll request itself is unaffected (a poll that
+// surfaces a failed job is still a normal successful poll response). Callers
+// should branch on the variant.
+type OcrExtractionApiV2Error struct {
+	dropbox.Tagged
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
+	ServerError string `json:"server_error,omitempty"`
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
+	UserError string `json:"user_error,omitempty"`
+}
+
+// Valid tag values for OcrExtractionApiV2Error
+const (
+	OcrExtractionApiV2ErrorServerError                 = "server_error"
+	OcrExtractionApiV2ErrorUserError                   = "user_error"
+	OcrExtractionApiV2ErrorUnsupportedFormatError      = "unsupported_format_error"
+	OcrExtractionApiV2ErrorLinkDownloadDisabledError   = "link_download_disabled_error"
+	OcrExtractionApiV2ErrorSharedLinkPasswordProtected = "shared_link_password_protected"
+	OcrExtractionApiV2ErrorLimitExceededError          = "limit_exceeded_error"
+	OcrExtractionApiV2ErrorConversionFailureError      = "conversion_failure_error"
+	OcrExtractionApiV2ErrorNotFoundError               = "not_found_error"
+	OcrExtractionApiV2ErrorIsAFolderError              = "is_a_folder_error"
+	OcrExtractionApiV2ErrorOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a OcrExtractionApiV2Error instance
+func (u *OcrExtractionApiV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
+		ServerError string `json:"server_error,omitempty"`
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
+		UserError string `json:"user_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "server_error":
+		u.ServerError = w.ServerError
+
+	case "user_error":
+		u.UserError = w.UserError
+
+	}
+	return nil
+}
 
 // OfficeFileType : The kind of MS Office document that produced an
 // `ApiOfficeMetadata` result.
