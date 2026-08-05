@@ -215,6 +215,7 @@ func (d *Downloader) downloadFileParallel(
 	}
 	if err := f.Truncate(total); err != nil {
 		_ = f.Close()
+		_ = os.Remove(partPath)
 		return nil, err
 	}
 
@@ -226,10 +227,12 @@ func (d *Downloader) downloadFileParallel(
 		)
 		if err != nil {
 			_ = f.Close()
+			_ = os.Remove(partPath)
 			return nil, err
 		}
 		if n != 1 {
 			_ = f.Close()
+			_ = os.Remove(partPath)
 			return nil, fmt.Errorf(
 				"incomplete initial range: got %d bytes, expected 1",
 				n,
