@@ -153,6 +153,7 @@ func (d *Downloader) downloadFileAttempt(
 	}
 
 	if err := f.Close(); err != nil {
+		_ = os.Remove(partPath)
 		return nil, err
 	}
 
