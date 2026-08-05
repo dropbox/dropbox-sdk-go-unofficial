@@ -241,6 +241,7 @@ func (d *Downloader) downloadFileParallel(
 		}
 	}
 	if err := f.Close(); err != nil {
+		_ = os.Remove(partPath)
 		return nil, err
 	}
 
