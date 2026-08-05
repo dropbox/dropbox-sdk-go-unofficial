@@ -12,6 +12,7 @@ For most applications, you should just import the relevant namespace(s) only. Th
 
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/contenthash`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filedownload`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/openid`
@@ -261,6 +262,62 @@ defer content.Close()
 ```
 
 `SetRange` is useful for continuing an interrupted download from the number of bytes already written.
+
+### Resumable file downloads
+
+Use the `filedownload` helper when downloading a Dropbox file to local storage.
+It writes to `localPath + ".part"` first, resumes from that partial file after
+read errors, validates the final size, verifies Dropbox `content_hash` metadata
+when present, and renames the partial file only after validation succeeds:
+
+```go
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filedownload"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
+
+client := files.NewContext(config)
+downloader := filedownload.New(client)
+
+result, err := downloader.DownloadFile(ctx, "/large-file.bin", "large-file.bin")
+if err != nil {
+    return err
+}
+
+fmt.Printf(
+    "downloaded %s (%d bytes), resumed from byte %d\n",
+    result.Metadata.Name,
+    result.Metadata.Size,
+    result.ResumedFrom,
+)
+```
+
+Progress callbacks receive cumulative bytes written, the expected total size
+when known, and the byte offset used for resume:
+
+```go
+downloader := filedownload.New(
+    client,
+    filedownload.WithProgress(func(progress filedownload.Progress) {
+        fmt.Printf("%d/%d bytes\n", progress.BytesWritten, progress.TotalBytes)
+    }),
+)
+```
+
+For fresh downloads, opt in to parallel ranged requests with
+`WithParallelDownloads`. Existing `.part` files continue serially from the saved
+offset so retries preserve already-written bytes:
+
+```go
+downloader := filedownload.New(
+    client,
+    filedownload.WithParallelDownloads(4),
+)
+
+_, err := downloader.DownloadFile(ctx, "/large-file.bin", "large-file.bin")
+```
+
+If a retry sees a different file revision than the previous attempt, the
+download fails and discards the stale partial file instead of appending bytes
+from different revisions.
 
 ### Retrying API calls
 
