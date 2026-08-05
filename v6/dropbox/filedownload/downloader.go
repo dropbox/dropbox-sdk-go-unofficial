@@ -220,9 +220,20 @@ func (d *Downloader) downloadFileParallel(
 
 	progress := d.newProgress(0, total, 0)
 	if total > 0 {
-		if _, err := io.Copy(&writeAtWriter{f: f}, progress.reader(body)); err != nil {
+		n, err := io.Copy(
+			&writeAtWriter{f: f},
+			progress.reader(body),
+		)
+		if err != nil {
 			_ = f.Close()
 			return nil, err
+		}
+		if n != 1 {
+			_ = f.Close()
+			return nil, fmt.Errorf(
+				"incomplete initial range: got %d bytes, expected 1",
+				n,
+			)
 		}
 	}
 	if err := f.Close(); err != nil {
@@ -321,8 +332,19 @@ func (d *Downloader) downloadRange(
 		return err
 	}
 
-	_, err = io.Copy(&writeAtWriter{f: f, offset: r.offset}, progress.reader(body))
-	return err
+	n, err := io.Copy(&writeAtWriter{f: f, offset: r.offset}, progress.reader(body))
+	if err != nil {
+		return err
+	}
+	if n != r.length {
+		return fmt.Errorf(
+			"incomplete range at offset %d: got %d bytes, expected %d",
+			r.offset,
+			n,
+			r.length,
+		)
+	}
+	return nil
 }
 
 func (d *Downloader) DownloadFile(
