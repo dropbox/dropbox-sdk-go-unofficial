@@ -6099,6 +6099,8 @@ type EventDetails struct {
 	ProtectPolicyScheduledDetails *ProtectPolicyScheduledDetails `json:"protect_policy_scheduled_details,omitempty"`
 	// ProtectPolicyUpdatedDetails : has no documentation (yet)
 	ProtectPolicyUpdatedDetails *ProtectPolicyUpdatedDetails `json:"protect_policy_updated_details,omitempty"`
+	// ProtectReportViewDetails : has no documentation (yet)
+	ProtectReportViewDetails *ProtectReportViewDetails `json:"protect_report_view_details,omitempty"`
 	// ClassificationCreateReportDetails : has no documentation (yet)
 	ClassificationCreateReportDetails *ClassificationCreateReportDetails `json:"classification_create_report_details,omitempty"`
 	// ClassificationCreateReportFailDetails : has no documentation (yet)
@@ -7105,6 +7107,7 @@ const (
 	EventDetailsProtectPolicyDeactivatedDetails                      = "protect_policy_deactivated_details"
 	EventDetailsProtectPolicyScheduledDetails                        = "protect_policy_scheduled_details"
 	EventDetailsProtectPolicyUpdatedDetails                          = "protect_policy_updated_details"
+	EventDetailsProtectReportViewDetails                             = "protect_report_view_details"
 	EventDetailsClassificationCreateReportDetails                    = "classification_create_report_details"
 	EventDetailsClassificationCreateReportFailDetails                = "classification_create_report_fail_details"
 	EventDetailsEmmCreateExceptionsReportDetails                     = "emm_create_exceptions_report_details"
@@ -8904,6 +8907,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "protect_policy_updated_details":
 		if err = json.Unmarshal(body, &u.ProtectPolicyUpdatedDetails); err != nil {
+			return err
+		}
+
+	case "protect_report_view_details":
+		if err = json.Unmarshal(body, &u.ProtectReportViewDetails); err != nil {
 			return err
 		}
 
@@ -11317,6 +11325,8 @@ type EventType struct {
 	ProtectPolicyScheduled *ProtectPolicyScheduledType `json:"protect_policy_scheduled,omitempty"`
 	// ProtectPolicyUpdated : (protect) Updated a Dropbox Protect policy
 	ProtectPolicyUpdated *ProtectPolicyUpdatedType `json:"protect_policy_updated,omitempty"`
+	// ProtectReportView : (protect) Viewed a Dropbox Protect report
+	ProtectReportView *ProtectReportViewType `json:"protect_report_view,omitempty"`
 	// ClassificationCreateReport : (reports) Created Classification report
 	ClassificationCreateReport *ClassificationCreateReportType `json:"classification_create_report,omitempty"`
 	// ClassificationCreateReportFail : (reports) Couldn't create Classification
@@ -12529,6 +12539,7 @@ const (
 	EventTypeProtectPolicyDeactivated                      = "protect_policy_deactivated"
 	EventTypeProtectPolicyScheduled                        = "protect_policy_scheduled"
 	EventTypeProtectPolicyUpdated                          = "protect_policy_updated"
+	EventTypeProtectReportView                             = "protect_report_view"
 	EventTypeClassificationCreateReport                    = "classification_create_report"
 	EventTypeClassificationCreateReportFail                = "classification_create_report_fail"
 	EventTypeEmmCreateExceptionsReport                     = "emm_create_exceptions_report"
@@ -14327,6 +14338,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "protect_policy_updated":
 		if err = json.Unmarshal(body, &u.ProtectPolicyUpdated); err != nil {
+			return err
+		}
+
+	case "protect_report_view":
+		if err = json.Unmarshal(body, &u.ProtectReportView); err != nil {
 			return err
 		}
 
@@ -16335,6 +16351,7 @@ const (
 	EventTypeArgProtectPolicyDeactivated                      = "protect_policy_deactivated"
 	EventTypeArgProtectPolicyScheduled                        = "protect_policy_scheduled"
 	EventTypeArgProtectPolicyUpdated                          = "protect_policy_updated"
+	EventTypeArgProtectReportView                             = "protect_report_view"
 	EventTypeArgClassificationCreateReport                    = "classification_create_report"
 	EventTypeArgClassificationCreateReportFail                = "classification_create_report_fail"
 	EventTypeArgEmmCreateExceptionsReport                     = "emm_create_exceptions_report"
@@ -25050,6 +25067,130 @@ type ProtectPolicyUpdatedType struct {
 // NewProtectPolicyUpdatedType returns a new ProtectPolicyUpdatedType instance
 func NewProtectPolicyUpdatedType(Description string) *ProtectPolicyUpdatedType {
 	s := new(ProtectPolicyUpdatedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectReportCategory : The category that a Dropbox Protect report belongs to
+type ProtectReportCategory struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ProtectReportCategory
+const (
+	ProtectReportCategoryOverview    = "overview"
+	ProtectReportCategoryStaleAccess = "stale_access"
+	ProtectReportCategoryOther       = "other"
+)
+
+// ProtectReportMetric : The metric that a Dropbox Protect report corresponds to
+type ProtectReportMetric struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ProtectReportMetric
+const (
+	ProtectReportMetricExternalModifiedOver1Year          = "external_modified_over_1_year"
+	ProtectReportMetricExternalModifiedOver1YearCompany   = "external_modified_over_1_year_company"
+	ProtectReportMetricExternalModifiedOver1YearOutside   = "external_modified_over_1_year_outside"
+	ProtectReportMetricExternalModifiedOver1YearPersonal  = "external_modified_over_1_year_personal"
+	ProtectReportMetricExternalModifiedOver1YearPublic    = "external_modified_over_1_year_public"
+	ProtectReportMetricExternalModifiedOver2Years         = "external_modified_over_2_years"
+	ProtectReportMetricExternalModifiedOver2YearsCompany  = "external_modified_over_2_years_company"
+	ProtectReportMetricExternalModifiedOver2YearsOutside  = "external_modified_over_2_years_outside"
+	ProtectReportMetricExternalModifiedOver2YearsPersonal = "external_modified_over_2_years_personal"
+	ProtectReportMetricExternalModifiedOver2YearsPublic   = "external_modified_over_2_years_public"
+	ProtectReportMetricExternalModifiedOver3Years         = "external_modified_over_3_years"
+	ProtectReportMetricExternalModifiedOver3YearsCompany  = "external_modified_over_3_years_company"
+	ProtectReportMetricExternalModifiedOver3YearsOutside  = "external_modified_over_3_years_outside"
+	ProtectReportMetricExternalModifiedOver3YearsPersonal = "external_modified_over_3_years_personal"
+	ProtectReportMetricExternalModifiedOver3YearsPublic   = "external_modified_over_3_years_public"
+	ProtectReportMetricExternalModifiedOver5Years         = "external_modified_over_5_years"
+	ProtectReportMetricExternalModifiedOver5YearsCompany  = "external_modified_over_5_years_company"
+	ProtectReportMetricExternalModifiedOver5YearsOutside  = "external_modified_over_5_years_outside"
+	ProtectReportMetricExternalModifiedOver5YearsPersonal = "external_modified_over_5_years_personal"
+	ProtectReportMetricExternalModifiedOver5YearsPublic   = "external_modified_over_5_years_public"
+	ProtectReportMetricFoldersCompany                     = "folders_company"
+	ProtectReportMetricFoldersInternal                    = "folders_internal"
+	ProtectReportMetricFoldersOutside                     = "folders_outside"
+	ProtectReportMetricFoldersPersonal                    = "folders_personal"
+	ProtectReportMetricFoldersPublic                      = "folders_public"
+	ProtectReportMetricInternalModifiedOver1Year          = "internal_modified_over_1_year"
+	ProtectReportMetricInternalModifiedOver1YearCompany   = "internal_modified_over_1_year_company"
+	ProtectReportMetricInternalModifiedOver1YearOutside   = "internal_modified_over_1_year_outside"
+	ProtectReportMetricInternalModifiedOver1YearPersonal  = "internal_modified_over_1_year_personal"
+	ProtectReportMetricInternalModifiedOver1YearPublic    = "internal_modified_over_1_year_public"
+	ProtectReportMetricInternalModifiedOver2Years         = "internal_modified_over_2_years"
+	ProtectReportMetricInternalModifiedOver2YearsCompany  = "internal_modified_over_2_years_company"
+	ProtectReportMetricInternalModifiedOver2YearsOutside  = "internal_modified_over_2_years_outside"
+	ProtectReportMetricInternalModifiedOver2YearsPersonal = "internal_modified_over_2_years_personal"
+	ProtectReportMetricInternalModifiedOver2YearsPublic   = "internal_modified_over_2_years_public"
+	ProtectReportMetricInternalModifiedOver3Years         = "internal_modified_over_3_years"
+	ProtectReportMetricInternalModifiedOver3YearsCompany  = "internal_modified_over_3_years_company"
+	ProtectReportMetricInternalModifiedOver3YearsOutside  = "internal_modified_over_3_years_outside"
+	ProtectReportMetricInternalModifiedOver3YearsPersonal = "internal_modified_over_3_years_personal"
+	ProtectReportMetricInternalModifiedOver3YearsPublic   = "internal_modified_over_3_years_public"
+	ProtectReportMetricInternalModifiedOver5Years         = "internal_modified_over_5_years"
+	ProtectReportMetricInternalModifiedOver5YearsCompany  = "internal_modified_over_5_years_company"
+	ProtectReportMetricInternalModifiedOver5YearsOutside  = "internal_modified_over_5_years_outside"
+	ProtectReportMetricInternalModifiedOver5YearsPersonal = "internal_modified_over_5_years_personal"
+	ProtectReportMetricInternalModifiedOver5YearsPublic   = "internal_modified_over_5_years_public"
+	ProtectReportMetricItemsAll                           = "items_all"
+	ProtectReportMetricItemsCompanyAccess                 = "items_company_access"
+	ProtectReportMetricItemsInternallyOwned               = "items_internally_owned"
+	ProtectReportMetricItemsModifiedOver1Year             = "items_modified_over_1_year"
+	ProtectReportMetricItemsModifiedOver3Years            = "items_modified_over_3_years"
+	ProtectReportMetricItemsOutsideAccess                 = "items_outside_access"
+	ProtectReportMetricItemsPersonalAccess                = "items_personal_access"
+	ProtectReportMetricItemsPublicLinks                   = "items_public_links"
+	ProtectReportMetricOtherFolders                       = "other_folders"
+	ProtectReportMetricOtherSharedDrives                  = "other_shared_drives"
+	ProtectReportMetricSharedDrivesInternal               = "shared_drives_internal"
+	ProtectReportMetricSharedDrivesOutside                = "shared_drives_outside"
+	ProtectReportMetricSharedDrivesPersonal               = "shared_drives_personal"
+	ProtectReportMetricOther                              = "other"
+)
+
+// ProtectReportSection : The section that a Dropbox Protect report belongs to
+type ProtectReportSection struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ProtectReportSection
+const (
+	ProtectReportSectionItems           = "items"
+	ProtectReportSectionOverviewOther   = "overview_other"
+	ProtectReportSectionOwnedExternally = "owned_externally"
+	ProtectReportSectionOwnedInternally = "owned_internally"
+	ProtectReportSectionOther           = "other"
+)
+
+// ProtectReportViewDetails : Viewed a Dropbox Protect report.
+type ProtectReportViewDetails struct {
+	// ReportCategory : The category of the report that was viewed.
+	ReportCategory *ProtectReportCategory `json:"report_category"`
+	// ReportSection : The section of the report that was viewed.
+	ReportSection *ProtectReportSection `json:"report_section,omitempty"`
+	// ReportMetric : The metric of the report that was viewed.
+	ReportMetric *ProtectReportMetric `json:"report_metric,omitempty"`
+}
+
+// NewProtectReportViewDetails returns a new ProtectReportViewDetails instance
+func NewProtectReportViewDetails(ReportCategory *ProtectReportCategory) *ProtectReportViewDetails {
+	s := new(ProtectReportViewDetails)
+	s.ReportCategory = ReportCategory
+	return s
+}
+
+// ProtectReportViewType : has no documentation (yet)
+type ProtectReportViewType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectReportViewType returns a new ProtectReportViewType instance
+func NewProtectReportViewType(Description string) *ProtectReportViewType {
+	s := new(ProtectReportViewType)
 	s.Description = Description
 	return s
 }
