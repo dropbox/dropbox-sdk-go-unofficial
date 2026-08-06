@@ -206,6 +206,51 @@ func TestDownloadCommitFailureCallsAbort(t *testing.T) {
 	}
 }
 
+func TestDownloadAbortUsesCleanupContext(t *testing.T) {
+	tests := []struct {
+		name    string
+		options DownloadOptions
+	}{
+		{
+			name: "sequential",
+		},
+		{
+			name: "parallel",
+			options: DownloadOptions{
+				ParallelDownloads: 2,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			target := &recordingDownloadTarget{
+				commitErr:  context.Canceled,
+				commitHook: cancel,
+			}
+			data := []byte("data for canceled cleanup")
+			client := &fakeDownloadClient{data: data, metadata: fileMetadata(data)}
+
+			_, err := NewDownloader(client).Download(
+				ctx,
+				"/input",
+				target,
+				tt.options,
+			)
+			if !errors.Is(err, context.Canceled) {
+				t.Fatalf("Download() error = %v, want context.Canceled", err)
+			}
+			if target.abortCalls != 1 {
+				t.Fatalf("Abort calls = %d, want 1", target.abortCalls)
+			}
+			if target.abortCtxErr != nil {
+				t.Fatalf("Abort context error = %v, want nil", target.abortCtxErr)
+			}
+		})
+	}
+}
+
 func TestDownloadFileHashMismatchCleansTemporaryFile(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "output.bin")
@@ -356,8 +401,10 @@ type recordingDownloadTarget struct {
 
 	data        []byte
 	commitErr   error
+	commitHook  func()
 	commitCalls int
 	abortCalls  int
+	abortCtxErr error
 }
 
 func (t *recordingDownloadTarget) Prepare(_ context.Context, info DownloadInfo) error {
@@ -377,13 +424,17 @@ func (t *recordingDownloadTarget) Commit(context.Context) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.commitCalls++
+	if t.commitHook != nil {
+		t.commitHook()
+	}
 	return t.commitErr
 }
 
-func (t *recordingDownloadTarget) Abort(context.Context, error) error {
+func (t *recordingDownloadTarget) Abort(ctx context.Context, _ error) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	t.abortCalls++
+	t.abortCtxErr = ctx.Err()
 	return nil
 }
 

@@ -169,9 +169,10 @@ func (d *Downloader) downloadSequential(
 		lastErr   error
 	)
 
+	cleanupCtx := context.WithoutCancel(ctx)
 	fail := func(err error) (*DownloadResult, error) {
 		if prepared {
-			if abortErr := target.Abort(ctx, err); abortErr != nil {
+			if abortErr := target.Abort(cleanupCtx, err); abortErr != nil {
 				err = errors.Join(err, fmt.Errorf("abort download target: %w", abortErr))
 			}
 		}
@@ -299,9 +300,10 @@ func (d *Downloader) downloadPreparedParallel(
 	progress DownloadProgressFunc,
 ) (*DownloadResult, error) {
 	prepared := true
+	cleanupCtx := context.WithoutCancel(ctx)
 	fail := func(err error) (*DownloadResult, error) {
 		if prepared {
-			if abortErr := target.Abort(ctx, err); abortErr != nil {
+			if abortErr := target.Abort(cleanupCtx, err); abortErr != nil {
 				err = errors.Join(err, fmt.Errorf("abort download target: %w", abortErr))
 			}
 		}
@@ -431,7 +433,7 @@ func (d *Downloader) prepareParallelDownload(
 			return stableMetadata, info, written, nil
 		}
 
-		if abortErr := target.Abort(ctx, copyErr); abortErr != nil {
+		if abortErr := target.Abort(context.WithoutCancel(ctx), copyErr); abortErr != nil {
 			copyErr = errors.Join(copyErr, abortErr)
 		}
 		if copyErr == nil {

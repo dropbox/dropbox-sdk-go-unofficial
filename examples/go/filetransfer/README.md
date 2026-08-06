@@ -3,14 +3,6 @@
 These examples demonstrate reliable Dropbox uploads and downloads using the
 `dropbox/filetransfer` package.
 
-## Suggested repository location
-
-Copy this directory to:
-
-```text
-examples/go/filetransfer/
-```
-
 Each subdirectory is an independent `main` package and can be run from this
 directory, for example:
 
