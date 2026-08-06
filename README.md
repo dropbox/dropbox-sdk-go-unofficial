@@ -12,8 +12,8 @@ For most applications, you should just import the relevant namespace(s) only. Th
 
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/contenthash`
-* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filedownload`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files`
+* `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filetransfer`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/openid`
 * `github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/retry`
@@ -263,61 +263,136 @@ defer content.Close()
 
 `SetRange` is useful for continuing an interrupted download from the number of bytes already written.
 
-### Resumable file downloads
+### File upload and download method examples
 
-Use the `filedownload` helper when downloading a Dropbox file to local storage.
-It writes to `localPath + ".part"` first, resumes from that partial file after
-read errors, validates the final size, verifies Dropbox `content_hash` metadata
-when present, and renames the partial file only after validation succeeds:
+For direct use of the generated `files` client, the main upload/download
+methods are:
+
+* `DownloadContext` for downloading a file, optionally with `SetRange` or
+  `SetRangeLength` for byte ranges.
+* `UploadContext` for a single-request upload.
+* `UploadSessionStartContext`, `UploadSessionAppendV2Context`, and
+  `UploadSessionFinishContext` for chunked uploads.
+
+For higher-level reliable uploads and downloads, use the `filetransfer`
+package described below. It provides retries, progress reporting, content
+validation, and optional parallel transfers.
+
+### Reliable file transfers
+
+The `filetransfer` package provides reliable uploads and downloads with retries,
+progress reporting, content validation, and optional parallel transfers.
+
+#### Download to a file
 
 ```go
-import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filedownload"
+import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filetransfer"
 import "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
 
 client := files.NewContext(config)
-downloader := filedownload.New(client)
+downloader := filetransfer.NewDownloader(client)
 
-result, err := downloader.DownloadFile(ctx, "/large-file.bin", "large-file.bin")
+result, err := downloader.Download(
+    ctx,
+    "/large-file.bin",
+    filetransfer.File("large-file.bin"),
+    filetransfer.DownloadOptions{},
+)
 if err != nil {
     return err
 }
 
 fmt.Printf(
-    "downloaded %s (%d bytes), resumed from byte %d\n",
+    "downloaded %s (%d bytes)\n",
     result.Metadata.Name,
     result.Metadata.Size,
-    result.ResumedFrom,
 )
 ```
 
-Progress callbacks receive cumulative bytes written, the expected total size
-when known, and the byte offset used for resume:
+The built-in file target writes to a temporary file and renames it to the final
+destination only after validating the downloaded size and Dropbox
+`content_hash`, when available.
+
+#### Download progress
 
 ```go
-downloader := filedownload.New(
-    client,
-    filedownload.WithProgress(func(progress filedownload.Progress) {
-        fmt.Printf("%d/%d bytes\n", progress.BytesWritten, progress.TotalBytes)
-    }),
+_, err := downloader.Download(
+    ctx,
+    "/large-file.bin",
+    filetransfer.File("large-file.bin"),
+    filetransfer.DownloadOptions{
+        Progress: func(progress filetransfer.DownloadProgress) {
+            fmt.Printf(
+                "%d/%d bytes\n",
+                progress.BytesCommitted,
+                progress.TotalBytes,
+            )
+        },
+    },
 )
 ```
 
-For fresh downloads, opt in to parallel ranged requests with
-`WithParallelDownloads`. Existing `.part` files continue serially from the saved
-offset so retries preserve already-written bytes:
+Progress reports bytes successfully committed to the target. Retried bytes are
+not counted more than once.
+
+#### Parallel downloads
 
 ```go
-downloader := filedownload.New(
-    client,
-    filedownload.WithParallelDownloads(4),
+_, err := downloader.Download(
+    ctx,
+    "/large-file.bin",
+    filetransfer.File("large-file.bin"),
+    filetransfer.DownloadOptions{
+        ParallelDownloads: 4,
+    },
 )
-
-_, err := downloader.DownloadFile(ctx, "/large-file.bin", "large-file.bin")
 ```
 
-If a retry sees a different file revision than the previous attempt, the
-download fails and discards the stale partial file instead of appending bytes
-from different revisions.
+Parallel downloads use ranged requests and verify that file metadata remains
+stable while the transfer is in progress.
+
+#### Upload a file
+
+```go
+source, err := filetransfer.FileUpload("large-file.bin")
+if err != nil {
+    return err
+}
+
+uploader := filetransfer.NewUploader(client)
+
+result, err := uploader.Upload(
+    ctx,
+    source,
+    files.NewCommitInfo("/large-file.bin"),
+    filetransfer.UploadOptions{},
+)
+if err != nil {
+    return err
+}
+
+fmt.Printf(
+    "uploaded %s (%d bytes)\n",
+    result.Metadata.Name,
+    result.Metadata.Size,
+)
+```
+
+File and byte sources also support parallel uploads:
+
+```go
+_, err := uploader.Upload(
+    ctx,
+    source,
+    files.NewCommitInfo("/large-file.bin"),
+    filetransfer.UploadOptions{
+        ParallelUploads: 4,
+    },
+)
+```
+
+See `examples/go/filetransfer` for complete upload and download examples,
+including file, memory, streaming, progress, and parallel transfers.
 
 ### Retrying API calls
 
