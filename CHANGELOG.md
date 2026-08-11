@@ -7,9 +7,16 @@ summarized from the repository history.
 
 ### Added
 
+- Added `dropbox/filetransfer` for reliable uploads and downloads with retries,
+  progress reporting, content validation, and optional parallel transfers.
 - Added `integration`-tagged live-API tests for the user and team clients
   (folder create/delete round-trips) authenticated with scoped refresh tokens,
   plus an Integration GitHub Actions workflow.
+
+### Removed
+
+- Removed the earlier `dropbox/filedownload` helper in favor of
+  `dropbox/filetransfer`.
 
 ### Changed
 

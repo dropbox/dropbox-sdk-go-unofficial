@@ -28,77 +28,193 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
-	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filedownload"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/files"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/filetransfer"
 )
 
-func TestUserDownloadFile(t *testing.T) {
+func TestUserFileTransferUploadDownloadFile(t *testing.T) {
 	ctx := context.Background()
 	client := files.NewContext(userConfig(t))
-	remotePath := fmt.Sprintf("/sdk-integration-download-%d.txt", time.Now().UnixNano())
-	payload := "hello from the filedownload integration test\n"
-	uploadIntegrationFile(t, ctx, client, remotePath, payload)
+	remotePath := fmt.Sprintf("/sdk-integration-filetransfer-%d.txt", time.Now().UnixNano())
 	defer deleteIntegrationPath(t, client, remotePath)
 
-	localPath := filepath.Join(t.TempDir(), "download.txt")
-	result, err := filedownload.New(client).DownloadFile(ctx, remotePath, localPath)
-	if err != nil {
-		t.Fatalf("DownloadFile(%q): %v", remotePath, err)
+	payload := "hello from the filetransfer integration test\n"
+	localUploadPath := filepath.Join(t.TempDir(), "upload.txt")
+	if err := os.WriteFile(localUploadPath, []byte(payload), 0o644); err != nil {
+		t.Fatal(err)
 	}
 
-	data, err := os.ReadFile(localPath)
+	uploadSource, err := filetransfer.FileUpload(localUploadPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var uploadUpdates []filetransfer.UploadProgress
+	uploadResult, err := filetransfer.NewUploader(client).Upload(
+		ctx,
+		uploadSource,
+		files.NewCommitInfo(remotePath),
+		filetransfer.UploadOptions{
+			Progress: func(progress filetransfer.UploadProgress) {
+				uploadUpdates = append(uploadUpdates, progress)
+			},
+		},
+	)
+	if err != nil {
+		t.Fatalf("Upload(%q): %v", remotePath, err)
+	}
+	assertUploadProgress(t, uploadUpdates, int64(len(payload)))
+	if uploadResult.Metadata == nil {
+		t.Fatal("Upload() metadata is nil")
+	}
+	if uploadResult.Metadata.PathDisplay != remotePath {
+		t.Fatalf("upload metadata path = %q, want %q", uploadResult.Metadata.PathDisplay, remotePath)
+	}
+	if uploadResult.Metadata.Size != uint64(len(payload)) {
+		t.Fatalf("upload metadata size = %d, want %d", uploadResult.Metadata.Size, len(payload))
+	}
+
+	localDownloadPath := filepath.Join(t.TempDir(), "download.txt")
+	var downloadUpdates []filetransfer.DownloadProgress
+	downloadResult, err := filetransfer.NewDownloader(client).Download(
+		ctx,
+		remotePath,
+		filetransfer.File(localDownloadPath),
+		filetransfer.DownloadOptions{
+			Progress: func(progress filetransfer.DownloadProgress) {
+				downloadUpdates = append(downloadUpdates, progress)
+			},
+		},
+	)
+	if err != nil {
+		t.Fatalf("Download(%q): %v", remotePath, err)
+	}
+	assertDownloadProgress(t, downloadUpdates, int64(len(payload)))
+
+	data, err := os.ReadFile(localDownloadPath)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if got := string(data); got != payload {
 		t.Fatalf("downloaded content = %q, want %q", got, payload)
 	}
-	if result.Metadata == nil {
-		t.Fatal("DownloadFile() metadata is nil")
+	if downloadResult.Metadata == nil {
+		t.Fatal("Download() metadata is nil")
 	}
-	if result.Metadata.PathDisplay != remotePath {
-		t.Fatalf("metadata path = %q, want %q", result.Metadata.PathDisplay, remotePath)
+	if downloadResult.Metadata.PathDisplay != remotePath {
+		t.Fatalf("download metadata path = %q, want %q", downloadResult.Metadata.PathDisplay, remotePath)
+	}
+	if downloadResult.Metadata.Size != uint64(len(payload)) {
+		t.Fatalf("download metadata size = %d, want %d", downloadResult.Metadata.Size, len(payload))
+	}
+}
+
+func TestUserFileTransferDownloadParallelToMemory(t *testing.T) {
+	ctx := context.Background()
+	client := files.NewContext(userConfig(t))
+	remotePath := fmt.Sprintf("/sdk-integration-filetransfer-parallel-%d.txt", time.Now().UnixNano())
+	payload := strings.Repeat("parallel filetransfer payload\n", 512)
+	uploadIntegrationFile(t, ctx, client, remotePath, payload)
+	defer deleteIntegrationPath(t, client, remotePath)
+
+	target := filetransfer.Bytes()
+	var (
+		progressMu      sync.Mutex
+		downloadUpdates []filetransfer.DownloadProgress
+	)
+	result, err := filetransfer.NewDownloader(client).Download(
+		ctx,
+		remotePath,
+		target,
+		filetransfer.DownloadOptions{
+			ParallelDownloads: 4,
+			Progress: func(progress filetransfer.DownloadProgress) {
+				progressMu.Lock()
+				downloadUpdates = append(downloadUpdates, progress)
+				progressMu.Unlock()
+			},
+		},
+	)
+	if err != nil {
+		t.Fatalf("Download(%q): %v", remotePath, err)
+	}
+
+	if got := string(target.Bytes()); got != payload {
+		t.Fatalf("downloaded content = %q, want %q", got, payload)
+	}
+	if result.Metadata == nil {
+		t.Fatal("Download() metadata is nil")
 	}
 	if result.Metadata.Size != uint64(len(payload)) {
 		t.Fatalf("metadata size = %d, want %d", result.Metadata.Size, len(payload))
 	}
+	progressMu.Lock()
+	captured := append([]filetransfer.DownloadProgress(nil), downloadUpdates...)
+	progressMu.Unlock()
+	assertDownloadProgress(t, captured, int64(len(payload)))
 }
 
-func TestUserDownloadFileResumesFromPartFile(t *testing.T) {
-	ctx := context.Background()
-	client := files.NewContext(userConfig(t))
-	remotePath := fmt.Sprintf("/sdk-integration-download-resume-%d.txt", time.Now().UnixNano())
-	prefix := "already downloaded "
-	suffix := "and fetched with a range request\n"
-	payload := prefix + suffix
-	uploadIntegrationFile(t, ctx, client, remotePath, payload)
-	defer deleteIntegrationPath(t, client, remotePath)
+func assertUploadProgress(
+	t *testing.T,
+	updates []filetransfer.UploadProgress,
+	total int64,
+) {
+	t.Helper()
+	if total == 0 {
+		return
+	}
+	if len(updates) == 0 {
+		t.Fatal("no upload progress updates")
+	}
+	previous := int64(0)
+	for _, update := range updates {
+		if update.TotalBytes != total {
+			t.Fatalf("upload TotalBytes = %d, want %d", update.TotalBytes, total)
+		}
+		if update.BytesCommitted <= previous {
+			t.Fatalf("upload progress is not increasing: previous=%d current=%d", previous, update.BytesCommitted)
+		}
+		if update.BytesCommitted > total {
+			t.Fatalf("upload progress exceeds total: %d > %d", update.BytesCommitted, total)
+		}
+		previous = update.BytesCommitted
+	}
+	if previous != total {
+		t.Fatalf("final upload progress = %d, want %d", previous, total)
+	}
+}
 
-	localPath := filepath.Join(t.TempDir(), "download.txt")
-	if err := os.WriteFile(localPath+".part", []byte(prefix), 0o644); err != nil {
-		t.Fatal(err)
+func assertDownloadProgress(
+	t *testing.T,
+	updates []filetransfer.DownloadProgress,
+	total int64,
+) {
+	t.Helper()
+	if total == 0 {
+		return
 	}
-
-	result, err := filedownload.New(client).DownloadFile(ctx, remotePath, localPath)
-	if err != nil {
-		t.Fatalf("DownloadFile(%q): %v", remotePath, err)
+	if len(updates) == 0 {
+		t.Fatal("no download progress updates")
 	}
-
-	data, err := os.ReadFile(localPath)
-	if err != nil {
-		t.Fatal(err)
+	previous := int64(0)
+	for _, update := range updates {
+		if update.TotalBytes != total {
+			t.Fatalf("download TotalBytes = %d, want %d", update.TotalBytes, total)
+		}
+		if update.BytesCommitted <= previous {
+			t.Fatalf("download progress is not increasing: previous=%d current=%d", previous, update.BytesCommitted)
+		}
+		if update.BytesCommitted > total {
+			t.Fatalf("download progress exceeds total: %d > %d", update.BytesCommitted, total)
+		}
+		previous = update.BytesCommitted
 	}
-	if got := string(data); got != payload {
-		t.Fatalf("downloaded content = %q, want %q", got, payload)
-	}
-	if result.ResumedFrom != int64(len(prefix)) {
-		t.Fatalf("ResumedFrom = %d, want %d", result.ResumedFrom, len(prefix))
-	}
-	if _, err := os.Stat(localPath + ".part"); !os.IsNotExist(err) {
-		t.Fatalf("part file still exists: %v", err)
+	if previous != total {
+		t.Fatalf("final download progress = %d, want %d", previous, total)
 	}
 }
 
