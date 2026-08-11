@@ -20832,10 +20832,11 @@ type MediaHubSharedLinkAudience struct {
 
 // Valid tag values for MediaHubSharedLinkAudience
 const (
-	MediaHubSharedLinkAudienceNoOne    = "no_one"
-	MediaHubSharedLinkAudiencePublic   = "public"
-	MediaHubSharedLinkAudienceTeamOnly = "team_only"
-	MediaHubSharedLinkAudienceOther    = "other"
+	MediaHubSharedLinkAudienceNoOne              = "no_one"
+	MediaHubSharedLinkAudiencePublic             = "public"
+	MediaHubSharedLinkAudiencePublicLoggedInOnly = "public_logged_in_only"
+	MediaHubSharedLinkAudienceTeamOnly           = "team_only"
+	MediaHubSharedLinkAudienceOther              = "other"
 )
 
 // MediaHubSharedLinkAudienceChangedDetails : Changed Replay shared link
