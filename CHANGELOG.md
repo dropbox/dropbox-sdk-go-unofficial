@@ -5,6 +5,8 @@ summarized from the repository history.
 
 ## Unreleased
 
+## v6.6.0 - 2026-08-11
+
 ### Added
 
 - Added `dropbox/filetransfer` for reliable uploads and downloads with retries,
