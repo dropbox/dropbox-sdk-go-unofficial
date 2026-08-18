@@ -197,14 +197,14 @@ func (d *Downloader) downloadSequential(
 				return fail(err)
 			}
 			lastErr = err
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, err); err != nil {
 				return fail(err)
 			}
 			continue
 		}
 		if body == nil {
 			lastErr = errors.New("download response body is nil")
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, lastErr); err != nil {
 				return fail(err)
 			}
 			continue
@@ -256,7 +256,7 @@ func (d *Downloader) downloadSequential(
 			if !retryable {
 				return fail(copyErr)
 			}
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, copyErr); err != nil {
 				return fail(err)
 			}
 			continue
@@ -267,7 +267,7 @@ func (d *Downloader) downloadSequential(
 				committed,
 				info.Size,
 			)
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, lastErr); err != nil {
 				return fail(err)
 			}
 			continue
@@ -393,14 +393,14 @@ func (d *Downloader) prepareParallelDownload(
 				return nil, DownloadInfo{}, 0, err
 			}
 			lastErr = err
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, err); err != nil {
 				return nil, DownloadInfo{}, 0, err
 			}
 			continue
 		}
 		if body == nil {
 			lastErr = errors.New("download response body is nil")
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, lastErr); err != nil {
 				return nil, DownloadInfo{}, 0, err
 			}
 			continue
@@ -447,7 +447,7 @@ func (d *Downloader) prepareParallelDownload(
 			return nil, DownloadInfo{}, 0, copyErr
 		}
 		lastErr = copyErr
-		if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+		if err := waitForRetry(ctx, attempt, maxAttempts, copyErr); err != nil {
 			return nil, DownloadInfo{}, 0, err
 		}
 	}
@@ -496,14 +496,14 @@ func (d *Downloader) downloadRange(
 				return err
 			}
 			lastErr = err
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, err); err != nil {
 				return err
 			}
 			continue
 		}
 		if body == nil {
 			lastErr = errors.New("download response body is nil")
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, lastErr); err != nil {
 				return err
 			}
 			continue
@@ -537,7 +537,7 @@ func (d *Downloader) downloadRange(
 			return copyErr
 		}
 		lastErr = copyErr
-		if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+		if err := waitForRetry(ctx, attempt, maxAttempts, copyErr); err != nil {
 			return err
 		}
 	}

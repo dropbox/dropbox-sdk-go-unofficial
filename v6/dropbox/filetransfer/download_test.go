@@ -87,6 +87,57 @@ func TestDownloadSequentialRetriesFromCommittedOffset(t *testing.T) {
 	assertDownloadProgress(t, updates, int64(len(data)))
 }
 
+func TestDownloadRetriesNonTimeoutNetworkError(t *testing.T) {
+	data := []byte("retry network error")
+	client := &fakeDownloadClient{
+		data:                data,
+		metadata:            fileMetadata(data),
+		failFirstRequestErr: networkError{},
+	}
+	target := Bytes()
+
+	_, err := NewDownloader(client).Download(
+		context.Background(),
+		"/retry-network-error.bin",
+		target,
+		DownloadOptions{MaxAttempts: 2},
+	)
+	if err != nil {
+		t.Fatalf("Download() error = %v", err)
+	}
+	if client.calls != 2 {
+		t.Fatalf("download calls = %d, want 2", client.calls)
+	}
+	if got := target.Bytes(); !bytes.Equal(got, data) {
+		t.Fatalf("downloaded bytes = %q, want %q", got, data)
+	}
+}
+
+func TestDownloadRetryStopsWhenContextCanceled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	client := &fakeDownloadClient{
+		data:        []byte("unused"),
+		metadata:    fileMetadata([]byte("unused")),
+		apiErr:      networkError{},
+		onFirstCall: cancel,
+	}
+
+	_, err := NewDownloader(client).Download(
+		ctx,
+		"/canceled-retry.bin",
+		Bytes(),
+		DownloadOptions{MaxAttempts: 3},
+	)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("Download() error = %v, want context.Canceled", err)
+	}
+	if client.calls != 1 {
+		t.Fatalf("download calls = %d, want 1", client.calls)
+	}
+}
+
 func TestDownloadDoesNotRetryPermanentAPIError(t *testing.T) {
 	client := &fakeDownloadClient{
 		data:     []byte("unused"),
@@ -287,10 +338,12 @@ type fakeDownloadClient struct {
 	metadata *files.FileMetadata
 	ranges   []string
 
-	failFirstAt  int
-	failFirstErr error
-	apiErr       error
-	calls        int
+	failFirstAt         int
+	failFirstErr        error
+	failFirstRequestErr error
+	apiErr              error
+	onFirstCall         func()
+	calls               int
 }
 
 func (c *fakeDownloadClient) DownloadContext(
@@ -301,11 +354,17 @@ func (c *fakeDownloadClient) DownloadContext(
 	defer c.mu.Unlock()
 
 	c.calls++
+	if c.calls == 1 && c.onFirstCall != nil {
+		c.onFirstCall()
+	}
 	rangeHeader := ""
 	if arg != nil && arg.ExtraHeaders != nil {
 		rangeHeader = arg.ExtraHeaders["Range"]
 	}
 	c.ranges = append(c.ranges, rangeHeader)
+	if c.calls == 1 && c.failFirstRequestErr != nil {
+		return nil, nil, c.failFirstRequestErr
+	}
 	if c.apiErr != nil {
 		return nil, nil, c.apiErr
 	}

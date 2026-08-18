@@ -5,8 +5,10 @@ import (
 	"errors"
 	"io"
 	"testing"
+	"time"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/auth"
 )
 
 func TestIsRetryableTransferError(t *testing.T) {
@@ -43,6 +45,11 @@ func TestIsRetryableTransferError(t *testing.T) {
 		{
 			name: "network timeout",
 			err:  timeoutError{},
+			want: true,
+		},
+		{
+			name: "network non-timeout",
+			err:  networkError{},
 			want: true,
 		},
 		{
@@ -104,7 +111,7 @@ func TestWaitForRetryLastAttempt(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	if err := waitForRetry(ctx, 2, 3); err != nil {
+	if err := waitForRetry(ctx, 2, 3, nil); err != nil {
 		t.Fatalf("waitForRetry() error = %v", err)
 	}
 }
@@ -113,12 +120,56 @@ func TestWaitForRetryCanceledContext(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	cancel()
 
-	err := waitForRetry(ctx, 0, 3)
+	err := waitForRetry(ctx, 0, 3, nil)
 	if !errors.Is(err, context.Canceled) {
 		t.Fatalf(
 			"waitForRetry() error = %v, want context.Canceled",
 			err,
 		)
+	}
+}
+
+func TestRetryDelayUsesRateLimitRetryAfter(t *testing.T) {
+	tests := []struct {
+		name string
+		err  error
+	}{
+		{
+			name: "value",
+			err: auth.RateLimitAPIError{
+				RateLimitError: &auth.RateLimitError{RetryAfter: 7},
+			},
+		},
+		{
+			name: "pointer",
+			err: &auth.RateLimitAPIError{
+				RateLimitError: &auth.RateLimitError{RetryAfter: 7},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if !isRetryableTransferError(tt.err) {
+				t.Fatal("isRetryableTransferError() = false, want true")
+			}
+			if got, want := retryDelay(tt.err, 0), 7*time.Second; got != want {
+				t.Fatalf("retryDelay() = %v, want %v", got, want)
+			}
+		})
+	}
+}
+
+func TestRetryDelayUsesJitteredExponentialBackoff(t *testing.T) {
+	for attempt, maximum := range map[int]time.Duration{
+		0: retryBaseDelay,
+		1: retryBaseDelay * 2,
+		2: retryBaseDelay * 4,
+	} {
+		delay := retryDelay(errors.New("temporary failure"), attempt)
+		if delay < maximum/2 || delay > maximum {
+			t.Fatalf("retryDelay(attempt %d) = %v, want between %v and %v", attempt, delay, maximum/2, maximum)
+		}
 	}
 }
 
@@ -135,3 +186,9 @@ func (timeoutError) Timeout() bool {
 func (timeoutError) Temporary() bool {
 	return false
 }
+
+type networkError struct{}
+
+func (networkError) Error() string   { return "network error" }
+func (networkError) Timeout() bool   { return false }
+func (networkError) Temporary() bool { return false }
