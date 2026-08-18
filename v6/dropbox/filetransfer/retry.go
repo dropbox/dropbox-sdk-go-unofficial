@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"io"
+	"math"
 	"math/rand/v2"
 	"net"
 	"time"
@@ -22,9 +23,32 @@ func waitForRetry(
 	ctx context.Context,
 	attempt int,
 	maxAttempts int,
+	retryErr error,
 ) error {
 	if attempt+1 >= maxAttempts {
 		return nil
+	}
+
+	delay := retryDelay(retryErr, attempt)
+	timer := time.NewTimer(delay)
+	defer timer.Stop()
+
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case <-timer.C:
+		return nil
+	}
+}
+
+func retryDelay(err error, attempt int) time.Duration {
+	if rateLimitErr := rateLimitTransferError(err); rateLimitErr != nil &&
+		rateLimitErr.RateLimitError != nil {
+		retryAfter := rateLimitErr.RateLimitError.RetryAfter
+		if retryAfter > uint64(math.MaxInt64/int64(time.Second)) {
+			return time.Duration(math.MaxInt64)
+		}
+		return time.Duration(retryAfter) * time.Second
 	}
 
 	delay := retryBaseDelay
@@ -38,15 +62,21 @@ func waitForRetry(
 	half := delay / 2
 	delay = half + time.Duration(rand.Int64N(int64(half)+1))
 
-	timer := time.NewTimer(delay)
-	defer timer.Stop()
+	return delay
+}
 
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	case <-timer.C:
-		return nil
+func rateLimitTransferError(err error) *auth.RateLimitAPIError {
+	var rateLimitErr auth.RateLimitAPIError
+	if errors.As(err, &rateLimitErr) {
+		return &rateLimitErr
 	}
+
+	var rateLimitErrPtr *auth.RateLimitAPIError
+	if errors.As(err, &rateLimitErrPtr) {
+		return rateLimitErrPtr
+	}
+
+	return nil
 }
 
 func isRetryableTransferError(err error) bool {
@@ -63,7 +93,7 @@ func isRetryableTransferError(err error) bool {
 	}
 
 	var netErr net.Error
-	if errors.As(err, &netErr) && netErr.Timeout() {
+	if errors.As(err, &netErr) {
 		return true
 	}
 
@@ -71,8 +101,7 @@ func isRetryableTransferError(err error) bool {
 	if errors.As(err, &serverErr) {
 		return true
 	}
-	var rateLimitErr auth.RateLimitAPIError
-	if errors.As(err, &rateLimitErr) {
+	if rateLimitTransferError(err) != nil {
 		return true
 	}
 	var internalErr dropbox.SDKInternalError
