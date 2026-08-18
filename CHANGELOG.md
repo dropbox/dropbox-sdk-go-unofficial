@@ -5,6 +5,15 @@ summarized from the repository history.
 
 ## Unreleased
 
+## v6.6.1 - 2026-08-18
+
+### Fixed
+
+- Retried all network errors during `dropbox/filetransfer` downloads and
+  honored rate-limit `retry_after` delays.
+
+## v6.6.0 - 2026-08-11
+
 ### Added
 
 - Added `dropbox/filetransfer` for reliable uploads and downloads with retries,
@@ -12,11 +21,6 @@ summarized from the repository history.
 - Added `integration`-tagged live-API tests for the user and team clients
   (folder create/delete round-trips) authenticated with scoped refresh tokens,
   plus an Integration GitHub Actions workflow.
-
-### Fixed
-
-- Retried all network errors during `dropbox/filetransfer` downloads and
-  honored rate-limit `retry_after` delays.
 
 ### Removed
 
