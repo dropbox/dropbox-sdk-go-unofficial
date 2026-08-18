@@ -13,6 +13,11 @@ summarized from the repository history.
   (folder create/delete round-trips) authenticated with scoped refresh tokens,
   plus an Integration GitHub Actions workflow.
 
+### Fixed
+
+- Retried all network errors during `dropbox/filetransfer` downloads and
+  honored rate-limit `retry_after` delays.
+
 ### Removed
 
 - Removed the earlier `dropbox/filedownload` helper in favor of

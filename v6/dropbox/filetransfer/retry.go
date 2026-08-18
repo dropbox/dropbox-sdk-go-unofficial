@@ -23,17 +23,13 @@ func waitForRetry(
 	ctx context.Context,
 	attempt int,
 	maxAttempts int,
-	retryErr ...error,
+	retryErr error,
 ) error {
 	if attempt+1 >= maxAttempts {
 		return nil
 	}
 
-	var err error
-	if len(retryErr) > 0 {
-		err = retryErr[0]
-	}
-	delay := retryDelay(err, attempt)
+	delay := retryDelay(retryErr, attempt)
 	timer := time.NewTimer(delay)
 	defer timer.Stop()
 

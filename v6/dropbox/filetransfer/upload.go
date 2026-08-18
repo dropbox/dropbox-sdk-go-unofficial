@@ -185,7 +185,7 @@ func (u *Uploader) startUploadSessionWithRetry(
 		}
 
 		lastErr = err
-		if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+		if err := waitForRetry(ctx, attempt, maxAttempts, nil); err != nil {
 			return nil, err
 		}
 	}
@@ -488,7 +488,7 @@ func (u *Uploader) appendUploadWithRetry(
 					return nil
 				case offset:
 					lastErr = err
-					if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+					if err := waitForRetry(ctx, attempt, maxAttempts, nil); err != nil {
 						return err
 					}
 					continue
@@ -505,7 +505,7 @@ func (u *Uploader) appendUploadWithRetry(
 				return err
 			}
 			lastErr = err
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, nil); err != nil {
 				return err
 			}
 			continue
@@ -557,7 +557,7 @@ func (u *Uploader) finishUploadWithRetry(
 					)
 				}
 				lastErr = err
-				if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+				if err := waitForRetry(ctx, attempt, maxAttempts, nil); err != nil {
 					return nil, err
 				}
 				continue
@@ -566,7 +566,7 @@ func (u *Uploader) finishUploadWithRetry(
 				return nil, err
 			}
 			lastErr = err
-			if err := waitForRetry(ctx, attempt, maxAttempts); err != nil {
+			if err := waitForRetry(ctx, attempt, maxAttempts, nil); err != nil {
 				return nil, err
 			}
 			continue
