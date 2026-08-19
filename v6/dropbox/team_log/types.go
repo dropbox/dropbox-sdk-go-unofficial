@@ -20747,6 +20747,9 @@ const (
 type MediaHubProjectTeamAddDetails struct {
 	// Project : Replay project.
 	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
+	// Invitee : The email address of the Replay project member targeted by the
+	// event.
+	Invitee string `json:"invitee,omitempty"`
 }
 
 // NewMediaHubProjectTeamAddDetails returns a new MediaHubProjectTeamAddDetails instance
@@ -20772,6 +20775,9 @@ func NewMediaHubProjectTeamAddType(Description string) *MediaHubProjectTeamAddTy
 type MediaHubProjectTeamDeleteDetails struct {
 	// Project : Replay project.
 	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
+	// Invitee : The email address of the Replay project member targeted by the
+	// event.
+	Invitee string `json:"invitee,omitempty"`
 }
 
 // NewMediaHubProjectTeamDeleteDetails returns a new MediaHubProjectTeamDeleteDetails instance
@@ -20802,6 +20808,9 @@ type MediaHubProjectTeamRoleChangedDetails struct {
 	NewRole *MediaHubProjectRole `json:"new_role"`
 	// Project : Replay project.
 	Project *MediaHubProjectLogInfo `json:"project,omitempty"`
+	// Invitee : The email address of the Replay project member targeted by the
+	// event.
+	Invitee string `json:"invitee,omitempty"`
 }
 
 // NewMediaHubProjectTeamRoleChangedDetails returns a new MediaHubProjectTeamRoleChangedDetails instance
