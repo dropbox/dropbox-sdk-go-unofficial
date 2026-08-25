@@ -6085,6 +6085,8 @@ type EventDetails struct {
 	ProtectActionExportDetails *ProtectActionExportDetails `json:"protect_action_export_details,omitempty"`
 	// ProtectActionRemoveCollaboratorDetails : has no documentation (yet)
 	ProtectActionRemoveCollaboratorDetails *ProtectActionRemoveCollaboratorDetails `json:"protect_action_remove_collaborator_details,omitempty"`
+	// ProtectActionRemoveDomainsDetails : has no documentation (yet)
+	ProtectActionRemoveDomainsDetails *ProtectActionRemoveDomainsDetails `json:"protect_action_remove_domains_details,omitempty"`
 	// ProtectActionRemoveLinkDetails : has no documentation (yet)
 	ProtectActionRemoveLinkDetails *ProtectActionRemoveLinkDetails `json:"protect_action_remove_link_details,omitempty"`
 	// ProtectActionStopSharingDetails : has no documentation (yet)
@@ -7106,6 +7108,7 @@ const (
 	EventDetailsProtectActionDeleteDetails                               = "protect_action_delete_details"
 	EventDetailsProtectActionExportDetails                               = "protect_action_export_details"
 	EventDetailsProtectActionRemoveCollaboratorDetails                   = "protect_action_remove_collaborator_details"
+	EventDetailsProtectActionRemoveDomainsDetails                        = "protect_action_remove_domains_details"
 	EventDetailsProtectActionRemoveLinkDetails                           = "protect_action_remove_link_details"
 	EventDetailsProtectActionStopSharingDetails                          = "protect_action_stop_sharing_details"
 	EventDetailsProtectInternalDomainsChangedDetails                     = "protect_internal_domains_changed_details"
@@ -8880,6 +8883,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "protect_action_remove_collaborator_details":
 		if err = json.Unmarshal(body, &u.ProtectActionRemoveCollaboratorDetails); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_domains_details":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveDomainsDetails); err != nil {
 			return err
 		}
 
@@ -11327,6 +11335,9 @@ type EventType struct {
 	// ProtectActionRemoveCollaborator : (protect) Removed collaborators via
 	// Dropbox Protect
 	ProtectActionRemoveCollaborator *ProtectActionRemoveCollaboratorType `json:"protect_action_remove_collaborator,omitempty"`
+	// ProtectActionRemoveDomains : (protect) Removed domains via Dropbox
+	// Protect
+	ProtectActionRemoveDomains *ProtectActionRemoveDomainsType `json:"protect_action_remove_domains,omitempty"`
 	// ProtectActionRemoveLink : (protect) Removed a link via Dropbox Protect
 	ProtectActionRemoveLink *ProtectActionRemoveLinkType `json:"protect_action_remove_link,omitempty"`
 	// ProtectActionStopSharing : (protect) Stopped sharing content via Dropbox
@@ -12556,6 +12567,7 @@ const (
 	EventTypeProtectActionDelete                               = "protect_action_delete"
 	EventTypeProtectActionExport                               = "protect_action_export"
 	EventTypeProtectActionRemoveCollaborator                   = "protect_action_remove_collaborator"
+	EventTypeProtectActionRemoveDomains                        = "protect_action_remove_domains"
 	EventTypeProtectActionRemoveLink                           = "protect_action_remove_link"
 	EventTypeProtectActionStopSharing                          = "protect_action_stop_sharing"
 	EventTypeProtectInternalDomainsChanged                     = "protect_internal_domains_changed"
@@ -14329,6 +14341,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "protect_action_remove_collaborator":
 		if err = json.Unmarshal(body, &u.ProtectActionRemoveCollaborator); err != nil {
+			return err
+		}
+
+	case "protect_action_remove_domains":
+		if err = json.Unmarshal(body, &u.ProtectActionRemoveDomains); err != nil {
 			return err
 		}
 
@@ -16380,6 +16397,7 @@ const (
 	EventTypeArgProtectActionDelete                               = "protect_action_delete"
 	EventTypeArgProtectActionExport                               = "protect_action_export"
 	EventTypeArgProtectActionRemoveCollaborator                   = "protect_action_remove_collaborator"
+	EventTypeArgProtectActionRemoveDomains                        = "protect_action_remove_domains"
 	EventTypeArgProtectActionRemoveLink                           = "protect_action_remove_link"
 	EventTypeArgProtectActionStopSharing                          = "protect_action_stop_sharing"
 	EventTypeArgProtectInternalDomainsChanged                     = "protect_internal_domains_changed"
@@ -24943,6 +24961,32 @@ type ProtectActionRemoveCollaboratorType struct {
 // NewProtectActionRemoveCollaboratorType returns a new ProtectActionRemoveCollaboratorType instance
 func NewProtectActionRemoveCollaboratorType(Description string) *ProtectActionRemoveCollaboratorType {
 	s := new(ProtectActionRemoveCollaboratorType)
+	s.Description = Description
+	return s
+}
+
+// ProtectActionRemoveDomainsDetails : Removed domains via Dropbox Protect.
+type ProtectActionRemoveDomainsDetails struct {
+	// ActionId : Action ID.
+	ActionId string `json:"action_id"`
+}
+
+// NewProtectActionRemoveDomainsDetails returns a new ProtectActionRemoveDomainsDetails instance
+func NewProtectActionRemoveDomainsDetails(ActionId string) *ProtectActionRemoveDomainsDetails {
+	s := new(ProtectActionRemoveDomainsDetails)
+	s.ActionId = ActionId
+	return s
+}
+
+// ProtectActionRemoveDomainsType : has no documentation (yet)
+type ProtectActionRemoveDomainsType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectActionRemoveDomainsType returns a new ProtectActionRemoveDomainsType instance
+func NewProtectActionRemoveDomainsType(Description string) *ProtectActionRemoveDomainsType {
+	s := new(ProtectActionRemoveDomainsType)
 	s.Description = Description
 	return s
 }
