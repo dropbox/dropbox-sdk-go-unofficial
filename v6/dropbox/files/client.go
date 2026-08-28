@@ -162,8 +162,7 @@ type Client interface {
 	// exist for a specific upload path at any given time.  The POST request on
 	// the temporary upload link must have its Content-Type set to
 	// "application/octet-stream".  Example temporary upload link consumption
-	// request:  curl -X POST
-	// https://content.dropboxapi.com/apitul/1/bNi2uIYF51cVBND --header
+	// request:  curl -X POST <temporary_upload_link_url> --header
 	// "Content-Type: application/octet-stream" --data-binary @local_file.txt  A
 	// successful temporary upload link consumption request returns the content
 	// hash of the uploaded data in JSON format. Example successful temporary
@@ -604,8 +603,7 @@ type ContextClient interface {
 	// exist for a specific upload path at any given time.  The POST request on
 	// the temporary upload link must have its Content-Type set to
 	// "application/octet-stream".  Example temporary upload link consumption
-	// request:  curl -X POST
-	// https://content.dropboxapi.com/apitul/1/bNi2uIYF51cVBND --header
+	// request:  curl -X POST <temporary_upload_link_url> --header
 	// "Content-Type: application/octet-stream" --data-binary @local_file.txt  A
 	// successful temporary upload link consumption request returns the content
 	// hash of the uploaded data in JSON format. Example successful temporary
@@ -2135,12 +2133,11 @@ type GetTemporaryUploadLinkAPIError struct {
 // will have to be generated. Multiple links may exist for a specific upload
 // path at any given time.  The POST request on the temporary upload link must
 // have its Content-Type set to "application/octet-stream".  Example temporary
-// upload link consumption request:  curl -X POST
-// https://content.dropboxapi.com/apitul/1/bNi2uIYF51cVBND --header
-// "Content-Type: application/octet-stream" --data-binary @local_file.txt  A
-// successful temporary upload link consumption request returns the content hash
-// of the uploaded data in JSON format. Example successful temporary upload link
-// consumption response: {"content-hash":
+// upload link consumption request:  curl -X POST <temporary_upload_link_url>
+// --header "Content-Type: application/octet-stream" --data-binary
+// @local_file.txt  A successful temporary upload link consumption request
+// returns the content hash of the uploaded data in JSON format. Example
+// successful temporary upload link consumption response: {"content-hash":
 // "599d71033d700ac892a0e48fa61b125d2f5994"}  An unsuccessful temporary upload
 // link consumption request returns any of the following status codes:  HTTP 400
 // Bad Request: Content-Type is not one of application/octet-stream and
