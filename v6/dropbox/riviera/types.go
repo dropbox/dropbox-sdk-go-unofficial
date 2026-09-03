@@ -120,6 +120,31 @@ func NewApiExifMetadata() *ApiExifMetadata {
 	return s
 }
 
+// ApiKeyframe : A single extracted scene-change keyframe.
+type ApiKeyframe struct {
+	// Timestamp : Presentation timestamp of the keyframe, in seconds from the
+	// start of the video.
+	Timestamp float64 `json:"timestamp"`
+	// SceneScore : Scene-change score that triggered this keyframe, in the
+	// range [0.0, 1.0]. Higher values indicate a more pronounced scene change
+	// relative to the preceding frame. The first keyframe of a video is always
+	// reported as 1.0: the start of a video is a scene boundary by definition,
+	// so that score is not a measured frame-to-frame comparison.
+	SceneScore float64 `json:"scene_score"`
+	// ImageBase64 : The extracted frame as a base64-encoded JPEG image. Empty
+	// when the request set `include_images = false`.
+	ImageBase64 string `json:"image_base64"`
+}
+
+// NewApiKeyframe returns a new ApiKeyframe instance
+func NewApiKeyframe() *ApiKeyframe {
+	s := new(ApiKeyframe)
+	s.Timestamp = 0.0
+	s.SceneScore = 0.0
+	s.ImageBase64 = ""
+	return s
+}
+
 // ApiMediaMetadata : Audio/video container and per-stream metadata. Mirrors the
 // useful subset of the internal `riviera.MediaMetadata` message.
 type ApiMediaMetadata struct {
@@ -432,6 +457,98 @@ func (u *FileIdOrUrl) UnmarshalJSON(body []byte) error {
 
 	}
 	return nil
+}
+
+// GetKeyframesArgs : Arguments for the asynchronous `get_keyframes_async`
+// route. Exactly one of `file_id`, `path`, or `url` must be supplied via
+// `file_id_or_url` to identify the video whose scene-change keyframes should be
+// extracted.
+type GetKeyframesArgs struct {
+	// FileIdOrUrl : Identifier of the video file to extract keyframes from.
+	// Callers must set exactly one of the `FileIdOrUrl` variants. Keyframe
+	// extraction is supported for video files only; see the route description
+	// for the supported formats. Requests against unsupported formats return
+	// `unsupported_format_error`.
+	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
+	// SceneChangeThreshold : Sensitivity of scene-change detection. A keyframe
+	// is emitted whenever the frame-to-frame scene score crosses this
+	// threshold, so a LOWER value yields MORE keyframes. Valid range is (0.0,
+	// 1.0]. When omitted (0.0) the service uses a default of 0.3, which is a
+	// good starting point for most videos.
+	SceneChangeThreshold float64 `json:"scene_change_threshold"`
+	// IncludeImages : When true, each returned keyframe includes the JPEG image
+	// bytes, base64-encoded, in `ApiKeyframe.image_base64`. When false, the
+	// response contains only per-keyframe metadata (timestamp and scene score)
+	// and `image_base64` is left empty -- useful when you only need the scene
+	// boundaries and want a small response. NOTE: because the field defaults to
+	// false in proto3, callers who want images must set this explicitly to
+	// true.
+	IncludeImages bool `json:"include_images"`
+}
+
+// NewGetKeyframesArgs returns a new GetKeyframesArgs instance
+func NewGetKeyframesArgs() *GetKeyframesArgs {
+	s := new(GetKeyframesArgs)
+	s.SceneChangeThreshold = 0.0
+	s.IncludeImages = false
+	return s
+}
+
+// GetKeyframesAsyncCheckResult : Result type for EventBus async check - must
+// end in "CheckResult"
+type GetKeyframesAsyncCheckResult struct {
+	dropbox.Tagged
+	// Complete : has no documentation (yet)
+	Complete *GetKeyframesResult `json:"complete,omitempty"`
+	// Failed : has no documentation (yet)
+	Failed *KeyframesExtractionApiV2Error `json:"failed,omitempty"`
+}
+
+// Valid tag values for GetKeyframesAsyncCheckResult
+const (
+	GetKeyframesAsyncCheckResultInProgress = "in_progress"
+	GetKeyframesAsyncCheckResultComplete   = "complete"
+	GetKeyframesAsyncCheckResultFailed     = "failed"
+	GetKeyframesAsyncCheckResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a GetKeyframesAsyncCheckResult instance
+func (u *GetKeyframesAsyncCheckResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *KeyframesExtractionApiV2Error `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
+			return err
+		}
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// GetKeyframesResult : has no documentation (yet)
+type GetKeyframesResult struct {
+	// Frames : The extracted keyframes, ordered by `timestamp`. May be empty
+	// when no scene changes are detected in the source.
+	Frames []*ApiKeyframe `json:"frames,omitempty"`
+}
+
+// NewGetKeyframesResult returns a new GetKeyframesResult instance
+func NewGetKeyframesResult() *GetKeyframesResult {
+	s := new(GetKeyframesResult)
+	return s
 }
 
 // GetMarkdownArgs : Arguments for the asynchronous `get_markdown_async` route.
@@ -864,6 +981,67 @@ type GetTranscriptResult struct {
 func NewGetTranscriptResult() *GetTranscriptResult {
 	s := new(GetTranscriptResult)
 	return s
+}
+
+// KeyframesExtractionApiV2Error : Reason a keyframe extraction job failed.
+// Returned in the `failed` variant of `GetKeyframesAsyncCheckResult`. This is a
+// semantic error union: the HTTP status of the poll request itself is
+// unaffected (a poll that surfaces a failed job is still a normal successful
+// poll response). Callers should branch on the variant.
+type KeyframesExtractionApiV2Error struct {
+	dropbox.Tagged
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
+	ServerError string `json:"server_error,omitempty"`
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
+	UserError string `json:"user_error,omitempty"`
+}
+
+// Valid tag values for KeyframesExtractionApiV2Error
+const (
+	KeyframesExtractionApiV2ErrorServerError                 = "server_error"
+	KeyframesExtractionApiV2ErrorUserError                   = "user_error"
+	KeyframesExtractionApiV2ErrorUnsupportedFormatError      = "unsupported_format_error"
+	KeyframesExtractionApiV2ErrorLinkDownloadDisabledError   = "link_download_disabled_error"
+	KeyframesExtractionApiV2ErrorSharedLinkPasswordProtected = "shared_link_password_protected"
+	KeyframesExtractionApiV2ErrorLimitExceededError          = "limit_exceeded_error"
+	KeyframesExtractionApiV2ErrorConversionFailureError      = "conversion_failure_error"
+	KeyframesExtractionApiV2ErrorNotFoundError               = "not_found_error"
+	KeyframesExtractionApiV2ErrorIsAFolderError              = "is_a_folder_error"
+	KeyframesExtractionApiV2ErrorOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a KeyframesExtractionApiV2Error instance
+func (u *KeyframesExtractionApiV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
+		ServerError string `json:"server_error,omitempty"`
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
+		UserError string `json:"user_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "server_error":
+		u.ServerError = w.ServerError
+
+	case "user_error":
+		u.UserError = w.UserError
+
+	}
+	return nil
 }
 
 // MarkdownConversionApiV2Error : Reason a markdown conversion job failed.
