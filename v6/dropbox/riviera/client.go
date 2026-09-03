@@ -33,6 +33,25 @@ import (
 
 // Client interface describes all routes in this namespace
 type Client interface {
+	// GetKeyframesAsync : Asynchronous scene-change keyframe extraction for
+	// video files. Detects scene changes in the source video and returns one
+	// representative keyframe per detected scene, each tagged with its
+	// timestamp (seconds from the start of the video) and scene-change score.
+	// Set `include_images = true` to also receive each frame as a
+	// base64-encoded JPEG; when the field is omitted the response carries
+	// keyframe metadata only. Supported video formats: .3gp, .3gpp, .3gpp2,
+	// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
+	// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
+	// formats return an `unsupported_format_error`. Limits: the source file
+	// must be at most 10 GB. To keep responses within service limits the number
+	// of keyframes and the total image payload are bounded; requests that would
+	// exceed these limits return a `limit_exceeded_error` -- raise
+	// `scene_change_threshold` or set `include_images = false` to stay within
+	// bounds.
+	GetKeyframesAsync(arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error)
+	// GetKeyframesAsyncCheck : Returns the status or result of specified
+	// get_keyframes_async task.
+	GetKeyframesAsyncCheck(arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
 	// GetMarkdownAsync : Asynchronous document-to-markdown conversion for
 	// supported file formats. Supported formats: .binder, .docx, .html, .paper,
 	// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats return an
@@ -101,6 +120,25 @@ type Client interface {
 // ContextClient interface describes all routes in this namespace with context support
 type ContextClient interface {
 	Client
+	// GetKeyframesAsyncContext : Asynchronous scene-change keyframe extraction
+	// for video files. Detects scene changes in the source video and returns
+	// one representative keyframe per detected scene, each tagged with its
+	// timestamp (seconds from the start of the video) and scene-change score.
+	// Set `include_images = true` to also receive each frame as a
+	// base64-encoded JPEG; when the field is omitted the response carries
+	// keyframe metadata only. Supported video formats: .3gp, .3gpp, .3gpp2,
+	// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
+	// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
+	// formats return an `unsupported_format_error`. Limits: the source file
+	// must be at most 10 GB. To keep responses within service limits the number
+	// of keyframes and the total image payload are bounded; requests that would
+	// exceed these limits return a `limit_exceeded_error` -- raise
+	// `scene_change_threshold` or set `include_images = false` to stay within
+	// bounds.
+	GetKeyframesAsyncContext(ctx context.Context, arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error)
+	// GetKeyframesAsyncCheckContext : Returns the status or result of specified
+	// get_keyframes_async task.
+	GetKeyframesAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
 	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion
 	// for supported file formats. Supported formats: .binder, .docx, .html,
 	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats
@@ -167,6 +205,106 @@ type ContextClient interface {
 }
 
 type apiImpl dropbox.Context
+
+// GetKeyframesAsyncAPIError is an error-wrapper for the get_keyframes_async route
+type GetKeyframesAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+// GetKeyframesAsyncContext : Asynchronous scene-change keyframe extraction for
+// video files. Detects scene changes in the source video and returns one
+// representative keyframe per detected scene, each tagged with its timestamp
+// (seconds from the start of the video) and scene-change score. Set
+// `include_images = true` to also receive each frame as a base64-encoded JPEG;
+// when the field is omitted the response carries keyframe metadata only.
+// Supported video formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t,
+// .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv,
+// .rm, .ts, .vob, .webm, .wmv. Unsupported formats return an
+// `unsupported_format_error`. Limits: the source file must be at most 10 GB. To
+// keep responses within service limits the number of keyframes and the total
+// image payload are bounded; requests that would exceed these limits return a
+// `limit_exceeded_error` -- raise `scene_change_threshold` or set
+// `include_images = false` to stay within bounds.
+func (dbx *apiImpl) GetKeyframesAsyncContext(ctx context.Context, arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_keyframes_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetKeyframesAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetKeyframesAsync(arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.GetKeyframesAsyncContext(context.Background(), arg)
+}
+
+// GetKeyframesAsyncCheckAPIError is an error-wrapper for the get_keyframes_async/check route
+type GetKeyframesAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// GetKeyframesAsyncCheckContext : Returns the status or result of specified
+// get_keyframes_async task.
+func (dbx *apiImpl) GetKeyframesAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "get_keyframes_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr GetKeyframesAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) GetKeyframesAsyncCheck(arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error) {
+	return dbx.GetKeyframesAsyncCheckContext(context.Background(), arg)
+}
 
 // GetMarkdownAsyncAPIError is an error-wrapper for the get_markdown_async route
 type GetMarkdownAsyncAPIError struct {
