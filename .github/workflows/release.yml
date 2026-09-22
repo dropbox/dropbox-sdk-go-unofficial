@@ -74,6 +74,26 @@ jobs:
             exit 1
           fi
 
+          latest_tag=$(
+            git tag --list |
+              awk -v major="$major" \
+                '$0 ~ "^v" major "\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$" { print }' |
+              sort -V |
+              tail -n 1
+          )
+          if [[ -n "$latest_tag" ]]; then
+            latest_version=${latest_tag#v}
+            newest_version=$(
+              printf '%s\n%s\n' "$latest_version" "$VERSION" |
+                sort -V |
+                tail -n 1
+            )
+            if [[ "$VERSION" == "$latest_version" || "$newest_version" != "$VERSION" ]]; then
+              echo "Requested version $VERSION must be greater than latest released version $latest_version." >&2
+              exit 1
+            fi
+          fi
+
           echo "module-directory=$module_directory" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
