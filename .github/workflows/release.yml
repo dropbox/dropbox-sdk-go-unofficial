@@ -1,0 +1,193 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version without the v prefix (for example, 6.7.0)
+        required: true
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: release-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Validate release request
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      module-directory: ${{ steps.version.outputs.module-directory }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Require the default branch
+        env:
+          RELEASE_REF: ${{ github.ref }}
+        run: |
+          if [[ "$RELEASE_REF" != "refs/heads/master" ]]; then
+            echo "Releases must run from master (received $RELEASE_REF)." >&2
+            exit 1
+          fi
+
+      - name: Require a repository administrator
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          permission=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/collaborators/${GITHUB_ACTOR}/permission" \
+            --jq '.permission')
+          if [[ "$permission" != "admin" ]]; then
+            echo "Only repository administrators may run a release (received $permission)." >&2
+            exit 1
+          fi
+
+      - name: Checkout the release commit
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Validate the version
+        id: version
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          if [[ ! "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Version must be a stable semantic version such as 6.7.0, without a v prefix." >&2
+            exit 1
+          fi
+
+          major=${VERSION%%.*}
+          module_directory="v${major}"
+          if [[ ! -f "$module_directory/go.mod" ]]; then
+            echo "No Go module exists at $module_directory/go.mod for version $VERSION." >&2
+            exit 1
+          fi
+
+          module_path=$(sed -n 's/^module[[:space:]]\+//p' "$module_directory/go.mod")
+          if [[ "$major" -ge 2 && "$module_path" != */"v${major}" ]]; then
+            echo "Module path $module_path does not match major version $major." >&2
+            exit 1
+          fi
+
+          echo "module-directory=$module_directory" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Require the latest default-branch commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+        run: |
+          default_sha=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/master" \
+            --jq '.object.sha')
+          if [[ "$RELEASE_SHA" != "$default_sha" ]]; then
+            echo "The selected master commit is not the latest commit on master." >&2
+            exit 1
+          fi
+
+      - name: Require a new tag
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists." >&2
+            exit 1
+          else
+            status=$?
+            if [[ "$status" -ne 2 ]]; then
+              echo "Unable to check whether tag $TAG exists." >&2
+              exit "$status"
+            fi
+          fi
+
+  test:
+    name: Build and test
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout the release commit
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: ${{ needs.validate.outputs.module-directory }}/go.mod
+          cache-dependency-path: ${{ needs.validate.outputs.module-directory }}/go.sum
+
+      - name: Build
+        working-directory: ${{ needs.validate.outputs.module-directory }}
+        run: go build ./...
+
+      - name: Vet
+        working-directory: ${{ needs.validate.outputs.module-directory }}
+        run: go vet ./...
+
+      - name: Test
+        working-directory: ${{ needs.validate.outputs.module-directory }}
+        run: go test -race -v ./...
+
+  publish:
+    name: Publish Go module and GitHub release
+    needs: [validate, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the release commit
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Revalidate release target
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_SHA: ${{ github.sha }}
+          TAG: ${{ needs.validate.outputs.tag }}
+        run: |
+          default_sha=$(gh api \
+            "repos/${GITHUB_REPOSITORY}/git/ref/heads/master" \
+            --jq '.object.sha')
+          if [[ "$RELEASE_SHA" != "$default_sha" ]]; then
+            echo "master changed while the release was running; start a new release." >&2
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG was created while the release was running." >&2
+            exit 1
+          else
+            status=$?
+            if [[ "$status" -ne 2 ]]; then
+              echo "Unable to check whether tag $TAG exists." >&2
+              exit "$status"
+            fi
+          fi
+
+      - name: Create tag and GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ needs.validate.outputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --title "$TAG" \
+            --generate-notes
+
+  documentation:
+    name: Publish documentation
+    needs: [validate, publish]
+    permissions:
+      contents: read
+    uses: ./.github/workflows/documentation.yml
+    with:
+      version: ${{ inputs.version }}

@@ -1,0 +1,95 @@
+name: Documentation
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semantic version, with or without the v prefix
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      version:
+        description: Semantic version, with or without the v prefix
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: documentation-${{ github.event.release.tag_name || inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Index module and documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Normalize version
+        id: version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_VERSION: ${{ inputs.version }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          if [[ "$EVENT_NAME" == "release" ]]; then
+            raw_version=$RELEASE_TAG
+          else
+            raw_version=$INPUT_VERSION
+          fi
+          version=${raw_version#v}
+          if [[ ! "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "Version must be a stable semantic version, with or without a v prefix." >&2
+            exit 1
+          fi
+          echo "module-directory=v${version%%.*}" >> "$GITHUB_OUTPUT"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout the release tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.version.outputs.tag }}
+          persist-credentials: false
+
+      - name: Read module path
+        id: module
+        env:
+          MODULE_DIRECTORY: ${{ steps.version.outputs.module-directory }}
+        run: |
+          if [[ ! -f "$MODULE_DIRECTORY/go.mod" ]]; then
+            echo "No Go module exists at $MODULE_DIRECTORY/go.mod." >&2
+            exit 1
+          fi
+          module_path=$(sed -n 's/^module[[:space:]]\+//p' "$MODULE_DIRECTORY/go.mod")
+          if [[ -z "$module_path" ]]; then
+            echo "Unable to read the module path from $MODULE_DIRECTORY/go.mod." >&2
+            exit 1
+          fi
+          echo "path=$module_path" >> "$GITHUB_OUTPUT"
+
+      - name: Install Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: ${{ steps.version.outputs.module-directory }}/go.mod
+          cache: false
+
+      - name: Publish to the Go module proxy and request documentation
+        env:
+          MODULE_PATH: ${{ steps.module.outputs.path }}
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          for attempt in {1..12}; do
+            if GOPROXY=https://proxy.golang.org \
+              go list -m -json "$MODULE_PATH@$TAG"; then
+              exit 0
+            fi
+            if [[ "$attempt" -eq 12 ]]; then
+              echo "The Go module proxy did not index $MODULE_PATH@$TAG." >&2
+              exit 1
+            fi
+            echo "Module not indexed yet; retrying in $((attempt * 10)) seconds."
+            sleep $((attempt * 10))
+          done
