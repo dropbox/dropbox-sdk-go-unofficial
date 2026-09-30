@@ -31,19 +31,19 @@ import (
 // EXIF data. Fields are populated on a best-effort basis and may be empty when
 // absent from the source file.
 type ApiExifGpsMetadata struct {
-	// Latitude : Latitude / longitude in decimal degrees (positive = N/E,
-	// negative = S/W).
+	// Latitude : Latitude in decimal degrees (positive = north, negative =
+	// south).
 	Latitude float32 `json:"latitude"`
-	// Longitude : has no documentation (yet)
+	// Longitude : Longitude in decimal degrees (positive = east, negative =
+	// west).
 	Longitude float32 `json:"longitude"`
 	// Altitude : Altitude in meters, as reported by the source (string to
 	// preserve the original representation, which may include a reference
 	// direction).
 	Altitude string `json:"altitude"`
-	// Timestamp : Timestamp / datestamp of the GPS fix, in the EXIF-provided
-	// format.
+	// Timestamp : Time of the GPS fix, in the EXIF-provided format.
 	Timestamp string `json:"timestamp"`
-	// Datestamp : has no documentation (yet)
+	// Datestamp : Date of the GPS fix, in the EXIF-provided format.
 	Datestamp string `json:"datestamp"`
 }
 
@@ -58,44 +58,50 @@ func NewApiExifGpsMetadata() *ApiExifGpsMetadata {
 	return s
 }
 
-// ApiExifMetadata : Image EXIF metadata. Mirrors the useful subset of the
-// internal `riviera.ExifMetadata` message. Fields are best-effort and may be
-// empty.
+// ApiExifMetadata : Image EXIF metadata. Fields are populated on a best-effort
+// basis and may be empty when absent from the source file.
 type ApiExifMetadata struct {
-	// ImageWidth : has no documentation (yet)
+	// ImageWidth : Width of the image, in pixels.
 	ImageWidth uint32 `json:"image_width"`
-	// ImageHeight : has no documentation (yet)
+	// ImageHeight : Height of the image, in pixels.
 	ImageHeight uint32 `json:"image_height"`
-	// CameraMake : has no documentation (yet)
+	// CameraMake : Manufacturer of the device that captured the image, e.g.
+	// "Apple".
 	CameraMake string `json:"camera_make"`
-	// CameraModel : has no documentation (yet)
+	// CameraModel : Model of the device that captured the image, e.g. "iPhone
+	// 15 Pro".
 	CameraModel string `json:"camera_model"`
-	// LensModel : has no documentation (yet)
+	// LensModel : Model of the lens the image was captured with, when the
+	// source records it.
 	LensModel string `json:"lens_model"`
 	// DateTimeOriginal : Capture time in the EXIF-provided format (local time
 	// of the camera).
 	DateTimeOriginal string `json:"date_time_original"`
-	// OffsetTimeOriginal : Timezone offset for `date_time_original`, e.g.
-	// "+09:00".
+	// OffsetTimeOriginal : Timezone offset for
+	// `ApiExifMetadata.date_time_original`, e.g. "+09:00".
 	OffsetTimeOriginal string `json:"offset_time_original"`
 	// Orientation : EXIF orientation value (1-8). See the EXIF spec; 1 is the
 	// normal upright orientation.
 	Orientation uint32 `json:"orientation"`
-	// ExposureTime : fraction in string form, e.g. "1/250"
+	// ExposureTime : Exposure time the image was captured with, as a
+	// fractional-second string, e.g. "1/250".
 	ExposureTime string `json:"exposure_time"`
-	// ApertureValue : has no documentation (yet)
+	// ApertureValue : Aperture the image was captured at, as reported by the
+	// EXIF aperture tag.
 	ApertureValue float64 `json:"aperture_value"`
-	// IsoSpeed : has no documentation (yet)
+	// IsoSpeed : ISO sensitivity the image was captured at.
 	IsoSpeed uint32 `json:"iso_speed"`
-	// FocalLength : e.g. "26.0 mm"
+	// FocalLength : Focal length the image was captured at, including the unit,
+	// e.g. "26.0 mm".
 	FocalLength string `json:"focal_length"`
-	// Megapixels : has no documentation (yet)
+	// Megapixels : Total pixel count of the image, in megapixels.
 	Megapixels float64 `json:"megapixels"`
-	// Artist : has no documentation (yet)
+	// Artist : Creator credited in the EXIF artist tag.
 	Artist string `json:"artist"`
-	// Copyright : has no documentation (yet)
+	// Copyright : Copyright notice from the EXIF copyright tag.
 	Copyright string `json:"copyright"`
-	// GpsMetadata : has no documentation (yet)
+	// GpsMetadata : Location tags from the image, when the source recorded a
+	// location.
 	GpsMetadata *ApiExifGpsMetadata `json:"gps_metadata,omitempty"`
 }
 
@@ -145,16 +151,18 @@ func NewApiKeyframe() *ApiKeyframe {
 	return s
 }
 
-// ApiMediaMetadata : Audio/video container and per-stream metadata. Mirrors the
-// useful subset of the internal `riviera.MediaMetadata` message.
+// ApiMediaMetadata : Audio/video container and per-stream metadata. Fields are
+// populated on a best-effort basis and may be empty when absent from the source
+// file.
 type ApiMediaMetadata struct {
-	// BitrateBps : has no documentation (yet)
+	// BitrateBps : Overall bitrate of the container, in bits per second.
 	BitrateBps uint64 `json:"bitrate_bps"`
-	// DurationS : has no documentation (yet)
+	// DurationS : Duration of the media, in seconds.
 	DurationS float64 `json:"duration_s"`
 	// CreationTime : Container-level creation time, when present.
 	CreationTime string `json:"creation_time"`
-	// Streams : has no documentation (yet)
+	// Streams : The audio and video streams the container holds, in container
+	// order.
 	Streams []*ApiMediaStream `json:"streams,omitempty"`
 }
 
@@ -169,31 +177,39 @@ func NewApiMediaMetadata() *ApiMediaMetadata {
 
 // ApiMediaStream : A single audio or video stream within a media file.
 type ApiMediaStream struct {
-	// Index : has no documentation (yet)
+	// Index : Zero-based index of the stream within the container.
 	Index uint32 `json:"index"`
-	// CodecType : "audio", "video", etc.
+	// CodecType : Kind of media the stream carries, e.g. "audio" or "video".
 	CodecType string `json:"codec_type"`
-	// CodecName : has no documentation (yet)
+	// CodecName : Name of the codec the stream is encoded with, e.g. "h264" or
+	// "aac".
 	CodecName string `json:"codec_name"`
-	// BitrateBps : has no documentation (yet)
+	// BitrateBps : Bitrate of this stream, in bits per second.
 	BitrateBps uint64 `json:"bitrate_bps"`
-	// DurationS : has no documentation (yet)
+	// DurationS : Duration of this stream, in seconds.
 	DurationS float64 `json:"duration_s"`
-	// Width : Video-specific fields (zero / empty for audio streams).
+	// Width : Width of the video frame, in pixels. Zero for audio streams.
 	Width uint32 `json:"width"`
-	// Height : has no documentation (yet)
+	// Height : Height of the video frame, in pixels. Zero for audio streams.
 	Height uint32 `json:"height"`
-	// FramesPerSecond : has no documentation (yet)
+	// FramesPerSecond : Frame rate of the stream, in frames per second. Zero
+	// for audio streams.
 	FramesPerSecond float64 `json:"frames_per_second"`
-	// Rotation : has no documentation (yet)
+	// Rotation : Rotation to apply on playback, in degrees, as recorded in the
+	// stream metadata. Zero for audio streams and for video that needs no
+	// rotation.
 	Rotation int32 `json:"rotation"`
-	// DisplayAspectRatio : e.g. "16:9"
+	// DisplayAspectRatio : Aspect ratio the video should be displayed at, as a
+	// "width:height" string, e.g. "16:9". Empty for audio streams.
 	DisplayAspectRatio string `json:"display_aspect_ratio"`
-	// Channels : Audio-specific fields (zero / empty for video streams).
+	// Channels : Number of audio channels in the stream. Zero for video
+	// streams.
 	Channels uint32 `json:"channels"`
-	// ChannelLayout : has no documentation (yet)
+	// ChannelLayout : Layout of the audio channels, e.g. "stereo". Empty for
+	// video streams.
 	ChannelLayout string `json:"channel_layout"`
-	// SampleRateS : has no documentation (yet)
+	// SampleRateS : Sample rate of the audio stream, in samples per second.
+	// Zero for video streams.
 	SampleRateS uint64 `json:"sample_rate_s"`
 	// LanguageIso639 : ISO 639 language code for the stream, when present.
 	LanguageIso639 string `json:"language_iso_639"`
@@ -219,33 +235,40 @@ func NewApiMediaStream() *ApiMediaStream {
 	return s
 }
 
-// ApiOfficeMetadata : MS Office document metadata. Mirrors the internal
-// `riviera.OfficeMetadata` message. Some fields apply only to specific document
-// types (e.g. `slides` for PowerPoint, `words`/`pages` for Word).
+// ApiOfficeMetadata : MS Office document metadata. Some fields apply only to
+// specific document types (e.g. `ApiOfficeMetadata.slides` for PowerPoint,
+// `ApiOfficeMetadata.words` and `ApiOfficeMetadata.pages` for Word).
 type ApiOfficeMetadata struct {
-	// FileType : has no documentation (yet)
+	// FileType : Which kind of Office document this metadata was extracted
+	// from.
 	FileType *OfficeFileType `json:"file_type"`
-	// Creator : has no documentation (yet)
+	// Creator : Author recorded in the document properties.
 	Creator string `json:"creator"`
-	// Company : has no documentation (yet)
+	// Company : Company recorded in the document properties.
 	Company string `json:"company"`
-	// Title : has no documentation (yet)
+	// Title : Title recorded in the document properties.
 	Title string `json:"title"`
-	// Subject : has no documentation (yet)
+	// Subject : Subject recorded in the document properties.
 	Subject string `json:"subject"`
-	// Keywords : has no documentation (yet)
+	// Keywords : Keywords recorded in the document properties, in the
+	// document's own formatting (typically a single comma- or space-separated
+	// string).
 	Keywords string `json:"keywords"`
-	// Description : has no documentation (yet)
+	// Description : Description recorded in the document properties.
 	Description string `json:"description"`
-	// TotalEditTimeMinutes : has no documentation (yet)
+	// TotalEditTimeMinutes : Total editing time recorded in the document
+	// properties, in minutes.
 	TotalEditTimeMinutes uint32 `json:"total_edit_time_minutes"`
-	// Pages : Word only.
+	// Pages : Page count recorded in the document properties. Word documents
+	// only; zero for PowerPoint and Excel.
 	Pages uint32 `json:"pages"`
-	// Words : has no documentation (yet)
+	// Words : Word count recorded in the document properties. Word documents
+	// only; zero for PowerPoint and Excel.
 	Words uint32 `json:"words"`
-	// Slides : PowerPoint only.
+	// Slides : Slide count recorded in the document properties. PowerPoint
+	// documents only; zero for Word and Excel.
 	Slides uint32 `json:"slides"`
-	// RevisionNumber : has no documentation (yet)
+	// RevisionNumber : Revision number recorded in the document properties.
 	RevisionNumber string `json:"revision_number"`
 }
 
@@ -269,11 +292,11 @@ func NewApiOfficeMetadata() *ApiOfficeMetadata {
 
 // ApiPdfMetadata : PDF document metadata.
 type ApiPdfMetadata struct {
-	// Pages : has no documentation (yet)
+	// Pages : Number of pages in the document.
 	Pages uint32 `json:"pages"`
-	// Width : Width / height of the first page, in PDF points.
+	// Width : Width of the first page, in PDF points.
 	Width uint32 `json:"width"`
-	// Height : has no documentation (yet)
+	// Height : Height of the first page, in PDF points.
 	Height uint32 `json:"height"`
 }
 
@@ -286,11 +309,13 @@ func NewApiPdfMetadata() *ApiPdfMetadata {
 	return s
 }
 
-// ApiStructuredTranscript : Structured transcript for APIv2
+// ApiStructuredTranscript : A transcript, split into segments.
 type ApiStructuredTranscript struct {
-	// Segments : has no documentation (yet)
+	// Segments : The segments of the transcript, in playback order.
 	Segments []*ApiTranscriptSegment `json:"segments,omitempty"`
-	// TranscriptLocale : has no documentation (yet)
+	// TranscriptLocale : The language of the transcript, as an ISO 639-1 code
+	// (e.g. "en"). This is the language detected in the audio, or the one
+	// supplied in `GetTranscriptArgs.audio_language`.
 	TranscriptLocale string `json:"transcript_locale"`
 }
 
@@ -301,13 +326,16 @@ func NewApiStructuredTranscript() *ApiStructuredTranscript {
 	return s
 }
 
-// ApiTranscriptSegment : Transcript segment for APIv2
+// ApiTranscriptSegment : A contiguous span of transcribed speech. The span
+// covered by a segment depends on the requested `TimestampLevel`.
 type ApiTranscriptSegment struct {
-	// Text : has no documentation (yet)
+	// Text : The transcribed text of this segment.
 	Text string `json:"text"`
-	// StartTime : has no documentation (yet)
+	// StartTime : Offset of the start of this segment, in seconds from the
+	// beginning of the media.
 	StartTime float64 `json:"start_time"`
-	// EndTime : has no documentation (yet)
+	// EndTime : Offset of the end of this segment, in seconds from the
+	// beginning of the media.
 	EndTime float64 `json:"end_time"`
 }
 
@@ -320,9 +348,9 @@ func NewApiTranscriptSegment() *ApiTranscriptSegment {
 	return s
 }
 
-// ContentApiV2Error : Reason a transcript job failed. Returned in the `failed`
-// variant of `GetTranscriptAsyncCheckResult`. This is a semantic error union:
-// the HTTP status of the poll request itself is unaffected (a poll that
+// ContentApiV2Error : Reason a transcript job failed. Returned in the
+// `GetTranscriptAsyncCheckResult.failed` variant. This is a semantic error
+// union: the HTTP status of the poll request itself is unaffected (a poll that
 // surfaces a failed job is still a normal successful poll response). Callers
 // should branch on the variant.
 type ContentApiV2Error struct {
@@ -335,7 +363,8 @@ type ContentApiV2Error struct {
 	// with the caller's input). The string is a human-readable message;
 	// retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
-	// MediaDurationError : has no documentation (yet)
+	// MediaDurationError : The audio to transcribe is longer than the supported
+	// maximum.
 	MediaDurationError *MediaDurationError `json:"media_duration_error,omitempty"`
 }
 
@@ -391,19 +420,18 @@ func (u *ContentApiV2Error) UnmarshalJSON(body []byte) error {
 // FileIdOrUrl : has no documentation (yet)
 type FileIdOrUrl struct {
 	dropbox.Tagged
-	// FileId : A Dropbox-issued file id (format: "id:<id>") for a file the
-	// authenticated user has access to.
+	// FileId : A Dropbox-issued file ID for a file the authenticated user has
+	// access to, e.g. "id:a4ayc_80_OEAAAAAAAAAYa".
 	FileId string `json:"file_id,omitempty"`
-	// Url : Either a Dropbox shared link (www.dropbox.com) or an external HTTP
-	// or HTTPS URL pointing to a supported file. - Dropbox shared links are
-	// resolved internally using the caller's authenticated identity and the
-	// link's visibility / download settings. They therefore require an
-	// authenticated user context (anonymous `url` requests against Dropbox
-	// links are rejected with an `access_error`). Links protected by a password
-	// are rejected with `shared_link_password_protected`; links with downloads
-	// disabled are rejected with `link_download_disabled_error`. - External
-	// URLs are fetched through the backend's egress proxy and must point at a
-	// supported file extension.
+	// Url : Either a Dropbox shared link (www.dropbox.com) or an
+	// internet-accessible URL pointing to a supported file. - Dropbox shared
+	// links are resolved internally using the caller's authenticated identity
+	// and the link's visibility / download settings. They therefore require an
+	// authenticated user context; requests made with app auth alone are
+	// rejected. Password-protected links and links with downloads disabled are
+	// rejected as well. - Other URLs are fetched by Dropbox's servers, so they
+	// must be reachable from the public internet -- not only from the calling
+	// application's network -- and must point at a supported file extension.
 	Url string `json:"url,omitempty"`
 	// Path : An absolute Dropbox path, e.g. "/folder/example.pdf".
 	Path string `json:"path,omitempty"`
@@ -421,20 +449,19 @@ const (
 func (u *FileIdOrUrl) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// FileId : A Dropbox-issued file id (format: "id:<id>") for a file the
-		// authenticated user has access to.
+		// FileId : A Dropbox-issued file ID for a file the authenticated user
+		// has access to, e.g. "id:a4ayc_80_OEAAAAAAAAAYa".
 		FileId string `json:"file_id,omitempty"`
-		// Url : Either a Dropbox shared link (www.dropbox.com) or an external
-		// HTTP or HTTPS URL pointing to a supported file. - Dropbox shared
-		// links are resolved internally using the caller's authenticated
+		// Url : Either a Dropbox shared link (www.dropbox.com) or an
+		// internet-accessible URL pointing to a supported file. - Dropbox
+		// shared links are resolved internally using the caller's authenticated
 		// identity and the link's visibility / download settings. They
-		// therefore require an authenticated user context (anonymous `url`
-		// requests against Dropbox links are rejected with an `access_error`).
-		// Links protected by a password are rejected with
-		// `shared_link_password_protected`; links with downloads disabled are
-		// rejected with `link_download_disabled_error`. - External URLs are
-		// fetched through the backend's egress proxy and must point at a
-		// supported file extension.
+		// therefore require an authenticated user context; requests made with
+		// app auth alone are rejected. Password-protected links and links with
+		// downloads disabled are rejected as well. - Other URLs are fetched by
+		// Dropbox's servers, so they must be reachable from the public internet
+		// -- not only from the calling application's network -- and must point
+		// at a supported file extension.
 		Url string `json:"url,omitempty"`
 		// Path : An absolute Dropbox path, e.g. "/folder/example.pdf".
 		Path string `json:"path,omitempty"`
@@ -551,14 +578,16 @@ func NewGetKeyframesResult() *GetKeyframesResult {
 	return s
 }
 
-// GetMarkdownArgs : Arguments for the asynchronous `get_markdown_async` route.
-// Exactly one of `file_id`, `path`, or `url` must be supplied via
-// `file_id_or_url` to identify the document to convert to markdown.
+// GetMarkdownArgs : Arguments for the asynchronous `getMarkdownAsync` route.
+// Exactly one of `FileIdOrUrl.file_id`, `FileIdOrUrl.path`, or
+// `FileIdOrUrl.url` must be supplied via `GetMarkdownArgs.file_id_or_url` to
+// identify the document to convert to markdown.
 type GetMarkdownArgs struct {
 	// FileIdOrUrl : Identifier of the document to convert. Callers must set
 	// exactly one of the `FileIdOrUrl` variants. The referenced file must be a
 	// document in a supported format (see the route description for the list);
-	// requests against unsupported formats return `unsupported_format_error`.
+	// requests against unsupported formats fail with
+	// `MarkdownConversionApiV2Error.user_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 	// EnableOcr : Enable OCR for PDF documents. Processing is slower when
 	// enabled.
@@ -576,12 +605,13 @@ func NewGetMarkdownArgs() *GetMarkdownArgs {
 	return s
 }
 
-// GetMarkdownAsyncCheckResult : Result type for EventBus async check
+// GetMarkdownAsyncCheckResult : Status of a markdown conversion job started by
+// `getMarkdownAsync`, as returned by `getMarkdownAsyncCheck`.
 type GetMarkdownAsyncCheckResult struct {
 	dropbox.Tagged
-	// Complete : has no documentation (yet)
+	// Complete : The job finished successfully.
 	Complete *GetMarkdownResult `json:"complete,omitempty"`
-	// Failed : has no documentation (yet)
+	// Failed : The job finished unsuccessfully.
 	Failed *MarkdownConversionApiV2Error `json:"failed,omitempty"`
 }
 
@@ -597,7 +627,7 @@ const (
 func (u *GetMarkdownAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Failed : has no documentation (yet)
+		// Failed : The job finished unsuccessfully.
 		Failed *MarkdownConversionApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
@@ -621,7 +651,7 @@ func (u *GetMarkdownAsyncCheckResult) UnmarshalJSON(body []byte) error {
 
 // GetMarkdownResult : has no documentation (yet)
 type GetMarkdownResult struct {
-	// Markdown : The converted markdown content
+	// Markdown : The markdown the source document was converted to.
 	Markdown string `json:"markdown"`
 }
 
@@ -632,9 +662,10 @@ func NewGetMarkdownResult() *GetMarkdownResult {
 	return s
 }
 
-// GetMetadataArgs : Arguments for the asynchronous `get_metadata_async` route.
-// Exactly one of `file_id`, `path`, or `url` must be supplied via
-// `file_id_or_url` to identify the file whose metadata should be extracted.
+// GetMetadataArgs : Arguments for the asynchronous `getMetadataAsync` route.
+// Exactly one of `FileIdOrUrl.file_id`, `FileIdOrUrl.path`, or
+// `FileIdOrUrl.url` must be supplied via `GetMetadataArgs.file_id_or_url` to
+// identify the file whose metadata should be extracted.
 type GetMetadataArgs struct {
 	// FileIdOrUrl : Identifier of the file to extract metadata from. Callers
 	// must set exactly one of the `FileIdOrUrl` variants. The kind of metadata
@@ -642,7 +673,8 @@ type GetMetadataArgs struct {
 	// metadata, audio/video files return media metadata, PDFs return PDF
 	// metadata, and MS Office documents (docx, pptx, xlsx) return Office
 	// metadata. See the route description for the supported formats. Requests
-	// against unsupported formats return `unsupported_format_error`.
+	// against unsupported formats fail with
+	// `MetadataExtractionApiV2Error.user_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 }
 
@@ -652,13 +684,13 @@ func NewGetMetadataArgs() *GetMetadataArgs {
 	return s
 }
 
-// GetMetadataAsyncCheckResult : Result type for EventBus async check - must end
-// in "CheckResult"
+// GetMetadataAsyncCheckResult : Status of a metadata extraction job started by
+// `getMetadataAsync`, as returned by `getMetadataAsyncCheck`.
 type GetMetadataAsyncCheckResult struct {
 	dropbox.Tagged
-	// Complete : has no documentation (yet)
+	// Complete : The job finished successfully.
 	Complete *GetMetadataResult `json:"complete,omitempty"`
-	// Failed : has no documentation (yet)
+	// Failed : The job finished unsuccessfully.
 	Failed *MetadataExtractionApiV2Error `json:"failed,omitempty"`
 }
 
@@ -674,7 +706,7 @@ const (
 func (u *GetMetadataAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Failed : has no documentation (yet)
+		// Failed : The job finished unsuccessfully.
 		Failed *MetadataExtractionApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
@@ -699,7 +731,8 @@ func (u *GetMetadataAsyncCheckResult) UnmarshalJSON(body []byte) error {
 // GetMetadataResult : has no documentation (yet)
 type GetMetadataResult struct {
 	// MetadataType : The kind of metadata that was extracted for the requested
-	// file. Callers should read the matching field of the `metadata` oneof.
+	// file. Callers should read the matching variant of
+	// `GetMetadataResult.metadata`.
 	MetadataType *MetadataType `json:"metadata_type"`
 	// Metadata : has no documentation (yet)
 	Metadata *MetadataUnion `json:"metadata,omitempty"`
@@ -886,31 +919,30 @@ func NewGetTextResult() *GetTextResult {
 	return s
 }
 
-// GetTranscriptArgs : Arguments for the asynchronous `get_transcript_async`
-// route. Exactly one of `file_id`, `path`, or `url` must be supplied via
-// `file_id_or_url` to identify the audio or video asset to transcribe.
+// GetTranscriptArgs : Arguments for the asynchronous `getTranscriptAsync`
+// route. Exactly one of `FileIdOrUrl.file_id`, `FileIdOrUrl.path`, or
+// `FileIdOrUrl.url` must be supplied via `GetTranscriptArgs.file_id_or_url` to
+// identify the audio or video asset to transcribe.
 type GetTranscriptArgs struct {
 	// FileIdOrUrl : Identifier of the media asset to transcribe. Callers must
 	// set exactly one of the `FileIdOrUrl` variants. The referenced asset must
 	// be an audio or video file in a supported format (see the route
 	// description for the list); requests against files with no audio track
-	// return a `no_audio_error`.
+	// fail with `ContentApiV2Error.no_audio_error`.
 	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
 	// TimestampLevel : Granularity of the time offsets returned for each
-	// transcript segment. Defaults to `SENTENCE` when the field is omitted. -
-	// SENTENCE: one segment per spoken sentence (recommended). - WORD: one
-	// segment per word, useful for fine-grained alignment such as captioning or
-	// highlight-as-you-listen experiences.
+	// transcript segment. Defaults to `TimestampLevel.sentence` when the field
+	// is omitted.
 	TimestampLevel *TimestampLevel `json:"timestamp_level"`
 	// IncludedSpecialWords : Comma-delimited list of non-lexical filler words
 	// to preserve in the transcript output, e.g. `"uh, ah, uhm"`. By default
 	// these fillers are stripped. Unrecognized tokens are ignored. Leave empty
 	// to use the default filtering behavior.
 	IncludedSpecialWords string `json:"included_special_words"`
-	// AudioLanguage : Optional ISO 639-1 two-letter language code hinting the
-	// spoken language of the source audio (e.g. "en", "ja"). When empty, the
-	// service auto-detects the language; supplying a hint improves accuracy and
-	// latency for short or ambiguous clips. Unsupported languages fall back to
+	// AudioLanguage : Hint for the spoken language of the source audio, as an
+	// ISO 639-1 code (e.g. "en", "ja"). When empty, the service auto-detects
+	// the language; supplying a hint improves accuracy and latency for short or
+	// ambiguous clips. Languages the service does not support fall back to
 	// auto-detection.
 	AudioLanguage string `json:"audio_language"`
 }
@@ -924,13 +956,13 @@ func NewGetTranscriptArgs() *GetTranscriptArgs {
 	return s
 }
 
-// GetTranscriptAsyncCheckResult : Result type for EventBus async check - must
-// end in "CheckResult"
+// GetTranscriptAsyncCheckResult : Status of a transcript job started by
+// `getTranscriptAsync`, as returned by `getTranscriptAsyncCheck`.
 type GetTranscriptAsyncCheckResult struct {
 	dropbox.Tagged
-	// Complete : has no documentation (yet)
+	// Complete : The job finished successfully.
 	Complete *GetTranscriptResult `json:"complete,omitempty"`
-	// Failed : has no documentation (yet)
+	// Failed : The job finished unsuccessfully.
 	Failed *ContentApiV2Error `json:"failed,omitempty"`
 }
 
@@ -946,7 +978,7 @@ const (
 func (u *GetTranscriptAsyncCheckResult) UnmarshalJSON(body []byte) error {
 	type wrap struct {
 		dropbox.Tagged
-		// Failed : has no documentation (yet)
+		// Failed : The job finished unsuccessfully.
 		Failed *ContentApiV2Error `json:"failed,omitempty"`
 	}
 	var w wrap
@@ -970,10 +1002,8 @@ func (u *GetTranscriptAsyncCheckResult) UnmarshalJSON(body []byte) error {
 
 // GetTranscriptResult : has no documentation (yet)
 type GetTranscriptResult struct {
-	// StructuredTranscript : The structured transcript produced for the
-	// requested media asset, with per-segment text, start/end offsets (in
-	// seconds from the beginning of the media), and the detected or
-	// caller-supplied locale.
+	// StructuredTranscript : The transcript produced for the requested media
+	// asset.
 	StructuredTranscript *ApiStructuredTranscript `json:"structured_transcript,omitempty"`
 }
 
@@ -1045,7 +1075,7 @@ func (u *KeyframesExtractionApiV2Error) UnmarshalJSON(body []byte) error {
 }
 
 // MarkdownConversionApiV2Error : Reason a markdown conversion job failed.
-// Returned in the `failed` variant of `GetMarkdownAsyncCheckResult`. This is a
+// Returned in the `GetMarkdownAsyncCheckResult.failed` variant. This is a
 // semantic error union: the HTTP status of the poll request itself is
 // unaffected (a poll that surfaces a failed job is still a normal successful
 // poll response). Callers should branch on the variant.
@@ -1056,7 +1086,8 @@ type MarkdownConversionApiV2Error struct {
 	// succeed.
 	ServerError string `json:"server_error,omitempty"`
 	// UserError : The request could not be processed as supplied (a problem
-	// with the caller's input). The string is a human-readable message;
+	// with the caller's input) -- for example an unsupported file format or a
+	// file over the size limit. The string is a human-readable message;
 	// retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
 }
@@ -1084,7 +1115,8 @@ func (u *MarkdownConversionApiV2Error) UnmarshalJSON(body []byte) error {
 		// backoff may succeed.
 		ServerError string `json:"server_error,omitempty"`
 		// UserError : The request could not be processed as supplied (a problem
-		// with the caller's input). The string is a human-readable message;
+		// with the caller's input) -- for example an unsupported file format or
+		// a file over the size limit. The string is a human-readable message;
 		// retrying the same request will not help.
 		UserError string `json:"user_error,omitempty"`
 	}
@@ -1107,7 +1139,8 @@ func (u *MarkdownConversionApiV2Error) UnmarshalJSON(body []byte) error {
 
 // MediaDurationError : has no documentation (yet)
 type MediaDurationError struct {
-	// Limit : has no documentation (yet)
+	// Limit : The maximum supported duration, in seconds, of the audio to
+	// transcribe.
 	Limit int32 `json:"limit"`
 }
 
@@ -1119,7 +1152,7 @@ func NewMediaDurationError() *MediaDurationError {
 }
 
 // MetadataExtractionApiV2Error : Reason a metadata extraction job failed.
-// Returned in the `failed` variant of `GetMetadataAsyncCheckResult`. This is a
+// Returned in the `GetMetadataAsyncCheckResult.failed` variant. This is a
 // semantic error union: the HTTP status of the poll request itself is
 // unaffected (a poll that surfaces a failed job is still a normal successful
 // poll response). Callers should branch on the variant.
@@ -1130,8 +1163,9 @@ type MetadataExtractionApiV2Error struct {
 	// succeed.
 	ServerError string `json:"server_error,omitempty"`
 	// UserError : The request could not be processed as supplied (a problem
-	// with the caller's input). The string is a human-readable message;
-	// retrying the same request will not help.
+	// with the caller's input) -- for example an unsupported file format or a
+	// file over the size limit for its metadata kind. The string is a
+	// human-readable message; retrying the same request will not help.
 	UserError string `json:"user_error,omitempty"`
 }
 
@@ -1158,8 +1192,9 @@ func (u *MetadataExtractionApiV2Error) UnmarshalJSON(body []byte) error {
 		// backoff may succeed.
 		ServerError string `json:"server_error,omitempty"`
 		// UserError : The request could not be processed as supplied (a problem
-		// with the caller's input). The string is a human-readable message;
-		// retrying the same request will not help.
+		// with the caller's input) -- for example an unsupported file format or
+		// a file over the size limit for its metadata kind. The string is a
+		// human-readable message; retrying the same request will not help.
 		UserError string `json:"user_error,omitempty"`
 	}
 	var w wrap
@@ -1332,7 +1367,8 @@ func (u *TextExtractionApiV2Error) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
-// TimestampLevel : has no documentation (yet)
+// TimestampLevel : Granularity of the time offsets returned for each transcript
+// segment.
 type TimestampLevel struct {
 	dropbox.Tagged
 }
@@ -1344,17 +1380,17 @@ const (
 	TimestampLevelOther    = "other"
 )
 
-// MetadataUnion : Exactly one variant is populated, corresponding to
-// `metadata_type`.
+// MetadataUnion : The extracted metadata. Exactly one variant is populated,
+// corresponding to `GetMetadataResult.metadata_type`.
 type MetadataUnion struct {
 	dropbox.Tagged
-	// Exif : has no documentation (yet)
+	// Exif : EXIF metadata, for image files.
 	Exif *ApiExifMetadata `json:"exif,omitempty"`
-	// Media : has no documentation (yet)
+	// Media : Container and per-stream metadata, for audio and video files.
 	Media *ApiMediaMetadata `json:"media,omitempty"`
-	// Pdf : has no documentation (yet)
+	// Pdf : Document metadata, for PDFs.
 	Pdf *ApiPdfMetadata `json:"pdf,omitempty"`
-	// Office : has no documentation (yet)
+	// Office : Document metadata, for MS Office files.
 	Office *ApiOfficeMetadata `json:"office,omitempty"`
 }
 

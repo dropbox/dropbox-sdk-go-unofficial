@@ -54,9 +54,13 @@ type Client interface {
 	GetKeyframesAsyncCheck(arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
 	// GetMarkdownAsync : Asynchronous document-to-markdown conversion for
 	// supported file formats. Supported formats: .binder, .docx, .html, .paper,
-	// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats return an
-	// `unsupported_format_error`. Size limit: the source file must be at most
-	// 50 MB. Larger files are rejected.
+	// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other formats fail
+	// with `MarkdownConversionApiV2Error.user_error`. Size limit: the source
+	// file must be at most 50 MB. Larger files fail with
+	// `MarkdownConversionApiV2Error.user_error`. The markdown is not returned
+	// by this route. Poll `getMarkdownAsyncCheck` with the returned async job
+	// ID until it reports `GetMarkdownAsyncCheckResult.complete` or
+	// `GetMarkdownAsyncCheckResult.failed`.
 	GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheck : Returns the status or result of specified
 	// get_markdown_async task.
@@ -71,8 +75,15 @@ type Client interface {
 	// .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma, .3gp, .3gpp, .3gpp2, .asf,
 	// .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts,
 	// .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. - PDF format: .pdf.
-	// - MS Office formats: .docx, .pptx, .xlsx. Unsupported formats return an
-	// `unsupported_format_error`.
+	// - MS Office formats: .docx, .pptx, .xlsx. Files in other formats fail
+	// with `MetadataExtractionApiV2Error.user_error`. Size limits depend on the
+	// kind of metadata being extracted: at most 200 MB for image (EXIF) files,
+	// 100 GB for audio/video files, 500 MB for PDFs, and 288 MB for MS Office
+	// files. Files over the limit for their kind fail with
+	// `MetadataExtractionApiV2Error.user_error`. The metadata is not returned
+	// by this route. Poll `getMetadataAsyncCheck` with the returned async job
+	// ID until it reports `GetMetadataAsyncCheckResult.complete` or
+	// `GetMetadataAsyncCheckResult.failed`.
 	GetMetadataAsync(arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
 	// GetMetadataAsyncCheck : Returns the status or result of specified
 	// get_metadata_async task.
@@ -108,9 +119,13 @@ type Client interface {
 	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
 	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
 	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
-	// Unsupported formats return an `unsupported_format_error`. Size limits:
-	// the source file must be at most 10 GB and its audio track at most 1 hour
-	// in duration. Files exceeding these limits are rejected.
+	// Files in other formats fail with `ContentApiV2Error.user_error`. Size
+	// limits: the source file must be at most 10 GB and its audio track at most
+	// 1 hour in duration. Files exceeding either limit fail with
+	// `ContentApiV2Error.user_error`. The transcript is not returned by this
+	// route. Poll `getTranscriptAsyncCheck` with the returned async job ID
+	// until it reports `GetTranscriptAsyncCheckResult.complete` or
+	// `GetTranscriptAsyncCheckResult.failed`.
 	GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheck : Returns the status or result of specified
 	// get_transcript_async task.
@@ -141,9 +156,13 @@ type ContextClient interface {
 	GetKeyframesAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
 	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion
 	// for supported file formats. Supported formats: .binder, .docx, .html,
-	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats
-	// return an `unsupported_format_error`. Size limit: the source file must be
-	// at most 50 MB. Larger files are rejected.
+	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other
+	// formats fail with `MarkdownConversionApiV2Error.user_error`. Size limit:
+	// the source file must be at most 50 MB. Larger files fail with
+	// `MarkdownConversionApiV2Error.user_error`. The markdown is not returned
+	// by this route. Poll `getMarkdownAsyncCheck` with the returned async job
+	// ID until it reports `GetMarkdownAsyncCheckResult.complete` or
+	// `GetMarkdownAsyncCheckResult.failed`.
 	GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheckContext : Returns the status or result of specified
 	// get_markdown_async task.
@@ -158,8 +177,15 @@ type ContextClient interface {
 	// .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma, .3gp, .3gpp, .3gpp2, .asf,
 	// .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts,
 	// .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. - PDF format: .pdf.
-	// - MS Office formats: .docx, .pptx, .xlsx. Unsupported formats return an
-	// `unsupported_format_error`.
+	// - MS Office formats: .docx, .pptx, .xlsx. Files in other formats fail
+	// with `MetadataExtractionApiV2Error.user_error`. Size limits depend on the
+	// kind of metadata being extracted: at most 200 MB for image (EXIF) files,
+	// 100 GB for audio/video files, 500 MB for PDFs, and 288 MB for MS Office
+	// files. Files over the limit for their kind fail with
+	// `MetadataExtractionApiV2Error.user_error`. The metadata is not returned
+	// by this route. Poll `getMetadataAsyncCheck` with the returned async job
+	// ID until it reports `GetMetadataAsyncCheckResult.complete` or
+	// `GetMetadataAsyncCheckResult.failed`.
 	GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error)
 	// GetMetadataAsyncCheckContext : Returns the status or result of specified
 	// get_metadata_async task.
@@ -195,9 +221,13 @@ type ContextClient interface {
 	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
 	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
 	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
-	// Unsupported formats return an `unsupported_format_error`. Size limits:
-	// the source file must be at most 10 GB and its audio track at most 1 hour
-	// in duration. Files exceeding these limits are rejected.
+	// Files in other formats fail with `ContentApiV2Error.user_error`. Size
+	// limits: the source file must be at most 10 GB and its audio track at most
+	// 1 hour in duration. Files exceeding either limit fail with
+	// `ContentApiV2Error.user_error`. The transcript is not returned by this
+	// route. Poll `getTranscriptAsyncCheck` with the returned async job ID
+	// until it reports `GetTranscriptAsyncCheckResult.complete` or
+	// `GetTranscriptAsyncCheckResult.failed`.
 	GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheckContext : Returns the status or result of
 	// specified get_transcript_async task.
@@ -314,9 +344,13 @@ type GetMarkdownAsyncAPIError struct {
 
 // GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
 // supported file formats. Supported formats: .binder, .docx, .html, .paper,
-// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Unsupported formats return an
-// `unsupported_format_error`. Size limit: the source file must be at most 50
-// MB. Larger files are rejected.
+// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other formats fail with
+// `MarkdownConversionApiV2Error.user_error`. Size limit: the source file must
+// be at most 50 MB. Larger files fail with
+// `MarkdownConversionApiV2Error.user_error`. The markdown is not returned by
+// this route. Poll `getMarkdownAsyncCheck` with the returned async job ID until
+// it reports `GetMarkdownAsyncCheckResult.complete` or
+// `GetMarkdownAsyncCheckResult.failed`.
 func (dbx *apiImpl) GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
@@ -413,7 +447,14 @@ type GetMetadataAsyncAPIError struct {
 // .wav, .wma, .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v,
 // .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob,
 // .webm, .wmv. - PDF format: .pdf. - MS Office formats: .docx, .pptx, .xlsx.
-// Unsupported formats return an `unsupported_format_error`.
+// Files in other formats fail with `MetadataExtractionApiV2Error.user_error`.
+// Size limits depend on the kind of metadata being extracted: at most 200 MB
+// for image (EXIF) files, 100 GB for audio/video files, 500 MB for PDFs, and
+// 288 MB for MS Office files. Files over the limit for their kind fail with
+// `MetadataExtractionApiV2Error.user_error`. The metadata is not returned by
+// this route. Poll `getMetadataAsyncCheck` with the returned async job ID until
+// it reports `GetMetadataAsyncCheckResult.complete` or
+// `GetMetadataAsyncCheckResult.failed`.
 func (dbx *apiImpl) GetMetadataAsyncContext(ctx context.Context, arg *GetMetadataArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",
@@ -693,10 +734,14 @@ type GetTranscriptAsyncAPIError struct {
 // video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a, .m4r,
 // .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp, .3gpp2,
 // .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
-// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
-// formats return an `unsupported_format_error`. Size limits: the source file
-// must be at most 10 GB and its audio track at most 1 hour in duration. Files
-// exceeding these limits are rejected.
+// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Files in other
+// formats fail with `ContentApiV2Error.user_error`. Size limits: the source
+// file must be at most 10 GB and its audio track at most 1 hour in duration.
+// Files exceeding either limit fail with `ContentApiV2Error.user_error`. The
+// transcript is not returned by this route. Poll `getTranscriptAsyncCheck` with
+// the returned async job ID until it reports
+// `GetTranscriptAsyncCheckResult.complete` or
+// `GetTranscriptAsyncCheckResult.failed`.
 func (dbx *apiImpl) GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
 	req := dropbox.Request{
 		Host:         "api",

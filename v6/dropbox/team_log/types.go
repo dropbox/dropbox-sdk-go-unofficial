@@ -6614,6 +6614,8 @@ type EventDetails struct {
 	PaperEnabledUsersGroupAdditionDetails *PaperEnabledUsersGroupAdditionDetails `json:"paper_enabled_users_group_addition_details,omitempty"`
 	// PaperEnabledUsersGroupRemovalDetails : has no documentation (yet)
 	PaperEnabledUsersGroupRemovalDetails *PaperEnabledUsersGroupRemovalDetails `json:"paper_enabled_users_group_removal_details,omitempty"`
+	// PaperOfflineModePolicyChangedDetails : has no documentation (yet)
+	PaperOfflineModePolicyChangedDetails *PaperOfflineModePolicyChangedDetails `json:"paper_offline_mode_policy_changed_details,omitempty"`
 	// PasskeyLoginPolicyChangedDetails : has no documentation (yet)
 	PasskeyLoginPolicyChangedDetails *PasskeyLoginPolicyChangedDetails `json:"passkey_login_policy_changed_details,omitempty"`
 	// PasswordStrengthRequirementsChangePolicyDetails : has no documentation
@@ -7368,6 +7370,7 @@ const (
 	EventDetailsPaperDesktopPolicyChangedDetails                         = "paper_desktop_policy_changed_details"
 	EventDetailsPaperEnabledUsersGroupAdditionDetails                    = "paper_enabled_users_group_addition_details"
 	EventDetailsPaperEnabledUsersGroupRemovalDetails                     = "paper_enabled_users_group_removal_details"
+	EventDetailsPaperOfflineModePolicyChangedDetails                     = "paper_offline_mode_policy_changed_details"
 	EventDetailsPasskeyLoginPolicyChangedDetails                         = "passkey_login_policy_changed_details"
 	EventDetailsPasswordStrengthRequirementsChangePolicyDetails          = "password_strength_requirements_change_policy_details"
 	EventDetailsPermanentDeleteChangePolicyDetails                       = "permanent_delete_change_policy_details"
@@ -10186,6 +10189,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "paper_offline_mode_policy_changed_details":
+		if err = json.Unmarshal(body, &u.PaperOfflineModePolicyChangedDetails); err != nil {
+			return err
+		}
+
 	case "passkey_login_policy_changed_details":
 		if err = json.Unmarshal(body, &u.PasskeyLoginPolicyChangedDetails); err != nil {
 			return err
@@ -12011,6 +12019,9 @@ type EventType struct {
 	// PaperEnabledUsersGroupRemoval : (team_policies) Removed users from
 	// Paper-enabled users list
 	PaperEnabledUsersGroupRemoval *PaperEnabledUsersGroupRemovalType `json:"paper_enabled_users_group_removal,omitempty"`
+	// PaperOfflineModePolicyChanged : (team_policies) Enabled/disabled Paper
+	// offline mode for team
+	PaperOfflineModePolicyChanged *PaperOfflineModePolicyChangedType `json:"paper_offline_mode_policy_changed,omitempty"`
 	// PasskeyLoginPolicyChanged : (team_policies) Changed passkey login policy
 	// for team
 	PasskeyLoginPolicyChanged *PasskeyLoginPolicyChangedType `json:"passkey_login_policy_changed,omitempty"`
@@ -12827,6 +12838,7 @@ const (
 	EventTypePaperDesktopPolicyChanged                         = "paper_desktop_policy_changed"
 	EventTypePaperEnabledUsersGroupAddition                    = "paper_enabled_users_group_addition"
 	EventTypePaperEnabledUsersGroupRemoval                     = "paper_enabled_users_group_removal"
+	EventTypePaperOfflineModePolicyChanged                     = "paper_offline_mode_policy_changed"
 	EventTypePasskeyLoginPolicyChanged                         = "passkey_login_policy_changed"
 	EventTypePasswordStrengthRequirementsChangePolicy          = "password_strength_requirements_change_policy"
 	EventTypePermanentDeleteChangePolicy                       = "permanent_delete_change_policy"
@@ -15644,6 +15656,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "paper_offline_mode_policy_changed":
+		if err = json.Unmarshal(body, &u.PaperOfflineModePolicyChanged); err != nil {
+			return err
+		}
+
 	case "passkey_login_policy_changed":
 		if err = json.Unmarshal(body, &u.PasskeyLoginPolicyChanged); err != nil {
 			return err
@@ -16657,6 +16674,7 @@ const (
 	EventTypeArgPaperDesktopPolicyChanged                         = "paper_desktop_policy_changed"
 	EventTypeArgPaperEnabledUsersGroupAddition                    = "paper_enabled_users_group_addition"
 	EventTypeArgPaperEnabledUsersGroupRemoval                     = "paper_enabled_users_group_removal"
+	EventTypeArgPaperOfflineModePolicyChanged                     = "paper_offline_mode_policy_changed"
 	EventTypeArgPasskeyLoginPolicyChanged                         = "passkey_login_policy_changed"
 	EventTypeArgPasswordStrengthRequirementsChangePolicy          = "password_strength_requirements_change_policy"
 	EventTypeArgPermanentDeleteChangePolicy                       = "permanent_delete_change_policy"
@@ -24192,6 +24210,50 @@ const (
 	PaperMemberPolicyTeamAndExplicitlyShared = "team_and_explicitly_shared"
 	PaperMemberPolicyOther                   = "other"
 )
+
+// PaperOfflineModePolicy : Policy for controlling if team members can use Paper
+// offline mode
+type PaperOfflineModePolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for PaperOfflineModePolicy
+const (
+	PaperOfflineModePolicyDefault  = "default"
+	PaperOfflineModePolicyDisabled = "disabled"
+	PaperOfflineModePolicyEnabled  = "enabled"
+	PaperOfflineModePolicyOther    = "other"
+)
+
+// PaperOfflineModePolicyChangedDetails : Enabled/disabled Paper offline mode
+// for team.
+type PaperOfflineModePolicyChangedDetails struct {
+	// NewValue : New Paper offline mode policy.
+	NewValue *PaperOfflineModePolicy `json:"new_value"`
+	// PreviousValue : Previous Paper offline mode policy.
+	PreviousValue *PaperOfflineModePolicy `json:"previous_value"`
+}
+
+// NewPaperOfflineModePolicyChangedDetails returns a new PaperOfflineModePolicyChangedDetails instance
+func NewPaperOfflineModePolicyChangedDetails(NewValue *PaperOfflineModePolicy, PreviousValue *PaperOfflineModePolicy) *PaperOfflineModePolicyChangedDetails {
+	s := new(PaperOfflineModePolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// PaperOfflineModePolicyChangedType : has no documentation (yet)
+type PaperOfflineModePolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewPaperOfflineModePolicyChangedType returns a new PaperOfflineModePolicyChangedType instance
+func NewPaperOfflineModePolicyChangedType(Description string) *PaperOfflineModePolicyChangedType {
+	s := new(PaperOfflineModePolicyChangedType)
+	s.Description = Description
+	return s
+}
 
 // PaperPublishedLinkChangePermissionDetails : Changed permissions for published
 // doc.
