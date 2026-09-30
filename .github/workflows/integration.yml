@@ -21,7 +21,7 @@ jobs:
       - name: Install Go
         uses: actions/setup-go@v7
         with:
-          go-version: '1.26.x'
+          go-version-file: v6/go.mod
           cache-dependency-path: v6/go.sum
 
       - name: Configure AWS credentials (OIDC)
