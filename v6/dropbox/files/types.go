@@ -2706,7 +2706,7 @@ const (
 	MoveIntoFamilyErrorOther          = "other"
 )
 
-// MoveIntoVaultError : has no documentation (yet)
+// MoveIntoVaultError : Deprecated: the server no longer emits this error.
 type MoveIntoVaultError struct {
 	dropbox.Tagged
 }
@@ -3091,8 +3091,9 @@ type RelocationError struct {
 	FromWrite *WriteError `json:"from_write,omitempty"`
 	// To : has no documentation (yet)
 	To *WriteError `json:"to,omitempty"`
-	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
-	// circumstances, see detailed error.
+	// CantMoveIntoVault : Field is deprecated. Some content cannot be moved
+	// into Vault under certain circumstances, see detailed error. Deprecated:
+	// the server no longer emits this error.
 	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 	// CantMoveIntoFamily : Some content cannot be moved into the Family Room
 	// folder under certain circumstances, see detailed error.
@@ -3130,8 +3131,9 @@ func (u *RelocationError) UnmarshalJSON(body []byte) error {
 		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
 		To *WriteError `json:"to,omitempty"`
-		// CantMoveIntoVault : Some content cannot be moved into Vault under
-		// certain circumstances, see detailed error.
+		// CantMoveIntoVault : Field is deprecated. Some content cannot be moved
+		// into Vault under certain circumstances, see detailed error.
+		// Deprecated: the server no longer emits this error.
 		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 		// CantMoveIntoFamily : Some content cannot be moved into the Family
 		// Room folder under certain circumstances, see detailed error.
@@ -3172,8 +3174,9 @@ type RelocationBatchError struct {
 	FromWrite *WriteError `json:"from_write,omitempty"`
 	// To : has no documentation (yet)
 	To *WriteError `json:"to,omitempty"`
-	// CantMoveIntoVault : Some content cannot be moved into Vault under certain
-	// circumstances, see detailed error.
+	// CantMoveIntoVault : Field is deprecated. Some content cannot be moved
+	// into Vault under certain circumstances, see detailed error. Deprecated:
+	// the server no longer emits this error.
 	CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 	// CantMoveIntoFamily : Some content cannot be moved into the Family Room
 	// folder under certain circumstances, see detailed error.
@@ -3212,8 +3215,9 @@ func (u *RelocationBatchError) UnmarshalJSON(body []byte) error {
 		FromWrite *WriteError `json:"from_write,omitempty"`
 		// To : has no documentation (yet)
 		To *WriteError `json:"to,omitempty"`
-		// CantMoveIntoVault : Some content cannot be moved into Vault under
-		// certain circumstances, see detailed error.
+		// CantMoveIntoVault : Field is deprecated. Some content cannot be moved
+		// into Vault under certain circumstances, see detailed error.
+		// Deprecated: the server no longer emits this error.
 		CantMoveIntoVault *MoveIntoVaultError `json:"cant_move_into_vault,omitempty"`
 		// CantMoveIntoFamily : Some content cannot be moved into the Family
 		// Room folder under certain circumstances, see detailed error.
@@ -4533,6 +4537,11 @@ type ThumbnailV2Arg struct {
 	// populated. This improves latency for use cases where `media_info` is not
 	// needed.
 	ExcludeMediaInfo bool `json:"exclude_media_info,omitempty"`
+	// PreserveTransparency : Whether to preserve the original image's
+	// transparency in the thumbnail. This is supported only when the output
+	// format is PNG or WebP. Requests that set this flag with JPEG output
+	// return an error.
+	PreserveTransparency bool `json:"preserve_transparency"`
 }
 
 // NewThumbnailV2Arg returns a new ThumbnailV2Arg instance
@@ -4542,6 +4551,7 @@ func NewThumbnailV2Arg(Resource *PathOrLink) *ThumbnailV2Arg {
 	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
 	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
 	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
+	s.PreserveTransparency = false
 	return s
 }
 
@@ -4554,14 +4564,15 @@ type ThumbnailV2Error struct {
 
 // Valid tag values for ThumbnailV2Error
 const (
-	ThumbnailV2ErrorPath                 = "path"
-	ThumbnailV2ErrorUnsupportedExtension = "unsupported_extension"
-	ThumbnailV2ErrorUnsupportedImage     = "unsupported_image"
-	ThumbnailV2ErrorEncryptedContent     = "encrypted_content"
-	ThumbnailV2ErrorConversionError      = "conversion_error"
-	ThumbnailV2ErrorAccessDenied         = "access_denied"
-	ThumbnailV2ErrorNotFound             = "not_found"
-	ThumbnailV2ErrorOther                = "other"
+	ThumbnailV2ErrorPath                    = "path"
+	ThumbnailV2ErrorUnsupportedExtension    = "unsupported_extension"
+	ThumbnailV2ErrorUnsupportedImage        = "unsupported_image"
+	ThumbnailV2ErrorEncryptedContent        = "encrypted_content"
+	ThumbnailV2ErrorConversionError         = "conversion_error"
+	ThumbnailV2ErrorAccessDenied            = "access_denied"
+	ThumbnailV2ErrorNotFound                = "not_found"
+	ThumbnailV2ErrorUnsupportedOutputFormat = "unsupported_output_format"
+	ThumbnailV2ErrorOther                   = "other"
 )
 
 // UnmarshalJSON deserializes into a ThumbnailV2Error instance
@@ -4618,7 +4629,8 @@ type UploadArg struct {
 	CommitInfo
 	// ContentHash : A hash of the file content uploaded in this call. If
 	// provided and the uploaded content does not match this hash, an error will
-	// be returned. For more information see our `Content hash`
+	// be returned. Optional, but recommended to avoid committing data corrupted
+	// in transit. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4691,7 +4703,8 @@ type UploadSessionAppendArg struct {
 	Close bool `json:"close"`
 	// ContentHash : A hash of the file content uploaded in this call. If
 	// provided and the uploaded content does not match this hash, an error will
-	// be returned. For more information see our `Content hash`
+	// be returned. Optional, but recommended to avoid committing data corrupted
+	// in transit. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4708,10 +4721,11 @@ func NewUploadSessionAppendArg(Cursor *UploadSessionCursor) *UploadSessionAppend
 type UploadSessionAppendBatchArg struct {
 	// Entries : Append information for each file in the batch.
 	Entries []*UploadSessionAppendBatchArgEntry `json:"entries"`
-	// ContentHash : A hash of the entire request body which is all the
-	// concatenated pieces of file content that were uploaded in this call. If
-	// provided and the uploaded content does not match this hash, an error will
-	// be returned. For more information see our `Content hash`
+	// ContentHash : A single hash of all the concatenated file contents
+	// uploaded in this call. If provided and the uploaded content does not
+	// match this hash, an error will be returned. Optional, but recommended to
+	// avoid committing data corrupted in transit. For more information see our
+	// `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -4919,7 +4933,8 @@ type UploadSessionFinishArg struct {
 	Commit *CommitInfo `json:"commit"`
 	// ContentHash : A hash of the file content uploaded in this call. If
 	// provided and the uploaded content does not match this hash, an error will
-	// be returned. For more information see our `Content hash`
+	// be returned. Optional, but recommended to avoid committing data corrupted
+	// in transit. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -5216,7 +5231,8 @@ type UploadSessionStartArg struct {
 	SessionType *UploadSessionType `json:"session_type,omitempty"`
 	// ContentHash : A hash of the file content uploaded in this call. If
 	// provided and the uploaded content does not match this hash, an error will
-	// be returned. For more information see our `Content hash`
+	// be returned. Optional, but recommended to avoid committing data corrupted
+	// in transit. For more information see our `Content hash`
 	// <https://www.dropbox.com/developers/reference/content-hash> page.
 	ContentHash string `json:"content_hash,omitempty"`
 }
@@ -5381,6 +5397,7 @@ const (
 	WriteErrorAccessRestricted              = "access_restricted"
 	WriteErrorTeamFolderInsufficientSpace   = "team_folder_insufficient_space"
 	WriteErrorMemberFolderInsufficientSpace = "member_folder_insufficient_space"
+	WriteErrorUploadTrafficLimitReached     = "upload_traffic_limit_reached"
 	WriteErrorOther                         = "other"
 )
 

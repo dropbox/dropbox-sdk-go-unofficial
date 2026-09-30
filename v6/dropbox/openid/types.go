@@ -84,18 +84,24 @@ func (u *UserInfoError) UnmarshalJSON(body []byte) error {
 
 // UserInfoResult : has no documentation (yet)
 type UserInfoResult struct {
-	// FamilyName : Last name of user.
+	// FamilyName : Last name of the user.
 	FamilyName string `json:"family_name,omitempty"`
-	// GivenName : First name of user.
+	// GivenName : First name of the user.
 	GivenName string `json:"given_name,omitempty"`
-	// Email : Email address of user.
+	// Email : The user's email address. Be aware it's possible that the user
+	// has since lost access to their email. Note: email is not a unique or
+	// stable identifier for a Dropbox account. Users can change their email,
+	// and emails can be reused by different accounts. Apps should not use email
+	// as a key for account identification; use `sub` instead.
 	Email string `json:"email,omitempty"`
-	// EmailVerified : If user is email verified.
+	// EmailVerified : If the user's email address is verified.
 	EmailVerified bool `json:"email_verified,omitempty"`
-	// Iss : Issuer of token (in this case Dropbox).
+	// Iss : Issuer of the token (in this case Dropbox).
 	Iss string `json:"iss"`
 	// Sub : An identifier for the user. This is the Dropbox account_id, a
-	// string value such as dbid:AAH4f99T0taONIb-OurWxbNQ6ywGRopQngc.
+	// string value such as dbid:AAH4f99T0taONIb-OurWxbNQ6ywGRopQngc. The
+	// account_id is a unique and stable identifier for a Dropbox account,
+	// suitable for use as a key in authentication and account management.
 	Sub string `json:"sub"`
 }
 

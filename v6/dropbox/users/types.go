@@ -35,13 +35,16 @@ import (
 // Account : The amount of detail revealed about an account depends on the user
 // being queried and the user making the query.
 type Account struct {
-	// AccountId : The user's unique Dropbox ID.
+	// AccountId : The user's unique and stable Dropbox ID.
 	AccountId string `json:"account_id"`
 	// Name : Details of a user's name.
 	Name *Name `json:"name"`
 	// Email : The user's email address. Do not rely on this without checking
 	// the `email_verified` field. Even then, it's possible that the user has
-	// since lost access to their email.
+	// since lost access to their email. Note: email is not a unique or stable
+	// identifier for a Dropbox account. Users can change their email, and
+	// emails can be reused by different accounts. Apps should not use email as
+	// a key for account identification; use `account_id` instead.
 	Email string `json:"email"`
 	// EmailVerified : Whether the user has verified their email address.
 	EmailVerified bool `json:"email_verified"`
@@ -207,13 +210,17 @@ func NewFullAccount(AccountId string, Name *Name, Email string, EmailVerified bo
 // UnmarshalJSON deserializes into a FullAccount instance
 func (u *FullAccount) UnmarshalJSON(b []byte) error {
 	type wrap struct {
-		// AccountId : The user's unique Dropbox ID.
+		// AccountId : The user's unique and stable Dropbox ID.
 		AccountId string `json:"account_id"`
 		// Name : Details of a user's name.
 		Name *Name `json:"name"`
 		// Email : The user's email address. Do not rely on this without
 		// checking the `email_verified` field. Even then, it's possible that
-		// the user has since lost access to their email.
+		// the user has since lost access to their email. Note: email is not a
+		// unique or stable identifier for a Dropbox account. Users can change
+		// their email, and emails can be reused by different accounts. Apps
+		// should not use email as a key for account identification; use
+		// `account_id` instead.
 		Email string `json:"email"`
 		// EmailVerified : Whether the user has verified their email address.
 		EmailVerified bool `json:"email_verified"`
