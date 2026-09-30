@@ -40,7 +40,7 @@ jobs:
       - name: Setup Go environment
         uses: actions/setup-go@v7
         with:
-          go-version: '1.25'
+          go-version-file: v6/go.mod
       - name: Get current time
         uses: 1466587594/get-current-time@v2
         id: current-time
