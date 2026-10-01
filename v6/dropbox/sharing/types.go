@@ -1769,12 +1769,13 @@ type LinkAudience struct {
 
 // Valid tag values for LinkAudience
 const (
-	LinkAudiencePublic   = "public"
-	LinkAudienceTeam     = "team"
-	LinkAudienceNoOne    = "no_one"
-	LinkAudiencePassword = "password"
-	LinkAudienceMembers  = "members"
-	LinkAudienceOther    = "other"
+	LinkAudiencePublic             = "public"
+	LinkAudienceTeam               = "team"
+	LinkAudienceNoOne              = "no_one"
+	LinkAudiencePassword           = "password"
+	LinkAudienceMembers            = "members"
+	LinkAudiencePublicLoggedInOnly = "public_logged_in_only"
+	LinkAudienceOther              = "other"
 )
 
 // VisibilityPolicyDisallowedReason : has no documentation (yet)
