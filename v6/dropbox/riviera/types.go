@@ -417,6 +417,41 @@ func (u *ContentApiV2Error) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// DownloadTransformOutputArgs : Arguments for `download_transform_output`.
+type DownloadTransformOutputArgs struct {
+	// OutputHandle : The `output_handle` from a `complete`
+	// `get_transform_async/check` result.
+	OutputHandle string `json:"output_handle"`
+}
+
+// NewDownloadTransformOutputArgs returns a new DownloadTransformOutputArgs instance
+func NewDownloadTransformOutputArgs(OutputHandle string) *DownloadTransformOutputArgs {
+	s := new(DownloadTransformOutputArgs)
+	s.OutputHandle = OutputHandle
+	return s
+}
+
+// DownloadTransformOutputResult : Describes the bytes in the response body.
+// Returned in the `Dropbox-API-Result` header.
+type DownloadTransformOutputResult struct {
+	// Size : Size of the output in bytes.
+	Size uint64 `json:"size"`
+	// Format : Format of the output, as a short lowercase format name such as
+	// "pdf", "html", "jpeg", or "png".
+	Format string `json:"format"`
+	// MimeType : MIME type corresponding to `format`.
+	MimeType string `json:"mime_type"`
+}
+
+// NewDownloadTransformOutputResult returns a new DownloadTransformOutputResult instance
+func NewDownloadTransformOutputResult() *DownloadTransformOutputResult {
+	s := new(DownloadTransformOutputResult)
+	s.Size = 0
+	s.Format = ""
+	s.MimeType = ""
+	return s
+}
+
 // FileIdOrUrl : has no documentation (yet)
 type FileIdOrUrl struct {
 	dropbox.Tagged
@@ -1013,6 +1048,74 @@ func NewGetTranscriptResult() *GetTranscriptResult {
 	return s
 }
 
+// GetTransformAsyncCheckResult : Result type for EventBus async check - must
+// end in "CheckResult"
+type GetTransformAsyncCheckResult struct {
+	dropbox.Tagged
+	// Complete : The job finished successfully.
+	Complete *TransformOutput `json:"complete,omitempty"`
+	// Failed : The job finished unsuccessfully.
+	Failed *TransformApiV2Error `json:"failed,omitempty"`
+}
+
+// Valid tag values for GetTransformAsyncCheckResult
+const (
+	GetTransformAsyncCheckResultInProgress = "in_progress"
+	GetTransformAsyncCheckResultComplete   = "complete"
+	GetTransformAsyncCheckResultFailed     = "failed"
+	GetTransformAsyncCheckResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a GetTransformAsyncCheckResult instance
+func (u *GetTransformAsyncCheckResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : The job finished unsuccessfully.
+		Failed *TransformApiV2Error `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
+			return err
+		}
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// ImageOptions : Options for `TransformType.image` and
+// `TransformType.image_pdf`. Supplying this message with any other transform
+// type fails with `invalid_options_error`.
+type ImageOptions struct {
+	// PageNumber : For multi-page sources (PDFs, presentations, documents), the
+	// 1-based page to render. Each request renders one page; to render a whole
+	// document, issue one request per page. Defaults to the first page when
+	// omitted.
+	PageNumber uint32 `json:"page_number"`
+	// ScalePercent : Scale the rendered image to this percentage of its natural
+	// size. Must be in (0, 100] -- the pipeline does not upscale, so values
+	// above 100 are rejected with `invalid_options_error`. Defaults to 100 (no
+	// scaling) when omitted.
+	ScalePercent uint32 `json:"scale_percent"`
+}
+
+// NewImageOptions returns a new ImageOptions instance
+func NewImageOptions() *ImageOptions {
+	s := new(ImageOptions)
+	s.PageNumber = 1
+	s.ScalePercent = 100
+	return s
+}
+
 // KeyframesExtractionApiV2Error : Reason a keyframe extraction job failed.
 // Returned in the `failed` variant of `GetKeyframesAsyncCheckResult`. This is a
 // semantic error union: the HTTP status of the poll request itself is
@@ -1367,6 +1470,79 @@ func (u *TextExtractionApiV2Error) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// ThumbnailFormat : The encoding of the produced image. These match
+// `files/get_thumbnail`'s formats: JPEG is the better choice for photographs,
+// PNG for screenshots, line art, and anything with sharp text edges or
+// transparency.
+type ThumbnailFormat struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ThumbnailFormat
+const (
+	ThumbnailFormatJpeg  = "jpeg"
+	ThumbnailFormatPng   = "png"
+	ThumbnailFormatWebp  = "webp"
+	ThumbnailFormatOther = "other"
+)
+
+// ThumbnailMode : How to resize and crop the source to reach the requested
+// `ThumbnailSize`. These match `files/get_thumbnail`'s modes.
+type ThumbnailMode struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ThumbnailMode
+const (
+	ThumbnailModeStrict        = "strict"
+	ThumbnailModeBestfit       = "bestfit"
+	ThumbnailModeFitoneBestfit = "fitone_bestfit"
+	ThumbnailModeOriginal      = "original"
+	ThumbnailModeOther         = "other"
+)
+
+// ThumbnailOptions : Options for `TransformType.thumbnail`. Supplying this
+// message with any other transform type fails with `invalid_options_error`.
+type ThumbnailOptions struct {
+	// Size : The size bucket to produce. Defaults to `w64h64` when omitted.
+	Size *ThumbnailSize `json:"size"`
+	// Mode : How to fit the source into `size`. Defaults to `strict` when
+	// omitted.
+	Mode *ThumbnailMode `json:"mode"`
+	// Format : The output encoding. Defaults to `jpeg` when omitted.
+	Format *ThumbnailFormat `json:"format"`
+}
+
+// NewThumbnailOptions returns a new ThumbnailOptions instance
+func NewThumbnailOptions() *ThumbnailOptions {
+	s := new(ThumbnailOptions)
+	s.Size = &ThumbnailSize{Tagged: dropbox.Tagged{Tag: "w64h64"}}
+	s.Mode = &ThumbnailMode{Tagged: dropbox.Tagged{Tag: "strict"}}
+	s.Format = &ThumbnailFormat{Tagged: dropbox.Tagged{Tag: "jpeg"}}
+	return s
+}
+
+// ThumbnailSize : The size of the thumbnail to produce. These are the same
+// named size buckets `files/get_thumbnail` supports, with the same meanings;
+// arbitrary pixel dimensions are not accepted.
+type ThumbnailSize struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for ThumbnailSize
+const (
+	ThumbnailSizeW32h32     = "w32h32"
+	ThumbnailSizeW64h64     = "w64h64"
+	ThumbnailSizeW128h128   = "w128h128"
+	ThumbnailSizeW256h256   = "w256h256"
+	ThumbnailSizeW480h320   = "w480h320"
+	ThumbnailSizeW640h480   = "w640h480"
+	ThumbnailSizeW960h640   = "w960h640"
+	ThumbnailSizeW1024h768  = "w1024h768"
+	ThumbnailSizeW2048h1536 = "w2048h1536"
+	ThumbnailSizeOther      = "other"
+)
+
 // TimestampLevel : Granularity of the time offsets returned for each transcript
 // segment.
 type TimestampLevel struct {
@@ -1379,6 +1555,189 @@ const (
 	TimestampLevelWord     = "word"
 	TimestampLevelOther    = "other"
 )
+
+// TransformApiV2Error : Reason a transform job failed. Returned in the `failed`
+// variant of `GetTransformAsyncCheckResult`, and by
+// `download_transform_output`. This is a semantic error union: the HTTP status
+// of the poll request itself is unaffected (a poll that surfaces a failed job
+// is still a normal successful poll response). Callers should branch on the
+// variant.
+type TransformApiV2Error struct {
+	dropbox.Tagged
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
+	ServerError string `json:"server_error,omitempty"`
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input). The string is a human-readable message;
+	// retrying the same request will not help.
+	UserError string `json:"user_error,omitempty"`
+}
+
+// Valid tag values for TransformApiV2Error
+const (
+	TransformApiV2ErrorServerError                 = "server_error"
+	TransformApiV2ErrorUserError                   = "user_error"
+	TransformApiV2ErrorUnsupportedFormatError      = "unsupported_format_error"
+	TransformApiV2ErrorLinkDownloadDisabledError   = "link_download_disabled_error"
+	TransformApiV2ErrorSharedLinkPasswordProtected = "shared_link_password_protected"
+	TransformApiV2ErrorLimitExceededError          = "limit_exceeded_error"
+	TransformApiV2ErrorConversionFailureError      = "conversion_failure_error"
+	TransformApiV2ErrorNotFoundError               = "not_found_error"
+	TransformApiV2ErrorIsAFolderError              = "is_a_folder_error"
+	TransformApiV2ErrorInvalidOptionsError         = "invalid_options_error"
+	TransformApiV2ErrorExpiredHandleError          = "expired_handle_error"
+	TransformApiV2ErrorOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a TransformApiV2Error instance
+func (u *TransformApiV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
+		ServerError string `json:"server_error,omitempty"`
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input). The string is a human-readable message;
+		// retrying the same request will not help.
+		UserError string `json:"user_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "server_error":
+		u.ServerError = w.ServerError
+
+	case "user_error":
+		u.UserError = w.UserError
+
+	}
+	return nil
+}
+
+// TransformArgs : Arguments for the asynchronous `get_transform_async` route.
+// Exactly one of `file_id`, `path`, or `url` must be supplied via
+// `file_id_or_url` to identify the source file, and exactly one variant of
+// `transform_type` must be set to say what to produce from it. At most one
+// options message may be set, and it must be the one belonging to the requested
+// `transform_type`. Options that belong to a different transform type are
+// rejected with `invalid_options_error` rather than ignored, so that a request
+// whose parameters were misassembled fails visibly instead of quietly producing
+// the wrong output.
+type TransformArgs struct {
+	// FileIdOrUrl : Identifier of the source file to transform. Callers must
+	// set exactly one of the `FileIdOrUrl` variants. The referenced file must
+	// be in a format the requested `transform_type` supports; see the route
+	// description for the per-transform format lists. Requests against
+	// unsupported formats fail with `unsupported_format_error`.
+	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
+	// TransformType : What to produce from the source file. Required.
+	TransformType *TransformType `json:"transform_type"`
+	// Thumbnail : Options for `TransformType.thumbnail`.
+	Thumbnail *ThumbnailOptions `json:"thumbnail,omitempty"`
+	// Image : Options for `TransformType.image` and `TransformType.image_pdf`.
+	Image *ImageOptions `json:"image,omitempty"`
+	// VideoFrame : Options for `TransformType.video_frame`.
+	VideoFrame *VideoFrameOptions `json:"video_frame,omitempty"`
+}
+
+// NewTransformArgs returns a new TransformArgs instance
+func NewTransformArgs(TransformType *TransformType) *TransformArgs {
+	s := new(TransformArgs)
+	s.TransformType = TransformType
+	return s
+}
+
+// TransformOutput : A completed transform: a handle for retrieving the produced
+// bytes, plus enough metadata to decide whether to retrieve them. The bytes
+// themselves are deliberately not carried here. A completed async result is
+// persisted, so it is bounded by a row-size limit well below the size of a
+// typical converted document -- an inline payload would fail for exactly the
+// large documents this route exists to convert. The transform therefore
+// completes by caching its output and handing back `output_handle`, which
+// `download_transform_output` exchanges for the bytes.
+type TransformOutput struct {
+	// OutputHandle : Opaque, single-purpose handle for the produced bytes. Pass
+	// it to `download_transform_output` to retrieve them. The handle is scoped
+	// to the account that created it and cannot be used to read anything other
+	// than the output of this transform. It is not a URL and carries no meaning
+	// for callers beyond being passed back verbatim.
+	OutputHandle string `json:"output_handle"`
+	// Size : Size of the produced output in bytes.
+	Size uint64 `json:"size"`
+	// Format : Format of the produced output, as a short lowercase format name
+	// such as "pdf", "html", "jpeg", or "png". This reflects what was actually
+	// produced, which for some sources differs from what was requested.
+	Format string `json:"format"`
+	// MimeType : MIME type corresponding to `format`, for callers that need a
+	// Content-Type to hand to a downstream consumer.
+	MimeType string `json:"mime_type"`
+	// ExpiresTs : Unix timestamp, in seconds, after which `output_handle` is no
+	// longer accepted. Retrieve the bytes before this point; after it,
+	// `download_transform_output` reports `expired_handle_error` and the
+	// transform has to be requested again.
+	ExpiresTs uint64 `json:"expires_ts"`
+}
+
+// NewTransformOutput returns a new TransformOutput instance
+func NewTransformOutput() *TransformOutput {
+	s := new(TransformOutput)
+	s.OutputHandle = ""
+	s.Size = 0
+	s.Format = ""
+	s.MimeType = ""
+	s.ExpiresTs = 0
+	return s
+}
+
+// TransformType : Which derived file to produce from the source file. Unlike
+// the other Riviera content routes, which each expose one capability,
+// `get_transform_async` is a single route over many conversions: the caller
+// names the source file and the output it wants, and the service picks the
+// conversion pipeline. Exactly one variant must be set; a request with none set
+// fails with `invalid_options_error`.
+type TransformType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TransformType
+const (
+	TransformTypePdf        = "pdf"
+	TransformTypeHtml       = "html"
+	TransformTypeImage      = "image"
+	TransformTypeThumbnail  = "thumbnail"
+	TransformTypeImagePdf   = "image_pdf"
+	TransformTypeVideoFrame = "video_frame"
+	TransformTypeOther      = "other"
+)
+
+// VideoFrameOptions : Options for `TransformType.video_frame`. Supplying this
+// message with any other transform type fails with `invalid_options_error`.
+type VideoFrameOptions struct {
+	// OffsetInSeconds : Offset into the video, in seconds, of the frame to
+	// extract. Should be within the video's duration. Defaults to 0 (the first
+	// frame) when omitted. Only the lower bound is enforced, because the upper
+	// bound is the source's duration, which is not known until the video is
+	// opened. An offset past the end is not rejected.
+	OffsetInSeconds float64 `json:"offset_in_seconds"`
+	// ScalePercent : Scale the extracted frame to this percentage of the
+	// video's natural frame size. Must be in (0, 100]; the pipeline does not
+	// upscale. Defaults to 100 (no scaling) when omitted.
+	ScalePercent uint32 `json:"scale_percent"`
+}
+
+// NewVideoFrameOptions returns a new VideoFrameOptions instance
+func NewVideoFrameOptions() *VideoFrameOptions {
+	s := new(VideoFrameOptions)
+	s.OffsetInSeconds = 0.0
+	s.ScalePercent = 100
+	return s
+}
 
 // MetadataUnion : The extracted metadata. Exactly one variant is populated,
 // corresponding to `GetMetadataResult.metadata_type`.
