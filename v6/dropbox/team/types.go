@@ -4320,6 +4320,207 @@ func (u *MembersSetProfilePhotoError) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// MembersSuspendBatchArg : Launches one action-specific member suspension batch
+// job.
+type MembersSuspendBatchArg struct {
+	// Members : Must contain between 1 and 500 targets. The launch handler also
+	// rejects duplicate client item IDs and duplicate member selectors.
+	Members []*MembersSuspendBatchTarget `json:"members"`
+}
+
+// NewMembersSuspendBatchArg returns a new MembersSuspendBatchArg instance
+func NewMembersSuspendBatchArg(Members []*MembersSuspendBatchTarget) *MembersSuspendBatchArg {
+	s := new(MembersSuspendBatchArg)
+	s.Members = Members
+	return s
+}
+
+// MembersSuspendBatchComplete : has no documentation (yet)
+type MembersSuspendBatchComplete struct {
+	// Requested : has no documentation (yet)
+	Requested int64 `json:"requested"`
+	// Suspended : has no documentation (yet)
+	Suspended int64 `json:"suspended"`
+	// Failed : has no documentation (yet)
+	Failed int64 `json:"failed"`
+	// Unknown : has no documentation (yet)
+	Unknown int64 `json:"unknown"`
+	// ReportDelivery : has no documentation (yet)
+	ReportDelivery *MembersSuspendBatchReportDeliveryStatus `json:"report_delivery"`
+}
+
+// NewMembersSuspendBatchComplete returns a new MembersSuspendBatchComplete instance
+func NewMembersSuspendBatchComplete(Requested int64, Suspended int64, Failed int64, Unknown int64, ReportDelivery *MembersSuspendBatchReportDeliveryStatus) *MembersSuspendBatchComplete {
+	s := new(MembersSuspendBatchComplete)
+	s.Requested = Requested
+	s.Suspended = Suspended
+	s.Failed = Failed
+	s.Unknown = Unknown
+	s.ReportDelivery = ReportDelivery
+	return s
+}
+
+// MembersSuspendBatchError : A typed launch rejection. Authorization failures
+// continue to use the API v2 authentication/permission error surface.
+type MembersSuspendBatchError struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersSuspendBatchError
+const (
+	MembersSuspendBatchErrorTooManyMembers        = "too_many_members"
+	MembersSuspendBatchErrorDuplicateClientItemId = "duplicate_client_item_id"
+	MembersSuspendBatchErrorDuplicateTeamMemberId = "duplicate_team_member_id"
+	MembersSuspendBatchErrorActingAdmin           = "acting_admin"
+	MembersSuspendBatchErrorLastAdmin             = "last_admin"
+	MembersSuspendBatchErrorOther                 = "other"
+)
+
+// MembersSuspendBatchJobStatus : Coarse job state. Live row progress and report
+// contents are intentionally omitted; the authorized team admin who initiated
+// the batch receives row details in the terminal email report.
+type MembersSuspendBatchJobStatus struct {
+	dropbox.Tagged
+	// Complete : has no documentation (yet)
+	Complete *MembersSuspendBatchComplete `json:"complete,omitempty"`
+	// Failed : has no documentation (yet)
+	Failed *MembersSuspendBatchTaskFailure `json:"failed,omitempty"`
+}
+
+// Valid tag values for MembersSuspendBatchJobStatus
+const (
+	MembersSuspendBatchJobStatusInProgress = "in_progress"
+	MembersSuspendBatchJobStatusComplete   = "complete"
+	MembersSuspendBatchJobStatusFailed     = "failed"
+	MembersSuspendBatchJobStatusOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersSuspendBatchJobStatus instance
+func (u *MembersSuspendBatchJobStatus) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *MembersSuspendBatchTaskFailure `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		if err = json.Unmarshal(body, &u.Complete); err != nil {
+			return err
+		}
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// MembersSuspendBatchReportDeliveryStatus : has no documentation (yet)
+type MembersSuspendBatchReportDeliveryStatus struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersSuspendBatchReportDeliveryStatus
+const (
+	MembersSuspendBatchReportDeliveryStatusMembersSuspendBatchReportDeliveryStatusUnspecified = "members_suspend_batch_report_delivery_status_unspecified"
+	MembersSuspendBatchReportDeliveryStatusMembersSuspendBatchReportDeliveryStatusPending     = "members_suspend_batch_report_delivery_status_pending"
+	MembersSuspendBatchReportDeliveryStatusMembersSuspendBatchReportDeliveryStatusDelivered   = "members_suspend_batch_report_delivery_status_delivered"
+	MembersSuspendBatchReportDeliveryStatusMembersSuspendBatchReportDeliveryStatusFailed      = "members_suspend_batch_report_delivery_status_failed"
+	MembersSuspendBatchReportDeliveryStatusOther                                              = "other"
+)
+
+// MembersSuspendBatchRowFailure : Stable machine-readable reasons used by the
+// terminal row report.
+type MembersSuspendBatchRowFailure struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersSuspendBatchRowFailure
+const (
+	MembersSuspendBatchRowFailureUserNotFound         = "user_not_found"
+	MembersSuspendBatchRowFailureUserNotInTeam        = "user_not_in_team"
+	MembersSuspendBatchRowFailureOther                = "other"
+	MembersSuspendBatchRowFailureSuspendInactiveUser  = "suspend_inactive_user"
+	MembersSuspendBatchRowFailureSuspendLastAdmin     = "suspend_last_admin"
+	MembersSuspendBatchRowFailureTeamLicenseLimit     = "team_license_limit"
+	MembersSuspendBatchRowFailureProtectedActingAdmin = "protected_acting_admin"
+	MembersSuspendBatchRowFailurePermissionChanged    = "permission_changed"
+	MembersSuspendBatchRowFailureSuspendFailed        = "suspend_failed"
+)
+
+// MembersSuspendBatchRowOutcome : The terminal outcome for one requested
+// member. Row outcomes are delivered in the report rather than embedded in the
+// status response.
+type MembersSuspendBatchRowOutcome struct {
+	dropbox.Tagged
+	// Failed : has no documentation (yet)
+	Failed *MembersSuspendBatchRowFailure `json:"failed,omitempty"`
+}
+
+// Valid tag values for MembersSuspendBatchRowOutcome
+const (
+	MembersSuspendBatchRowOutcomeSuspended = "suspended"
+	MembersSuspendBatchRowOutcomeFailed    = "failed"
+	MembersSuspendBatchRowOutcomeUnknown   = "unknown"
+	MembersSuspendBatchRowOutcomeOther     = "other"
+)
+
+// UnmarshalJSON deserializes into a MembersSuspendBatchRowOutcome instance
+func (u *MembersSuspendBatchRowOutcome) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Failed : has no documentation (yet)
+		Failed *MembersSuspendBatchRowFailure `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// MembersSuspendBatchTarget : One member selected for suspension. The opaque
+// client item ID correlates the eventual report row with the caller's input
+// without sending CSV data.
+type MembersSuspendBatchTarget struct {
+	// ClientItemId : has no documentation (yet)
+	ClientItemId string `json:"client_item_id"`
+	// SuspendArg : has no documentation (yet)
+	SuspendArg *MembersDeactivateArg `json:"suspend_arg"`
+}
+
+// NewMembersSuspendBatchTarget returns a new MembersSuspendBatchTarget instance
+func NewMembersSuspendBatchTarget(ClientItemId string, SuspendArg *MembersDeactivateArg) *MembersSuspendBatchTarget {
+	s := new(MembersSuspendBatchTarget)
+	s.ClientItemId = ClientItemId
+	s.SuspendArg = SuspendArg
+	return s
+}
+
+// MembersSuspendBatchTaskFailure : has no documentation (yet)
+type MembersSuspendBatchTaskFailure struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for MembersSuspendBatchTaskFailure
+const (
+	MembersSuspendBatchTaskFailureUnusableResult = "unusable_result"
+	MembersSuspendBatchTaskFailureOther          = "other"
+)
+
 // MembersTransferFormerMembersFilesError : has no documentation (yet)
 type MembersTransferFormerMembersFilesError struct {
 	dropbox.Tagged
