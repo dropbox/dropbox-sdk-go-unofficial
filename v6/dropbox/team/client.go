@@ -325,6 +325,12 @@ type Client interface {
 	// management Exactly one of team_member_id, email, or external_id must be
 	// provided to identify the user account.
 	MembersSuspend(arg *MembersDeactivateArg) (err error)
+	// MembersSuspendBatch : Launch a member suspension batch. The server
+	// enforces a maximum of 500 members.
+	MembersSuspendBatch(arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error)
+	// MembersSuspendBatchJobStatusCheck : Poll a previously launched member
+	// suspension batch job.
+	MembersSuspendBatchJobStatusCheck(arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error)
 	// MembersUnsuspend : Unsuspend a member from a team. Permission : Team
 	// member management Exactly one of team_member_id, email, or external_id
 	// must be provided to identify the user account.
@@ -739,6 +745,12 @@ type ContextClient interface {
 	// member management Exactly one of team_member_id, email, or external_id
 	// must be provided to identify the user account.
 	MembersSuspendContext(ctx context.Context, arg *MembersDeactivateArg) (err error)
+	// MembersSuspendBatchContext : Launch a member suspension batch. The server
+	// enforces a maximum of 500 members.
+	MembersSuspendBatchContext(ctx context.Context, arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error)
+	// MembersSuspendBatchJobStatusCheckContext : Poll a previously launched
+	// member suspension batch job.
+	MembersSuspendBatchJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error)
 	// MembersUnsuspendContext : Unsuspend a member from a team. Permission :
 	// Team member management Exactly one of team_member_id, email, or
 	// external_id must be provided to identify the user account.
@@ -3990,6 +4002,94 @@ func (dbx *apiImpl) MembersSuspendContext(ctx context.Context, arg *MembersDeact
 
 func (dbx *apiImpl) MembersSuspend(arg *MembersDeactivateArg) (err error) {
 	return dbx.MembersSuspendContext(context.Background(), arg)
+}
+
+// MembersSuspendBatchAPIError is an error-wrapper for the members/suspend_batch route
+type MembersSuspendBatchAPIError struct {
+	dropbox.APIError
+	EndpointError *MembersSuspendBatchError `json:"error"`
+}
+
+// MembersSuspendBatchContext : Launch a member suspension batch. The server
+// enforces a maximum of 500 members.
+func (dbx *apiImpl) MembersSuspendBatchContext(ctx context.Context, arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "members/suspend_batch",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr MembersSuspendBatchAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) MembersSuspendBatch(arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error) {
+	return dbx.MembersSuspendBatchContext(context.Background(), arg)
+}
+
+// MembersSuspendBatchJobStatusCheckAPIError is an error-wrapper for the members/suspend_batch/job_status/check route
+type MembersSuspendBatchJobStatusCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// MembersSuspendBatchJobStatusCheckContext : Poll a previously launched member
+// suspension batch job.
+func (dbx *apiImpl) MembersSuspendBatchJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "members/suspend_batch/job_status/check",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr MembersSuspendBatchJobStatusCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) MembersSuspendBatchJobStatusCheck(arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error) {
+	return dbx.MembersSuspendBatchJobStatusCheckContext(context.Background(), arg)
 }
 
 // MembersUnsuspendAPIError is an error-wrapper for the members/unsuspend route
