@@ -208,12 +208,14 @@ type Client interface {
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error)
-	// MembersBulkSuspend : Launch a bulk suspend job. The server enforces a
-	// maximum of 500 members.
-	MembersBulkSuspend(arg *BulkSuspendArg) (res *async.LaunchResultBase, err error)
-	// MembersBulkSuspendJobStatusCheck : Poll a previously launched bulk
-	// suspend job.
-	MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *BulkSuspendJobStatus, err error)
+	// MembersBulkSuspend : Deprecated compatibility alias for
+	// MembersSuspendBatch.
+	// Deprecated:
+	MembersBulkSuspend(arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error)
+	// MembersBulkSuspendJobStatusCheck : Deprecated compatibility alias for
+	// MembersSuspendBatchJobStatusCheck.
+	// Deprecated:
+	MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error)
 	// MembersDeleteFormerMemberFiles : Permanently delete the files of a user
 	// who has been removed from the team. After permanent deletion, those files
 	// will not be available to be transferred to another team member.
@@ -626,12 +628,14 @@ type ContextClient interface {
 	// `membersAdd` , use this to poll the status of the asynchronous request.
 	// Permission : Team member management.
 	MembersAddJobStatusGetV2Context(ctx context.Context, arg *async.PollArg) (res *MembersAddJobStatusV2Result, err error)
-	// MembersBulkSuspendContext : Launch a bulk suspend job. The server
-	// enforces a maximum of 500 members.
-	MembersBulkSuspendContext(ctx context.Context, arg *BulkSuspendArg) (res *async.LaunchResultBase, err error)
-	// MembersBulkSuspendJobStatusCheckContext : Poll a previously launched bulk
-	// suspend job.
-	MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *BulkSuspendJobStatus, err error)
+	// MembersBulkSuspendContext : Deprecated compatibility alias for
+	// MembersSuspendBatch.
+	// Deprecated:
+	MembersBulkSuspendContext(ctx context.Context, arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error)
+	// MembersBulkSuspendJobStatusCheckContext : Deprecated compatibility alias
+	// for MembersSuspendBatchJobStatusCheck.
+	// Deprecated:
+	MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error)
 	// MembersDeleteFormerMemberFilesContext : Permanently delete the files of a
 	// user who has been removed from the team. After permanent deletion, those
 	// files will not be available to be transferred to another team member.
@@ -2758,12 +2762,15 @@ func (dbx *apiImpl) MembersAddJobStatusGetV2(arg *async.PollArg) (res *MembersAd
 // MembersBulkSuspendAPIError is an error-wrapper for the members/bulk_suspend route
 type MembersBulkSuspendAPIError struct {
 	dropbox.APIError
-	EndpointError *BulkSuspendError `json:"error"`
+	EndpointError *MembersSuspendBatchError `json:"error"`
 }
 
-// MembersBulkSuspendContext : Launch a bulk suspend job. The server enforces a
-// maximum of 500 members.
-func (dbx *apiImpl) MembersBulkSuspendContext(ctx context.Context, arg *BulkSuspendArg) (res *async.LaunchResultBase, err error) {
+// MembersBulkSuspendContext : Deprecated compatibility alias for
+// MembersSuspendBatch.
+// Deprecated:
+func (dbx *apiImpl) MembersBulkSuspendContext(ctx context.Context, arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `MembersBulkSuspend` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "team",
@@ -2795,7 +2802,7 @@ func (dbx *apiImpl) MembersBulkSuspendContext(ctx context.Context, arg *BulkSusp
 	return
 }
 
-func (dbx *apiImpl) MembersBulkSuspend(arg *BulkSuspendArg) (res *async.LaunchResultBase, err error) {
+func (dbx *apiImpl) MembersBulkSuspend(arg *MembersSuspendBatchArg) (res *async.LaunchResultBase, err error) {
 	return dbx.MembersBulkSuspendContext(context.Background(), arg)
 }
 
@@ -2805,9 +2812,12 @@ type MembersBulkSuspendJobStatusCheckAPIError struct {
 	EndpointError *async.PollError `json:"error"`
 }
 
-// MembersBulkSuspendJobStatusCheckContext : Poll a previously launched bulk
-// suspend job.
-func (dbx *apiImpl) MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *BulkSuspendJobStatus, err error) {
+// MembersBulkSuspendJobStatusCheckContext : Deprecated compatibility alias for
+// MembersSuspendBatchJobStatusCheck.
+// Deprecated:
+func (dbx *apiImpl) MembersBulkSuspendJobStatusCheckContext(ctx context.Context, arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error) {
+	log.Printf("WARNING: API `MembersBulkSuspendJobStatusCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "team",
@@ -2839,7 +2849,7 @@ func (dbx *apiImpl) MembersBulkSuspendJobStatusCheckContext(ctx context.Context,
 	return
 }
 
-func (dbx *apiImpl) MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *BulkSuspendJobStatus, err error) {
+func (dbx *apiImpl) MembersBulkSuspendJobStatusCheck(arg *async.PollArg) (res *MembersSuspendBatchJobStatus, err error) {
 	return dbx.MembersBulkSuspendJobStatusCheckContext(context.Background(), arg)
 }
 
