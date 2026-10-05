@@ -6091,6 +6091,16 @@ type EventDetails struct {
 	ProtectActionRemoveLinkDetails *ProtectActionRemoveLinkDetails `json:"protect_action_remove_link_details,omitempty"`
 	// ProtectActionStopSharingDetails : has no documentation (yet)
 	ProtectActionStopSharingDetails *ProtectActionStopSharingDetails `json:"protect_action_stop_sharing_details,omitempty"`
+	// ProtectCustomDataTypeCreatedDetails : has no documentation (yet)
+	ProtectCustomDataTypeCreatedDetails *ProtectCustomDataTypeCreatedDetails `json:"protect_custom_data_type_created_details,omitempty"`
+	// ProtectCustomDataTypeDeletedDetails : has no documentation (yet)
+	ProtectCustomDataTypeDeletedDetails *ProtectCustomDataTypeDeletedDetails `json:"protect_custom_data_type_deleted_details,omitempty"`
+	// ProtectCustomDataTypeDisabledDetails : has no documentation (yet)
+	ProtectCustomDataTypeDisabledDetails *ProtectCustomDataTypeDisabledDetails `json:"protect_custom_data_type_disabled_details,omitempty"`
+	// ProtectCustomDataTypeEnabledDetails : has no documentation (yet)
+	ProtectCustomDataTypeEnabledDetails *ProtectCustomDataTypeEnabledDetails `json:"protect_custom_data_type_enabled_details,omitempty"`
+	// ProtectCustomDataTypeModifiedDetails : has no documentation (yet)
+	ProtectCustomDataTypeModifiedDetails *ProtectCustomDataTypeModifiedDetails `json:"protect_custom_data_type_modified_details,omitempty"`
 	// ProtectInternalDomainsChangedDetails : has no documentation (yet)
 	ProtectInternalDomainsChangedDetails *ProtectInternalDomainsChangedDetails `json:"protect_internal_domains_changed_details,omitempty"`
 	// ProtectPolicyActivatedDetails : has no documentation (yet)
@@ -7113,6 +7123,11 @@ const (
 	EventDetailsProtectActionRemoveDomainsDetails                        = "protect_action_remove_domains_details"
 	EventDetailsProtectActionRemoveLinkDetails                           = "protect_action_remove_link_details"
 	EventDetailsProtectActionStopSharingDetails                          = "protect_action_stop_sharing_details"
+	EventDetailsProtectCustomDataTypeCreatedDetails                      = "protect_custom_data_type_created_details"
+	EventDetailsProtectCustomDataTypeDeletedDetails                      = "protect_custom_data_type_deleted_details"
+	EventDetailsProtectCustomDataTypeDisabledDetails                     = "protect_custom_data_type_disabled_details"
+	EventDetailsProtectCustomDataTypeEnabledDetails                      = "protect_custom_data_type_enabled_details"
+	EventDetailsProtectCustomDataTypeModifiedDetails                     = "protect_custom_data_type_modified_details"
 	EventDetailsProtectInternalDomainsChangedDetails                     = "protect_internal_domains_changed_details"
 	EventDetailsProtectPolicyActivatedDetails                            = "protect_policy_activated_details"
 	EventDetailsProtectPolicyDeactivatedDetails                          = "protect_policy_deactivated_details"
@@ -8901,6 +8916,31 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 
 	case "protect_action_stop_sharing_details":
 		if err = json.Unmarshal(body, &u.ProtectActionStopSharingDetails); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_created_details":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeCreatedDetails); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_deleted_details":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeDeletedDetails); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_disabled_details":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeDisabledDetails); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_enabled_details":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeEnabledDetails); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_modified_details":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeModifiedDetails); err != nil {
 			return err
 		}
 
@@ -11351,6 +11391,21 @@ type EventType struct {
 	// ProtectActionStopSharing : (protect) Stopped sharing content via Dropbox
 	// Protect
 	ProtectActionStopSharing *ProtectActionStopSharingType `json:"protect_action_stop_sharing,omitempty"`
+	// ProtectCustomDataTypeCreated : (protect) Created a Dropbox Protect custom
+	// data type
+	ProtectCustomDataTypeCreated *ProtectCustomDataTypeCreatedType `json:"protect_custom_data_type_created,omitempty"`
+	// ProtectCustomDataTypeDeleted : (protect) Deleted a Dropbox Protect custom
+	// data type
+	ProtectCustomDataTypeDeleted *ProtectCustomDataTypeDeletedType `json:"protect_custom_data_type_deleted,omitempty"`
+	// ProtectCustomDataTypeDisabled : (protect) Disabled a Dropbox Protect
+	// custom data type
+	ProtectCustomDataTypeDisabled *ProtectCustomDataTypeDisabledType `json:"protect_custom_data_type_disabled,omitempty"`
+	// ProtectCustomDataTypeEnabled : (protect) Enabled a Dropbox Protect custom
+	// data type
+	ProtectCustomDataTypeEnabled *ProtectCustomDataTypeEnabledType `json:"protect_custom_data_type_enabled,omitempty"`
+	// ProtectCustomDataTypeModified : (protect) Modified a Dropbox Protect
+	// custom data type
+	ProtectCustomDataTypeModified *ProtectCustomDataTypeModifiedType `json:"protect_custom_data_type_modified,omitempty"`
 	// ProtectInternalDomainsChanged : (protect) Modified Protect internal
 	// domains list
 	ProtectInternalDomainsChanged *ProtectInternalDomainsChangedType `json:"protect_internal_domains_changed,omitempty"`
@@ -12581,6 +12636,11 @@ const (
 	EventTypeProtectActionRemoveDomains                        = "protect_action_remove_domains"
 	EventTypeProtectActionRemoveLink                           = "protect_action_remove_link"
 	EventTypeProtectActionStopSharing                          = "protect_action_stop_sharing"
+	EventTypeProtectCustomDataTypeCreated                      = "protect_custom_data_type_created"
+	EventTypeProtectCustomDataTypeDeleted                      = "protect_custom_data_type_deleted"
+	EventTypeProtectCustomDataTypeDisabled                     = "protect_custom_data_type_disabled"
+	EventTypeProtectCustomDataTypeEnabled                      = "protect_custom_data_type_enabled"
+	EventTypeProtectCustomDataTypeModified                     = "protect_custom_data_type_modified"
 	EventTypeProtectInternalDomainsChanged                     = "protect_internal_domains_changed"
 	EventTypeProtectPolicyActivated                            = "protect_policy_activated"
 	EventTypeProtectPolicyDeactivated                          = "protect_policy_deactivated"
@@ -14368,6 +14428,31 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 
 	case "protect_action_stop_sharing":
 		if err = json.Unmarshal(body, &u.ProtectActionStopSharing); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_created":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeCreated); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_deleted":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeDeleted); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_disabled":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeDisabled); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_enabled":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeEnabled); err != nil {
+			return err
+		}
+
+	case "protect_custom_data_type_modified":
+		if err = json.Unmarshal(body, &u.ProtectCustomDataTypeModified); err != nil {
 			return err
 		}
 
@@ -16417,6 +16502,11 @@ const (
 	EventTypeArgProtectActionRemoveDomains                        = "protect_action_remove_domains"
 	EventTypeArgProtectActionRemoveLink                           = "protect_action_remove_link"
 	EventTypeArgProtectActionStopSharing                          = "protect_action_stop_sharing"
+	EventTypeArgProtectCustomDataTypeCreated                      = "protect_custom_data_type_created"
+	EventTypeArgProtectCustomDataTypeDeleted                      = "protect_custom_data_type_deleted"
+	EventTypeArgProtectCustomDataTypeDisabled                     = "protect_custom_data_type_disabled"
+	EventTypeArgProtectCustomDataTypeEnabled                      = "protect_custom_data_type_enabled"
+	EventTypeArgProtectCustomDataTypeModified                     = "protect_custom_data_type_modified"
 	EventTypeArgProtectInternalDomainsChanged                     = "protect_internal_domains_changed"
 	EventTypeArgProtectPolicyActivated                            = "protect_policy_activated"
 	EventTypeArgProtectPolicyDeactivated                          = "protect_policy_deactivated"
@@ -25102,6 +25192,156 @@ type ProtectActionStopSharingType struct {
 // NewProtectActionStopSharingType returns a new ProtectActionStopSharingType instance
 func NewProtectActionStopSharingType(Description string) *ProtectActionStopSharingType {
 	s := new(ProtectActionStopSharingType)
+	s.Description = Description
+	return s
+}
+
+// ProtectCustomDataTypeCreatedDetails : Created a Dropbox Protect custom data
+// type.
+type ProtectCustomDataTypeCreatedDetails struct {
+	// CustomDataTypeId : ID.
+	CustomDataTypeId string `json:"custom_data_type_id"`
+	// Name : Name.
+	Name string `json:"name"`
+}
+
+// NewProtectCustomDataTypeCreatedDetails returns a new ProtectCustomDataTypeCreatedDetails instance
+func NewProtectCustomDataTypeCreatedDetails(CustomDataTypeId string, Name string) *ProtectCustomDataTypeCreatedDetails {
+	s := new(ProtectCustomDataTypeCreatedDetails)
+	s.CustomDataTypeId = CustomDataTypeId
+	s.Name = Name
+	return s
+}
+
+// ProtectCustomDataTypeCreatedType : has no documentation (yet)
+type ProtectCustomDataTypeCreatedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectCustomDataTypeCreatedType returns a new ProtectCustomDataTypeCreatedType instance
+func NewProtectCustomDataTypeCreatedType(Description string) *ProtectCustomDataTypeCreatedType {
+	s := new(ProtectCustomDataTypeCreatedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectCustomDataTypeDeletedDetails : Deleted a Dropbox Protect custom data
+// type.
+type ProtectCustomDataTypeDeletedDetails struct {
+	// CustomDataTypeId : ID.
+	CustomDataTypeId string `json:"custom_data_type_id"`
+	// Name : Name.
+	Name string `json:"name"`
+}
+
+// NewProtectCustomDataTypeDeletedDetails returns a new ProtectCustomDataTypeDeletedDetails instance
+func NewProtectCustomDataTypeDeletedDetails(CustomDataTypeId string, Name string) *ProtectCustomDataTypeDeletedDetails {
+	s := new(ProtectCustomDataTypeDeletedDetails)
+	s.CustomDataTypeId = CustomDataTypeId
+	s.Name = Name
+	return s
+}
+
+// ProtectCustomDataTypeDeletedType : has no documentation (yet)
+type ProtectCustomDataTypeDeletedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectCustomDataTypeDeletedType returns a new ProtectCustomDataTypeDeletedType instance
+func NewProtectCustomDataTypeDeletedType(Description string) *ProtectCustomDataTypeDeletedType {
+	s := new(ProtectCustomDataTypeDeletedType)
+	s.Description = Description
+	return s
+}
+
+// ProtectCustomDataTypeDisabledDetails : Disabled a Dropbox Protect custom data
+// type.
+type ProtectCustomDataTypeDisabledDetails struct {
+	// CustomDataTypeId : ID.
+	CustomDataTypeId string `json:"custom_data_type_id"`
+	// Name : Name.
+	Name string `json:"name"`
+}
+
+// NewProtectCustomDataTypeDisabledDetails returns a new ProtectCustomDataTypeDisabledDetails instance
+func NewProtectCustomDataTypeDisabledDetails(CustomDataTypeId string, Name string) *ProtectCustomDataTypeDisabledDetails {
+	s := new(ProtectCustomDataTypeDisabledDetails)
+	s.CustomDataTypeId = CustomDataTypeId
+	s.Name = Name
+	return s
+}
+
+// ProtectCustomDataTypeDisabledType : has no documentation (yet)
+type ProtectCustomDataTypeDisabledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectCustomDataTypeDisabledType returns a new ProtectCustomDataTypeDisabledType instance
+func NewProtectCustomDataTypeDisabledType(Description string) *ProtectCustomDataTypeDisabledType {
+	s := new(ProtectCustomDataTypeDisabledType)
+	s.Description = Description
+	return s
+}
+
+// ProtectCustomDataTypeEnabledDetails : Enabled a Dropbox Protect custom data
+// type.
+type ProtectCustomDataTypeEnabledDetails struct {
+	// CustomDataTypeId : ID.
+	CustomDataTypeId string `json:"custom_data_type_id"`
+	// Name : Name.
+	Name string `json:"name"`
+}
+
+// NewProtectCustomDataTypeEnabledDetails returns a new ProtectCustomDataTypeEnabledDetails instance
+func NewProtectCustomDataTypeEnabledDetails(CustomDataTypeId string, Name string) *ProtectCustomDataTypeEnabledDetails {
+	s := new(ProtectCustomDataTypeEnabledDetails)
+	s.CustomDataTypeId = CustomDataTypeId
+	s.Name = Name
+	return s
+}
+
+// ProtectCustomDataTypeEnabledType : has no documentation (yet)
+type ProtectCustomDataTypeEnabledType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectCustomDataTypeEnabledType returns a new ProtectCustomDataTypeEnabledType instance
+func NewProtectCustomDataTypeEnabledType(Description string) *ProtectCustomDataTypeEnabledType {
+	s := new(ProtectCustomDataTypeEnabledType)
+	s.Description = Description
+	return s
+}
+
+// ProtectCustomDataTypeModifiedDetails : Modified a Dropbox Protect custom data
+// type.
+type ProtectCustomDataTypeModifiedDetails struct {
+	// CustomDataTypeId : ID.
+	CustomDataTypeId string `json:"custom_data_type_id"`
+	// Name : Name.
+	Name string `json:"name"`
+}
+
+// NewProtectCustomDataTypeModifiedDetails returns a new ProtectCustomDataTypeModifiedDetails instance
+func NewProtectCustomDataTypeModifiedDetails(CustomDataTypeId string, Name string) *ProtectCustomDataTypeModifiedDetails {
+	s := new(ProtectCustomDataTypeModifiedDetails)
+	s.CustomDataTypeId = CustomDataTypeId
+	s.Name = Name
+	return s
+}
+
+// ProtectCustomDataTypeModifiedType : has no documentation (yet)
+type ProtectCustomDataTypeModifiedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewProtectCustomDataTypeModifiedType returns a new ProtectCustomDataTypeModifiedType instance
+func NewProtectCustomDataTypeModifiedType(Description string) *ProtectCustomDataTypeModifiedType {
+	s := new(ProtectCustomDataTypeModifiedType)
 	s.Description = Description
 	return s
 }
