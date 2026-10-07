@@ -4124,7 +4124,9 @@ type SearchOptions struct {
 	// OrderBy : Specified property of the order of search results. By default,
 	// results are sorted by relevance.
 	OrderBy *SearchOrderBy `json:"order_by,omitempty"`
-	// FileStatus : Restricts search to the given file status.
+	// FileStatus : Restricts search to the given file status. The
+	// `FileStatus.deleted` value is deprecated and should not be used. This
+	// also applies to searches continued with `searchContinue`.
 	FileStatus *FileStatus `json:"file_status"`
 	// FilenameOnly : Restricts search to only match on filenames.
 	FilenameOnly bool `json:"filename_only"`
