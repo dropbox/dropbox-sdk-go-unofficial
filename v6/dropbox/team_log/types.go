@@ -5442,6 +5442,49 @@ const (
 	EnforceLinkPasswordPolicyOther    = "other"
 )
 
+// EnterpriseManagedAuthPolicy : Enterprise managed authorization policy
+type EnterpriseManagedAuthPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for EnterpriseManagedAuthPolicy
+const (
+	EnterpriseManagedAuthPolicyDefault  = "default"
+	EnterpriseManagedAuthPolicyDisabled = "disabled"
+	EnterpriseManagedAuthPolicyEnabled  = "enabled"
+	EnterpriseManagedAuthPolicyOther    = "other"
+)
+
+// EnterpriseManagedAuthPolicyChangedDetails : Changed enterprise managed
+// authorization policy for team.
+type EnterpriseManagedAuthPolicyChangedDetails struct {
+	// NewValue : New enterprise managed authorization policy.
+	NewValue *EnterpriseManagedAuthPolicy `json:"new_value"`
+	// PreviousValue : Previous enterprise managed authorization policy. Might
+	// be missing due to historical data gap.
+	PreviousValue *EnterpriseManagedAuthPolicy `json:"previous_value,omitempty"`
+}
+
+// NewEnterpriseManagedAuthPolicyChangedDetails returns a new EnterpriseManagedAuthPolicyChangedDetails instance
+func NewEnterpriseManagedAuthPolicyChangedDetails(NewValue *EnterpriseManagedAuthPolicy) *EnterpriseManagedAuthPolicyChangedDetails {
+	s := new(EnterpriseManagedAuthPolicyChangedDetails)
+	s.NewValue = NewValue
+	return s
+}
+
+// EnterpriseManagedAuthPolicyChangedType : has no documentation (yet)
+type EnterpriseManagedAuthPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewEnterpriseManagedAuthPolicyChangedType returns a new EnterpriseManagedAuthPolicyChangedType instance
+func NewEnterpriseManagedAuthPolicyChangedType(Description string) *EnterpriseManagedAuthPolicyChangedType {
+	s := new(EnterpriseManagedAuthPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // EnterpriseSettingsLockingDetails : Changed who can update a setting.
 type EnterpriseSettingsLockingDetails struct {
 	// TeamName : The secondary team name.
@@ -6549,6 +6592,8 @@ type EventDetails struct {
 	EmmChangePolicyDetails *EmmChangePolicyDetails `json:"emm_change_policy_details,omitempty"`
 	// EmmRemoveExceptionDetails : has no documentation (yet)
 	EmmRemoveExceptionDetails *EmmRemoveExceptionDetails `json:"emm_remove_exception_details,omitempty"`
+	// EnterpriseManagedAuthPolicyChangedDetails : has no documentation (yet)
+	EnterpriseManagedAuthPolicyChangedDetails *EnterpriseManagedAuthPolicyChangedDetails `json:"enterprise_managed_auth_policy_changed_details,omitempty"`
 	// ExtendedVersionHistoryChangePolicyDetails : has no documentation (yet)
 	ExtendedVersionHistoryChangePolicyDetails *ExtendedVersionHistoryChangePolicyDetails `json:"extended_version_history_change_policy_details,omitempty"`
 	// ExternalDriveBackupPolicyChangedDetails : has no documentation (yet)
@@ -7348,6 +7393,7 @@ const (
 	EventDetailsEmmAddExceptionDetails                                   = "emm_add_exception_details"
 	EventDetailsEmmChangePolicyDetails                                   = "emm_change_policy_details"
 	EventDetailsEmmRemoveExceptionDetails                                = "emm_remove_exception_details"
+	EventDetailsEnterpriseManagedAuthPolicyChangedDetails                = "enterprise_managed_auth_policy_changed_details"
 	EventDetailsExtendedVersionHistoryChangePolicyDetails                = "extended_version_history_change_policy_details"
 	EventDetailsExternalDriveBackupPolicyChangedDetails                  = "external_drive_backup_policy_changed_details"
 	EventDetailsFileCommentsChangePolicyDetails                          = "file_comments_change_policy_details"
@@ -10044,6 +10090,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "enterprise_managed_auth_policy_changed_details":
+		if err = json.Unmarshal(body, &u.EnterpriseManagedAuthPolicyChangedDetails); err != nil {
+			return err
+		}
+
 	case "extended_version_history_change_policy_details":
 		if err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicyDetails); err != nil {
 			return err
@@ -11963,6 +12014,9 @@ type EventType struct {
 	// EmmRemoveException : (team_policies) Removed members from EMM exception
 	// list
 	EmmRemoveException *EmmRemoveExceptionType `json:"emm_remove_exception,omitempty"`
+	// EnterpriseManagedAuthPolicyChanged : (team_policies) Changed enterprise
+	// managed authorization policy for team
+	EnterpriseManagedAuthPolicyChanged *EnterpriseManagedAuthPolicyChangedType `json:"enterprise_managed_auth_policy_changed,omitempty"`
 	// ExtendedVersionHistoryChangePolicy : (team_policies) Accepted/opted out
 	// of extended version history
 	ExtendedVersionHistoryChangePolicy *ExtendedVersionHistoryChangePolicyType `json:"extended_version_history_change_policy,omitempty"`
@@ -12861,6 +12915,7 @@ const (
 	EventTypeEmmAddException                                   = "emm_add_exception"
 	EventTypeEmmChangePolicy                                   = "emm_change_policy"
 	EventTypeEmmRemoveException                                = "emm_remove_exception"
+	EventTypeEnterpriseManagedAuthPolicyChanged                = "enterprise_managed_auth_policy_changed"
 	EventTypeExtendedVersionHistoryChangePolicy                = "extended_version_history_change_policy"
 	EventTypeExternalDriveBackupPolicyChanged                  = "external_drive_backup_policy_changed"
 	EventTypeFileCommentsChangePolicy                          = "file_comments_change_policy"
@@ -15556,6 +15611,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "enterprise_managed_auth_policy_changed":
+		if err = json.Unmarshal(body, &u.EnterpriseManagedAuthPolicyChanged); err != nil {
+			return err
+		}
+
 	case "extended_version_history_change_policy":
 		if err = json.Unmarshal(body, &u.ExtendedVersionHistoryChangePolicy); err != nil {
 			return err
@@ -16727,6 +16787,7 @@ const (
 	EventTypeArgEmmAddException                                   = "emm_add_exception"
 	EventTypeArgEmmChangePolicy                                   = "emm_change_policy"
 	EventTypeArgEmmRemoveException                                = "emm_remove_exception"
+	EventTypeArgEnterpriseManagedAuthPolicyChanged                = "enterprise_managed_auth_policy_changed"
 	EventTypeArgExtendedVersionHistoryChangePolicy                = "extended_version_history_change_policy"
 	EventTypeArgExternalDriveBackupPolicyChanged                  = "external_drive_backup_policy_changed"
 	EventTypeArgFileCommentsChangePolicy                          = "file_comments_change_policy"
