@@ -2787,6 +2787,8 @@ type MountFolderError struct {
 	// InsufficientQuota : The current user does not have enough space to mount
 	// the shared folder.
 	InsufficientQuota *InsufficientQuotaAmounts `json:"insufficient_quota,omitempty"`
+	// TooManyMounts : User will have too many mounts after this operation.
+	TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 }
 
 // Valid tag values for MountFolderError
@@ -2798,6 +2800,7 @@ const (
 	MountFolderErrorNoPermission       = "no_permission"
 	MountFolderErrorNotMountable       = "not_mountable"
 	MountFolderErrorMustAutomount      = "must_automount"
+	MountFolderErrorTooManyMounts      = "too_many_mounts"
 	MountFolderErrorOther              = "other"
 )
 
@@ -2807,6 +2810,8 @@ func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// AccessError : has no documentation (yet)
 		AccessError *SharedFolderAccessError `json:"access_error,omitempty"`
+		// TooManyMounts : User will have too many mounts after this operation.
+		TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -2823,8 +2828,33 @@ func (u *MountFolderError) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "too_many_mounts":
+		u.TooManyMounts = w.TooManyMounts
+
 	}
 	return nil
+}
+
+// MountLimitsInfo : Information about the mount limit that the operation would
+// exceed.
+type MountLimitsInfo struct {
+	// Limit : The maximum number allowed for this limit.
+	Limit uint64 `json:"limit"`
+	// CurrentCount : The current number of mounts for the user, or of
+	// namespaces in the folder tree.
+	CurrentCount uint64 `json:"current_count"`
+	// NewCount : The number of mounts for the user, or of namespaces in the
+	// folder tree, if the operation were completed.
+	NewCount uint64 `json:"new_count"`
+}
+
+// NewMountLimitsInfo returns a new MountLimitsInfo instance
+func NewMountLimitsInfo(Limit uint64, CurrentCount uint64, NewCount uint64) *MountLimitsInfo {
+	s := new(MountLimitsInfo)
+	s.Limit = Limit
+	s.CurrentCount = CurrentCount
+	s.NewCount = NewCount
+	return s
 }
 
 // ParentFolderAccessInfo : Contains information about a parent folder that a
@@ -3411,6 +3441,8 @@ type ShareFolderErrorBase struct {
 	dropbox.Tagged
 	// BadPath : `ShareFolderArg.path` is invalid.
 	BadPath *SharePathError `json:"bad_path,omitempty"`
+	// TooManyMounts : User will have too many mounts after the operation.
+	TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 }
 
 // Valid tag values for ShareFolderErrorBase
@@ -3419,6 +3451,7 @@ const (
 	ShareFolderErrorBaseBadPath                         = "bad_path"
 	ShareFolderErrorBaseTeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
 	ShareFolderErrorBaseDisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
+	ShareFolderErrorBaseTooManyMounts                   = "too_many_mounts"
 	ShareFolderErrorBaseOther                           = "other"
 )
 
@@ -3428,6 +3461,8 @@ func (u *ShareFolderErrorBase) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// BadPath : `ShareFolderArg.path` is invalid.
 		BadPath *SharePathError `json:"bad_path,omitempty"`
+		// TooManyMounts : User will have too many mounts after the operation.
+		TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3438,6 +3473,9 @@ func (u *ShareFolderErrorBase) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "bad_path":
 		u.BadPath = w.BadPath
+
+	case "too_many_mounts":
+		u.TooManyMounts = w.TooManyMounts
 
 	}
 	return nil
@@ -3448,6 +3486,8 @@ type ShareFolderError struct {
 	dropbox.Tagged
 	// BadPath : `ShareFolderArg.path` is invalid.
 	BadPath *SharePathError `json:"bad_path,omitempty"`
+	// TooManyMounts : User will have too many mounts after the operation.
+	TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 }
 
 // Valid tag values for ShareFolderError
@@ -3456,6 +3496,7 @@ const (
 	ShareFolderErrorBadPath                         = "bad_path"
 	ShareFolderErrorTeamPolicyDisallowsMemberPolicy = "team_policy_disallows_member_policy"
 	ShareFolderErrorDisallowedSharedLinkPolicy      = "disallowed_shared_link_policy"
+	ShareFolderErrorTooManyMounts                   = "too_many_mounts"
 	ShareFolderErrorOther                           = "other"
 	ShareFolderErrorNoPermission                    = "no_permission"
 )
@@ -3466,6 +3507,8 @@ func (u *ShareFolderError) UnmarshalJSON(body []byte) error {
 		dropbox.Tagged
 		// BadPath : `ShareFolderArg.path` is invalid.
 		BadPath *SharePathError `json:"bad_path,omitempty"`
+		// TooManyMounts : User will have too many mounts after the operation.
+		TooManyMounts *TooManyMountsError `json:"too_many_mounts,omitempty"`
 	}
 	var w wrap
 	var err error
@@ -3476,6 +3519,9 @@ func (u *ShareFolderError) UnmarshalJSON(body []byte) error {
 	switch u.Tag {
 	case "bad_path":
 		u.BadPath = w.BadPath
+
+	case "too_many_mounts":
+		u.TooManyMounts = w.TooManyMounts
 
 	}
 	return nil
@@ -4176,6 +4222,61 @@ func NewTeamMemberInfo(TeamInfo *users.Team, DisplayName string) *TeamMemberInfo
 	s.TeamInfo = TeamInfo
 	s.DisplayName = DisplayName
 	return s
+}
+
+// TooManyMountsError : This operation would exceed the maximum number of mounts
+// allowed.
+type TooManyMountsError struct {
+	dropbox.Tagged
+	// TotalMountsExceeded : The user can't add more mounts because it would
+	// exceed the maximum number of mounts allowed.
+	TotalMountsExceeded *MountLimitsInfo `json:"total_mounts_exceeded,omitempty"`
+	// HomeMountsExceeded : The user can't add more mounts because it would
+	// exceed the mount limit for their home namespace.
+	HomeMountsExceeded *MountLimitsInfo `json:"home_mounts_exceeded,omitempty"`
+	// TreeSizeExceeded : The user can't create a new nested share because doing
+	// so would exceed the maximum number of namespaces allowed in the folder
+	// tree.
+	TreeSizeExceeded *MountLimitsInfo `json:"tree_size_exceeded,omitempty"`
+}
+
+// Valid tag values for TooManyMountsError
+const (
+	TooManyMountsErrorTotalMountsExceeded = "total_mounts_exceeded"
+	TooManyMountsErrorHomeMountsExceeded  = "home_mounts_exceeded"
+	TooManyMountsErrorTreeSizeExceeded    = "tree_size_exceeded"
+	TooManyMountsErrorOther               = "other"
+)
+
+// UnmarshalJSON deserializes into a TooManyMountsError instance
+func (u *TooManyMountsError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "total_mounts_exceeded":
+		if err = json.Unmarshal(body, &u.TotalMountsExceeded); err != nil {
+			return err
+		}
+
+	case "home_mounts_exceeded":
+		if err = json.Unmarshal(body, &u.HomeMountsExceeded); err != nil {
+			return err
+		}
+
+	case "tree_size_exceeded":
+		if err = json.Unmarshal(body, &u.TreeSizeExceeded); err != nil {
+			return err
+		}
+
+	}
+	return nil
 }
 
 // TransferFolderArg : has no documentation (yet)
