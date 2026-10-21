@@ -821,6 +821,12 @@ type SharedLinkMetadata struct {
 	// field will only be present if the content's owner is a team member and
 	// the content's owner team is different from the link's owner team.
 	ContentOwnerTeamInfo *users.Team `json:"content_owner_team_info,omitempty"`
+	// PreviewType : The preview type is determined by the file extension of the
+	// shared link. It will be null if the file cannot be previewed by the file
+	// viewer.
+	PreviewType string `json:"preview_type,omitempty"`
+	// CreatedTimestamp : The time the shared link was created.
+	CreatedTimestamp *dropbox.DBXTime `json:"created_timestamp,omitempty"`
 }
 
 // NewSharedLinkMetadata returns a new SharedLinkMetadata instance
@@ -1523,6 +1529,8 @@ type MembershipInfo struct {
 	Initials string `json:"initials,omitempty"`
 	// IsInherited : True if the member has access on a parent folder.
 	IsInherited bool `json:"is_inherited"`
+	// InheritedAccessType : The access type from parent folder for this member.
+	InheritedAccessType *AccessLevel `json:"inherited_access_type,omitempty"`
 }
 
 // NewMembershipInfo returns a new MembershipInfo instance
@@ -2517,9 +2525,10 @@ type ListSharedLinksError struct {
 
 // Valid tag values for ListSharedLinksError
 const (
-	ListSharedLinksErrorPath  = "path"
-	ListSharedLinksErrorReset = "reset"
-	ListSharedLinksErrorOther = "other"
+	ListSharedLinksErrorPath             = "path"
+	ListSharedLinksErrorReset            = "reset"
+	ListSharedLinksErrorPermissionDenied = "permission_denied"
+	ListSharedLinksErrorOther            = "other"
 )
 
 // UnmarshalJSON deserializes into a ListSharedLinksError instance

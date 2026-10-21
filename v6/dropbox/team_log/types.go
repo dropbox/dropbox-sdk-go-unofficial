@@ -3518,6 +3518,49 @@ const (
 	DefaultLinkExpirationDaysPolicyOther  = "other"
 )
 
+// DefaultTeamFolderSyncPolicy : Default sync setting for newly created team
+// folders.
+type DefaultTeamFolderSyncPolicy struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for DefaultTeamFolderSyncPolicy
+const (
+	DefaultTeamFolderSyncPolicyDoNotSync = "do_not_sync"
+	DefaultTeamFolderSyncPolicySync      = "sync"
+	DefaultTeamFolderSyncPolicyOther     = "other"
+)
+
+// DefaultTeamFolderSyncPolicyChangedDetails : Changed the default sync setting
+// for new team folders.
+type DefaultTeamFolderSyncPolicyChangedDetails struct {
+	// NewValue : New default sync setting for team folders.
+	NewValue *DefaultTeamFolderSyncPolicy `json:"new_value"`
+	// PreviousValue : Previous default sync setting for team folders.
+	PreviousValue *DefaultTeamFolderSyncPolicy `json:"previous_value"`
+}
+
+// NewDefaultTeamFolderSyncPolicyChangedDetails returns a new DefaultTeamFolderSyncPolicyChangedDetails instance
+func NewDefaultTeamFolderSyncPolicyChangedDetails(NewValue *DefaultTeamFolderSyncPolicy, PreviousValue *DefaultTeamFolderSyncPolicy) *DefaultTeamFolderSyncPolicyChangedDetails {
+	s := new(DefaultTeamFolderSyncPolicyChangedDetails)
+	s.NewValue = NewValue
+	s.PreviousValue = PreviousValue
+	return s
+}
+
+// DefaultTeamFolderSyncPolicyChangedType : has no documentation (yet)
+type DefaultTeamFolderSyncPolicyChangedType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewDefaultTeamFolderSyncPolicyChangedType returns a new DefaultTeamFolderSyncPolicyChangedType instance
+func NewDefaultTeamFolderSyncPolicyChangedType(Description string) *DefaultTeamFolderSyncPolicyChangedType {
+	s := new(DefaultTeamFolderSyncPolicyChangedType)
+	s.Description = Description
+	return s
+}
+
 // DeleteTeamInviteLinkDetails : Deleted team invite link.
 type DeleteTeamInviteLinkDetails struct {
 	// LinkUrl : The invite link url that was deleted.
@@ -6566,6 +6609,8 @@ type EventDetails struct {
 	DataPlacementRestrictionChangePolicyDetails *DataPlacementRestrictionChangePolicyDetails `json:"data_placement_restriction_change_policy_details,omitempty"`
 	// DataPlacementRestrictionSatisfyPolicyDetails : has no documentation (yet)
 	DataPlacementRestrictionSatisfyPolicyDetails *DataPlacementRestrictionSatisfyPolicyDetails `json:"data_placement_restriction_satisfy_policy_details,omitempty"`
+	// DefaultTeamFolderSyncPolicyChangedDetails : has no documentation (yet)
+	DefaultTeamFolderSyncPolicyChangedDetails *DefaultTeamFolderSyncPolicyChangedDetails `json:"default_team_folder_sync_policy_changed_details,omitempty"`
 	// DeviceApprovalsAddExceptionDetails : has no documentation (yet)
 	DeviceApprovalsAddExceptionDetails *DeviceApprovalsAddExceptionDetails `json:"device_approvals_add_exception_details,omitempty"`
 	// DeviceApprovalsChangeDesktopPolicyDetails : has no documentation (yet)
@@ -7380,6 +7425,7 @@ const (
 	EventDetailsDashExternalSharingPolicyChangedDetails                  = "dash_external_sharing_policy_changed_details"
 	EventDetailsDataPlacementRestrictionChangePolicyDetails              = "data_placement_restriction_change_policy_details"
 	EventDetailsDataPlacementRestrictionSatisfyPolicyDetails             = "data_placement_restriction_satisfy_policy_details"
+	EventDetailsDefaultTeamFolderSyncPolicyChangedDetails                = "default_team_folder_sync_policy_changed_details"
 	EventDetailsDeviceApprovalsAddExceptionDetails                       = "device_approvals_add_exception_details"
 	EventDetailsDeviceApprovalsChangeDesktopPolicyDetails                = "device_approvals_change_desktop_policy_details"
 	EventDetailsDeviceApprovalsChangeMobilePolicyDetails                 = "device_approvals_change_mobile_policy_details"
@@ -10025,6 +10071,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "default_team_folder_sync_policy_changed_details":
+		if err = json.Unmarshal(body, &u.DefaultTeamFolderSyncPolicyChangedDetails); err != nil {
+			return err
+		}
+
 	case "device_approvals_add_exception_details":
 		if err = json.Unmarshal(body, &u.DeviceApprovalsAddExceptionDetails); err != nil {
 			return err
@@ -11976,6 +12027,9 @@ type EventType struct {
 	// DataPlacementRestrictionSatisfyPolicy : (team_policies) Completed
 	// restrictions on data center locations where team data resides
 	DataPlacementRestrictionSatisfyPolicy *DataPlacementRestrictionSatisfyPolicyType `json:"data_placement_restriction_satisfy_policy,omitempty"`
+	// DefaultTeamFolderSyncPolicyChanged : (team_policies) Changed the default
+	// sync setting for new team folders
+	DefaultTeamFolderSyncPolicyChanged *DefaultTeamFolderSyncPolicyChangedType `json:"default_team_folder_sync_policy_changed,omitempty"`
 	// DeviceApprovalsAddException : (team_policies) Added members to device
 	// approvals exception list
 	DeviceApprovalsAddException *DeviceApprovalsAddExceptionType `json:"device_approvals_add_exception,omitempty"`
@@ -12902,6 +12956,7 @@ const (
 	EventTypeDashExternalSharingPolicyChanged                  = "dash_external_sharing_policy_changed"
 	EventTypeDataPlacementRestrictionChangePolicy              = "data_placement_restriction_change_policy"
 	EventTypeDataPlacementRestrictionSatisfyPolicy             = "data_placement_restriction_satisfy_policy"
+	EventTypeDefaultTeamFolderSyncPolicyChanged                = "default_team_folder_sync_policy_changed"
 	EventTypeDeviceApprovalsAddException                       = "device_approvals_add_exception"
 	EventTypeDeviceApprovalsChangeDesktopPolicy                = "device_approvals_change_desktop_policy"
 	EventTypeDeviceApprovalsChangeMobilePolicy                 = "device_approvals_change_mobile_policy"
@@ -15546,6 +15601,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "default_team_folder_sync_policy_changed":
+		if err = json.Unmarshal(body, &u.DefaultTeamFolderSyncPolicyChanged); err != nil {
+			return err
+		}
+
 	case "device_approvals_add_exception":
 		if err = json.Unmarshal(body, &u.DeviceApprovalsAddException); err != nil {
 			return err
@@ -16774,6 +16834,7 @@ const (
 	EventTypeArgDashExternalSharingPolicyChanged                  = "dash_external_sharing_policy_changed"
 	EventTypeArgDataPlacementRestrictionChangePolicy              = "data_placement_restriction_change_policy"
 	EventTypeArgDataPlacementRestrictionSatisfyPolicy             = "data_placement_restriction_satisfy_policy"
+	EventTypeArgDefaultTeamFolderSyncPolicyChanged                = "default_team_folder_sync_policy_changed"
 	EventTypeArgDeviceApprovalsAddException                       = "device_approvals_add_exception"
 	EventTypeArgDeviceApprovalsChangeDesktopPolicy                = "device_approvals_change_desktop_policy"
 	EventTypeArgDeviceApprovalsChangeMobilePolicy                 = "device_approvals_change_mobile_policy"
