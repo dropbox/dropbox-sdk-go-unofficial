@@ -157,10 +157,6 @@ type Client interface {
 	// folder. This will run synchronously if leave_a_copy is false, and
 	// asynchronously if leave_a_copy is true.
 	RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error)
-	// RemoveFileMember : Identical to remove_file_member_2 but with less
-	// information returned.
-	// Deprecated:
-	RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error)
 	// RemoveFileMember2 : Removes a specified member from the file.
 	RemoveFileMember2(arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error)
 	// RemoveFolderMember : Allows an owner or editor (if the ACL update policy
@@ -344,10 +340,6 @@ type ContextClient interface {
 	// folder. This will run synchronously if leave_a_copy is false, and
 	// asynchronously if leave_a_copy is true.
 	RelinquishFolderMembershipContext(ctx context.Context, arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error)
-	// RemoveFileMemberContext : Identical to remove_file_member_2 but with less
-	// information returned.
-	// Deprecated:
-	RemoveFileMemberContext(ctx context.Context, arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error)
 	// RemoveFileMember2Context : Removes a specified member from the file.
 	RemoveFileMember2Context(ctx context.Context, arg *RemoveFileMemberArg) (res *FileMemberRemoveActionResult, err error)
 	// RemoveFolderMemberContext : Allows an owner or editor (if the ACL update
@@ -1780,53 +1772,6 @@ func (dbx *apiImpl) RelinquishFolderMembershipContext(ctx context.Context, arg *
 
 func (dbx *apiImpl) RelinquishFolderMembership(arg *RelinquishFolderMembershipArg) (res *async.LaunchEmptyResult, err error) {
 	return dbx.RelinquishFolderMembershipContext(context.Background(), arg)
-}
-
-// RemoveFileMemberAPIError is an error-wrapper for the remove_file_member route
-type RemoveFileMemberAPIError struct {
-	dropbox.APIError
-	EndpointError *RemoveFileMemberError `json:"error"`
-}
-
-// RemoveFileMemberContext : Identical to remove_file_member_2 but with less
-// information returned.
-// Deprecated:
-func (dbx *apiImpl) RemoveFileMemberContext(ctx context.Context, arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
-	log.Printf("WARNING: API `RemoveFileMember` is deprecated")
-
-	req := dropbox.Request{
-		Host:         "api",
-		Namespace:    "sharing",
-		Route:        "remove_file_member",
-		Auth:         "user",
-		Style:        "rpc",
-		Arg:          arg,
-		ExtraHeaders: nil,
-	}
-
-	var resp []byte
-	var respBody io.ReadCloser
-	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
-	if err != nil {
-		var appErr RemoveFileMemberAPIError
-		err = auth.ParseError(err, &appErr)
-		if errors.Is(err, &appErr) {
-			err = appErr
-		}
-		return
-	}
-
-	err = json.Unmarshal(resp, &res)
-	if err != nil {
-		return
-	}
-
-	_ = respBody
-	return
-}
-
-func (dbx *apiImpl) RemoveFileMember(arg *RemoveFileMemberArg) (res *FileMemberActionIndividualResult, err error) {
-	return dbx.RemoveFileMemberContext(context.Background(), arg)
 }
 
 // RemoveFileMember2APIError is an error-wrapper for the remove_file_member_2 route
