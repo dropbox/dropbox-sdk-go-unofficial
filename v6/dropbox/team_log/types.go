@@ -6415,6 +6415,8 @@ type EventDetails struct {
 	SharedFolderMountDetails *SharedFolderMountDetails `json:"shared_folder_mount_details,omitempty"`
 	// SharedFolderNestDetails : has no documentation (yet)
 	SharedFolderNestDetails *SharedFolderNestDetails `json:"shared_folder_nest_details,omitempty"`
+	// SharedFolderTransferMembershipDetails : has no documentation (yet)
+	SharedFolderTransferMembershipDetails *SharedFolderTransferMembershipDetails `json:"shared_folder_transfer_membership_details,omitempty"`
 	// SharedFolderTransferOwnershipDetails : has no documentation (yet)
 	SharedFolderTransferOwnershipDetails *SharedFolderTransferOwnershipDetails `json:"shared_folder_transfer_ownership_details,omitempty"`
 	// SharedFolderUnmountDetails : has no documentation (yet)
@@ -7330,6 +7332,7 @@ const (
 	EventDetailsSharedFolderDeclineInvitationDetails                     = "shared_folder_decline_invitation_details"
 	EventDetailsSharedFolderMountDetails                                 = "shared_folder_mount_details"
 	EventDetailsSharedFolderNestDetails                                  = "shared_folder_nest_details"
+	EventDetailsSharedFolderTransferMembershipDetails                    = "shared_folder_transfer_membership_details"
 	EventDetailsSharedFolderTransferOwnershipDetails                     = "shared_folder_transfer_ownership_details"
 	EventDetailsSharedFolderUnmountDetails                               = "shared_folder_unmount_details"
 	EventDetailsSharedLinkAddExpiryDetails                               = "shared_link_add_expiry_details"
@@ -9596,6 +9599,11 @@ func (u *EventDetails) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "shared_folder_transfer_membership_details":
+		if err = json.Unmarshal(body, &u.SharedFolderTransferMembershipDetails); err != nil {
+			return err
+		}
+
 	case "shared_folder_transfer_ownership_details":
 		if err = json.Unmarshal(body, &u.SharedFolderTransferOwnershipDetails); err != nil {
 			return err
@@ -11799,6 +11807,9 @@ type EventType struct {
 	SharedFolderMount *SharedFolderMountType `json:"shared_folder_mount,omitempty"`
 	// SharedFolderNest : (sharing) Changed parent of shared folder
 	SharedFolderNest *SharedFolderNestType `json:"shared_folder_nest,omitempty"`
+	// SharedFolderTransferMembership : (sharing) Transferred shared folder
+	// membership to another member
+	SharedFolderTransferMembership *SharedFolderTransferMembershipType `json:"shared_folder_transfer_membership,omitempty"`
 	// SharedFolderTransferOwnership : (sharing) Transferred ownership of shared
 	// folder to another member
 	SharedFolderTransferOwnership *SharedFolderTransferOwnershipType `json:"shared_folder_transfer_ownership,omitempty"`
@@ -12861,6 +12872,7 @@ const (
 	EventTypeSharedFolderDeclineInvitation                     = "shared_folder_decline_invitation"
 	EventTypeSharedFolderMount                                 = "shared_folder_mount"
 	EventTypeSharedFolderNest                                  = "shared_folder_nest"
+	EventTypeSharedFolderTransferMembership                    = "shared_folder_transfer_membership"
 	EventTypeSharedFolderTransferOwnership                     = "shared_folder_transfer_ownership"
 	EventTypeSharedFolderUnmount                               = "shared_folder_unmount"
 	EventTypeSharedLinkAddExpiry                               = "shared_link_add_expiry"
@@ -15126,6 +15138,11 @@ func (u *EventType) UnmarshalJSON(body []byte) error {
 			return err
 		}
 
+	case "shared_folder_transfer_membership":
+		if err = json.Unmarshal(body, &u.SharedFolderTransferMembership); err != nil {
+			return err
+		}
+
 	case "shared_folder_transfer_ownership":
 		if err = json.Unmarshal(body, &u.SharedFolderTransferOwnership); err != nil {
 			return err
@@ -16739,6 +16756,7 @@ const (
 	EventTypeArgSharedFolderDeclineInvitation                     = "shared_folder_decline_invitation"
 	EventTypeArgSharedFolderMount                                 = "shared_folder_mount"
 	EventTypeArgSharedFolderNest                                  = "shared_folder_nest"
+	EventTypeArgSharedFolderTransferMembership                    = "shared_folder_transfer_membership"
 	EventTypeArgSharedFolderTransferOwnership                     = "shared_folder_transfer_ownership"
 	EventTypeArgSharedFolderUnmount                               = "shared_folder_unmount"
 	EventTypeArgSharedLinkAddExpiry                               = "shared_link_add_expiry"
@@ -28243,6 +28261,42 @@ type SharedFolderNestType struct {
 // NewSharedFolderNestType returns a new SharedFolderNestType instance
 func NewSharedFolderNestType(Description string) *SharedFolderNestType {
 	s := new(SharedFolderNestType)
+	s.Description = Description
+	return s
+}
+
+// SharedFolderTransferMembershipDetails : Transferred shared folder membership
+// to another member.
+type SharedFolderTransferMembershipDetails struct {
+	// PreviousMemberAccountId : The account that previously held the access
+	// being transferred.
+	PreviousMemberAccountId string `json:"previous_member_account_id"`
+	// NewMemberAccountId : The account that received the transferred access.
+	NewMemberAccountId string `json:"new_member_account_id"`
+	// SharedContentAccessLevel : The shared folder access level that was
+	// transferred. This is the level at the time of the transfer and does not
+	// change if the member's access is updated later.
+	SharedContentAccessLevel *sharing.AccessLevel `json:"shared_content_access_level"`
+}
+
+// NewSharedFolderTransferMembershipDetails returns a new SharedFolderTransferMembershipDetails instance
+func NewSharedFolderTransferMembershipDetails(PreviousMemberAccountId string, NewMemberAccountId string, SharedContentAccessLevel *sharing.AccessLevel) *SharedFolderTransferMembershipDetails {
+	s := new(SharedFolderTransferMembershipDetails)
+	s.PreviousMemberAccountId = PreviousMemberAccountId
+	s.NewMemberAccountId = NewMemberAccountId
+	s.SharedContentAccessLevel = SharedContentAccessLevel
+	return s
+}
+
+// SharedFolderTransferMembershipType : has no documentation (yet)
+type SharedFolderTransferMembershipType struct {
+	// Description : has no documentation (yet)
+	Description string `json:"description"`
+}
+
+// NewSharedFolderTransferMembershipType returns a new SharedFolderTransferMembershipType instance
+func NewSharedFolderTransferMembershipType(Description string) *SharedFolderTransferMembershipType {
+	s := new(SharedFolderTransferMembershipType)
 	s.Description = Description
 	return s
 }
