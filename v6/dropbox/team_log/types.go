@@ -28560,6 +28560,8 @@ type SharedLinkCreateDetails struct {
 	// SharedLinkAccessLevel : Defines who can access the shared link. Might be
 	// missing due to historical data gap.
 	SharedLinkAccessLevel *SharedLinkAccessLevel `json:"shared_link_access_level,omitempty"`
+	// Subdomain : Team subdomain associated with this shared-link action.
+	Subdomain string `json:"subdomain,omitempty"`
 }
 
 // NewSharedLinkCreateDetails returns a new SharedLinkCreateDetails instance
