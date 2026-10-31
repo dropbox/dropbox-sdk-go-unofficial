@@ -29098,6 +29098,8 @@ type SharedLinkViewDetails struct {
 	// SharedLinkOwner : Shared link owner details. Might be missing due to
 	// historical data gap.
 	SharedLinkOwner IsUserLogInfo `json:"shared_link_owner,omitempty"`
+	// Subdomain : Team subdomain used to access the shared link.
+	Subdomain string `json:"subdomain,omitempty"`
 }
 
 // NewSharedLinkViewDetails returns a new SharedLinkViewDetails instance
@@ -29112,6 +29114,8 @@ func (u *SharedLinkViewDetails) UnmarshalJSON(b []byte) error {
 		// SharedLinkOwner : Shared link owner details. Might be missing due to
 		// historical data gap.
 		SharedLinkOwner json.RawMessage `json:"shared_link_owner,omitempty"`
+		// Subdomain : Team subdomain used to access the shared link.
+		Subdomain string `json:"subdomain,omitempty"`
 	}
 	var w wrap
 	if err := json.Unmarshal(b, &w); err != nil {
@@ -29122,6 +29126,7 @@ func (u *SharedLinkViewDetails) UnmarshalJSON(b []byte) error {
 		return err
 	}
 	u.SharedLinkOwner = SharedLinkOwner
+	u.Subdomain = w.Subdomain
 	return nil
 }
 
