@@ -452,6 +452,288 @@ func NewDownloadTransformOutputResult() *DownloadTransformOutputResult {
 	return s
 }
 
+// ExtractApiV2Error : Reason an extraction job failed. Returned in the `failed`
+// variant of `ExtractAsyncCheckResult`. This is a semantic error union: the
+// HTTP status of the poll request itself is unaffected (a poll that surfaces a
+// failed job is still a normal successful poll response). Callers should branch
+// on the variant.
+type ExtractApiV2Error struct {
+	dropbox.Tagged
+	// ServerError : An unexpected, typically transient, server-side failure.
+	// The string is a human-readable message; retrying with backoff may
+	// succeed.
+	ServerError string `json:"server_error,omitempty"`
+	// UserError : The request could not be processed as supplied (a problem
+	// with the caller's input), for example an out-of-range option. The string
+	// is a human-readable message; retrying the same request will not help.
+	UserError string `json:"user_error,omitempty"`
+}
+
+// Valid tag values for ExtractApiV2Error
+const (
+	ExtractApiV2ErrorServerError                 = "server_error"
+	ExtractApiV2ErrorUserError                   = "user_error"
+	ExtractApiV2ErrorUnsupportedFormatError      = "unsupported_format_error"
+	ExtractApiV2ErrorLinkDownloadDisabledError   = "link_download_disabled_error"
+	ExtractApiV2ErrorSharedLinkPasswordProtected = "shared_link_password_protected"
+	ExtractApiV2ErrorLimitExceededError          = "limit_exceeded_error"
+	ExtractApiV2ErrorConversionFailureError      = "conversion_failure_error"
+	ExtractApiV2ErrorNotFoundError               = "not_found_error"
+	ExtractApiV2ErrorIsAFolderError              = "is_a_folder_error"
+	ExtractApiV2ErrorNoAudioError                = "no_audio_error"
+	ExtractApiV2ErrorOther                       = "other"
+)
+
+// UnmarshalJSON deserializes into a ExtractApiV2Error instance
+func (u *ExtractApiV2Error) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// ServerError : An unexpected, typically transient, server-side
+		// failure. The string is a human-readable message; retrying with
+		// backoff may succeed.
+		ServerError string `json:"server_error,omitempty"`
+		// UserError : The request could not be processed as supplied (a problem
+		// with the caller's input), for example an out-of-range option. The
+		// string is a human-readable message; retrying the same request will
+		// not help.
+		UserError string `json:"user_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "server_error":
+		u.ServerError = w.ServerError
+
+	case "user_error":
+		u.UserError = w.UserError
+
+	}
+	return nil
+}
+
+// ExtractArgs : Arguments for the asynchronous `extract_async` route. Exactly
+// one of `file_id`, `path`, or `url` must be supplied via `file_id_or_url` to
+// identify the source file, and `extract_type` must say what to extract from
+// it.
+type ExtractArgs struct {
+	// FileIdOrUrl : Identifier of the source file. Callers must set exactly one
+	// of the `FileIdOrUrl` variants. The file must be in a format the requested
+	// `extract_type` supports; see `ExtractType` for the per-type lists.
+	FileIdOrUrl *FileIdOrUrl `json:"file_id_or_url,omitempty"`
+	// ExtractType : What to extract, and that extraction's options. Required.
+	ExtractType *ExtractType `json:"extract_type"`
+}
+
+// NewExtractArgs returns a new ExtractArgs instance
+func NewExtractArgs(ExtractType *ExtractType) *ExtractArgs {
+	s := new(ExtractArgs)
+	s.ExtractType = ExtractType
+	return s
+}
+
+// ExtractAsyncCheckResult : Status of an extraction job started by
+// `extract_async`, as returned by `extract_async/check`.
+type ExtractAsyncCheckResult struct {
+	dropbox.Tagged
+	// Complete : The job finished successfully.
+	Complete *ExtractResult `json:"complete,omitempty"`
+	// Failed : The job finished unsuccessfully.
+	Failed *ExtractApiV2Error `json:"failed,omitempty"`
+}
+
+// Valid tag values for ExtractAsyncCheckResult
+const (
+	ExtractAsyncCheckResultInProgress = "in_progress"
+	ExtractAsyncCheckResultComplete   = "complete"
+	ExtractAsyncCheckResultFailed     = "failed"
+	ExtractAsyncCheckResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a ExtractAsyncCheckResult instance
+func (u *ExtractAsyncCheckResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// Complete : The job finished successfully.
+		Complete *ExtractResult `json:"complete,omitempty"`
+		// Failed : The job finished unsuccessfully.
+		Failed *ExtractApiV2Error `json:"failed,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "complete":
+		u.Complete = w.Complete
+
+	case "failed":
+		u.Failed = w.Failed
+
+	}
+	return nil
+}
+
+// ExtractResult : A completed extraction. The variant always matches the
+// `ExtractType` that was requested.
+type ExtractResult struct {
+	dropbox.Tagged
+	// Markdown : The markdown the document was converted to. May be empty when
+	// the document has no extractable text.
+	Markdown *GetMarkdownResult `json:"markdown,omitempty"`
+	// Text : The plain text of the document. May be empty when no text is
+	// found.
+	Text *GetTextResult `json:"text,omitempty"`
+	// Ocr : The OCR text and hOCR. Both may be empty when no text is detected.
+	Ocr *GetOcrResult `json:"ocr,omitempty"`
+	// Transcript : The transcript. Its segments are empty when no speech is
+	// detected.
+	Transcript *GetTranscriptResult `json:"transcript,omitempty"`
+	// Keyframes : The keyframes. Empty when no scene changes are detected.
+	Keyframes *GetKeyframesResult `json:"keyframes,omitempty"`
+}
+
+// Valid tag values for ExtractResult
+const (
+	ExtractResultMarkdown   = "markdown"
+	ExtractResultText       = "text"
+	ExtractResultOcr        = "ocr"
+	ExtractResultTranscript = "transcript"
+	ExtractResultKeyframes  = "keyframes"
+	ExtractResultOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a ExtractResult instance
+func (u *ExtractResult) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "markdown":
+		if err = json.Unmarshal(body, &u.Markdown); err != nil {
+			return err
+		}
+
+	case "text":
+		if err = json.Unmarshal(body, &u.Text); err != nil {
+			return err
+		}
+
+	case "ocr":
+		if err = json.Unmarshal(body, &u.Ocr); err != nil {
+			return err
+		}
+
+	case "transcript":
+		if err = json.Unmarshal(body, &u.Transcript); err != nil {
+			return err
+		}
+
+	case "keyframes":
+		if err = json.Unmarshal(body, &u.Keyframes); err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
+// ExtractType : What to extract from the source file, with that extraction's
+// options. Exactly one variant must be set. Every variant carries an options
+// message, so always send the object form -- for example `{".tag": "text"}` --
+// rather than a bare tag string. Option fields may be omitted to take their
+// defaults.
+type ExtractType struct {
+	dropbox.Tagged
+	// Markdown : Convert a document to markdown, preserving structure such as
+	// headings, lists, and tables. Supported formats: .binder, .docx, .html,
+	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. At most 50 MB.
+	Markdown *MarkdownExtractOptions `json:"markdown,omitempty"`
+	// Text : Extract the plain text of a document. Supported formats: .doc,
+	// .docx, .docm, .rtf, .ppt, .pptx, .pptm, .xls, .xlsx, .xlsm, .pdf, .paper,
+	// .papert, .binder, .gdoc, .gsheet, .gslides, .txt, .vtt. At most 50 MB.
+	Text *TextExtractOptions `json:"text,omitempty"`
+	// Ocr : Run OCR on an image or a scanned PDF, returning reading-ordered
+	// text plus hOCR with per-word coordinates. Supported formats: .bmp, .gif,
+	// .heic, .jpeg, .jpg, .png, .tif, .tiff, .webp, .pdf. A PDF that already
+	// has a text layer is not OCRed and yields an empty result; use `text` for
+	// it. External (non-Dropbox) URLs are not supported.
+	Ocr *OcrExtractOptions `json:"ocr,omitempty"`
+	// Transcript : Transcribe the audio of an audio or video file into
+	// timestamped segments. Supported audio formats: .aac, .aif, .aiff, .flac,
+	// .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma; video formats as for
+	// `keyframes`. At most 10 GB, with at most 1 hour of audio. A file with no
+	// audio track fails with `no_audio_error`.
+	Transcript *TranscriptExtractOptions `json:"transcript,omitempty"`
+	// Keyframes : Detect scene changes in a video and return one keyframe per
+	// scene. Supported formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv,
+	// .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora,
+	// .ogv, .rm, .ts, .vob, .webm, .wmv. At most 10 GB.
+	Keyframes *KeyframesExtractOptions `json:"keyframes,omitempty"`
+}
+
+// Valid tag values for ExtractType
+const (
+	ExtractTypeMarkdown   = "markdown"
+	ExtractTypeText       = "text"
+	ExtractTypeOcr        = "ocr"
+	ExtractTypeTranscript = "transcript"
+	ExtractTypeKeyframes  = "keyframes"
+	ExtractTypeOther      = "other"
+)
+
+// UnmarshalJSON deserializes into a ExtractType instance
+func (u *ExtractType) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "markdown":
+		if err = json.Unmarshal(body, &u.Markdown); err != nil {
+			return err
+		}
+
+	case "text":
+		if err = json.Unmarshal(body, &u.Text); err != nil {
+			return err
+		}
+
+	case "ocr":
+		if err = json.Unmarshal(body, &u.Ocr); err != nil {
+			return err
+		}
+
+	case "transcript":
+		if err = json.Unmarshal(body, &u.Transcript); err != nil {
+			return err
+		}
+
+	case "keyframes":
+		if err = json.Unmarshal(body, &u.Keyframes); err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
+
 // FileIdOrUrl : has no documentation (yet)
 type FileIdOrUrl struct {
 	dropbox.Tagged
@@ -1116,6 +1398,29 @@ func NewImageOptions() *ImageOptions {
 	return s
 }
 
+// KeyframesExtractOptions : Options for `ExtractType.keyframes`.
+type KeyframesExtractOptions struct {
+	// SceneChangeThreshold : Sensitivity of scene-change detection. A keyframe
+	// is emitted whenever the frame-to-frame scene score crosses this
+	// threshold, so a LOWER value yields MORE keyframes. When omitted (0.0) the
+	// service uses 0.3, a good starting point for most videos. Values above 1.0
+	// fail with `user_error`.
+	SceneChangeThreshold float64 `json:"scene_change_threshold"`
+	// IncludeImages : When true, each keyframe carries its JPEG image,
+	// base64-encoded, in `ApiKeyframe.image_base64`. When false (the default),
+	// only timestamps and scene scores are returned, which keeps the result
+	// small.
+	IncludeImages bool `json:"include_images"`
+}
+
+// NewKeyframesExtractOptions returns a new KeyframesExtractOptions instance
+func NewKeyframesExtractOptions() *KeyframesExtractOptions {
+	s := new(KeyframesExtractOptions)
+	s.SceneChangeThreshold = 0.0
+	s.IncludeImages = false
+	return s
+}
+
 // KeyframesExtractionApiV2Error : Reason a keyframe extraction job failed.
 // Returned in the `failed` variant of `GetKeyframesAsyncCheckResult`. This is a
 // semantic error union: the HTTP status of the poll request itself is
@@ -1240,6 +1545,24 @@ func (u *MarkdownConversionApiV2Error) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// MarkdownExtractOptions : Options for `ExtractType.markdown`.
+type MarkdownExtractOptions struct {
+	// EnableOcr : Run OCR on PDF documents, so that scanned pages contribute
+	// text. Processing is slower when enabled.
+	EnableOcr bool `json:"enable_ocr"`
+	// EmbedImages : Embed images as base64 data URIs in the markdown. This can
+	// significantly increase the size of the result.
+	EmbedImages bool `json:"embed_images"`
+}
+
+// NewMarkdownExtractOptions returns a new MarkdownExtractOptions instance
+func NewMarkdownExtractOptions() *MarkdownExtractOptions {
+	s := new(MarkdownExtractOptions)
+	s.EnableOcr = false
+	s.EmbedImages = false
+	return s
+}
+
 // MediaDurationError : has no documentation (yet)
 type MediaDurationError struct {
 	// Limit : The maximum supported duration, in seconds, of the audio to
@@ -1333,6 +1656,18 @@ const (
 	MetadataTypeOther               = "other"
 )
 
+// OcrExtractOptions : Options for `ExtractType.ocr`. There are none yet; the
+// variant carries a message so that options can be added later without changing
+// its shape.
+type OcrExtractOptions struct {
+}
+
+// NewOcrExtractOptions returns a new OcrExtractOptions instance
+func NewOcrExtractOptions() *OcrExtractOptions {
+	s := new(OcrExtractOptions)
+	return s
+}
+
 // OcrExtractionApiV2Error : Reason an OCR extraction job failed. Returned in
 // the `failed` variant of `GetOcrAsyncCheckResult`. This is a semantic error
 // union: the HTTP status of the poll request itself is unaffected (a poll that
@@ -1408,6 +1743,18 @@ const (
 	OfficeFileTypeOfficeFiletypeExcel      = "office_filetype_excel"
 	OfficeFileTypeOther                    = "other"
 )
+
+// TextExtractOptions : Options for `ExtractType.text`. There are none yet; the
+// variant carries a message so that options can be added later without changing
+// its shape.
+type TextExtractOptions struct {
+}
+
+// NewTextExtractOptions returns a new TextExtractOptions instance
+func NewTextExtractOptions() *TextExtractOptions {
+	s := new(TextExtractOptions)
+	return s
+}
 
 // TextExtractionApiV2Error : Reason a text extraction job failed. Returned in
 // the `failed` variant of `GetTextAsyncCheckResult`. This is a semantic error
@@ -1555,6 +1902,31 @@ const (
 	TimestampLevelWord     = "word"
 	TimestampLevelOther    = "other"
 )
+
+// TranscriptExtractOptions : Options for `ExtractType.transcript`.
+type TranscriptExtractOptions struct {
+	// TimestampLevel : Granularity of the time offsets returned for each
+	// transcript segment. Defaults to `sentence`.
+	TimestampLevel *TimestampLevel `json:"timestamp_level"`
+	// IncludedSpecialWords : Comma-delimited list of non-lexical filler words
+	// to keep in the transcript, e.g. "uh, ah, uhm". By default these fillers
+	// are stripped. Unrecognized tokens are ignored.
+	IncludedSpecialWords string `json:"included_special_words"`
+	// AudioLanguage : Hint for the spoken language of the audio, as an ISO
+	// 639-1 code such as "en" or "ja". When empty, the service detects the
+	// language. A language the service does not support fails with
+	// `user_error`.
+	AudioLanguage string `json:"audio_language"`
+}
+
+// NewTranscriptExtractOptions returns a new TranscriptExtractOptions instance
+func NewTranscriptExtractOptions() *TranscriptExtractOptions {
+	s := new(TranscriptExtractOptions)
+	s.TimestampLevel = &TimestampLevel{Tagged: dropbox.Tagged{Tag: "sentence"}}
+	s.IncludedSpecialWords = ""
+	s.AudioLanguage = ""
+	return s
+}
 
 // TransformApiV2Error : Reason a transform job failed. Returned in the `failed`
 // variant of `GetTransformAsyncCheckResult`, and by
