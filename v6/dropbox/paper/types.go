@@ -168,6 +168,7 @@ const (
 	DocLookupErrorInsufficientPermissions = "insufficient_permissions"
 	DocLookupErrorOther                   = "other"
 	DocLookupErrorDocNotFound             = "doc_not_found"
+	DocLookupErrorFolderNotFound          = "folder_not_found"
 )
 
 // DocSubscriptionLevel : The subscription level of a Paper doc.
@@ -817,6 +818,7 @@ const (
 	PaperDocUpdateErrorInsufficientPermissions = "insufficient_permissions"
 	PaperDocUpdateErrorOther                   = "other"
 	PaperDocUpdateErrorDocNotFound             = "doc_not_found"
+	PaperDocUpdateErrorFolderNotFound          = "folder_not_found"
 	PaperDocUpdateErrorContentMalformed        = "content_malformed"
 	PaperDocUpdateErrorRevisionMismatch        = "revision_mismatch"
 	PaperDocUpdateErrorDocLengthExceeded       = "doc_length_exceeded"
