@@ -42,6 +42,25 @@ type Client interface {
 	// transform has to be requested again. A handle that was never valid, or
 	// that belongs to another user, fails with `user_error`.
 	DownloadTransformOutput(arg *DownloadTransformOutputArgs) (res *DownloadTransformOutputResult, content io.ReadCloser, err error)
+	// ExtractAsync : Asynchronous content extraction from a single file. One
+	// route covers every Riviera extraction. Name the source file in
+	// `file_id_or_url`, and say what to extract in `extract_type`, whose
+	// variant carries that extraction's options: - `markdown`: a document,
+	// converted to markdown that preserves its structure. - `text`: the plain
+	// text of a document. - `ocr`: the text of an image or scanned PDF, plus
+	// hOCR with per-word coordinates. - `transcript`: the timestamped
+	// transcript of an audio or video file. - `keyframes`: one keyframe per
+	// scene change in a video. The accepted formats and size limits differ per
+	// extraction; see `ExtractType`. Formats the requested extraction does not
+	// support fail with `unsupported_format_error`, and files over its size
+	// limit fail with `limit_exceeded_error`. The result is not returned by
+	// this route. Poll `extract_async/check` with the returned async job ID
+	// until it reports `complete` or `failed`. A `complete` result is an
+	// `ExtractResult` whose variant matches the requested `extract_type`.
+	ExtractAsync(arg *ExtractArgs) (res *async.LaunchResultBase, err error)
+	// ExtractAsyncCheck : Returns the status or result of specified
+	// extract_async task.
+	ExtractAsyncCheck(arg *async.PollArg) (res *ExtractAsyncCheckResult, err error)
 	// GetKeyframesAsync : Asynchronous scene-change keyframe extraction for
 	// video files. Detects scene changes in the source video and returns one
 	// representative keyframe per detected scene, each tagged with its
@@ -195,6 +214,25 @@ type ContextClient interface {
 	// transform has to be requested again. A handle that was never valid, or
 	// that belongs to another user, fails with `user_error`.
 	DownloadTransformOutputContext(ctx context.Context, arg *DownloadTransformOutputArgs) (res *DownloadTransformOutputResult, content io.ReadCloser, err error)
+	// ExtractAsyncContext : Asynchronous content extraction from a single file.
+	// One route covers every Riviera extraction. Name the source file in
+	// `file_id_or_url`, and say what to extract in `extract_type`, whose
+	// variant carries that extraction's options: - `markdown`: a document,
+	// converted to markdown that preserves its structure. - `text`: the plain
+	// text of a document. - `ocr`: the text of an image or scanned PDF, plus
+	// hOCR with per-word coordinates. - `transcript`: the timestamped
+	// transcript of an audio or video file. - `keyframes`: one keyframe per
+	// scene change in a video. The accepted formats and size limits differ per
+	// extraction; see `ExtractType`. Formats the requested extraction does not
+	// support fail with `unsupported_format_error`, and files over its size
+	// limit fail with `limit_exceeded_error`. The result is not returned by
+	// this route. Poll `extract_async/check` with the returned async job ID
+	// until it reports `complete` or `failed`. A `complete` result is an
+	// `ExtractResult` whose variant matches the requested `extract_type`.
+	ExtractAsyncContext(ctx context.Context, arg *ExtractArgs) (res *async.LaunchResultBase, err error)
+	// ExtractAsyncCheckContext : Returns the status or result of specified
+	// extract_async task.
+	ExtractAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *ExtractAsyncCheckResult, err error)
 	// GetKeyframesAsyncContext : Asynchronous scene-change keyframe extraction
 	// for video files. Detects scene changes in the source video and returns
 	// one representative keyframe per detected scene, each tagged with its
@@ -386,6 +424,107 @@ func (dbx *apiImpl) DownloadTransformOutputContext(ctx context.Context, arg *Dow
 
 func (dbx *apiImpl) DownloadTransformOutput(arg *DownloadTransformOutputArgs) (res *DownloadTransformOutputResult, content io.ReadCloser, err error) {
 	return dbx.DownloadTransformOutputContext(context.Background(), arg)
+}
+
+// ExtractAsyncAPIError is an error-wrapper for the extract_async route
+type ExtractAsyncAPIError struct {
+	dropbox.APIError
+	EndpointError struct{} `json:"error"`
+}
+
+// ExtractAsyncContext : Asynchronous content extraction from a single file. One
+// route covers every Riviera extraction. Name the source file in
+// `file_id_or_url`, and say what to extract in `extract_type`, whose variant
+// carries that extraction's options: - `markdown`: a document, converted to
+// markdown that preserves its structure. - `text`: the plain text of a
+// document. - `ocr`: the text of an image or scanned PDF, plus hOCR with
+// per-word coordinates. - `transcript`: the timestamped transcript of an audio
+// or video file. - `keyframes`: one keyframe per scene change in a video. The
+// accepted formats and size limits differ per extraction; see `ExtractType`.
+// Formats the requested extraction does not support fail with
+// `unsupported_format_error`, and files over its size limit fail with
+// `limit_exceeded_error`. The result is not returned by this route. Poll
+// `extract_async/check` with the returned async job ID until it reports
+// `complete` or `failed`. A `complete` result is an `ExtractResult` whose
+// variant matches the requested `extract_type`.
+func (dbx *apiImpl) ExtractAsyncContext(ctx context.Context, arg *ExtractArgs) (res *async.LaunchResultBase, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "extract_async",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr ExtractAsyncAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) ExtractAsync(arg *ExtractArgs) (res *async.LaunchResultBase, err error) {
+	return dbx.ExtractAsyncContext(context.Background(), arg)
+}
+
+// ExtractAsyncCheckAPIError is an error-wrapper for the extract_async/check route
+type ExtractAsyncCheckAPIError struct {
+	dropbox.APIError
+	EndpointError *async.PollError `json:"error"`
+}
+
+// ExtractAsyncCheckContext : Returns the status or result of specified
+// extract_async task.
+func (dbx *apiImpl) ExtractAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *ExtractAsyncCheckResult, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "riviera",
+		Route:        "extract_async/check",
+		Auth:         "app, user",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr ExtractAsyncCheckAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) ExtractAsyncCheck(arg *async.PollArg) (res *ExtractAsyncCheckResult, err error) {
+	return dbx.ExtractAsyncCheckContext(context.Background(), arg)
 }
 
 // GetKeyframesAsyncAPIError is an error-wrapper for the get_keyframes_async route
