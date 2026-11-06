@@ -405,6 +405,14 @@ type Client interface {
 	// TeamFolderRestore : Sets an inactive team folder's status to active.
 	// Permission: Team member file access.
 	TeamFolderRestore(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
+	// TeamFolderSpaceLimitGet : Returns the space limit configuration of a team
+	// folder. See `TeamFolderSpaceLimitCapsType` for how space limits are
+	// enforced.
+	TeamFolderSpaceLimitGet(arg *TeamFolderIdArg) (res *TeamFolderGetSpaceLimitResponse, err error)
+	// TeamFolderSpaceLimitSet : Sets the space limit configuration of a team
+	// folder, replacing any existing configuration. See
+	// `TeamFolderSpaceLimitCapsType` for how space limits are enforced.
+	TeamFolderSpaceLimitSet(arg *TeamFolderSetSpaceLimitArg) (err error)
 	// TeamFolderUpdateSyncSettings : Updates the sync settings on a team folder
 	// or its contents.  Use of this endpoint requires that the team has team
 	// selective sync enabled.
@@ -796,6 +804,14 @@ type ContextClient interface {
 	// TeamFolderRestoreContext : Sets an inactive team folder's status to
 	// active. Permission: Team member file access.
 	TeamFolderRestoreContext(ctx context.Context, arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
+	// TeamFolderSpaceLimitGetContext : Returns the space limit configuration of
+	// a team folder. See `TeamFolderSpaceLimitCapsType` for how space limits
+	// are enforced.
+	TeamFolderSpaceLimitGetContext(ctx context.Context, arg *TeamFolderIdArg) (res *TeamFolderGetSpaceLimitResponse, err error)
+	// TeamFolderSpaceLimitSetContext : Sets the space limit configuration of a
+	// team folder, replacing any existing configuration. See
+	// `TeamFolderSpaceLimitCapsType` for how space limits are enforced.
+	TeamFolderSpaceLimitSetContext(ctx context.Context, arg *TeamFolderSetSpaceLimitArg) (err error)
 	// TeamFolderUpdateSyncSettingsContext : Updates the sync settings on a team
 	// folder or its contents.  Use of this endpoint requires that the team has
 	// team selective sync enabled.
@@ -4806,6 +4822,92 @@ func (dbx *apiImpl) TeamFolderRestoreContext(ctx context.Context, arg *TeamFolde
 
 func (dbx *apiImpl) TeamFolderRestore(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error) {
 	return dbx.TeamFolderRestoreContext(context.Background(), arg)
+}
+
+// TeamFolderSpaceLimitGetAPIError is an error-wrapper for the team_folder/space_limit/get route
+type TeamFolderSpaceLimitGetAPIError struct {
+	dropbox.APIError
+	EndpointError *TeamFolderGetSpaceLimitError `json:"error"`
+}
+
+// TeamFolderSpaceLimitGetContext : Returns the space limit configuration of a
+// team folder. See `TeamFolderSpaceLimitCapsType` for how space limits are
+// enforced.
+func (dbx *apiImpl) TeamFolderSpaceLimitGetContext(ctx context.Context, arg *TeamFolderIdArg) (res *TeamFolderGetSpaceLimitResponse, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "team_folder/space_limit/get",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr TeamFolderSpaceLimitGetAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) TeamFolderSpaceLimitGet(arg *TeamFolderIdArg) (res *TeamFolderGetSpaceLimitResponse, err error) {
+	return dbx.TeamFolderSpaceLimitGetContext(context.Background(), arg)
+}
+
+// TeamFolderSpaceLimitSetAPIError is an error-wrapper for the team_folder/space_limit/set route
+type TeamFolderSpaceLimitSetAPIError struct {
+	dropbox.APIError
+	EndpointError *TeamFolderSetSpaceLimitError `json:"error"`
+}
+
+// TeamFolderSpaceLimitSetContext : Sets the space limit configuration of a team
+// folder, replacing any existing configuration. See
+// `TeamFolderSpaceLimitCapsType` for how space limits are enforced.
+func (dbx *apiImpl) TeamFolderSpaceLimitSetContext(ctx context.Context, arg *TeamFolderSetSpaceLimitArg) (err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "team_folder/space_limit/set",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr TeamFolderSpaceLimitSetAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	_ = resp
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) TeamFolderSpaceLimitSet(arg *TeamFolderSetSpaceLimitArg) (err error) {
+	return dbx.TeamFolderSpaceLimitSetContext(context.Background(), arg)
 }
 
 // TeamFolderUpdateSyncSettingsAPIError is an error-wrapper for the team_folder/update_sync_settings route

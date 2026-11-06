@@ -5188,6 +5188,81 @@ func (u *TeamFolderGetInfoItem) UnmarshalJSON(body []byte) error {
 	return nil
 }
 
+// TeamFolderGetSpaceLimitError : Errors for `teamFolderSpaceLimitGet`.
+type TeamFolderGetSpaceLimitError struct {
+	dropbox.Tagged
+	// AccessError : has no documentation (yet)
+	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
+	// StatusError : has no documentation (yet)
+	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+	// TeamSharedDropboxError : has no documentation (yet)
+	TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
+}
+
+// Valid tag values for TeamFolderGetSpaceLimitError
+const (
+	TeamFolderGetSpaceLimitErrorAccessError            = "access_error"
+	TeamFolderGetSpaceLimitErrorStatusError            = "status_error"
+	TeamFolderGetSpaceLimitErrorTeamSharedDropboxError = "team_shared_dropbox_error"
+	TeamFolderGetSpaceLimitErrorOther                  = "other"
+)
+
+// UnmarshalJSON deserializes into a TeamFolderGetSpaceLimitError instance
+func (u *TeamFolderGetSpaceLimitError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// AccessError : has no documentation (yet)
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
+		// StatusError : has no documentation (yet)
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+		// TeamSharedDropboxError : has no documentation (yet)
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "access_error":
+		u.AccessError = w.AccessError
+
+	case "status_error":
+		u.StatusError = w.StatusError
+
+	case "team_shared_dropbox_error":
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
+
+	}
+	return nil
+}
+
+// TeamFolderGetSpaceLimitResponse : The space limit configuration of a team
+// folder. If no space limit has ever been set for the team folder,
+// `space_limit_bytes` is 0, `caps_type` is `TeamFolderSpaceLimitCapsType.off`,
+// and `notification_target` is `TeamFolderSpaceLimitNotificationTarget.admins`.
+type TeamFolderGetSpaceLimitResponse struct {
+	// SpaceLimitBytes : The maximum total size, in bytes, of all content in the
+	// team folder and its subfolders. Only meaningful when `caps_type` is not
+	// `TeamFolderSpaceLimitCapsType.off`.
+	SpaceLimitBytes uint64 `json:"space_limit_bytes"`
+	// CapsType : The caps type currently applied to the team folder.
+	CapsType *TeamFolderSpaceLimitCapsType `json:"caps_type"`
+	// NotificationTarget : Who currently receives usage notifications for the
+	// team folder.
+	NotificationTarget *TeamFolderSpaceLimitNotificationTarget `json:"notification_target"`
+}
+
+// NewTeamFolderGetSpaceLimitResponse returns a new TeamFolderGetSpaceLimitResponse instance
+func NewTeamFolderGetSpaceLimitResponse(CapsType *TeamFolderSpaceLimitCapsType, NotificationTarget *TeamFolderSpaceLimitNotificationTarget) *TeamFolderGetSpaceLimitResponse {
+	s := new(TeamFolderGetSpaceLimitResponse)
+	s.CapsType = CapsType
+	s.NotificationTarget = NotificationTarget
+	s.SpaceLimitBytes = 0
+	return s
+}
+
 // TeamFolderIdListArg : has no documentation (yet)
 type TeamFolderIdListArg struct {
 	// TeamFolderIds : The list of team folder IDs.
@@ -5488,6 +5563,120 @@ func (u *TeamFolderRestoreError) UnmarshalJSON(body []byte) error {
 	}
 	return nil
 }
+
+// TeamFolderSetSpaceLimitArg : Arguments for `teamFolderSpaceLimitSet`.
+type TeamFolderSetSpaceLimitArg struct {
+	TeamFolderIdArg
+	// SpaceLimitBytes : The maximum total size, in bytes, of all content in the
+	// team folder and its subfolders. When `caps_type` is
+	// `TeamFolderSpaceLimitCapsType.soft` or
+	// `TeamFolderSpaceLimitCapsType.hard`, this must be at least 2 GB
+	// (2147483648 bytes). It must never exceed the team's total storage
+	// capacity. When `caps_type` is `TeamFolderSpaceLimitCapsType.off`, the
+	// value is stored but has no effect, and it may be 0.
+	SpaceLimitBytes uint64 `json:"space_limit_bytes"`
+	// CapsType : The caps type to apply to the specified team folder.
+	CapsType *TeamFolderSpaceLimitCapsType `json:"caps_type"`
+	// NotificationTarget : Who receives usage notifications for the specified
+	// team folder.
+	NotificationTarget *TeamFolderSpaceLimitNotificationTarget `json:"notification_target"`
+}
+
+// NewTeamFolderSetSpaceLimitArg returns a new TeamFolderSetSpaceLimitArg instance
+func NewTeamFolderSetSpaceLimitArg(TeamFolderId string, SpaceLimitBytes uint64, CapsType *TeamFolderSpaceLimitCapsType, NotificationTarget *TeamFolderSpaceLimitNotificationTarget) *TeamFolderSetSpaceLimitArg {
+	s := new(TeamFolderSetSpaceLimitArg)
+	s.TeamFolderId = TeamFolderId
+	s.SpaceLimitBytes = SpaceLimitBytes
+	s.CapsType = CapsType
+	s.NotificationTarget = NotificationTarget
+	return s
+}
+
+// TeamFolderSetSpaceLimitError : Errors for `teamFolderSpaceLimitSet`.
+type TeamFolderSetSpaceLimitError struct {
+	dropbox.Tagged
+	// AccessError : has no documentation (yet)
+	AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
+	// StatusError : has no documentation (yet)
+	StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+	// TeamSharedDropboxError : has no documentation (yet)
+	TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
+}
+
+// Valid tag values for TeamFolderSetSpaceLimitError
+const (
+	TeamFolderSetSpaceLimitErrorAccessError            = "access_error"
+	TeamFolderSetSpaceLimitErrorStatusError            = "status_error"
+	TeamFolderSetSpaceLimitErrorTeamSharedDropboxError = "team_shared_dropbox_error"
+	TeamFolderSetSpaceLimitErrorOther                  = "other"
+	TeamFolderSetSpaceLimitErrorLimitBelowMinimum      = "limit_below_minimum"
+	TeamFolderSetSpaceLimitErrorLimitExceedsTeamQuota  = "limit_exceeds_team_quota"
+)
+
+// UnmarshalJSON deserializes into a TeamFolderSetSpaceLimitError instance
+func (u *TeamFolderSetSpaceLimitError) UnmarshalJSON(body []byte) error {
+	type wrap struct {
+		dropbox.Tagged
+		// AccessError : has no documentation (yet)
+		AccessError *TeamFolderAccessError `json:"access_error,omitempty"`
+		// StatusError : has no documentation (yet)
+		StatusError *TeamFolderInvalidStatusError `json:"status_error,omitempty"`
+		// TeamSharedDropboxError : has no documentation (yet)
+		TeamSharedDropboxError *TeamFolderTeamSharedDropboxError `json:"team_shared_dropbox_error,omitempty"`
+	}
+	var w wrap
+	var err error
+	if err = json.Unmarshal(body, &w); err != nil {
+		return err
+	}
+	u.Tag = w.Tag
+	switch u.Tag {
+	case "access_error":
+		u.AccessError = w.AccessError
+
+	case "status_error":
+		u.StatusError = w.StatusError
+
+	case "team_shared_dropbox_error":
+		u.TeamSharedDropboxError = w.TeamSharedDropboxError
+
+	}
+	return nil
+}
+
+// TeamFolderSpaceLimitCapsType : How a team folder's space limit is enforced.
+type TeamFolderSpaceLimitCapsType struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamFolderSpaceLimitCapsType
+const (
+	TeamFolderSpaceLimitCapsTypeOff   = "off"
+	TeamFolderSpaceLimitCapsTypeSoft  = "soft"
+	TeamFolderSpaceLimitCapsTypeHard  = "hard"
+	TeamFolderSpaceLimitCapsTypeOther = "other"
+)
+
+// TeamFolderSpaceLimitNotificationTarget : Who receives email notifications
+// when a team folder's usage reaches 80% of its space limit, and when usage
+// reaches or exceeds the limit. These notifications are sent asynchronously, so
+// they can arrive some time after usage crosses a threshold. They are only sent
+// when the caps type is `TeamFolderSpaceLimitCapsType.soft` or
+// `TeamFolderSpaceLimitCapsType.hard`. Regardless of this setting, team admins
+// and all members with edit access to the team folder are notified when a space
+// limit is added, changed, or removed.
+type TeamFolderSpaceLimitNotificationTarget struct {
+	dropbox.Tagged
+}
+
+// Valid tag values for TeamFolderSpaceLimitNotificationTarget
+const (
+	TeamFolderSpaceLimitNotificationTargetAdmins  = "admins"
+	TeamFolderSpaceLimitNotificationTargetEditors = "editors"
+	TeamFolderSpaceLimitNotificationTargetBoth    = "both"
+	TeamFolderSpaceLimitNotificationTargetSilent  = "silent"
+	TeamFolderSpaceLimitNotificationTargetOther   = "other"
+)
 
 // TeamFolderStatus : has no documentation (yet)
 type TeamFolderStatus struct {
