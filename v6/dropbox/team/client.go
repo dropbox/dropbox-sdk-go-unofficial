@@ -363,6 +363,29 @@ type Client interface {
 	// usage. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error)
+	// SharingAllowlistAdd : Endpoint adds Approve List entries. Changes are
+	// effective immediately. Changes are committed in transaction. In case of
+	// single validation error - all entries are rejected. Valid domains
+	// (RFC-1034/5) and emails (RFC-5322/822) are accepted. Added entries cannot
+	// overflow limit of 10000 entries per team. Maximum 100 entries per call is
+	// allowed.
+	SharingAllowlistAdd(arg *SharingAllowlistAddArgs) (res *SharingAllowlistAddResponse, err error)
+	// SharingAllowlistList : Lists Approve List entries for given team, from
+	// newest to oldest, returning up to `limit` entries at a time. If there are
+	// more than `limit` entries associated with the current team, more can be
+	// fetched by passing the returned `cursor` to
+	// `sharingAllowlistListContinue`.
+	SharingAllowlistList(arg *SharingAllowlistListArg) (res *SharingAllowlistListResponse, err error)
+	// SharingAllowlistListContinue : Lists entries associated with given team,
+	// starting from a the cursor. See `sharingAllowlistList`.
+	SharingAllowlistListContinue(arg *SharingAllowlistListContinueArg) (res *SharingAllowlistListResponse, err error)
+	// SharingAllowlistRemove : Endpoint removes Approve List entries. Changes
+	// are effective immediately. Changes are committed in transaction. In case
+	// of single validation error - all entries are rejected. Valid domains
+	// (RFC-1034/5) and emails (RFC-5322/822) are accepted. Entries being
+	// removed have to be present on the list. Maximum 1000 entries per call is
+	// allowed.
+	SharingAllowlistRemove(arg *SharingAllowlistRemoveArgs) (res *SharingAllowlistRemoveResponse, err error)
 	// TeamFolderActivate : Sets an archived team folder's status to active.
 	// Permission : Team member file access.
 	TeamFolderActivate(arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
@@ -762,6 +785,29 @@ type ContextClient interface {
 	// storage usage. Deprecated: Will be removed on July 1st 2021.
 	// Deprecated:
 	ReportsGetStorageContext(ctx context.Context, arg *DateRange) (res *GetStorageReport, err error)
+	// SharingAllowlistAddContext : Endpoint adds Approve List entries. Changes
+	// are effective immediately. Changes are committed in transaction. In case
+	// of single validation error - all entries are rejected. Valid domains
+	// (RFC-1034/5) and emails (RFC-5322/822) are accepted. Added entries cannot
+	// overflow limit of 10000 entries per team. Maximum 100 entries per call is
+	// allowed.
+	SharingAllowlistAddContext(ctx context.Context, arg *SharingAllowlistAddArgs) (res *SharingAllowlistAddResponse, err error)
+	// SharingAllowlistListContext : Lists Approve List entries for given team,
+	// from newest to oldest, returning up to `limit` entries at a time. If
+	// there are more than `limit` entries associated with the current team,
+	// more can be fetched by passing the returned `cursor` to
+	// `sharingAllowlistListContinue`.
+	SharingAllowlistListContext(ctx context.Context, arg *SharingAllowlistListArg) (res *SharingAllowlistListResponse, err error)
+	// SharingAllowlistListContinueContext : Lists entries associated with given
+	// team, starting from a the cursor. See `sharingAllowlistList`.
+	SharingAllowlistListContinueContext(ctx context.Context, arg *SharingAllowlistListContinueArg) (res *SharingAllowlistListResponse, err error)
+	// SharingAllowlistRemoveContext : Endpoint removes Approve List entries.
+	// Changes are effective immediately. Changes are committed in transaction.
+	// In case of single validation error - all entries are rejected. Valid
+	// domains (RFC-1034/5) and emails (RFC-5322/822) are accepted. Entries
+	// being removed have to be present on the list. Maximum 1000 entries per
+	// call is allowed.
+	SharingAllowlistRemoveContext(ctx context.Context, arg *SharingAllowlistRemoveArgs) (res *SharingAllowlistRemoveResponse, err error)
 	// TeamFolderActivateContext : Sets an archived team folder's status to
 	// active. Permission : Team member file access.
 	TeamFolderActivateContext(ctx context.Context, arg *TeamFolderIdArg) (res *TeamFolderMetadata, err error)
@@ -4375,6 +4421,191 @@ func (dbx *apiImpl) ReportsGetStorageContext(ctx context.Context, arg *DateRange
 
 func (dbx *apiImpl) ReportsGetStorage(arg *DateRange) (res *GetStorageReport, err error) {
 	return dbx.ReportsGetStorageContext(context.Background(), arg)
+}
+
+// SharingAllowlistAddAPIError is an error-wrapper for the sharing_allowlist/add route
+type SharingAllowlistAddAPIError struct {
+	dropbox.APIError
+	EndpointError *SharingAllowlistAddError `json:"error"`
+}
+
+// SharingAllowlistAddContext : Endpoint adds Approve List entries. Changes are
+// effective immediately. Changes are committed in transaction. In case of
+// single validation error - all entries are rejected. Valid domains
+// (RFC-1034/5) and emails (RFC-5322/822) are accepted. Added entries cannot
+// overflow limit of 10000 entries per team. Maximum 100 entries per call is
+// allowed.
+func (dbx *apiImpl) SharingAllowlistAddContext(ctx context.Context, arg *SharingAllowlistAddArgs) (res *SharingAllowlistAddResponse, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "sharing_allowlist/add",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr SharingAllowlistAddAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) SharingAllowlistAdd(arg *SharingAllowlistAddArgs) (res *SharingAllowlistAddResponse, err error) {
+	return dbx.SharingAllowlistAddContext(context.Background(), arg)
+}
+
+// SharingAllowlistListAPIError is an error-wrapper for the sharing_allowlist/list route
+type SharingAllowlistListAPIError struct {
+	dropbox.APIError
+	EndpointError *SharingAllowlistListError `json:"error"`
+}
+
+// SharingAllowlistListContext : Lists Approve List entries for given team, from
+// newest to oldest, returning up to `limit` entries at a time. If there are
+// more than `limit` entries associated with the current team, more can be
+// fetched by passing the returned `cursor` to `sharingAllowlistListContinue`.
+func (dbx *apiImpl) SharingAllowlistListContext(ctx context.Context, arg *SharingAllowlistListArg) (res *SharingAllowlistListResponse, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "sharing_allowlist/list",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr SharingAllowlistListAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) SharingAllowlistList(arg *SharingAllowlistListArg) (res *SharingAllowlistListResponse, err error) {
+	return dbx.SharingAllowlistListContext(context.Background(), arg)
+}
+
+// SharingAllowlistListContinueAPIError is an error-wrapper for the sharing_allowlist/list/continue route
+type SharingAllowlistListContinueAPIError struct {
+	dropbox.APIError
+	EndpointError *SharingAllowlistListContinueError `json:"error"`
+}
+
+// SharingAllowlistListContinueContext : Lists entries associated with given
+// team, starting from a the cursor. See `sharingAllowlistList`.
+func (dbx *apiImpl) SharingAllowlistListContinueContext(ctx context.Context, arg *SharingAllowlistListContinueArg) (res *SharingAllowlistListResponse, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "sharing_allowlist/list/continue",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr SharingAllowlistListContinueAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) SharingAllowlistListContinue(arg *SharingAllowlistListContinueArg) (res *SharingAllowlistListResponse, err error) {
+	return dbx.SharingAllowlistListContinueContext(context.Background(), arg)
+}
+
+// SharingAllowlistRemoveAPIError is an error-wrapper for the sharing_allowlist/remove route
+type SharingAllowlistRemoveAPIError struct {
+	dropbox.APIError
+	EndpointError *SharingAllowlistRemoveError `json:"error"`
+}
+
+// SharingAllowlistRemoveContext : Endpoint removes Approve List entries.
+// Changes are effective immediately. Changes are committed in transaction. In
+// case of single validation error - all entries are rejected. Valid domains
+// (RFC-1034/5) and emails (RFC-5322/822) are accepted. Entries being removed
+// have to be present on the list. Maximum 1000 entries per call is allowed.
+func (dbx *apiImpl) SharingAllowlistRemoveContext(ctx context.Context, arg *SharingAllowlistRemoveArgs) (res *SharingAllowlistRemoveResponse, err error) {
+	req := dropbox.Request{
+		Host:         "api",
+		Namespace:    "team",
+		Route:        "sharing_allowlist/remove",
+		Auth:         "team",
+		Style:        "rpc",
+		Arg:          arg,
+		ExtraHeaders: nil,
+	}
+
+	var resp []byte
+	var respBody io.ReadCloser
+	resp, respBody, err = (*dropbox.Context)(dbx).ExecuteContext(ctx, req, nil)
+	if err != nil {
+		var appErr SharingAllowlistRemoveAPIError
+		err = auth.ParseError(err, &appErr)
+		if errors.Is(err, &appErr) {
+			err = appErr
+		}
+		return
+	}
+
+	err = json.Unmarshal(resp, &res)
+	if err != nil {
+		return
+	}
+
+	_ = respBody
+	return
+}
+
+func (dbx *apiImpl) SharingAllowlistRemove(arg *SharingAllowlistRemoveArgs) (res *SharingAllowlistRemoveResponse, err error) {
+	return dbx.SharingAllowlistRemoveContext(context.Background(), arg)
 }
 
 // TeamFolderActivateAPIError is an error-wrapper for the team_folder/activate route
