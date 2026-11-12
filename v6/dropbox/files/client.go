@@ -123,8 +123,7 @@ type Client interface {
 	// The folder must be less than 20 GB in size and any single file within
 	// must be less than 4 GB in size. The resulting zip must have fewer than
 	// 10,000 total file and folder entries, including the top level folder. The
-	// input cannot be a single file. Note: this endpoint does not support HTTP
-	// range requests.
+	// input cannot be a single file.
 	DownloadZip(arg *DownloadZipArg) (res *DownloadZipResult, content io.ReadCloser, err error)
 	// Export : Export a file from a user's Dropbox. This route only supports
 	// exporting files that cannot be downloaded directly and whose
@@ -563,8 +562,7 @@ type ContextClient interface {
 	// file. The folder must be less than 20 GB in size and any single file
 	// within must be less than 4 GB in size. The resulting zip must have fewer
 	// than 10,000 total file and folder entries, including the top level
-	// folder. The input cannot be a single file. Note: this endpoint does not
-	// support HTTP range requests.
+	// folder. The input cannot be a single file.
 	DownloadZipContext(ctx context.Context, arg *DownloadZipArg) (res *DownloadZipResult, content io.ReadCloser, err error)
 	// ExportContext : Export a file from a user's Dropbox. This route only
 	// supports exporting files that cannot be downloaded directly and whose
@@ -1839,8 +1837,7 @@ type DownloadZipAPIError struct {
 // file. The folder must be less than 20 GB in size and any single file within
 // must be less than 4 GB in size. The resulting zip must have fewer than 10,000
 // total file and folder entries, including the top level folder. The input
-// cannot be a single file. Note: this endpoint does not support HTTP range
-// requests.
+// cannot be a single file.
 func (dbx *apiImpl) DownloadZipContext(ctx context.Context, arg *DownloadZipArg) (res *DownloadZipResult, content io.ReadCloser, err error) {
 	req := dropbox.Request{
 		Host:         "content",
