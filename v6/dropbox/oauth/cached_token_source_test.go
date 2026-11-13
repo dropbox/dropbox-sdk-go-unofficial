@@ -24,6 +24,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -333,5 +334,84 @@ func TestCachedTokenSourceIsolatesOAuth2Caches(t *testing.T) {
 	}
 	if calls != 1 {
 		t.Fatalf("refresh calls = %d, want 1; outer cache changed shared expiry metadata", calls)
+	}
+}
+
+func TestAccessTokenSnapshotTextFormatting(t *testing.T) {
+	for _, value := range []struct {
+		name       string
+		snapshot   dropboxoauth.AccessTokenSnapshot
+		expiryText string
+	}{
+		{"nonzero expiry", dropboxoauth.AccessTokenSnapshot{
+			AccessToken: "sl.secret-token",
+			Expiry:      time.Date(2030, 1, 2, 3, 4, 5, 0, time.UTC),
+		}, "2030-01-02T03:04:05Z"},
+		{"zero expiry", dropboxoauth.AccessTokenSnapshot{AccessToken: "sl.secret-token"}, "0001-01-01T00:00:00Z"},
+		{"empty access token", dropboxoauth.AccessTokenSnapshot{}, "0001-01-01T00:00:00Z"},
+		{"fractional expiry with offset", dropboxoauth.AccessTokenSnapshot{
+			AccessToken: "sl.secret-token",
+			Expiry:      time.Date(2030, 1, 2, 3, 4, 5, 123456789, time.FixedZone("offset", 3600)),
+		}, "2030-01-02T03:04:05.123456789+01:00"},
+	} {
+		t.Run(value.name, func(t *testing.T) {
+			snapshot := value.snapshot
+			before := snapshot
+			want := "AccessTokenSnapshot{AccessToken:<redacted>, Expiry:" + value.expiryText + "}"
+			for _, form := range []struct {
+				name   string
+				render func(any) string
+			}{
+				{"fmt.Sprint", func(v any) string { return fmt.Sprint(v) }},
+				{"fmt %v", func(v any) string { return fmt.Sprintf("%v", v) }},
+				{"fmt %+v", func(v any) string { return fmt.Sprintf("%+v", v) }},
+				{"fmt %#v", func(v any) string { return fmt.Sprintf("%#v", v) }},
+				{"fmt %s", func(v any) string { return fmt.Sprintf("%s", v) }},
+				{"log %v", func(v any) string {
+					var output strings.Builder
+					log.New(&output, "", 0).Printf("%v", v)
+					return strings.TrimSuffix(output.String(), "\n")
+				}},
+				{"log %+v", func(v any) string {
+					var output strings.Builder
+					log.New(&output, "", 0).Printf("%+v", v)
+					return strings.TrimSuffix(output.String(), "\n")
+				}},
+				{"log %#v", func(v any) string {
+					var output strings.Builder
+					log.New(&output, "", 0).Printf("%#v", v)
+					return strings.TrimSuffix(output.String(), "\n")
+				}},
+			} {
+				t.Run(form.name, func(t *testing.T) {
+					for _, input := range []any{snapshot, &snapshot} {
+						got := form.render(input)
+						if got != want {
+							t.Errorf("formatted snapshot = %q, want %q", got, want)
+						}
+						if strings.Contains(got, "sl.secret-token") {
+							t.Error("text formatting exposes access token")
+						}
+						if snapshot != before {
+							t.Fatal("formatting changed snapshot fields")
+						}
+					}
+				})
+			}
+			data, err := json.Marshal(snapshot)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var restored dropboxoauth.AccessTokenSnapshot
+			if err := json.Unmarshal(data, &restored); err != nil {
+				t.Fatal(err)
+			}
+			if restored.AccessToken != before.AccessToken || !restored.Expiry.Equal(before.Expiry) {
+				t.Fatal("JSON serialization did not retain original credentials")
+			}
+			if snapshot != before {
+				t.Fatal("JSON serialization changed snapshot fields")
+			}
+		})
 	}
 }

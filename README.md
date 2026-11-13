@@ -299,8 +299,16 @@ func main() {
 ```
 
 Access tokens grant account access: store snapshots securely, restrict access,
-and never log them. Keep refresh tokens and app secrets separately in secure
-storage, and use the same app credentials when restoring a source. Persistence
+and never log them. The `fmt` verbs `%v`, `%+v`, `%#v`, and `%s` applied to a
+snapshot redact the access token while showing the expiration, also through `log`.
+JSON serialization does **not** redact credentials: `json.Marshal(snapshot)`
+retains the actual access token for secure persistence and must never be logged.
+Redaction is a defense against accidental logging, not a security boundary.
+Other formatting verbs such as `%d` bypass these methods and can expose the token,
+as can formatting `snapshot.AccessToken` directly or converting the snapshot to a
+type without its formatting methods.
+Keep refresh tokens and app secrets separately in secure storage, and use the
+same app credentials when restoring a source. Persistence
 is the application's responsibility. The existing `dropboxoauth.TokenSource`
 API remains available when snapshots are unnecessary. An executable example with
 mocked HTTP responses is in `v6/dropbox/oauth/example_test.go`.

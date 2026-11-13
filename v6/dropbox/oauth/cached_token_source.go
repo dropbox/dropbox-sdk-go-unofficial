@@ -29,8 +29,11 @@ import (
 )
 
 // AccessTokenSnapshot is a copy of a cached access token and its expiration.
-// It contains no refresh credentials. Access tokens are sensitive and must not
-// be logged or disclosed.
+// It contains no refresh credentials. The %v, %+v, %#v, and %s text formats redact
+// the access token, but JSON serialization retains it and must never be logged.
+// Store access tokens securely. Redaction guards against accidental logging;
+// it is not a security boundary. Other formats such as %d bypass these methods,
+// and direct field access still exposes the token.
 type AccessTokenSnapshot struct {
 	// AccessToken is the cached OAuth2 access token.
 	AccessToken string
@@ -38,6 +41,17 @@ type AccessTokenSnapshot struct {
 	// does not guarantee an unlimited lifetime; OAuth2 reuses such tokens
 	// without automatically refreshing them.
 	Expiry time.Time
+}
+
+// String returns a text representation with the access token redacted and the
+// expiry formatted as RFC3339Nano, including when expiry is zero.
+func (s AccessTokenSnapshot) String() string {
+	return "AccessTokenSnapshot{AccessToken:<redacted>, Expiry:" + s.Expiry.Format(time.RFC3339Nano) + "}"
+}
+
+// GoString returns the same redacted representation as String for %#v formatting.
+func (s AccessTokenSnapshot) GoString() string {
+	return s.String()
 }
 
 // CachedTokenSource is a refreshable OAuth2 token source with local snapshots.
