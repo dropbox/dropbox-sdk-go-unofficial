@@ -211,6 +211,108 @@ if err != nil {
 _ = info
 ```
 
+### Reusing cached OAuth2 access tokens
+
+Applications that recreate Dropbox clients can persist the latest access token
+and expiration to avoid unnecessary refresh requests. Use
+`dropboxoauth.NewCachedTokenSource(ctx, appKey, token, opts...)` in
+`dropbox.Config.TokenSource`, then call `source.Snapshot()`. It returns an
+`AccessTokenSnapshot` value and a boolean indicating whether an access token is
+cached. The snapshot contains only `AccessToken` and `Expiry`, without refresh
+credentials. The constructor accepts the same options as `TokenSource`, including
+`WithAppSecret` for confidential apps.
+
+`Snapshot()` only reads local state: it never sends HTTP requests, validates a
+token, or refreshes it. In contrast, `Token()` and normal authenticated SDK calls
+can refresh when the token is missing or expired (including OAuth2's early-expiry
+window). The initial access token is immediately available, even if expired;
+successful refreshes publish a new snapshot, while failed refreshes preserve the
+previous one. Reads remain available during refresh, and returned values do not
+change after subsequent refreshes. Multiple clients may share the same source.
+
+`Expiry` is a `time.Time` holding the exact OAuth2 expiration. A zero value means
+expiration is unknown; it does not guarantee an unlimited lifetime. Following
+`golang.org/x/oauth2` behavior, a nonempty access token with zero expiry is reused
+without automatic refresh. Preserve a known expiry when storing and restoring
+credentials; do not replace it with zero or recompute it from the current time.
+Expired or revoked tokens can still appear in snapshots.
+
+This complete program uses a refresh token from application storage. The first
+API call obtains an access token; the second client reuses the snapshot without
+another refresh while it remains valid:
+
+```go
+package main
+
+import (
+    "context"
+    "log"
+    "os"
+
+    "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
+    dropboxoauth "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/oauth"
+    "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/users"
+    "golang.org/x/oauth2"
+)
+
+func main() {
+    ctx := context.Background()
+    // Supply credentials from your application's secure storage.
+    appKey := os.Getenv("DROPBOX_APP_KEY")
+    refreshToken := os.Getenv("DROPBOX_REFRESH_TOKEN")
+    if appKey == "" || refreshToken == "" {
+        log.Fatal("set DROPBOX_APP_KEY and DROPBOX_REFRESH_TOKEN")
+    }
+
+    // 1. Create a refreshable token source.
+    source := dropboxoauth.NewCachedTokenSource(ctx, appKey, &oauth2.Token{
+        RefreshToken: refreshToken,
+    })
+
+    // 2. Configure a Dropbox client.
+    dbx := users.New(dropbox.Config{TokenSource: source})
+
+    // 3. Perform an API operation (requires account_info.read permission).
+    if _, err := dbx.GetCurrentAccount(); err != nil {
+        log.Fatal(err)
+    }
+
+    // 4. Retrieve the cached token snapshot.
+    snapshot, ok := source.Snapshot()
+    if !ok {
+        log.Fatal("no cached access token")
+    }
+    // Persist snapshot securely here. Keep the refresh token separately.
+    // After restarting, load snapshot with its original Expiry from storage.
+
+    // 5. Reuse the snapshot with a new client.
+    nextSource := dropboxoauth.NewCachedTokenSource(ctx, appKey, &oauth2.Token{
+        AccessToken:  snapshot.AccessToken,
+        Expiry:       snapshot.Expiry,
+        RefreshToken: refreshToken,
+    })
+    nextClient := users.New(dropbox.Config{TokenSource: nextSource})
+    if _, err := nextClient.GetCurrentAccount(); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+Access tokens grant account access: store snapshots securely, restrict access,
+and never log them. The `fmt` verbs `%v`, `%+v`, `%#v`, and `%s` applied to a
+snapshot redact the access token while showing the expiration, also through `log`.
+JSON serialization does **not** redact credentials: `json.Marshal(snapshot)`
+retains the actual access token for secure persistence and must never be logged.
+Redaction is a defense against accidental logging, not a security boundary.
+Other formatting verbs such as `%d` bypass these methods and can expose the token,
+as can formatting `snapshot.AccessToken` directly or converting the snapshot to a
+type without its formatting methods.
+Keep refresh tokens and app secrets separately in secure storage, and use the
+same app credentials when restoring a source. Persistence
+is the application's responsibility. The existing `dropboxoauth.TokenSource`
+API remains available when snapshots are unnecessary. An executable example with
+mocked HTTP responses is in `v6/dropbox/oauth/example_test.go`.
+
 ### Making API calls
 
 Each Dropbox API takes in a request type and returns a response type. For instance, [/users/get_account](https://www.dropbox.com/developers/documentation/http/documentation#users-get_account) takes as input a `GetAccountArg` and returns a `BasicAccount`. The typical pattern for making API calls is:
