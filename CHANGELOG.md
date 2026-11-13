@@ -5,6 +5,12 @@ summarized from the repository history.
 
 ## Unreleased
 
+### Added
+
+- Added `dropbox/oauth.NewCachedTokenSource` and `AccessTokenSnapshot` for
+  thread-safe reads of cached access tokens and expiration without HTTP requests
+  or refresh, allowing applications to reuse credentials across clients.
+
 ## v6.6.1 - 2026-08-18
 
 ### Fixed
