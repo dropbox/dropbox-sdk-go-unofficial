@@ -109,7 +109,7 @@ func TestCachedTokenSourceCopiesInitialToken(t *testing.T) {
 	changed := before
 	changed.AccessToken = "changed snapshot"
 	changed.Expiry = time.Time{}
-	if after, _ := source.Snapshot(); after != before {
+	if after, _ := source.Snapshot(); after != before || after.AccessToken == changed.AccessToken || after.Expiry.Equal(changed.Expiry) {
 		t.Fatal("modifying snapshot changed cache")
 	}
 }
@@ -250,7 +250,7 @@ func TestCachedTokenSourceConcurrentRefreshAndSnapshots(t *testing.T) {
 				default:
 				}
 				snapshot, ok := source.Snapshot()
-				if !ok || (snapshot != before && (snapshot.AccessToken != "new" || snapshot.Expiry.IsZero() || snapshot.Expiry == before.Expiry)) {
+				if !ok || (snapshot != before && (snapshot.AccessToken != "new" || snapshot.Expiry.IsZero() || snapshot.Expiry.Equal(before.Expiry))) {
 					t.Error("inconsistent token/expiry pair")
 					return
 				}
