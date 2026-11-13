@@ -25,6 +25,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log"
 
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox"
 	"github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox/async"
@@ -61,37 +62,46 @@ type Client interface {
 	// ExtractAsyncCheck : Returns the status or result of specified
 	// extract_async task.
 	ExtractAsyncCheck(arg *async.PollArg) (res *ExtractAsyncCheckResult, err error)
-	// GetKeyframesAsync : Asynchronous scene-change keyframe extraction for
-	// video files. Detects scene changes in the source video and returns one
-	// representative keyframe per detected scene, each tagged with its
-	// timestamp (seconds from the start of the video) and scene-change score.
-	// Set `include_images = true` to also receive each frame as a
-	// base64-encoded JPEG; when the field is omitted the response carries
-	// keyframe metadata only. Supported video formats: .3gp, .3gpp, .3gpp2,
-	// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
-	// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
-	// formats return an `unsupported_format_error`. Limits: the source file
-	// must be at most 10 GB. To keep responses within service limits the number
-	// of keyframes and the total image payload are bounded; requests that would
-	// exceed these limits return a `limit_exceeded_error` -- raise
-	// `scene_change_threshold` or set `include_images = false` to stay within
-	// bounds.
+	// GetKeyframesAsync : Deprecated: use `extractAsync` with `extract_type`
+	// set to `ExtractType.keyframes` instead, which takes the same options.
+	// This route will be turned off by December 31, 2026. Asynchronous
+	// scene-change keyframe extraction for video files. Detects scene changes
+	// in the source video and returns one representative keyframe per detected
+	// scene, each tagged with its timestamp (seconds from the start of the
+	// video) and scene-change score. Set `include_images = true` to also
+	// receive each frame as a base64-encoded JPEG; when the field is omitted
+	// the response carries keyframe metadata only. Supported video formats:
+	// .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv,
+	// .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob,
+	// .webm, .wmv. Unsupported formats return an `unsupported_format_error`.
+	// Limits: the source file must be at most 10 GB. To keep responses within
+	// service limits the number of keyframes and the total image payload are
+	// bounded; requests that would exceed these limits return a
+	// `limit_exceeded_error` -- raise `scene_change_threshold` or set
+	// `include_images = false` to stay within bounds.
+	// Deprecated:
 	GetKeyframesAsync(arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error)
 	// GetKeyframesAsyncCheck : Returns the status or result of specified
 	// get_keyframes_async task.
+	// Deprecated:
 	GetKeyframesAsyncCheck(arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
-	// GetMarkdownAsync : Asynchronous document-to-markdown conversion for
-	// supported file formats. Supported formats: .binder, .docx, .html, .paper,
-	// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other formats fail
-	// with `MarkdownConversionApiV2Error.user_error`. Size limit: the source
-	// file must be at most 50 MB. Larger files fail with
+	// GetMarkdownAsync : Deprecated: use `extractAsync` with `extract_type` set
+	// to `ExtractType.markdown` instead, which takes the same options. This
+	// route will be turned off by December 31, 2026. Asynchronous
+	// document-to-markdown conversion for supported file formats. Supported
+	// formats: .binder, .docx, .html, .paper, .papert, .pptx, .xlsx, .gsheet,
+	// .ods, .pdf. Files in other formats fail with
+	// `MarkdownConversionApiV2Error.user_error`. Size limit: the source file
+	// must be at most 50 MB. Larger files fail with
 	// `MarkdownConversionApiV2Error.user_error`. The markdown is not returned
 	// by this route. Poll `getMarkdownAsyncCheck` with the returned async job
 	// ID until it reports `GetMarkdownAsyncCheckResult.complete` or
 	// `GetMarkdownAsyncCheckResult.failed`.
+	// Deprecated:
 	GetMarkdownAsync(arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheck : Returns the status or result of specified
 	// get_markdown_async task.
+	// Deprecated:
 	GetMarkdownAsyncCheck(arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
 	// GetMetadataAsync : Asynchronous file metadata extraction for supported
 	// file formats. The kind of metadata returned depends on the file type: -
@@ -116,47 +126,61 @@ type Client interface {
 	// GetMetadataAsyncCheck : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheck(arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
-	// GetOcrAsync : Asynchronous OCR (optical character recognition) text
-	// extraction for images and PDFs, including scanned / non-text PDFs.
-	// Supported formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png,
-	// .tif, .tiff, .webp. - PDF format: .pdf. Unsupported formats return an
-	// `unsupported_format_error`. For the `url` variant only Dropbox shared
-	// links are supported; external URLs return `unsupported_format_error`.
-	// Text-based PDFs already carry a text layer, so OCR is not run against
-	// them and the result is empty; use `get_text_async` to read the embedded
-	// text layer of such a PDF. The result carries the extracted words as plain
-	// text, plus the same content as hOCR with per-word coordinates.
+	// GetOcrAsync : Deprecated: use `extractAsync` with `extract_type` set to
+	// `ExtractType.ocr` instead, which takes the same options. This route will
+	// be turned off by December 31, 2026. Asynchronous OCR (optical character
+	// recognition) text extraction for images and PDFs, including scanned /
+	// non-text PDFs. Supported formats: - Image formats: .bmp, .gif, .heic,
+	// .jpeg, .jpg, .png, .tif, .tiff, .webp. - PDF format: .pdf. Unsupported
+	// formats return an `unsupported_format_error`. For the `url` variant only
+	// Dropbox shared links are supported; external URLs return
+	// `unsupported_format_error`. Text-based PDFs already carry a text layer,
+	// so OCR is not run against them and the result is empty; use
+	// `get_text_async` to read the embedded text layer of such a PDF. The
+	// result carries the extracted words as plain text, plus the same content
+	// as hOCR with per-word coordinates.
+	// Deprecated:
 	GetOcrAsync(arg *GetOcrArgs) (res *async.LaunchResultBase, err error)
 	// GetOcrAsyncCheck : Returns the status or result of specified
 	// get_ocr_async task.
+	// Deprecated:
 	GetOcrAsyncCheck(arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error)
-	// GetTextAsync : Asynchronous plain-text extraction from documents.
-	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
-	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
-	// PDF: .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc,
-	// .gsheet, .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported
-	// formats return an `unsupported_format_error`. For the `url` variant only
-	// Dropbox shared links are supported; external URLs return
-	// `unsupported_format_error`.
+	// GetTextAsync : Deprecated: use `extractAsync` with `extract_type` set to
+	// `ExtractType.text` instead, which takes the same options. This route will
+	// be turned off by December 31, 2026. Asynchronous plain-text extraction
+	// from documents. Supported formats include: - Word processing: .doc,
+	// .docx, .docm, .rtf. - Presentations: .ppt, .pptx, .pptm. - Spreadsheets:
+	// .xls, .xlsx, .xlsm. - PDF: .pdf. - Dropbox document types: .paper,
+	// .papert, .binder, .gdoc, .gsheet, .gslides. - Plain text / subtitles:
+	// .txt, .vtt. Unsupported formats return an `unsupported_format_error`. For
+	// the `url` variant only Dropbox shared links are supported; external URLs
+	// return `unsupported_format_error`.
+	// Deprecated:
 	GetTextAsync(arg *GetTextArgs) (res *async.LaunchResultBase, err error)
 	// GetTextAsyncCheck : Returns the status or result of specified
 	// get_text_async task.
+	// Deprecated:
 	GetTextAsyncCheck(arg *async.PollArg) (res *GetTextAsyncCheckResult, err error)
-	// GetTranscriptAsync : Asynchronous transcript generation for audio and
-	// video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
-	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
-	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
-	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
-	// Files in other formats fail with `ContentApiV2Error.user_error`. Size
-	// limits: the source file must be at most 10 GB and its audio track at most
-	// 1 hour in duration. Files exceeding either limit fail with
-	// `ContentApiV2Error.user_error`. The transcript is not returned by this
-	// route. Poll `getTranscriptAsyncCheck` with the returned async job ID
-	// until it reports `GetTranscriptAsyncCheckResult.complete` or
+	// GetTranscriptAsync : Deprecated: use `extractAsync` with `extract_type`
+	// set to `ExtractType.transcript` instead, which takes the same options.
+	// This route will be turned off by December 31, 2026. Asynchronous
+	// transcript generation for audio and video files. Supported audio formats:
+	// .aac, .aif, .aiff, .flac, .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma.
+	// Supported video formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv,
+	// .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora,
+	// .ogv, .rm, .ts, .vob, .webm, .wmv. Files in other formats fail with
+	// `ContentApiV2Error.user_error`. Size limits: the source file must be at
+	// most 10 GB and its audio track at most 1 hour in duration. Files
+	// exceeding either limit fail with `ContentApiV2Error.user_error`. The
+	// transcript is not returned by this route. Poll `getTranscriptAsyncCheck`
+	// with the returned async job ID until it reports
+	// `GetTranscriptAsyncCheckResult.complete` or
 	// `GetTranscriptAsyncCheckResult.failed`.
+	// Deprecated:
 	GetTranscriptAsync(arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheck : Returns the status or result of specified
 	// get_transcript_async task.
+	// Deprecated:
 	GetTranscriptAsyncCheck(arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
 	// GetTransformAsync : Asynchronous file transformation: produces a new file
 	// from an existing one. One route covers many conversions. Name the source
@@ -233,37 +257,46 @@ type ContextClient interface {
 	// ExtractAsyncCheckContext : Returns the status or result of specified
 	// extract_async task.
 	ExtractAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *ExtractAsyncCheckResult, err error)
-	// GetKeyframesAsyncContext : Asynchronous scene-change keyframe extraction
-	// for video files. Detects scene changes in the source video and returns
-	// one representative keyframe per detected scene, each tagged with its
-	// timestamp (seconds from the start of the video) and scene-change score.
-	// Set `include_images = true` to also receive each frame as a
-	// base64-encoded JPEG; when the field is omitted the response carries
-	// keyframe metadata only. Supported video formats: .3gp, .3gpp, .3gpp2,
-	// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
-	// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported
-	// formats return an `unsupported_format_error`. Limits: the source file
-	// must be at most 10 GB. To keep responses within service limits the number
-	// of keyframes and the total image payload are bounded; requests that would
-	// exceed these limits return a `limit_exceeded_error` -- raise
-	// `scene_change_threshold` or set `include_images = false` to stay within
-	// bounds.
+	// GetKeyframesAsyncContext : Deprecated: use `extractAsync` with
+	// `extract_type` set to `ExtractType.keyframes` instead, which takes the
+	// same options. This route will be turned off by December 31, 2026.
+	// Asynchronous scene-change keyframe extraction for video files. Detects
+	// scene changes in the source video and returns one representative keyframe
+	// per detected scene, each tagged with its timestamp (seconds from the
+	// start of the video) and scene-change score. Set `include_images = true`
+	// to also receive each frame as a base64-encoded JPEG; when the field is
+	// omitted the response carries keyframe metadata only. Supported video
+	// formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v,
+	// .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts,
+	// .vob, .webm, .wmv. Unsupported formats return an
+	// `unsupported_format_error`. Limits: the source file must be at most 10
+	// GB. To keep responses within service limits the number of keyframes and
+	// the total image payload are bounded; requests that would exceed these
+	// limits return a `limit_exceeded_error` -- raise `scene_change_threshold`
+	// or set `include_images = false` to stay within bounds.
+	// Deprecated:
 	GetKeyframesAsyncContext(ctx context.Context, arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error)
 	// GetKeyframesAsyncCheckContext : Returns the status or result of specified
 	// get_keyframes_async task.
+	// Deprecated:
 	GetKeyframesAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error)
-	// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion
-	// for supported file formats. Supported formats: .binder, .docx, .html,
-	// .paper, .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other
-	// formats fail with `MarkdownConversionApiV2Error.user_error`. Size limit:
-	// the source file must be at most 50 MB. Larger files fail with
+	// GetMarkdownAsyncContext : Deprecated: use `extractAsync` with
+	// `extract_type` set to `ExtractType.markdown` instead, which takes the
+	// same options. This route will be turned off by December 31, 2026.
+	// Asynchronous document-to-markdown conversion for supported file formats.
+	// Supported formats: .binder, .docx, .html, .paper, .papert, .pptx, .xlsx,
+	// .gsheet, .ods, .pdf. Files in other formats fail with
+	// `MarkdownConversionApiV2Error.user_error`. Size limit: the source file
+	// must be at most 50 MB. Larger files fail with
 	// `MarkdownConversionApiV2Error.user_error`. The markdown is not returned
 	// by this route. Poll `getMarkdownAsyncCheck` with the returned async job
 	// ID until it reports `GetMarkdownAsyncCheckResult.complete` or
 	// `GetMarkdownAsyncCheckResult.failed`.
+	// Deprecated:
 	GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error)
 	// GetMarkdownAsyncCheckContext : Returns the status or result of specified
 	// get_markdown_async task.
+	// Deprecated:
 	GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error)
 	// GetMetadataAsyncContext : Asynchronous file metadata extraction for
 	// supported file formats. The kind of metadata returned depends on the file
@@ -288,47 +321,61 @@ type ContextClient interface {
 	// GetMetadataAsyncCheckContext : Returns the status or result of specified
 	// get_metadata_async task.
 	GetMetadataAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMetadataAsyncCheckResult, err error)
-	// GetOcrAsyncContext : Asynchronous OCR (optical character recognition)
-	// text extraction for images and PDFs, including scanned / non-text PDFs.
-	// Supported formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png,
-	// .tif, .tiff, .webp. - PDF format: .pdf. Unsupported formats return an
-	// `unsupported_format_error`. For the `url` variant only Dropbox shared
-	// links are supported; external URLs return `unsupported_format_error`.
-	// Text-based PDFs already carry a text layer, so OCR is not run against
-	// them and the result is empty; use `get_text_async` to read the embedded
-	// text layer of such a PDF. The result carries the extracted words as plain
-	// text, plus the same content as hOCR with per-word coordinates.
+	// GetOcrAsyncContext : Deprecated: use `extractAsync` with `extract_type`
+	// set to `ExtractType.ocr` instead, which takes the same options. This
+	// route will be turned off by December 31, 2026. Asynchronous OCR (optical
+	// character recognition) text extraction for images and PDFs, including
+	// scanned / non-text PDFs. Supported formats: - Image formats: .bmp, .gif,
+	// .heic, .jpeg, .jpg, .png, .tif, .tiff, .webp. - PDF format: .pdf.
+	// Unsupported formats return an `unsupported_format_error`. For the `url`
+	// variant only Dropbox shared links are supported; external URLs return
+	// `unsupported_format_error`. Text-based PDFs already carry a text layer,
+	// so OCR is not run against them and the result is empty; use
+	// `get_text_async` to read the embedded text layer of such a PDF. The
+	// result carries the extracted words as plain text, plus the same content
+	// as hOCR with per-word coordinates.
+	// Deprecated:
 	GetOcrAsyncContext(ctx context.Context, arg *GetOcrArgs) (res *async.LaunchResultBase, err error)
 	// GetOcrAsyncCheckContext : Returns the status or result of specified
 	// get_ocr_async task.
+	// Deprecated:
 	GetOcrAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error)
-	// GetTextAsyncContext : Asynchronous plain-text extraction from documents.
-	// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
-	// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. -
-	// PDF: .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc,
-	// .gsheet, .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported
-	// formats return an `unsupported_format_error`. For the `url` variant only
-	// Dropbox shared links are supported; external URLs return
-	// `unsupported_format_error`.
+	// GetTextAsyncContext : Deprecated: use `extractAsync` with `extract_type`
+	// set to `ExtractType.text` instead, which takes the same options. This
+	// route will be turned off by December 31, 2026. Asynchronous plain-text
+	// extraction from documents. Supported formats include: - Word processing:
+	// .doc, .docx, .docm, .rtf. - Presentations: .ppt, .pptx, .pptm. -
+	// Spreadsheets: .xls, .xlsx, .xlsm. - PDF: .pdf. - Dropbox document types:
+	// .paper, .papert, .binder, .gdoc, .gsheet, .gslides. - Plain text /
+	// subtitles: .txt, .vtt. Unsupported formats return an
+	// `unsupported_format_error`. For the `url` variant only Dropbox shared
+	// links are supported; external URLs return `unsupported_format_error`.
+	// Deprecated:
 	GetTextAsyncContext(ctx context.Context, arg *GetTextArgs) (res *async.LaunchResultBase, err error)
 	// GetTextAsyncCheckContext : Returns the status or result of specified
 	// get_text_async task.
+	// Deprecated:
 	GetTextAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTextAsyncCheckResult, err error)
-	// GetTranscriptAsyncContext : Asynchronous transcript generation for audio
-	// and video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a,
-	// .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp,
-	// .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4,
-	// .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv.
-	// Files in other formats fail with `ContentApiV2Error.user_error`. Size
-	// limits: the source file must be at most 10 GB and its audio track at most
-	// 1 hour in duration. Files exceeding either limit fail with
-	// `ContentApiV2Error.user_error`. The transcript is not returned by this
-	// route. Poll `getTranscriptAsyncCheck` with the returned async job ID
-	// until it reports `GetTranscriptAsyncCheckResult.complete` or
+	// GetTranscriptAsyncContext : Deprecated: use `extractAsync` with
+	// `extract_type` set to `ExtractType.transcript` instead, which takes the
+	// same options. This route will be turned off by December 31, 2026.
+	// Asynchronous transcript generation for audio and video files. Supported
+	// audio formats: .aac, .aif, .aiff, .flac, .m4a, .m4r, .mp3, .oga, .ogg,
+	// .wav, .wma. Supported video formats: .3gp, .3gpp, .3gpp2, .asf, .avi,
+	// .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf,
+	// .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Files in other formats
+	// fail with `ContentApiV2Error.user_error`. Size limits: the source file
+	// must be at most 10 GB and its audio track at most 1 hour in duration.
+	// Files exceeding either limit fail with `ContentApiV2Error.user_error`.
+	// The transcript is not returned by this route. Poll
+	// `getTranscriptAsyncCheck` with the returned async job ID until it reports
+	// `GetTranscriptAsyncCheckResult.complete` or
 	// `GetTranscriptAsyncCheckResult.failed`.
+	// Deprecated:
 	GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error)
 	// GetTranscriptAsyncCheckContext : Returns the status or result of
 	// specified get_transcript_async task.
+	// Deprecated:
 	GetTranscriptAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error)
 	// GetTransformAsyncContext : Asynchronous file transformation: produces a
 	// new file from an existing one. One route covers many conversions. Name
@@ -533,21 +580,26 @@ type GetKeyframesAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// GetKeyframesAsyncContext : Asynchronous scene-change keyframe extraction for
-// video files. Detects scene changes in the source video and returns one
-// representative keyframe per detected scene, each tagged with its timestamp
-// (seconds from the start of the video) and scene-change score. Set
-// `include_images = true` to also receive each frame as a base64-encoded JPEG;
-// when the field is omitted the response carries keyframe metadata only.
-// Supported video formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t,
-// .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv,
-// .rm, .ts, .vob, .webm, .wmv. Unsupported formats return an
+// GetKeyframesAsyncContext : Deprecated: use `extractAsync` with `extract_type`
+// set to `ExtractType.keyframes` instead, which takes the same options. This
+// route will be turned off by December 31, 2026. Asynchronous scene-change
+// keyframe extraction for video files. Detects scene changes in the source
+// video and returns one representative keyframe per detected scene, each tagged
+// with its timestamp (seconds from the start of the video) and scene-change
+// score. Set `include_images = true` to also receive each frame as a
+// base64-encoded JPEG; when the field is omitted the response carries keyframe
+// metadata only. Supported video formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv,
+// .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf,
+// .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Unsupported formats return an
 // `unsupported_format_error`. Limits: the source file must be at most 10 GB. To
 // keep responses within service limits the number of keyframes and the total
 // image payload are bounded; requests that would exceed these limits return a
 // `limit_exceeded_error` -- raise `scene_change_threshold` or set
 // `include_images = false` to stay within bounds.
+// Deprecated:
 func (dbx *apiImpl) GetKeyframesAsyncContext(ctx context.Context, arg *GetKeyframesArgs) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `GetKeyframesAsync` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -591,7 +643,10 @@ type GetKeyframesAsyncCheckAPIError struct {
 
 // GetKeyframesAsyncCheckContext : Returns the status or result of specified
 // get_keyframes_async task.
+// Deprecated:
 func (dbx *apiImpl) GetKeyframesAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetKeyframesAsyncCheckResult, err error) {
+	log.Printf("WARNING: API `GetKeyframesAsyncCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -633,16 +688,22 @@ type GetMarkdownAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// GetMarkdownAsyncContext : Asynchronous document-to-markdown conversion for
-// supported file formats. Supported formats: .binder, .docx, .html, .paper,
-// .papert, .pptx, .xlsx, .gsheet, .ods, .pdf. Files in other formats fail with
+// GetMarkdownAsyncContext : Deprecated: use `extractAsync` with `extract_type`
+// set to `ExtractType.markdown` instead, which takes the same options. This
+// route will be turned off by December 31, 2026. Asynchronous
+// document-to-markdown conversion for supported file formats. Supported
+// formats: .binder, .docx, .html, .paper, .papert, .pptx, .xlsx, .gsheet, .ods,
+// .pdf. Files in other formats fail with
 // `MarkdownConversionApiV2Error.user_error`. Size limit: the source file must
 // be at most 50 MB. Larger files fail with
 // `MarkdownConversionApiV2Error.user_error`. The markdown is not returned by
 // this route. Poll `getMarkdownAsyncCheck` with the returned async job ID until
 // it reports `GetMarkdownAsyncCheckResult.complete` or
 // `GetMarkdownAsyncCheckResult.failed`.
+// Deprecated:
 func (dbx *apiImpl) GetMarkdownAsyncContext(ctx context.Context, arg *GetMarkdownArgs) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `GetMarkdownAsync` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -686,7 +747,10 @@ type GetMarkdownAsyncCheckAPIError struct {
 
 // GetMarkdownAsyncCheckContext : Returns the status or result of specified
 // get_markdown_async task.
+// Deprecated:
 func (dbx *apiImpl) GetMarkdownAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetMarkdownAsyncCheckResult, err error) {
+	log.Printf("WARNING: API `GetMarkdownAsyncCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -832,17 +896,22 @@ type GetOcrAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// GetOcrAsyncContext : Asynchronous OCR (optical character recognition) text
-// extraction for images and PDFs, including scanned / non-text PDFs. Supported
-// formats: - Image formats: .bmp, .gif, .heic, .jpeg, .jpg, .png, .tif, .tiff,
-// .webp. - PDF format: .pdf. Unsupported formats return an
-// `unsupported_format_error`. For the `url` variant only Dropbox shared links
-// are supported; external URLs return `unsupported_format_error`. Text-based
-// PDFs already carry a text layer, so OCR is not run against them and the
-// result is empty; use `get_text_async` to read the embedded text layer of such
-// a PDF. The result carries the extracted words as plain text, plus the same
-// content as hOCR with per-word coordinates.
+// GetOcrAsyncContext : Deprecated: use `extractAsync` with `extract_type` set
+// to `ExtractType.ocr` instead, which takes the same options. This route will
+// be turned off by December 31, 2026. Asynchronous OCR (optical character
+// recognition) text extraction for images and PDFs, including scanned /
+// non-text PDFs. Supported formats: - Image formats: .bmp, .gif, .heic, .jpeg,
+// .jpg, .png, .tif, .tiff, .webp. - PDF format: .pdf. Unsupported formats
+// return an `unsupported_format_error`. For the `url` variant only Dropbox
+// shared links are supported; external URLs return `unsupported_format_error`.
+// Text-based PDFs already carry a text layer, so OCR is not run against them
+// and the result is empty; use `get_text_async` to read the embedded text layer
+// of such a PDF. The result carries the extracted words as plain text, plus the
+// same content as hOCR with per-word coordinates.
+// Deprecated:
 func (dbx *apiImpl) GetOcrAsyncContext(ctx context.Context, arg *GetOcrArgs) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `GetOcrAsync` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -886,7 +955,10 @@ type GetOcrAsyncCheckAPIError struct {
 
 // GetOcrAsyncCheckContext : Returns the status or result of specified
 // get_ocr_async task.
+// Deprecated:
 func (dbx *apiImpl) GetOcrAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetOcrAsyncCheckResult, err error) {
+	log.Printf("WARNING: API `GetOcrAsyncCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -928,14 +1000,20 @@ type GetTextAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// GetTextAsyncContext : Asynchronous plain-text extraction from documents.
-// Supported formats include: - Word processing: .doc, .docx, .docm, .rtf. -
-// Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx, .xlsm. - PDF:
-// .pdf. - Dropbox document types: .paper, .papert, .binder, .gdoc, .gsheet,
-// .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported formats return an
-// `unsupported_format_error`. For the `url` variant only Dropbox shared links
-// are supported; external URLs return `unsupported_format_error`.
+// GetTextAsyncContext : Deprecated: use `extractAsync` with `extract_type` set
+// to `ExtractType.text` instead, which takes the same options. This route will
+// be turned off by December 31, 2026. Asynchronous plain-text extraction from
+// documents. Supported formats include: - Word processing: .doc, .docx, .docm,
+// .rtf. - Presentations: .ppt, .pptx, .pptm. - Spreadsheets: .xls, .xlsx,
+// .xlsm. - PDF: .pdf. - Dropbox document types: .paper, .papert, .binder,
+// .gdoc, .gsheet, .gslides. - Plain text / subtitles: .txt, .vtt. Unsupported
+// formats return an `unsupported_format_error`. For the `url` variant only
+// Dropbox shared links are supported; external URLs return
+// `unsupported_format_error`.
+// Deprecated:
 func (dbx *apiImpl) GetTextAsyncContext(ctx context.Context, arg *GetTextArgs) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `GetTextAsync` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -979,7 +1057,10 @@ type GetTextAsyncCheckAPIError struct {
 
 // GetTextAsyncCheckContext : Returns the status or result of specified
 // get_text_async task.
+// Deprecated:
 func (dbx *apiImpl) GetTextAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTextAsyncCheckResult, err error) {
+	log.Printf("WARNING: API `GetTextAsyncCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -1021,19 +1102,24 @@ type GetTranscriptAsyncAPIError struct {
 	EndpointError struct{} `json:"error"`
 }
 
-// GetTranscriptAsyncContext : Asynchronous transcript generation for audio and
-// video files. Supported audio formats: .aac, .aif, .aiff, .flac, .m4a, .m4r,
-// .mp3, .oga, .ogg, .wav, .wma. Supported video formats: .3gp, .3gpp, .3gpp2,
-// .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v, .mkv, .mov, .mp4, .mpeg, .mpg,
-// .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob, .webm, .wmv. Files in other
-// formats fail with `ContentApiV2Error.user_error`. Size limits: the source
-// file must be at most 10 GB and its audio track at most 1 hour in duration.
-// Files exceeding either limit fail with `ContentApiV2Error.user_error`. The
-// transcript is not returned by this route. Poll `getTranscriptAsyncCheck` with
-// the returned async job ID until it reports
-// `GetTranscriptAsyncCheckResult.complete` or
+// GetTranscriptAsyncContext : Deprecated: use `extractAsync` with
+// `extract_type` set to `ExtractType.transcript` instead, which takes the same
+// options. This route will be turned off by December 31, 2026. Asynchronous
+// transcript generation for audio and video files. Supported audio formats:
+// .aac, .aif, .aiff, .flac, .m4a, .m4r, .mp3, .oga, .ogg, .wav, .wma. Supported
+// video formats: .3gp, .3gpp, .3gpp2, .asf, .avi, .dv, .flv, .m2t, .m2ts, .m4v,
+// .mkv, .mov, .mp4, .mpeg, .mpg, .mts, .mxf, .oggtheora, .ogv, .rm, .ts, .vob,
+// .webm, .wmv. Files in other formats fail with `ContentApiV2Error.user_error`.
+// Size limits: the source file must be at most 10 GB and its audio track at
+// most 1 hour in duration. Files exceeding either limit fail with
+// `ContentApiV2Error.user_error`. The transcript is not returned by this route.
+// Poll `getTranscriptAsyncCheck` with the returned async job ID until it
+// reports `GetTranscriptAsyncCheckResult.complete` or
 // `GetTranscriptAsyncCheckResult.failed`.
+// Deprecated:
 func (dbx *apiImpl) GetTranscriptAsyncContext(ctx context.Context, arg *GetTranscriptArgs) (res *async.LaunchResultBase, err error) {
+	log.Printf("WARNING: API `GetTranscriptAsync` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
@@ -1077,7 +1163,10 @@ type GetTranscriptAsyncCheckAPIError struct {
 
 // GetTranscriptAsyncCheckContext : Returns the status or result of specified
 // get_transcript_async task.
+// Deprecated:
 func (dbx *apiImpl) GetTranscriptAsyncCheckContext(ctx context.Context, arg *async.PollArg) (res *GetTranscriptAsyncCheckResult, err error) {
+	log.Printf("WARNING: API `GetTranscriptAsyncCheck` is deprecated")
+
 	req := dropbox.Request{
 		Host:         "api",
 		Namespace:    "riviera",
