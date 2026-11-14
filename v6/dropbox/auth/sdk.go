@@ -37,64 +37,65 @@ type ServerError struct {
 	StatusCode int
 }
 
-func ParseError(err error, appError error) error {
+// ParseError decodes a transport error into the endpoint error type T.
+// Generated callers pass a pointer to a zero value; decoded endpoint errors
+// are returned by value, including when wrapped in HTTPError.
+func ParseError[T error](err error, appError *T) (parsed error) {
+	if httpErr, ok := err.(*dropbox.HTTPError); ok {
+		err = httpErr.Err
+		defer func() {
+			httpErr.Err = parsed
+			parsed = httpErr
+		}()
+	}
 	sdkErr, ok := err.(dropbox.SDKInternalError)
 	if !ok {
 		return err
 	}
 
-	base := dropbox.APIError{ErrorSummary: sdkErr.Content}
-	base.SetResponseMetadata(sdkErr.ResponseMetadata())
-
 	if sdkErr.StatusCode >= 500 && sdkErr.StatusCode <= 599 {
 		return ServerError{
 			StatusCode: sdkErr.StatusCode,
-			APIError:   base,
+			APIError: dropbox.APIError{
+				ErrorSummary: sdkErr.Content,
+			},
 		}
 	}
 
 	switch sdkErr.StatusCode {
 	case http.StatusBadRequest:
 		return BadRequest{
-			APIError: base,
+			APIError: dropbox.APIError{
+				ErrorSummary: sdkErr.Content,
+			},
 		}
 	case http.StatusUnauthorized:
 		var apiError AuthAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
+			return pErr
 		}
 
-		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusForbidden:
 		var apiError AccessAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
+			return pErr
 		}
 
-		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusTooManyRequests:
 		var apiError RateLimitAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
+			return pErr
 		}
 
-		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusConflict:
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), appError); pErr != nil {
-			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
+			return pErr
 		}
 
-		// Generated callers copy appError to a value after ParseError returns.
-		// Set the embedded APIError before that copy, without changing its type.
-		if target, ok := appError.(interface {
-			SetResponseMetadata(*dropbox.ResponseMetadata)
-		}); ok {
-			target.SetResponseMetadata(sdkErr.ResponseMetadata())
-		}
-		return appError
+		return *appError
 	}
 
 	return err
