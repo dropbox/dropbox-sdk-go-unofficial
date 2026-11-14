@@ -674,7 +674,24 @@ t := time.Time(metadata.ClientModified)
 
 ### Error Handling
 
-As described in the [API docs](https://www.dropbox.com/developers/documentation/http/documentation#error-handling), all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
+HTTP response errors wrap the existing SDK error in `*dropbox.HTTPError`:
+
+```go
+var httpErr *dropbox.HTTPError
+if errors.As(err, &httpErr) {
+    fmt.Println(httpErr.StatusCode, httpErr.RequestID)
+}
+
+var apiErr files.GetMetadataAPIError
+if errors.As(err, &apiErr) {
+    // Handle apiErr.EndpointError as before.
+}
+```
+
+Use `errors.As` instead of direct assertions such as
+`err.(files.GetMetadataAPIError)`: the outer error is now `*dropbox.HTTPError`.
+Error messages and the underlying error's JSON serialization are preserved.
+Network failures without an HTTP response are not wrapped.
 
 ## Note on using the Teams API
 

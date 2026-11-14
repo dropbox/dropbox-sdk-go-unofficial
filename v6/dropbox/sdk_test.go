@@ -109,6 +109,10 @@ func TestInternalError(t *testing.T) {
 	if v != nil || strings.Trim(e.Error(), "\n") != eString {
 		t.Errorf("v: %v e: '%s'\n", v, e.Error())
 	}
+	var serverError auth.ServerError
+	if !errors.As(e, &serverError) || serverError.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("expected ServerError with status 500, got %#v", e)
+	}
 }
 
 func TestRateLimitJSON(t *testing.T) {
@@ -128,9 +132,9 @@ func TestRateLimitJSON(t *testing.T) {
 		}}
 	client := users.NewContext(config)
 	_, e := client.GetCurrentAccountContext(context.Background())
-	re, ok := e.(auth.RateLimitAPIError)
-	if !ok {
-		t.Errorf("Unexpected error type: %T\n", e)
+	var re auth.RateLimitAPIError
+	if !errors.As(e, &re) {
+		t.Fatalf("Unexpected error type: %T\n", e)
 	}
 	if re.RateLimitError.RetryAfter != 300 {
 		t.Errorf("Unexpected retry-after value: %d\n", re.RateLimitError.RetryAfter)
@@ -156,9 +160,9 @@ func TestAuthError(t *testing.T) {
 		}}
 	client := users.New(config)
 	_, e := client.GetCurrentAccount()
-	re, ok := e.(auth.AuthAPIError)
-	if !ok {
-		t.Errorf("Unexpected error type: %T\n", e)
+	var re auth.AuthAPIError
+	if !errors.As(e, &re) {
+		t.Fatalf("Unexpected error type: %T\n", e)
 	}
 	fmt.Printf("ERROR is %v\n", re)
 	if re.AuthError.Tag != auth.AuthErrorUserSuspended {
@@ -186,9 +190,9 @@ func TestAccessError(t *testing.T) {
 		}}
 	client := users.New(config)
 	_, e := client.GetCurrentAccount()
-	re, ok := e.(auth.AccessAPIError)
-	if !ok {
-		t.Errorf("Unexpected error type: %T\n", e)
+	var re auth.AccessAPIError
+	if !errors.As(e, &re) {
+		t.Fatalf("Unexpected error type: %T\n", e)
 	}
 	if re.AccessError.Tag != auth.AccessErrorPaperAccessDenied {
 		t.Errorf("Unexpected tag: %s\n", re.AccessError.Tag)
@@ -214,9 +218,9 @@ func TestAppError(t *testing.T) {
 		}}
 	client := auth.New(config)
 	_, e := client.TokenFromOauth1(nil)
-	re, ok := e.(auth.TokenFromOauth1APIError)
-	if !ok {
-		t.Errorf("Unexpected error type: %T\n%v\n", e, e)
+	var re auth.TokenFromOauth1APIError
+	if !errors.As(e, &re) {
+		t.Fatalf("Unexpected error type: %T\n%v\n", e, e)
 	}
 	if re.EndpointError.Tag != auth.TokenFromOAuth1ErrorAppIdMismatch {
 		t.Errorf("Unexpected tag: %s\n", re.EndpointError.Tag)

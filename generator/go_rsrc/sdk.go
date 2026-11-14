@@ -64,6 +64,23 @@ func (e APIError) Error() string {
 	return e.ErrorSummary
 }
 
+// HTTPError wraps an error from an HTTP response. Use errors.As to access
+// either HTTPError or the underlying SDK error. Responses without a request ID
+// have an empty RequestID. Network failures without a response are not wrapped.
+type HTTPError struct {
+	StatusCode int    `json:"-"`
+	RequestID  string `json:"-"`
+	Err        error  `json:"-"`
+}
+
+func (e *HTTPError) Error() string { return e.Err.Error() }
+
+// Unwrap returns the underlying SDK, decoding, or response body error.
+func (e *HTTPError) Unwrap() error { return e.Err }
+
+// MarshalJSON preserves the underlying error's JSON representation.
+func (e *HTTPError) MarshalJSON() ([]byte, error) { return json.Marshal(e.Err) }
+
 // SDKInternalError is returned when the Dropbox API responds with a status code
 // that does not carry a typed error body (e.g. 500 Internal Server Error).
 type SDKInternalError struct {
@@ -211,14 +228,20 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 
 		resp, err := client.Do(httpReq)
 		if err != nil {
+			if resp != nil {
+				return nil, nil, &HTTPError{StatusCode: resp.StatusCode, RequestID: resp.Header.Get("X-Dropbox-Request-Id"), Err: err}
+			}
 			return nil, nil, err
 		}
+
+		httpErr := &HTTPError{StatusCode: resp.StatusCode, RequestID: resp.Header.Get("X-Dropbox-Request-Id")}
 
 		if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
 			switch req.Style {
 			case "rpc", "upload":
 				if resp.Body == nil {
-					return nil, nil, errors.New("expected body in RPC response, got nil")
+					httpErr.Err = errors.New("expected body in RPC response, got nil")
+					return nil, nil, httpErr
 				}
 
 				b, err := io.ReadAll(resp.Body)
@@ -226,7 +249,8 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 					err = closeErr
 				}
 				if err != nil {
-					return nil, nil, err
+					httpErr.Err = err
+					return nil, nil, httpErr
 				}
 
 				return b, nil, nil
@@ -255,7 +279,8 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 					continue
 				}
 			}
-			return nil, nil, bodyErr
+			httpErr.Err = bodyErr
+			return nil, nil, httpErr
 		}
 
 		if canRetry {
@@ -267,10 +292,11 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 			}
 		}
 
-		return nil, nil, SDKInternalError{
+		httpErr.Err = SDKInternalError{
 			StatusCode: resp.StatusCode,
 			Content:    string(b),
 		}
+		return nil, nil, httpErr
 	}
 }
 
