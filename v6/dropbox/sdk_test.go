@@ -109,6 +109,11 @@ func TestInternalError(t *testing.T) {
 	if v != nil || strings.Trim(e.Error(), "\n") != eString {
 		t.Errorf("v: %v e: '%s'\n", v, e.Error())
 	}
+	var serverError auth.ServerError
+	if !errors.As(e, &serverError) || serverError.StatusCode != http.StatusInternalServerError {
+		t.Fatalf("expected ServerError with status 500, got %#v", e)
+	}
+
 }
 
 func TestRateLimitJSON(t *testing.T) {

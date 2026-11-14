@@ -43,47 +43,57 @@ func ParseError(err error, appError error) error {
 		return err
 	}
 
+	base := dropbox.APIError{ErrorSummary: sdkErr.Content}
+	base.SetResponseMetadata(sdkErr.ResponseMetadata())
+
 	if sdkErr.StatusCode >= 500 && sdkErr.StatusCode <= 599 {
 		return ServerError{
-			APIError: dropbox.APIError{
-				ErrorSummary: sdkErr.Content,
-			},
+			StatusCode: sdkErr.StatusCode,
+			APIError:   base,
 		}
 	}
 
 	switch sdkErr.StatusCode {
 	case http.StatusBadRequest:
 		return BadRequest{
-			APIError: dropbox.APIError{
-				ErrorSummary: sdkErr.Content,
-			},
+			APIError: base,
 		}
 	case http.StatusUnauthorized:
 		var apiError AuthAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return pErr
+			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
 		}
 
+		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusForbidden:
 		var apiError AccessAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return pErr
+			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
 		}
 
+		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusTooManyRequests:
 		var apiError RateLimitAPIError
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), &apiError); pErr != nil {
-			return pErr
+			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
 		}
 
+		apiError.SetResponseMetadata(sdkErr.ResponseMetadata())
 		return apiError
 	case http.StatusConflict:
 		if pErr := json.Unmarshal([]byte(sdkErr.Content), appError); pErr != nil {
-			return pErr
+			return dropbox.NewResponseError(pErr, sdkErr.ResponseMetadata())
 		}
 
+		// Generated callers copy appError to a value after ParseError returns.
+		// Set the embedded APIError before that copy, without changing its type.
+		if target, ok := appError.(interface {
+			SetResponseMetadata(*dropbox.ResponseMetadata)
+		}); ok {
+			target.SetResponseMetadata(sdkErr.ResponseMetadata())
+		}
 		return appError
 	}
 

@@ -58,21 +58,106 @@ type Tagged struct {
 // APIError is the base type for endpoint-specific errors.
 type APIError struct {
 	ErrorSummary string `json:"error_summary"`
+	metadata     *ResponseMetadata
 }
 
 func (e APIError) Error() string {
 	return e.ErrorSummary
 }
 
+// ResponseMetadata describes the HTTP response that produced an error.
+// It contains no response body. Headers returns an independent snapshot.
+type ResponseMetadata struct {
+	// StatusCode is the actual HTTP response status.
+	StatusCode int `json:"-"`
+	// RequestID is X-Dropbox-Request-Id, or empty if it was not received.
+	RequestID string `json:"-"`
+	headers   http.Header
+}
+
+func cloneHeaders(headers http.Header) http.Header {
+	if headers == nil {
+		return nil
+	}
+	result := make(http.Header, len(headers))
+	for key, values := range headers {
+		key = http.CanonicalHeaderKey(key)
+		result[key] = append(result[key], values...)
+	}
+	return result
+}
+
+func newResponseMetadata(resp *http.Response) *ResponseMetadata {
+	headers := cloneHeaders(resp.Header)
+	return &ResponseMetadata{StatusCode: resp.StatusCode, RequestID: headers.Get("X-Dropbox-Request-Id"), headers: headers}
+}
+
+// Headers returns a deep copy with canonical header names. Get and Values can
+// be used with any capitalization. A nil receiver returns nil.
+func (m *ResponseMetadata) Headers() http.Header {
+	if m == nil {
+		return nil
+	}
+	return cloneHeaders(m.headers)
+}
+
+func copyResponseMetadata(m *ResponseMetadata) *ResponseMetadata {
+	if m == nil {
+		return nil
+	}
+	return &ResponseMetadata{StatusCode: m.StatusCode, RequestID: m.RequestID, headers: m.Headers()}
+}
+
+// ResponseMetadata returns the actual HTTP response metadata, or nil if no
+// response was received. The returned value can be modified independently.
+// This value receiver also exposes metadata on errors returned by value.
+func (e APIError) ResponseMetadata() *ResponseMetadata { return copyResponseMetadata(e.metadata) }
+
+// SetResponseMetadata copies metadata into the error. It is used by error
+// parsers and is promoted by errors embedding APIError.
+func (e *APIError) SetResponseMetadata(m *ResponseMetadata) { e.metadata = copyResponseMetadata(m) }
+
+// ResponseError preserves an error encountered while reading, closing, or
+// decoding an HTTP error body, together with the response metadata.
+// It does not represent a successfully decoded API error.
+type ResponseError struct {
+	cause    error
+	metadata *ResponseMetadata
+}
+
+// NewResponseError associates an error with a snapshot of response metadata.
+// If err is nil it returns nil.
+func NewResponseError(err error, metadata *ResponseMetadata) error {
+	if err == nil {
+		return nil
+	}
+	return &ResponseError{cause: err, metadata: copyResponseMetadata(metadata)}
+}
+
+func (e *ResponseError) Error() string { return e.cause.Error() }
+
+// Unwrap returns the original reading, closing, or decoding error.
+func (e *ResponseError) Unwrap() error { return e.cause }
+
+// ResponseMetadata returns an independent copy of the HTTP response metadata.
+func (e *ResponseError) ResponseMetadata() *ResponseMetadata { return copyResponseMetadata(e.metadata) }
+
 // SDKInternalError is returned when the Dropbox API responds with a status code
 // that does not carry a typed error body (e.g. 500 Internal Server Error).
 type SDKInternalError struct {
 	StatusCode int
 	Content    string
+	metadata   *ResponseMetadata
 }
 
 func (e SDKInternalError) Error() string {
 	return fmt.Sprintf("Unexpected error: %v (code: %v)", e.Content, e.StatusCode)
+}
+
+// ResponseMetadata returns the actual response metadata, or nil for an error
+// constructed without a response. StatusCode alone does not imply metadata.
+func (e SDKInternalError) ResponseMetadata() *ResponseMetadata {
+	return copyResponseMetadata(e.metadata)
 }
 
 // Config contains parameters for configuring the SDK.
@@ -214,11 +299,13 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 			return nil, nil, err
 		}
 
+		metadata := newResponseMetadata(resp)
+
 		if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusPartialContent {
 			switch req.Style {
 			case "rpc", "upload":
 				if resp.Body == nil {
-					return nil, nil, errors.New("expected body in RPC response, got nil")
+					return nil, nil, NewResponseError(errors.New("expected body in RPC response, got nil"), metadata)
 				}
 
 				b, err := io.ReadAll(resp.Body)
@@ -226,7 +313,7 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 					err = closeErr
 				}
 				if err != nil {
-					return nil, nil, err
+					return nil, nil, NewResponseError(err, metadata)
 				}
 
 				return b, nil, nil
@@ -255,7 +342,7 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 					continue
 				}
 			}
-			return nil, nil, bodyErr
+			return nil, nil, NewResponseError(bodyErr, metadata)
 		}
 
 		if canRetry {
@@ -270,6 +357,7 @@ func (c *Context) ExecuteContext(ctx context.Context, req Request, body io.Reade
 		return nil, nil, SDKInternalError{
 			StatusCode: resp.StatusCode,
 			Content:    string(b),
+			metadata:   metadata,
 		}
 	}
 }

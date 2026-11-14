@@ -674,7 +674,51 @@ t := time.Time(metadata.ClientModified)
 
 ### Error Handling
 
-As described in the [API docs](https://www.dropbox.com/developers/documentation/http/documentation#error-handling), all HTTP errors _except_ 409 are returned as-is to the client (with a helpful text message where possible). In case of a 409, the SDK will return an endpoint-specific error as described in the API. This will be made available as `EndpointError` member in the error.
+HTTP errors are converted to `auth.BadRequest` (400), `auth.AuthAPIError`
+(401), `auth.AccessAPIError` (403), `auth.RateLimitAPIError` (429), or
+`auth.ServerError` (5xx). A 409 returns an endpoint-specific error with an
+`EndpointError` member. Other HTTP statuses return `dropbox.SDKInternalError`.
+Existing error types and their value/pointer forms are preserved.
+
+Errors from HTTP error responses expose metadata through a common method:
+
+```go
+// Import "errors" and "github.com/dropbox/dropbox-sdk-go-unofficial/v6/dropbox".
+var responseErr interface {
+    ResponseMetadata() *dropbox.ResponseMetadata
+}
+if errors.As(err, &responseErr) {
+    if metadata := responseErr.ResponseMetadata(); metadata != nil {
+        status := metadata.StatusCode
+        requestID := metadata.RequestID
+        values := metadata.Headers().Values("X-Server-Response-Time")
+        _, _, _ = status, requestID, values // Use these in your error handling.
+    }
+}
+```
+
+`ResponseMetadata` records the actual HTTP status and optional
+`X-Dropbox-Request-Id`. `Headers()` returns a deep copy of all response headers
+with canonical names and all values preserved. The snapshot remains available
+after the response body is closed; modifying the original headers, the returned
+metadata, or a returned header map does not change the error's snapshot.
+Manually constructed errors have nil metadata unless explicitly set. Metadata
+are excluded from JSON and error strings. JSON `RateLimitError.RetryAfter`
+retains its existing meaning independently of the HTTP `Retry-After` header.
+When configured retries are exhausted, metadata describe only the final response.
+
+If an HTTP error body cannot be decoded, `*dropbox.ResponseError` preserves the
+metadata and wraps the original JSON error, accessible through `errors.As` and
+`errors.Unwrap`. Response body read/close failures also preserve metadata and
+wrap their original cause. These failures are not decoded structured API errors.
+Streamed download body errors encountered by the caller remain the caller's
+responsibility.
+
+Compatibility note: storing metadata adds private fields to `dropbox.APIError`
+and `dropbox.SDKInternalError`. External unkeyed composite literals of these
+structs no longer compile; use keyed literals such as
+`dropbox.APIError{ErrorSummary: "message"}`. This change is therefore not fully
+source-compatible.
 
 ## Note on using the Teams API
 
