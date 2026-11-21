@@ -37,7 +37,17 @@ type ServerError struct {
 	StatusCode int
 }
 
-func ParseError(err error, appError error) error {
+// ParseError decodes a transport error into the endpoint error type T.
+// Generated callers pass a pointer to a zero value; decoded endpoint errors
+// are returned by value, including when wrapped in HTTPError.
+func ParseError[T error](err error, appError *T) (parsed error) {
+	if httpErr, ok := err.(*dropbox.HTTPError); ok {
+		err = httpErr.Err
+		defer func() {
+			httpErr.Err = parsed
+			parsed = httpErr
+		}()
+	}
 	sdkErr, ok := err.(dropbox.SDKInternalError)
 	if !ok {
 		return err
@@ -45,6 +55,7 @@ func ParseError(err error, appError error) error {
 
 	if sdkErr.StatusCode >= 500 && sdkErr.StatusCode <= 599 {
 		return ServerError{
+			StatusCode: sdkErr.StatusCode,
 			APIError: dropbox.APIError{
 				ErrorSummary: sdkErr.Content,
 			},
@@ -84,7 +95,7 @@ func ParseError(err error, appError error) error {
 			return pErr
 		}
 
-		return appError
+		return *appError
 	}
 
 	return err
